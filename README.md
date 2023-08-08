@@ -1,2 +1,9 @@
-# web-app
+# panther-web-app
 Codebase for web app
+
+# install node package
+yarn --legacy-peer-deps
+
+or
+
+npm i --legacy-peer-deps
