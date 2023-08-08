@@ -2,8 +2,8 @@
 Codebase for web app
 
 # install node package
-yarn --legacy-peer-deps
+npm ci --legacy-peer-deps
 
 or
 
-npm i --legacy-peer-deps
+yarn --legacy-peer-deps
