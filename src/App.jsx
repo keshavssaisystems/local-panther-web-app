@@ -4,6 +4,7 @@ import { history } from '_helpers';
 import { PrivateRoute } from '_components';
 import { Home } from 'home';
 import { Dashboard } from 'dashboard';
+import { JobList } from 'customer/Jobs/JobList';
 import { Login } from 'login';
 
 import { AppHeader } from '_layout/AppHeader';
@@ -32,9 +33,11 @@ export function App() {
                                     </PrivateRoute>
                                 }
                             />
-
+                            <Route path="/JobList" element={<JobList />} />
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/login" element={<Login />} />
+                            {/* <Route path="*" element={<Navigate to="/" />} /> */}
+                            
                         </Routes>
                     </div>
                 <AppFooter />
