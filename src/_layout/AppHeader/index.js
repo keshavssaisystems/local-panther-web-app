@@ -1,7 +1,7 @@
 import React from "react";
 import cx from "classnames";
 
-import { CSSTransition } from "react-transition-group";
+import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 
 import { SearchBox } from "./Components/SearchBox";
 // import MegaMenu from "./Components/MegaMenu";
@@ -11,17 +11,17 @@ import { UserBox } from "./Components/UserBox";
 // import HeaderDots from "./Components/HeaderDots";
 
 export function AppHeader({
-  headerBackgroundColor,
-  enableMobileMenuSmall,
-  enableHeaderShadow
+  headerBackgroundColor = 'white',
+  enableMobileMenuSmall = true,
+  enableHeaderShadow = true
   }) {
     return (
       <>
-        <CSSTransition component="div"
-          className={cx("app-header header-shadow", headerBackgroundColor, {
+        <CSSTransitionGroup component="div"
+          className={cx("app-header", headerBackgroundColor, {
             "header-shadow": enableHeaderShadow,
           })}
-          transitionName="HeaderAnimation" transitionAppear={true}
+          transitionname="HeaderAnimation" transitionAppear={true}
           transitionAppearTimeout={1500} transitionEnter={false} transitionLeave={false}>
 
           <div
@@ -38,7 +38,7 @@ export function AppHeader({
               {/* <HeaderRightDrawer /> */}
             </div>
           </div>
-        </CSSTransition>
+        </CSSTransitionGroup>
       </>
     );
 }
