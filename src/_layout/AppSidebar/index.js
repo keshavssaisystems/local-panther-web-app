@@ -1,11 +1,11 @@
 import React from "react";
 import cx from "classnames";
 
-// import Nav from "../AppNav/VerticalNavWrapper";
+import { Nav } from "../AppNav/VerticalNavWrapper";
 
-import { CSSTransition } from "react-transition-group";
+import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 
-// import PerfectScrollbar from "react-perfect-scrollbar";
+import PerfectScrollbar from "react-perfect-scrollbar";
 // import { HeaderLogo } from "../../_layout/AppLogo";
 
 
@@ -19,18 +19,18 @@ export function AppSidebar({
     return (
       <>
         <div className="sidebar-mobile-overlay"/>
-        <CSSTransition component="div"
+        <CSSTransitionGroup component="div"
           className={cx("app-sidebar", backgroundColor, {
             "sidebar-shadow": enableSidebarShadow,
           })}
-          transitionName="SidebarAnimation" transitionAppear={true}
+          transitionname="SidebarAnimation" transitionAppear={true}
           transitionAppearTimeout={1500} transitionEnter={false} transitionLeave={false}>
           {/* <HeaderLogo /> */}
-          {/* <PerfectScrollbar>
+          <PerfectScrollbar>
             <div className="app-sidebar__inner">
               <Nav />
             </div>
-          </PerfectScrollbar> */}
+          </PerfectScrollbar>
           <div className={cx("app-sidebar-bg", backgroundImageOpacity)}
             style={{
               backgroundImage: enableBackgroundImage
@@ -38,7 +38,7 @@ export function AppSidebar({
                 : null,
             }}>   
           </div>
-        </CSSTransition>
+        </CSSTransitionGroup>
       </>
     );
 }

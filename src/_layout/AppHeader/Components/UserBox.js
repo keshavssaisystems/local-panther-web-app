@@ -27,7 +27,7 @@ export function UserBox() {
                   <img width={42} className="rounded-circle" src={avatar1} alt=""/>
                   <FontAwesomeIcon className="mr-2 opacity-8" icon={faAngleDown}/>
                 </DropdownToggle>
-                <DropdownMenu right className="rm-pointers dropdown-menu-lg">
+                <DropdownMenu end className="rm-pointers dropdown-menu-lg">
                   <div className="dropdown-menu-header">
                     <div className="dropdown-menu-header-inner bg-info">
                       <div className="menu-header-image opacity-2"
