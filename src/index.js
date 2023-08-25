@@ -20,12 +20,12 @@ root.render(
     <React.StrictMode>
         <Provider store={store}>
             <HashRouter>
-            <div
-              className={cx(
-                    "app-container app-theme-white fixed-header fixed-sidebar fixed-footer closed-sidebar closed-sidebar-mobile sidebar-mobile-open body-tabs-shadow-btn"
-                )}>
-                <App />
-              </div>
+                    <div
+                        className={cx(
+                            "app-container app-theme-white fixed-header fixed-sidebar fixed-footer closed-sidebar closed-sidebar-mobile sidebar-mobile-open body-tabs-shadow-btn"
+                        )}>
+                        <App />
+                    </div>
             </HashRouter>
         </Provider>
     </React.StrictMode>

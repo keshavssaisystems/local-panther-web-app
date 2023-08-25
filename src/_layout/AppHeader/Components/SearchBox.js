@@ -16,8 +16,8 @@ export function SearchBox() {
             <span />
           </button>
         </div>
-        <button
-          className="close"/>
+        {/* <button
+          className="close"/> */}
       </div>
     </>
   );

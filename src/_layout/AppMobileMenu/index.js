@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Slider } from "react-burgers";
 import cx from "classnames";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +7,7 @@ import { Button } from "reactstrap";
 
 export function AppMobileMenu() {
   return (
-    <Fragment>
+    <>
       <div className="app-header__mobile-menu">
         <div onClick={this.toggleMobileSidebar}>
           <Slider width={26} lineHeight={2} lineSpacing={5} color="#6c757d"
@@ -33,7 +33,7 @@ export function AppMobileMenu() {
           </Button>
         </span>
       </div>
-    </Fragment>
+    </>
   );
 }
 
