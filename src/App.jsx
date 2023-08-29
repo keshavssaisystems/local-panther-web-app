@@ -25,16 +25,16 @@ export function App() {
                     <div className="app-main__inner">
                         <Routes>
                             <Route
-                                path="/home"
+                                path="/"
                                 element={
                                     <PrivateRoute>
                                         <Home />
                                     </PrivateRoute>
                                 }
                             />
-                            <Route path="/" element={<Dashboard />} />
+
+                            <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="*" element={<Navigate to="/" />} />
                         </Routes>
                     </div>
                 <AppFooter />

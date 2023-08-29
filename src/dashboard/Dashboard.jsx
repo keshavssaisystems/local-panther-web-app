@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function Dashboard() {
     
-    const [state, setState] = useState({
+    const [state] = useState({
         value: "",
         mask: "9999-9999-9999-9999",
       });

@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name, jsx-a11y/click-events-have-key-events */
 import { Navigation } from "react-minimal-side-navigation";
-import { /* useHistory, */ useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Icon from "awesome-react-icons";
 import React, { useState } from "react";
@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
 export const AppSidebar = () => {
-  // const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -43,12 +43,18 @@ export const AppSidebar = () => {
         <Navigation
           activeItemId={location.pathname}
           onSelect={({ itemId }) => {
-            // history.push(itemId);
+            navigate(itemId);
           }}
           items={[
             {
               title: "Home",
-              itemId: "/home",
+              itemId: "/",
+              // Optional
+              elemBefore: () => <Icon name="coffee" />
+            },
+            {
+              title: "Dashboard",
+              itemId: "/dashboard",
               // Optional
               elemBefore: () => <Icon name="coffee" />
             },
@@ -71,17 +77,24 @@ export const AppSidebar = () => {
               ]
             },
             {
-              title: "Another Tab",
-              itemId: "/another",
+              title: "Next",
+              itemId: "/next",
+              elemBefore: () => <Icon name="user" />,
               subNav: [
                 {
-                  title: "Teams",
-                  itemId: "/another/teams",
+                  title: "Next 1",
+                  itemId: "/next/next-1",
                   // Optional
-                  elemBefore: () => <Icon name="calendar" />
+                  elemBefore: () => <Icon name="cloud-snow" />
+                },
+                {
+                  title: "Next 2",
+                  itemId: "/next/next-2",
+                  elemBefore: () => <Icon name="coffee" />
                 }
               ]
-            }
+            },
+            
           ]}
         />
       </div>
