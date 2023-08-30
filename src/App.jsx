@@ -5,6 +5,7 @@ import { PrivateRoute } from '_components';
 import { Home } from 'home';
 import { Dashboard } from 'dashboard';
 import { JobList } from 'customer/Jobs/JobList';
+import { JobDetail } from 'customer/Jobs/JobDetail';
 import { Login } from 'login';
 
 import { AppHeader } from '_layout/AppHeader';
@@ -34,6 +35,7 @@ export function App() {
                                 }
                             />
                             <Route path="/JobList" element={<JobList />} />
+                            <Route path="/JobDetail" element={<JobDetail />} />
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/login" element={<Login />} />
                             {/* <Route path="*" element={<Navigate to="/" />} /> */}
