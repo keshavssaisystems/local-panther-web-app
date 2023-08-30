@@ -5,6 +5,7 @@ import { PrivateRoute } from '_components';
 import { Home } from 'home';
 import { Dashboard } from 'dashboard';
 import { Login } from 'login';
+import {CandidateList} from 'Candidate'
 
 import { AppHeader } from '_layout/AppHeader';
 import { AppSidebar } from '_layout/AppSidebar';
@@ -32,9 +33,10 @@ export function App() {
                                     </PrivateRoute>
                                 }
                             />
-                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/" element={<CandidateList />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="*" element={<Navigate to="/" />} />
+                            <Route path="/candidate-list" element={<CandidateList />} />
+                            {/* <Route path="*" element={<Navigate to="/" />} /> */}
                         </Routes>
                     </div>
                 <AppFooter />
