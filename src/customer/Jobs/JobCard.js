@@ -3,11 +3,16 @@ import { Row, Col, Card, CardBody, CardTitle, CardText } from "reactstrap";
 import  { faCalendarAlt, faMapMarkedAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./jobList.css";
+import { useNavigate } from 'react-router-dom';
 
-export function JobCard({name, customer, minExperience, maxExperience, location, description, role}) {
+export function JobCard({name, customer, minExperience, maxExperience, location, description, role , jobId}) {
+    const navigate = useNavigate();
+    const navigateToJobDetail = () => {
+        navigate("/JobDetail?JobId=" + jobId);
+    };
     return (
         <>
-            <Card className="mb-2">
+            <Card className="mb-2" onClick={navigateToJobDetail}>
                 <CardBody>
                     <Row>
                         <Col md="9">

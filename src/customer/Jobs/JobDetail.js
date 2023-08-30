@@ -71,7 +71,7 @@ export function JobDetail() {
                                 <HeadingAndDetail heading={"No of Positions"} detail={jobDetail.noofopenposition} />
                             </Col>
                             <Col>
-                                <HeadingAndDetail heading={"Location"} detail={jobDetail.jobLocationDtos[0].location} />
+                                <HeadingAndDetail heading={"Location"} detail={jobDetail.jobLocationDtos.length > 0 ? jobDetail.jobLocationDtos[0].location : "-"} />
                             </Col>
                             <Col>
                                 <HeadingAndDetail heading={"Job Posted On"} detail={"Posted " + jobCreatedDate} />
