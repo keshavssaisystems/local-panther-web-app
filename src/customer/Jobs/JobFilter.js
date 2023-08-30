@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardBody, CardTitle, Form, FormGroup, Button, Col } from "reactstrap";
 import { customerOptionsDummy, locationOptionsDummy, experienceOptionDummy} from "./Dummy";
 import { FilterSelect, FilterMultipleSelect } from "./formComponents/FilterSelect";
 
 export function JobFilter({onFilter}) {
-    const responseBody = {customer: "", location: "", minExperience: "", maxExperience : "" }
+    const [filterData, setFilterData] = useState({customer: "", location: "", minExperience: "", maxExperience : "" }) 
     const onSubmitHandler = (event) => {
         event.preventDefault();
+        let responseBody = {};
         responseBody.customer = event.target.elements.customer.value;
         responseBody.location = event.target.elements.location.value;
         responseBody.minExperience = event.target.elements.minExperience.value;
         responseBody.maxExperience = event.target.elements.maxExperience.value;
-        onFilter(responseBody);
+        setFilterData(responseBody);
     }
+    onFilter(filterData);
     return (
         <>
             <Col md="3">

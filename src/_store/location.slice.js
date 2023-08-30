@@ -20,7 +20,7 @@ function createInitialState() {
 }
 
 function createExtraActions() {
-    // const baseUrl = `http://172.16.14.120:8082/api`;
+    const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
 
     return {
         getLocation: getLocation()
@@ -29,7 +29,7 @@ function createExtraActions() {
     function getLocation() {
         return createAsyncThunk(
             `${name}/getLocation`,
-            async () => await fetchWrapper.get(`http://172.16.14.120:8083/api/Common/GetLocation`)
+            async () => await fetchWrapper.get(`${baseUrl}/Common/GetLocation`)
         );
     }
 }
