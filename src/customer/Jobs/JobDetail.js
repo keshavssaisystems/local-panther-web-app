@@ -9,7 +9,6 @@ import { useSearchParams } from "react-router-dom";
 import moment from "moment/moment";
 
 export function JobDetail() {
-    console.log(moment('Thu Oct 25 2018 17:30:03 GMT+0300').fromNow());
     const [searchParams] = useSearchParams();
     let JobId = searchParams.get("JobId")
     const dispatch = useDispatch();
