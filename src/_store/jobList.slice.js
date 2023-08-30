@@ -20,7 +20,7 @@ function createInitialState() {
 }
 
 function createExtraActions() {
-    const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
+    const baseUrl = `http://172.16.14.120:8082/api`;
 
     return {
         getJobList: getJobList()
@@ -29,7 +29,7 @@ function createExtraActions() {
     function getJobList() {
         return createAsyncThunk(
             `${name}/getJobList`,
-            async ({ pageNo }) => await fetchWrapper.get(`${baseUrl}/job?isActive=true&jobId=&companyId=&pageSize=5&pageNumber=${pageNo}`)
+            async ({ jobId, pageNo }) => await fetchWrapper.get(`${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}`)
         );
     }
 }

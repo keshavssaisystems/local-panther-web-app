@@ -8,6 +8,7 @@ import { jobListActions } from '_store';
 export function JobList() {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState({
+    "jobId" : null,
     "pageNo" : 1
   })
   useEffect(() => {

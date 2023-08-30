@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "reactstrap";
+import { useNavigate } from 'react-router-dom';
 import "./jobList.css";
 
 export function HeadingAndDetailWithDiv({heading, detail}) {
@@ -24,9 +25,13 @@ export function HeadingAndDetail({heading, detail}) {
 
 
 export function ButtonWithCount({buttonName, color, count, action}) {
+    const navigate = useNavigate();
+    const navigateTo = () => {
+        navigate(action);
+    };
     return(
         <>
-            <Button color={color} className="mr-10" onClick={action}> {buttonName} <span className="badge rounded-pill bg-light">{count}</span> </Button>
+            <Button color={color} className="mr-10" onClick={navigateTo}> {buttonName} <span className="badge rounded-pill bg-light">{count}</span> </Button>
         </>
     )
 }
