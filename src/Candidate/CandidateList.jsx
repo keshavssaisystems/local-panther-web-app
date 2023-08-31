@@ -30,7 +30,8 @@ export function CandidateList() {
     const [pageIndex, setPageIndex] = useState(1)
     const [pageSize, setpageSize] = useState(10)
     const [totalRecords, setTotalRecords] = useState()
-    const [isExpError, setIsExpError] = useState(false)
+    let isExpError = false
+    let expError = false
     const [searchText, setSearchText] = useState('')
     let minExp = 0
     let maxExp = 0
@@ -101,12 +102,14 @@ export function CandidateList() {
         check == 'min' ? minExp = Number(event) : maxExp = Number(event)
         if (minExp && maxExp) {
             if (minExp > maxExp) {
-                setIsExpError(true)
+                isExpError = true
                 return
             }
         }
-        setIsExpError(false)
-        // getCandidatesList()
+        else{
+            isExpError = false
+        }
+       
     }
 
     const onSelectCandidate = function (data) {
@@ -134,42 +137,36 @@ export function CandidateList() {
 
             {!showCandidate ?
                 <Card>
-                    <CardTitle className="mt-3 ml-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Candidate List
+                    <CardTitle className="mt-3 ml-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Candidate List{isExpError}
                     </CardTitle>
                     <CardBody>
                         <div>
                             <Row>
-                                <Col className="col-md-3">
+                                <Col className="col-md-5">
                                     <Row>
-                                        <Col>
-                                            <Label className="me-0">Min Exp</Label>
+                                       
+                                        <Col className="col-md-3 mb-3">
+                                            <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
+                                                onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
+                                            </Input>
 
-                                            <Col className="col-md-3 mb-3">
-                                                <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
-                                                    onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
-                                                </Input>
-                                                <br />
-                                                {isExpError ? <h6 style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</h6> : ""}
 
-                                            </Col>
                                         </Col>
-                                        <Col>
-                                            <Col className="col-md-3 mb-3">
-                                                <Label>Max Exp</Label>
-                                                <Input type="text" id="maxExperience" name="maxExperience" placeholder="Max Exp"
-                                                    onInput={(evt) => onHandleExpChange('max', evt.target.value)}>
-                                                </Input>
-                                            </Col>
+                                        {isExpError ? <h6 style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</h6> : ""}
+
+                                        <Col className="col-md-3 mb-3">
+
+                                            <Input type="text" id="maxExperience" name="maxExperience" placeholder="Max Exp"
+                                                onInput={(evt) => onHandleExpChange('max', evt.target.value)}>
+                                            </Input>
                                         </Col>
-
-
 
                                         <Col className="col-md-6">
-                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-6 me-2"
+                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3 me-2"
                                                 onClick={(evt) => getCandidatesList()}>
                                                 submit
                                             </Button>
-                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-5"
+                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3"
                                                 onClick={(evt) => getCandidatesList()}>
                                                 reset
                                             </Button>
@@ -178,7 +175,7 @@ export function CandidateList() {
 
                                 </Col>
 
-                                <Col className="col-md-8">
+                                <Col className="col-md-6">
                                     <div
                                         className={cx("search-wrapper", {
                                             active: true,
@@ -215,7 +212,7 @@ export function CandidateList() {
                                         <tbody>
                                             {candidatesList.map((col) => (
                                                 <tr>
-                                                    <th scope="row" onClick={(evt) => onSelectCandidate(col)}>{col.firstname}</th>
+                                                    <th style={{ cursor: 'pointer' }} scope="row" onClick={(evt) => onSelectCandidate(col)}>{col.firstname}</th>
                                                     <td>{col.lastname}</td>
                                                     <td>{col.experienceyears}</td>
                                                     <td>{col.phonenumber}</td>
@@ -230,14 +227,7 @@ export function CandidateList() {
 
                                 </Table>
                             </Row>
-                           
-                            {/* <Row className="mt-3 float-end">
-                                <Pagination aria-label="Page navigation example">
-                                    <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
-                                    </PaginationItem>                                    
-                                </Pagination>
-                            </Row> */}
+
                         </div>
                     </CardBody>
                 </Card>

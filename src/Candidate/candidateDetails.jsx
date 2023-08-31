@@ -94,7 +94,8 @@ export function CandidateDetails(props) {
 
     const getCandidateDetails = async function () {
         var req = selectedCandidate.candidateid
-        let response = await dispatch(candidateActions.getCandidateDetails({ req }));
+        debugger;
+        let response = await dispatch(candidateActions.getCandidateDetails(req));
         debugger;
         setSelectedCandidateRes(response.payload.data)
     }
@@ -187,7 +188,7 @@ export function CandidateDetails(props) {
                                                 {selectedCandidate.primaryskills}
                                             </h6>
                                             <h6>Applied {isAppliedToday ? ' Today' : (appliedDate == 1 ? +appliedDate + " day ago" : appliedDate + " days ago")} </h6>
-                                            <h6 onClick={(evt) => openProfile()}>Check Profile</h6>
+                                            <h6 style={{ cursor: 'pointer' }} onClick={(evt) => openProfile()}>Check Profile</h6>
 
                                         </div>
                                         <div className="menu-header-btn-pane">
@@ -273,7 +274,7 @@ export function CandidateDetails(props) {
                             </div> : <></>}
 
                         </Form>
-                        <Row>
+                        <Row style={{ cursor: 'pointer' }}>
                             <Col md="2" className="mt-3">
                                 <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1 me-3" onClick={(evt) => navigateToListPage()}>
                                     Back
@@ -281,16 +282,13 @@ export function CandidateDetails(props) {
                             </Col>
                             <Col md="2" className="mt-3" style={{ marginLeft: '60%' }}>
 
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1 me-3" onClick={(evt) => acceptRejectCandidate('accept')}>
+                                <Button style={{ backgroundColor: '#d92550', borderColor: '#d92550' }} className="mt-1 me-3" onClick={(evt) => acceptRejectCandidate('accept')}>
                                     Accept
                                 </Button>
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1" onClick={(evt) => rejectCandidate()}>
+                                <Button style={{ backgroundColor: '#3ac47d', borderColor: '#3ac47d' }} className="mt-1" onClick={(evt) => rejectCandidate()}>
                                     Reject
                                 </Button>
 
-                                {/* <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1" onClick={(evt) => navigateProfile()}>
-                                    Profile
-                                </Button> */}
                             </Col>
 
                         </Row>
@@ -304,9 +302,9 @@ export function CandidateDetails(props) {
 
 
             <Modal isOpen={acceptModal}>
-                <ModalHeader >Reject Candidate</ModalHeader>
+                <ModalHeader >Accept Candidate</ModalHeader>
                 <ModalBody>
-                    Candidate accepted successfully
+                    Candidate Accepted successfully
                 </ModalBody>
                 <ModalFooter>
                     <Button color="link" onClick={(evt) => acceptCandidate()}>
@@ -318,7 +316,7 @@ export function CandidateDetails(props) {
 
 
 
-            <Modal isOpen={rejectModal}>
+            <Modal className="lg" isOpen={rejectModal}>
                 <ModalHeader >Reject Candidate</ModalHeader>
                 <ModalBody>
                     <Row>
@@ -366,8 +364,26 @@ export function CandidateDetails(props) {
             </Modal>
 
 
-            <Modal isOpen={showProfile}>
-                <ModalHeader >Candidate Profile</ModalHeader>
+            <Modal lg isOpen={showProfile}>
+                {selectedCandidate ?
+                    <div style={{ backgroundColor: 'rgb(33 91 153)' }}>
+                        <Col md="12" lg="12" xl="12">
+                            <div className="dropdown-menu-header">
+                                <div className="dropdown-menu-header-inner">
+                                    <div className="menu-header-content btn-pane-right">
+
+                                        <div>
+                                            <h1 className="menu-header-subtitle">
+                                                Candidate Profile
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </Col>
+                    </div>
+                    : <></>}
                 <ModalBody>
                     {selectedCandidateList ? <h4>{selectedCandidateList.primaryskills}</h4> : ''}
 
@@ -394,8 +410,9 @@ export function CandidateDetails(props) {
 
                             <Col className="me-5">
                                 <FormGroup>
-                                    <Label for="exampleEmail">Resume  : </Label>{selectedCandidateRes ? <Link>
-                                        {selectedCandidateRes.resumepath}  </Link> : ''}
+                                    <Label for="exampleEmail">Resume  : </Label>{selectedCandidateRes ? <a
+                                        href={selectedCandidateRes.resumepath} target="blank">
+                                        {selectedCandidateRes.firstname+"_resume.pdf"}  </a> : ''}
                                 </FormGroup>
                             </Col>
                             <Col className="me-5">
