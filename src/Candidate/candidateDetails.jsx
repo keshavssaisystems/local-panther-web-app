@@ -24,7 +24,6 @@ import { history, fetchWrapper } from '_helpers';
 import { addComment } from "@babel/types";
 
 export function CandidateDetails(props) {
-    debugger;
     const dispatch = useDispatch();
     let jobId = props.jobId
     const navigate = useNavigate();
@@ -40,6 +39,8 @@ export function CandidateDetails(props) {
         },
         {
             value: 2, type: "Skills not matched"
+        }, {
+            value: 3, type: "Fake Profile"
         }
     ])
 
@@ -94,9 +95,7 @@ export function CandidateDetails(props) {
 
     const getCandidateDetails = async function () {
         var req = selectedCandidate.candidateid
-        debugger;
         let response = await dispatch(candidateActions.getCandidateDetails(req));
-        debugger;
         setSelectedCandidateRes(response.payload.data)
     }
 
@@ -112,9 +111,6 @@ export function CandidateDetails(props) {
     }
 
     const acceptRejectCandidate = async function (check) {
-
-        debugger;
-
         let applicationstatusid = 0
         let rejectedreasonid = rejectReqData.rejectedreasonid
         let rejectedcomment = rejectReqData.rejectedcomment
@@ -131,8 +127,6 @@ export function CandidateDetails(props) {
 
 
         let response = await dispatch(candidateActions.acceptRejectCandidate({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
-        debugger;
-
         if (check == 'accept') {
             setAcceptModal(!acceptModal)
         }
@@ -154,13 +148,41 @@ export function CandidateDetails(props) {
     }
 
     const addComment = function (data) {
-        debugger;
         rejectReqData.rejectedcomment = data
     }
 
     const openProfile = function () {
         setShowProfile(!showProfile)
     }
+
+    const applyMask = function (inputValue) {
+        const numCharsToMask = inputValue.length - 3;
+        const maskedValue = '*'.repeat(inputValue.length - numCharsToMask) + inputValue.slice(-numCharsToMask);
+
+        return maskedValue;
+    }
+    const formatPhoneNumber = function (inputValue) {
+
+        const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
+        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
+
+        return formatedValue;
+    }
+
+    const maskEmail = function (inputValue) {
+
+        // Extract the part before the '@' symbol
+        const username = inputValue.substring(0, inputValue.indexOf('@'));
+
+        // Mask the username with 'x's
+        const maskedUsername = 'x'.repeat(username.length);
+
+        // Combine masked username with '@' symbol and domain
+        const maskedValue = maskedUsername + inputValue.substring(inputValue.indexOf('@'));
+
+        return maskedValue;
+    }
+
 
 
     return (
@@ -245,7 +267,7 @@ export function CandidateDetails(props) {
                                     <Col md="4" className="me-5">
                                         <FormGroup>
                                             <Label for="exampleEmail">Experience</Label>
-                                            <Input disabled type="text" name="experience" id="experience" value={selectedCandidate.experienceyears} />
+                                            <Input disabled type="text" name="experience" id="experience" value={selectedCandidate.experienceyears + " years"} />
                                         </FormGroup>
                                     </Col>
                                     <Col md="4" className="me-5">
@@ -412,7 +434,7 @@ export function CandidateDetails(props) {
                                 <FormGroup>
                                     <Label for="exampleEmail">Resume  : </Label>{selectedCandidateRes ? <a
                                         href={selectedCandidateRes.resumepath} target="blank">
-                                        {selectedCandidateRes.firstname+"_resume.pdf"}  </a> : ''}
+                                        {selectedCandidateRes.firstname + "_resume.pdf"}  </a> : ''}
                                 </FormGroup>
                             </Col>
                             <Col className="me-5">

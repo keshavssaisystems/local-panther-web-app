@@ -30,11 +30,11 @@ export function CandidateList() {
     const [pageIndex, setPageIndex] = useState(1)
     const [pageSize, setpageSize] = useState(10)
     const [totalRecords, setTotalRecords] = useState()
-    let isExpError = false
+    const [isExpError, setIsExpError] = useState(false)
     let expError = false
     const [searchText, setSearchText] = useState('')
-    let minExp = 0
-    let maxExp = 0
+    let minExp
+    let maxExp
     let searchData = ''
 
     const [expList, setExpList] = useState([
@@ -66,6 +66,10 @@ export function CandidateList() {
         setCandidateList(getCandidateList)
     }, [getCandidateList]);
 
+    useEffect(() => {
+        setIsExpError(expError)
+    }, [expError]);
+
 
 
     const getCandidatesList = async function () {
@@ -78,10 +82,10 @@ export function CandidateList() {
         if (searchText) {
             url += '&searchText=' + searchText
         }
-        if (minExp) {
+        if (minExp != undefined) {
             url += '&minExperience=' + minExp
         }
-        if (maxExp) {
+        if (maxExp != undefined) {
             url += '&maxExperience=' + maxExp
         }
 
@@ -102,14 +106,46 @@ export function CandidateList() {
         check == 'min' ? minExp = Number(event) : maxExp = Number(event)
         if (minExp && maxExp) {
             if (minExp > maxExp) {
-                isExpError = true
+                expError = true
                 return
             }
         }
-        else{
-            isExpError = false
+        else {
+            expError = false
         }
-       
+
+    }
+
+    const applyMask = function (inputValue) {
+        debugger;
+        const numCharsToMask = inputValue.length - 3;
+        const maskedValue = '*'.repeat(inputValue.length - numCharsToMask) + inputValue.slice(-numCharsToMask);
+
+        return maskedValue;
+    }
+    const formatPhoneNumber = function (inputValue) {
+        // Remove all non-numeric characters
+        debugger;
+        // Apply the mask: (xxx) - xxx - 8684       
+
+        const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
+        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
+
+        return formatedValue;
+    }
+
+    const maskEmail = function (inputValue) {
+
+        // Extract the part before the '@' symbol
+        const username = inputValue.substring(0, inputValue.indexOf('@'));
+
+        // Mask the username with 'x's
+        const maskedUsername = 'x'.repeat(username.length);
+
+        // Combine masked username with '@' symbol and domain
+        const maskedValue = maskedUsername + inputValue.substring(inputValue.indexOf('@'));
+
+        return maskedValue;
     }
 
     const onSelectCandidate = function (data) {
@@ -144,7 +180,7 @@ export function CandidateList() {
                             <Row>
                                 <Col className="col-md-5">
                                     <Row>
-                                       
+
                                         <Col className="col-md-3 mb-3">
                                             <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
                                                 onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
@@ -152,7 +188,7 @@ export function CandidateList() {
 
 
                                         </Col>
-                                        {isExpError ? <h6 style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</h6> : ""}
+                                        {isExpError ? <Label style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</Label> : ""}
 
                                         <Col className="col-md-3 mb-3">
 
@@ -167,7 +203,7 @@ export function CandidateList() {
                                                 submit
                                             </Button>
                                             <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3"
-                                                onClick={(evt) => getCandidatesList()}>
+                                                onClick={(evt) => onClearSearch()}>
                                                 reset
                                             </Button>
                                         </Col>
@@ -208,15 +244,16 @@ export function CandidateList() {
                                         </tr>
                                     </thead>
 
+
                                     {candidatesList.length > 0 ?
                                         <tbody>
                                             {candidatesList.map((col) => (
                                                 <tr>
-                                                    <th style={{ cursor: 'pointer' }} scope="row" onClick={(evt) => onSelectCandidate(col)}>{col.firstname}</th>
-                                                    <td>{col.lastname}</td>
-                                                    <td>{col.experienceyears}</td>
-                                                    <td>{col.phonenumber}</td>
-                                                    <td>{col.email}</td>
+                                                    <th style={{ cursor: 'pointer' }} scope="row" onClick={(evt) => onSelectCandidate(col)}>{applyMask(col.firstname)}</th>
+                                                    <td>{applyMask(col.lastname)}</td>
+                                                    <td>{col.experienceyears + " years"}</td>
+                                                    <td>{formatPhoneNumber(col.phonenumber)}</td>
+                                                    <td>{maskEmail(col.email)}</td>
                                                 </tr>
                                             ))
                                             }
