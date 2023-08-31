@@ -3,7 +3,8 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import { history } from '_helpers';
 import { PrivateRoute } from '_components';
 import { Home } from 'home';
-import { Dashboard } from 'dashboard';
+// import { Dashboard } from 'dashboard';
+import FormStickyBasic  from 'createjob/CreateJob'
 import { Login } from 'login';
 
 import { AppHeader } from '_layout/AppHeader';
@@ -32,7 +33,8 @@ export function App() {
                                     </PrivateRoute>
                                 }
                             />
-                            <Route path="/" element={<Dashboard />} />
+   <Route path="/" element={< FormStickyBasic/>} />
+                            {/* <Route path="/" element={<Dashboard />} /> */}
                             <Route path="/login" element={<Login />} />
                             <Route path="*" element={<Navigate to="/" />} />
                         </Routes>
