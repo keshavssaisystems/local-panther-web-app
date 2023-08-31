@@ -21,50 +21,17 @@ import { CandidateDetails } from './candidateDetails';
 
 export function CandidateList() {
     const dispatch = useDispatch();
-    const [data, setData] = useState()
-    const columns = [
-        {
-            name: "First Name",
-            selector: row => row.firstName,
-            sortable: true,
-        },
-        {
-            name: "Last Name",
-            id: "lastName",
-            selector: row => row.lastName,
-            sortable: true,
-        },
 
-        {
-            name: "Experience",
-            selector: row => row.experienceyears,
-            sortable: true,
-        },
-        {
-            name: "Phone Number",
-            selector: row => row.phonenumber,
-            sortable: true,
-        },
-
-        {
-            name: "Email",
-            selector: row => row.email,
-            sortable: true,
-        },
-    ];
-    const [filteredExp, setfilteredExp] = useState({})
-    const [selectedOption, setselectedOption] = useState()
+    let jobId = 2;
     const [candidatesList, setCandidateList] = useState([])
     const [getCandidateList, setList] = useState([]);
     const [showCandidate, setshowCandidate] = useState(false);
-    const [tempList, setTempList] = useState([]);
     const [selectedCandidate, setselectedCandidate] = useState();
     const [pageIndex, setPageIndex] = useState(1)
     const [pageSize, setpageSize] = useState(10)
     const [totalRecords, setTotalRecords] = useState()
+    const [isExpError, setIsExpError] = useState(false)
     const [searchText, setSearchText] = useState('')
-    let [minExperience, setMinExperience] = useState(0)
-    let [maxExperience, setMaxExperience] = useState(0)
     let minExp = 0
     let maxExp = 0
     let searchData = ''
@@ -101,11 +68,14 @@ export function CandidateList() {
 
 
     const getCandidatesList = async function () {
-        console.log(minExperience);
         debugger;
+        console.log(searchText);
+        if (isExpError) {
+            return
+        }
         let url = 'JobApplications/GetJobAppliedCandidatesList/' + 2 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex + '&isActive=true'
-        if (searchData) {
-            url += '&searchText=' + searchData
+        if (searchText) {
+            url += '&searchText=' + searchText
         }
         if (minExp) {
             url += '&minExperience=' + minExp
@@ -129,7 +99,14 @@ export function CandidateList() {
     const onHandleExpChange = function (check, event) {
         debugger;
         check == 'min' ? minExp = Number(event) : maxExp = Number(event)
-        getCandidatesList()
+        if (minExp && maxExp) {
+            if (minExp > maxExp) {
+                setIsExpError(true)
+                return
+            }
+        }
+        setIsExpError(false)
+        // getCandidatesList()
     }
 
     const onSelectCandidate = function (data) {
@@ -139,7 +116,8 @@ export function CandidateList() {
     }
 
     const onSearch = function (data) {
-        searchData += data.target.value
+        debugger;
+        searchData = data
         setSearchText(searchData)
         console.log(searchText);
 
@@ -161,37 +139,36 @@ export function CandidateList() {
                     <CardBody>
                         <div>
                             <Row>
-                                <Col className="col-md-6">
+                                <Col className="col-md-3">
                                     <Row>
-                                        <Col className="col-md-2">
+                                        <Col>
                                             <Label className="me-0">Min Exp</Label>
-                                        </Col>
-                                        <Col className="col-md-3 mb-3">
-                                            <Input type="select" id="minExperience" name="minExperience" placeholder="Min Exp"
-                                                onChange={(evt) => onHandleExpChange('min', evt.target.value)}>
-                                                <option value=""></option>
-                                                {expList.map((col) => (
-                                                    <option value={col.value}>{col.label}</option>
-                                                ))}
-                                            </Input>
-                                        </Col>
 
-                                        <Col className="col-md-2">
-                                            <Label>Max Exp</Label>
+                                            <Col className="col-md-3 mb-3">
+                                                <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
+                                                    onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
+                                                </Input>
+                                                <br />
+                                                {isExpError ? <h6 style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</h6> : ""}
+
+                                            </Col>
                                         </Col>
-                                        <Col className="col-md-3 mb-3 ">
-                                            <Input type="select" id="maxExperience" name="maxExperience" placeholder="Max Exp"
-                                                onChange={(evt) => onHandleExpChange('max', evt.target.value)}>
-                                                <option value=""></option>
-                                                {expList.map((col) => (
-                                                    <option value={col.label}>{col.label}</option>
-                                                ))}
-                                            </Input>
+                                        <Col>
+                                            <Col className="col-md-3 mb-3">
+                                                <Label>Max Exp</Label>
+                                                <Input type="text" id="maxExperience" name="maxExperience" placeholder="Max Exp"
+                                                    onInput={(evt) => onHandleExpChange('max', evt.target.value)}>
+                                                </Input>
+                                            </Col>
                                         </Col>
 
 
 
-                                        <Col className="col-md-2">
+                                        <Col className="col-md-6">
+                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-6 me-2"
+                                                onClick={(evt) => getCandidatesList()}>
+                                                submit
+                                            </Button>
                                             <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-5"
                                                 onClick={(evt) => getCandidatesList()}>
                                                 reset
@@ -201,13 +178,13 @@ export function CandidateList() {
 
                                 </Col>
 
-                                <Col className="col-md-6">
+                                <Col className="col-md-8">
                                     <div
                                         className={cx("search-wrapper", {
                                             active: true,
                                         })} style={{ marginLeft: '75%' }}>
                                         <div className="input-holder">
-                                            <input type="text" className="search-input" onChange={(evt) => onSearch(evt)} placeholder="Search by name/skill/location" />
+                                            <input type="text" className="search-input" onInput={(evt) => onSearch(evt.target.value)} placeholder="Search by name/skill/location" />
                                             <button onClick={(evt) => getCandidatesList()}
                                                 className="search-icon">
                                                 <span />
@@ -253,6 +230,7 @@ export function CandidateList() {
 
                                 </Table>
                             </Row>
+                           
                             {/* <Row className="mt-3 float-end">
                                 <Pagination aria-label="Page navigation example">
                                     <PaginationItem>
@@ -265,7 +243,7 @@ export function CandidateList() {
                 </Card>
                 : <div>
 
-                    <CandidateDetails selectedData={selectedCandidate}></CandidateDetails>
+                    <CandidateDetails selectedData={selectedCandidate} jobId={jobId}></CandidateDetails>
                 </div>}
 
         </div>

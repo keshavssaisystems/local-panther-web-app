@@ -20,10 +20,12 @@ import {
 import cx from "classnames";
 import { useSelector, useDispatch } from 'react-redux';
 import { history, fetchWrapper } from '_helpers';
+import { addComment } from "@babel/types";
 
 export function CandidateDetails(props) {
     debugger;
     const dispatch = useDispatch();
+    let jobId = props.jobId
     const [selectedCandidate, setSelectedCandidate] = useState(props.selectedData)
     const [selectedCandidateRes, setSelectedCandidateRes] = useState()
     const [selectedCandidateList, setSelectedCandidateList] = useState({})
@@ -36,12 +38,48 @@ export function CandidateDetails(props) {
             value: 2, type: "Skills not matched"
         }
     ])
-    const [comment, setComment] = useState()
-    const [rejectModal, setRejectModal] = useState()
+
+
+    let rejectReqData = {
+        "jobapplicationid": selectedCandidate.jobapplicationid,
+        "jobid": jobId,
+        "candidateid": selectedCandidate.candidateid,
+        "applicationdate": selectedCandidate.applicationdate,
+        "applicationstatusid": 0,
+        "applicationstatus": "",
+        "feedback": selectedCandidate.feedback,
+        "ratings": selectedCandidate.ratings,
+        "skills": selectedCandidate.secondaryskills,
+        "experienceyears": selectedCandidate.experienceyears,
+        "noticeperiodid": selectedCandidate.noticeperiodid,
+        "isrelocate": selectedCandidate.isrelocate,
+        "isvideoconference": selectedCandidate.isvideoconference,
+        "acceptedby": 0,
+        "accepteddate": "",
+        "rejectedby": 0,
+        "rejecteddate": "",
+        "rejectedreasonid": 0,
+        "rejectedcomment": "",
+        "isactive": true,
+        "currentUserId": 0
+    }
+
+    const [appliedDate, setAppliedDate] = useState()
+    const [isAppliedToday, setIsAppliedToday] = useState()
+    const [rejectModal, setRejectModal] = useState(false)
     const [rejectConfirmation, setRejectConfirmation] = useState(false)
 
 
     useEffect(() => {
+
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const today = new Date();
+        const appliedDate = new Date(selectedCandidate.applicationdate);
+        if (today == appliedDate) {
+            setIsAppliedToday(true)
+        }
+        const diffDays = Math.round(Math.abs((today - appliedDate) / oneDay));
+        setAppliedDate(diffDays)
         getCandidateDetails()
     }, [])
 
@@ -62,32 +100,70 @@ export function CandidateDetails(props) {
     }
 
     const acceptCandidate = function () {
-        setAcceptModal(!acceptModal)
+        window.location.reload();
     }
-
     const rejectCandidate = function () {
         setRejectModal(!rejectModal)
     }
 
+    const acceptRejectCandidate = async function (check) {
 
-    const rejectCandidateConfirmation = function () {
-        setRejectConfirmation(!rejectConfirmation)
+        debugger;
+
+        let applicationstatusid = 0
+        let rejectedreasonid = rejectReqData.rejectedreasonid
+        let rejectedcomment = rejectReqData.rejectedcomment
+        let currentUserId = 1
+        let applicationstatus;
+        if (check == 'reject') {
+            applicationstatus = 'Rejected'
+            rejectedreasonid = rejectReqData.rejectedreasonid
+            rejectedcomment = rejectReqData.rejectedcomment
+        }
+        else {
+            applicationstatus = 'Accepted'
+        }
+
+
+        let response = await dispatch(candidateActions.acceptRejectCandidate({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
+        debugger;
+
+        if (check == 'accept') {
+            setAcceptModal(!acceptModal)
+        }
+        else {
+            setRejectModal(!rejectModal)
+            setRejectConfirmation(!rejectConfirmation)
+        }
+
+
+
     }
 
-    const onChangeReason = function () {
-
+    const rejectCandidateCancel = function () {
+        setRejectModal(!rejectModal)
     }
+
+    const onChangeReason = function (data) {
+        rejectReqData.rejectedreasonid = data
+    }
+
+    const addComment = function (data) {
+        debugger;
+        rejectReqData.rejectedcomment = data
+    }
+
 
     return (
         <div>
-            
+
             {selectedCandidateList ? <Row>
 
                 <Card className="main-card">
 
                     <CardTitle className="mt-3 mb-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Candidate Details
                     </CardTitle>
-                    <Row className="me-2" style={{ backgroundColor: 'rgb(33 91 153)', borderRadius: '5px',marginLeft:'3px' }}>
+                    <Row className="me-2" style={{ backgroundColor: 'rgb(33 91 153)', borderRadius: '5px', marginLeft: '3px' }}>
                         <Col md="12" lg="12" xl="12">
                             <div className="dropdown-menu-header">
                                 <div className="dropdown-menu-header-inner">
@@ -100,8 +176,11 @@ export function CandidateDetails(props) {
                                         <div>
                                             <h5 className="menu-header-title">{selectedCandidateList.firstname} {selectedCandidateList.lastname}</h5>
                                             <h6 className="menu-header-subtitle">
-                                            {selectedCandidate.primaryskills}
+                                                {selectedCandidate.primaryskills}
                                             </h6>
+                                            <h6>Applied {isAppliedToday ? ' Today' : (appliedDate == 1 ? +appliedDate + " day ago" : appliedDate +" days ago")} </h6>
+                                            <a href="http://localhost:3000/candidate-list" target="blank">Check Profile</a>
+
                                         </div>
                                         <div className="menu-header-btn-pane">
 
@@ -188,16 +267,16 @@ export function CandidateDetails(props) {
                         </Form>
                         <Row>
                             <Col md="2" className="mt-3">
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)'}} className="mt-1 me-3" onClick={(evt) => navigateToListPage()}>
+                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1 me-3" onClick={(evt) => navigateToListPage()}>
                                     Back
                                 </Button>
                             </Col>
                             <Col md="2" className="mt-3" style={{ marginLeft: '60%' }}>
 
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)'}} className="mt-1 me-3" onClick={(evt) => acceptCandidate()}>
+                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1 me-3" onClick={(evt) => acceptRejectCandidate('accept')}>
                                     Accept
                                 </Button>
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)'}} className="mt-1" onClick={(evt) => rejectCandidate()}>
+                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1" onClick={(evt) => rejectCandidate()}>
                                     Reject
                                 </Button>
                             </Col>
@@ -236,9 +315,9 @@ export function CandidateDetails(props) {
                                 Select Rejection Reason
                             </Label>
                             <Input type="select" id="jobType" name="jobType"
-                                onChange={(evt) => onChangeReason(evt)}>
+                                onChange={(evt) => onChangeReason(evt.target.value)}>
                                 {reasonList.map((col) => (
-                                    <option value={col.type}>{col.type}</option>
+                                    <option value={col.value}>{col.type}</option>
                                 ))}
                             </Input>
                         </Col>
@@ -246,16 +325,16 @@ export function CandidateDetails(props) {
                     <Row>
                         <FormGroup>
                             <Label for="exampleText">Comment</Label>
-                            <Input type="textarea" name="text" id="exampleText" />
+                            <Input type="textarea" onInput={(evt) => addComment(evt.target.value)} name="text" id="exampleText" />
                         </FormGroup>
                     </Row>
 
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="link" onClick={(evt) => rejectCandidateConfirmation()}>
+                    <Button color="link" onClick={(evt) => acceptRejectCandidate('reject')}>
                         submit
                     </Button>
-                    <Button color="link" onClick={(evt) => rejectCandidate()}>
+                    <Button color="link" onClick={(evt) => rejectCandidateCancel()}>
                         Cancel
                     </Button>
                 </ModalFooter>
