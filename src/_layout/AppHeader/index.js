@@ -6,6 +6,7 @@ import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 import { SearchBox } from "./Components/SearchBox";
 // import MegaMenu from "./Components/MegaMenu";
 import { UserBox } from "./Components/UserBox";
+import logo from "../../assets/utils/images/panther-logo.png";
 // import HeaderRightDrawer from "./Components/HeaderRightDrawer";
 
 // import HeaderDots from "./Components/HeaderDots";
@@ -29,6 +30,7 @@ export function AppHeader({
               "header-mobile-open": enableMobileMenuSmall,
             })}>
             <div className="app-header-left">
+              <img src={logo} width={"130px"} alt="logo"/>
               {/* <SearchBox /> */}
               {/* <MegaMenu /> */}
             </div>
