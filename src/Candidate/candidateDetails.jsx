@@ -22,7 +22,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { history, fetchWrapper } from '_helpers';
 import { addComment } from "@babel/types";
-import { userLogo } from '.././assets/utils/images/person-circle.svg'
 
 
 
