@@ -73,7 +73,6 @@ export function CandidateList() {
 
 
     const getCandidatesList = async function () {
-        debugger;
         console.log(searchText);
         if (isExpError) {
             return
@@ -117,15 +116,12 @@ export function CandidateList() {
     }
 
     const applyMask = function (inputValue) {
-        debugger;
         const numCharsToMask = inputValue.length - 3;
         const maskedValue = '*'.repeat(inputValue.length - numCharsToMask) + inputValue.slice(-numCharsToMask);
 
         return maskedValue;
     }
     const formatPhoneNumber = function (inputValue) {
-        // Remove all non-numeric characters
-        debugger;
         // Apply the mask: (xxx) - xxx - 8684       
 
         const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
@@ -155,7 +151,6 @@ export function CandidateList() {
     }
 
     const onSearch = function (data) {
-        debugger;
         searchData = data
         setSearchText(searchData)
         console.log(searchText);
@@ -198,7 +193,7 @@ export function CandidateList() {
                                         </Col>
 
                                         <Col className="col-md-6">
-                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3 me-2"
+                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-4 me-2"
                                                 onClick={(evt) => getCandidatesList()}>
                                                 submit
                                             </Button>
@@ -211,7 +206,7 @@ export function CandidateList() {
 
                                 </Col>
 
-                                <Col className="col-md-6">
+                                <Col className="col-md-5">
                                     <div
                                         className={cx("search-wrapper", {
                                             active: true,
