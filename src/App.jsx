@@ -7,6 +7,7 @@ import { Dashboard } from 'dashboard';
 import { JobList } from 'customer/Jobs/JobList';
 import { JobDetail } from 'customer/Jobs/JobDetail';
 import { Login } from 'login';
+import { CandidateList } from 'Candidate'
 
 import { AppHeader } from '_layout/AppHeader';
 import { AppSidebar } from '_layout/AppSidebar';
@@ -38,6 +39,7 @@ export function App() {
                             <Route path="/JobDetail" element={<JobDetail />} />
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/login" element={<Login />} />
+                            <Route path="/candidate-list" element={<CandidateList />} />
                             {/* <Route path="*" element={<Navigate to="/" />} /> */}
                             
                         </Routes>
