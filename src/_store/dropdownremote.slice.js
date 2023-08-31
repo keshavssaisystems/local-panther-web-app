@@ -12,7 +12,7 @@ const initialState = {
 
 // Define the async action
 export const getRemote = createAsyncThunk("remote/getRemote", async () => {
-  const baseUrl = `https://masterservice-api-dev.azurewebsites.net/api`;
+  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
   const response = await fetchWrapper.get(
     `${baseUrl}/Common/GetCommonDropdown?searchText=remotestatus`
   );

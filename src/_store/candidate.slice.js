@@ -30,7 +30,7 @@ function createInitialState() {
 
 
 function createActions() {
-    const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
+    const baseUrl = `${process.env.REACT_APP_CANDIDATE_API_URL}/api`;
 
     return {
         getCandidateDetails: getCandidateDetails()
@@ -41,7 +41,7 @@ function createActions() {
         return createAsyncThunk(
             `${name}/getCandidateDetails`,
             async (req) =>
-                await fetchWrapper.get(`https://candidateservice-api-dev.azurewebsites.net/api/Candidate/GetCandidateById/${req}`)
+                await fetchWrapper.get(`${baseUrl}/Candidate/GetCandidateById/${req}`)
         );
     }
 
@@ -49,7 +49,7 @@ function createActions() {
 
 
 function createExtraActions() {
-    const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
+    const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
     return {
         getCandidates: getCandidates()
@@ -118,7 +118,7 @@ function createReducers() {
 
 
 function createDetailsActions() {
-    const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
+    const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
     return {
         acceptRejectCandidate: acceptRejectCandidate()

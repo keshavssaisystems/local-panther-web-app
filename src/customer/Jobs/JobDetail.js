@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import { Card, Row, Col } from "reactstrap";
 import "./jobList.css";
 import { useDispatch, useSelector } from 'react-redux';
-import {HeadingAndDetailWithDiv, HeadingAndDetail, ButtonWithCount, HeadingWithPill, DetailsHeader} from "./JobDetailComponents";
+import {HeadingAndDetailWithDiv, HeadingAndDetail, ButtonWithCount, HeadingWithPill, DetailsHeader} from "../../_components/Job/JobDetailComponents";
 import { jobListActions } from '_store';
 import Loader from "react-loaders";
 import { useSearchParams } from "react-router-dom";
@@ -10,7 +10,7 @@ import moment from "moment/moment";
 
 export function JobDetail() {
     const [searchParams] = useSearchParams();
-    let JobId = searchParams.get("JobId")
+    let JobId = searchParams.get("JobId");
     const dispatch = useDispatch();
     const [filter, setFilter] = useState({
         "jobId" : JobId,

@@ -22,8 +22,7 @@ function createInitialState() {
 }
 
 function createExtraActions() {
-  //   const baseUrl = `http://172.16.14.120:8082/api`;
-  const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
+  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
   return {
     getCreatejob: getCreatejob(),
