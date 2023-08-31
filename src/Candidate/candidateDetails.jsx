@@ -22,6 +22,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { history, fetchWrapper } from '_helpers';
 import { addComment } from "@babel/types";
+import { userLogo } from '.././assets/utils/images/person-circle.svg'
+
+
 
 export function CandidateDetails(props) {
     const dispatch = useDispatch();
@@ -156,14 +159,18 @@ export function CandidateDetails(props) {
     }
 
     const applyMask = function (inputValue) {
-        const numCharsToMask = inputValue.length - 3;
-        const maskedValue = '*'.repeat(inputValue.length - numCharsToMask) + inputValue.slice(-numCharsToMask);
+        // let inputValue = (selectedCandidateList.firstname + selectedCandidateList.lastname)
+        if (inputValue) {
+            const numCharsToMask = inputValue.length - 8;
+            const maskedValue = '*'.repeat((inputValue.length) - numCharsToMask) + inputValue.slice(-numCharsToMask);
 
-        return maskedValue;
+            return maskedValue;
+        }
+
+        // }
     }
     const formatPhoneNumber = function (inputValue) {
-
-        const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
+        const maskedValue = '*'.repeat(10 - 4) + selectedCandidate.phonenumber.slice(-4);
         const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
 
         return formatedValue;
@@ -172,13 +179,13 @@ export function CandidateDetails(props) {
     const maskEmail = function (inputValue) {
 
         // Extract the part before the '@' symbol
-        const username = inputValue.substring(0, inputValue.indexOf('@'));
+        const username = selectedCandidate.email.substring(0, selectedCandidate.email.indexOf('@'));
 
         // Mask the username with 'x's
         const maskedUsername = 'x'.repeat(username.length);
 
         // Combine masked username with '@' symbol and domain
-        const maskedValue = maskedUsername + inputValue.substring(inputValue.indexOf('@'));
+        const maskedValue = maskedUsername + selectedCandidate.email.substring(selectedCandidate.email.indexOf('@'));
 
         return maskedValue;
     }
@@ -205,7 +212,7 @@ export function CandidateDetails(props) {
                                             </div>
                                         </div>
                                         <div>
-                                            <h5 className="menu-header-title">{selectedCandidateList.firstname} {selectedCandidateList.lastname}</h5>
+                                            <h5 className="menu-header-title">{applyMask(selectedCandidateList.firstname + selectedCandidateList.lastname)}</h5>
                                             <h6 className="menu-header-subtitle">
                                                 {selectedCandidate.primaryskills}
                                             </h6>
@@ -230,13 +237,13 @@ export function CandidateDetails(props) {
                                     <Col md="4" className="me-5">
                                         <FormGroup>
                                             <Label for="exampleEmail">Email</Label>
-                                            <Input disabled type="email" name="email" id="exampleEmail" value={selectedCandidateList.email} />
+                                            <Input disabled type="email" name="email" id="exampleEmail" value={maskEmail(selectedCandidateList.email)} />
                                         </FormGroup>
                                     </Col>
                                     <Col md="4">
                                         <FormGroup>
                                             <Label for="examplePassword">Contact</Label>
-                                            <Input disabled type="text" name="contact" id="contact" value={selectedCandidateList.phonenumber} />
+                                            <Input disabled type="text" name="contact" id="contact" value={formatPhoneNumber(selectedCandidateList.phonenumber)} />
                                         </FormGroup>
                                     </Col>
 
@@ -414,19 +421,19 @@ export function CandidateDetails(props) {
 
                             <Col className="me-5">
                                 <FormGroup>
-                                    <Label for="exampleEmail">Name  :  {selectedCandidateList.firstname + selectedCandidateList.lastname}</Label>
+                                    <Label for="exampleEmail">Name  :  {applyMask(selectedCandidateList.firstname + selectedCandidateList.lastname)}</Label>
 
                                 </FormGroup>
                             </Col>
 
                             <Col className="me-5">
                                 <FormGroup>
-                                    <Label for="exampleEmail">Email  :  {selectedCandidateList.email}</Label>
+                                    <Label for="exampleEmail">Email  :  {maskEmail(selectedCandidateList.email)}</Label>
                                 </FormGroup>
                             </Col>
                             <Col>
                                 <FormGroup>
-                                    <Label for="examplePassword">Contact  :  {selectedCandidateList.phonenumber}</Label>
+                                    <Label for="examplePassword">Contact  :  {formatPhoneNumber(selectedCandidateList.phonenumber)}</Label>
                                 </FormGroup>
                             </Col>
 
@@ -434,7 +441,7 @@ export function CandidateDetails(props) {
                                 <FormGroup>
                                     <Label for="exampleEmail">Resume  : </Label>{selectedCandidateRes ? <a
                                         href={selectedCandidateRes.resumepath} target="blank">
-                                        {selectedCandidateRes.firstname + "_resume.pdf"}  </a> : ''}
+                                        {(selectedCandidateRes.firstname) + "_resume.pdf"}  </a> : ''}
                                 </FormGroup>
                             </Col>
                             <Col className="me-5">
