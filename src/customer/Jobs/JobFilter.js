@@ -22,11 +22,11 @@ export function JobFilter({onFilter}) {
                     <CardBody>
                         <CardTitle>Filter</CardTitle>
                         <Form onSubmit={onSubmitHandler}>
-                            <FormGroup>
+                            {/* <FormGroup>
                                 <FilterSelect id="customer" name="customer" label="Company" optionData={customerOptionsDummy} />
-                            </FormGroup>
+                            </FormGroup> */}
                             <FormGroup>
-                                <FilterSelect id="location" name="location" label="Location" optionData={locationOptionsDummy} /> 
+                                <FilterSelect id="location" name="location" label="City" optionData={locationOptionsDummy} /> 
                             </FormGroup>
                             <FormGroup>
                                 <FilterMultipleSelect id="experience" name1="minExperience" label="Experience" optionData={experienceOptionDummy}  name2="maxExperience" />

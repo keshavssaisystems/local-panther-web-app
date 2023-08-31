@@ -43,7 +43,7 @@ export function JobDetail() {
             { loading === true && <Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" /> }
             { jobDetailRaw.jobList.length > 0 && loading === false &&
                 <Card className="card-shadow-primary profile-responsive card-border mb-3">
-                    <DetailsHeader heading={jobDetail.jobtitle} subHeading={jobDetail.jobCompanyDtos.companyname} image={"https://saisystems.com/wp-content/uploads/2021/01/SAI-LOGO_COLOR_INT_horiz-trans.png"}/>
+                    <DetailsHeader heading={jobDetail.jobtitle} subHeading={jobDetail.jobCompanyDtos.companyname} image={"https://d1csarkz8obe9u.cloudfront.net/posterpreviews/generic-finance-and-marketing-icon-logo-design-template-3a451f9735990327f5b0f8a44711859c_screen.jpg?ts=1611418926"}/>
                     <HeadingAndDetailWithDiv heading={"Job Description"} detail={jobDetail.description} />
                     <div className="p-3">
                         <Row>
@@ -54,7 +54,7 @@ export function JobDetail() {
                                 <HeadingWithPill  heading={"Skills"} pillData={skillArray}/>
                             </Col>
                             <Col>
-                                <HeadingAndDetail heading={"Department"} detail={jobDetail.department} />
+                                <HeadingAndDetail heading={"Department"} detail={"IT, Software"} />
                             </Col>
                             <Col>
                                 <HeadingAndDetail heading={"Year of Experience"} detail={jobDetail.minexperience + " - " + jobDetail.maxexperience + " Years" } />
@@ -63,9 +63,9 @@ export function JobDetail() {
                     </div>
                     <div className="p-3">
                         <Row>
-                            <Col>
+                            {/* <Col>
                                 <HeadingAndDetail heading={"Company Name"} detail={jobDetail.jobCompanyDtos.companyname} />
-                            </Col>
+                            </Col> */}
                             <Col>
                                 <HeadingAndDetail heading={"No of Positions"} detail={jobDetail.noofopenposition} />
                             </Col>
@@ -74,6 +74,9 @@ export function JobDetail() {
                             </Col>
                             <Col>
                                 <HeadingAndDetail heading={"Job Posted On"} detail={"Posted " + jobCreatedDate} />
+                            </Col>
+                            <Col>
+                                {/* <HeadingAndDetail heading={"Job Posted On"} detail={"Posted " + jobCreatedDate} /> */}
                             </Col>
                         </Row>
                     </div>

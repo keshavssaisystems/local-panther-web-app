@@ -15,7 +15,7 @@ export function JobListing({jobData, onPageChange}) {
       <>
         <Col md="9">
           { jobData.jobList.length > 0 && jobData.jobList.map((job) => (
-            <JobCard key={job.jobid} name={job.jobtitle} customer={job.jobCompanyDtos == null ? "No Company Added" : job.jobCompanyDtos.companyname} minExperience={job.minexperience} maxExperience={job.maxexperience} location={job.jobLocationDtos.length > 0 ? job.jobLocationDtos[0].location : "No Location Added"} description={job.description} role={job.jobrole} jobId={job.jobid}/>
+            <JobCard key={job.jobid} name={job.jobtitle} customer={job.jobCompanyDtos == null ? "No Company Added" : job.jobCompanyDtos.companyname} minExperience={job.minexperience} maxExperience={job.maxexperience} location={job.jobLocationDtos.length > 0 ? job.jobLocationDtos[0].location + ", " + job.jobLocationDtos[0].statename : "-"} description={job.description} role={job.jobrole} jobId={job.jobid}/>
           ))}
           { jobData.jobList.length === 0 &&
             <Card>

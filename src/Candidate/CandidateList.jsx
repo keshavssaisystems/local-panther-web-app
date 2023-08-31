@@ -184,7 +184,7 @@ export function CandidateList() {
                                             active: true,
                                         })} style={{ marginLeft: '75%' }}>
                                         <div className="input-holder">
-                                            <input type="text" className="search-input" onInput={(evt) => onSearch(evt.target.value)} placeholder="Search by name/skill/location" />
+                                            <input type="text" className="search-input" onInput={(evt) => onSearch(evt.target.value)} placeholder="Search by name,skill,location" />
                                             <button onClick={(evt) => getCandidatesList()}
                                                 className="search-icon">
                                                 <span />

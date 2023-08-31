@@ -15,19 +15,19 @@ export function JobCard({name, customer, minExperience, maxExperience, location,
             <Card className="mb-2" onClick={navigateToJobDetail}>
                 <CardBody>
                     <Row>
-                        <Col md="9">
+                        <Col md="12">
                             <CardTitle>{name}</CardTitle>
-                            <Row className="mb-2">
+                            {/* <Row className="mb-2">
                                 <Col><CardText className="fw-bold">{customer}</CardText></Col>
-                            </Row>
+                            </Row> */}
                             <Row className="mb-2">
-                                <Col><CardText><FontAwesomeIcon icon={faCalendarAlt} />  {minExperience}-{maxExperience}</CardText></Col>
-                                <Col><CardText><FontAwesomeIcon icon={faMapMarkedAlt} />  {location}</CardText></Col>
-                                <Col><CardText><FontAwesomeIcon icon={faMapMarkedAlt} />  {role}</CardText></Col>
+                                <Col><CardText>Exp : {minExperience}-{maxExperience} Years</CardText></Col>
+                                <Col><CardText>Location : {location}</CardText></Col>
+                                <Col><CardText>Role : {role}</CardText></Col>
                             </Row>
                             <CardText>{description}</CardText>
                         </Col>
-                        <Col md="3"><img alt="Card" src="https://saisystems.com/wp-content/uploads/2021/01/SAI-LOGO_COLOR_INT_horiz-trans.png" className="company-logo float-end" /></Col>
+                        {/* <Col md="3"><img alt="Card" src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/generic-finance-and-marketing-icon-logo-design-template-3a451f9735990327f5b0f8a44711859c_screen.jpg?ts=1611418926" className="company-logo float-end" /></Col> */}
                     </Row>
                     
                 </CardBody>
