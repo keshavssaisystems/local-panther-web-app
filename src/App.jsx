@@ -6,6 +6,7 @@ import { Home } from 'home';
 import { Dashboard } from 'dashboard';
 import { JobList } from 'customer/Jobs/JobList';
 import { JobDetail } from 'customer/Jobs/JobDetail';
+import FormStickyBasic  from 'createjob/CreateJob'
 import { Login } from 'login';
 import { CandidateList } from 'Candidate'
 
@@ -38,8 +39,9 @@ export function App() {
                             <Route path="/JobList" element={<JobList />} />
                             <Route path="/JobDetail" element={<JobDetail />} />
                             <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/login" element={<Login />} />
+                            <Route path="/create-job" element={< FormStickyBasic/>} />
                             <Route path="/candidate-list" element={<CandidateList />} />
+                            <Route path="/login" element={<Login />} />
                             {/* <Route path="*" element={<Navigate to="/" />} /> */}
                             
                         </Routes>
