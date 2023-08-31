@@ -29,7 +29,7 @@ export function AppHeader({
               "header-mobile-open": enableMobileMenuSmall,
             })}>
             <div className="app-header-left">
-              <SearchBox />
+              {/* <SearchBox /> */}
               {/* <MegaMenu /> */}
             </div>
             <div className="app-header-right">

@@ -49,14 +49,22 @@ export const AppSidebar = () => {
             {
               title: "Home",
               itemId: "/",
-              // Optional
               elemBefore: () => <Icon name="coffee" />
             },
             {
-              title: "Dashboard",
-              itemId: "/dashboard",
-              // Optional
+              title: "Open Jobs",
+              itemId: "/JobList",
+              elemBefore: () => <Icon name="cloud-snow" />
+            },
+            {
+              title: "Candidate List",
+              itemId: "/candidate-list",
               elemBefore: () => <Icon name="coffee" />
+            },
+            {
+              title: "Create Job",
+              itemId: "/create-job",
+              elemBefore: () => <Icon name="cloud-snow" />
             },
             {
               title: "About",
