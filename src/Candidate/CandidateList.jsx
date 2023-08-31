@@ -31,9 +31,10 @@ export function CandidateList() {
     const [pageSize, setpageSize] = useState(10)
     const [totalRecords, setTotalRecords] = useState()
     const [isExpError, setIsExpError] = useState(false)
+    let expError = false
     const [searchText, setSearchText] = useState('')
-    let minExp = 0
-    let maxExp = 0
+    let minExp
+    let maxExp
     let searchData = ''
 
     const [expList, setExpList] = useState([
@@ -65,6 +66,10 @@ export function CandidateList() {
         setCandidateList(getCandidateList)
     }, [getCandidateList]);
 
+    useEffect(() => {
+        setIsExpError(expError)
+    }, [expError]);
+
 
 
     const getCandidatesList = async function () {
@@ -77,10 +82,10 @@ export function CandidateList() {
         if (searchText) {
             url += '&searchText=' + searchText
         }
-        if (minExp) {
+        if (minExp != undefined) {
             url += '&minExperience=' + minExp
         }
-        if (maxExp) {
+        if (maxExp != undefined) {
             url += '&maxExperience=' + maxExp
         }
 
@@ -101,12 +106,46 @@ export function CandidateList() {
         check == 'min' ? minExp = Number(event) : maxExp = Number(event)
         if (minExp && maxExp) {
             if (minExp > maxExp) {
-                setIsExpError(true)
+                expError = true
                 return
             }
         }
-        setIsExpError(false)
-        // getCandidatesList()
+        else {
+            expError = false
+        }
+
+    }
+
+    const applyMask = function (inputValue) {
+        debugger;
+        const numCharsToMask = inputValue.length - 3;
+        const maskedValue = '*'.repeat(inputValue.length - numCharsToMask) + inputValue.slice(-numCharsToMask);
+
+        return maskedValue;
+    }
+    const formatPhoneNumber = function (inputValue) {
+        // Remove all non-numeric characters
+        debugger;
+        // Apply the mask: (xxx) - xxx - 8684       
+
+        const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
+        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
+
+        return formatedValue;
+    }
+
+    const maskEmail = function (inputValue) {
+
+        // Extract the part before the '@' symbol
+        const username = inputValue.substring(0, inputValue.indexOf('@'));
+
+        // Mask the username with 'x's
+        const maskedUsername = 'x'.repeat(username.length);
+
+        // Combine masked username with '@' symbol and domain
+        const maskedValue = maskedUsername + inputValue.substring(inputValue.indexOf('@'));
+
+        return maskedValue;
     }
 
     const onSelectCandidate = function (data) {
@@ -134,43 +173,37 @@ export function CandidateList() {
 
             {!showCandidate ?
                 <Card>
-                    <CardTitle className="mt-3 ml-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Candidate List
+                    <CardTitle className="mt-3 ml-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Candidate List{isExpError}
                     </CardTitle>
                     <CardBody>
                         <div>
                             <Row>
-                                <Col className="col-md-3">
+                                <Col className="col-md-5">
                                     <Row>
-                                        <Col>
-                                            <Label className="me-0">Min Exp</Label>
 
-                                            <Col className="col-md-3 mb-3">
-                                                <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
-                                                    onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
-                                                </Input>
-                                                <br />
-                                                {isExpError ? <h6 style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</h6> : ""}
+                                        <Col className="col-md-3 mb-3">
+                                            <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
+                                                onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
+                                            </Input>
 
-                                            </Col>
+
                                         </Col>
-                                        <Col>
-                                            <Col className="col-md-3 mb-3">
-                                                <Label>Max Exp</Label>
-                                                <Input type="text" id="maxExperience" name="maxExperience" placeholder="Max Exp"
-                                                    onInput={(evt) => onHandleExpChange('max', evt.target.value)}>
-                                                </Input>
-                                            </Col>
+                                        {isExpError ? <Label style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</Label> : ""}
+
+                                        <Col className="col-md-3 mb-3">
+
+                                            <Input type="text" id="maxExperience" name="maxExperience" placeholder="Max Exp"
+                                                onInput={(evt) => onHandleExpChange('max', evt.target.value)}>
+                                            </Input>
                                         </Col>
-
-
 
                                         <Col className="col-md-6">
-                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-6 me-2"
+                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3 me-2"
                                                 onClick={(evt) => getCandidatesList()}>
                                                 submit
                                             </Button>
-                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-5"
-                                                onClick={(evt) => getCandidatesList()}>
+                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3"
+                                                onClick={(evt) => onClearSearch()}>
                                                 reset
                                             </Button>
                                         </Col>
@@ -178,7 +211,7 @@ export function CandidateList() {
 
                                 </Col>
 
-                                <Col className="col-md-8">
+                                <Col className="col-md-6">
                                     <div
                                         className={cx("search-wrapper", {
                                             active: true,
@@ -211,15 +244,16 @@ export function CandidateList() {
                                         </tr>
                                     </thead>
 
+
                                     {candidatesList.length > 0 ?
                                         <tbody>
                                             {candidatesList.map((col) => (
                                                 <tr>
-                                                    <th scope="row" onClick={(evt) => onSelectCandidate(col)}>{col.firstname}</th>
-                                                    <td>{col.lastname}</td>
-                                                    <td>{col.experienceyears}</td>
-                                                    <td>{col.phonenumber}</td>
-                                                    <td>{col.email}</td>
+                                                    <th style={{ cursor: 'pointer' }} scope="row" onClick={(evt) => onSelectCandidate(col)}>{applyMask(col.firstname)}</th>
+                                                    <td>{applyMask(col.lastname)}</td>
+                                                    <td>{col.experienceyears + " years"}</td>
+                                                    <td>{formatPhoneNumber(col.phonenumber)}</td>
+                                                    <td>{maskEmail(col.email)}</td>
                                                 </tr>
                                             ))
                                             }
@@ -230,14 +264,7 @@ export function CandidateList() {
 
                                 </Table>
                             </Row>
-                           
-                            {/* <Row className="mt-3 float-end">
-                                <Pagination aria-label="Page navigation example">
-                                    <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
-                                    </PaginationItem>                                    
-                                </Pagination>
-                            </Row> */}
+
                         </div>
                     </CardBody>
                 </Card>

@@ -18,28 +18,33 @@ import {
     Button, Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
 import cx from "classnames";
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { history, fetchWrapper } from '_helpers';
 import { addComment } from "@babel/types";
 
 export function CandidateDetails(props) {
-    debugger;
     const dispatch = useDispatch();
     let jobId = props.jobId
+    const navigate = useNavigate();
     const [selectedCandidate, setSelectedCandidate] = useState(props.selectedData)
     const [selectedCandidateRes, setSelectedCandidateRes] = useState()
     const [selectedCandidateList, setSelectedCandidateList] = useState({})
     const [acceptModal, setAcceptModal] = useState(false)
+    const [showProfile, setShowProfile] = useState(false)
+
     const [reasonList, setReasonList] = useState([
         {
             value: 1, type: "Location Issue"
         },
         {
             value: 2, type: "Skills not matched"
+        }, {
+            value: 3, type: "Fake Profile"
         }
     ])
 
-
+    let candidateId = selectedCandidate.candidateid
     let rejectReqData = {
         "jobapplicationid": selectedCandidate.jobapplicationid,
         "jobid": jobId,
@@ -90,8 +95,7 @@ export function CandidateDetails(props) {
 
     const getCandidateDetails = async function () {
         var req = selectedCandidate.candidateid
-        let response = await dispatch(candidateActions.getCandidateDetails({ req }));
-        debugger;
+        let response = await dispatch(candidateActions.getCandidateDetails(req));
         setSelectedCandidateRes(response.payload.data)
     }
 
@@ -107,9 +111,6 @@ export function CandidateDetails(props) {
     }
 
     const acceptRejectCandidate = async function (check) {
-
-        debugger;
-
         let applicationstatusid = 0
         let rejectedreasonid = rejectReqData.rejectedreasonid
         let rejectedcomment = rejectReqData.rejectedcomment
@@ -126,8 +127,6 @@ export function CandidateDetails(props) {
 
 
         let response = await dispatch(candidateActions.acceptRejectCandidate({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
-        debugger;
-
         if (check == 'accept') {
             setAcceptModal(!acceptModal)
         }
@@ -149,9 +148,41 @@ export function CandidateDetails(props) {
     }
 
     const addComment = function (data) {
-        debugger;
         rejectReqData.rejectedcomment = data
     }
+
+    const openProfile = function () {
+        setShowProfile(!showProfile)
+    }
+
+    const applyMask = function (inputValue) {
+        const numCharsToMask = inputValue.length - 3;
+        const maskedValue = '*'.repeat(inputValue.length - numCharsToMask) + inputValue.slice(-numCharsToMask);
+
+        return maskedValue;
+    }
+    const formatPhoneNumber = function (inputValue) {
+
+        const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
+        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
+
+        return formatedValue;
+    }
+
+    const maskEmail = function (inputValue) {
+
+        // Extract the part before the '@' symbol
+        const username = inputValue.substring(0, inputValue.indexOf('@'));
+
+        // Mask the username with 'x's
+        const maskedUsername = 'x'.repeat(username.length);
+
+        // Combine masked username with '@' symbol and domain
+        const maskedValue = maskedUsername + inputValue.substring(inputValue.indexOf('@'));
+
+        return maskedValue;
+    }
+
 
 
     return (
@@ -178,8 +209,8 @@ export function CandidateDetails(props) {
                                             <h6 className="menu-header-subtitle">
                                                 {selectedCandidate.primaryskills}
                                             </h6>
-                                            <h6>Applied {isAppliedToday ? ' Today' : (appliedDate == 1 ? +appliedDate + " day ago" : appliedDate +" days ago")} </h6>
-                                            <a href="http://localhost:3000/candidate-list" target="blank">Check Profile</a>
+                                            <h6>Applied {isAppliedToday ? ' Today' : (appliedDate == 1 ? +appliedDate + " day ago" : appliedDate + " days ago")} </h6>
+                                            <h6 style={{ cursor: 'pointer' }} onClick={(evt) => openProfile()}>Check Profile</h6>
 
                                         </div>
                                         <div className="menu-header-btn-pane">
@@ -236,7 +267,7 @@ export function CandidateDetails(props) {
                                     <Col md="4" className="me-5">
                                         <FormGroup>
                                             <Label for="exampleEmail">Experience</Label>
-                                            <Input disabled type="text" name="experience" id="experience" value={selectedCandidate.experienceyears} />
+                                            <Input disabled type="text" name="experience" id="experience" value={selectedCandidate.experienceyears + " years"} />
                                         </FormGroup>
                                     </Col>
                                     <Col md="4" className="me-5">
@@ -265,7 +296,7 @@ export function CandidateDetails(props) {
                             </div> : <></>}
 
                         </Form>
-                        <Row>
+                        <Row style={{ cursor: 'pointer' }}>
                             <Col md="2" className="mt-3">
                                 <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1 me-3" onClick={(evt) => navigateToListPage()}>
                                     Back
@@ -273,12 +304,13 @@ export function CandidateDetails(props) {
                             </Col>
                             <Col md="2" className="mt-3" style={{ marginLeft: '60%' }}>
 
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1 me-3" onClick={(evt) => acceptRejectCandidate('accept')}>
+                                <Button style={{ backgroundColor: '#d92550', borderColor: '#d92550' }} className="mt-1 me-3" onClick={(evt) => acceptRejectCandidate('accept')}>
                                     Accept
                                 </Button>
-                                <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="mt-1" onClick={(evt) => rejectCandidate()}>
+                                <Button style={{ backgroundColor: '#3ac47d', borderColor: '#3ac47d' }} className="mt-1" onClick={(evt) => rejectCandidate()}>
                                     Reject
                                 </Button>
+
                             </Col>
 
                         </Row>
@@ -292,9 +324,9 @@ export function CandidateDetails(props) {
 
 
             <Modal isOpen={acceptModal}>
-                <ModalHeader >Reject Candidate</ModalHeader>
+                <ModalHeader >Accept Candidate</ModalHeader>
                 <ModalBody>
-                    Candidate accepted successfully
+                    Candidate Accepted successfully
                 </ModalBody>
                 <ModalFooter>
                     <Button color="link" onClick={(evt) => acceptCandidate()}>
@@ -306,7 +338,7 @@ export function CandidateDetails(props) {
 
 
 
-            <Modal isOpen={rejectModal}>
+            <Modal className="lg" isOpen={rejectModal}>
                 <ModalHeader >Reject Candidate</ModalHeader>
                 <ModalBody>
                     <Row>
@@ -349,6 +381,91 @@ export function CandidateDetails(props) {
                 <ModalFooter>
                     <Button color="link" onClick={(evt) => navigateToListPage()}>
                         OK
+                    </Button>
+                </ModalFooter>
+            </Modal>
+
+
+            <Modal lg isOpen={showProfile}>
+                {selectedCandidate ?
+                    <div style={{ backgroundColor: 'rgb(33 91 153)' }}>
+                        <Col md="12" lg="12" xl="12">
+                            <div className="dropdown-menu-header">
+                                <div className="dropdown-menu-header-inner">
+                                    <div className="menu-header-content btn-pane-right">
+
+                                        <div>
+                                            <h1 className="menu-header-subtitle">
+                                                Candidate Profile
+                                            </h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </Col>
+                    </div>
+                    : <></>}
+                <ModalBody>
+                    {selectedCandidateList ? <h4>{selectedCandidateList.primaryskills}</h4> : ''}
+
+                    <Form className="mt-4" style={{ marginLeft: '15%' }}>
+                        {selectedCandidateList ? <div>
+
+                            <Col className="me-5">
+                                <FormGroup>
+                                    <Label for="exampleEmail">Name  :  {selectedCandidateList.firstname + selectedCandidateList.lastname}</Label>
+
+                                </FormGroup>
+                            </Col>
+
+                            <Col className="me-5">
+                                <FormGroup>
+                                    <Label for="exampleEmail">Email  :  {selectedCandidateList.email}</Label>
+                                </FormGroup>
+                            </Col>
+                            <Col>
+                                <FormGroup>
+                                    <Label for="examplePassword">Contact  :  {selectedCandidateList.phonenumber}</Label>
+                                </FormGroup>
+                            </Col>
+
+                            <Col className="me-5">
+                                <FormGroup>
+                                    <Label for="exampleEmail">Resume  : </Label>{selectedCandidateRes ? <a
+                                        href={selectedCandidateRes.resumepath} target="blank">
+                                        {selectedCandidateRes.firstname + "_resume.pdf"}  </a> : ''}
+                                </FormGroup>
+                            </Col>
+                            <Col className="me-5">
+                                <FormGroup>
+                                    <Label for="examplePassword">Video Intro  : </Label>
+                                </FormGroup>
+                            </Col>
+
+                            <Col className="me-5">
+                                <FormGroup>
+                                    <Label for="exampleEmail">Skills  :  {selectedCandidate.secondaryskills}</Label>
+
+                                </FormGroup>
+                            </Col>
+                            <Col className="me-5">
+                                <FormGroup>
+                                    <Label for="examplePassword">Language  :  </Label>
+                                    {selectedCandidateRes ? <Label>
+                                        {selectedCandidateRes.languages}  </Label> : ''}
+                                </FormGroup>
+                            </Col>
+
+
+
+                        </div> : <></>}
+
+                    </Form>
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="link" onClick={(evt) => openProfile()}>
+                        close
                     </Button>
                 </ModalFooter>
             </Modal>

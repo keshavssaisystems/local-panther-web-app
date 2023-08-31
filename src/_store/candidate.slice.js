@@ -40,8 +40,8 @@ function createActions() {
         debugger;
         return createAsyncThunk(
             `${name}/getCandidateDetails`,
-            async () =>
-                await fetchWrapper.get(`https://candidateservice-api-dev.azurewebsites.net/api/Candidate/GetCandidateById/8`)
+            async (req) =>
+                await fetchWrapper.get(`https://candidateservice-api-dev.azurewebsites.net/api/Candidate/GetCandidateById/${req}`)
         );
     }
 
