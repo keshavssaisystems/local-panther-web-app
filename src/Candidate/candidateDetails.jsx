@@ -401,9 +401,9 @@ export function CandidateDetails(props) {
                                     <div className="menu-header-content btn-pane-right">
 
                                         <div>
-                                            <h1 className="menu-header-subtitle">
+                                            <Label className="menu-header-subtitle">
                                                 Candidate Profile
-                                            </h1>
+                                            </Label>
                                         </div>
                                     </div>
                                 </div>
@@ -413,7 +413,11 @@ export function CandidateDetails(props) {
                     </div>
                     : <></>}
                 <ModalBody>
-                    {selectedCandidateList ? <h4>{selectedCandidateList.primaryskills}</h4> : ''}
+                    <div>
+                        {/* <img src={userlogo} alt="user-logo" className="me-3" /> */}
+                        {selectedCandidateList ? <h4>{selectedCandidateList.primaryskills}</h4> : ''}
+                    </div>
+
 
                     <Form className="mt-4" style={{ marginLeft: '15%' }}>
                         {selectedCandidateList ? <div>

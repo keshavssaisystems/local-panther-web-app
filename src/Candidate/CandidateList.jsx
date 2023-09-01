@@ -151,10 +151,17 @@ export function CandidateList() {
         setSearchText(searchData)
 
     }
-    const onClearSearch = function () {
+    const onReset = function () {
+        
+        setIsExpError('false')
         document.getElementById('minExp').value = ''
         document.getElementById('maxExp').value = ''
-        document.getElementById('search-input').value = ''
+        getCandidatesList()
+    }
+
+    const onClearSearch = function () {
+        setSearchText('')
+        document.getElementById('search-input').value = ''        
         getCandidatesList()
     }
 
@@ -194,11 +201,14 @@ export function CandidateList() {
                                         <Col className="col-md-6">
                                             <Button className="col-md-4 me-2"
                                                 onClick={(evt) => isExpError == 'false' ? getCandidatesList() : ''}
-                                                style={{ backgroundColor: isExpError == 'false' ? 'rgb(33 91 153)' : 'grey' }}>
+                                                style={{
+                                                    backgroundColor: isExpError == 'false' ? 'rgb(33 91 153)' : 'grey',
+                                                    cursor: isExpError == 'false' ? 'pointer' : 'not-allowed'
+                                                }}>
                                                 submit
                                             </Button>
                                             <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3"
-                                                onClick={(evt) => onClearSearch()}>
+                                                onClick={(evt) => onReset()}>
                                                 reset
                                             </Button>
                                         </Col>
