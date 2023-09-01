@@ -14,6 +14,7 @@ const reducers = createReducers();
 const slice = createSlice({ name, initialState, extraReducers, reducers, detailsReducer });
 
 
+const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
 
 // exports
 export const candidateActions = { ...slice.actions, ...extraActions, ...actions, ...detailsAction };
@@ -30,7 +31,6 @@ function createInitialState() {
 
 
 function createActions() {
-    const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
 
     return {
         getCandidateDetails: getCandidateDetails()
@@ -49,7 +49,6 @@ function createActions() {
 
 
 function createExtraActions() {
-    const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
 
     return {
         getCandidates: getCandidates()
@@ -77,12 +76,7 @@ function createExtraReducers() {
                     state.error = null;
                 })
                 .addCase(fulfilled, (state, action) => {
-                    const user = action.payload;
-                    debugger;
-
-                    return user.data;
-
-
+                    state.candidateList = action.payload;
                 })
                 .addCase(rejected, (state, action) => {
                     state.error = action.error;
@@ -118,7 +112,6 @@ function createReducers() {
 
 
 function createDetailsActions() {
-    const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
 
     return {
         acceptRejectCandidate: acceptRejectCandidate()
@@ -128,7 +121,7 @@ function createDetailsActions() {
         return createAsyncThunk(
             `${name}/AcceptRejectJobApplication`,
             async ({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }) =>
-                await fetchWrapper.put(`${baseUrl}/JobApplications/AcceptRejectJobApplication/${jobId}`, { applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus })
+                await fetchWrapper.put(`https://candidateservice-api-dev.azurewebsites.net/api/JobApplications/AcceptRejectJobApplication/${jobId}`, { applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus })
         );
     }
 }

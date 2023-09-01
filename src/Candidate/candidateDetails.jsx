@@ -148,7 +148,7 @@ export function CandidateDetails(props) {
     const onChangeReason = function (data) {
         rejectReqData.rejectedreasonid = data
     }
-
+    
     const addComment = function (data) {
         rejectReqData.rejectedcomment = data
     }
@@ -169,10 +169,10 @@ export function CandidateDetails(props) {
         // }
     }
     const formatPhoneNumber = function (inputValue) {
-        const maskedValue = '*'.repeat(10 - 4) + selectedCandidate.phonenumber.slice(-4);
-        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
 
-        return formatedValue;
+        const maskedValue = '*'.repeat(10 - 4) + selectedCandidate.phonenumber.slice(-4);
+        return `(${maskedValue.substring(0, 3)}) - ${maskedValue.substring(3, 6)} - ${maskedValue.substring(6)}`;
+
     }
 
     const maskEmail = function (inputValue) {
