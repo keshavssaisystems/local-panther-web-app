@@ -21,7 +21,7 @@ import cx from "classnames";
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { history, fetchWrapper } from '_helpers';
-import { addComment } from "@babel/types";
+import userlogo from '../assets/utils/images/Union.svg'
 
 
 
@@ -169,10 +169,10 @@ export function CandidateDetails(props) {
         // }
     }
     const formatPhoneNumber = function (inputValue) {
-        const maskedValue = '*'.repeat(10 - 4) + selectedCandidate.phonenumber.slice(-4);
-        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
 
-        return formatedValue;
+        const maskedValue = '*'.repeat(10 - 4) + selectedCandidate.phonenumber.slice(-4);
+        return `(${maskedValue.substring(0, 3)}) - ${maskedValue.substring(3, 6)} - ${maskedValue.substring(6)}`;
+
     }
 
     const maskEmail = function (inputValue) {
@@ -206,8 +206,8 @@ export function CandidateDetails(props) {
                                 <div className="dropdown-menu-header-inner">
                                     <div className="menu-header-content btn-pane-right">
                                         <div className="avatar-icon-wrapper me-3 avatar-icon-xl">
-                                            <div className="avatar-icon">
-                                                {/* <img src={avatar4} alt="Avatar 5" /> */}
+                                            <div className="avatar-icon" style={{ border: 'none' }}>
+                                                <img src={userlogo} alt="Avatar 5" />
                                             </div>
                                         </div>
                                         <div>
@@ -401,9 +401,9 @@ export function CandidateDetails(props) {
                                     <div className="menu-header-content btn-pane-right">
 
                                         <div>
-                                            <h1 className="menu-header-subtitle">
+                                            <Label className="menu-header-subtitle">
                                                 Candidate Profile
-                                            </h1>
+                                            </Label>
                                         </div>
                                     </div>
                                 </div>
@@ -413,7 +413,11 @@ export function CandidateDetails(props) {
                     </div>
                     : <></>}
                 <ModalBody>
-                    {selectedCandidateList ? <h4>{selectedCandidateList.primaryskills}</h4> : ''}
+                    <div>
+                        {/* <img src={userlogo} alt="user-logo" className="me-3" /> */}
+                        {selectedCandidateList ? <h4>{selectedCandidateList.primaryskills}</h4> : ''}
+                    </div>
+
 
                     <Form className="mt-4" style={{ marginLeft: '15%' }}>
                         {selectedCandidateList ? <div>

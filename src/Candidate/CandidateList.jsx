@@ -5,13 +5,6 @@ import {
     PaginationItem,
     PaginationLink, Card, CardBody, CardTitle
 } from "reactstrap";
-import {
-    UncontrolledButtonDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-} from "reactstrap";
-// import Select from "react-select";
 import { candidateActions } from '_store';
 import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
@@ -30,9 +23,11 @@ export function CandidateList() {
     const [pageIndex, setPageIndex] = useState(1)
     const [pageSize, setpageSize] = useState(10)
     const [totalRecords, setTotalRecords] = useState()
-    const [isExpError, setIsExpError] = useState(false)
-    let expError = false
+    const [isExpError, setIsExpError] = useState('false')
     const [searchText, setSearchText] = useState('')
+
+    const [minExperience, setMinExperience] = useState()
+    const [maxExperience, setMaxExperience] = useState()
     let minExp
     let maxExp
     let searchData = ''
@@ -66,17 +61,21 @@ export function CandidateList() {
         setCandidateList(getCandidateList)
     }, [getCandidateList]);
 
+
     useEffect(() => {
-        setIsExpError(expError)
-    }, [expError]);
+        setMinExperience(minExp)
+    }, [minExp]);
+
+
+    useEffect(() => {
+        setMaxExperience(maxExp)
+    }, [maxExp]);
 
 
 
     const getCandidatesList = async function () {
         console.log(searchText);
-        if (isExpError) {
-            return
-        }
+
         let url = 'JobApplications/GetJobAppliedCandidatesList/' + 2 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex + '&isActive=true'
         if (searchText) {
             url += '&searchText=' + searchText
@@ -102,18 +101,24 @@ export function CandidateList() {
 
     const onHandleExpChange = function (check, event) {
         debugger;
-        check == 'min' ? minExp = Number(event) : maxExp = Number(event)
+
+        minExp = Number(document.getElementById('minExp').value)
+        maxExp = Number(document.getElementById('maxExp').value)
+
         if (minExp && maxExp) {
             if (minExp > maxExp) {
-                expError = true
-                return
+                setIsExpError('true')
+            }
+            else {
+                setIsExpError('false')
             }
         }
         else {
-            expError = false
+            setIsExpError('false')
         }
 
     }
+
 
     const applyMask = function (inputValue) {
         const numCharsToMask = inputValue.length - 3;
@@ -122,23 +127,14 @@ export function CandidateList() {
         return maskedValue;
     }
     const formatPhoneNumber = function (inputValue) {
-        // Apply the mask: (xxx) - xxx - 8684       
-
         const maskedValue = '*'.repeat(10 - 4) + inputValue.slice(-4);
-        const formatedValue = maskedValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) - $2 - $3');
-
-        return formatedValue;
+        return `(${maskedValue.substring(0, 3)}) - ${maskedValue.substring(3, 6)} - ${maskedValue.substring(6)}`;
     }
 
     const maskEmail = function (inputValue) {
 
-        // Extract the part before the '@' symbol
         const username = inputValue.substring(0, inputValue.indexOf('@'));
-
-        // Mask the username with 'x's
         const maskedUsername = 'x'.repeat(username.length);
-
-        // Combine masked username with '@' symbol and domain
         const maskedValue = maskedUsername + inputValue.substring(inputValue.indexOf('@'));
 
         return maskedValue;
@@ -153,11 +149,20 @@ export function CandidateList() {
     const onSearch = function (data) {
         searchData = data
         setSearchText(searchData)
-        console.log(searchText);
 
     }
+    const onReset = function () {
+        
+        setIsExpError('false')
+        document.getElementById('minExp').value = ''
+        document.getElementById('maxExp').value = ''
+        getCandidatesList()
+    }
+
     const onClearSearch = function () {
-        window.location.reload()
+        setSearchText('')
+        document.getElementById('search-input').value = ''        
+        getCandidatesList()
     }
 
 
@@ -168,7 +173,7 @@ export function CandidateList() {
 
             {!showCandidate ?
                 <Card>
-                    <CardTitle className="mt-3 ml-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Candidate List{isExpError}
+                    <CardTitle className="mt-3 ml-3" style={{ fontSize: '21px', marginLeft: '20px' }}>Applied Candidate List
                     </CardTitle>
                     <CardBody>
                         <div>
@@ -177,31 +182,37 @@ export function CandidateList() {
                                     <Row>
 
                                         <Col className="col-md-3 mb-3">
-                                            <Input type="text" id="minExperience" name="minExperience" placeholder="Min Exp"
-                                                onInput={(evt) => onHandleExpChange('min', evt.target.value)}>
+                                            <Input type="text" id="minExp" name="minExp" placeholder="Min Exp"
+                                                style={{ borderColor: isExpError == 'true' ? 'red' : '#ced4da' }} onChange={(evt) => onHandleExpChange('min', evt.target.value)}>
                                             </Input>
 
-
                                         </Col>
-                                        {isExpError ? <Label style={{ color: 'warn' }}>Minimum experience should be less than Max Experience</Label> : ""}
 
                                         <Col className="col-md-3 mb-3">
 
-                                            <Input type="text" id="maxExperience" name="maxExperience" placeholder="Max Exp"
-                                                onInput={(evt) => onHandleExpChange('max', evt.target.value)}>
+                                            <Input type="text" id="maxExp" name="maxExp" placeholder="Max Exp"
+                                                style={{ borderColor: isExpError == 'true' ? 'red' : '#ced4da' }}
+                                                onChange={(evt) => onHandleExpChange('max', evt.target.value)}>
                                             </Input>
                                         </Col>
 
+
+
                                         <Col className="col-md-6">
-                                            <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-4 me-2"
-                                                onClick={(evt) => getCandidatesList()}>
+                                            <Button className="col-md-4 me-2"
+                                                onClick={(evt) => isExpError == 'false' ? getCandidatesList() : ''}
+                                                style={{
+                                                    backgroundColor: isExpError == 'false' ? 'rgb(33 91 153)' : 'grey',
+                                                    cursor: isExpError == 'false' ? 'pointer' : 'not-allowed'
+                                                }}>
                                                 submit
                                             </Button>
                                             <Button style={{ backgroundColor: 'rgb(33 91 153)' }} className="col-md-3"
-                                                onClick={(evt) => onClearSearch()}>
+                                                onClick={(evt) => onReset()}>
                                                 reset
                                             </Button>
                                         </Col>
+                                        {isExpError == 'true' ? <Label style={{ color: 'red' }}>Minimum experience should be less than Max Experience</Label> : ""}
                                     </Row>
 
                                 </Col>
@@ -212,7 +223,7 @@ export function CandidateList() {
                                             active: true,
                                         })} style={{ marginLeft: '75%' }}>
                                         <div className="input-holder">
-                                            <input type="text" className="search-input" onInput={(evt) => onSearch(evt.target.value)} placeholder="Search by name,skill,location" />
+                                            <input type="text" className="search-input" id="search-input" onInput={(evt) => onSearch(evt.target.value)} placeholder="Search by skill/location" />
                                             <button onClick={(evt) => getCandidatesList()}
                                                 className="search-icon">
                                                 <span />
@@ -262,12 +273,13 @@ export function CandidateList() {
 
                         </div>
                     </CardBody>
-                </Card>
+                </Card >
                 : <div>
 
                     <CandidateDetails selectedData={selectedCandidate} jobId={jobId}></CandidateDetails>
-                </div>}
+                </div>
+            }
 
-        </div>
+        </div >
     );
 }
