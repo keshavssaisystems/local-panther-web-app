@@ -14,7 +14,7 @@ const reducers = createReducers();
 const slice = createSlice({ name, initialState, extraReducers, reducers, detailsReducer });
 
 
-const baseUrl = `${process.env.REACT_APP_API_URL}/api`;
+const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
 
 // exports
 export const candidateActions = { ...slice.actions, ...extraActions, ...actions, ...detailsAction };

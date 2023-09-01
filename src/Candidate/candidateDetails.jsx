@@ -21,7 +21,7 @@ import cx from "classnames";
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { history, fetchWrapper } from '_helpers';
-import { addComment } from "@babel/types";
+import userlogo from '../assets/utils/images/Union.svg'
 
 
 
@@ -148,7 +148,7 @@ export function CandidateDetails(props) {
     const onChangeReason = function (data) {
         rejectReqData.rejectedreasonid = data
     }
-    
+
     const addComment = function (data) {
         rejectReqData.rejectedcomment = data
     }
@@ -206,8 +206,8 @@ export function CandidateDetails(props) {
                                 <div className="dropdown-menu-header-inner">
                                     <div className="menu-header-content btn-pane-right">
                                         <div className="avatar-icon-wrapper me-3 avatar-icon-xl">
-                                            <div className="avatar-icon">
-                                                {/* <img src={avatar4} alt="Avatar 5" /> */}
+                                            <div className="avatar-icon" style={{ border: 'none' }}>
+                                                <img src={userlogo} alt="Avatar 5" />
                                             </div>
                                         </div>
                                         <div>
