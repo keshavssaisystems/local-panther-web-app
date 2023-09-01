@@ -7,6 +7,7 @@ import { jobListActions } from '_store';
 import Loader from "react-loaders";
 import { useSearchParams } from "react-router-dom";
 import moment from "moment/moment";
+import { ApplyJobModal } from "Candidate/ApplyJobModal";
 
 export function JobDetail() {
     const [searchParams] = useSearchParams();
@@ -87,6 +88,7 @@ export function JobDetail() {
                         <ButtonWithCount buttonName={"Liked Candidate"} color={"primary"} count={0} action={"/likedCandidate"} />
                         <ButtonWithCount buttonName={"Accepted Candidate"} color={"success"} count={0} action={"/acceptedCandidate"} />
                         <ButtonWithCount buttonName={"Rejected Candidate"} color={"danger"} count={0} action={"/rejectedCandidate"} />
+                        <ApplyJobModal />
                     </div>
                 </Card>
             }
