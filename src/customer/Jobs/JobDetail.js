@@ -92,7 +92,6 @@ export function JobDetail() {
                             <ButtonWithCount buttonName={"Liked Candidate"} color={"primary"} count={0} action={"/likedCandidate"} />
                             <ButtonWithCount buttonName={"Accepted Candidate"} color={"success"} count={0} action={"/acceptedCandidate"} />
                             <ButtonWithCount buttonName={"Rejected Candidate"} color={"danger"} count={0} action={"/rejectedCandidate"} />
-                            <ApplyJobModal jobId={JobId} />
                         </div>
                     }
                     {
