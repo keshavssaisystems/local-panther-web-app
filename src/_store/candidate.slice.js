@@ -37,7 +37,7 @@ function createActions() {
     };
 
     function getCandidateDetails() {
-        debugger;
+        // debugger;
         return createAsyncThunk(
             `${name}/getCandidateDetails`,
             async (req) =>
@@ -78,7 +78,7 @@ function createExtraReducers() {
                 })
                 .addCase(fulfilled, (state, action) => {
                     const user = action.payload;
-                    debugger;
+                    // debugger;
 
                     return user.data;
 

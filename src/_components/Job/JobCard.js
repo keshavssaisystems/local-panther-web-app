@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export function JobCard({name, customer, minExperience, maxExperience, location, description, role , jobId}) {
     const navigate = useNavigate();
     const navigateToJobDetail = () => {
-        navigate("/JobDetail?JobId=" + jobId);
+        navigate("/JobDetail?type=1&&JobId=" + jobId);
     };
     return (
         <>
