@@ -13,7 +13,7 @@ export function JobDetail() {
     const [searchParams] = useSearchParams();
     let JobId = searchParams.get("JobId");
     let typeId = searchParams.get("type");
-    console.log(typeId);
+    // console.log(typeId);
     const dispatch = useDispatch();
     const [filter, setFilter] = useState({
         "jobId" : JobId,
