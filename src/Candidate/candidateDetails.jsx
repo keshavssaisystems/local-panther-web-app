@@ -46,21 +46,16 @@ export function CandidateDetails(props) {
 
 
     const applyMask = function (inputValue) {
-        // let inputValue = (selectedCandidateList.firstname + selectedCandidateList.lastname)
-        if (inputValue) {
-            let maskLength = 5;
-            if (inputValue.length <= maskLength) {
-                maskLength = 1
-            }
+        
+        if (inputValue) {           
 
-            const visiblePart = inputValue.substring(0, 3); // Get the visible part
-            const maskedPart = '*'.repeat(maskLength); // Create a string of asterisks
+            const numCharsToMask = inputValue.length - (inputValue.length - 2);
+            const maskedValue = '*'.repeat((inputValue.length) - numCharsToMask) + inputValue.slice(-numCharsToMask);
 
-            return visiblePart + maskedPart;
+            return maskedValue;
 
         }
 
-        // }
     }
     const formatPhoneNumber = function (inputValue) {
 
@@ -169,13 +164,6 @@ export function CandidateDetails(props) {
                                             <FormGroup>
                                                 <Label for="exampleEmail">Experience</Label>
                                                 <Input disabled type="text" name="experience" id="experience" value={selectedCandidate.experienceyears + " years"} />
-                                            </FormGroup>
-                                        </Col>
-                                        <Col md="4" className="me-5">
-                                            <FormGroup>
-                                                <Label for="exampleEmail">Resume  : </Label> {selectedCandidateRes ? <a
-                                                    href={selectedCandidateRes.resumepath} target="blank">
-                                                    {(selectedCandidateRes.firstname) + "_resume.pdf"}  </a> : ''}
                                             </FormGroup>
                                         </Col>
 

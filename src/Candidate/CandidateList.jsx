@@ -215,12 +215,11 @@ export function CandidateList() {
     }
 
     const applyMask = function (inputValue) {
-        let maskLength = inputValue.length + 3 - (inputValue.length)
+        const numCharsToMask = inputValue.length - (inputValue.length - 2);
+        const maskedValue = '*'.repeat((inputValue.length) - numCharsToMask) + inputValue.slice(-numCharsToMask);
 
-        const visiblePart = inputValue.substring(0, maskLength); // Get the visible part
-        const maskedPart = '*'.repeat(maskLength); // Create a string of asterisks
+        return maskedValue;
 
-        return visiblePart + maskedPart;
 
     }
     const formatPhoneNumber = function (inputValue) {
@@ -532,7 +531,6 @@ export function CandidateList() {
 
             </Modal>
 
-
             <Modal isOpen={acceptModal}>
 
                 <Card >
@@ -563,9 +561,11 @@ export function CandidateList() {
                     </CardBody>
                 </Card>
 
-
-
             </Modal>
+
+
+
+
 
 
             <Modal className="lg" isOpen={rejectModal}>
