@@ -62,8 +62,8 @@ export const AppSidebar = () => {
               elemBefore: () => <Icon name="coffee" />
             },
             {
-              title: "Create Job",
-              itemId: "/create-job",
+              title: "Create New Job",
+              itemId: "/createJob",
               elemBefore: () => <Icon name="cloud-snow" />
             },
             {

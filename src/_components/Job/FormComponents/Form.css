@@ -1,0 +1,12 @@
+.fw-semi-bold{
+    font-weight: 500 !important;
+    color: #2F2E2E;
+}
+.form-select{
+    color: #2F2E2E !important;
+    border-radius: 1px !important;
+}
+.form-control{
+    color: #2F2E2E !important;
+    border-radius: 1px !important;
+}

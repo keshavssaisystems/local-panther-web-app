@@ -1,0 +1,22 @@
+.popup-message{
+    font-size: 25px;
+    font-weight: 600;
+}
+.margin-custom{
+    margin-top: 50px;
+}
+.button-custom{
+    width :60px;
+    background-color : #2F479B !important;
+}
+.margin-custom-v2{
+    margin-top: 10px;
+}
+.next-step-message{
+    font-weight: 500;
+}
+
+.button-dark-custom{
+    width :50px;
+    background-color : #2F2E2E !important;
+}

@@ -1,11 +1,14 @@
 import React from "react";
 import {Label, Input, FormGroup, FormText } from "reactstrap";
+import "./Form.css";
 
-export function SelectFormGroup({name, optionData, id, label, defaultOption, validationMessage, showValidation}) {
+export function SelectFormGroup({name, optionData, id, label, defaultOption, validationMessage, showValidation, mandatory}) {
     return (
         <>
             <FormGroup>
-                <Label for={id}> {label} </Label>
+                <Label for={id} className="fw-semi-bold"> {label}{
+                    mandatory === true && <span style={{color : "red"}}>* </span>
+                } </Label>
                 <Input id={id} name={name} type="select" >
                 <option key={0} value={""}> {defaultOption} </option>
                 { optionData.length > 0 && optionData.map((options) => (
