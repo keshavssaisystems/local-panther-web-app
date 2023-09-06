@@ -1,5 +1,5 @@
 import { Title } from "chart.js";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Table, Label, Input, Pagination,
     PaginationItem,
@@ -14,6 +14,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { CandidateDetails } from './candidateDetails';
 import PageTitle from "./pagetitle";
 import titlelogo from '../assets/utils/images/candidate.svg'
+import errorIcon from '../assets/utils/images/error_icon.png'
+import successIcon from '../assets/utils/images/success_icon.svg'
 import candidatelogo from '../assets/utils/images/profile_pic.svg'
 import {
 
@@ -30,7 +32,6 @@ export function CandidateList() {
     const [getCandidateList, setList] = useState([]);
     const [showCandidate, setshowCandidate] = useState(false);
     const [selectedCandidate, setselectedCandidate] = useState();
-    const [pageIndex, setPageIndex] = useState(1)
     const [pageSize, setpageSize] = useState(10)
     const [isPopOver, setIsPopOver] = useState(false)
     const [isExpError, setIsExpError] = useState('false')
@@ -43,12 +44,13 @@ export function CandidateList() {
     const [showProfile, setShowProfile] = useState(false)
     const [rejectModal, setRejectModal] = useState(false)
     const [rejectConfirmation, setRejectConfirmation] = useState(false)
-    const [appliedDate, setAppliedDate] = useState()
-    const [isAppliedToday, setIsAppliedToday] = useState()
+    var totalPages = useRef()
+    var pageIndex = useRef(1)
+    var skillDetails = [];
 
-    let minExp
-    let maxExp
-    let searchData = ''
+    var minExp = useRef()
+    var maxExp = useRef()
+    let searchData = useRef()
 
     const [reasonList, setReasonList] = useState([
         {
@@ -83,7 +85,7 @@ export function CandidateList() {
 
 
     let rejectReqData = {
-
+        "candidateid": 0,
         "applicationstatusid": 0,
         "applicationstatus": "",
         "rejectedreasonid": 0,
@@ -128,25 +130,49 @@ export function CandidateList() {
     const getCandidatesList = async function () {
         console.log(searchText);
 
-        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 2 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex + '&isActive=true'
-        if (document.getElementById('search-input').value != '') {
-            url += '&searchText=' + document.getElementById('search-input').value
+        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 2 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true'
+        if (searchData.current != undefined || searchData.current != null) {
+            url += '&searchText=' + searchData.current
         }
-        if (minExp != undefined) {
-            url += '&minExperience=' + minExp
+        if (minExp.current != undefined || maxExp.current != null) {
+            url += '&minExperience=' + minExp.current
         }
-        if (maxExp != undefined) {
-            url += '&maxExperience=' + maxExp
+        if (maxExp.current != undefined || maxExp.current != null) {
+            url += '&maxExperience=' + maxExp.current
         }
 
 
         let response = await dispatch(candidateActions.getCandidates({ url }));
         setList(response.payload.data.candidateList);
-        // setTotalRecords(response.payload.data.totalRecords);
+        totalPages.current = Math.round(Number(response.payload.data.totalRows) / pageSize)
 
-
+        if (totalPages.current * pageSize != response.payload.data.totalRows) {
+            totalPages.current++
+        }
 
     }
+
+
+    const renderPaginationItems = () => {
+        const items = [];
+
+        for (let page = 1; page <= totalPages.current; page++) {
+            items.push(
+                <PaginationItem key={page} active={pageIndex.current === page}>
+                    <PaginationLink onClick={() => handlePageChange(page)}>
+                        {page}
+                    </PaginationLink>
+                </PaginationItem>
+            );
+        }
+
+        return items;
+    };
+
+    const handlePageChange = (page) => {
+        pageIndex.current = page;
+        getCandidatesList()
+    };
 
     const getApplicationDate = function (date) {
         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
@@ -164,16 +190,14 @@ export function CandidateList() {
     }
 
     const onchangePage = function (data) {
-        setPageIndex(data.target.value)
         getCandidatesList()
     }
 
     const onHandleExpChange = function (check, event) {
-        minExp = Number(document.getElementById('minExp').value)
-        maxExp = Number(document.getElementById('maxExp').value)
+        check == 'min' ? minExp.current = Number(event) : maxExp.current = Number(event)
 
-        if (minExp && maxExp) {
-            if (minExp > maxExp) {
+        if (minExp.current && maxExp.current) {
+            if (minExp.current > maxExp.current) {
                 setIsExpError('true')
             }
             else {
@@ -220,20 +244,18 @@ export function CandidateList() {
     }
 
     const onSearch = function (data) {
-        searchData = data
-        setSearchText(searchData)
+        searchData.current = data
 
     }
     const onReset = function () {
-
+        minExp.current = null
+        maxExp.current = null
         setIsExpError('false')
-        document.getElementById('minExp').value = ''
-        document.getElementById('maxExp').value = ''
         getCandidatesList()
     }
 
     const onClearSearch = function () {
-        setSearchText('')
+        searchData.current = undefined
         document.getElementById('search-input').value = ''
         getCandidatesList()
     }
@@ -246,7 +268,7 @@ export function CandidateList() {
         setselectedCandidate(data)
         setIsPopOver(true)
     }
-    const acceptRejectCandidate = async function (check) {
+    const acceptRejectCandidate = async function (check, candidateid) {
         let applicationstatusid = 0
         let rejectedreasonid = rejectReqData.rejectedreasonid
         let rejectedcomment = rejectReqData.rejectedcomment
@@ -260,9 +282,7 @@ export function CandidateList() {
         else {
             applicationstatus = 'Accepted'
         }
-
-
-        let response = await dispatch(candidateActions.acceptRejectCandidate({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
+        let response = await dispatch(candidateActions.acceptRejectCandidate({ candidateid, jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
         if (check == 'accept') {
             setAcceptModal(!acceptModal)
         }
@@ -272,6 +292,21 @@ export function CandidateList() {
         }
 
 
+
+    }
+
+    const getSkills = function (data) {
+
+        let skillData
+        skillDetails = []
+        let splitData = data.split(',')
+        for (let i = 0; i < 3; i++) {
+            if (splitData[i]) {
+                skillDetails.push(splitData[i])
+            }
+        }
+        skillData = skillDetails.join()
+        return skillData;
 
     }
 
@@ -288,7 +323,7 @@ export function CandidateList() {
                                     <Col className="col-md-6">
                                         <Row>
                                             <Col className="col-md-3">
-                                                <Input type="text" id="minExp" name="minExp" placeholder="Min Exp" style={{
+                                                <Input type="number" id="minExp" name="minExp" placeholder="Min Exp" value={minExp.current} style={{
                                                     borderColor:
                                                         isExpError == 'true' ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('min',
@@ -297,7 +332,7 @@ export function CandidateList() {
                                             </Col>
 
                                             <Col className="col-md-3">
-                                                <Input type="text" id="maxExp" name="maxExp" placeholder="Max Exp" style={{
+                                                <Input type="number" id="maxExp" name="maxExp" value={maxExp.current} placeholder="Max Exp" style={{
                                                     borderColor:
                                                         isExpError == 'true' ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('max',
@@ -313,7 +348,7 @@ export function CandidateList() {
                                                     submit
                                                 </Button>
 
-                                                <Button className="col-md-4 me-2" onClick={(evt) => onClearSearch()}
+                                                <Button className="col-md-4 me-2" onClick={(evt) => onReset()}
                                                     style={{
 
                                                         cursor: 'pointer'
@@ -331,7 +366,7 @@ export function CandidateList() {
                                     <Col className="col-md-6">
                                         <div className={cx("search-wrapper float-end", { active: true, })}>
                                             <div className="input-holder">
-                                                <input type="text" className="search-input" id="search-input" onInput={(evt) =>
+                                                <input type="text" className="search-input" id="search-input" value={searchData.current} onInput={(evt) =>
                                                     onSearch(evt.target.value)} placeholder="Search by skill/location" />
                                                 <button onClick={(evt) => getCandidatesList()}
                                                     className="search-icon">
@@ -370,9 +405,10 @@ export function CandidateList() {
                                                 <td>
                                                     <img src={candidatelogo} alt="user-icon" className="me-2" style={{ height: '35px' }} />
 
-                                                    <span style={{ color: 'rgb(33, 91, 153)', cursor: 'pointer', fontWeight: '600' }} id="Popover" onClick={(evt) => { showPopOver(col) }}> {applyMask(col.firstname + col.lastname)}</span>
+                                                    <span style={{ color: 'rgb(33, 91, 153)', cursor: 'pointer', fontWeight: '600' }}
+                                                        id="Popover" onClick={(evt) => { showPopOver(col) }}> {applyMask(col.firstname + col.lastname)}</span>
 
-                                                    <Row style={{ marginTop: '-10px' }}>
+                                                    <Row style={{ marginTop: '-11px', fontSize: '12px' }}>
                                                         <span style={{ marginLeft: '45px', fontWeight: '500' }}>{col.primaryskills}
                                                         </span>
                                                     </Row>
@@ -383,14 +419,20 @@ export function CandidateList() {
 
                                                 <td className="align-middle">{col.experienceyears + " years"}</td>
                                                 <td>{col.noticeperiod}</td>
-                                                <td>{col.secondaryskills}</td>
+                                                <td>{getSkills(col.secondaryskills)}
+                                                    {skillDetails.length > 3 ?
+                                                        <div>
+                                                            <a href=''>+{skillDetails.length - 3} More</a>
+                                                        </div> : <></>
+                                                    }
+                                                </td>
                                                 <td>
                                                     <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) =>
                                                         onSelectCandidate(col)}>
                                                         <span> Profile</span>
                                                     </Button>
 
-                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept')} >
+                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col.candidateid)} >
                                                         <span> Accept</span>
                                                     </Button>
                                                     <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => rejectCandidate()}>
@@ -411,23 +453,12 @@ export function CandidateList() {
                             <CardBody >
                                 <Pagination aria-label="Page navigation example" className="text-center float-end">
 
-                                    <PaginationItem>
-                                        <PaginationLink href="#">1</PaginationLink>
+                                    <PaginationItem disabled={pageIndex.current == 1}>
+                                        <PaginationLink previous onClick={() => handlePageChange(pageIndex.current - 1)} />
                                     </PaginationItem>
-                                    <PaginationItem active>
-                                        <PaginationLink href="#">2</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">3</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">4</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink href="#">5</PaginationLink>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationLink next href="#" />
+                                    {renderPaginationItems()}
+                                    <PaginationItem disabled={pageIndex.current === totalPages.current}>
+                                        <PaginationLink next onClick={() => handlePageChange(pageIndex.current + 1)} />
                                     </PaginationItem>
 
                                 </Pagination>
@@ -475,67 +506,127 @@ export function CandidateList() {
                 </UncontrolledPopover>
                 : <></>}
             <Modal isOpen={rejectConfirmation}>
-                <ModalHeader >Reject Candidate</ModalHeader>
-                <ModalBody>
-                    Candidate Rejected successfully
-                </ModalBody>
-                <ModalFooter>
-                    {/* onClick={(evt) => navigateToListPage()} */}
-                    <Button color="link" >
-                        OK
-                    </Button>
-                </ModalFooter>
+                <Card >
+                    <CardBody>
+                        <div className="d-flex justify-content-center mb-3">
+                            <img src={successIcon} alt="success-icon" />
+                        </div>
+                        <div className="mb-0 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Candidate Rejected</div>
+                        <div className="mb-3 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}> Successfully</div>
+                        <div>
+
+                            <Row >
+                                <Col className="d-flex justify-content-center ">
+
+                                    <Button color="primary" onClick={(evt) => acceptCandidate()}>
+                                        OK
+                                    </Button>
+                                </Col>
+
+                            </Row>
+
+
+                        </div>
+                    </CardBody>
+                </Card>
+
             </Modal>
 
 
             <Modal isOpen={acceptModal}>
-                <ModalHeader >Accepted Candidate</ModalHeader>
-                <ModalBody style={{ marginLeft: '20%' }}>
-                    You Want to Schedule the Interview??
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="link" onClick={(evt) => acceptCandidate()}>
-                        Yes
-                    </Button>
-                    <Button color="link" onClick={(evt) => acceptCandidate()}>
-                        No
-                    </Button>
-                </ModalFooter>
+
+                <Card >
+                    <CardBody>
+                        <div className="d-flex justify-content-center mb-3">
+                            <img src={successIcon} alt="success-icon" />
+                        </div>
+                        <div className="mb-0 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Candidate has been Accepted</div>
+                        <div className="mb-3 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Successfully</div>
+                        <div>
+                            <Row className="d-flex justify-content-center mb-4">
+                                Would you like to schedule an interview?
+                            </Row>
+                            <Row >
+                                <Col className="d-flex justify-content-center ">
+                                    <Button color="primary" className="me-2" onClick={(evt) => acceptCandidate()}>
+                                        Yes
+                                    </Button>
+                                    <Button color="primary" onClick={(evt) => acceptCandidate()}>
+                                        No
+                                    </Button>
+                                </Col>
+
+                            </Row>
+
+
+                        </div>
+                    </CardBody>
+                </Card>
+
+
+
             </Modal>
 
 
             <Modal className="lg" isOpen={rejectModal}>
-                <ModalHeader >Reject Candidate</ModalHeader>
-                <ModalBody>
-                    <Row>
-                        <Col className="mb-3">
-                            <Label for="exampleCustomSelectDisabled">
-                                Select Rejection Reason
-                            </Label>
-                            <Input type="select" id="jobType" name="jobType"
-                                onChange={(evt) => onChangeReason(evt.target.value)}>
-                                {reasonList.map((col) => (
-                                    <option value={col.value}>{col.type}</option>
-                                ))}
-                            </Input>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <FormGroup>
-                            <Label for="exampleText">Comment</Label>
-                            <Input type="textarea" onInput={(evt) => addComment(evt.target.value)} name="text" id="exampleText" />
-                        </FormGroup>
-                    </Row>
+                <Card >
+                    <CardBody>
+                        <div className="d-flex justify-content-center mb-3">
+                            <img src={errorIcon} alt="error-icon" />
+                        </div>
+                        <div className="mb-0 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Please Provide a Reason for</div>
+                        <div className="mb-3 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}> Candidate Rejection</div>
+                        <div>
 
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="link" onClick={(evt) => acceptRejectCandidate('reject')}>
-                        submit
-                    </Button>
-                    <Button color="link" onClick={(evt) => rejectCandidateCancel()}>
-                        Cancel
-                    </Button>
-                </ModalFooter>
+                            <Row >
+                                <Col className="mb-2">
+                                    <Label for="exampleCustomSelectDisabled">
+                                        Select Rejection Reason
+                                    </Label>
+                                    <Input type="select" id="jobType" name="jobType"
+                                        onChange={(evt) => onChangeReason(evt.target.value)}>
+                                        {reasonList.map((col) => (
+                                            <option value={col.value}>{col.type}</option>
+                                        ))}
+                                    </Input>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <FormGroup>
+                                        <Label for="exampleText">Comment</Label>
+                                        <Input type="textarea" onInput={(evt) => addComment(evt.target.value)} name="text" id="exampleText" />
+                                    </FormGroup>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col className="d-flex justify-content-center ">
+
+                                    <Button className="me-2" color="primary" onClick={(evt) => acceptRejectCandidate('reject')}>
+                                        submit
+                                    </Button>
+                                    <Button color="primary" onClick={(evt) => rejectCandidateCancel()}>
+                                        Cancel
+                                    </Button>
+                                </Col>
+                            </Row>
+
+
+
+
+
+                        </div>
+                    </CardBody>
+                </Card>
+
+
+
+
+
+
+
+
+
             </Modal>
 
 
