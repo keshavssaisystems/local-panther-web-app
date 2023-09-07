@@ -9,8 +9,8 @@ const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
 // exports
-export const jobListActions = { ...slice.actions, ...extraActions };
-export const jobListReducer = slice.reducer;
+export const jobDetailActions = { ...slice.actions, ...extraActions };
+export const jobDetailReducer = slice.reducer;
 
 // implementation
 function createInitialState() {
@@ -29,10 +29,9 @@ function createExtraActions() {
   function getJobList() {
     return createAsyncThunk(
       `${name}/getJobList`,
-
-      async ({ jobId, pageNo, searchText, minExperience, employentModeId }) =>
+      async ({ jobId, pageNo }) =>
         await fetchWrapper.get(
-          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}&searchText=${searchText}&minExperience=${minExperience}&employmentmodeid=${employentModeId}`
+          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}`
         )
     );
   }
