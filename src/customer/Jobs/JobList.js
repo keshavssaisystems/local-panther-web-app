@@ -28,7 +28,10 @@ export function JobList() {
   const onPageChange = (page) => {
     let filterOnPageChange = {
       "jobId" : "",
-      "pageNo" : page
+      "pageNo" : page,
+      "searchText" : "", 
+      "minExperience" : "", 
+      "employentModeId" : ""
     };
     console.log(filterOnPageChange);
     console.log(page);
