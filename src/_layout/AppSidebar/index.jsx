@@ -67,6 +67,11 @@ export const AppSidebar = () => {
               elemBefore: () => <Icon name="cloud-snow" />
             },
             {
+              title: "Recommended Job List",
+              itemId: "/recommended-job",
+              elemBefore: () => <Icon name="cloud-snow" />,
+            },
+            {
               title: "About",
               itemId: "/about",
               elemBefore: () => <Icon name="user" />,

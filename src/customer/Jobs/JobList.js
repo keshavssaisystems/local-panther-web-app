@@ -9,8 +9,11 @@ export function JobList() {
   const dispatch = useDispatch();
   let filterObj = {
     "jobId" : "",
-    "pageNo" : 1
-  }
+    "pageNo" : 1,
+    "searchText" : "", 
+    "minExperience" : "", 
+    "employentModeId" : ""  
+  })
   useEffect(() => {
     getJobList(filterObj)
   },[]);

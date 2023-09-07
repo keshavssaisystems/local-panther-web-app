@@ -22,16 +22,20 @@ function createInitialState() {
 function createExtraActions() {
     const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
-    return {
-        getJobList: getJobList()
-    };
+  return {
+    getJobList: getJobList(),
+  };
 
-    function getJobList() {
-        return createAsyncThunk(
-            `${name}/getJobList`,
-            async ({ jobId, pageNo }) => await fetchWrapper.get(`${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}`)
-        );
-    }
+  function getJobList() {
+    return createAsyncThunk(
+      `${name}/getJobList`,
+
+      async ({ jobId, pageNo, searchText, minExperience, employentModeId }) =>
+        await fetchWrapper.get(
+          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}&searchText=${searchText}&minExperience=${minExperience}&employmentmodeid=${employentModeId}`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
