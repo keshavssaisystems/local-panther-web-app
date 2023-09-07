@@ -13,7 +13,7 @@ export function JobList() {
     "searchText" : "", 
     "minExperience" : "", 
     "employentModeId" : ""  
-  })
+  }
   useEffect(() => {
     getJobList(filterObj)
   },[]);
