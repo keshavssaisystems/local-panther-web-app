@@ -4,7 +4,7 @@ import { JobCard } from "./JobCard";
 import { CustomPagination } from "Candidate";
 
 
-export function JobListing({jobData, onPageChange, type}) {
+export function JobListing({jobData, onPageChange, type, pageSize}) {
   console.log(jobData);
   let current = Number(jobData.totalRows) / pageSize
   if (current * pageSize !== jobData.totalRows) {
