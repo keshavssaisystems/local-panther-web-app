@@ -46,7 +46,7 @@ function createExtraReducers() {
           state.error = null;
         })
         .addCase(fulfilled, (state, action) => {
-         
+          console.log("action", action);
         })
         .addCase(rejected, (state, action) => {
           state.error = action.error;

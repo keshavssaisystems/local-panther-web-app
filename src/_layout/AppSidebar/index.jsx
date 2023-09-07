@@ -22,6 +22,8 @@ export const AppSidebar = () => {
         }`}
       />
 
+      
+
       {/* <div>
         <button
           className="btn-menu"
@@ -47,27 +49,22 @@ export const AppSidebar = () => {
             {
               title: "Home",
               itemId: "/",
-              elemBefore: () => <Icon name="coffee" />,
+              elemBefore: () => <Icon name="coffee" />
             },
             {
               title: "Open Jobs",
               itemId: "/JobList",
-              elemBefore: () => <Icon name="cloud-snow" />,
+              elemBefore: () => <Icon name="cloud-snow" />
             },
             {
               title: "Candidate List",
               itemId: "/candidate-list",
-              elemBefore: () => <Icon name="coffee" />,
+              elemBefore: () => <Icon name="coffee" />
             },
             {
               title: "Create Job",
               itemId: "/create-job",
-              elemBefore: () => <Icon name="cloud-snow" />,
-            },
-            {
-              title: "Recommended Job List",
-              itemId: "/recommended-job",
-              elemBefore: () => <Icon name="cloud-snow" />,
+              elemBefore: () => <Icon name="cloud-snow" />
             },
             {
               title: "About",
@@ -78,14 +75,14 @@ export const AppSidebar = () => {
                   title: "Projects",
                   itemId: "/about/projects",
                   // Optional
-                  elemBefore: () => <Icon name="cloud-snow" />,
+                  elemBefore: () => <Icon name="cloud-snow" />
                 },
                 {
                   title: "Members",
                   itemId: "/about/members",
-                  elemBefore: () => <Icon name="coffee" />,
-                },
-              ],
+                  elemBefore: () => <Icon name="coffee" />
+                }
+              ]
             },
             {
               title: "Next",
@@ -96,15 +93,16 @@ export const AppSidebar = () => {
                   title: "Next 1",
                   itemId: "/next/next-1",
                   // Optional
-                  elemBefore: () => <Icon name="cloud-snow" />,
+                  elemBefore: () => <Icon name="cloud-snow" />
                 },
                 {
                   title: "Next 2",
                   itemId: "/next/next-2",
-                  elemBefore: () => <Icon name="coffee" />,
-                },
-              ],
+                  elemBefore: () => <Icon name="coffee" />
+                }
+              ]
             },
+            
           ]}
         />
       </div>
