@@ -7,7 +7,7 @@ import {
 
 
 export function CustomPagination(props) {
-debugger;
+// debugger;
     var totalPages = props.totalPages
     var pageIndex = props.pageIndex
 
