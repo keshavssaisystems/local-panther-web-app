@@ -6,7 +6,7 @@ const DropdownstateInput = ({ selectedState, onChange, options, name }) => {
     return <div>Loading...</div>;
   } else {
   }
-
+  console.log("selectedState", selectedState);
   return (
     <div>
       <select onChange={onChange} value={selectedState} name={name}>

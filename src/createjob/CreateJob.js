@@ -96,7 +96,14 @@ const CreateJob = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    // console.log(selectedSkills);
+    // let new_array = [];
+
+    // for (var i = 0; i < selectedSkills.length; i++) {
+    //   isSet.push(skillData.find((x) => x.id == Number(selectedSkills[i])).name);
+    // }
+    // console.log(isSet);
+    // console.log(createJobData);
     dispatch(createjobActions.getCreatejob(createJobData));
     //   const isSkillSelected = createJobData.jobSkillDtos.length > 0;
     //   const isEmploymentModeSelected = createJobData.employmentmodeid !== 0;
