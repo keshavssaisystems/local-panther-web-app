@@ -9,7 +9,10 @@ export function JobList() {
   const dispatch = useDispatch();
   const [filter, setFilter] = useState({
     "jobId" : "",
-    "pageNo" : 1
+    "pageNo" : 1,
+    "searchText" : "", 
+    "minExperience" : "", 
+    "employentModeId" : ""  
   })
   useEffect(() => {
     getJobList()

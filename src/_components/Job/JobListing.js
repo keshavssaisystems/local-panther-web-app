@@ -4,7 +4,7 @@ import { JobCard } from "./JobCard";
 import { JobListPagination } from "./JobListPagination";
 
 
-export function JobListing({jobData, onPageChange}) {
+export function JobListing({jobData, onPageChange, type}) {
   console.log(jobData);
   const[page, setPage] = useState(1);
   const handlePageChange =useCallback((page)=> {
@@ -15,7 +15,7 @@ export function JobListing({jobData, onPageChange}) {
       <>
         <Col md="9">
           { jobData.jobList.length > 0 && jobData.jobList.map((job) => (
-            <JobCard key={job.jobid} name={job.jobtitle} customer={job.jobCompanyDtos == null ? "No Company Added" : job.jobCompanyDtos.companyname} minExperience={job.minexperience} maxExperience={job.maxexperience} location={job.jobLocationDtos.length > 0 ? job.jobLocationDtos[0].location : "-"} description={job.description} role={job.jobrole} jobId={job.jobid}/>
+            <JobCard key={job.jobid} name={job.jobtitle} customer={job.jobCompanyDtos == null ? "No Company Added" : job.jobCompanyDtos.companyname} minExperience={job.minexperience} maxExperience={job.maxexperience} location={job.jobLocationDtos.length > 0 ? job.jobLocationDtos[0].location : "-"} description={job.description} role={job.jobrole} jobId={job.jobid} typeId={type === "Open" ? 0 : 1}/>
           ))}
           { jobData.jobList.length === 0 &&
             <Card>
