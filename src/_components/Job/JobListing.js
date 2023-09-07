@@ -1,16 +1,21 @@
 import React, { useCallback, useState } from "react";
 import { Card, CardBody, Col, CardText } from "reactstrap";
 import { JobCard } from "./JobCard";
-import { JobListPagination } from "./JobListPagination";
+import { CustomPagination } from "Candidate";
 
 
-export function JobListing({jobData, onPageChange}) {
+export function JobListing({jobData, onPageChange, pageSize}) {
   console.log(jobData);
+  let current = Number(jobData.totalRows) / pageSize
+  if (current * pageSize !== jobData.totalRows) {
+    current++
+  }
   const[page, setPage] = useState(1);
   const handlePageChange =useCallback((page)=> {
     setPage(page);
+    onPageChange(page);
   },[]);
-  onPageChange(page);
+  
   return (
       <>
         <Col md="9">
@@ -25,7 +30,7 @@ export function JobListing({jobData, onPageChange}) {
             </Card>
           }
           { jobData.jobList.length > 0 &&
-            <JobListPagination total={jobData.totalRows} current={page} onChangePage={handlePageChange} maxCount={5}/>
+            <CustomPagination totalPages={current} pageIndex={page} onCallBack={handlePageChange}></CustomPagination>
           }
         </Col>
       </>
