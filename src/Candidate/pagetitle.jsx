@@ -10,6 +10,7 @@ class PageTitle extends Component {
         let {
             heading,
             subheading,
+            jobTitle,
             icon
         } = this.props;
 
@@ -26,7 +27,7 @@ class PageTitle extends Component {
                         </div>
                         
                         <div className="page-title">
-                            {heading}
+                            {heading} {jobTitle}
                             <div className={cx("page-title-subheading", {
                                 "d-none": true,
                             })}>

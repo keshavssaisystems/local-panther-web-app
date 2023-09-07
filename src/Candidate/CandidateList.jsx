@@ -13,6 +13,7 @@ import cx from "classnames";
 import { useSelector, useDispatch } from 'react-redux';
 import { CandidateDetails } from './candidateDetails';
 import PageTitle from "./pagetitle";
+import { CustomPagination } from "Candidate";
 import titlelogo from '../assets/utils/images/candidate.svg'
 import errorIcon from '../assets/utils/images/error_icon.png'
 import successIcon from '../assets/utils/images/success_icon.svg'
@@ -37,7 +38,7 @@ export function CandidateList() {
     const [isExpError, setIsExpError] = useState('false')
     const [searchText, setSearchText] = useState('')
 
-    const [minExperience, setMinExperience] = useState()
+    const [jobTitle, setJobTitle] = useState()
     const [maxExperience, setMaxExperience] = useState()
 
     const [acceptModal, setAcceptModal] = useState(false)
@@ -102,15 +103,6 @@ export function CandidateList() {
     }, [getCandidateList]);
 
 
-    useEffect(() => {
-        setMinExperience(minExp)
-    }, [minExp]);
-
-
-    useEffect(() => {
-        setMaxExperience(maxExp)
-    }, [maxExp]);
-
     const acceptCandidate = function () {
         window.location.reload();
     }
@@ -144,6 +136,7 @@ export function CandidateList() {
 
         let response = await dispatch(candidateActions.getCandidates({ url }));
         setList(response.payload.data.candidateList);
+        setJobTitle(response.payload.data.jobTitle)
         totalPages.current = Math.round(Number(response.payload.data.totalRows) / pageSize)
 
         if (totalPages.current * pageSize != response.payload.data.totalRows) {
@@ -153,26 +146,7 @@ export function CandidateList() {
     }
 
 
-    const renderPaginationItems = () => {
-        const items = [];
 
-        for (let page = 1; page <= totalPages.current; page++) {
-            items.push(
-                <PaginationItem key={page} active={pageIndex.current === page}>
-                    <PaginationLink onClick={() => handlePageChange(page)}>
-                        {page}
-                    </PaginationLink>
-                </PaginationItem>
-            );
-        }
-
-        return items;
-    };
-
-    const handlePageChange = (page) => {
-        pageIndex.current = page;
-        getCandidatesList()
-    };
 
     const getApplicationDate = function (date) {
         const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
@@ -309,17 +283,22 @@ export function CandidateList() {
 
     }
 
+    const handlePageChange = (page) => {
+        pageIndex.current = page;
+        getCandidatesList()
+    };
 
     return (
         <div>
             {
                 !showCandidate ?
                     <div>
-                        <PageTitle heading="Applied Candidates" icon={titlelogo} />
+                        <PageTitle heading="Applied Candidates for " jobTitle={jobTitle} icon={titlelogo} />
                         <Card className="main-card mb-2">
                             <CardBody>
                                 <Row>
                                     <Col className="col-md-6">
+
                                         <Row>
                                             <Col className="col-md-3">
                                                 <Input type="number" id="minExp" name="minExp" placeholder="Min Exp" value={minExp.current} style={{
@@ -328,8 +307,7 @@ export function CandidateList() {
                                                 }} onChange={(evt) => onHandleExpChange('min',
                                                     evt.target.value)}>
                                                 </Input>
-                                            </Col>
-
+                                            </Col>  
                                             <Col className="col-md-3">
                                                 <Input type="number" id="maxExp" name="maxExp" value={maxExp.current} placeholder="Max Exp" style={{
                                                     borderColor:
@@ -349,7 +327,6 @@ export function CandidateList() {
 
                                                 <Button className="col-md-4 me-2" onClick={(evt) => onReset()}
                                                     style={{
-
                                                         cursor: 'pointer'
                                                     }}>
                                                     reset
@@ -426,10 +403,10 @@ export function CandidateList() {
                                                     }
                                                 </td>
                                                 <td>
-                                                    <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) =>
+                                                    {/* <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) =>
                                                         onSelectCandidate(col)}>
                                                         <span> Profile</span>
-                                                    </Button>
+                                                    </Button> */}
 
                                                     <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col.candidateid)} >
                                                         <span> Accept</span>
@@ -448,25 +425,9 @@ export function CandidateList() {
 
                             </Table>
                         </Row>
-                        <Card className="mb-2">
-                            <CardBody >
-                                <Pagination aria-label="Page navigation example" className="text-center float-end">
-
-                                    <PaginationItem disabled={pageIndex.current == 1}>
-                                        <PaginationLink previous onClick={() => handlePageChange(pageIndex.current - 1)} />
-                                    </PaginationItem>
-                                    {renderPaginationItems()}
-                                    <PaginationItem disabled={pageIndex.current === totalPages.current}>
-                                        <PaginationLink next onClick={() => handlePageChange(pageIndex.current + 1)} />
-                                    </PaginationItem>
-
-                                </Pagination>
-                            </CardBody>
-                        </Card>
+                        <CustomPagination totalPages={totalPages.current} pageIndex={pageIndex.current} onCallBack={handlePageChange}></CustomPagination>
                     </div>
                     : <div>
-
-
                         <CandidateDetails selectedData={selectedCandidate} jobId={jobId}></CandidateDetails>
                     </div>
             }
@@ -618,13 +579,6 @@ export function CandidateList() {
                         </div>
                     </CardBody>
                 </Card>
-
-
-
-
-
-
-
 
 
             </Modal>
