@@ -12,6 +12,8 @@ import { stateReducer } from "./dropdownstate.slice";
 import { cityReducer } from "./dropdowncity.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "./recommendejobList.slice";
+import { noticePeriodReducer } from "./noticePeriod.slice";
+import { applyForJobReducer } from "./applyForJob.slice"
 
 export * from "./auth.slice";
 export * from "./users.slice";
@@ -26,6 +28,8 @@ export * from "./dropdownstate.slice";
 export * from "./dropdowncity.slice";
 export * from "./jobDetail.slice";
 export * from "./recommendejobList.slice";
+export * from "./noticePeriod.slice";
+export * from "./applyForJob.slice";
 
 export const store = configureStore({
   reducer: {
@@ -42,5 +46,7 @@ export const store = configureStore({
     city: cityReducer,
     jobDetail: jobDetailReducer,
     recommendedjobList: recommendedjobListReducer,
+    noticePeriod: noticePeriodReducer,
+    applyForJob: applyForJobReducer
   },
 });
