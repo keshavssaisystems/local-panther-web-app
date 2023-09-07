@@ -7,7 +7,7 @@ import { jobListActions } from '_store';
 
 export function JobList() {
   const dispatch = useDispatch();
-  const [filter, setFilter] = useState({
+  let filterObj = {
     "jobId" : "",
     "pageNo" : 1,
     "searchText" : "", 
@@ -15,28 +15,25 @@ export function JobList() {
     "employentModeId" : ""  
   })
   useEffect(() => {
-    getJobList()
+    getJobList(filterObj)
   },[]);
-  const getJobList = async function (){
-    await dispatch(jobListActions.getJobList(filter));
+  const getJobList = async function (filterObj){
+    console.log(filterObj);
+    await dispatch(jobListActions.getJobList(filterObj));
   }
   let JobList = useSelector(state => state.jobList);
   const onFilterClick = (filterData) => {
     console.log(filterData);
   }
   const onPageChange = (page) => {
+    let filterOnPageChange = {
+      "jobId" : "",
+      "pageNo" : page
+    };
+    console.log(filterOnPageChange);
     console.log(page);
-    // setFilter({
-    //   "pageNo" : page
-    // });
-
-    // getJobList()
+    getJobList(filterOnPageChange);
   }
-  // useEffect(() => {
-  //   getJobList()
-  //   console.log("Strng");
-  // },filter.pageNo);
-  // console.log(page);
   return (
       <>
         <Row>
@@ -49,7 +46,7 @@ export function JobList() {
           </Col>
           <JobFilter onFilter={onFilterClick} />
           <JobListing jobData={JobList} 
-          onPageChange={onPageChange}
+          onPageChange={onPageChange} pageSize={5}
            />
         </Row>
       </>
