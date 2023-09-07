@@ -1,18 +1,18 @@
 import React from "react";
 
-const DropdownstateInput = ({ selectedState, onChange, options, name }) => {
+const DropdownempmodeInput = ({ selectedEmpMode, onChange, options, name }) => {
   if (!options) {
     // Data is not available yet, you might want to display a loading indicator here
     return <div>Loading...</div>;
   } else {
   }
-
+  console.log("selectedEmpMode", selectedEmpMode);
   return (
     <div>
-      <select onChange={onChange} value={selectedState} name={name}>
+      <select onChange={onChange} value={selectedEmpMode} name={name}>
         {" "}
         <option value="" disabled>
-          Enter state
+          Enter employee mode
         </option>
         {options.map((item) => (
           <option key={item.id} value={item.id}>
@@ -24,4 +24,4 @@ const DropdownstateInput = ({ selectedState, onChange, options, name }) => {
   );
 };
 
-export default DropdownstateInput;
+export default DropdownempmodeInput;

@@ -2,20 +2,20 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "_helpers";
 
 // create slice
-const name = "jobList";
+const name = "recommendedjobList";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
 // exports
-export const jobListActions = { ...slice.actions, ...extraActions };
-export const jobListReducer = slice.reducer;
+export const recommendedjobListActions = { ...slice.actions, ...extraActions };
+export const recommendedjobListReducer = slice.reducer;
 
 // implementation
 function createInitialState() {
   return {
-    jobList: [],
+    recommendedjobList: [],
   };
 }
 
@@ -23,12 +23,12 @@ function createExtraActions() {
   const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
   return {
-    getJobList: getJobList(),
+    getrecommendedJobList: getrecommendedJobList(),
   };
 
-  function getJobList() {
+  function getrecommendedJobList() {
     return createAsyncThunk(
-      `${name}/getJobList`,
+      `${name}/getrecommendedJobList`,
 
       async ({ jobId, pageNo, searchText, minExperience, employentModeId }) =>
         await fetchWrapper.get(
@@ -40,20 +40,20 @@ function createExtraActions() {
 
 function createExtraReducers() {
   return (builder) => {
-    getJobList();
+    getrecommendedJobList();
 
-    function getJobList() {
-      var { pending, fulfilled, rejected } = extraActions.getJobList;
+    function getrecommendedJobList() {
+      var { pending, fulfilled, rejected } = extraActions.getrecommendedJobList;
       builder
         .addCase(pending, (state) => {
-          state.jobList = { loading: true };
+          state.recommendedjobList = { loading: true };
         })
         .addCase(fulfilled, (state, action) => {
-          state.jobList = action.payload.data.jobList;
+          state.recommendedjobList = action.payload.data.recommendedjobList;
           state.totalRows = action.payload.data.totalRows;
         })
         .addCase(rejected, (state, action) => {
-          state.jobList = { error: action.error };
+          state.recommendedjobList = { error: action.error };
         });
     }
   };
