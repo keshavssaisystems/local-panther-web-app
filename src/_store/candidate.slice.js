@@ -38,7 +38,6 @@ function createActions() {
     };
 
     function getCandidateDetails() {
-        debugger;
         return createAsyncThunk(
             `${name}/getCandidateDetails`,
             async (req) =>
@@ -122,8 +121,8 @@ function createDetailsActions() {
     function acceptRejectCandidate() {
         return createAsyncThunk(
             `${name}/AcceptRejectJobApplication`,
-            async ({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }) =>
-                await fetchWrapper.put(`https://candidateservice-api-dev.azurewebsites.net/api/JobApplications/AcceptRejectJobApplication/${jobId}`, { applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus })
+            async ({ candidateid,jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }) =>
+                await fetchWrapper.put(`https://jobservice-api-dev.azurewebsites.net/api/JobApplications/AcceptRejectJobApplication/${jobId}`, {candidateid, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus })
         );
     }
 }
