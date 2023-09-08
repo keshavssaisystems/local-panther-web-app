@@ -3,10 +3,10 @@ import { Row, Col, Card, CardBody, CardTitle, CardText } from "reactstrap";
 import "../../customer/Jobs/jobList.css";
 import { useNavigate } from 'react-router-dom';
 
-export function JobCard({name, customer, minExperience, maxExperience, location, description, role , jobId}) {
+export function JobCard({name, customer, minExperience, maxExperience, location, description, role , jobId, typeId}) {
     const navigate = useNavigate();
     const navigateToJobDetail = () => {
-        navigate("/JobDetail?JobId=" + jobId);
+        navigate("/JobDetail?type=" + typeId + "&JobId=" + jobId);
     };
     return (
         <>

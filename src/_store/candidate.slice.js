@@ -14,6 +14,7 @@ const reducers = createReducers();
 const slice = createSlice({ name, initialState, extraReducers, reducers, detailsReducer });
 
 
+const baseUrl = `https://jobservice-api-dev.azurewebsites.net/api`;
 
 // exports
 export const candidateActions = { ...slice.actions, ...extraActions, ...actions, ...detailsAction };
@@ -37,7 +38,6 @@ function createActions() {
     };
 
     function getCandidateDetails() {
-        debugger;
         return createAsyncThunk(
             `${name}/getCandidateDetails`,
             async (req) =>
@@ -77,12 +77,7 @@ function createExtraReducers() {
                     state.error = null;
                 })
                 .addCase(fulfilled, (state, action) => {
-                    const user = action.payload;
-                    debugger;
-
-                    return user.data;
-
-
+                    state.candidateList = action.payload;
                 })
                 .addCase(rejected, (state, action) => {
                     state.error = action.error;
@@ -118,7 +113,6 @@ function createReducers() {
 
 
 function createDetailsActions() {
-    const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
     return {
         acceptRejectCandidate: acceptRejectCandidate()
@@ -127,8 +121,8 @@ function createDetailsActions() {
     function acceptRejectCandidate() {
         return createAsyncThunk(
             `${name}/AcceptRejectJobApplication`,
-            async ({ jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }) =>
-                await fetchWrapper.put(`${baseUrl}/JobApplications/AcceptRejectJobApplication/${jobId}`, { applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus })
+            async ({ candidateid,jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }) =>
+                await fetchWrapper.put(`https://jobservice-api-dev.azurewebsites.net/api/JobApplications/AcceptRejectJobApplication/${jobId}`, {candidateid, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus })
         );
     }
 }

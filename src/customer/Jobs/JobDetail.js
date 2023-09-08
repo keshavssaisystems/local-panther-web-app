@@ -7,10 +7,13 @@ import { jobListActions } from '_store';
 import Loader from "react-loaders";
 import { useSearchParams } from "react-router-dom";
 import moment from "moment/moment";
+import { ApplyJobModal } from "Candidate/ApplyJobModal";
 
 export function JobDetail() {
     const [searchParams] = useSearchParams();
     let JobId = searchParams.get("JobId");
+    let typeId = searchParams.get("type");
+    // console.log(typeId);
     const dispatch = useDispatch();
     const [filter, setFilter] = useState({
         "jobId" : JobId,
@@ -81,13 +84,23 @@ export function JobDetail() {
                         </Row>
                     </div>
                     <HeadingAndDetailWithDiv heading={"Job Responsibilities"} detail={jobDetail.responsibilities} />
-                    <div className="p-3 d-flex justify-content-center">
-                        <ButtonWithCount buttonName={"Applied Candidate"} color={"primary"} count={0} action={"/appliedCandidate"} />
-                        <ButtonWithCount buttonName={"Recommended Candidate"} color={"primary"} count={0} action={"/recommendedCandidate"} />
-                        <ButtonWithCount buttonName={"Liked Candidate"} color={"primary"} count={0} action={"/likedCandidate"} />
-                        <ButtonWithCount buttonName={"Accepted Candidate"} color={"success"} count={0} action={"/acceptedCandidate"} />
-                        <ButtonWithCount buttonName={"Rejected Candidate"} color={"danger"} count={0} action={"/rejectedCandidate"} />
-                    </div>
+                    {
+                        typeId === "0" && 
+                        <div className="p-3 d-flex justify-content-center">
+                            <ButtonWithCount buttonName={"Applied Candidate"} color={"primary"} count={0} action={"/appliedCandidate"} />
+                            <ButtonWithCount buttonName={"Recommended Candidate"} color={"primary"} count={0} action={"/recommendedCandidate"} />
+                            <ButtonWithCount buttonName={"Liked Candidate"} color={"primary"} count={0} action={"/likedCandidate"} />
+                            <ButtonWithCount buttonName={"Accepted Candidate"} color={"success"} count={0} action={"/acceptedCandidate"} />
+                            <ButtonWithCount buttonName={"Rejected Candidate"} color={"danger"} count={0} action={"/rejectedCandidate"} />
+                        </div>
+                    }
+                    {
+                        typeId === "1" && 
+                        <div className="p-3 float-end">
+                            <ApplyJobModal jobId={JobId} />
+                        </div>
+                    }
+                    
                 </Card>
             }
         </>
