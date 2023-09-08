@@ -1,19 +1,16 @@
 import { Title } from "chart.js";
 import React, { useState, useEffect, useRef } from "react";
 import {
-    Table, Label, Input, Pagination,
-    PaginationItem,
-    PaginationLink, Card, CardBody, CardTitle, Modal, ModalHeader, ModalBody, ModalFooter,
-    Form,
+    Table, Label, Input, Card, CardBody, Modal,
     FormGroup
 } from "reactstrap";
 import { candidateActions } from '_store';
 import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
 import { useSelector, useDispatch } from 'react-redux';
-import { CandidateDetails } from './candidateDetails';
-import PageTitle from "./pagetitle";
-import { CustomPagination } from "Candidate";
+import { CandidateProfile } from './candidateProfile';
+import PageTitle from "../_components/pagetitle";
+import { CustomPagination } from "../_components/pagination";
 import titlelogo from '../assets/utils/images/candidate.svg'
 import errorIcon from '../assets/utils/images/error_icon.png'
 import successIcon from '../assets/utils/images/success_icon.svg'
@@ -185,7 +182,7 @@ export function CandidateList() {
         return maskedValue;
     }
 
-    const onSelectCandidate = function (data) {
+    const onShowProfile = function (data) {
         setselectedCandidate(data)
         setshowCandidate(true)
 
@@ -330,7 +327,7 @@ export function CandidateList() {
                                     </Col>
 
                                     <Col className="col-md-3">
-                                        <div className={cx("search-wrapper float-end", { active: true, })}>
+                                        <div className={cx("search-wrapper float-end", { active: true, })} style={{marginTop:'21px'}}>
                                             <div className="input-holder">
                                                 <input type="text" className="search-input" id="search-input" value={searchText} onInput={(evt) =>
                                                     onSearch(evt.target.value)} placeholder="Search by skill/location" />
@@ -393,7 +390,8 @@ export function CandidateList() {
                                                     }
                                                 </td>
                                                 <td>
-                                                    <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }}>
+                                                    <Button className=" me-2 btn-transition" 
+                                                    style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt)=>onShowProfile(col)}>
                                                         <span> Profile</span>
                                                     </Button>
 
@@ -417,7 +415,7 @@ export function CandidateList() {
                         <CustomPagination totalPages={totalPages.current} pageIndex={pageIndex.current} onCallBack={handlePageChange}></CustomPagination>
                     </div>
                     : <div>
-                        <CandidateDetails selectedData={selectedCandidate} jobId={jobId}></CandidateDetails>
+                        <CandidateProfile selectedData={selectedCandidate} jobId={jobId}></CandidateProfile>
                     </div>
             }
 
@@ -574,10 +572,6 @@ export function CandidateList() {
                                     </Button>
                                 </Col>
                             </Row>
-
-
-
-
 
                         </div>
                     </CardBody>
