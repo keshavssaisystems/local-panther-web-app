@@ -1,4 +1,6 @@
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+
+import { useSelector } from 'react-redux';
 
 import { history } from '_helpers';
 import { PrivateRoute } from '_components';
@@ -8,6 +10,7 @@ import { JobList } from 'customer/Jobs/JobList';
 import { JobDetail } from 'customer/Jobs/JobDetail';
 import FormStickyBasic  from 'createjob/CreateJob'
 import { Login } from 'login';
+import { Registration } from 'registration';
 import { CandidateList } from 'Candidate';
 import { RecommendedJobList } from "Candidate/RecommendedJobList";
 
@@ -16,6 +19,8 @@ import { AppSidebar } from '_layout/AppSidebar';
 import { AppFooter } from '_layout/AppFooter';
 
 export function App() {
+    const authUser = useSelector(x => x.auth.user);
+
     // init custom history object to allow navigation from 
     // anywhere in the react app (inside or outside components)
     history.navigate = useNavigate();
@@ -23,11 +28,12 @@ export function App() {
 
     return (
         <>
-            <AppHeader />
-            <div className="app-main">
-                <AppSidebar />
-                <div className="app-main__outer">
+            {authUser && <AppHeader />}
+            <div className={authUser ? `app-main` : ''}>
+            {authUser &&  <AppSidebar />}
+                <div className={authUser ? `app-main__outer` : ''}>
                     <div className="app-main__inner">
+                    
                         <Routes>
                             <Route
                                 path="/"
@@ -42,13 +48,14 @@ export function App() {
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/create-job" element={< FormStickyBasic/>} />
                             <Route path="/candidate-list" element={<CandidateList />} />
-                            <Route path="/login" element={<Login />} />
                             <Route path="/recommended-job" element={<RecommendedJobList />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/registration" element={<Registration />} />
                             {/* <Route path="*" element={<Navigate to="/" />} /> */}
                             
                         </Routes>
                     </div>
-                <AppFooter />
+                    {authUser && <AppFooter />}
                 </div>
             </div>
         </>

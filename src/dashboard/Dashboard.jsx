@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Card, CardBody, CardTitle, InputGroup } from "reactstrap";
 
 import InputMask from "react-input-mask";
@@ -8,11 +8,11 @@ import { faCalendarAlt, faPhone } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function Dashboard() {
-    
     const [state] = useState({
         value: "",
         mask: "9999-9999-9999-9999",
       });
+
     return (
         <>
           <Row>
