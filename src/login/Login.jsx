@@ -131,7 +131,7 @@ function Login() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="userName">Email</Label>
+                          <Label for="userName">User name</Label>
                           <input 
                             type="text" 
                             name="username" 
