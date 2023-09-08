@@ -69,7 +69,9 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit({ email, password }) {
-    dispatch(authActions.login({ email, password }));
+    debugger
+    return dispatch(authActions.login({ email, password }));
+    
   }
 
   console.log('isSubmitting :>> ', isSubmitting);
@@ -145,31 +147,33 @@ export function Login() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="email">Email</Label>
-                          <input
-                            type="email"
-                            name="Email"
+                          <Label for="email">User name</Label>
+                          <input 
+                            type="text" 
+                            name="Email" 
                             id="email"
-                            placeholder="Email"
+                            placeholder="Email" 
                             {...register("email")}
-                            className={`form-control ${errors.email ? "is-invalid" : ""
-                              }`}
-                          />
-                          <div className="invalid-feedback">{errors.email?.message}</div>
+                            className={`form-control ${
+                              errors.email ? "is-invalid" : ""
+                            }`}
+                            />
+                            <div className="invalid-feedback">{errors.email?.message}</div>
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="password">Password</Label>
-                          <InputGroup>
-
-                            <input placeholder="password" name="password"
-                              type={showPassword ? 'text' : 'password'}
-                              id="password"  {...register("password")}
-                              className={`form-control ${errors.password ? "is-invalid" : ""
-                                }`} />
-                            <InputGroupText onClick={(evt) => togglePasswordVisibility()}>{showPassword ? <FaEyeSlash /> : <FaEye />}</InputGroupText>
-                          </InputGroup>
+                          <input 
+                            type="password" 
+                            name="password" 
+                            id="password" 
+                            placeholder="Password"
+                            {...register("password")}
+                            className={`form-control ${
+                              errors.password ? "is-invalid" : ""
+                            }`}
+                          />
                           <div className="invalid-feedback">{errors.password?.message}</div>
                         </FormGroup>
                       </Col>
