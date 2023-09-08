@@ -4,8 +4,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
-import SweetAlert from 'react-bootstrap-sweetalert';
-import { Card, CardBody, CardTitle,InputGroup, InputGroupText, Input  } from "reactstrap";
+import SweetAlert from "react-bootstrap-sweetalert";
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  InputGroup,
+  InputGroupText,
+  Input,
+} from "reactstrap";
 
 import Slider from "react-slick";
 
@@ -18,16 +25,16 @@ import { Col, Row, Button, Form, FormGroup, Label } from "reactstrap";
 import { history } from "_helpers";
 import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export function Login() {
   const dispatch = useDispatch();
   const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
 
   const [sliderSettings] = useState({
     dots: true,
@@ -46,12 +53,10 @@ export function Login() {
     if (authUser) {
       if (authUser) {
         history.navigate("/");
-      }
-      else {
-        setError(true)
+      } else {
+        setError(true);
       }
     }
-
   }, [authUser]);
 
   const togglePasswordVisibility = () => {
@@ -73,7 +78,7 @@ export function Login() {
     dispatch(authActions.login({ email, password }));
   }
 
-  console.log('isSubmitting :>> ', isSubmitting);
+  console.log("isSubmitting :>> ", isSubmitting);
   return (
     <>
       <div className="app-container">
@@ -83,10 +88,12 @@ export function Login() {
               <div className="slider-light">
                 <Slider {...sliderSettings}>
                   <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                    <div className="slide-img-bg"
+                    <div
+                      className="slide-img-bg"
                       style={{
                         backgroundImage: "url(" + bg1 + ")",
-                      }} />
+                      }}
+                    />
                     <div className="slider-content">
                       <h3>Perfect Balance</h3>
                       <p>
@@ -97,10 +104,12 @@ export function Login() {
                     </div>
                   </div>
                   <div className="h-100 d-flex justify-content-center align-items-center bg-premium-dark">
-                    <div className="slide-img-bg"
+                    <div
+                      className="slide-img-bg"
                       style={{
                         backgroundImage: "url(" + bg3 + ")",
-                      }} />
+                      }}
+                    />
                     <div className="slider-content">
                       <h3>Scalable, Modular, Consistent</h3>
                       <p>
@@ -111,10 +120,12 @@ export function Login() {
                     </div>
                   </div>
                   <div className="h-100 d-flex justify-content-center align-items-center bg-sunny-morning">
-                    <div className="slide-img-bg opacity-6"
+                    <div
+                      className="slide-img-bg opacity-6"
                       style={{
                         backgroundImage: "url(" + bg2 + ")",
-                      }} />
+                      }}
+                    />
                     <div className="slider-content">
                       <h3>Complex, but lightweight</h3>
                       <p>
@@ -126,7 +137,11 @@ export function Login() {
                 </Slider>
               </div>
             </Col>
-            <Col lg="8" md="12" className="h-100 d-flex bg-white justify-content-center align-items-center">
+            <Col
+              lg="8"
+              md="12"
+              className="h-100 d-flex bg-white justify-content-center align-items-center"
+            >
               <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
                 <img src={logo} width={"130px"} alt="logo" />
 
@@ -137,8 +152,9 @@ export function Login() {
                 </h4>
                 <h6 className="mt-3">
                   No account?{" "}
-                  <Link to="/registration" className="text-primary">Sign up now</Link>
-
+                  <Link to="/registration" className="text-primary">
+                    Sign up now
+                  </Link>
                 </h6>
                 <Row className="divider" />
                 <div>
@@ -153,32 +169,49 @@ export function Login() {
                             id="email"
                             placeholder="Email"
                             {...register("email")}
-                            className={`form-control ${errors.email ? "is-invalid" : ""
-                              }`}
+                            className={`form-control ${
+                              errors.email ? "is-invalid" : ""
+                            }`}
                           />
-                          <div className="invalid-feedback">{errors.email?.message}</div>
+                          <div className="invalid-feedback">
+                            {errors.email?.message}
+                          </div>
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="password">Password</Label>
                           <InputGroup>
-
-                            <input placeholder="password" name="password"
-                              type={showPassword ? 'text' : 'password'}
-                              id="password"  {...register("password")}
-                              className={`form-control ${errors.password ? "is-invalid" : ""
-                                }`} />
-                            <InputGroupText onClick={(evt) => togglePasswordVisibility()}>{showPassword ? <FaEyeSlash /> : <FaEye />}</InputGroupText>
+                            <input
+                              placeholder="password"
+                              name="password"
+                              type={showPassword ? "text" : "password"}
+                              id="password"
+                              {...register("password")}
+                              className={`form-control ${
+                                errors.password ? "is-invalid" : ""
+                              }`}
+                            />
+                            <InputGroupText
+                              onClick={(evt) => togglePasswordVisibility()}
+                            >
+                              {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </InputGroupText>
                           </InputGroup>
-                          <div className="invalid-feedback">{errors.password?.message}</div>
+                          <div className="invalid-feedback">
+                            {errors.password?.message}
+                          </div>
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row className="divider" />
                     <div className="d-flex align-items-center">
                       <div className="ms-auto">
-                        <Button disabled={isSubmitting} color="primary" size="lg">
+                        <Button
+                          disabled={isSubmitting}
+                          color="primary"
+                          size="lg"
+                        >
                           {isSubmitting && (
                             <span className="spinner-border spinner-border-sm me-1"></span>
                           )}
@@ -215,5 +248,5 @@ export function Login() {
           </Col>
         </div> : <></>} */}
     </>
-  )
+  );
 }
