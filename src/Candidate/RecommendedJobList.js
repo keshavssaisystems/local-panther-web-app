@@ -12,7 +12,7 @@ import {
 import { JobListing } from "../_components/Job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
-import { empmodeActions } from "_store";
+import { employmentModeReducer } from "_store";
 import cx from "classnames";
 
 export function RecommendedJobList() {
@@ -40,7 +40,7 @@ export function RecommendedJobList() {
   var minExp = useRef();
   var maxExp = useRef();
   useEffect(() => {
-    dispatch(empmodeActions.getEmpmode());
+    dispatch(employmentModeReducer.getEmpmode());
   }, [dispatch]);
   const handleEmpModeChange = (event) => {
     setSelectedEmpMode(event.target.value);
