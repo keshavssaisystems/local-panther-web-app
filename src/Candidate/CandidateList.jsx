@@ -35,7 +35,7 @@ export function CandidateList() {
     const [selectedCandidate, setselectedCandidate] = useState();
     const [pageSize, setpageSize] = useState(10)
     const [isPopOver, setIsPopOver] = useState(false)
-    const [isExpError, setIsExpError] = useState('false')
+    const [isExpError, setIsExpError] = useState(false)
     const [searchText, setSearchText] = useState('')
 
     const [jobTitle, setJobTitle] = useState()
@@ -51,7 +51,9 @@ export function CandidateList() {
 
     var minExp = useRef()
     var maxExp = useRef()
-    let searchData = useRef()
+    let searchData = useRef('')
+    let skillPopover = useRef(false)
+
 
     const [reasonList, setReasonList] = useState([
         {
@@ -120,10 +122,9 @@ export function CandidateList() {
     }
 
     const getCandidatesList = async function () {
-        console.log(searchText);
-
-        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 2 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true'
-        if (searchData.current != undefined || searchData.current != null) {
+        
+        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 3 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true&Applicationstatus=Applied'
+        if (searchData.current  != '') {
             url += '&searchText=' + searchData.current
         }
         if (minExp.current != undefined || maxExp.current != null) {
@@ -135,6 +136,7 @@ export function CandidateList() {
 
 
         let response = await dispatch(candidateActions.getCandidates({ url }));
+        
         setList(response.payload.data.candidateList);
         setJobTitle(response.payload.data.jobTitle)
         totalPages.current = Math.round(Number(response.payload.data.totalRows) / pageSize)
@@ -163,29 +165,21 @@ export function CandidateList() {
 
     }
 
-    const onchangePage = function (data) {
-        getCandidatesList()
-    }
-
     const onHandleExpChange = function (check, event) {
         check == 'min' ? minExp.current = Number(event) : maxExp.current = Number(event)
 
         if (minExp.current && maxExp.current) {
             if (minExp.current > maxExp.current) {
-                setIsExpError('true')
+                setIsExpError(true)
             }
             else {
-                setIsExpError('false')
+                setIsExpError(false)
             }
         }
         else {
-            setIsExpError('false')
+            setIsExpError(false)
         }
 
-    }
-
-    const openProfile = function () {
-        setShowProfile(!showProfile)
     }
 
     const applyMask = function (inputValue) {
@@ -217,19 +211,24 @@ export function CandidateList() {
     }
 
     const onSearch = function (data) {
+        setSearchText(data)
         searchData.current = data
 
     }
     const onReset = function () {
-        minExp.current = null
-        maxExp.current = null
-        setIsExpError('false')
+        minExp.current = undefined
+        maxExp.current = undefined
+
+        document.getElementById('minExp').value = undefined
+        document.getElementById('maxExp').value = undefined
+
+        setIsExpError(false)
         getCandidatesList()
     }
 
     const onClearSearch = function () {
-        searchData.current = undefined
-        document.getElementById('search-input').value = ''
+        setSearchText('')
+        searchData.current = ''
         getCandidatesList()
     }
 
@@ -239,7 +238,8 @@ export function CandidateList() {
 
     const showPopOver = function (data) {
         setselectedCandidate(data)
-        setIsPopOver(true)
+        isPopOver.current = false
+        isPopOver.current = true
     }
     const acceptRejectCandidate = async function (check, candidateid) {
         let applicationstatusid = 0
@@ -303,7 +303,7 @@ export function CandidateList() {
                                             <Col className="col-md-3">
                                                 <Input type="number" id="minExp" name="minExp" placeholder="Min Exp" value={minExp.current} style={{
                                                     borderColor:
-                                                        isExpError == 'true' ? 'red' : '#ced4da'
+                                                        isExpError ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('min',
                                                     evt.target.value)}>
                                                 </Input>
@@ -311,16 +311,16 @@ export function CandidateList() {
                                             <Col className="col-md-3">
                                                 <Input type="number" id="maxExp" name="maxExp" value={maxExp.current} placeholder="Max Exp" style={{
                                                     borderColor:
-                                                        isExpError == 'true' ? 'red' : '#ced4da'
+                                                        isExpError ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('max',
                                                     evt.target.value)}>
                                                 </Input>
                                             </Col>
-                                            <Col className="col-md-4">
-                                                <Button className="col-md-4 me-2" onClick={(evt) => isExpError == 'false' ? getCandidatesList() : ''}
+                                            <Col className="col-md-4" style={{ marginTop: '30px' }}>
+                                                <Button className="col-md-3 me-2" onClick={(evt) => !isExpError ? getCandidatesList() : ''}
                                                     style={{
-                                                        backgroundColor: isExpError == 'false' ? 'rgb(33 91 153)' : 'grey',
-                                                        cursor: isExpError == 'false' ? 'pointer' : 'not-allowed'
+                                                        backgroundColor: !isExpError ? 'rgb(33 91 153)' : 'grey',
+                                                        cursor: !isExpError ? 'pointer' : 'not-allowed'
                                                     }}>
                                                     submit
                                                 </Button>
@@ -334,7 +334,7 @@ export function CandidateList() {
                                             </Col>
 
                                         </Row>
-                                        {isExpError == 'true' ? <Label style={{ color: 'red' }}>Minimum experience should be less than Max
+                                        {isExpError ? <Label style={{ color: 'red' }}>Minimum experience should be less than Max
                                             Experience</Label> : ""}
 
                                     </Col>
@@ -342,7 +342,7 @@ export function CandidateList() {
                                     <Col className="col-md-6">
                                         <div className={cx("search-wrapper float-end", { active: true, })}>
                                             <div className="input-holder">
-                                                <input type="text" className="search-input" id="search-input" value={searchData.current} onInput={(evt) =>
+                                                <input type="text" className="search-input" id="search-input" value={searchText} onInput={(evt) =>
                                                     onSearch(evt.target.value)} placeholder="Search by skill/location" />
                                                 <button onClick={(evt) => getCandidatesList()}
                                                     className="search-icon">
@@ -432,7 +432,7 @@ export function CandidateList() {
                     </div>
             }
 
-            {isPopOver ?
+            {isPopOver.current ?
                 <UncontrolledPopover placement='right' target={"Popover"}>
                     <PopoverHeader>
                         {selectedCandidate ? <div>
