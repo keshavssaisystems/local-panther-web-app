@@ -3,7 +3,6 @@ import cx from "classnames";
 
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 
-import { SearchBox } from "./Components/SearchBox";
 // import MegaMenu from "./Components/MegaMenu";
 import { UserBox } from "./Components/UserBox";
 import logo from "../../assets/utils/images/panther-logo.png";

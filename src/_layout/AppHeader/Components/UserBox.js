@@ -1,11 +1,13 @@
 import React from "react";
 
-import { IoIosCalendar } from "react-icons/io";
+// import { IoIosCalendar } from "react-icons/io";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { DropdownToggle, DropdownMenu,  Nav, Col, Row, Button, NavItem,
-  NavLink, UncontrolledTooltip,  UncontrolledButtonDropdown, } from "reactstrap";
+  NavLink,  UncontrolledButtonDropdown, } from "reactstrap";
+
+import { useSelector, useDispatch } from 'react-redux';
 
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,7 +16,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import city3 from "../../../assets/utils/images/dropdown-header/city3.jpg";
 import avatar1 from "../../../assets/utils/images/avatars/1.jpg";
 
+import { authActions } from '_store';
+
 export function UserBox() {
+  const authUser = useSelector(x => x.auth.user);
+  const dispatch = useDispatch();
+  const logout = () => dispatch(authActions.logout());
+
+  // only show nav when logged in
+  if (!authUser) return null;
 
   return (
     <>
@@ -49,7 +59,7 @@ export function UserBox() {
                               </div>
                             </div>
                             <div className="widget-content-right mr-2">
-                              <Button className="btn-pill btn-shadow btn-shine" color="focus"> Logout </Button>
+                              <Button onClick={logout} className="btn-pill btn-shadow btn-shine" color="focus"> Logout </Button>
                             </div>
                           </div>
                         </div>
@@ -134,14 +144,14 @@ export function UserBox() {
               <div className="widget-subheading">VP People Manager</div>
             </div>
 
-            <div className="widget-content-right header-user-info mr-3">
+            {/* <div className="widget-content-right header-user-info mr-3">
               <Button className="btn-shadow p-1" size="sm" color="info" id="Tooltip-1">
                 <IoIosCalendar color="#ffffff" fontSize="20px" />
               </Button>
               <UncontrolledTooltip placement="bottom" target={"Tooltip-1"}>
                 Click for Toastify Notifications!
               </UncontrolledTooltip>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

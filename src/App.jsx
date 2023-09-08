@@ -1,4 +1,6 @@
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+
+import { useSelector } from 'react-redux';
 
 import { history } from '_helpers';
 import { PrivateRoute } from '_components';
@@ -15,6 +17,8 @@ import { AppSidebar } from '_layout/AppSidebar';
 import { AppFooter } from '_layout/AppFooter';
 
 export function App() {
+    const authUser = useSelector(x => x.auth.user);
+
     // init custom history object to allow navigation from 
     // anywhere in the react app (inside or outside components)
     history.navigate = useNavigate();
@@ -22,11 +26,12 @@ export function App() {
 
     return (
         <>
-            <AppHeader />
-            <div className="app-main">
-                <AppSidebar />
-                <div className="app-main__outer">
+            {authUser && <AppHeader />}
+            <div className={authUser ? `app-main` : ''}>
+            {authUser &&  <AppSidebar />}
+                <div className={authUser ? `app-main__outer` : ''}>
                     <div className="app-main__inner">
+                    
                         <Routes>
                             <Route
                                 path="/"
@@ -46,7 +51,7 @@ export function App() {
                             
                         </Routes>
                     </div>
-                <AppFooter />
+                    {authUser && <AppFooter />}
                 </div>
             </div>
         </>
