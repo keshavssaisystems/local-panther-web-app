@@ -4,23 +4,30 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
+import SweetAlert from 'react-bootstrap-sweetalert';
+import { Card, CardBody, CardTitle,InputGroup, InputGroupText, Input  } from "reactstrap";
 
 import Slider from "react-slick";
 
-import bg1 from "../assets/utils/images/originals/city.jpg";
-import bg2 from "../assets/utils/images/originals/citydark.jpg";
-import bg3 from "../assets/utils/images/originals/citynights.jpg";
+import bg1 from "../../assets/utils/images/originals/city.jpg";
+import bg2 from "../../assets/utils/images/originals/citydark.jpg";
+import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 
 import { Col, Row, Button, Form, FormGroup, Label } from "reactstrap";
 
 import { history } from "_helpers";
 import { authActions } from "_store";
-import logo from "../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo.png";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export function Login() {
   const dispatch = useDispatch();
-  const authUser = useSelector((x) => x.auth.user);
+  const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
+  const [error, setError] = useState(false)
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState('');
 
   const [sliderSettings] = useState({
     dots: true,
@@ -36,15 +43,24 @@ export function Login() {
   });
 
   useEffect(() => {
-    // redirect to home if already logged in
-    if (authUser) history.navigate("/");
+    if (authUser) {
+      if (authUser) {
+        history.navigate("/");
+      }
+      else {
+        setError(true)
+      }
+    }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authUser]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
+    email: Yup.string().required("Email is required"),
     password: Yup.string().required("Password is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -53,10 +69,11 @@ export function Login() {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
-  function onSubmit({ username, password }) {
-    return dispatch(authActions.login({ username, password }));
+  function onSubmit({ email, password }) {
+    dispatch(authActions.login({ email, password }));
   }
 
+  console.log('isSubmitting :>> ', isSubmitting);
   return (
     <>
       <div className="app-container">
@@ -69,7 +86,7 @@ export function Login() {
                     <div className="slide-img-bg"
                       style={{
                         backgroundImage: "url(" + bg1 + ")",
-                      }}/>
+                      }} />
                     <div className="slider-content">
                       <h3>Perfect Balance</h3>
                       <p>
@@ -83,7 +100,7 @@ export function Login() {
                     <div className="slide-img-bg"
                       style={{
                         backgroundImage: "url(" + bg3 + ")",
-                      }}/>
+                      }} />
                     <div className="slider-content">
                       <h3>Scalable, Modular, Consistent</h3>
                       <p>
@@ -97,7 +114,7 @@ export function Login() {
                     <div className="slide-img-bg opacity-6"
                       style={{
                         backgroundImage: "url(" + bg2 + ")",
-                      }}/>
+                      }} />
                     <div className="slider-content">
                       <h3>Complex, but lightweight</h3>
                       <p>
@@ -111,8 +128,8 @@ export function Login() {
             </Col>
             <Col lg="8" md="12" className="h-100 d-flex bg-white justify-content-center align-items-center">
               <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
-                <img src={logo} width={"130px"} alt="logo"/>
-                
+                <img src={logo} width={"130px"} alt="logo" />
+
                 <div className="app-logo" />
                 <h4 className="mb-0">
                   <div>Welcome back,</div>
@@ -129,49 +146,38 @@ export function Login() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="userName">User name</Label>
-                          <input 
-                            type="text" 
-                            name="username" 
-                            id="userName"
-                            placeholder="User name here..." 
-                            {...register("username")}
-                            className={`form-control ${
-                              errors.username ? "is-invalid" : ""
-                            }`}
-                            />
-                            <div className="invalid-feedback">{errors.username?.message}</div>
+                          <Label for="email">Email</Label>
+                          <input
+                            type="email"
+                            name="Email"
+                            id="email"
+                            placeholder="Email"
+                            {...register("email")}
+                            className={`form-control ${errors.email ? "is-invalid" : ""
+                              }`}
+                          />
+                          <div className="invalid-feedback">{errors.email?.message}</div>
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="password">Password</Label>
-                          <input 
-                            type="password" 
-                            name="password" 
-                            id="password" 
-                            placeholder="Password here..."
-                            {...register("password")}
-                            className={`form-control ${
-                              errors.password ? "is-invalid" : ""
-                            }`}
-                          />
+                          <InputGroup>
+
+                            <input placeholder="password" name="password"
+                              type={showPassword ? 'text' : 'password'}
+                              id="password"  {...register("password")}
+                              className={`form-control ${errors.password ? "is-invalid" : ""
+                                }`} />
+                            <InputGroupText onClick={(evt) => togglePasswordVisibility()}>{showPassword ? <FaEyeSlash /> : <FaEye />}</InputGroupText>
+                          </InputGroup>
                           <div className="invalid-feedback">{errors.password?.message}</div>
                         </FormGroup>
                       </Col>
                     </Row>
-                    {/* <FormGroup check>
-                      <Input type="checkbox" name="check" id="exampleCheck" />
-                      <Label for="exampleCheck" check>
-                        Keep me logged in
-                      </Label>
-                    </FormGroup> */}
                     <Row className="divider" />
                     <div className="d-flex align-items-center">
                       <div className="ms-auto">
-                        {/* <a href="https://colorlib.com/" onClick={(e) => e.preventDefault()} className="btn-lg btn btn-link" >
-                          Recover Password
-                        </a>{" "} */}
                         <Button disabled={isSubmitting} color="primary" size="lg">
                           {isSubmitting && (
                             <span className="spinner-border spinner-border-sm me-1"></span>
@@ -193,6 +199,7 @@ export function Login() {
           </Row>
         </div>
       </div>
+     
     </>
   )
 }

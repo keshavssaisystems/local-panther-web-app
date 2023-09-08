@@ -7,17 +7,17 @@ import { useSelector, useDispatch } from "react-redux";
 
 import Slider from "react-slick";
 
-import bg3 from "../assets/utils/images/originals/citynights.jpg";
+import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 
 import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
 
 import { history } from "_helpers";
 import { authActions } from "_store";
-import logo from "../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo.png";
 
 export function Registration() {
   const dispatch = useDispatch();
-  const authUser = useSelector((x) => x.auth.user);
+  const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
 
   const [sliderSettings] = useState({

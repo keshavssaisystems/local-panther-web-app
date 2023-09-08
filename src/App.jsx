@@ -9,16 +9,16 @@ import { Dashboard } from 'dashboard';
 import { JobList } from '_containers/customer/jobs/JobList';
 import { JobDetail } from '_containers/customer/jobs/JobDetail';
 import { CreateJob }  from '_containers/customer/createJob/CreateJob'
-import { Login } from 'login';
-import { Registration } from 'registration';
-import { CandidateList } from 'Candidate';
-import { RecommendedJobList } from "Candidate/RecommendedJobList";
+import { Login } from '_containers/login';
+import { Registration } from '_containers/registration';
+import { CandidateList } from '_containers/candidate/recommendedcandidates/CandidateList';
+import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from '_layout/AppHeader';
 import { AppSidebar } from '_layout/AppSidebar';
 import { AppFooter } from '_layout/AppFooter';
 
 export function App() {
-    const authUser = useSelector(x => x.auth.user);
+    const authUser = useSelector(x => x?.auth?.token);
 
     // init custom history object to allow navigation from 
     // anywhere in the react app (inside or outside components)

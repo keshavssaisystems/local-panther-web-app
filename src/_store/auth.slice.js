@@ -18,7 +18,8 @@ export const authReducer = slice.reducer;
 function createInitialState() {
     return {
         // initialize state from local storage to enable user to stay logged in
-        user: JSON.parse(localStorage.getItem('user')),
+        menuList:JSON.parse(localStorage.getItem('menuList')), //temp fix
+        token: localStorage.getItem('token'),
         error: null
     }
 }
@@ -29,15 +30,19 @@ function createReducers() {
     };
 
     function logout(state) {
-        state.user = null;
+        state.user = {}
+        state.token = null;
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToekn');
+        localStorage.removeItem('menuList');
+
         history.navigate('/login');
     }
 }
 
 function createExtraActions() {
-    const baseUrl = `${process.env.REACT_APP_API_URL}/users`;
-
+    const baseUrl = `${process.env.REACT_APP_USER_API_URL}/api/Auth`;
     return {
         login: login()
     };
@@ -45,7 +50,9 @@ function createExtraActions() {
     function login() {
         return createAsyncThunk(
             `${name}/login`,
-            async ({ username, password }) => await fetchWrapper.post(`${baseUrl}/authenticate`, { username, password })
+            async ({ email, password }) => {
+                return await fetchWrapper.post(`${baseUrl}/Login`, { email, password })
+            }
         );
     }
 }
@@ -60,12 +67,14 @@ function createExtraReducers() {
                 .addCase(pending, (state) => {
                     state.error = null;
                 })
-                .addCase(fulfilled, (state, action) => {
-                    const user = action.payload;
-
-                    // store user details and basic auth data in local storage to keep user logged in between page refreshes
-                    localStorage.setItem('user', JSON.stringify(user));
-                    state.user = user;
+                .addCase(fulfilled, (state, { payload: { data = {} } = {} }) => {
+                    const { token, refreshToken, menuDtoList = [] } = data;
+                    state.menuList = menuDtoList;
+                    state.user = data;
+                    state.token = token;
+                    localStorage.setItem('menuList', JSON.stringify(menuDtoList));  //temp fix
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('refreshToken', refreshToken);
 
                     // get return url from location state or default to home page
                     const { from } = history.location.state || { from: { pathname: '/' } };

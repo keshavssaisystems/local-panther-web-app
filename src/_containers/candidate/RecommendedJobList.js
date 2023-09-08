@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Card, CardBody, CardTitle, Button, Label } from "reactstrap";
-import { JobListing } from "../_components/Job/JobListing";
+import { Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
+import { JobListing } from "../../_components/Job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
-import { jobListActions } from "_store";
-import { employmentModeReducer } from "_store";
+import { jobListActions } from "../../_store";
+import { employmentModeReducer } from "../../_store";
 import cx from "classnames";
 
 export function RecommendedJobList() {
@@ -26,11 +26,10 @@ export function RecommendedJobList() {
   const [selectedEmpMode, setSelectedEmpMode] = useState("");
   const [input, setInput] = useState("");
   const [list, setList] = useState([]);
-  const empModeData = useSelector((state) => state.empmode.user.data);
+  const empModeData = useSelector((state) => state?.empmode?.user.data);
 
-  useEffect(() => {
-    dispatch(employmentModeReducer.getEmpmode());
-  }, [dispatch]);
+  var minExp = useRef();
+  var maxExp = useRef();
   const handleEmpModeChange = (event) => {
     setSelectedEmpMode(event.target.value);
   };
@@ -78,51 +77,30 @@ export function RecommendedJobList() {
               <CardTitle className="mb-2">Recommended Jobs </CardTitle>
 
               <Row>
-
-                <Col className="col-md-9">
-                  <Row><Col md="3">
-                    <Label>Select employment mode: </Label>
-                    <div className="">
-                      <select
-                        id="empModeSelect"
-                        value={selectedEmpMode}
-                        onChange={handleEmpModeChange}
-                      >
-                        <option value="">Select an option</option>
-                        {empModeData.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </Col>
-                    <Col md="3">
-                      <div className="m-4">
-                        <Button type="buton" color="primary" onClick={getJobList}>
-                          Apply Filters
-                        </Button>
-                      </div>
-                    </Col>
-                    </Row>
-
-                </Col>
-
-
-                <Col className="col-md-3">
-                  <div className={cx("search-wrapper float-end", { active: true, })} style={{ marginTop: '21px' }}>
-                    <div className="input-holder">
-                      <input type="text" className="search-input" value={searchData.current}
-                        onChange={collectSearchData}
-                        placeholder="Search by skill/location" />
-                      <button
-                        className="search-icon"
-                        onClick={getJobList}>
-                        <span />
-                      </button>
-                    </div>
-                    <button style={{ left: '220px' }}
-                      className="btn-close" onClick={inputClear} />
+                <Col md="3">
+                  {/* <div className="m-5">
+                    <Label for="minExperience">Minimum Experience:</Label>
+                    <Input
+                      type="number"
+                      id="minExperience"
+                      placeholder="Enter min experience"
+                      value={minExp.current}
+                      onChange={(e) => handleExperience("min", e.target.value)}
+                    />
+                  </div> */}
+                  <div className="m-5">
+                    <select
+                      id="empModeSelect"
+                      value={selectedEmpMode}
+                      onChange={handleEmpModeChange}
+                    >
+                      <option value="">Select an option</option>
+                      {empModeData?.map((option) => (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </Col>
 

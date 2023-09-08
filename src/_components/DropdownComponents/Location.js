@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { locationActions } from "_store";
-import SelectSearch from "react-select-search";
-import "react-select-search/style.css";
 import { Label, Input, FormGroup, FormText } from "reactstrap";
 
 export function Location({

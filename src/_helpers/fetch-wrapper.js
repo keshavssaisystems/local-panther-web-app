@@ -54,6 +54,16 @@ async function handleResponse(response) {
         // get error message from body or default to response status
         const error = (data && data.message) || response.status;
         return Promise.reject(error);
+    } else if (data?.status === 'Failed') {
+        if (basicAuthData() && [401, 403].includes(response.statusCode)) {
+            // auto logout if logged in and response status is 401 Unauthorized or 403 Forbidden
+            const logout = () => store.dispatch(authActions.logout());
+            logout();
+        }
+
+        // get error message from body or default to response status
+        const error = (data && data.message) || response.statusCode;
+        return Promise.reject(error);
     }
 
     return data;
