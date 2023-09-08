@@ -34,12 +34,10 @@ export function CandidateList() {
     const [showCandidate, setshowCandidate] = useState(false);
     const [selectedCandidate, setselectedCandidate] = useState();
     const [pageSize, setpageSize] = useState(10)
-    const [isPopOver, setIsPopOver] = useState(false)
     const [isExpError, setIsExpError] = useState(false)
     const [searchText, setSearchText] = useState('')
 
     const [jobTitle, setJobTitle] = useState()
-    const [maxExperience, setMaxExperience] = useState()
 
     const [acceptModal, setAcceptModal] = useState(false)
     const [showProfile, setShowProfile] = useState(false)
@@ -51,6 +49,7 @@ export function CandidateList() {
 
     var minExp = useRef()
     var maxExp = useRef()
+    var isPopOver = useRef(false)
     let searchData = useRef('')
     let skillPopover = useRef(false)
 
@@ -66,25 +65,6 @@ export function CandidateList() {
         }
     ])
 
-    const [expList, setExpList] = useState([
-        {
-            value: 1, label: "1"
-        },
-        {
-            value: 2, label: "2"
-        },
-        {
-            value: 1, label: "3"
-        },
-        {
-            value: 2, label: "4"
-        },
-        {
-            value: 1, label: "5"
-        },
-        {
-            value: 2, label: "6"
-        }])
 
 
     let rejectReqData = {
@@ -127,7 +107,7 @@ export function CandidateList() {
         if (searchData.current  != '') {
             url += '&searchText=' + searchData.current
         }
-        if (minExp.current != undefined || maxExp.current != null) {
+        if (minExp.current != undefined || minExp.current != null) {
             url += '&minExperience=' + minExp.current
         }
         if (maxExp.current != undefined || maxExp.current != null) {
@@ -158,8 +138,9 @@ export function CandidateList() {
         if (today == appliedDate) {
             istoday = true
         }
+        debugger;
         const diffDays = Math.round(Math.abs((today - appliedDate) / oneDay));
-        let daysMsg = "Applied " + (today ? ' Today' : (diffDays == 1 ? +diffDays + " day ago" : diffDays + " days ago"))
+        let daysMsg = "Applied " + (istoday ? ' Today' : (diffDays == 1 ? +diffDays + " day ago" : diffDays + " days ago"))
 
         return daysMsg
 
@@ -270,17 +251,22 @@ export function CandidateList() {
 
     const getSkills = function (data) {
 
-        let skillData
+        let skillData = []
         skillDetails = []
         let splitData = data.split(',')
-        for (let i = 0; i < 3; i++) {
-            if (splitData[i]) {
-                skillDetails.push(splitData[i])
+        for (let i = 0; i < splitData.length; i++) {
+            if (i < 3) {
+                skillData.push(splitData[i])
             }
+            skillDetails.push(splitData[i])
         }
-        skillData = skillDetails.join()
-        return skillData;
+        return skillData.join(',');
 
+    }
+
+    const showSkills = (data) => {
+        setselectedCandidate(data)
+        skillPopover.current = !skillPopover.current;
     }
 
     const handlePageChange = (page) => {
@@ -297,18 +283,22 @@ export function CandidateList() {
                         <Card className="main-card mb-2">
                             <CardBody>
                                 <Row>
-                                    <Col className="col-md-6">
+                                    <Col className="col-md-9">
 
                                         <Row>
+
                                             <Col className="col-md-3">
+                                                <Label>Min Experience</Label>
                                                 <Input type="number" id="minExp" name="minExp" placeholder="Min Exp" value={minExp.current} style={{
                                                     borderColor:
                                                         isExpError ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('min',
                                                     evt.target.value)}>
                                                 </Input>
-                                            </Col>  
+                                            </Col>
+
                                             <Col className="col-md-3">
+                                                <Label>Min Experience</Label>
                                                 <Input type="number" id="maxExp" name="maxExp" value={maxExp.current} placeholder="Max Exp" style={{
                                                     borderColor:
                                                         isExpError ? 'red' : '#ced4da'
@@ -325,7 +315,7 @@ export function CandidateList() {
                                                     submit
                                                 </Button>
 
-                                                <Button className="col-md-4 me-2" onClick={(evt) => onReset()}
+                                                <Button className="col-md-3 me-2" onClick={(evt) => onReset()}
                                                     style={{
                                                         cursor: 'pointer'
                                                     }}>
@@ -339,7 +329,7 @@ export function CandidateList() {
 
                                     </Col>
 
-                                    <Col className="col-md-6">
+                                    <Col className="col-md-3">
                                         <div className={cx("search-wrapper float-end", { active: true, })}>
                                             <div className="input-holder">
                                                 <input type="text" className="search-input" id="search-input" value={searchText} onInput={(evt) =>
@@ -395,18 +385,17 @@ export function CandidateList() {
 
                                                 <td className="align-middle">{col.experienceyears + " years"}</td>
                                                 <td>{col.noticeperiod}</td>
-                                                <td>{getSkills(col.secondaryskills)}
+                                                <td>{getSkills(col.secondaryskills) + " "}
                                                     {skillDetails.length > 3 ?
-                                                        <div>
-                                                            <a href=''>+{skillDetails.length - 3} More</a>
-                                                        </div> : <></>
+
+                                                        <a style={{ color: '#215B99', borderBottom: 'solid 2px', cursor: 'pointer', fontSize: '13px' }} id="skill-popover" onClick={(evt) => showSkills(col)}>+{skillDetails.length - 3} More</a>
+                                                        : <></>
                                                     }
                                                 </td>
                                                 <td>
-                                                    {/* <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) =>
-                                                        onSelectCandidate(col)}>
+                                                    <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }}>
                                                         <span> Profile</span>
-                                                    </Button> */}
+                                                    </Button>
 
                                                     <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col.candidateid)} >
                                                         <span> Accept</span>
@@ -440,12 +429,12 @@ export function CandidateList() {
                                 <span className="menu-header-title" style={{ color: '#545cd8' }}>{applyMask(selectedCandidate.firstname + selectedCandidate.lastname)}</span>
                             </Row>
                             <Row style={{ fontSize: '12px' }}>
-                                <Col>
+                                <Col className="col-md-5">
                                     <span className="menu-header-subtitle">
                                         {selectedCandidate.primaryskills}
                                     </span>
                                 </Col>
-                                <Col>
+                                <Col className="col-md-7">
                                     <h6 style={{ fontSize: '12px' }} className="float-end">{getApplicationDate(selectedCandidate.applicationdate)}</h6>
                                 </Col>
 
@@ -465,6 +454,20 @@ export function CandidateList() {
                     </PopoverBody>
                 </UncontrolledPopover>
                 : <></>}
+
+            {skillPopover.current ?
+                <UncontrolledPopover placement='top' target={"skill-popover"}>
+                    <PopoverHeader style={{ fontWeight: '600' }}>Skills</PopoverHeader>
+                    <PopoverBody style={{ fontSize: '13px' }}>
+                        {selectedCandidate ? <div>
+                            <Row style={{ fontSize: '14px' }}>
+                                {selectedCandidate.secondaryskills}
+                            </Row>
+                        </div> : <></>}
+                    </PopoverBody>
+                </UncontrolledPopover>
+                : <></>}
+
             <Modal isOpen={rejectConfirmation}>
                 <Card >
                     <CardBody>
@@ -502,7 +505,7 @@ export function CandidateList() {
                         <div className="mb-0 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Candidate has been Accepted</div>
                         <div className="mb-3 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Successfully</div>
                         <div>
-                            <Row className="d-flex justify-content-center mb-4">
+                            <Row style={{ fontSize: '18px' }} className="d-flex justify-content-center mb-4">
                                 Would you like to schedule an interview?
                             </Row>
                             <Row >
