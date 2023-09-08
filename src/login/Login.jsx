@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -16,9 +17,7 @@ import { history } from "_helpers";
 import { authActions } from "_store";
 import logo from "../assets/utils/images/panther-logo.png";
 
-export { Login };
-
-function Login() {
+export function Login() {
   const dispatch = useDispatch();
   const authUser = useSelector((x) => x.auth.user);
   const authError = useSelector((x) => x.auth.error);
@@ -119,12 +118,11 @@ function Login() {
                   <div>Welcome back,</div>
                   <span>Please sign in to your account.</span>
                 </h4>
-                {/* <h6 className="mt-3">
+                <h6 className="mt-3">
                   No account?{" "}
-                  <a href="https://colorlib.com/" onClick={(e) => e.preventDefault()} className="text-primary">
-                    Sign up now
-                  </a>
-                </h6> */}
+                  <Link to="/registration" className="text-primary">Sign up now</Link>
+
+                </h6>
                 <Row className="divider" />
                 <div>
                   <Form onSubmit={handleSubmit(onSubmit)}>
