@@ -7,7 +7,8 @@ import {
     CardTitle,
     Collapse,
     CardHeader,
-    Button
+    Button, Form,
+    FormGroup,
 } from "reactstrap";
 import { useSelector, useDispatch } from 'react-redux';
 import userlogo from '../assets/utils/images/Union.svg'
@@ -20,6 +21,9 @@ export function CandidateProfile(props) {
     const [selectedCandidateRes, setSelectedCandidateRes] = useState()
     const [selectedCandidateList, setSelectedCandidateList] = useState({})
     const [isOpenAccordian, setOpenAccordian] = useState(false)
+    const [isContactAccordian, setContactAccordian] = useState(false)
+    const [isEducationAccordian, setEducationAccordian] = useState(false)
+    const [isJobAccordian, setJobAccordian] = useState(false)
 
 
     useEffect(() => {
@@ -79,7 +83,22 @@ export function CandidateProfile(props) {
     }
 
     const showPersonalInfo = function () {
-        setOpenAccordian(true)
+        setOpenAccordian(!isOpenAccordian)
+    }
+    const showContactInfo = function () {
+        setContactAccordian(!isContactAccordian)
+    }
+    const showEducationInfo = function () {
+        setEducationAccordian(!isEducationAccordian)
+    }
+    const showJobInfo = function () {
+        setJobAccordian(!isJobAccordian)
+    }
+
+    const changeDate = function (date) {
+        function pad(s) { return (s < 10) ? '0' + s : s; }
+        var d = new Date(date)
+        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
     }
 
     return (
@@ -91,7 +110,7 @@ export function CandidateProfile(props) {
 
                     <Row>
 
-                        <Card>
+                        <Card className="mb-2">
                             <CardHeader id="headingOne">
                                 <Button block color="link" className="text-start m-0 p-0" onClick={() => showPersonalInfo()}
                                     aria-controls="collapseOne">
@@ -99,34 +118,156 @@ export function CandidateProfile(props) {
                                 </Button>
                             </CardHeader>
                             <Collapse isOpen={isOpenAccordian} data-parent="#accordion" id="collapseOne" aria-labelledby="headingOne">
-                                <CardBody>
+                                <CardBody className="">
+                                    <Row className="mb-2">
+
+                                        <FormGroup>
+
+                                            <Row>
+                                                <Col>
+                                                    <Label for="exampleEmail">First Name</Label>
+                                                    <Input disabled type="text" name="firstname" id="firstname" placeholder="with a placeholder"
+                                                        value={selectedCandidateList.firstname} />
+                                                </Col>
+
+                                                <Col>
+                                                    <Col>
+                                                        <Label >Middle Name :</Label>
+                                                        <Input disabled type="text" name="firstname" id="firstname" placeholder=""
+                                                            value="" />
+                                                    </Col>
+                                                </Col>
+                                            </Row>
+
+                                            <Row className="mb-2">
+                                                <Col className="col-md-6">
+                                                    <Label className="me-2">Last Name :</Label>
+                                                    <Input type="text" disabled='true' id="lastname" name="lastname" value={selectedCandidateList.lastname} />
+                                                </Col>
+                                                <Col className="col-md-6">
+                                                    <Label className="me-2">Email : </Label>
+                                                    <Input type="text" disabled='true' id="email" name="email" value={selectedCandidateList.email} />
+                                                </Col>
+                                            </Row>
+
+                                            <Row className="mb-2">
+                                                <Col className="col-md-6">
+                                                    <Label className="me-2">Contact :</Label>
+                                                    <Input type="text" disabled='true' id="contact" name="contact" value={selectedCandidateList.phonenumber} />
+                                                </Col>
+                                                <Col className="col-md-6">
+                                                    <Label className="me-2">Emergency Contact :</Label>
+                                                    <Input type="text" disabled='true' id="contact" name="contact" value="" />
+                                                </Col>
+
+                                            </Row>
+
+                                            <Row className="mb-2">
+                                                <Col className="col-md-6">
+                                                    <Label className="me-2">Date Of Birth</Label>
+                                                    <Input type="text" disabled='true' id="lastname" name="lastname" value={changeDate(selectedCandidateList.dob)} />
+                                                </Col>
+                                                <Col className="col-md-6">
+                                                    <Label className="me-2">Video Intro :</Label>
+                                                    <Input type="text" disabled='true' id="lastname" name="lastname" value="-" />
+                                                </Col>
+                                            </Row>
+
+
+                                        </FormGroup>
+
+                                    </Row>
+
+
 
                                 </CardBody>
                             </Collapse>
                         </Card>
-                        <Card>
+                        <Card className="mb-2">
                             <CardHeader id="headingOne">
-                                <Button block color="link" className="text-start m-0 p-0" onClick={() => showPersonalInfo()}
+                                <Button block color="link" className="text-start m-0 p-0" onClick={() => showContactInfo()}
                                     aria-controls="collapseTwo">
                                     <h5 className="m-0 p-0">Contact Information</h5>
                                 </Button>
                             </CardHeader>
-                            <Collapse isOpen={isOpenAccordian} data-parent="#accordion" id="collapseTwo" aria-labelledby="headingOne">
+                            <Collapse isOpen={isContactAccordian} data-parent="#accordion" id="collapseTwo" aria-labelledby="headingOne">
+                                <CardBody>
+                                    <FormGroup>
+
+                                        <Row>
+                                            <Col>
+                                                <Label for="exampleEmail">City</Label>
+                                                <Input disabled type="text" name="firstname" id="firstname" placeholder="with a placeholder"
+                                                    value={selectedCandidateList.firstname} />
+                                            </Col>
+
+                                            <Col>
+                                                <Col>
+                                                    <Label >state</Label>
+                                                    <Input disabled type="text" name="firstname" id="firstname" placeholder=""
+                                                        value="" />
+                                                </Col>
+                                            </Col>
+                                        </Row>
+
+                                        <Row className="mb-2">
+                                            <Col className="col-md-6">
+                                                <Label className="me-2">Country</Label>
+                                                <Input type="text" disabled='true' id="lastname" name="lastname" value={selectedCandidateList.lastname} />
+                                            </Col>
+                                            <Col className="col-md-6">
+                                                <Label className="me-2">Zip Code</Label>
+                                                <Input type="text" disabled='true' id="zipcode" name="zipcode" value={selectedCandidateList.zipcode} />
+                                            </Col>
+                                        </Row>
+
+
+                                    </FormGroup>
+                                </CardBody>
+                            </Collapse>
+                        </Card>
+                        <Card className="mb-2">
+                            <CardHeader id="headingOne">
+                                <Button block color="link" className="text-start m-0 p-0" onClick={() => showEducationInfo()}
+                                    aria-controls="collapse">
+                                    <h5 className="m-0 p-0">Education Qualification</h5>
+                                </Button>
+                            </CardHeader>
+                            <Collapse isOpen={isEducationAccordian} data-parent="#accordion" id="collapse" aria-labelledby="headingOne">
                                 <CardBody>
 
                                 </CardBody>
                             </Collapse>
                         </Card>
-                        <Card>
+                        <Card className="mb-2">
                             <CardHeader id="headingOne">
-                                <Button block color="link" className="text-start m-0 p-0" onClick={() => showPersonalInfo()}
+                                <Button block color="link" className="text-start m-0 p-0" onClick={() => showJobInfo()}
                                     aria-controls="collapse">
-                                    <h5 className="m-0 p-0">Education Qualification</h5>
+                                    <h5 className="m-0 p-0">Job Title/Position</h5>
                                 </Button>
                             </CardHeader>
-                            <Collapse isOpen={isOpenAccordian} data-parent="#accordion" id="collapse" aria-labelledby="headingOne">
+                            <Collapse isOpen={isJobAccordian} data-parent="#accordion" id="collapse" aria-labelledby="headingOne">
                                 <CardBody>
-
+                                    <Row className="mb-2">
+                                        <Col className="col-md-6">
+                                            <Label className="me-2">Current Position</Label>
+                                            <Input type="text" disabled='true' id="lastname" name="lastname" value={selectedCandidateList.primaryskills} />
+                                        </Col>
+                                        <Col className="col-md-6">
+                                            <Label className="me-2">Notice Period</Label>
+                                            <Input type="text" disabled='true' id="zipcode" name="zipcode" value={selectedCandidate.noticeperid} />
+                                        </Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col className="col-md-6">
+                                            <Label className="me-2">Skills :</Label>
+                                            <Input type="text" disabled='true' id="contact" name="contact" value={selectedCandidateList.secondaryskills} />
+                                        </Col>
+                                        <Col className="col-md-6">
+                                            <Label className="me-2">Experience</Label>
+                                            <Input type="text" disabled='true' id="lastname" name="lastname" value={(selectedCandidateList.experienceyears + " years")} />
+                                        </Col>
+                                    </Row>
                                 </CardBody>
                             </Collapse>
                         </Card>

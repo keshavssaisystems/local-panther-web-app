@@ -304,7 +304,7 @@ export function CandidateList() {
                                                 </Input>
                                             </Col>
                                             <Col className="col-md-4" style={{ marginTop: '30px' }}>
-                                                <Button className="col-md-3 me-2" onClick={(evt) => !isExpError ? getCandidatesList() : ''}
+                                                <Button className="col-md-4 me-2" onClick={(evt) => !isExpError ? getCandidatesList() : ''}
                                                     style={{
                                                         backgroundColor: !isExpError ? 'rgb(33 91 153)' : 'grey',
                                                         cursor: !isExpError ? 'pointer' : 'not-allowed'
