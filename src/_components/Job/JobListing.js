@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Card, CardBody, Col, CardText } from "reactstrap";
 import { JobCard } from "./JobCard";
-import { CustomPagination } from "Candidate";
+import { CustomPagination } from "../pagination";
 
 export function JobListing({ jobData, onPageChange, type, pageSize }) {
   console.log(jobData);

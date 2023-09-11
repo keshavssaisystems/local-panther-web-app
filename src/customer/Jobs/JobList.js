@@ -34,7 +34,7 @@ export function JobList() {
       searchText: "",
       minExperience: "",
       employentModeId: "",
-      pageSize: "",
+      pageSize: "5",
     };
     // console.log(filterOnPageChange);
     // console.log(page);
