@@ -143,7 +143,7 @@ export function JobDetail() {
                 buttonName={"Applied Candidate"}
                 color={"primary"}
                 count={0}
-                action={"/appliedCandidate"}
+                action={"/candidate-list"}
               />
               <ButtonWithCount
                 buttonName={"Recommended Candidate"}
