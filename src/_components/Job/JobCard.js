@@ -17,7 +17,7 @@ export function JobCard({
   console.log(typeId);
   const navigate = useNavigate();
   const navigateToJobDetail = () => {
-    navigate("/JobDetail?type=" + typeId + "&JobId=" + jobId);
+    navigate("/job-detail?type=" + typeId + "&JobId=" + jobId);
   };
   return (
     <>

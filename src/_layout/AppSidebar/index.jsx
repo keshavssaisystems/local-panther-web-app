@@ -53,7 +53,7 @@ export const AppSidebar = () => {
             // },
             {
               title: "Open Jobs",
-              itemId: "/JobList",
+              itemId: "/job-list",
               elemBefore: () => <Icon name="cloud-snow" />
             },
             {

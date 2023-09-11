@@ -43,8 +43,8 @@ export function App() {
                                     </PrivateRoute>
                                 }
                             />
-                            <Route path="/JobList" element={<JobList />} />
-                            <Route path="/JobDetail" element={<JobDetail />} />
+                            <Route path="/job-list" element={<JobList />} />
+                            <Route path="/job-detail" element={<JobDetail />} />
                             <Route path="/dashboard" element={<Dashboard />} />
                             <Route path="/create-job" element={< FormStickyBasic/>} />
                             <Route path="/candidate-list" element={<CandidateList />} />
