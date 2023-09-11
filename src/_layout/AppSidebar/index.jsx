@@ -54,22 +54,22 @@ export const AppSidebar = () => {
             {
               title: "Open Jobs",
               itemId: "/JobList",
-              elemBefore: () => <Icon name="cloud-snow" />
+              // elemBefore: () => <Icon name="cloud-snow" />
             },
             {
               title: "Candidate List",
               itemId: "/candidate-list",
-              elemBefore: () => <Icon name="coffee" />
+              // elemBefore: () => <Icon name="coffee" />
             },
             {
               title: "Create New Job",
               itemId: "/createJob",
-              elemBefore: () => <Icon name="cloud-snow" />
+              // elemBefore: () => <Icon name="cloud-snow" />
             },
             {
               title: "Recommended Job List",
               itemId: "/recommended-job",
-              elemBefore: () => <Icon name="cloud-snow" />,
+              // elemBefore: () => <Icon name="cloud-snow" />,
             },
             // {
             //   title: "About",

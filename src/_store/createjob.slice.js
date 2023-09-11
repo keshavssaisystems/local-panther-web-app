@@ -15,9 +15,8 @@ export const createjobReducer = slice.reducer;
 
 function createInitialState() {
   return {
-    // initialize state from local storage to enable user to stay logged in
-    user: {},
-    error: null,
+    jobDetails: [],
+    loading: false,
   };
 }
 
@@ -43,10 +42,12 @@ function createExtraReducers() {
       var { pending, fulfilled, rejected } = extraActions.getCreatejob;
       builder
         .addCase(pending, (state) => {
-          state.error = null;
+          state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          console.log("action", action);
+          state.jobDetails = action;
+          state.loading = false;
+          // console.log("action", action);
         })
         .addCase(rejected, (state, action) => {
           state.error = action.error;

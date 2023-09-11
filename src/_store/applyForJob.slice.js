@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchWrapper } from '_helpers';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchWrapper } from "_helpers";
 
 // create slice
-const name = 'applyForJob';
+const name = "applyForJob";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
@@ -14,42 +14,67 @@ export const applyForJobReducer = slice.reducer;
 
 // implementation
 function createInitialState() {
-    return {
-        applyForJob: []
-    }
+  return {
+    applyForJob: [],
+  };
 }
 
 function createExtraActions() {
-    const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
-    return {
-        postApplyForJob: postApplyForJob()
-    };
+  return {
+    postApplyForJob: postApplyForJob(),
+  };
 
-    function postApplyForJob() {
-        return createAsyncThunk(
-            `${name}/postApplyForJob`,
-            async ({jobapplicationid, jobid, candidateid, applicationdate, applicationstatus, experienceyears, noticeperiodid, isrelocate, isvideoconference, isactive, currentUserId}) => await fetchWrapper.post(`${baseUrl}/JobApplications`,{jobapplicationid, jobid, candidateid, applicationdate, applicationstatus, experienceyears, noticeperiodid, isrelocate, isvideoconference, isactive, currentUserId})
-        );
-    }
+  function postApplyForJob() {
+    return createAsyncThunk(
+      `${name}/postApplyForJob`,
+      async ({
+        jobapplicationid,
+        jobid,
+        candidateid,
+        applicationdate,
+        applicationstatus,
+        experienceyears,
+        noticeperiodid,
+        isrelocate,
+        isvideoconference,
+        isactive,
+        currentUserId,
+      }) =>
+        await fetchWrapper.post(`${baseUrl}/JobApplications`, {
+          jobapplicationid,
+          jobid,
+          candidateid,
+          applicationdate,
+          applicationstatus,
+          experienceyears,
+          noticeperiodid,
+          isrelocate,
+          isvideoconference,
+          isactive,
+          currentUserId,
+        })
+    );
+  }
 }
 
 function createExtraReducers() {
-    return (builder) => {
-        postApplyForJob();
+  return (builder) => {
+    postApplyForJob();
 
-        function postApplyForJob() {
-            var { pending, fulfilled, rejected } = extraActions.postApplyForJob;
-            builder
-                .addCase(pending, (state) => {
-                    state.applyForJob = { loading: true };
-                })
-                .addCase(fulfilled, (state, action) => {
-                    state.applyForJob = action.payload;
-                })
-                .addCase(rejected, (state, action) => {
-                    state.applyForJob = { error: action.error };
-                });
-        }
-    };
+    function postApplyForJob() {
+      var { pending, fulfilled, rejected } = extraActions.postApplyForJob;
+      builder
+        .addCase(pending, (state) => {
+          state.applyForJob = { loading: true };
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.applyForJob = action.payload;
+        })
+        .addCase(rejected, (state, action) => {
+          state.applyForJob = { error: action.error };
+        });
+    }
+  };
 }

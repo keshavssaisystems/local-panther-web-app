@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchWrapper } from '_helpers';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchWrapper } from "_helpers";
 
 // create slice
-const name = 'department';
+const name = "department";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
@@ -14,42 +14,48 @@ export const departmentReducer = slice.reducer;
 
 // implementation
 function createInitialState() {
-    return {
-        department: []
-    }
+  return {
+    department: [],
+    loading: false,
+  };
 }
 
 function createExtraActions() {
-    const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
 
-    return {
-        getDepartment: getDepartment()
-    };
+  return {
+    getDepartment: getDepartment(),
+  };
 
-    function getDepartment() {
-        return createAsyncThunk(
-            `${name}/getDepartment`,
-            async () => await fetchWrapper.get(`${baseUrl}/Common/GetCommonDropdown?searchText=department`)
-        );
-    }
+  function getDepartment() {
+    return createAsyncThunk(
+      `${name}/getDepartment`,
+      async () =>
+        await fetchWrapper.get(
+          `${baseUrl}/Common/GetCommonDropdown?searchText=department`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
-    return (builder) => {
-        getDepartment();
+  return (builder) => {
+    getDepartment();
 
-        function getDepartment() {
-            var { pending, fulfilled, rejected } = extraActions.getDepartment;
-            builder
-                .addCase(pending, (state) => {
-                    state.department = { loading: true };
-                })
-                .addCase(fulfilled, (state, action) => {
-                    state.department = action.payload.data;
-                })
-                .addCase(rejected, (state, action) => {
-                    state.department = { error: action.error };
-                });
-        }
-    };
+    function getDepartment() {
+      var { pending, fulfilled, rejected } = extraActions.getDepartment;
+      builder
+        .addCase(pending, (state) => {
+          state.department = [];
+          state.loading = true;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.department = action.payload.data;
+          state.loading = false;
+        })
+        .addCase(rejected, (state, action) => {
+          state.department = { error: action.error };
+        });
+    }
+  };
 }
