@@ -41,7 +41,7 @@ export function Login() {
 
   useEffect(() => {
     if (authUser) {
-      if (authUser.data.token) {
+      if (authUser) {
         history.navigate("/");
       }
       else {
@@ -63,10 +63,7 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit({ email, password }) {
-
-    let response = dispatch(authActions.login({ email, password }));
-
-
+    dispatch(authActions.login({ email, password }));
   }
 
   console.log('isSubmitting :>> ', isSubmitting);
@@ -142,9 +139,9 @@ export function Login() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="email">User name</Label>
+                          <Label for="email">Email</Label>
                           <input
-                            type="text"
+                            type="email"
                             name="Email"
                             id="email"
                             placeholder="Email"

@@ -18,8 +18,6 @@ export const authReducer = slice.reducer;
 function createInitialState() {
     return {
         // initialize state from local storage to enable user to stay logged in
-        menuList:JSON.parse(localStorage.getItem('menuList')), //temp fix
-        token: localStorage.getItem('token'),
         error: null
     }
 }
@@ -31,27 +29,27 @@ function createReducers() {
 
     function logout(state) {
         state.user = {}
+        state.token = null;
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToekn');
-        localStorage.removeItem('menuList');
-
+        
         history.navigate('/login');
     }
 }
 
 function createExtraActions() {
     const baseUrl = `${process.env.REACT_APP_USER_API_URL}/api/Auth`;
-    debugger;
     return {
         login: login()
     };
 
     function login() {
-        console.log(baseUrl)
         return createAsyncThunk(
             `${name}/login`,
-            async ({ email, password }) => await fetchWrapper.post(`${baseUrl}/Login`, { email, password })
+            async ({ email, password }) => {
+                return await fetchWrapper.post(`${baseUrl}/Login`, { email, password })
+            }
         );
     }
 }
@@ -66,6 +64,7 @@ function createExtraReducers() {
                 .addCase(pending, (state) => {
                     state.error = null;
                 })
+<<<<<<< HEAD
                 .addCase(fulfilled, (state, { payload: { data = {} } = {} }) => {
                     const { token, refreshToken, menuDtoList = [] } = data;
                     state.menuList = menuDtoList;
@@ -75,6 +74,15 @@ function createExtraReducers() {
                     localStorage.setItem('token', token);
                     localStorage.setItem('refreshToken', refreshToken);
 
+=======
+                .addCase(fulfilled, (state, { payload: { data = {}} = {}}) => {
+                    const {token, refreshToken, menuDtoList = []} = data;
+                    state.menuDtoList = menuDtoList;
+                    state.user = data;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    
+>>>>>>> 4edd1b8 (Feature: added login url with error handling.)
                     // get return url from location state or default to home page
                     const { from } = history.location.state || { from: { pathname: '/' } };
                     history.navigate(from);

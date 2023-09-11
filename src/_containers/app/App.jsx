@@ -17,47 +17,46 @@ import { AppFooter } from "_components/_layout/AppFooter";
 import "./app.scss";
 
 export function App() {
-  const authUser = useSelector((x) => x?.auth?.token);
+    const authUser = useSelector(x => x?.auth?.token);
 
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
   history.location = useLocation();
 
-  return (
-    <>
-      {authUser && <AppHeader />}
-      <div className={authUser ? `app-main` : ""}>
-        {authUser && <AppSidebar />}
-        <div className={authUser ? `app-main__outer` : ""}>
-          <div className="app-main__inner">
-            <div className="container-row">
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <PrivateRoute>
-                      <Home />
-                    </PrivateRoute>
-                  }
-                />
-                <Route path="/job-list" element={<JobList />} />
-                <Route path="/job-detail" element={<JobDetail />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/create-job" element={<CreateJob />} />
-                <Route path="/candidate-list" element={<CandidateList />} />
-                <Route
-                  path="/recommended-job"
-                  element={<RecommendedJobList />}
-                />
-                <Route path="/login" element={<Login />} />
-                <Route path="/registration" element={<Registration />} />
-              </Routes>
+    return (
+        <>
+            {authUser && <AppHeader />}
+            <div className={authUser ? `app-main` : ''}>
+            {authUser &&  <AppSidebar />}
+                <div className={authUser ? `app-main__outer` : ''}>
+                    <div className="app-main__inner">
+                    
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={
+                                    <PrivateRoute>
+                                        <Home />
+                                    </PrivateRoute>
+                                }
+                            />
+                            <Route path="/JobList" element={<JobList />} />
+                            <Route path="/JobDetail" element={<JobDetail />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/create-job" element={< FormStickyBasic/>} />
+                            <Route path="/candidate-list" element={<CandidateList />} />
+                            <Route path="/recommended-job" element={<RecommendedJobList />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/registration" element={<Registration />} />
+                            {/* <Route path="*" element={<Navigate to="/" />} /> */}
+                            
+                        </Routes>
+                    </div>
+                    {authUser && <AppFooter />}
+                </div>
             </div>
-          </div>
-          {authUser && <AppFooter />}
-        </div>
-      </div>
+      
     </>
   );
 }

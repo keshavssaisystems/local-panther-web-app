@@ -12,12 +12,13 @@ export const AppSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const authUser = useSelector((x) => x.auth.user);
+  const authUser = useSelector((x) => console.log('x >> ', x));
+  
   const [menuItems, setMenuItems] = useState([])
 
   useEffect(() => {
     let data = []
-    for (var i = 0; i < authUser.data.menuDtoList.length; i++) {
+    /* for (var i = 0; i < authUser.data.menuDtoList.length; i++) {
       let obj = {
         itemId: authUser.data.menuDtoList[i].path,
         title: authUser.data.menuDtoList[i].menuname,
@@ -35,7 +36,7 @@ export const AppSidebar = () => {
       data.push(obj)
     }
 
-    setMenuItems(data)
+    setMenuItems(data) */
   }, []);
 
   return (

@@ -7,7 +7,6 @@ export { Home };
 
 function Home() {
     const dispatch = useDispatch();
-    debugger;
     const { user: authUser } = useSelector(x => x.auth);
     const { users } = useSelector(x => x.users);
 
