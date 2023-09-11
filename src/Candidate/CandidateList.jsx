@@ -219,7 +219,9 @@ export function CandidateList() {
         isPopOver.current = false
         isPopOver.current = true
     }
-    const acceptRejectCandidate = async function (check, candidateid) {
+    const acceptRejectCandidate = async function (check, data) {
+        let candidateid = data.candidateid
+        let jobId = data.jobapplicationid
         let applicationstatusid = 0
         let rejectedreasonid = rejectReqData.rejectedreasonid
         let rejectedcomment = rejectReqData.rejectedcomment
@@ -395,7 +397,7 @@ export function CandidateList() {
                                                         <span> Profile</span>
                                                     </Button>
 
-                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col.candidateid)} >
+                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col)} >
                                                         <span> Accept</span>
                                                     </Button>
                                                     <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => rejectCandidate()}>
