@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { Card, CardBody, CardTitle,InputGroup, InputGroupText, Input  } from "reactstrap";
+import { Card, CardBody, CardTitle } from "reactstrap";
 
 import Slider from "react-slick";
 
@@ -26,9 +26,6 @@ export function Login() {
   const authError = useSelector((x) => x.auth.error);
   const [error, setError] = useState(false)
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState('');
-
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -44,18 +41,15 @@ export function Login() {
 
   useEffect(() => {
     if (authUser) {
-      if (authUser) {
+      if (authUser.data.token) {
         history.navigate("/");
       }
       else {
         setError(true)
       }
     }
-  }, [authUser]);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  }, [authUser]);
 
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -69,9 +63,10 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit({ email, password }) {
-    debugger
-    return dispatch(authActions.login({ email, password }));
-    
+
+    let response = dispatch(authActions.login({ email, password }));
+
+
   }
 
   console.log('isSubmitting :>> ', isSubmitting);
@@ -148,31 +143,29 @@ export function Login() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="email">User name</Label>
-                          <input 
-                            type="text" 
-                            name="Email" 
+                          <input
+                            type="text"
+                            name="Email"
                             id="email"
-                            placeholder="Email" 
+                            placeholder="Email"
                             {...register("email")}
-                            className={`form-control ${
-                              errors.email ? "is-invalid" : ""
-                            }`}
-                            />
-                            <div className="invalid-feedback">{errors.email?.message}</div>
+                            className={`form-control ${errors.email ? "is-invalid" : ""
+                              }`}
+                          />
+                          <div className="invalid-feedback">{errors.email?.message}</div>
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="password">Password</Label>
-                          <input 
-                            type="password" 
-                            name="password" 
-                            id="password" 
+                          <input
+                            type="password"
+                            name="password"
+                            id="password"
                             placeholder="Password"
                             {...register("password")}
-                            className={`form-control ${
-                              errors.password ? "is-invalid" : ""
-                            }`}
+                            className={`form-control ${errors.password ? "is-invalid" : ""
+                              }`}
                           />
                           <div className="invalid-feedback">{errors.password?.message}</div>
                         </FormGroup>
@@ -202,7 +195,21 @@ export function Login() {
           </Row>
         </div>
       </div>
-     
+      {/* {error ?
+        <div>
+          <Col md="3">
+            <Card className="mb-3 text-center">
+              <CardBody>
+                <CardTitle>Success</CardTitle>
+                <Button color="success" onClick={() => this.setState({ show: true })}>
+                  Show Alert
+                </Button>
+                <SweetAlert title="Error" show={error}
+                  type="danger" />
+              </CardBody>
+            </Card>
+          </Col>
+        </div> : <></>} */}
     </>
   )
 }

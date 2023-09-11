@@ -31,7 +31,6 @@ function createReducers() {
 
     function logout(state) {
         state.user = {}
-        state.token = null;
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToekn');
@@ -42,7 +41,7 @@ function createReducers() {
 }
 
 function createExtraActions() {
-    const baseUrl = `${process.env.REACT_APP_USER_API_URL}`;
+    const baseUrl = `${process.env.REACT_APP_USER_API_URL}/api/Auth`;
     debugger;
     return {
         login: login()
