@@ -1,13 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  CardTitle,
-  Button,
-
-} from "reactstrap";
+import { Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
 import { JobListing } from "../_components/Job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
@@ -21,11 +13,12 @@ export function RecommendedJobList() {
     pageNo: 1,
     searchText: "",
     employentModeId: null,
+    pageSize: "5",
   });
   let JobList = useSelector((state) => state.jobList);
   let stateUpdate = "true";
   var searchData = useRef("");
-  const [pageSize, setPage] = useState(10)
+  const [pageSize, setPage] = useState(5);
   const [searchText, setSearchText] = useState("");
   const [filteredJobList, setFilteredJobList] = useState({});
   const [minValue, setMinValue] = useState();
@@ -49,9 +42,7 @@ export function RecommendedJobList() {
   }, []);
 
   useEffect(() => {
-
     setFilteredJobList(JobList);
-
   }, [list]);
 
   const getJobList = async function () {
@@ -92,7 +83,7 @@ export function RecommendedJobList() {
     getJobList();
   };
 
-  const onPageChange = (page) => { };
+  const onPageChange = (page) => {};
   return (
     <>
       <Row>
@@ -213,18 +204,16 @@ export function RecommendedJobList() {
           </Card>
         </Col>
 
-        {filteredJobList.jobList ? <JobListing
-
-          jobData={filteredJobList}
-
-          onPageChange={onPageChange}
-
-          type={"Recommended"}
-
-          pageSize={pageSize}
-
-        /> : <></>}
-
+        {filteredJobList.jobList ? (
+          <JobListing
+            jobData={filteredJobList}
+            onPageChange={onPageChange}
+            type={"Recommended"}
+            pageSize={pageSize}
+          />
+        ) : (
+          <></>
+        )}
       </Row>
     </>
   );
