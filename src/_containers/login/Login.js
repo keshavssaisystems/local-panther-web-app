@@ -5,14 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  InputGroup,
-  InputGroupText,
-  Input,
-} from "reactstrap";
+import { Card, CardBody, CardTitle } from "reactstrap";
 
 import Slider from "react-slick";
 
@@ -33,9 +26,6 @@ export function Login() {
   const authError = useSelector((x) => x.auth.error);
   const [error, setError] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState("");
-
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -51,17 +41,13 @@ export function Login() {
 
   useEffect(() => {
     if (authUser) {
-      if (authUser) {
+      if (authUser.data.token) {
         history.navigate("/");
       } else {
         setError(true);
       }
     }
   }, [authUser]);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -75,7 +61,7 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit({ email, password }) {
-    dispatch(authActions.login({ email, password }));
+    let response = dispatch(authActions.login({ email, password }));
   }
 
   console.log("isSubmitting :>> ", isSubmitting);
@@ -162,9 +148,9 @@ export function Login() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="email">Email</Label>
+                          <Label for="email">User name</Label>
                           <input
-                            type="email"
+                            type="text"
                             name="Email"
                             id="email"
                             placeholder="Email"
@@ -181,23 +167,16 @@ export function Login() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="password">Password</Label>
-                          <InputGroup>
-                            <input
-                              placeholder="password"
-                              name="password"
-                              type={showPassword ? "text" : "password"}
-                              id="password"
-                              {...register("password")}
-                              className={`form-control ${
-                                errors.password ? "is-invalid" : ""
-                              }`}
-                            />
-                            <InputGroupText
-                              onClick={(evt) => togglePasswordVisibility()}
-                            >
-                              {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </InputGroupText>
-                          </InputGroup>
+                          <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Password"
+                            {...register("password")}
+                            className={`form-control ${
+                              errors.password ? "is-invalid" : ""
+                            }`}
+                          />
                           <div className="invalid-feedback">
                             {errors.password?.message}
                           </div>
