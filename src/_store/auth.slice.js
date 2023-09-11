@@ -45,7 +45,6 @@ function createExtraActions() {
   };
 
   function login() {
-    console.log(baseUrl);
     return createAsyncThunk(`${name}/login`, async ({ email, password }) => {
       return await fetchWrapper.post(`${baseUrl}/Login`, { email, password });
     });
@@ -64,10 +63,8 @@ function createExtraReducers() {
         })
         .addCase(fulfilled, (state, { payload: { data = {} } = {} }) => {
           const { token, refreshToken, menuDtoList = [] } = data;
-          state.menuList = menuDtoList;
+          state.menuDtoList = menuDtoList;
           state.user = data;
-          state.token = token;
-          localStorage.setItem("menuList", JSON.stringify(menuDtoList)); //temp fix
           localStorage.setItem("token", token);
           localStorage.setItem("refreshToken", refreshToken);
 

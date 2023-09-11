@@ -41,7 +41,7 @@ export function Login() {
 
   useEffect(() => {
     if (authUser) {
-      if (authUser.data.token) {
+      if (authUser) {
         history.navigate("/");
       } else {
         setError(true);
@@ -148,9 +148,9 @@ export function Login() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="email">User name</Label>
+                          <Label for="email">Email</Label>
                           <input
-                            type="text"
+                            type="email"
                             name="Email"
                             id="email"
                             placeholder="Email"

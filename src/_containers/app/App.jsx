@@ -26,10 +26,10 @@ export function App() {
 
     return (
         <>
-            {authUser?.data?.token && <AppHeader />}
-            <div className={authUser?.data?.token ? `app-main` : ''}>
-            {authUser.data.token &&  <AppSidebar />}
-                <div className={authUser?.data?.token ? `app-main__outer` : ''}>
+            {authUser && <AppHeader />}
+            <div className={authUser ? `app-main` : ''}>
+            {authUser &&  <AppSidebar />}
+                <div className={authUser ? `app-main__outer` : ''}>
                     <div className="app-main__inner">
                     
                         <Routes>
@@ -53,7 +53,7 @@ export function App() {
                             
                         </Routes>
                     </div>
-                    {authUser?.data?.token && <AppFooter />}
+                    {authUser && <AppFooter />}
                 </div>
             </div>
       
