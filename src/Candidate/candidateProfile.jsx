@@ -127,13 +127,13 @@ export function CandidateProfile(props) {
                                                 <Col>
                                                     <Label for="exampleEmail">First Name</Label>
                                                     <Input disabled type="text" name="firstname" id="firstname" placeholder="with a placeholder"
-                                                        value={selectedCandidateList.firstname} />
+                                                        value={applyMask(selectedCandidateList.firstname)} />
                                                 </Col>
 
                                                 <Col>
                                                     <Col>
                                                         <Label >Middle Name :</Label>
-                                                        <Input disabled type="text" name="firstname" id="firstname" placeholder=""
+                                                        <Input disabled type="text" name="middlename" id="middlename" placeholder=""
                                                             value="" />
                                                     </Col>
                                                 </Col>
@@ -142,18 +142,18 @@ export function CandidateProfile(props) {
                                             <Row className="mb-2">
                                                 <Col className="col-md-6">
                                                     <Label className="me-2">Last Name :</Label>
-                                                    <Input type="text" disabled='true' id="lastname" name="lastname" value={selectedCandidateList.lastname} />
+                                                    <Input type="text" disabled='true' id="lastname" name="lastname" value={applyMask(selectedCandidateList.lastname)} />
                                                 </Col>
                                                 <Col className="col-md-6">
                                                     <Label className="me-2">Email : </Label>
-                                                    <Input type="text" disabled='true' id="email" name="email" value={selectedCandidateList.email} />
+                                                    <Input type="text" disabled='true' id="email" name="email" value={maskEmail(selectedCandidateList.email)} />
                                                 </Col>
                                             </Row>
 
                                             <Row className="mb-2">
                                                 <Col className="col-md-6">
                                                     <Label className="me-2">Contact :</Label>
-                                                    <Input type="text" disabled='true' id="contact" name="contact" value={selectedCandidateList.phonenumber} />
+                                                    <Input type="text" disabled='true' id="contact" name="contact" value={formatPhoneNumber(selectedCandidateList.phonenumber)} />
                                                 </Col>
                                                 <Col className="col-md-6">
                                                     <Label className="me-2">Emergency Contact :</Label>
