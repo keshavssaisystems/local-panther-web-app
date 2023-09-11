@@ -8,20 +8,21 @@ import { jobListActions } from '_store';
 export function JobList() {
   const dispatch = useDispatch();
   let filterObj = {
-    "jobId" : "",
-    "pageNo" : 1,
-    "searchText" : "", 
-    "minExperience" : "", 
-    "employentModeId" : ""  
+    "jobId": "",
+    "pageNo": 1,
+    "searchText": "",
+    "minExperience": "",
+    "employentModeId": ""
   }
   useEffect(() => {
     getJobList(filterObj)
-  },[]);
-  const getJobList = async function (filterObj){
+  }, []);
+  const getJobList = async function (filterObj) {
     console.log(filterObj);
     await dispatch(jobListActions.getJobList(filterObj));
   }
   let JobList = useSelector(state => state.jobList);
+  console.log('l', JobList)
   const onFilterClick = (filterData) => {
     console.log(filterData);
   }
@@ -38,20 +39,20 @@ export function JobList() {
     getJobList(filterOnPageChange);
   }
   return (
-      <>
-        <Row>
-          <Col md="12">
-            <Card className="main-card mb-3">
-              <CardBody>
-                <CardTitle className="mb-0">Open Jobs <Button className="float-end mb-0" color="primary">Create Job</Button></CardTitle>
-              </CardBody>
-            </Card>
-          </Col>
-          <JobFilter onFilter={onFilterClick} />
-          <JobListing jobData={JobList} 
+    <>
+      <Row>
+        <Col md="12">
+          <Card className="main-card mb-3">
+            <CardBody>
+              <CardTitle className="mb-0">Open Jobs <Button className="float-end mb-0" color="primary">Create Job</Button></CardTitle>
+            </CardBody>
+          </Card>
+        </Col>
+        <JobFilter onFilter={onFilterClick} />
+        <JobListing jobData={JobList}
           onPageChange={onPageChange} pageSize={5}
-           />
-        </Row>
-      </>
+        />
+      </Row>
+    </>
   );
 }

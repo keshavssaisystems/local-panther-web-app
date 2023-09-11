@@ -14,13 +14,13 @@ export const jobListReducer = slice.reducer;
 
 // implementation
 function createInitialState() {
-    return {
-        jobList: []
-    }
+  return {
+    jobList: []
+  }
 }
 
 function createExtraActions() {
-    const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
   return {
     getJobList: getJobList(),
@@ -30,31 +30,31 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getJobList`,
 
-      async ({ jobId, pageNo, searchText, minExperience, employentModeId }) =>
+      async ({ jobId, pageNo, searchText, minExperience, employentModeId, pageSize }) =>
         await fetchWrapper.get(
-          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}&searchText=${searchText}&minExperience=${minExperience}&employmentmodeid=${employentModeId}`
+          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=${pageSize}&pageNumber=${pageNo}&searchText=${searchText}&minExperience=${minExperience}&employmentmodeid=${employentModeId}`
         )
     );
   }
 }
 
 function createExtraReducers() {
-    return (builder) => {
-        getJobList();
+  return (builder) => {
+    getJobList();
 
-        function getJobList() {
-            var { pending, fulfilled, rejected } = extraActions.getJobList;
-            builder
-                .addCase(pending, (state) => {
-                    state.jobList = { loading: true };
-                })
-                .addCase(fulfilled, (state, action) => {
-                    state.jobList = action.payload.data.jobList;
-                    state.totalRows = action.payload.data.totalRows;
-                })
-                .addCase(rejected, (state, action) => {
-                    state.jobList = { error: action.error };
-                });
-        }
-    };
+    function getJobList() {
+      var { pending, fulfilled, rejected } = extraActions.getJobList;
+      builder
+        .addCase(pending, (state) => {
+          state.jobList = { loading: true };
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.jobList = action.payload.data.jobList;
+          state.totalRows = action.payload.data.totalRows;
+        })
+        .addCase(rejected, (state, action) => {
+          state.jobList = { error: action.error };
+        });
+    }
+  };
 }
