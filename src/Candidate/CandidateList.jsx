@@ -49,7 +49,8 @@ export function CandidateList() {
     var isPopOver = useRef(false)
     let searchData = useRef('')
     let skillPopover = useRef(false)
-
+    let rejectedCandidateId = useRef()
+    let rejectedApplicationId = useRef()
 
     const [reasonList, setReasonList] = useState([
         {
@@ -99,9 +100,9 @@ export function CandidateList() {
     }
 
     const getCandidatesList = async function () {
-        
+
         let url = 'JobApplications/GetJobAppliedCandidatesList/' + 3 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true&Applicationstatus=Applied'
-        if (searchData.current  != '') {
+        if (searchData.current != '') {
             url += '&searchText=' + searchData.current
         }
         if (minExp.current != undefined || minExp.current != null) {
@@ -113,7 +114,7 @@ export function CandidateList() {
 
 
         let response = await dispatch(candidateActions.getCandidates({ url }));
-        
+
         setList(response.payload.data.candidateList);
         setJobTitle(response.payload.data.jobTitle)
         totalPages.current = Math.round(Number(response.payload.data.totalRows) / pageSize)
@@ -210,7 +211,9 @@ export function CandidateList() {
         getCandidatesList()
     }
 
-    const rejectCandidate = function () {
+    const rejectCandidate = function (data) {
+        rejectedCandidateId.current = data.candidateid
+        rejectedApplicationId.current = data.jobapplicationid
         setRejectModal(!rejectModal)
     }
 
@@ -220,8 +223,10 @@ export function CandidateList() {
         isPopOver.current = true
     }
     const acceptRejectCandidate = async function (check, data) {
-        let candidateid = data.candidateid
-        let jobId = data.jobapplicationid
+        let candidateid;
+
+
+        let jobId
         let applicationstatusid = 0
         let rejectedreasonid = rejectReqData.rejectedreasonid
         let rejectedcomment = rejectReqData.rejectedcomment
@@ -229,11 +234,15 @@ export function CandidateList() {
         let applicationstatus;
         if (check == 'reject') {
             applicationstatus = 'Rejected'
+            candidateid = rejectedCandidateId.current
+            jobId = rejectedApplicationId.current
             rejectedreasonid = rejectReqData.rejectedreasonid
             rejectedcomment = rejectReqData.rejectedcomment
         }
         else {
             applicationstatus = 'Accepted'
+            candidateid = data.candidateid
+            jobId = data.jobapplicationid
         }
         let response = await dispatch(candidateActions.acceptRejectCandidate({ candidateid, jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
         if (check == 'accept') {
@@ -265,7 +274,8 @@ export function CandidateList() {
 
     const showSkills = (data) => {
         setselectedCandidate(data)
-        skillPopover.current = !skillPopover.current;
+        skillPopover.current = false;
+        skillPopover.current = true;
     }
 
     const handlePageChange = (page) => {
@@ -329,7 +339,7 @@ export function CandidateList() {
                                     </Col>
 
                                     <Col className="col-md-3">
-                                        <div className={cx("search-wrapper float-end", { active: true, })} style={{marginTop:'21px'}}>
+                                        <div className={cx("search-wrapper float-end", { active: true, })} style={{ marginTop: '21px' }}>
                                             <div className="input-holder">
                                                 <input type="text" className="search-input" id="search-input" value={searchText} onInput={(evt) =>
                                                     onSearch(evt.target.value)} placeholder="Search by skill/location" />
@@ -392,15 +402,15 @@ export function CandidateList() {
                                                     }
                                                 </td>
                                                 <td>
-                                                    <Button className=" me-2 btn-transition" 
-                                                    style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt)=>onShowProfile(col)}>
+                                                    <Button className=" me-2 btn-transition"
+                                                        style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) => onShowProfile(col)}>
                                                         <span> Profile</span>
                                                     </Button>
 
                                                     <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col)} >
                                                         <span> Accept</span>
                                                     </Button>
-                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => rejectCandidate()}>
+                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => rejectCandidate(col)}>
                                                         <span>Reject</span>
                                                     </Button>
                                                 </td>
@@ -566,7 +576,7 @@ export function CandidateList() {
                             <Row>
                                 <Col className="d-flex justify-content-center ">
 
-                                    <Button className="me-2" color="primary" onClick={(evt) => acceptRejectCandidate('reject')}>
+                                    <Button className="me-2" color="primary" onClick={(evt) => acceptRejectCandidate('reject', '')}>
                                         submit
                                     </Button>
                                     <Button color="primary" onClick={(evt) => rejectCandidateCancel()}>
