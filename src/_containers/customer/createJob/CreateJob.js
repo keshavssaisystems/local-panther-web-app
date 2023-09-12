@@ -35,7 +35,7 @@ export function CreateJob() {
   const checkValidation = (event) => {
     event.preventDefault();
     setShowPopup(false);
-    setShowPopupWithNextStep(false);
+    // setShowPopupWithNextStep(false);
     if (event.target.elements.jobTitle.value === "") {
       setJobTitleValidation(true);
     }
@@ -46,7 +46,7 @@ export function CreateJob() {
       setRequiredSkillsValidation(true);
     }
     if (event.target.elements.department.value === "") {
-      setDepartmentValidation(false);
+      setDepartmentValidation(true);
     }
     if (event.target.elements.jobRole.value === "") {
       setJobRoleValidation(true);
@@ -67,7 +67,7 @@ export function CreateJob() {
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.jobDescription.value !== "" &&
       event.target.elements.skills.value !== "" &&
-      // event.target.elements.department.value !== "" &&
+      event.target.elements.department.value !== "" &&
       event.target.elements.jobRole.value !== "" &&
       event.target.elements.location.value !== "" &&
       event.target.elements.rolesResponsibilities.value !== "" &&
@@ -78,14 +78,14 @@ export function CreateJob() {
     }
   };
   const getLocationDetails = (locationString) => {
-    // console.log(locationString);
     let locationDetails = [];
     let splitDetails = locationString.split(",");
     locationDetails = [
       {
         jobid: 0,
         joblocationid: 0,
-        location: splitDetails[3],
+        location:
+          splitDetails[3] + ", " + splitDetails[4] + ", " + splitDetails[5],
         cityid: splitDetails[0],
         stateid: splitDetails[1],
         statename: splitDetails[4],
@@ -99,10 +99,28 @@ export function CreateJob() {
     ];
     return locationDetails;
   };
+  const getSkillsDetails = (skillsString) => {
+    console.log(skillsString);
+    let skillsDetails = [];
+    let splitDetails = skillsString.split(",");
+    splitDetails.forEach((element) => {
+      let skillsDetailObj = {
+        jobskillid: 0,
+        jobid: 0,
+        skillid: 0,
+        skillname: element.trim(),
+        isactive: true,
+        currentUserId: 0,
+      };
+      skillsDetails.push(skillsDetailObj);
+    });
+    return skillsDetails;
+  };
   const onSubmitClick = (event) => {
     let locationDetails = getLocationDetails(
       event.target.elements.location.value
     );
+    let skillDetails = getSkillsDetails(event.target.elements.skills.value);
     let data = {
       jobid: 0,
       companyid: 1,
@@ -119,10 +137,11 @@ export function CreateJob() {
       responsibilities: event.target.elements.rolesResponsibilities.value,
       isactive: true,
       jobLocationDtos: locationDetails,
+      jobSkillDtos: skillDetails,
     };
     console.log(data);
     createJob(data);
-    // setShowPopupWithNextStep(!showPopupWithNextStep);
+    setShowPopupWithNextStep(!showPopupWithNextStep);
   };
   const dispatch = useDispatch();
   const createJob = async function (formElement) {
@@ -212,21 +231,11 @@ export function CreateJob() {
                     />
                   </Col>
                   <Col md="3">
-                    {/* <Location
+                    <Location
                       label={"Location"}
                       name={"location"}
                       id={"location"}
                       defaultOption={"search city"}
-                      showValidation={showLocationValidation}
-                      validationMessage={"Please select location"}
-                      mandatory={true}
-                    /> */}
-                    <InputFormGroup
-                      label={"Location"}
-                      name={"location"}
-                      id={"location"}
-                      type={"text"}
-                      placeholder={"search city"}
                       showValidation={showLocationValidation}
                       validationMessage={"Please select location"}
                       mandatory={true}

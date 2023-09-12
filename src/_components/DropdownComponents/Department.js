@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SelectFormGroup } from "../FormComponents/SelectFormGroup";
+import { SelectFormGroupWithName } from "../FormComponents/SelectFormGroupWithName";
 import { useDispatch, useSelector } from "react-redux";
 import { departmentActions } from "_store";
 
@@ -15,7 +15,7 @@ export function Department({ showValidation, validationMessage, mandatory }) {
   departmentOptions = useSelector((state) => state.department.department);
   return (
     <>
-      <SelectFormGroup
+      <SelectFormGroupWithName
         label="Department"
         id="department"
         name="department"

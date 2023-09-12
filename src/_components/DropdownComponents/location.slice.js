@@ -31,9 +31,7 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getLocation`,
       async (searchText) =>
-        await fetchWrapper.get(
-          `${baseUrl}/Common/GetLocation?searchText=${searchText}`
-        )
+        await fetchWrapper.get(`${baseUrl}/Common/GetLocation`)
     );
   }
 }
