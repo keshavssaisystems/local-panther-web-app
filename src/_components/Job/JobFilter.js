@@ -38,9 +38,6 @@ export function JobFilter({ onFilter }) {
           <CardBody>
             <CardTitle>Filter</CardTitle>
             <Form onSubmit={onSubmitHandler}>
-              {/* <FormGroup>
-                                <FilterSelect id="customer" name="customer" label="Company" optionData={customerOptionsDummy} />
-                            </FormGroup> */}
               <FormGroup>
                 <FilterSelect
                   id="location"

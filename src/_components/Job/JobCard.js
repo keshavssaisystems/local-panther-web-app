@@ -26,9 +26,6 @@ export function JobCard({
           <Row>
             <Col md="12">
               <CardTitle>{name}</CardTitle>
-              {/* <Row className="mb-2">
-                                <Col><CardText className="fw-bold">{customer}</CardText></Col>
-                            </Row> */}
               <Row className="mb-2">
                 <Col>
                   <CardText>
@@ -44,7 +41,6 @@ export function JobCard({
               </Row>
               <CardText>{description}</CardText>
             </Col>
-            {/* <Col md="3"><img alt="Card" src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/generic-finance-and-marketing-icon-logo-design-template-3a451f9735990327f5b0f8a44711859c_screen.jpg?ts=1611418926" className="company-logo float-end" /></Col> */}
           </Row>
         </CardBody>
       </Card>

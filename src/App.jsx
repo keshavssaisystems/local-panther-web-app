@@ -49,9 +49,7 @@ export function App() {
                             <Route path="/candidate-list" element={<CandidateList />} />
                             <Route path="/recommended-job" element={<RecommendedJobList />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="/registration" element={<Registration />} />
-                            {/* <Route path="*" element={<Navigate to="/" />} /> */}
-                            
+                            <Route path="/registration" element={<Registration />} />        
                         </Routes>
                     </div>
                     {authUser && <AppFooter />}
