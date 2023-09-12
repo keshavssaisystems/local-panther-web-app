@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { locationActions } from "_store";
-import {
-  Label,
-  Input,
-  FormGroup,
-  FormText,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
-} from "reactstrap";
+import SelectSearch from "react-select-search";
+import "react-select-search/style.css";
+import { Label, Input, FormGroup, FormText } from "reactstrap";
 
 export function Location({
   name,
@@ -22,7 +16,7 @@ export function Location({
 }) {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  console.log(search);
+  // console.log(search);
   useEffect(() => {
     getDropDown();
   }, []);
@@ -42,7 +36,10 @@ export function Location({
           {label}
           {mandatory === true && <span style={{ color: "red" }}>* </span>}{" "}
         </Label>
-        {/* <Input id={id} name={name} type="select">
+        <Input id={id} name={name} type="select">
+          <option key="0" value="">
+            {defaultOption}
+          </option>
           {locationDetails.length > 0 &&
             locationDetails.map((options) => (
               <option
@@ -69,50 +66,10 @@ export function Location({
                   options.countryname}{" "}
               </option>
             ))}
-        </Input> */}
+        </Input>
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>
         )}
-        <Dropdown>
-          {/* <DropdownToggle> */}
-          <Input
-            placeholder="search placeholder"
-            onChange={(e) => {
-              setSearch(e.target.value);
-              onSearch();
-            }}
-            value={search}
-          />
-          {/* </DropdownToggle> */}
-          <DropdownMenu>
-            {locationDetails.length > 0 &&
-              locationDetails.map((options) => (
-                <DropdownItem
-                  key={options.cityid}
-                  value={
-                    options.cityid +
-                    "," +
-                    options.stateid +
-                    "," +
-                    options.countryid +
-                    "," +
-                    options.location +
-                    "," +
-                    options.statename +
-                    "," +
-                    options.countryname
-                  }
-                >
-                  {" "}
-                  {options.location +
-                    ", " +
-                    options.statename +
-                    ", " +
-                    options.countryname}{" "}
-                </DropdownItem>
-              ))}
-          </DropdownMenu>
-        </Dropdown>
       </FormGroup>
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SelectFormGroup } from "../FormComponents/SelectFormGroup";
+import { SelectFormGroupWithName } from "../FormComponents/SelectFormGroupWithName";
 import { useDispatch, useSelector } from "react-redux";
 import { remoteStatusActions } from "_store";
 
@@ -15,7 +15,7 @@ export function RemoteStatus({ showValidation, validationMessage, mandatory }) {
   remoteStatusOptions = useSelector((state) => state.remoteStatus.remoteStatus);
   return (
     <>
-      <SelectFormGroup
+      <SelectFormGroupWithName
         label="Remote Status"
         id="remoteStatus"
         name="remoteStatus"
