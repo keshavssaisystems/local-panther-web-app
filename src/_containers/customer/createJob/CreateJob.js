@@ -341,8 +341,6 @@ export function CreateJob() {
           </Col>
         </Form>
       </Row>
-      {/* <Button className="float-end button-submit-new" onClick={() => setShowPopup(!showPopup)}> Demo </Button>  
-        <Button className="float-end button-submit-new" onClick={() => setShowPopupWithNextStep(!showPopupWithNextStep)}> Demo2 </Button>   */}
       {showPopup === true && (
         <Popup
           type={"success"}

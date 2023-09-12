@@ -63,13 +63,7 @@ export function DetailsHeader({ heading, subHeading, image }) {
           <div className="menu-header-content btn-pane-right">
             <div>
               <h5 className="menu-header-title fw-bold">{heading}</h5>
-              {/* <p className="mb-0">{subHeading}</p> */}
             </div>
-            {/* <div className="menu-header-btn-pane">
-                            <div className="avatar-icon-wrapper me-2 avatar-icon-xl">
-                                <img src={image} alt="company-logo" className="company-logo logo-background" />
-                            </div>
-                        </div> */}
           </div>
         </div>
       </div>

@@ -19,7 +19,6 @@ export function JobDetail() {
   const [searchParams] = useSearchParams();
   let JobId = searchParams.get("JobId");
   let typeId = searchParams.get("type");
-  // console.log(typeId);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState({
     jobId: JobId,
@@ -111,9 +110,6 @@ export function JobDetail() {
           </div>
           <div className="p-3">
             <Row>
-              {/* <Col>
-                                <HeadingAndDetail heading={"Company Name"} detail={jobDetail.jobCompanyDtos.companyname} />
-                            </Col> */}
               <Col>
                 <HeadingAndDetail
                   heading={"No of Positions"}
@@ -136,9 +132,7 @@ export function JobDetail() {
                   detail={"Posted " + jobCreatedDate}
                 />
               </Col>
-              <Col>
-                {/* <HeadingAndDetail heading={"Job Posted On"} detail={"Posted " + jobCreatedDate} /> */}
-              </Col>
+              <Col></Col>
             </Row>
           </div>
           <HeadingAndDetailWithDiv

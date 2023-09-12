@@ -47,7 +47,6 @@ function createExtraReducers() {
         .addCase(fulfilled, (state, action) => {
           state.jobDetails = action;
           state.loading = false;
-          // console.log("action", action);
         })
         .addCase(rejected, (state, action) => {
           state.error = action.error;
