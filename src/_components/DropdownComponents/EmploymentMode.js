@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SelectFormGroup } from "../FormComponents/SelectFormGroup";
+import { SelectFormGroup } from "../formComponents/SelectFormGroup";
 import { useDispatch, useSelector } from "react-redux";
 import { employmentModeActions } from "_store";
 

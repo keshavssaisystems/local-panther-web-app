@@ -3,12 +3,8 @@ import cx from "classnames";
 
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 
-// import MegaMenu from "./Components/MegaMenu";
 import { UserBox } from "./Components/UserBox";
-import logo from "../../assets/utils/images/panther-logo.png";
-// import HeaderRightDrawer from "./Components/HeaderRightDrawer";
-
-// import HeaderDots from "./Components/HeaderDots";
+import logo from "../../../assets/utils/images/panther-logo.png";
 
 export function AppHeader({
   headerBackgroundColor = 'white',
@@ -30,13 +26,9 @@ export function AppHeader({
             })}>
             <div className="app-header-left">
               <img src={logo} width={"130px"} alt="logo"/>
-              {/* <SearchBox /> */}
-              {/* <MegaMenu /> */}
             </div>
             <div className="app-header-right">
-              {/* <HeaderDots /> */}
               <UserBox />
-              {/* <HeaderRightDrawer /> */}
             </div>
           </div>
         </CSSTransitionGroup>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Row, Col, Card, CardBody, CardTitle, Button, Label } from "reactstrap";
-import { JobListing } from "../../_components/Job/JobListing";
+import { JobListing } from "../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "../../_store";
 import { empmodeActions } from "_store";

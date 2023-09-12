@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SelectFormGroupWithName } from "../FormComponents/SelectFormGroupWithName";
+import { SelectFormGroupWithName } from "../formComponents/SelectFormGroupWithName";
 import { useDispatch, useSelector } from "react-redux";
 import { remoteStatusActions } from "_store";
 
