@@ -58,70 +58,70 @@ export const AppSidebar = () => {
             navigate(itemId);
           }}
           items={menuItems}
-          // items={[
-          //   {
-          //     title: "Home",
-          //     itemId: "/",
-          //     elemBefore: () => <Icon name="coffee" />
-          //   },
-          //   {
-          //     title: "Open Jobs",
-          //     itemId: "/JobList",
-          //     elemBefore: () => <Icon name="cloud-snow" />
-          //   },
-          //   {
-          //     title: "Candidate List",
-          //     itemId: "/candidate-list",
-          //     elemBefore: () => <Icon name="coffee" />
-          //   },
-          //   {
-          //     title: "Create Job",
-          //     itemId: "/create-job",
-          //     elemBefore: () => <Icon name="cloud-snow" />
-          //   },
-          //   {
-          //     title: "Recommended Job List",
-          //     itemId: "/recommended-job",
-          //     elemBefore: () => <Icon name="cloud-snow" />,
-          //   },
-          //   {
-          //     title: "About",
-          //     itemId: "/about",
-          //     elemBefore: () => <Icon name="user" />,
-          //     subNav: [
-          //       {
-          //         title: "Projects",
-          //         itemId: "/about/projects",
-          //         // Optional
-          //         elemBefore: () => <Icon name="cloud-snow" />
-          //       },
-          //       {
-          //         title: "Members",
-          //         itemId: "/about/members",
-          //         elemBefore: () => <Icon name="coffee" />
-          //       }
-          //     ]
-          //   },
-          //   {
-          //     title: "Next",
-          //     itemId: "/next",
-          //     elemBefore: () => <Icon name="user" />,
-          //     subNav: [
-          //       {
-          //         title: "Next 1",
-          //         itemId: "/next/next-1",
-          //         // Optional
-          //         elemBefore: () => <Icon name="cloud-snow" />
-          //       },
-          //       {
-          //         title: "Next 2",
-          //         itemId: "/next/next-2",
-          //         elemBefore: () => <Icon name="coffee" />
-          //       }
-          //     ]
-          //   },
+        // items={[
+        //   {
+        //     title: "Home",
+        //     itemId: "/",
+        //     elemBefore: () => <Icon name="coffee" />
+        //   },
+        //   {
+        //     title: "Open Jobs",
+        //     itemId: "/JobList",
+        //     elemBefore: () => <Icon name="cloud-snow" />
+        //   },
+        //   {
+        //     title: "Candidate List",
+        //     itemId: "/candidate-list",
+        //     elemBefore: () => <Icon name="coffee" />
+        //   },
+        //   {
+        //     title: "Create Job",
+        //     itemId: "/create-job",
+        //     elemBefore: () => <Icon name="cloud-snow" />
+        //   },
+        //   {
+        //     title: "Recommended Job List",
+        //     itemId: "/recommended-job",
+        //     elemBefore: () => <Icon name="cloud-snow" />,
+        //   },
+        //   {
+        //     title: "About",
+        //     itemId: "/about",
+        //     elemBefore: () => <Icon name="user" />,
+        //     subNav: [
+        //       {
+        //         title: "Projects",
+        //         itemId: "/about/projects",
+        //         // Optional
+        //         elemBefore: () => <Icon name="cloud-snow" />
+        //       },
+        //       {
+        //         title: "Members",
+        //         itemId: "/about/members",
+        //         elemBefore: () => <Icon name="coffee" />
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     title: "Next",
+        //     itemId: "/next",
+        //     elemBefore: () => <Icon name="user" />,
+        //     subNav: [
+        //       {
+        //         title: "Next 1",
+        //         itemId: "/next/next-1",
+        //         // Optional
+        //         elemBefore: () => <Icon name="cloud-snow" />
+        //       },
+        //       {
+        //         title: "Next 2",
+        //         itemId: "/next/next-2",
+        //         elemBefore: () => <Icon name="coffee" />
+        //       }
+        //     ]
+        //   },
 
-          // ]}
+        // ]}
         />
       </div>
     </>

@@ -18,6 +18,7 @@ export const authReducer = slice.reducer;
 function createInitialState() {
   return {
     // initialize state from local storage to enable user to stay logged in
+    token: localStorage.getItem("token"),
     error: null,
   };
 }
@@ -65,6 +66,7 @@ function createExtraReducers() {
           const { token, refreshToken, menuDtoList = [] } = data;
           state.menuDtoList = menuDtoList;
           state.user = data;
+          state.token = token;
           localStorage.setItem("token", token);
           localStorage.setItem("refreshToken", refreshToken);
 
