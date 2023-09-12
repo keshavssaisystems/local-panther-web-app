@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { Card, CardBody, CardTitle } from "reactstrap";
+import { Card, CardBody, CardTitle,InputGroup, InputGroupText, Input  } from "reactstrap";
 
 import Slider from "react-slick";
 
@@ -25,6 +25,9 @@ export function Login() {
   const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
   const [error, setError] = useState(false)
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState('');
 
   const [sliderSettings] = useState({
     dots: true,
@@ -50,6 +53,10 @@ export function Login() {
     }
 
   }, [authUser]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -155,15 +162,15 @@ export function Login() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="password">Password</Label>
-                          <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            placeholder="Password"
-                            {...register("password")}
-                            className={`form-control ${errors.password ? "is-invalid" : ""
-                              }`}
-                          />
+                          <InputGroup>
+
+                            <input placeholder="password" name="password"
+                              type={showPassword ? 'text' : 'password'}
+                              id="password"  {...register("password")}
+                              className={`form-control ${errors.password ? "is-invalid" : ""
+                                }`} />
+                            <InputGroupText onClick={(evt) => togglePasswordVisibility()}>{showPassword ? <FaEyeSlash /> : <FaEye />}</InputGroupText>
+                          </InputGroup>
                           <div className="invalid-feedback">{errors.password?.message}</div>
                         </FormGroup>
                       </Col>

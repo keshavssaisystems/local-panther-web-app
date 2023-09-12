@@ -12,31 +12,30 @@ export const AppSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const authUser = useSelector((x) => console.log('x >> ', x));
-  
+  const menuDtoList = useSelector(x => x?.auth?.menuDtoList);
+
   const [menuItems, setMenuItems] = useState([])
 
   useEffect(() => {
     let data = []
-    /* for (var i = 0; i < authUser.data.menuDtoList.length; i++) {
+    for (let variable of menuDtoList) {
       let obj = {
-        itemId: authUser.data.menuDtoList[i].path,
-        title: authUser.data.menuDtoList[i].menuname,
-        userroleid: authUser.data.menuDtoList[i].userroleid,
-        rolename: authUser.data.menuDtoList[i].rolename,
-        menuicon: authUser.data.menuDtoList[i].menuicon,
-        modulename: authUser.data.menuDtoList[i].modulename,
-        pathname: authUser.data.menuDtoList[i].path,
-        isview: authUser.data.menuDtoList[i].isview,
-        isadd: authUser.data.menuDtoList[i].isadd,
-        isedit: authUser.data.menuDtoList[i].isedit,
-        isdelete: authUser.data.menuDtoList[i].isdelete,
-        subMenuList: authUser.data.menuDtoList[i].subMenuList
+        itemId: variable.path,
+        title: variable.menuname,
+        userroleid: variable.userroleid,
+        rolename: variable.rolename,
+        menuicon: variable.menuicon,
+        modulename: variable.modulename,
+        pathname: variable.path,
+        isview: variable.isview,
+        isadd: variable.isadd,
+        isedit: variable.isedit,
+        isdelete: variable.isdelete,
+        subMenuList: variable.subMenuList
       }
       data.push(obj)
     }
-
-    setMenuItems(data) */
+    setMenuItems(data)
   }, []);
 
   return (
@@ -59,70 +58,70 @@ export const AppSidebar = () => {
             navigate(itemId);
           }}
           items={menuItems}
-          // items={[
-          //   {
-          //     title: "Home",
-          //     itemId: "/",
-          //     elemBefore: () => <Icon name="coffee" />
-          //   },
-          //   {
-          //     title: "Open Jobs",
-          //     itemId: "/JobList",
-          //     elemBefore: () => <Icon name="cloud-snow" />
-          //   },
-          //   {
-          //     title: "Candidate List",
-          //     itemId: "/candidate-list",
-          //     elemBefore: () => <Icon name="coffee" />
-          //   },
-          //   {
-          //     title: "Create Job",
-          //     itemId: "/create-job",
-          //     elemBefore: () => <Icon name="cloud-snow" />
-          //   },
-          //   {
-          //     title: "Recommended Job List",
-          //     itemId: "/recommended-job",
-          //     elemBefore: () => <Icon name="cloud-snow" />,
-          //   },
-          //   {
-          //     title: "About",
-          //     itemId: "/about",
-          //     elemBefore: () => <Icon name="user" />,
-          //     subNav: [
-          //       {
-          //         title: "Projects",
-          //         itemId: "/about/projects",
-          //         // Optional
-          //         elemBefore: () => <Icon name="cloud-snow" />
-          //       },
-          //       {
-          //         title: "Members",
-          //         itemId: "/about/members",
-          //         elemBefore: () => <Icon name="coffee" />
-          //       }
-          //     ]
-          //   },
-          //   {
-          //     title: "Next",
-          //     itemId: "/next",
-          //     elemBefore: () => <Icon name="user" />,
-          //     subNav: [
-          //       {
-          //         title: "Next 1",
-          //         itemId: "/next/next-1",
-          //         // Optional
-          //         elemBefore: () => <Icon name="cloud-snow" />
-          //       },
-          //       {
-          //         title: "Next 2",
-          //         itemId: "/next/next-2",
-          //         elemBefore: () => <Icon name="coffee" />
-          //       }
-          //     ]
-          //   },
+        // items={[
+        //   {
+        //     title: "Home",
+        //     itemId: "/",
+        //     elemBefore: () => <Icon name="coffee" />
+        //   },
+        //   {
+        //     title: "Open Jobs",
+        //     itemId: "/JobList",
+        //     elemBefore: () => <Icon name="cloud-snow" />
+        //   },
+        //   {
+        //     title: "Candidate List",
+        //     itemId: "/candidate-list",
+        //     elemBefore: () => <Icon name="coffee" />
+        //   },
+        //   {
+        //     title: "Create Job",
+        //     itemId: "/create-job",
+        //     elemBefore: () => <Icon name="cloud-snow" />
+        //   },
+        //   {
+        //     title: "Recommended Job List",
+        //     itemId: "/recommended-job",
+        //     elemBefore: () => <Icon name="cloud-snow" />,
+        //   },
+        //   {
+        //     title: "About",
+        //     itemId: "/about",
+        //     elemBefore: () => <Icon name="user" />,
+        //     subNav: [
+        //       {
+        //         title: "Projects",
+        //         itemId: "/about/projects",
+        //         // Optional
+        //         elemBefore: () => <Icon name="cloud-snow" />
+        //       },
+        //       {
+        //         title: "Members",
+        //         itemId: "/about/members",
+        //         elemBefore: () => <Icon name="coffee" />
+        //       }
+        //     ]
+        //   },
+        //   {
+        //     title: "Next",
+        //     itemId: "/next",
+        //     elemBefore: () => <Icon name="user" />,
+        //     subNav: [
+        //       {
+        //         title: "Next 1",
+        //         itemId: "/next/next-1",
+        //         // Optional
+        //         elemBefore: () => <Icon name="cloud-snow" />
+        //       },
+        //       {
+        //         title: "Next 2",
+        //         itemId: "/next/next-2",
+        //         elemBefore: () => <Icon name="coffee" />
+        //       }
+        //     ]
+        //   },
 
-          // ]}
+        // ]}
         />
       </div>
     </>
