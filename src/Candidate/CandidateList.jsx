@@ -1,19 +1,16 @@
 import { Title } from "chart.js";
 import React, { useState, useEffect, useRef } from "react";
 import {
-    Table, Label, Input, Pagination,
-    PaginationItem,
-    PaginationLink, Card, CardBody, CardTitle, Modal, ModalHeader, ModalBody, ModalFooter,
-    Form,
+    Table, Label, Input, Card, CardBody, Modal,
     FormGroup
 } from "reactstrap";
 import { candidateActions } from '_store';
 import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
 import { useSelector, useDispatch } from 'react-redux';
-import { CandidateDetails } from './candidateDetails';
-import PageTitle from "./pagetitle";
-import { CustomPagination } from "Candidate";
+import { CandidateProfile } from './candidateProfile';
+import PageTitle from "../_components/pagetitle";
+import { CustomPagination } from "../_components/pagination";
 import titlelogo from '../assets/utils/images/candidate.svg'
 import errorIcon from '../assets/utils/images/error_icon.png'
 import successIcon from '../assets/utils/images/success_icon.svg'
@@ -34,12 +31,10 @@ export function CandidateList() {
     const [showCandidate, setshowCandidate] = useState(false);
     const [selectedCandidate, setselectedCandidate] = useState();
     const [pageSize, setpageSize] = useState(10)
-    const [isPopOver, setIsPopOver] = useState(false)
-    const [isExpError, setIsExpError] = useState('false')
+    const [isExpError, setIsExpError] = useState(false)
     const [searchText, setSearchText] = useState('')
 
     const [jobTitle, setJobTitle] = useState()
-    const [maxExperience, setMaxExperience] = useState()
 
     const [acceptModal, setAcceptModal] = useState(false)
     const [showProfile, setShowProfile] = useState(false)
@@ -51,7 +46,11 @@ export function CandidateList() {
 
     var minExp = useRef()
     var maxExp = useRef()
-    let searchData = useRef()
+    var isPopOver = useRef(false)
+    let searchData = useRef('')
+    let skillPopover = useRef(false)
+    let rejectedCandidateId = useRef()
+    let rejectedApplicationId = useRef()
 
     const [reasonList, setReasonList] = useState([
         {
@@ -64,25 +63,6 @@ export function CandidateList() {
         }
     ])
 
-    const [expList, setExpList] = useState([
-        {
-            value: 1, label: "1"
-        },
-        {
-            value: 2, label: "2"
-        },
-        {
-            value: 1, label: "3"
-        },
-        {
-            value: 2, label: "4"
-        },
-        {
-            value: 1, label: "5"
-        },
-        {
-            value: 2, label: "6"
-        }])
 
 
     let rejectReqData = {
@@ -120,13 +100,12 @@ export function CandidateList() {
     }
 
     const getCandidatesList = async function () {
-        console.log(searchText);
 
-        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 2 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true'
-        if (searchData.current != undefined || searchData.current != null) {
+        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 3 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true&Applicationstatus=Applied'
+        if (searchData.current != '') {
             url += '&searchText=' + searchData.current
         }
-        if (minExp.current != undefined || maxExp.current != null) {
+        if (minExp.current != undefined || minExp.current != null) {
             url += '&minExperience=' + minExp.current
         }
         if (maxExp.current != undefined || maxExp.current != null) {
@@ -135,6 +114,7 @@ export function CandidateList() {
 
 
         let response = await dispatch(candidateActions.getCandidates({ url }));
+
         setList(response.payload.data.candidateList);
         setJobTitle(response.payload.data.jobTitle)
         totalPages.current = Math.round(Number(response.payload.data.totalRows) / pageSize)
@@ -156,15 +136,12 @@ export function CandidateList() {
         if (today == appliedDate) {
             istoday = true
         }
+        debugger;
         const diffDays = Math.round(Math.abs((today - appliedDate) / oneDay));
-        let daysMsg = "Applied " + (today ? ' Today' : (diffDays == 1 ? +diffDays + " day ago" : diffDays + " days ago"))
+        let daysMsg = "Applied " + (istoday ? ' Today' : (diffDays == 1 ? +diffDays + " day ago" : diffDays + " days ago"))
 
         return daysMsg
 
-    }
-
-    const onchangePage = function (data) {
-        getCandidatesList()
     }
 
     const onHandleExpChange = function (check, event) {
@@ -172,20 +149,16 @@ export function CandidateList() {
 
         if (minExp.current && maxExp.current) {
             if (minExp.current > maxExp.current) {
-                setIsExpError('true')
+                setIsExpError(true)
             }
             else {
-                setIsExpError('false')
+                setIsExpError(false)
             }
         }
         else {
-            setIsExpError('false')
+            setIsExpError(false)
         }
 
-    }
-
-    const openProfile = function () {
-        setShowProfile(!showProfile)
     }
 
     const applyMask = function (inputValue) {
@@ -210,38 +183,50 @@ export function CandidateList() {
         return maskedValue;
     }
 
-    const onSelectCandidate = function (data) {
+    const onShowProfile = function (data) {
         setselectedCandidate(data)
         setshowCandidate(true)
 
     }
 
     const onSearch = function (data) {
+        setSearchText(data)
         searchData.current = data
 
     }
     const onReset = function () {
-        minExp.current = null
-        maxExp.current = null
-        setIsExpError('false')
+        minExp.current = undefined
+        maxExp.current = undefined
+
+        document.getElementById('minExp').value = undefined
+        document.getElementById('maxExp').value = undefined
+
+        setIsExpError(false)
         getCandidatesList()
     }
 
     const onClearSearch = function () {
-        searchData.current = undefined
-        document.getElementById('search-input').value = ''
+        setSearchText('')
+        searchData.current = ''
         getCandidatesList()
     }
 
-    const rejectCandidate = function () {
+    const rejectCandidate = function (data) {
+        rejectedCandidateId.current = data.candidateid
+        rejectedApplicationId.current = data.jobapplicationid
         setRejectModal(!rejectModal)
     }
 
     const showPopOver = function (data) {
         setselectedCandidate(data)
-        setIsPopOver(true)
+        isPopOver.current = false
+        isPopOver.current = true
     }
-    const acceptRejectCandidate = async function (check, candidateid) {
+    const acceptRejectCandidate = async function (check, data) {
+        let candidateid;
+
+
+        let jobId
         let applicationstatusid = 0
         let rejectedreasonid = rejectReqData.rejectedreasonid
         let rejectedcomment = rejectReqData.rejectedcomment
@@ -249,11 +234,15 @@ export function CandidateList() {
         let applicationstatus;
         if (check == 'reject') {
             applicationstatus = 'Rejected'
+            candidateid = rejectedCandidateId.current
+            jobId = rejectedApplicationId.current
             rejectedreasonid = rejectReqData.rejectedreasonid
             rejectedcomment = rejectReqData.rejectedcomment
         }
         else {
             applicationstatus = 'Accepted'
+            candidateid = data.candidateid
+            jobId = data.jobapplicationid
         }
         let response = await dispatch(candidateActions.acceptRejectCandidate({ candidateid, jobId, applicationstatusid, rejectedreasonid, rejectedcomment, currentUserId, applicationstatus }));
         if (check == 'accept') {
@@ -270,17 +259,23 @@ export function CandidateList() {
 
     const getSkills = function (data) {
 
-        let skillData
+        let skillData = []
         skillDetails = []
         let splitData = data.split(',')
-        for (let i = 0; i < 3; i++) {
-            if (splitData[i]) {
-                skillDetails.push(splitData[i])
+        for (let i = 0; i < splitData.length; i++) {
+            if (i < 3) {
+                skillData.push(splitData[i])
             }
+            skillDetails.push(splitData[i])
         }
-        skillData = skillDetails.join()
-        return skillData;
+        return skillData.join(',');
 
+    }
+
+    const showSkills = (data) => {
+        setselectedCandidate(data)
+        skillPopover.current = false;
+        skillPopover.current = true;
     }
 
     const handlePageChange = (page) => {
@@ -297,35 +292,39 @@ export function CandidateList() {
                         <Card className="main-card mb-2">
                             <CardBody>
                                 <Row>
-                                    <Col className="col-md-6">
+                                    <Col className="col-md-9">
 
                                         <Row>
+
                                             <Col className="col-md-3">
+                                                <Label>Min Experience</Label>
                                                 <Input type="number" id="minExp" name="minExp" placeholder="Min Exp" value={minExp.current} style={{
                                                     borderColor:
-                                                        isExpError == 'true' ? 'red' : '#ced4da'
+                                                        isExpError ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('min',
                                                     evt.target.value)}>
                                                 </Input>
-                                            </Col>  
+                                            </Col>
+
                                             <Col className="col-md-3">
+                                                <Label>Min Experience</Label>
                                                 <Input type="number" id="maxExp" name="maxExp" value={maxExp.current} placeholder="Max Exp" style={{
                                                     borderColor:
-                                                        isExpError == 'true' ? 'red' : '#ced4da'
+                                                        isExpError ? 'red' : '#ced4da'
                                                 }} onChange={(evt) => onHandleExpChange('max',
                                                     evt.target.value)}>
                                                 </Input>
                                             </Col>
-                                            <Col className="col-md-4">
-                                                <Button className="col-md-4 me-2" onClick={(evt) => isExpError == 'false' ? getCandidatesList() : ''}
+                                            <Col className="col-md-4" style={{ marginTop: '30px' }}>
+                                                <Button className="col-md-4 me-2" onClick={(evt) => !isExpError ? getCandidatesList() : ''}
                                                     style={{
-                                                        backgroundColor: isExpError == 'false' ? 'rgb(33 91 153)' : 'grey',
-                                                        cursor: isExpError == 'false' ? 'pointer' : 'not-allowed'
+                                                        backgroundColor: !isExpError ? 'rgb(33 91 153)' : 'grey',
+                                                        cursor: !isExpError ? 'pointer' : 'not-allowed'
                                                     }}>
                                                     submit
                                                 </Button>
 
-                                                <Button className="col-md-4 me-2" onClick={(evt) => onReset()}
+                                                <Button className="col-md-3 me-2" onClick={(evt) => onReset()}
                                                     style={{
                                                         cursor: 'pointer'
                                                     }}>
@@ -334,15 +333,15 @@ export function CandidateList() {
                                             </Col>
 
                                         </Row>
-                                        {isExpError == 'true' ? <Label style={{ color: 'red' }}>Minimum experience should be less than Max
+                                        {isExpError ? <Label style={{ color: 'red' }}>Minimum experience should be less than Max
                                             Experience</Label> : ""}
 
                                     </Col>
 
-                                    <Col className="col-md-6">
-                                        <div className={cx("search-wrapper float-end", { active: true, })}>
+                                    <Col className="col-md-3">
+                                        <div className={cx("search-wrapper float-end", { active: true, })} style={{ marginTop: '21px' }}>
                                             <div className="input-holder">
-                                                <input type="text" className="search-input" id="search-input" value={searchData.current} onInput={(evt) =>
+                                                <input type="text" className="search-input" id="search-input" value={searchText} onInput={(evt) =>
                                                     onSearch(evt.target.value)} placeholder="Search by skill/location" />
                                                 <button onClick={(evt) => getCandidatesList()}
                                                     className="search-icon">
@@ -395,23 +394,23 @@ export function CandidateList() {
 
                                                 <td className="align-middle">{col.experienceyears + " years"}</td>
                                                 <td>{col.noticeperiod}</td>
-                                                <td>{getSkills(col.secondaryskills)}
+                                                <td>{getSkills(col.secondaryskills) + " "}
                                                     {skillDetails.length > 3 ?
-                                                        <div>
-                                                            <a href=''>+{skillDetails.length - 3} More</a>
-                                                        </div> : <></>
+
+                                                        <a style={{ color: '#215B99', borderBottom: 'solid 2px', cursor: 'pointer', fontSize: '13px' }} id="skill-popover" onClick={(evt) => showSkills(col)}>+{skillDetails.length - 3} More</a>
+                                                        : <></>
                                                     }
                                                 </td>
                                                 <td>
-                                                    {/* <Button className=" me-2 btn-transition" style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) =>
-                                                        onSelectCandidate(col)}>
+                                                    <Button className=" me-2 btn-transition"
+                                                        style={{ backgroundColor: 'rgb(33 91 153)', cursor: 'pointer', height: '30px' }} onClick={(evt) => onShowProfile(col)}>
                                                         <span> Profile</span>
-                                                    </Button> */}
+                                                    </Button>
 
-                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col.candidateid)} >
+                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => acceptRejectCandidate('accept', col)} >
                                                         <span> Accept</span>
                                                     </Button>
-                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => rejectCandidate()}>
+                                                    <Button className=" me-2 btn-dark" style={{ cursor: 'pointer', height: '30px' }} onClick={(evt) => rejectCandidate(col)}>
                                                         <span>Reject</span>
                                                     </Button>
                                                 </td>
@@ -428,11 +427,11 @@ export function CandidateList() {
                         <CustomPagination totalPages={totalPages.current} pageIndex={pageIndex.current} onCallBack={handlePageChange}></CustomPagination>
                     </div>
                     : <div>
-                        <CandidateDetails selectedData={selectedCandidate} jobId={jobId}></CandidateDetails>
+                        <CandidateProfile selectedData={selectedCandidate} jobId={jobId}></CandidateProfile>
                     </div>
             }
 
-            {isPopOver ?
+            {isPopOver.current ?
                 <UncontrolledPopover placement='right' target={"Popover"}>
                     <PopoverHeader>
                         {selectedCandidate ? <div>
@@ -440,12 +439,12 @@ export function CandidateList() {
                                 <span className="menu-header-title" style={{ color: '#545cd8' }}>{applyMask(selectedCandidate.firstname + selectedCandidate.lastname)}</span>
                             </Row>
                             <Row style={{ fontSize: '12px' }}>
-                                <Col>
+                                <Col className="col-md-5">
                                     <span className="menu-header-subtitle">
                                         {selectedCandidate.primaryskills}
                                     </span>
                                 </Col>
-                                <Col>
+                                <Col className="col-md-7">
                                     <h6 style={{ fontSize: '12px' }} className="float-end">{getApplicationDate(selectedCandidate.applicationdate)}</h6>
                                 </Col>
 
@@ -465,6 +464,20 @@ export function CandidateList() {
                     </PopoverBody>
                 </UncontrolledPopover>
                 : <></>}
+
+            {skillPopover.current ?
+                <UncontrolledPopover placement='top' target={"skill-popover"}>
+                    <PopoverHeader style={{ fontWeight: '600' }}>Skills</PopoverHeader>
+                    <PopoverBody style={{ fontSize: '13px' }}>
+                        {selectedCandidate ? <div>
+                            <Row style={{ fontSize: '14px' }}>
+                                {selectedCandidate.secondaryskills}
+                            </Row>
+                        </div> : <></>}
+                    </PopoverBody>
+                </UncontrolledPopover>
+                : <></>}
+
             <Modal isOpen={rejectConfirmation}>
                 <Card >
                     <CardBody>
@@ -502,7 +515,7 @@ export function CandidateList() {
                         <div className="mb-0 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Candidate has been Accepted</div>
                         <div className="mb-3 d-flex justify-content-center" style={{ fontSize: '25px', fontWeight: '600' }}>Successfully</div>
                         <div>
-                            <Row className="d-flex justify-content-center mb-4">
+                            <Row style={{ fontSize: '18px' }} className="d-flex justify-content-center mb-4">
                                 Would you like to schedule an interview?
                             </Row>
                             <Row >
@@ -563,7 +576,7 @@ export function CandidateList() {
                             <Row>
                                 <Col className="d-flex justify-content-center ">
 
-                                    <Button className="me-2" color="primary" onClick={(evt) => acceptRejectCandidate('reject')}>
+                                    <Button className="me-2" color="primary" onClick={(evt) => acceptRejectCandidate('reject', '')}>
                                         submit
                                     </Button>
                                     <Button color="primary" onClick={(evt) => rejectCandidateCancel()}>
@@ -571,10 +584,6 @@ export function CandidateList() {
                                     </Button>
                                 </Col>
                             </Row>
-
-
-
-
 
                         </div>
                     </CardBody>

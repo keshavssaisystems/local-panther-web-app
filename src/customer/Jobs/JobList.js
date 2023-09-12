@@ -13,15 +13,17 @@ export function JobList() {
     searchText: "",
     minExperience: "",
     employentModeId: "",
+    pageSize: "5",
   };
   useEffect(() => {
     getJobList(filterObj);
   }, []);
   const getJobList = async function (filterObj) {
-    console.log(filterObj);
+    // console.log(filterObj);
     await dispatch(jobListActions.getJobList(filterObj));
   };
   let JobList = useSelector((state) => state.jobList);
+  // console.log("l", JobList);
   const onFilterClick = (filterData) => {
     console.log(filterData);
   };
@@ -32,9 +34,10 @@ export function JobList() {
       searchText: "",
       minExperience: "",
       employentModeId: "",
+      pageSize: "5",
     };
-    console.log(filterOnPageChange);
-    console.log(page);
+    // console.log(filterOnPageChange);
+    // console.log(page);
     getJobList(filterOnPageChange);
   };
   return (
@@ -52,11 +55,12 @@ export function JobList() {
             </CardBody>
           </Card>
         </Col>
-        <JobFilter onFilter={onFilterClick} />
+        {/* <JobFilter onFilter={onFilterClick} /> */}
         <JobListing
           jobData={JobList}
           onPageChange={onPageChange}
           pageSize={5}
+          type={"Open"}
         />
       </Row>
     </>
