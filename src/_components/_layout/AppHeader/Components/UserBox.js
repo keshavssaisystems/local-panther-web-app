@@ -1,7 +1,5 @@
 import React from "react";
 
-// import { IoIosCalendar } from "react-icons/io";
-
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { DropdownToggle, DropdownMenu,  Nav, Col, Row, Button, NavItem,
@@ -143,15 +141,6 @@ export function UserBox() {
               <div className="widget-heading">Alina Mclourd</div>
               <div className="widget-subheading">VP People Manager</div>
             </div>
-
-            {/* <div className="widget-content-right header-user-info mr-3">
-              <Button className="btn-shadow p-1" size="sm" color="info" id="Tooltip-1">
-                <IoIosCalendar color="#ffffff" fontSize="20px" />
-              </Button>
-              <UncontrolledTooltip placement="bottom" target={"Tooltip-1"}>
-                Click for Toastify Notifications!
-              </UncontrolledTooltip>
-            </div> */}
           </div>
         </div>
       </div>
