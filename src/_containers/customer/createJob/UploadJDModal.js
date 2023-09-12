@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, ModalBody, Form } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPuzzlePiece } from "@fortawesome/free-solid-svg-icons";
-import { FileUploadFormGroup } from "_components/Job/FormComponents/FileUploadFormGroup";
+import { FileUploadFormGroup } from "_components/FormComponents/FileUploadFormGroup";
 
 export function UploadJDModal() {
   const [modal, setModal] = useState(false);

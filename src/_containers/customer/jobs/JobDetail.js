@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col } from "reactstrap";
-import "./jobList.css";
+import "./jobList.scss";
 import { useDispatch, useSelector } from "react-redux";
 import {
   HeadingAndDetailWithDiv,
@@ -8,7 +8,7 @@ import {
   ButtonWithCount,
   HeadingWithPill,
   DetailsHeader,
-} from "../../_components/Job/JobDetailComponents";
+} from "../../../_components/Job/JobDetailComponents";
 import { jobListActions } from "_store";
 import Loader from "react-loaders";
 import { useSearchParams } from "react-router-dom";
@@ -30,6 +30,14 @@ export function JobDetail() {
     pageSize: "5",
   });
   useEffect(() => {
+    setFilter({
+      jobId: JobId,
+      pageNo: 1,
+      searchText: "",
+      minExperience: "",
+      employentModeId: "",
+      pageSize: "5",
+    });
     getJobList();
   }, []);
   const getJobList = async function () {

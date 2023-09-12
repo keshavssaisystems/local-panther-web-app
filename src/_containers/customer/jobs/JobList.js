@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
-import { JobFilter } from "../../_components/Job/JobFilter";
-import { JobListing } from "../../_components/Job/JobListing";
+import { JobListing } from "../../../_components/Job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
 
@@ -19,14 +18,9 @@ export function JobList() {
     getJobList(filterObj);
   }, []);
   const getJobList = async function (filterObj) {
-    // console.log(filterObj);
     await dispatch(jobListActions.getJobList(filterObj));
   };
   let JobList = useSelector((state) => state.jobList);
-  // console.log("l", JobList);
-  const onFilterClick = (filterData) => {
-    console.log(filterData);
-  };
   const onPageChange = (page) => {
     let filterOnPageChange = {
       jobId: "",
@@ -36,8 +30,6 @@ export function JobList() {
       employentModeId: "",
       pageSize: "5",
     };
-    // console.log(filterOnPageChange);
-    // console.log(page);
     getJobList(filterOnPageChange);
   };
   return (
@@ -55,7 +47,6 @@ export function JobList() {
             </CardBody>
           </Card>
         </Col>
-        {/* <JobFilter onFilter={onFilterClick} /> */}
         <JobListing
           jobData={JobList}
           onPageChange={onPageChange}
