@@ -78,16 +78,6 @@ export function RecommendedJobList() {
 
               <Row>
                 <Col md="3">
-                  {/* <div className="m-5">
-                    <Label for="minExperience">Minimum Experience:</Label>
-                    <Input
-                      type="number"
-                      id="minExperience"
-                      placeholder="Enter min experience"
-                      value={minExp.current}
-                      onChange={(e) => handleExperience("min", e.target.value)}
-                    />
-                  </div> */}
                   <div className="m-5">
                     <select
                       id="empModeSelect"

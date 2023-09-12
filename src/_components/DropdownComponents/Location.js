@@ -14,7 +14,6 @@ export function Location({
 }) {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  // console.log(search);
   useEffect(() => {
     getDropDown();
   }, []);

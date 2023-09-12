@@ -9,8 +9,8 @@ import { Dashboard } from 'dashboard';
 import { JobList } from '_containers/customer/jobs/JobList';
 import { JobDetail } from '_containers/customer/jobs/JobDetail';
 import { CreateJob }  from '_containers/customer/createJob/CreateJob'
-import { Login } from '_containers/login';
-import { Registration } from '_containers/registration';
+import { Login } from '_containers/login/Login';
+import { Registration } from '_containers/registration/Registration';
 import { CandidateList } from '_containers/candidate/recommendedcandidates/CandidateList';
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from '_layout/AppHeader';

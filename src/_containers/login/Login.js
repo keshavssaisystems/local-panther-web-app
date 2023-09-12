@@ -51,7 +51,6 @@ export function Login() {
         setError(true)
       }
     }
-
   }, [authUser]);
 
   const togglePasswordVisibility = () => {
