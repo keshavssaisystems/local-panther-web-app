@@ -1,15 +1,16 @@
 import React from "react";
 import { Label, Input, FormGroup, FormText } from "reactstrap";
-import "./Form.css";
+import "./Form.scss";
 
-export function FileUploadFormGroup({
+export function InputFormGroup({
   name,
+  type,
   id,
   label,
+  placeholder,
   mandatory,
   showValidation,
   validationMessage,
-  additionalClassName,
 }) {
   return (
     <>
@@ -19,14 +20,10 @@ export function FileUploadFormGroup({
           {label}
           {mandatory === true && <span style={{ color: "red" }}>* </span>}
         </Label>
-        <Input id={id} name={name} type={"file"} />
-        <FormText className={"float-end text-mute" + additionalClassName}>
-          Supported Formats: doc, docx, pdf, upto 5 MB
-        </FormText>
+        <Input id={id} name={name} type={type} placeholder={placeholder} />
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>
         )}
-        <div className={additionalClassName}></div>
       </FormGroup>
     </>
   );

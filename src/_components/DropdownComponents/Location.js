@@ -7,7 +7,6 @@ import {
   FormGroup,
   FormText,
   Dropdown,
-  DropdownToggle,
   DropdownMenu,
   DropdownItem,
 } from "reactstrap";
@@ -70,10 +69,10 @@ export function Location({
                   options.countryname}{" "}
               </option>
             ))}
-        </Input>
+        </Input> */}
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>
-        )} */}
+        )}
         <Dropdown>
           {/* <DropdownToggle> */}
           <Input

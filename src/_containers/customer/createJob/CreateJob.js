@@ -2,10 +2,10 @@ import { Department } from "_components/DropdownComponents/Department";
 import { EmploymentMode } from "_components/DropdownComponents/EmploymentMode";
 import { Experience } from "_components/DropdownComponents/Experience";
 import { RemoteStatus } from "_components/DropdownComponents/RemoteStatus";
-import { InputFormGroup } from "_components/Job/FormComponents/InputFormGroup";
+import { InputFormGroup } from "_components/FormComponents/InputFormGroup";
 import { Location } from "_components/DropdownComponents/Location";
 import React, { useState } from "react";
-import "./CreateJob.css";
+import "./CreateJob.scss";
 import { Row, Col, Card, CardBody, CardTitle, Button, Form } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPuzzlePiece } from "@fortawesome/free-solid-svg-icons";
@@ -34,6 +34,8 @@ export function CreateJob() {
     useState(false);
   const checkValidation = (event) => {
     event.preventDefault();
+    setShowPopup(false);
+    setShowPopupWithNextStep(false);
     if (event.target.elements.jobTitle.value === "") {
       setJobTitleValidation(true);
     }
@@ -210,7 +212,7 @@ export function CreateJob() {
                     />
                   </Col>
                   <Col md="3">
-                    <Location
+                    {/* <Location
                       label={"Location"}
                       name={"location"}
                       id={"location"}
@@ -218,8 +220,8 @@ export function CreateJob() {
                       showValidation={showLocationValidation}
                       validationMessage={"Please select location"}
                       mandatory={true}
-                    />
-                    {/* <InputFormGroup
+                    /> */}
+                    <InputFormGroup
                       label={"Location"}
                       name={"location"}
                       id={"location"}
@@ -228,7 +230,7 @@ export function CreateJob() {
                       showValidation={showLocationValidation}
                       validationMessage={"Please select location"}
                       mandatory={true}
-                    /> */}
+                    />
                   </Col>
                 </Row>
                 <Row>

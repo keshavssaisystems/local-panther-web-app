@@ -2,36 +2,36 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./auth.slice";
 import { usersReducer } from "./users.slice";
 import { jobListReducer } from "./jobList.slice";
-import { locationReducer } from "./location.slice";
+import { locationReducer } from "../_components/DropdownComponents/location.slice";
 import { candidateReducer } from "./candidate.slice";
-import { createjobReducer } from "./createjob.slice";
-import { employmentModeReducer } from "./employmentMode.slice";
+import { createjobReducer } from "../_containers/customer/createJob/createjob.slice";
+import { employmentModeReducer } from "../_components/DropdownComponents/employmentMode.slice";
 import { skillReducer } from "./dropdownskill.slice";
-import { remoteStatusReducer } from "./remoteStatus.slice";
+import { remoteStatusReducer } from "../_components/DropdownComponents/remoteStatus.slice";
 import { stateReducer } from "./dropdownstate.slice";
 import { cityReducer } from "./dropdowncity.slice";
-import { noticePeriodReducer } from "./noticePeriod.slice";
+import { noticePeriodReducer } from "../_components/DropdownComponents/noticePeriod.slice";
 import { applyForJobReducer } from "./applyForJob.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "./recommendejobList.slice";
-import { departmentReducer } from "./department.slice";
+import { departmentReducer } from "../_components/DropdownComponents/department.slice";
 
 export * from "./auth.slice";
 export * from "./users.slice";
 export * from "./jobList.slice";
-export * from "./location.slice";
+export * from "../_components/DropdownComponents/location.slice";
 export * from "./candidate.slice";
-export * from "./createjob.slice";
-export * from "./employmentMode.slice";
+export * from "../_containers/customer/createJob/createjob.slice";
+export * from "../_components/DropdownComponents/employmentMode.slice";
 export * from "./dropdownskill.slice";
-export * from "./remoteStatus.slice";
+export * from "../_components/DropdownComponents/remoteStatus.slice";
 export * from "./dropdownstate.slice";
 export * from "./dropdowncity.slice";
-export * from "./noticePeriod.slice";
+export * from "../_components/DropdownComponents/noticePeriod.slice";
 export * from "./applyForJob.slice";
 export * from "./jobDetail.slice";
 export * from "./recommendejobList.slice";
-export * from "./department.slice";
+export * from "../_components/DropdownComponents/department.slice";
 
 export const store = configureStore({
   reducer: {

@@ -6,9 +6,9 @@ import { history } from '_helpers';
 import { PrivateRoute } from '_components';
 import { Home } from 'home';
 import { Dashboard } from 'dashboard';
-import { JobList } from 'customer/Jobs/JobList';
-import { JobDetail } from 'customer/Jobs/JobDetail';
-import { CreateJob }  from 'customer/CreateJob/CreateJob'
+import { JobList } from '_containers/customer/jobs/JobList';
+import { JobDetail } from '_containers/customer/jobs/JobDetail';
+import { CreateJob }  from '_containers/customer/createJob/CreateJob'
 import { Login } from 'login';
 import { Registration } from 'registration';
 import { CandidateList } from 'Candidate';

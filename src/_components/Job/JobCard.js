@@ -1,6 +1,6 @@
 import React from "react";
 import { Row, Col, Card, CardBody, CardTitle, CardText } from "reactstrap";
-import "../../customer/Jobs/jobList.css";
+import "./job.scss";
 import { useNavigate } from "react-router-dom";
 
 export function JobCard({

@@ -1,5 +1,5 @@
-import { CheckboxFormGroup } from "_components/Job/FormComponents/CheckboxFormGroup";
-import { InputFormGroup } from "_components/Job/FormComponents/InputFormGroup";
+import { CheckboxFormGroup } from "_components/FormComponents/CheckboxFormGroup";
+import { InputFormGroup } from "_components/FormComponents/InputFormGroup";
 import { NoticePeriod } from "_components/DropdownComponents/NoticePeriod";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
