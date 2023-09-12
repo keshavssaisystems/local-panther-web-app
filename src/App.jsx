@@ -8,12 +8,11 @@ import { Home } from 'home';
 import { Dashboard } from 'dashboard';
 import { JobList } from 'customer/Jobs/JobList';
 import { JobDetail } from 'customer/Jobs/JobDetail';
-import FormStickyBasic  from 'createjob/CreateJob'
+import { CreateJob }  from 'customer/CreateJob/CreateJob'
 import { Login } from 'login';
 import { Registration } from 'registration';
 import { CandidateList } from 'Candidate';
 import { RecommendedJobList } from "Candidate/RecommendedJobList";
-
 import { AppHeader } from '_layout/AppHeader';
 import { AppSidebar } from '_layout/AppSidebar';
 import { AppFooter } from '_layout/AppFooter';
@@ -46,7 +45,7 @@ export function App() {
                             <Route path="/job-list" element={<JobList />} />
                             <Route path="/job-detail" element={<JobDetail />} />
                             <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/create-job" element={< FormStickyBasic/>} />
+                            <Route path="/createJob" element={<CreateJob />} />
                             <Route path="/candidate-list" element={<CandidateList />} />
                             <Route path="/recommended-job" element={<RecommendedJobList />} />
                             <Route path="/login" element={<Login />} />

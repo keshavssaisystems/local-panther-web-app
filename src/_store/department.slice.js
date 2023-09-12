@@ -1,21 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
 import { fetchWrapper } from "_helpers";
 
 // create slice
-const name = "createjob";
+const name = "department";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
 // exports
-export const createjobActions = { ...slice.actions, ...extraActions };
-export const createjobReducer = slice.reducer;
+export const departmentActions = { ...slice.actions, ...extraActions };
+export const departmentReducer = slice.reducer;
 
+// implementation
 function createInitialState() {
   return {
-    jobDetails: [],
+    department: [],
     loading: false,
   };
 }
@@ -24,33 +24,37 @@ function createExtraActions() {
   const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
 
   return {
-    getCreatejob: getCreatejob(),
+    getDepartment: getDepartment(),
   };
 
-  function getCreatejob() {
-    return createAsyncThunk(`${name}/getCreatejob`, async (jobData) => {
-      await fetchWrapper.post(`${baseUrl}/job`, { ...jobData });
-    });
+  function getDepartment() {
+    return createAsyncThunk(
+      `${name}/getDepartment`,
+      async () =>
+        await fetchWrapper.get(
+          `${baseUrl}/Common/GetCommonDropdown?searchText=department`
+        )
+    );
   }
 }
 
 function createExtraReducers() {
   return (builder) => {
-    getCreatejob();
+    getDepartment();
 
-    function getCreatejob() {
-      var { pending, fulfilled, rejected } = extraActions.getCreatejob;
+    function getDepartment() {
+      var { pending, fulfilled, rejected } = extraActions.getDepartment;
       builder
         .addCase(pending, (state) => {
+          state.department = [];
           state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          state.jobDetails = action;
+          state.department = action.payload.data;
           state.loading = false;
-          // console.log("action", action);
         })
         .addCase(rejected, (state, action) => {
-          state.error = action.error;
+          state.department = { error: action.error };
         });
     }
   };

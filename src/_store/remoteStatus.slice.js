@@ -1,56 +1,59 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
 import { fetchWrapper } from "_helpers";
 
 // create slice
-const name = "createjob";
+const name = "remoteStatus";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
 // exports
-export const createjobActions = { ...slice.actions, ...extraActions };
-export const createjobReducer = slice.reducer;
+export const remoteStatusActions = { ...slice.actions, ...extraActions };
+export const remoteStatusReducer = slice.reducer;
 
+// implementation
 function createInitialState() {
   return {
-    jobDetails: [],
+    remoteStatus: [],
     loading: false,
   };
 }
 
 function createExtraActions() {
-  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
 
   return {
-    getCreatejob: getCreatejob(),
+    getRemoteStatus: getRemoteStatus(),
   };
 
-  function getCreatejob() {
-    return createAsyncThunk(`${name}/getCreatejob`, async (jobData) => {
-      await fetchWrapper.post(`${baseUrl}/job`, { ...jobData });
-    });
+  function getRemoteStatus() {
+    return createAsyncThunk(
+      `${name}/getRemoteStatus`,
+      async () =>
+        await fetchWrapper.get(
+          `${baseUrl}/Common/GetCommonDropdown?searchText=remotestatus`
+        )
+    );
   }
 }
 
 function createExtraReducers() {
   return (builder) => {
-    getCreatejob();
+    getRemoteStatus();
 
-    function getCreatejob() {
-      var { pending, fulfilled, rejected } = extraActions.getCreatejob;
+    function getRemoteStatus() {
+      var { pending, fulfilled, rejected } = extraActions.getRemoteStatus;
       builder
         .addCase(pending, (state) => {
           state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          state.jobDetails = action;
+          state.remoteStatus = action.payload.data;
           state.loading = false;
-          // console.log("action", action);
         })
         .addCase(rejected, (state, action) => {
-          state.error = action.error;
+          state.remoteStatus = { error: action.error };
         });
     }
   };
