@@ -26,7 +26,9 @@ import {
 export function CandidateList() {
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams();
+    debugger;
     let jobId = searchParams.get("jobId");
+    jobId = jobId == null ? 3 : jobId 
 
     const [candidatesList, setCandidateList] = useState([])
     const [getCandidateList, setList] = useState([]);
