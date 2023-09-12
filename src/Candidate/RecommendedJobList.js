@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
+import { Row, Col, Card, CardBody, CardTitle, Button, Label } from "reactstrap";
 import { JobListing } from "../_components/Job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
@@ -21,16 +21,13 @@ export function RecommendedJobList() {
   const [pageSize, setPage] = useState(5);
   const [searchText, setSearchText] = useState("");
   const [filteredJobList, setFilteredJobList] = useState({});
-  const [minValue, setMinValue] = useState();
-  const [maxValue, setMaxValue] = useState();
+
 
   const [selectedEmpMode, setSelectedEmpMode] = useState("");
   const [input, setInput] = useState("");
   const [list, setList] = useState([]);
   const empModeData = useSelector((state) => state.empmode.user.data);
 
-  var minExp = useRef();
-  var maxExp = useRef();
   useEffect(() => {
     dispatch(empmodeActions.getEmpmode());
   }, [dispatch]);
@@ -56,22 +53,10 @@ export function RecommendedJobList() {
 
     filter.searchText = searchData.current;
 
-    if (minExp.current != undefined && minExp.current != null) {
-      data.minExperience = minExp.current;
-    }
-    if (maxExp.current != undefined && maxExp.current != null) {
-      data.maxExperience = minExp.current;
-    }
-
     let response = await dispatch(jobListActions.getJobList(data));
     setList(response.payload.data.jobList);
   };
 
-  const handleExperience = function (check, event) {
-    check == "min"
-      ? (minExp.current = Number(event))
-      : (maxExp.current = Number(event));
-  };
 
   const collectSearchData = (evt) => {
     searchData.current = evt.target.value;
@@ -79,107 +64,77 @@ export function RecommendedJobList() {
   };
   const inputClear = () => {
     searchData.current = "";
-    document.getElementById("search-input").value = "";
+
     getJobList();
   };
 
-  const onPageChange = (page) => {};
+  const onPageChange = (page) => { };
   return (
     <>
       <Row>
         <Col md="12">
           <Card className="main-card mb-3">
             <CardBody>
-              <CardTitle className="mb-0">Recommended Jobs </CardTitle>
+              <CardTitle className="mb-2">Recommended Jobs </CardTitle>
 
               <Row>
-                <Col md="3">
-                  {/* <div className="m-5">
-                    <Label for="minExperience">Minimum Experience:</Label>
-                    <Input
-                      type="number"
-                      id="minExperience"
-                      placeholder="Enter min experience"
-                      value={minExp.current}
-                      onChange={(e) => handleExperience("min", e.target.value)}
-                    />
-                  </div> */}
-                  <div className="m-5">
-                    <select
-                      id="empModeSelect"
-                      value={selectedEmpMode}
-                      onChange={handleEmpModeChange}
-                    >
-                      <option value="">Select an option</option>
-                      {empModeData.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
+
+                <Col className="col-md-9">
+                  <Row><Col md="3">
+                    <Label>Select employment mode: </Label>
+                    <div className="">
+                      <select
+                        id="empModeSelect"
+                        value={selectedEmpMode}
+                        onChange={handleEmpModeChange}
+                      >
+                        <option value="">Select an option</option>
+                        {empModeData.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </Col>
+                    <Col md="3">
+                      <div className="m-4">
+                        <Button type="buton" color="primary" onClick={getJobList}>
+                          Apply Filters
+                        </Button>
+                      </div>
+                    </Col>
+                    </Row>
+
+                </Col>
+
+
+                <Col className="col-md-3">
+                  <div className={cx("search-wrapper float-end", { active: true, })} style={{ marginTop: '21px' }}>
+                    <div className="input-holder">
+                      <input type="text" className="search-input" value={searchData.current}
+                        onChange={collectSearchData}
+                        placeholder="Search by skill/location" />
+                      <button
+                        className="search-icon"
+                        onClick={getJobList}>
+                        <span />
+                      </button>
+                    </div>
+                    <button style={{ left: '220px' }}
+                      className="btn-close" onClick={inputClear} />
                   </div>
                 </Col>
 
-                <Col md="3">
-                  {/* <div className="m-5">
-                    <Label for="maxExperience">Maximum Experience:</Label>
-                    <Input
-                      type="number"
-                      id="maxExperience"
-                      placeholder="Enter max experience"
-                      value={maxValue}
-                      onChange={(e) => handleExperience("max", e.target.value)}
-                    />
-                  </div> */}
-                  <div className="m-5">
-                    <Button type="buton" color="primary" onClick={getJobList}>
-                      Apply Filters
-                    </Button>
-                  </div>
-                </Col>
-                <Col md="6">
-                  {" "}
-                  <div className="input-holder m-5">
-                    <input
-                      type="text"
-                      id="search-input"
-                      className="search-input"
-                      value={searchData.current}
-                      onChange={collectSearchData}
-                      placeholder="Search by name,skill,location"
-                    />
-                    <button
-                      onClick={inputClear}
-                      className="btn-close"
-                      color="primary"
-                    />
-                    <Button
-                      onClick={getJobList}
-                      className="search-icon"
-                      color="primary"
-                    >
-                      <span />
-                      search
-                    </Button>
-                  </div>
-                </Col>
-                <Col md="3">
-                  <div className="m-4"></div>
-                </Col>
+
+
+
               </Row>
               <Row>
                 <Col md="3">
-                  <div className="m-4"></div>
+
                 </Col>
-                <Col md="3">
-                  {/* <div className="m-4">
-                    <select className="m-5">
-                      <option value="" selected>
-                        Enter location
-                      </option>
-                    </select>
-                  </div> */}
-                </Col>
+
               </Row>
 
               <Col md="3">
@@ -199,7 +154,7 @@ export function RecommendedJobList() {
                 ></div>
               </Col>
 
-              <Col> </Col>
+
             </CardBody>
           </Card>
         </Col>
