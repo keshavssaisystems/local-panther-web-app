@@ -9,8 +9,8 @@ import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
 import { useSelector, useDispatch } from 'react-redux';
 import { CandidateProfile } from '../candidateProfile';
-import PageTitle from "../../../_components/Common/pagetitle";
-import { CustomPagination } from "../../../_components/Common/pagination";
+import PageTitle from "../../../_components/common/pagetitle";
+import { CustomPagination } from "../../../_components/common/pagination";
 import titlelogo from '../../../assets/utils/images/candidate.svg'
 import errorIcon from '../../../assets/utils/images/error_icon.png'
 import successIcon from '../../../assets/utils/images/success_icon.svg'

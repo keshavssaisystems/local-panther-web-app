@@ -11,7 +11,7 @@ import {
     FormGroup,
 } from "reactstrap";
 import { useSelector, useDispatch } from 'react-redux';
-import PageTitle from "../../_components/Common/pagetitle";
+import PageTitle from "../../_components/common/pagetitle";
 
 
 export function CandidateProfile(props) {

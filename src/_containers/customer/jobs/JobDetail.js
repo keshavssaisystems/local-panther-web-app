@@ -8,7 +8,7 @@ import {
   ButtonWithCount,
   HeadingWithPill,
   DetailsHeader,
-} from "../../../_components/Job/JobDetailComponents";
+} from "../../../_components/job/JobDetailComponents";
 import { jobListActions } from "_store";
 import Loader from "react-loaders";
 import { useSearchParams } from "react-router-dom";

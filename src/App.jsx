@@ -13,9 +13,9 @@ import { Login } from '_containers/login/Login';
 import { Registration } from '_containers/registration/Registration';
 import { CandidateList } from '_containers/candidate/recommendedcandidates/CandidateList';
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
-import { AppHeader } from '_layout/AppHeader';
-import { AppSidebar } from '_layout/AppSidebar';
-import { AppFooter } from '_layout/AppFooter';
+import { AppHeader } from '_components/_layout/AppHeader';
+import { AppSidebar } from '_components/_layout/AppSidebar';
+import { AppFooter } from '_components/_layout/AppFooter';
 
 export function App() {
     const authUser = useSelector(x => x?.auth?.token);

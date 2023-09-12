@@ -1,5 +1,5 @@
 import React from "react";
-import { SelectFormGroup } from "../FormComponents/SelectFormGroup";
+import { SelectFormGroup } from "../formComponents/SelectFormGroup";
 
 export function Experience({
   name,

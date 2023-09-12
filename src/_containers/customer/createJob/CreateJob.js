@@ -1,9 +1,9 @@
-import { Department } from "_components/DropdownComponents/Department";
-import { EmploymentMode } from "_components/DropdownComponents/EmploymentMode";
-import { Experience } from "_components/DropdownComponents/Experience";
-import { RemoteStatus } from "_components/DropdownComponents/RemoteStatus";
-import { InputFormGroup } from "_components/FormComponents/InputFormGroup";
-import { Location } from "_components/DropdownComponents/Location";
+import { Department } from "_components/dropdownComponents/Department";
+import { EmploymentMode } from "_components/dropdownComponents/EmploymentMode";
+import { Experience } from "_components/dropdownComponents/Experience";
+import { RemoteStatus } from "_components/dropdownComponents/RemoteStatus";
+import { InputFormGroup } from "_components/formComponents/InputFormGroup";
+import { Location } from "_components/dropdownComponents/Location";
 import React, { useState } from "react";
 import "./CreateJob.scss";
 import { Row, Col, Card, CardBody, CardTitle, Button, Form } from "reactstrap";
@@ -12,8 +12,8 @@ import { faPuzzlePiece } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { createjobActions } from "_store";
 import { UploadJDModal } from "./UploadJDModal";
-import { Popup } from "_components/Common/Popup";
-import { PopupWithNextStep } from "_components/Common/PopupWithNextStep";
+import { Popup } from "_components/common/Popup";
+import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 
 export function CreateJob() {
   const [showPopup, setShowPopup] = useState(false);

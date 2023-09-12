@@ -12,9 +12,9 @@ import CountUp from "react-countup";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import city2 from "../../../assets/utils/images/dropdown-header/city2.jpg";
-import city3 from "../../../assets/utils/images/dropdown-header/city3.jpg";
-import avatar6 from "../../../assets/utils/images/avatars/2.jpg";
+import city2 from "../../../../assets/utils/images/dropdown-header/city2.jpg";
+import city3 from "../../../../assets/utils/images/dropdown-header/city3.jpg";
+import avatar6 from "../../../../assets/utils/images/avatars/2.jpg";
 
 import Flag from "react-flagkit";
 
