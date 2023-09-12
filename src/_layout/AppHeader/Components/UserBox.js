@@ -19,7 +19,7 @@ import avatar1 from "../../../assets/utils/images/avatars/1.jpg";
 import { authActions } from '_store';
 
 export function UserBox() {
-  const authUser = useSelector(x => x.auth.user);
+  const authUser = useSelector(x => x?.auth?.token);
   const dispatch = useDispatch();
   const logout = () => dispatch(authActions.logout());
 

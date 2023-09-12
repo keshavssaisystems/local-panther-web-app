@@ -8,13 +8,14 @@ import { candidateActions } from '_store';
 import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
 import { useSelector, useDispatch } from 'react-redux';
-import { CandidateProfile } from './candidateProfile';
-import PageTitle from "../_components/pagetitle";
-import { CustomPagination } from "../_components/pagination";
-import titlelogo from '../assets/utils/images/candidate.svg'
-import errorIcon from '../assets/utils/images/error_icon.png'
-import successIcon from '../assets/utils/images/success_icon.svg'
-import candidatelogo from '../assets/utils/images/profile_pic.svg'
+import { CandidateProfile } from '../candidateProfile';
+import PageTitle from "../../../_components/Common/pagetitle";
+import { CustomPagination } from "../../../_components/Common/pagination";
+import titlelogo from '../../../assets/utils/images/candidate.svg'
+import errorIcon from '../../../assets/utils/images/error_icon.png'
+import successIcon from '../../../assets/utils/images/success_icon.svg'
+import candidatelogo from '../../../assets/utils/images/profile_pic.svg'
+import { useSearchParams } from "react-router-dom";
 import {
 
     UncontrolledPopover,
@@ -24,8 +25,11 @@ import {
 
 export function CandidateList() {
     const dispatch = useDispatch();
+    const [searchParams] = useSearchParams();
+    debugger;
+    let jobId = searchParams.get("jobId");
+    jobId = jobId == null ? 3 : jobId 
 
-    let jobId = 2;
     const [candidatesList, setCandidateList] = useState([])
     const [getCandidateList, setList] = useState([]);
     const [showCandidate, setshowCandidate] = useState(false);
@@ -101,7 +105,7 @@ export function CandidateList() {
 
     const getCandidatesList = async function () {
 
-        let url = 'JobApplications/GetJobAppliedCandidatesList/' + 3 + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true&Applicationstatus=Applied'
+        let url = 'JobApplications/GetJobAppliedCandidatesList/' + jobId + '?pageSize=' + pageSize + '&pageNumber=' + pageIndex.current + '&isActive=true&Applicationstatus=Applied'
         if (searchData.current != '') {
             url += '&searchText=' + searchData.current
         }
@@ -136,7 +140,6 @@ export function CandidateList() {
         if (today == appliedDate) {
             istoday = true
         }
-        debugger;
         const diffDays = Math.round(Math.abs((today - appliedDate) / oneDay));
         let daysMsg = "Applied " + (istoday ? ' Today' : (diffDays == 1 ? +diffDays + " day ago" : diffDays + " days ago"))
 
@@ -366,7 +369,7 @@ export function CandidateList() {
                                         <th>Name</th>
                                         <th>Experience</th>
                                         <th>Notice Period</th>
-                                        <th>skills</th>
+                                        <th>Skills</th>
                                         <th></th>
 
                                     </tr>

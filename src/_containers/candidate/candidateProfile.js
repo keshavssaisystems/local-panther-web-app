@@ -11,8 +11,7 @@ import {
     FormGroup,
 } from "reactstrap";
 import { useSelector, useDispatch } from 'react-redux';
-import userlogo from '../assets/utils/images/Union.svg'
-import PageTitle from "../_components/pagetitle";
+import PageTitle from "../../_components/Common/pagetitle";
 
 
 export function CandidateProfile(props) {

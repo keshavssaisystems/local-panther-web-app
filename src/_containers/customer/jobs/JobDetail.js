@@ -13,7 +13,7 @@ import { jobListActions } from "_store";
 import Loader from "react-loaders";
 import { useSearchParams } from "react-router-dom";
 import moment from "moment/moment";
-import { ApplyJobModal } from "Candidate/ApplyJobModal";
+import { ApplyJobModal } from "../../../_containers/candidate/ApplyJobModal";
 
 export function JobDetail() {
   const [searchParams] = useSearchParams();
@@ -145,7 +145,7 @@ export function JobDetail() {
                 buttonName={"Applied Candidate"}
                 color={"primary"}
                 count={0}
-                action={"/candidate-list"}
+                action={"/candidate-list?jobId="+JobId}
               />
               <ButtonWithCount
                 buttonName={"Recommended Candidate"}

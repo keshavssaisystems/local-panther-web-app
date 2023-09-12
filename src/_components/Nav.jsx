@@ -6,7 +6,7 @@ import { authActions } from '_store';
 export { Nav };
 
 function Nav() {
-    const authUser = useSelector(x => x.auth.user);
+    const authUser = useSelector(x => x?.auth?.token);
     const dispatch = useDispatch();
     const logout = () => dispatch(authActions.logout());
 
