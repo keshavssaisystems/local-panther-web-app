@@ -7,6 +7,7 @@ export function InputFormGroup({
   type,
   id,
   label,
+  onChange,
   placeholder,
   mandatory,
   showValidation,
@@ -20,7 +21,8 @@ export function InputFormGroup({
           {label}
           {mandatory === true && <span style={{ color: "red" }}>* </span>}
         </Label>
-        <Input id={id} name={name} type={type} placeholder={placeholder} />
+        <Input id={id} name={name} type={type} placeholder={placeholder} onChange={onChange}/>
+
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>
         )}

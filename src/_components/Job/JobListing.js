@@ -1,23 +1,34 @@
 import React, { useCallback, useState } from "react";
 import { Card, CardBody, Col, CardText } from "reactstrap";
 import { JobCard } from "./JobCard";
-import { CustomPagination } from "../common/pagination";
+import { CardPagination } from "../common/cardpagination";
+import { JobDetail } from "../job/JobDetail";
 
 export function JobListing({ jobData, onPageChange, type, pageSize }) {
-  console.log(jobData);
+  const [selectedClass, setSelectedClass] = useState(
+    jobData.jobList.length > 0 ? jobData.jobList[0].jobid : "2"
+  );
+  let selectedJobDetails = [];
   let current = Number(jobData.totalRows) / pageSize;
   if (current * pageSize !== jobData.totalRows) {
     current++;
   }
   const [page, setPage] = useState(1);
+  const [selectedJobData, setSelectedJobData] = useState(jobData.jobList);
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
   }, []);
-
+  const getSelectedJob = (jobId) => {
+    selectedJobDetails = jobData.jobList.filter((element) => {
+      return element.jobid === jobId;
+    });
+    setSelectedJobData(selectedJobDetails);
+    setSelectedClass(jobId);
+  };
   return (
     <>
-      <Col md="12">
+      <Col md="4">
         {jobData.jobList.length > 0 &&
           jobData.jobList.map((job) => (
             <JobCard
@@ -38,7 +49,10 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
               description={job.description}
               role={job.jobrole}
               jobId={job.jobid}
-              typeId={type === "Open" ? 0 : 1}
+              createdDate={job.jobcreatedatetime}
+              type={type}
+              selectedJob={selectedClass}
+              getSelectedJobId={(e) => getSelectedJob(e)}
             />
           ))}
         {jobData.jobList.length === 0 && (
@@ -51,13 +65,14 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
           </Card>
         )}
         {jobData.jobList.length > 0 && (
-          <CustomPagination
+          <CardPagination
             totalPages={current}
             pageIndex={page}
             onCallBack={handlePageChange}
-          ></CustomPagination>
+          ></CardPagination>
         )}
       </Col>
+      <JobDetail jobDetails={selectedJobData} type={type} />
     </>
   );
 }

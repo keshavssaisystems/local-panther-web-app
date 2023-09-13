@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
-import { Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
+import { Row, Col, Card, CardBody, CardTitle } from "reactstrap";
 import { JobListing } from "../../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
+import { JobFilter } from "_components/job/JobFilter";
+import { BsFillPeopleFill } from "react-icons/bs";
 
 export function JobList() {
   const dispatch = useDispatch();
@@ -32,6 +34,9 @@ export function JobList() {
     };
     getJobList(filterOnPageChange);
   };
+  const onfliterData = (term) => {
+    console.log();
+  };
   return (
     <>
       <Row>
@@ -39,14 +44,14 @@ export function JobList() {
           <Card className="main-card mb-3">
             <CardBody>
               <CardTitle className="mb-0">
-                Open Jobs{" "}
-                <Button className="float-end mb-0" color="primary">
-                  Create Job
-                </Button>
+                {" "}
+                <BsFillPeopleFill /> Open Jobs{" "}
               </CardTitle>
             </CardBody>
           </Card>
         </Col>
+        <JobFilter onFilter={onfliterData} />
+        <p className="mb-1 row-count">{JobList.totalRows} jobs</p>
         <JobListing
           jobData={JobList}
           onPageChange={onPageChange}

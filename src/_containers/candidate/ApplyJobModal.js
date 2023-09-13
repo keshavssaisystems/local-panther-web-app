@@ -1,30 +1,35 @@
 import { CheckboxFormGroup } from "_components/formComponents/CheckboxFormGroup";
-import { InputFormGroup } from "_components/formComponents/InputFormGroup";
 import { NoticePeriod } from "_components/dropdownComponents/NoticePeriod";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { applyForJobActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import "./candidate.scss";
+import { FiMapPin } from "react-icons/fi";
+import logo from "../../assets/utils/images/panther-logo.png";
 
-import { Modal, Button, ModalHeader, ModalBody, Form } from "reactstrap";
+import {
+  Modal,
+  Button,
+  ModalHeader,
+  ModalBody,
+  Form,
+  Row,
+  Col,
+} from "reactstrap";
 
-export function ApplyJobModal({ jobId }) {
+export function ApplyJobModal({ jobId, heading, subHeading, location }) {
   const [modal, setModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showExperienceValidation, setExperienceValidation] = useState(false);
   const [showNotivePeriodValidation, setNoticePeriodValidation] =
     useState(false);
   const toggle = () => {
     setModal(!modal);
-    setExperienceValidation(false);
   };
 
   let applyForJob = null;
   const checkValidation = (event) => {
     event.preventDefault();
-    if (event.target.elements.experience.value === "") {
-      setExperienceValidation(true);
-    }
     if (event.target.elements.noticePeriod.value === "") {
       setNoticePeriodValidation(true);
     }
@@ -42,7 +47,6 @@ export function ApplyJobModal({ jobId }) {
       candidateid: 35,
       applicationdate: new Date(),
       applicationstatus: "accepted",
-      experienceyears: event.target.elements.experience.value,
       noticeperiodid: event.target.elements.noticePeriod.value,
       isrelocate: event.target.elements.relocate.checked,
       isvideoconference: event.target.elements.isvideoconference.checked,
@@ -58,12 +62,16 @@ export function ApplyJobModal({ jobId }) {
     await dispatch(applyForJobActions.postApplyForJob(formElement));
   };
   applyForJob = useSelector((state) => state.applyForJob);
-  console.log(applyForJob);
+  // console.log(applyForJob);
   return (
     <>
-      <Button color={"primary"} onClick={toggle}>
+      <Button
+        color={"primary"}
+        className="float-end apply-button"
+        onClick={toggle}
+      >
         {" "}
-        Apply{" "}
+        Apply Now{" "}
       </Button>
       <Modal
         isOpen={modal}
@@ -72,18 +80,27 @@ export function ApplyJobModal({ jobId }) {
         size="lg"
         backdrop={"static"}
       >
-        <ModalHeader toggle={toggle}>Apply For Job</ModalHeader>
+        <ModalHeader>Apply for this job</ModalHeader>
         <ModalBody>
+          <Row>
+            <Col>
+              <div className="menu-header-content btn-pane-right text-start mb-4">
+                <div>
+                  <h5 className="menu-header-title job-title-details">
+                    {heading}
+                  </h5>
+                  <p className="mb-0 mt-0">{subHeading}</p>
+                  <p className="mb-0 mt-0">
+                    <FiMapPin className="muted-icon" /> {location}
+                  </p>
+                </div>
+              </div>
+            </Col>
+            <Col>
+              <img src={logo} alt="logo" className="float-end display-logo" />
+            </Col>
+          </Row>
           <Form onSubmit={checkValidation}>
-            <InputFormGroup
-              label={"Years of Experience"}
-              name={"experience"}
-              id={"experience"}
-              type={"number"}
-              placeholder={"Enter years of experience"}
-              showValidation={showExperienceValidation}
-              validationMessage={"Please Enter Years of Experience"}
-            />
             <NoticePeriod
               showValidation={showNotivePeriodValidation}
               validationMessage={"Please Select Notice Period"}

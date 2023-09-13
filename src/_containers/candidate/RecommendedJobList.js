@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Card, CardBody, CardTitle, Button, Label } from "reactstrap";
+import { Row, Col, Card, CardBody, CardTitle } from "reactstrap";
 import { JobListing } from "../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "../../_store";
 import { empmodeActions } from "_store";
-import cx from "classnames";
+import { JobFilter } from "_components/job/JobFilter";
+import { BsFillPeopleFill } from "react-icons/bs";
 
 export function RecommendedJobList() {
   const dispatch = useDispatch();
+
   const [filter, setFilter] = useState({
     jobId: "",
     pageNo: 1,
@@ -15,6 +17,7 @@ export function RecommendedJobList() {
     employentModeId: null,
     pageSize: "5",
   });
+  const onfliterData = (term) => {};
   let JobList = useSelector((state) => state.jobList);
   let stateUpdate = "true";
   var searchData = useRef("");
@@ -22,12 +25,10 @@ export function RecommendedJobList() {
   const [searchText, setSearchText] = useState("");
   const [filteredJobList, setFilteredJobList] = useState({});
 
-
   const [selectedEmpMode, setSelectedEmpMode] = useState("");
   const [input, setInput] = useState("");
   const [list, setList] = useState([]);
   const empModeData = useSelector((state) => state.empmode.user.data);
-
 
   const handleEmpModeChange = (event) => {
     setSelectedEmpMode(event.target.value);
@@ -42,7 +43,6 @@ export function RecommendedJobList() {
   useEffect(() => {
     dispatch(empmodeActions.getEmpmode());
   }, [dispatch]);
-
 
   const getJobList = async function () {
     let data = {
@@ -59,7 +59,6 @@ export function RecommendedJobList() {
     setList(response.payload.data.jobList);
   };
 
-
   const collectSearchData = (evt) => {
     searchData.current = evt.target.value;
     setInput(evt.target.value);
@@ -70,97 +69,22 @@ export function RecommendedJobList() {
     getJobList();
   };
 
-  const onPageChange = (page) => { };
+  const onPageChange = (page) => {};
   return (
     <>
       <Row>
         <Col md="12">
           <Card className="main-card mb-3">
             <CardBody>
-              <CardTitle className="mb-2">Recommended Jobs </CardTitle>
-
-              <Row>
-
-                <Col className="col-md-9">
-                  <Row><Col md="3">
-                    <Label>Select employment mode: </Label>
-                    <div className="">
-                      <select
-                        id="empModeSelect"
-                        value={selectedEmpMode}
-                        onChange={handleEmpModeChange}
-                      >
-                        <option value="">Select an option</option>
-                        {empModeData.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </Col>
-                    <Col md="3">
-                      <div className="m-4">
-                        <Button type="buton" color="primary" onClick={getJobList}>
-                          Apply Filters
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-
-                </Col>
-
-
-                <Col className="col-md-3">
-                  <div className={cx("search-wrapper float-end", { active: true, })} style={{ marginTop: '21px' }}>
-                    <div className="input-holder">
-                      <input type="text" className="search-input" value={searchData.current}
-                        onChange={collectSearchData}
-                        placeholder="Search by Jobrole" />
-                      <button
-                        className="search-icon"
-                        onClick={getJobList}>
-                        <span />
-                      </button>
-                    </div>
-                    <button style={{ left: '220px' }}
-                      className="btn-close" onClick={inputClear} />
-                  </div>
-                </Col>
-
-
-
-
-              </Row>
-              <Row>
-                <Col md="3">
-
-                </Col>
-
-              </Row>
-
-              <Col md="3">
-                <div
-                  className={cx("search-wrapper", {
-                    active: true,
-                  })}
-                  style={{ marginLeft: "75%" }}
-                ></div>
-              </Col>
-              <Col md="3">
-                <div
-                  className={cx("search-wrapper", {
-                    active: true,
-                  })}
-                  style={{ marginLeft: "75%" }}
-                ></div>
-              </Col>
-
-
+              <CardTitle className="mb-0">
+                {" "}
+                <BsFillPeopleFill /> Open Jobs{" "}
+              </CardTitle>
             </CardBody>
           </Card>
         </Col>
-
+        <JobFilter onFilter={onfliterData} />
+        <p className="mb-1 row-count">{filteredJobList.totalRows} jobs</p>
         {filteredJobList.jobList ? (
           <JobListing
             jobData={filteredJobList}
