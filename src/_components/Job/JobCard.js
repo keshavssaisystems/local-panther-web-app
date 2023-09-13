@@ -3,7 +3,12 @@ import { Row, Col, Card, CardBody } from "reactstrap";
 import "./job.scss";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
-import { BsBriefcase, BsListStars, BsFillFlagFill } from "react-icons/bs";
+import {
+  BsBriefcase,
+  BsListStars,
+  BsFillFlagFill,
+  BsHandThumbsUp,
+} from "react-icons/bs";
 import moment from "moment/moment";
 
 export function JobCard({
@@ -16,16 +21,18 @@ export function JobCard({
   createdDate,
   role,
   jobId,
-  typeId,
+  type,
+  // recommendedLevel,
   // getSelectedJobId,
 }) {
+  let recommendedLevel = 3;
   // const navigateToJobDetail = (selectedJobId) => {
   //   getSelectedJobId(selectedJobId);
   // };
   return (
     <>
       <Card
-        className="mb-2"
+        className="mb-2 card-border-custom"
         // onClick={navigateToJobDetail(jobId)}
       >
         <CardBody>
@@ -56,11 +63,33 @@ export function JobCard({
                 <BsListStars /> Skills: Core Java, Spring Boot, Microservice,
                 Kaf...
               </p>
-              <p className="job-details mt-2">
-                <BsFillFlagFill /> Highly Recommended
-              </p>
+              {type === "Recommended" && (
+                <p className="job-details mt-2 recommended-success float-end">
+                  Applicants: 101
+                </p>
+              )}
+              {recommendedLevel === 1 && type === "Recommended" && (
+                <p className="job-details mt-2 recommended-success">
+                  <BsFillFlagFill /> Most Recommended
+                </p>
+              )}
+              {recommendedLevel === 2 && type === "Recommended" && (
+                <p className="job-details mt-2 recommended-warning">
+                  <BsFillFlagFill /> Medium Recommended
+                </p>
+              )}
+              {recommendedLevel === 3 && type === "Recommended" && (
+                <p className="job-details mt-2 recommended-danger">
+                  <BsFillFlagFill /> Least Recommended
+                </p>
+              )}
               <div className="muted-name mt-2">
                 Posted {moment(createdDate).fromNow()}
+                {type === "Recommended" && (
+                  <p className="thumb-icon float-end">
+                    <BsHandThumbsUp />
+                  </p>
+                )}
               </div>
             </Col>
           </Row>
