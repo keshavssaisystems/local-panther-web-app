@@ -67,7 +67,7 @@ export function JobDetail({ jobId, type }) {
                   ? jobDetail.jobLocationDtos[0].location
                   : "-"
               }
-              ApplyButton={type === "Recommended" ? false : true}
+              ApplyButton={type === "Open" ? false : true}
             />
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>

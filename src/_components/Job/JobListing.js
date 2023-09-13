@@ -42,7 +42,7 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
               role={job.jobrole}
               jobId={job.jobid}
               createdDate={job.jobcreatedatetime}
-              typeId={type === "Open" ? 0 : 1}
+              type={type}
               getSelectedJobId={getSelectedJob}
             />
           ))}

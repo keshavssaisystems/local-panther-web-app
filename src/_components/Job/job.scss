@@ -52,3 +52,40 @@
     width: 65px;
     background: #2F479B !important;
 }
+
+.recommended-success{
+    color: #61D097 !important;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.13px;
+}
+
+.recommended-danger{
+    color: #D92550 !important;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.13px;
+}
+
+.recommended-warning{
+    color: #F7B924 !important;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.13px;
+}
+
+.thumb-icon{
+    width: 12.69px;
+    height: 16px;
+    fill: #AFABA5;
+}
+
+.card-border-custom{
+    border: 1px solid #2F479B !important;
+}
