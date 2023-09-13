@@ -11,7 +11,6 @@ import {
 import { Col, Row } from "reactstrap";
 
 export function HeadingAndDetailWithDiv({ heading, detail, iconId }) {
-  //   let iconArray = [];
   return (
     <>
       <div>

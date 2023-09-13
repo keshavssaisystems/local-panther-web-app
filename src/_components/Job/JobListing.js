@@ -5,7 +5,6 @@ import { CardPagination } from "../common/cardpagination";
 import { JobDetail } from "../job/JobDetail";
 
 export function JobListing({ jobData, onPageChange, type, pageSize }) {
-  // console.log(jobData);
   const [selectedClass, setSelectedClass] = useState(
     jobData.jobList.length > 0 ? jobData.jobList[0].jobid : "2"
   );

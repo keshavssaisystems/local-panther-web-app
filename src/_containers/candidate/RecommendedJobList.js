@@ -17,9 +17,7 @@ export function RecommendedJobList() {
     employentModeId: null,
     pageSize: "5",
   });
-  const onfliterData = (term) => {
-    console.log();
-  };
+  const onfliterData = (term) => {};
   let JobList = useSelector((state) => state.jobList);
   let stateUpdate = "true";
   var searchData = useRef("");

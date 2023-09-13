@@ -61,7 +61,7 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
   const postApplyForJob = async function (formElement) {
     await dispatch(applyForJobActions.postApplyForJob(formElement));
   };
-  // applyForJob = useSelector((state) => state.applyForJob);
+  applyForJob = useSelector((state) => state.applyForJob);
   // console.log(applyForJob);
   return (
     <>
