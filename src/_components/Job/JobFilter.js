@@ -10,6 +10,17 @@ export function JobFilter({ onFilter }) {
     minExperience: "",
     maxExperience: "",
   });
+  const handleChange = (e) => {
+    e.preventDefault();
+    const { target } = e;
+    const { name, value } = target;
+    setFilterData({
+      ...filterData,
+      [name]: value,
+    });
+    console.log("filterData :>> ", filterData);
+  };
+
   const onSubmitHandler = (event) => {
     event.preventDefault();
     let responseBody = {};
@@ -35,6 +46,7 @@ export function JobFilter({ onFilter }) {
                         name={"location"}
                         id={"location"}
                         type={"text"}
+                        onChange={handleChange}
                         placeholder={"Search by city"}
                         showValidation={false}
                         validationMessage={""}
@@ -47,6 +59,7 @@ export function JobFilter({ onFilter }) {
                         name={"skills"}
                         id={"skills"}
                         type={"text"}
+                        onChange={handleChange}
                         placeholder={"Search skills"}
                         showValidation={false}
                         validationMessage={""}
