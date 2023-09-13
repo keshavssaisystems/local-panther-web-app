@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { Card, CardBody, Col, CardText } from "reactstrap";
 import { JobCard } from "./JobCard";
-import { CustomPagination } from "../common/pagination";
+import { CardPagination } from "../common/cardpagination";
+import { JobDetail } from "../job/JobDetail";
 
 export function JobListing({ jobData, onPageChange, type, pageSize }) {
   console.log(jobData);
@@ -14,10 +15,12 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
     setPage(page);
     onPageChange(page);
   }, []);
-
+  const getSelectedJob = (jobId) => {
+    console.log(jobId);
+  };
   return (
     <>
-      <Col md="12">
+      <Col md="4">
         {jobData.jobList.length > 0 &&
           jobData.jobList.map((job) => (
             <JobCard
@@ -38,7 +41,9 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
               description={job.description}
               role={job.jobrole}
               jobId={job.jobid}
+              createdDate={job.jobcreatedatetime}
               typeId={type === "Open" ? 0 : 1}
+              getSelectedJobId={getSelectedJob}
             />
           ))}
         {jobData.jobList.length === 0 && (
@@ -51,13 +56,14 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
           </Card>
         )}
         {jobData.jobList.length > 0 && (
-          <CustomPagination
+          <CardPagination
             totalPages={current}
             pageIndex={page}
             onCallBack={handlePageChange}
-          ></CustomPagination>
+          ></CardPagination>
         )}
       </Col>
+      <JobDetail jobId={221} type={type} />
     </>
   );
 }

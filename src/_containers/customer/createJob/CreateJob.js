@@ -208,6 +208,7 @@ export function CreateJob() {
                       showValidation={false}
                       validationMessage={"Please select employment mode"}
                       mandatory={false}
+                      defaultOption={"Eg. Full-time, Part-time etc."}
                     />
                   </Col>
                 </Row>
