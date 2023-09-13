@@ -1,29 +1,30 @@
 import { CheckboxFormGroup } from "_components/formComponents/CheckboxFormGroup";
-import { InputFormGroup } from "_components/formComponents/InputFormGroup";
+// import { InputFormGroup } from "_components/formComponents/InputFormGroup";
 import { NoticePeriod } from "_components/dropdownComponents/NoticePeriod";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { applyForJobActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import "./candidate.scss";
 
 import { Modal, Button, ModalHeader, ModalBody, Form } from "reactstrap";
 
 export function ApplyJobModal({ jobId }) {
   const [modal, setModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showExperienceValidation, setExperienceValidation] = useState(false);
+  // const [showExperienceValidation, setExperienceValidation] = useState(false);
   const [showNotivePeriodValidation, setNoticePeriodValidation] =
     useState(false);
   const toggle = () => {
     setModal(!modal);
-    setExperienceValidation(false);
+    // setExperienceValidation(false);
   };
 
   let applyForJob = null;
   const checkValidation = (event) => {
     event.preventDefault();
     if (event.target.elements.experience.value === "") {
-      setExperienceValidation(true);
+      // setExperienceValidation(true);
     }
     if (event.target.elements.noticePeriod.value === "") {
       setNoticePeriodValidation(true);
@@ -61,9 +62,13 @@ export function ApplyJobModal({ jobId }) {
   console.log(applyForJob);
   return (
     <>
-      <Button color={"primary"} onClick={toggle}>
+      <Button
+        color={"primary"}
+        className="float-end apply-button"
+        onClick={toggle}
+      >
         {" "}
-        Apply{" "}
+        Apply Now{" "}
       </Button>
       <Modal
         isOpen={modal}
@@ -75,7 +80,7 @@ export function ApplyJobModal({ jobId }) {
         <ModalHeader toggle={toggle}>Apply For Job</ModalHeader>
         <ModalBody>
           <Form onSubmit={checkValidation}>
-            <InputFormGroup
+            {/* <InputFormGroup
               label={"Years of Experience"}
               name={"experience"}
               id={"experience"}
@@ -83,7 +88,7 @@ export function ApplyJobModal({ jobId }) {
               placeholder={"Enter years of experience"}
               showValidation={showExperienceValidation}
               validationMessage={"Please Enter Years of Experience"}
-            />
+            /> */}
             <NoticePeriod
               showValidation={showNotivePeriodValidation}
               validationMessage={"Please Select Notice Period"}

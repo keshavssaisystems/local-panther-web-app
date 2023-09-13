@@ -60,8 +60,7 @@ export function JobCard({
                 {maxExperience} Years
               </p>
               <p className="job-details">
-                <BsListStars /> Skills: Core Java, Spring Boot, Microservice,
-                Kaf...
+                <BsListStars /> Skills: Core Java, Spring Boot, Mic...
               </p>
               {type === "Recommended" && (
                 <p className="job-details mt-2 recommended-success float-end">

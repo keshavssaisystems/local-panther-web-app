@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardBody, Form, Button, Col, Row } from "reactstrap";
-import { EmploymentMode } from "_components/DropdownComponents/EmploymentMode";
-import { InputFormGroup } from "_components/FormComponents/InputFormGroup";
+import { EmploymentMode } from "_components/dropdownComponents/EmploymentMode";
+import { InputFormGroup } from "_components/formComponents/InputFormGroup";
 
 export function JobFilter({ onFilter }) {
   const [filterData, setFilterData] = useState({

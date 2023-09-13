@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
 import { JobListing } from "../../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
-import { JobFilter } from "_components/Job/JobFilter";
+import { JobFilter } from "_components/job/JobFilter";
 
 export function JobList() {
   const dispatch = useDispatch();

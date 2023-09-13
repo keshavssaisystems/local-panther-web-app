@@ -4,12 +4,12 @@ import "./job.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { HeadingAndDetailWithDiv } from "../jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../jobDetailComponents/HeadingAndDetailWithoutIcon";
-// import { ButtonWithCount } from "../jobDetailComponents/ButtonWithCount";
+import { ButtonWithCount } from "../jobDetailComponents/ButtonWithCount";
 import { DetailsHeader } from "../jobDetailComponents/DetailsHeader";
 
 import { jobListActions } from "_store";
 import Loader from "react-loaders";
-import { ApplyJobModal } from "Candidate/ApplyJobModal";
+// import { ApplyJobModal } from "Candidate/ApplyJobModal";
 
 export function JobDetail({ jobId, type }) {
   const dispatch = useDispatch();
@@ -123,45 +123,40 @@ export function JobDetail({ jobId, type }) {
               heading={"Roles and Responsibility:"}
               detail={jobDetail.responsibilities}
             />
-            {/* {typeId === "0" && (
-              <div className="p-3 d-flex justify-content-center">
+            {type === "Open" && (
+              <div className="p-3 mt-3 align-left">
                 <ButtonWithCount
-                  buttonName={"Applied Candidate"}
+                  buttonName={"Applied"}
                   color={"primary"}
                   count={0}
                   action={"/candidate-list"}
                 />
                 <ButtonWithCount
-                  buttonName={"Recommended Candidate"}
+                  buttonName={"Recommended"}
                   color={"primary"}
                   count={0}
                   action={"/recommendedCandidate"}
                 />
                 <ButtonWithCount
-                  buttonName={"Liked Candidate"}
+                  buttonName={"Liked"}
                   color={"primary"}
                   count={0}
                   action={"/likedCandidate"}
                 />
                 <ButtonWithCount
-                  buttonName={"Accepted Candidate"}
+                  buttonName={"Accepted"}
                   color={"success"}
                   count={0}
                   action={"/acceptedCandidate"}
                 />
                 <ButtonWithCount
-                  buttonName={"Rejected Candidate"}
+                  buttonName={"Rejected"}
                   color={"danger"}
                   count={0}
                   action={"/rejectedCandidate"}
                 />
               </div>
             )}
-            {typeId === "1" && (
-              <div className="p-3 float-end">
-                <ApplyJobModal jobId={JobId} />
-              </div>
-            )} */}
           </Card>
         )}
       </Col>
