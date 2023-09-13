@@ -44,7 +44,7 @@ export function App() {
                 <Route path="/job-list" element={<JobList />} />
                 <Route path="/job-detail" element={<JobDetail />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/createJob" element={<CreateJob />} />
+                <Route path="/create-job" element={<CreateJob />} />
                 <Route path="/candidate-list" element={<CandidateList />} />
                 <Route
                   path="/recommended-job"

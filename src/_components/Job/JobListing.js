@@ -5,18 +5,27 @@ import { CardPagination } from "../common/cardpagination";
 import { JobDetail } from "../job/JobDetail";
 
 export function JobListing({ jobData, onPageChange, type, pageSize }) {
-  console.log(jobData);
+  // console.log(jobData);
+  const [selectedClass, setSelectedClass] = useState(
+    jobData.jobList.length > 0 ? jobData.jobList[0].jobid : "2"
+  );
+  let selectedJobDetails = [];
   let current = Number(jobData.totalRows) / pageSize;
   if (current * pageSize !== jobData.totalRows) {
     current++;
   }
   const [page, setPage] = useState(1);
+  const [selectedJobData, setSelectedJobData] = useState(jobData.jobList);
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
   }, []);
   const getSelectedJob = (jobId) => {
-    console.log(jobId);
+    selectedJobDetails = jobData.jobList.filter((element) => {
+      return element.jobid === jobId;
+    });
+    setSelectedJobData(selectedJobDetails);
+    setSelectedClass(jobId);
   };
   return (
     <>
@@ -43,7 +52,8 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
               jobId={job.jobid}
               createdDate={job.jobcreatedatetime}
               type={type}
-              getSelectedJobId={getSelectedJob}
+              selectedJob={selectedClass}
+              getSelectedJobId={(e) => getSelectedJob(e)}
             />
           ))}
         {jobData.jobList.length === 0 && (
@@ -63,7 +73,7 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
           ></CardPagination>
         )}
       </Col>
-      <JobDetail jobId={221} type={type} />
+      <JobDetail jobDetails={selectedJobData} type={type} />
     </>
   );
 }

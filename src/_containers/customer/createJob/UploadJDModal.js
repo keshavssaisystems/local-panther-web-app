@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, ModalBody, Form } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPuzzlePiece } from "@fortawesome/free-solid-svg-icons";
 import { FileUploadFormGroup } from "_components/formComponents/FileUploadFormGroup";
+import { BsDownload } from "react-icons/bs";
 
 export function UploadJDModal() {
   const [modal, setModal] = useState(false);
@@ -21,7 +20,7 @@ export function UploadJDModal() {
   return (
     <>
       <Button outline className="float-end button-upload" onClick={toggle}>
-        Upload JD <FontAwesomeIcon icon={faPuzzlePiece} />{" "}
+        Upload JD <BsDownload />
       </Button>
       <Modal
         isOpen={modal}

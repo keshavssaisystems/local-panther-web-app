@@ -13,34 +13,30 @@ import moment from "moment/moment";
 
 export function JobCard({
   name,
-  customer,
   minExperience,
   maxExperience,
   location,
-  description,
   createdDate,
-  role,
   jobId,
   type,
-  // recommendedLevel,
-  // getSelectedJobId,
+  getSelectedJobId,
+  selectedJob,
 }) {
-  let recommendedLevel = 3;
-  // const navigateToJobDetail = (selectedJobId) => {
-  //   getSelectedJobId(selectedJobId);
-  // };
+  let recommendedLevel = 2;
+  const navigateToJobDetail = () => {
+    getSelectedJobId(jobId);
+  };
   return (
     <>
       <Card
-        className="mb-2 card-border-custom"
-        // onClick={navigateToJobDetail(jobId)}
+        className={selectedJob === jobId ? "mb-2 card-border-custom" : "mb-2"}
+        onClick={() => navigateToJobDetail()}
       >
         <CardBody>
           <Row>
             <Col md="12">
               <Row className="mb-2">
                 <Col md="7">
-                  {" "}
                   <div className="job-title">{name}</div>
                   <div className="muted-name">Saisystems Technology</div>
                 </Col>

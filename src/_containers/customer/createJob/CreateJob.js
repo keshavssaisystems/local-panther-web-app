@@ -7,8 +7,7 @@ import { Location } from "_components/dropdownComponents/Location";
 import React, { useState } from "react";
 import "./CreateJob.scss";
 import { Row, Col, Card, CardBody, CardTitle, Button, Form } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPuzzlePiece } from "@fortawesome/free-solid-svg-icons";
+import { BsPuzzle } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { createjobActions } from "_store";
 import { UploadJDModal } from "./UploadJDModal";
@@ -159,7 +158,7 @@ export function CreateJob() {
               <CardTitle className="mb-0">
                 {" "}
                 <span className="icon-box">
-                  <FontAwesomeIcon icon={faPuzzlePiece} />
+                  <BsPuzzle style={{ transform: "rotate(90deg)" }} />
                 </span>{" "}
                 Create New Job <UploadJDModal />
               </CardTitle>

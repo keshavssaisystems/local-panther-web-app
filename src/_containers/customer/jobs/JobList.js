@@ -4,6 +4,7 @@ import { JobListing } from "../../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
 import { JobFilter } from "_components/job/JobFilter";
+import { BsFillPeopleFill } from "react-icons/bs";
 
 export function JobList() {
   const dispatch = useDispatch();
@@ -42,7 +43,10 @@ export function JobList() {
         <Col md="12">
           <Card className="main-card mb-3">
             <CardBody>
-              <CardTitle className="mb-0">Open Jobs </CardTitle>
+              <CardTitle className="mb-0">
+                {" "}
+                <BsFillPeopleFill /> Open Jobs{" "}
+              </CardTitle>
             </CardBody>
           </Card>
         </Col>

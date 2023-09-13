@@ -9,13 +9,15 @@ export function CardPagination(props) {
     const items = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      items.push(
-        <PaginationItem key={page} active={pageIndex === page}>
-          <PaginationLink onClick={() => props.onCallBack(page)}>
-            {page}
-          </PaginationLink>
-        </PaginationItem>
-      );
+      if (page <= 3 || page > 10) {
+        items.push(
+          <PaginationItem key={page} active={pageIndex === page}>
+            <PaginationLink onClick={() => props.onCallBack(page)}>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
     }
     return items;
   };

@@ -25,7 +25,12 @@ export function DetailsHeader({ heading, subHeading, location, ApplyButton }) {
             </Col>
             {ApplyButton === true && (
               <Col>
-                <ApplyJobModal jobId={221} />
+                <ApplyJobModal
+                  jobId={221}
+                  heading={heading}
+                  subHeading={subHeading}
+                  location={location}
+                />
               </Col>
             )}
           </Row>
