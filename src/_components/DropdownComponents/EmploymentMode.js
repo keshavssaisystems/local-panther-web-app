@@ -7,6 +7,7 @@ export function EmploymentMode({
   showValidation,
   validationMessage,
   mandatory,
+  defaultOption,
 }) {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -23,7 +24,7 @@ export function EmploymentMode({
         label="Employment Type"
         id="employmentType"
         name="employmentType"
-        defaultOption="Eg. Full-time, Part-time etc."
+        defaultOption={defaultOption}
         optionData={
           employmentModeOptions.employmentMode.length > 0
             ? employmentModeOptions.employmentMode

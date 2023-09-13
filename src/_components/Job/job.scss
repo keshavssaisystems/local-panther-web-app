@@ -13,3 +13,42 @@
 .mr-10{
     margin-right: 10px;
 }
+
+.job-title{
+    text-transform: none !important;
+    color: #2F479B !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+}
+
+.display-logo{
+    width: 80px;
+    margin-top: 4px;
+}
+
+.muted-name{
+    color : #AFABA5;
+}
+.job-details{
+    margin : 0px 0px 2px 0px;
+    color : #2F2E2E;
+    font-weight: 400 !important;
+}
+
+.job-main-heading{
+    font-size: 20px;
+    font-weight: 500;
+    color : #2F2E2E;
+}
+
+.heading-title{
+    padding-left : 15px;
+    padding-top : 25px
+}
+
+.search-button{
+    margin-right: 20px;
+    margin-top: 30px;
+    width: 65px;
+    background: #2F479B !important;
+}

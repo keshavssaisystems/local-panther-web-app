@@ -1,18 +1,7 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  Form,
-  FormGroup,
-  Button,
-  Col,
-} from "reactstrap";
-import {
-  locationOptionsDummy,
-  experienceOptionDummy,
-} from "../../_containers/customer/jobs/Dummy";
-import { FilterSelect, FilterMultipleSelect } from "./FilterSelect";
+import { Card, CardBody, Form, Button, Col, Row } from "reactstrap";
+import { EmploymentMode } from "_components/DropdownComponents/EmploymentMode";
+import { InputFormGroup } from "_components/FormComponents/InputFormGroup";
 
 export function JobFilter({ onFilter }) {
   const [filterData, setFilterData] = useState({
@@ -33,31 +22,51 @@ export function JobFilter({ onFilter }) {
   onFilter(filterData);
   return (
     <>
-      <Col md="3">
+      <Col md="12">
         <Card className="main-card mb-3">
           <CardBody>
-            <CardTitle>Filter</CardTitle>
             <Form onSubmit={onSubmitHandler}>
-              <FormGroup>
-                <FilterSelect
-                  id="location"
-                  name="location"
-                  label="City"
-                  optionData={locationOptionsDummy}
-                />
-              </FormGroup>
-              <FormGroup>
-                <FilterMultipleSelect
-                  id="experience"
-                  name1="minExperience"
-                  label="Experience"
-                  optionData={experienceOptionDummy}
-                  name2="maxExperience"
-                />
-              </FormGroup>
-              <Button color="primary" className="float-end">
-                Submit
-              </Button>
+              <Row>
+                <Col md={9}>
+                  <Row>
+                    <Col>
+                      <InputFormGroup
+                        label={"Location"}
+                        name={"location"}
+                        id={"location"}
+                        type={"text"}
+                        placeholder={"Search by city"}
+                        showValidation={false}
+                        validationMessage={""}
+                        mandatory={false}
+                      />
+                    </Col>
+                    <Col>
+                      <InputFormGroup
+                        label={"Skills"}
+                        name={"skills"}
+                        id={"skills"}
+                        type={"text"}
+                        placeholder={"Search skills"}
+                        showValidation={false}
+                        validationMessage={""}
+                        mandatory={false}
+                      />
+                    </Col>
+                    <Col>
+                      <EmploymentMode
+                        showValidation={false}
+                        validationMessage={""}
+                        mandatory={false}
+                        defaultOption={"Select Employment Type"}
+                      />
+                    </Col>
+                    <Col>
+                      <Button className="search-button">Search</Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
             </Form>
           </CardBody>
         </Card>
