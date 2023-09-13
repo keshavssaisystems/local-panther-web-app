@@ -1,0 +1,8 @@
+.app-main .container-row {
+  max-height: calc(100vh - calc(120px + 3rem));
+  overflow-x: auto;
+}
+
+.app-main .container-row > .row {
+  width: 100%;
+}
