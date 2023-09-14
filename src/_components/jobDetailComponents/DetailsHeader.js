@@ -4,7 +4,13 @@ import { FiMapPin } from "react-icons/fi";
 import { Col, Row } from "reactstrap";
 import { ApplyJobModal } from "../../_containers/candidate/ApplyJobModal";
 
-export function DetailsHeader({ heading, subHeading, location, ApplyButton }) {
+export function DetailsHeader({
+  heading,
+  subHeading,
+  location,
+  ApplyButton,
+  jobId,
+}) {
   return (
     <>
       <div className="dropdown-menu-header">
@@ -26,7 +32,7 @@ export function DetailsHeader({ heading, subHeading, location, ApplyButton }) {
             {ApplyButton === true && (
               <Col>
                 <ApplyJobModal
-                  jobId={221}
+                  jobId={jobId}
                   heading={heading}
                   subHeading={subHeading}
                   location={location}

@@ -16,6 +16,7 @@ export const applyForJobReducer = slice.reducer;
 function createInitialState() {
   return {
     applyForJob: [],
+    loading: false,
   };
 }
 
@@ -35,7 +36,7 @@ function createExtraActions() {
         candidateid,
         applicationdate,
         applicationstatus,
-        experienceyears,
+        skills,
         noticeperiodid,
         isrelocate,
         isvideoconference,
@@ -48,7 +49,7 @@ function createExtraActions() {
           candidateid,
           applicationdate,
           applicationstatus,
-          experienceyears,
+          skills,
           noticeperiodid,
           isrelocate,
           isvideoconference,
@@ -67,10 +68,11 @@ function createExtraReducers() {
       var { pending, fulfilled, rejected } = extraActions.postApplyForJob;
       builder
         .addCase(pending, (state) => {
-          state.applyForJob = { loading: true };
+          state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
           state.applyForJob = action.payload;
+          state.loading = false;
         })
         .addCase(rejected, (state, action) => {
           state.applyForJob = { error: action.error };
