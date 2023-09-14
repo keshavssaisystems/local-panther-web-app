@@ -31,13 +31,18 @@ export function JobDetail({ jobDetails, type }) {
           <Card className="card-shadow-primary profile-responsive card-border mb-3">
             <DetailsHeader
               heading={jobDetail.jobtitle}
-              subHeading={"Saisystems Technology"}
+              subHeading={
+                jobDetail.jobCompanyDtos == null
+                  ? "-"
+                  : jobDetail.jobCompanyDtos.companyname
+              }
               location={
                 jobDetail.jobLocationDtos.length > 0
                   ? jobDetail.jobLocationDtos[0].location
                   : "-"
               }
               ApplyButton={type === "Open" ? false : true}
+              jobId={jobDetail.jobid}
             />
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>

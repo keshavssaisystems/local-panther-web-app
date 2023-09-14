@@ -11,7 +11,7 @@ import { remoteStatusReducer } from "../_components/dropdownComponents/remoteSta
 import { stateReducer } from "./dropdownstate.slice";
 import { cityReducer } from "./dropdowncity.slice";
 import { noticePeriodReducer } from "../_components/dropdownComponents/noticePeriod.slice";
-import { applyForJobReducer } from "./applyForJob.slice";
+import { applyForJobReducer } from "../_containers/candidate/applyForJob.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "./recommendejobList.slice";
 import { departmentReducer } from "../_components/dropdownComponents/department.slice";
@@ -29,7 +29,7 @@ export * from "../_components/dropdownComponents/remoteStatus.slice";
 export * from "./dropdownstate.slice";
 export * from "./dropdowncity.slice";
 export * from "../_components/dropdownComponents/noticePeriod.slice";
-export * from "./applyForJob.slice";
+export * from "../_containers/candidate/applyForJob.slice";
 export * from "./jobDetail.slice";
 export * from "./recommendejobList.slice";
 export * from "../_components/dropdownComponents/department.slice";

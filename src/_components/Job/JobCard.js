@@ -21,6 +21,7 @@ export function JobCard({
   type,
   getSelectedJobId,
   selectedJob,
+  customer,
 }) {
   let recommendedLevel = 2;
   const navigateToJobDetail = () => {
@@ -38,13 +39,13 @@ export function JobCard({
               <Row className="mb-2">
                 <Col md="7">
                   <div className="job-title">{name}</div>
-                  <div className="muted-name">Saisystems Technology</div>
+                  <div className="muted-name">{customer}</div>
                 </Col>
                 <Col>
                   <img
                     src={logo}
                     alt="logo"
-                    className="float-end display-logo"
+                    className="float-end display-logo-card"
                   />
                 </Col>
               </Row>
