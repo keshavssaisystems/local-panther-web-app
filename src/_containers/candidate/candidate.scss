@@ -9,3 +9,32 @@
     width: 110px;
     margin-top: 10px;
 }
+
+.modal-body{
+    padding-left: 1.6rem !important;
+    padding-bottom: 1.6rem !important;
+    padding-right: 1.6rem !important;
+    padding-top: 1rem !important;
+}
+
+.submit-button{
+    margin-left: 15px;
+    width: 75px;
+    background: #2F479B !important;
+}
+
+.cancel-button{
+    width: 75px;
+}
+
+.modal-header{
+    padding-left: 1.6rem !important;
+    padding-bottom: 0.8rem !important;
+    padding-right: 1.6rem !important;
+    padding-top: 1rem !important;
+    background: #fff;
+}
+
+.modal-title{
+    font-weight: 500 !important;
+}
