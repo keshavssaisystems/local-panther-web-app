@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Navigation } from "react-minimal-side-navigation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import "./appsidebar.scss";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
@@ -31,6 +34,7 @@ export const AppSidebar = () => {
           isedit: variable.isedit,
           isdelete: variable.isdelete,
           subMenuList: variable.subMenuList,
+          elemBefore: () => <FontAwesomeIcon icon={faAngleRight} size="1x" />,
         };
         data.push(obj);
       }

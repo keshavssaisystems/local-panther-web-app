@@ -7,11 +7,16 @@ import {
   CardBody,
   Modal,
   FormGroup,
+  Row,
+  Col,
+  Button,
+  UncontrolledPopover,
+  PopoverHeader,
+  PopoverBody,
 } from "reactstrap";
 import { candidateActions } from "_store";
-import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { CandidateProfile } from "../candidateProfile";
 import PageTitle from "../../../_components/common/pagetitle";
 import { CustomPagination } from "../../../_components/common/pagination";
@@ -20,12 +25,10 @@ import errorIcon from "../../../assets/utils/images/error_icon.png";
 import successIcon from "../../../assets/utils/images/success_icon.svg";
 import candidatelogo from "../../../assets/utils/images/profile_pic.svg";
 import { useSearchParams } from "react-router-dom";
-import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
 
 export function CandidateList() {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
-  debugger;
   let jobId = searchParams.get("jobId");
   jobId = jobId == null ? 3 : jobId;
 
@@ -40,7 +43,6 @@ export function CandidateList() {
   const [jobTitle, setJobTitle] = useState();
 
   const [acceptModal, setAcceptModal] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
   const [rejectModal, setRejectModal] = useState(false);
   const [rejectConfirmation, setRejectConfirmation] = useState(false);
   var totalPages = useRef();
@@ -425,8 +427,9 @@ export function CandidateList() {
 
               {candidatesList.length > 0 ? (
                 <tbody>
-                  {candidatesList.map((col) => (
+                  {candidatesList.map((col, ind) => (
                     <tr
+                      key={`${ind} + ${col.firstname}`}
                       style={{
                         backgroundColor: "white",
                         borderBottom: "2px solid #d6dbe0",
