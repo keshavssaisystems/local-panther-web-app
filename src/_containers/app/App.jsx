@@ -2,7 +2,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { Home } from "home";
+import { Home } from "_containers/home";
 import { Dashboard } from "dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
 import { JobDetail } from "_containers/customer/jobs/JobDetail";
