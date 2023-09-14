@@ -38,6 +38,7 @@ export function JobDetail({ jobDetails, type }) {
                   : "-"
               }
               ApplyButton={type === "Open" ? false : true}
+              jobId={jobDetail.jobid}
             />
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>

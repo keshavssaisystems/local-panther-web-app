@@ -78,7 +78,7 @@ export function RecommendedJobList() {
             <CardBody>
               <CardTitle className="mb-0">
                 {" "}
-                <BsFillPeopleFill /> Open Jobs{" "}
+                <BsFillPeopleFill /> Recommended Jobs{" "}
               </CardTitle>
             </CardBody>
           </Card>

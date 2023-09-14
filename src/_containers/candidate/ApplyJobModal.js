@@ -1,13 +1,13 @@
-import { CheckboxFormGroup } from "_components/formComponents/CheckboxFormGroup";
+import { RadioButtonFormGroup } from "_components/formComponents/radioButtonFormGroup";
 import { NoticePeriod } from "_components/dropdownComponents/NoticePeriod";
 import { InputFormGroup } from "_components/formComponents/InputFormGroup";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { applyForJobActions } from "_store";
-import SweetAlert from "react-bootstrap-sweetalert";
 import "./candidate.scss";
 import { FiMapPin } from "react-icons/fi";
 import logo from "../../assets/utils/images/panther-logo.png";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 
 import {
   Modal,
@@ -17,6 +17,8 @@ import {
   Form,
   Row,
   Col,
+  Card,
+  CardBody,
 } from "reactstrap";
 
 export function ApplyJobModal({ jobId, heading, subHeading, location }) {
@@ -35,12 +37,18 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
       candidateid: 35,
       applicationdate: new Date(),
       applicationstatus: "accepted",
-      noticeperiodid: event.target.elements.noticePeriod.value,
-      isrelocate: event.target.elements.relocate.checked,
-      isvideoconference: event.target.elements.isvideoconference.checked,
+      noticeperiodid:
+        event.target.elements.noticePeriod.value === ""
+          ? 0
+          : event.target.elements.noticePeriod.value,
+      isrelocate: event.target.elements.relocate.value === "yes" ? true : false,
+      isvideoconference:
+        event.target.elements.isvideoconference.value === "yes" ? true : false,
       isactive: true,
       currentUserId: 1,
+      skills: event.target.elements.skills.value,
     };
+    console.log(data);
     postApplyForJob(data);
     toggle();
     setShowSuccess(true);
@@ -101,7 +109,7 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
             />
             <Row>
               <Col>
-                <CheckboxFormGroup
+                <RadioButtonFormGroup
                   id="isvideoconference"
                   name="isvideoconference"
                   label="Will you be available for video conference"
@@ -113,7 +121,7 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
             </Row>
             <Row>
               <Col>
-                <CheckboxFormGroup
+                <RadioButtonFormGroup
                   id="relocate"
                   name="relocate"
                   label="Are you willing to Relocate?"
@@ -136,12 +144,39 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
           </Form>
         </ModalBody>
       </Modal>
-      <SweetAlert
-        title="Applied Successfully"
-        show={showSuccess}
-        type="success"
-        onConfirm={() => setShowSuccess(false)}
-      />
+      <Modal isOpen={showSuccess}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3 mt-4">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center popup-message">
+              Success!
+            </div>
+            <div className="mb-0">
+              <p className="popup-message-content">
+                You've successfully applied for the{" "}
+                <b className="fw-semi-bold">{heading}</b> position at
+                <b className="fw-semi-bold">{" " + subHeading}</b>. We
+                appreciate your interest and will get back to you as soon as we
+                can.
+              </p>
+            </div>
+            <div className="popup-button-div-custom">
+              <Row>
+                <Col className="d-flex justify-content-center mb-4 ">
+                  <Button
+                    className="popup-button-custom"
+                    onClick={() => setShowSuccess(false)}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
     </>
   );
 }
