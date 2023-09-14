@@ -2,14 +2,14 @@ import React from "react";
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 
 export function CardPagination(props) {
-  var totalPages = props.totalPages;
+  var totalPages = Math.round(props.totalPages);
   var pageIndex = props.pageIndex;
 
   const renderPaginationItems = () => {
     const items = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      if (page <= 3 || page > 10) {
+      if (page <= 3 || page > totalPages - 3) {
         items.push(
           <PaginationItem key={page} active={pageIndex === page}>
             <PaginationLink onClick={() => props.onCallBack(page)}>

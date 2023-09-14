@@ -10,6 +10,7 @@ export function DetailsHeader({
   location,
   ApplyButton,
   jobId,
+  department,
 }) {
   return (
     <>
@@ -36,6 +37,7 @@ export function DetailsHeader({
                   heading={heading}
                   subHeading={subHeading}
                   location={location}
+                  department={department}
                 />
               </Col>
             )}

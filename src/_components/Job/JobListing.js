@@ -4,23 +4,29 @@ import { JobCard } from "./JobCard";
 import { CardPagination } from "../common/cardpagination";
 import { JobDetail } from "../job/JobDetail";
 
-export function JobListing({ jobData, onPageChange, type, pageSize }) {
+export function JobListing({
+  jobData,
+  onPageChange,
+  type,
+  pageSize,
+  totalRows,
+}) {
   const [selectedClass, setSelectedClass] = useState(
-    jobData.jobList.length > 0 ? jobData.jobList[0].jobid : "2"
+    jobData.length > 0 ? jobData[0].jobid : "2"
   );
   let selectedJobDetails = [];
-  let current = Number(jobData.totalRows) / pageSize;
-  if (current * pageSize !== jobData.totalRows) {
+  let current = Number(totalRows) / pageSize;
+  if (current * pageSize !== totalRows) {
     current++;
   }
   const [page, setPage] = useState(1);
-  const [selectedJobData, setSelectedJobData] = useState(jobData.jobList);
+  const [selectedJobData, setSelectedJobData] = useState(jobData);
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
   }, []);
   const getSelectedJob = (jobId) => {
-    selectedJobDetails = jobData.jobList.filter((element) => {
+    selectedJobDetails = jobData.filter((element) => {
       return element.jobid === jobId;
     });
     setSelectedJobData(selectedJobDetails);
@@ -29,8 +35,8 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
   return (
     <>
       <Col md="4">
-        {jobData.jobList.length > 0 &&
-          jobData.jobList.map((job) => (
+        {jobData.length > 0 &&
+          jobData.map((job) => (
             <JobCard
               key={job.jobid}
               name={job.jobtitle}
@@ -53,9 +59,10 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
               type={type}
               selectedJob={selectedClass}
               getSelectedJobId={(e) => getSelectedJob(e)}
+              additionalData={job}
             />
           ))}
-        {jobData.jobList.length === 0 && (
+        {jobData.length === 0 && (
           <Card>
             <CardBody>
               <CardText className="mb-0 text-center">
@@ -64,7 +71,7 @@ export function JobListing({ jobData, onPageChange, type, pageSize }) {
             </CardBody>
           </Card>
         )}
-        {jobData.jobList.length > 0 && (
+        {jobData.length > 0 && (
           <CardPagination
             totalPages={current}
             pageIndex={page}

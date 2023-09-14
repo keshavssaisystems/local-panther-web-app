@@ -11,7 +11,7 @@ import "./CreateJob.scss";
 import { Row, Col, Card, CardBody, CardTitle, Button, Form } from "reactstrap";
 import { BsPuzzle } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { createjobActions } from "_store";
+import { createjobActions, skillActions } from "_store";
 import { UploadJDModal } from "./UploadJDModal";
 import { Popup } from "_components/common/Popup";
 import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
@@ -43,9 +43,9 @@ export function CreateJob() {
     if (event.target.elements.jobDescription.value === "") {
       setJobDescriptionValidation(true);
     }
-    if (event.target.elements.skills.value === "") {
-      setRequiredSkillsValidation(true);
-    }
+    // if (event.target.elements.skills.length !== 0) {
+    //   setRequiredSkillsValidation(true);
+    // }
     if (event.target.elements.department.value === "") {
       setDepartmentValidation(true);
     }
@@ -67,7 +67,7 @@ export function CreateJob() {
     if (
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.jobDescription.value !== "" &&
-      event.target.elements.skills.value !== "" &&
+      // event.target.elements.skills.length === 0 &&
       event.target.elements.department.value !== "" &&
       event.target.elements.jobRole.value !== "" &&
       event.target.elements.location.value !== "" &&
@@ -100,16 +100,18 @@ export function CreateJob() {
     ];
     return locationDetails;
   };
-  const getSkillsDetails = (skillsString) => {
-    console.log(skillsString);
+  let skillsMainArray = useSelector((state) => state.skill.data);
+  const getSkillsDetails = (skillsArray) => {
     let skillsDetails = [];
-    let splitDetails = skillsString.split(",");
-    splitDetails.forEach((element) => {
+    skillsArray.forEach((skillInput) => {
+      let skillData = skillsMainArray.filter((element) => {
+        return element.skillid.toString() === skillInput.value;
+      });
       let skillsDetailObj = {
         jobskillid: 0,
         jobid: 0,
-        skillid: 0,
-        skillname: element.trim(),
+        skillid: skillData[0].skillid,
+        skillname: skillData[0].skillname,
         isactive: true,
         currentUserId: 0,
       };
@@ -121,7 +123,7 @@ export function CreateJob() {
     let locationDetails = getLocationDetails(
       event.target.elements.location.value
     );
-    let skillDetails = getSkillsDetails(event.target.elements.skills.value);
+    let skillDetails = getSkillsDetails(event.target.elements.skills);
     let data = {
       jobid: 0,
       companyid: 1,
@@ -153,9 +155,11 @@ export function CreateJob() {
   console.log(createJobSuccess);
 
   const handleDepartmentChange = (e) => {
-    const { target: {name , value } } = e;
-    console.log('name, value :>> ', name, value);
-  }
+    const {
+      target: { value },
+    } = e;
+    dispatch(skillActions.getSkill(value));
+  };
   return (
     <>
       <Row>
@@ -243,7 +247,7 @@ export function CreateJob() {
                       label={"Location"}
                       name={"location"}
                       id={"location"}
-                      defaultOption={"search city"}
+                      defaultOption={"Search city"}
                       showValidation={showLocationValidation}
                       validationMessage={"Please select location"}
                       mandatory={true}
@@ -312,7 +316,6 @@ export function CreateJob() {
                 </Row>
                 <Row>
                   <Col md="6">
-                    
                     <Skills
                       label={"Required Skills"}
                       name={"skills"}
@@ -362,8 +365,8 @@ export function CreateJob() {
           message={"The job has been created"}
           action={true}
           nextStepMessage={"Do you want to create a new job?"}
-          noAction={"/JobList"}
-          yesAction={"/createJob"}
+          noAction={"/job-list"}
+          yesAction={"/create-job"}
         />
       )}
     </>

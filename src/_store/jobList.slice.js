@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchWrapper } from '_helpers';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchWrapper } from "_helpers";
 
 // create slice
-const name = 'jobList';
+const name = "jobList";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
@@ -15,8 +15,8 @@ export const jobListReducer = slice.reducer;
 // implementation
 function createInitialState() {
   return {
-    jobList: []
-  }
+    jobList: [],
+  };
 }
 
 function createExtraActions() {
@@ -30,9 +30,17 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getJobList`,
 
-      async ({ jobId, pageNo, searchText, minExperience, employentModeId, pageSize }) =>
+      async ({
+        jobId,
+        pageNo,
+        searchText,
+        locationId,
+        employentModeId,
+        pageSize,
+        skillId,
+      }) =>
         await fetchWrapper.get(
-          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=${pageSize}&pageNumber=${pageNo}&searchText=${searchText}&minExperience=${minExperience}&employmentmodeid=${employentModeId}`
+          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=${pageSize}&pageNumber=${pageNo}&searchText=${searchText}&jobLocationIds=${locationId}&employmentmodeid=${employentModeId}&skillIds=${skillId}`
         )
     );
   }

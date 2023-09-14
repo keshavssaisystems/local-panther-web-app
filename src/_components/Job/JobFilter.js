@@ -2,43 +2,30 @@ import React, { useState } from "react";
 import { Card, CardBody, Form, Button, Col, Row } from "reactstrap";
 import { EmploymentMode } from "_components/dropdownComponents/EmploymentMode";
 import { InputFormGroup } from "_components/formComponents/InputFormGroup";
+import { FilterSearch } from "_components/common/filterSearch";
+import { Skills } from "_components/dropdownComponents/Skills";
 
-export function JobFilter({ onFilter }) {
-  const [filterData, setFilterData] = useState({
-    customer: "",
-    location: "",
-    minExperience: "",
-    maxExperience: "",
-  });
-  const handleChange = (e) => {
-    e.preventDefault();
-    const { target } = e;
-    const { name, value } = target;
-    setFilterData({
-      ...filterData,
-      [name]: value,
-    });
-    console.log("filterData :>> ", filterData);
-  };
-
+export function JobFilter({ onFilter, onSearch }) {
   const onSubmitHandler = (event) => {
     event.preventDefault();
     let responseBody = {};
-    responseBody.customer = event.target.elements.customer.value;
+    responseBody.skills = event.target.elements.skills.value;
     responseBody.location = event.target.elements.location.value;
-    responseBody.minExperience = event.target.elements.minExperience.value;
-    responseBody.maxExperience = event.target.elements.maxExperience.value;
-    setFilterData(responseBody);
+    responseBody.employementType = event.target.elements.employmentType.value;
+    onFilter(responseBody);
   };
-  onFilter(filterData);
+  const getSearchValue = (search) => {
+    onSearch(search);
+  };
+
   return (
     <>
       <Col md="12">
         <Card className="main-card mb-3">
           <CardBody>
-            <Form onSubmit={onSubmitHandler}>
-              <Row>
-                <Col md={9}>
+            <Row>
+              <Col md={9}>
+                <Form onSubmit={onSubmitHandler}>
                   <Row>
                     <Col>
                       <InputFormGroup
@@ -46,7 +33,6 @@ export function JobFilter({ onFilter }) {
                         name={"location"}
                         id={"location"}
                         type={"text"}
-                        onChange={handleChange}
                         placeholder={"Search by city"}
                         showValidation={false}
                         validationMessage={""}
@@ -59,7 +45,6 @@ export function JobFilter({ onFilter }) {
                         name={"skills"}
                         id={"skills"}
                         type={"text"}
-                        onChange={handleChange}
                         placeholder={"Search skills"}
                         showValidation={false}
                         validationMessage={""}
@@ -78,9 +63,15 @@ export function JobFilter({ onFilter }) {
                       <Button className="search-button">Search</Button>
                     </Col>
                   </Row>
-                </Col>
-              </Row>
-            </Form>
+                </Form>
+              </Col>
+              <Col>
+                <FilterSearch
+                  placeholder={"Search by job title"}
+                  searchValue={getSearchValue}
+                />
+              </Col>
+            </Row>
           </CardBody>
         </Card>
       </Col>

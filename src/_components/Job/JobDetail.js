@@ -11,13 +11,23 @@ export function JobDetail({ jobDetails, type }) {
   let loading = true;
   let jobDetail = {};
   let skillArray = [];
+  let skillsData = "-";
   loading = true;
   if (jobDetails.length > 0) {
     loading = false;
     jobDetail = jobDetails[0];
     jobDetail.jobSkillDtos !== undefined &&
       jobDetail.jobSkillDtos.map((skills) => skillArray.push(skills.skillname));
+    if (jobDetail.jobSkillDtos.length > 0) {
+      let skillsList = [];
+      jobDetail.jobSkillDtos.forEach((element) => {
+        let skillName = element.skillname == null ? "-" : element.skillname;
+        skillsList.push(skillName);
+      });
+      skillsData = skillsList.toString();
+    }
   }
+
   return (
     <>
       <Col md="8">
@@ -43,6 +53,7 @@ export function JobDetail({ jobDetails, type }) {
               }
               ApplyButton={type === "Open" ? false : true}
               jobId={jobDetail.jobid}
+              department={jobDetail.departmentid ?? 1}
             />
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
@@ -64,9 +75,7 @@ export function JobDetail({ jobDetails, type }) {
             />
             <HeadingAndDetailWithDiv
               heading={"Skills:"}
-              detail={
-                "Core Java, Spring Boot, Microservice, Java Programming, Version Control, RESTful APIs,  Database Management"
-              }
+              detail={skillsData}
               iconId={4}
             />
             <HeadingAndDetailWithDiv

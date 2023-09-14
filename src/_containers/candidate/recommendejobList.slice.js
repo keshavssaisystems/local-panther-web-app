@@ -16,6 +16,7 @@ export const recommendedjobListReducer = slice.reducer;
 function createInitialState() {
   return {
     recommendedjobList: [],
+    loading: false,
   };
 }
 
@@ -30,9 +31,17 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getrecommendedJobList`,
 
-      async ({ jobId, pageNo, searchText, minExperience, employentModeId }) =>
+      async ({
+        candidateId,
+        pageNo,
+        searchText,
+        locationId,
+        employentModeId,
+        skillId,
+        pageSize,
+      }) =>
         await fetchWrapper.get(
-          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=5&pageNumber=${pageNo}&searchText=${searchText}&minExperience=${minExperience}&employmentmodeid=${employentModeId}`
+          `${baseUrl}/CandidateRecommendedJob/GetCandidateRecommendedJobDetailedList?pageSize=5&pageNumber=${pageNo}&candidateId=${candidateId}&searchText=${searchText}&skillIds=${skillId}&jobLocationIds=${locationId}&employmentModeId=${employentModeId}`
         )
     );
   }
@@ -46,11 +55,12 @@ function createExtraReducers() {
       var { pending, fulfilled, rejected } = extraActions.getrecommendedJobList;
       builder
         .addCase(pending, (state) => {
-          state.recommendedjobList = { loading: true };
+          state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          state.recommendedjobList = action.payload.data.recommendedjobList;
+          state.recommendedjobList = action.payload.data;
           state.totalRows = action.payload.data.totalRows;
+          state.loading = false;
         })
         .addCase(rejected, (state, action) => {
           state.recommendedjobList = { error: action.error };
