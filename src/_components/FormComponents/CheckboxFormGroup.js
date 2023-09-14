@@ -6,9 +6,10 @@ export function CheckboxFormGroup({ name, id, label }) {
     <>
       <FormGroup>
         <Input type="checkbox" name={name} id={id} />
-        <Label check for={id} className="fw-semi-bold">
-          {"  "}
-          {"   " + label}
+        {"  "}
+        <Label check for={id}>
+          {" "}
+          {label}{" "}
         </Label>
       </FormGroup>
     </>
