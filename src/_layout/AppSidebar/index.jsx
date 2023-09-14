@@ -2,10 +2,7 @@
 import { Navigation } from "react-minimal-side-navigation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
-import Icon from "awesome-react-icons";
 import React, { useEffect, useState } from "react";
-
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
 
 export const AppSidebar = () => {

@@ -18,6 +18,7 @@ export const authReducer = slice.reducer;
 function createInitialState() {
   return {
     // initialize state from local storage to enable user to stay logged in
+    menuList: JSON.parse(localStorage.getItem("menuList")),
     token: localStorage.getItem("token"),
     error: null,
   };
@@ -34,7 +35,6 @@ function createReducers() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToekn");
-
     history.navigate("/login");
   }
 }
@@ -64,9 +64,10 @@ function createExtraReducers() {
         })
         .addCase(fulfilled, (state, { payload: { data = {} } = {} }) => {
           const { token, refreshToken, menuDtoList = [] } = data;
-          state.menuDtoList = menuDtoList;
+          state.menuList = menuDtoList;
           state.user = data;
           state.token = token;
+          localStorage.setItem("menuList", JSON.stringify(menuDtoList)); //temp fix
           localStorage.setItem("token", token);
           localStorage.setItem("refreshToken", refreshToken);
 

@@ -44,7 +44,7 @@ export function App() {
                             <Route path="/JobList" element={<JobList />} />
                             <Route path="/JobDetail" element={<JobDetail />} />
                             <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/create-job" element={< FormStickyBasic/>} />
+                            <Route path="/create-job" element={< CreateJob/>} />
                             <Route path="/candidate-list" element={<CandidateList />} />
                             <Route path="/recommended-job" element={<RecommendedJobList />} />
                             <Route path="/login" element={<Login />} />
