@@ -4,6 +4,8 @@ import { Experience } from "_components/dropdownComponents/Experience";
 import { RemoteStatus } from "_components/dropdownComponents/RemoteStatus";
 import { InputFormGroup } from "_components/formComponents/InputFormGroup";
 import { Location } from "_components/dropdownComponents/Location";
+import { Skills } from "_components/dropdownComponents/Skills";
+
 import React, { useState } from "react";
 import "./CreateJob.scss";
 import { Row, Col, Card, CardBody, CardTitle, Button, Form } from "reactstrap";
@@ -149,6 +151,11 @@ export function CreateJob() {
   let createJobSuccess = [];
   createJobSuccess = useSelector((state) => state.createJob);
   console.log(createJobSuccess);
+
+  const handleDepartmentChange = (e) => {
+    const { target: {name , value } } = e;
+    console.log('name, value :>> ', name, value);
+  }
   return (
     <>
       <Row>
@@ -200,6 +207,7 @@ export function CreateJob() {
                       showValidation={showDepartmentValidation}
                       validationMessage={"Please select department"}
                       mandatory={true}
+                      onChange={handleDepartmentChange}
                     />
                   </Col>
                   <Col md="3">
@@ -304,7 +312,8 @@ export function CreateJob() {
                 </Row>
                 <Row>
                   <Col md="6">
-                    <InputFormGroup
+                    
+                    <Skills
                       label={"Required Skills"}
                       name={"skills"}
                       id={"skills"}
