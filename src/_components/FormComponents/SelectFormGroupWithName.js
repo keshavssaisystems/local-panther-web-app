@@ -11,6 +11,7 @@ export function SelectFormGroupWithName({
   validationMessage,
   showValidation,
   mandatory,
+  onChange
 }) {
   return (
     <>
@@ -20,14 +21,14 @@ export function SelectFormGroupWithName({
           {label}
           {mandatory === true && <span style={{ color: "red" }}>* </span>}{" "}
         </Label>
-        <Input id={id} name={name} type="select">
+        <Input id={id} name={name} type="select" onChange={onChange}>
           <option key={0} value={""}>
             {" "}
             {defaultOption}{" "}
           </option>
           {optionData.length > 0 &&
             optionData.map((options) => (
-              <option key={options.id} value={options.name}>
+              <option key={options.id} value={options.id}>
                 {" "}
                 {options.name}{" "}
               </option>
