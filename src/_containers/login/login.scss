@@ -1,0 +1,170 @@
+.login-container {
+  .input-label {
+    font-family: Capitana;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+
+  .div-logo {
+    width: 968px;
+    height: 1px;
+    background: #ced4da;
+  }
+
+  .title-text {
+    color: #2f479b;
+    font-family: Inter;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    color: #2f479b;
+  }
+
+  .input-label {
+    color: #2f2e2e;
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: -0.14px;
+  }
+
+  .placeholder-text {
+    color: #afaba5;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    /* 114.286% */
+    letter-spacing: -0.14px;
+    color: #afaba5;
+  }
+
+  .forgot-pwd-text {
+    color: #2f479b;
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration-line: underline;
+    border-bottom: solid 1px;
+    color: #2f479b;
+  }
+
+  .btn-text {
+    color: #fff;
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    /* 100% */
+    letter-spacing: -0.16px;
+    vertical-align: initial;
+  }
+
+  .login-divider {
+    width: 350px;
+    height: 1px;
+    background: #ced4da;
+  }
+  .login-mt {
+    margin-top: -10px;
+  }
+
+  .error-text {
+    color: #ff406d;
+    font-family: Capitana;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 16px;
+    /* 123.077% */
+    letter-spacing: -0.13px;
+  }
+
+  .signin-logo {
+    fill: #ced4da;
+    stroke-width: 1px;
+    stroke: rgba(255, 255, 255, 0.5);
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .linkedin-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .ellipse {
+    height: 40px;
+    width: 40px;
+    background-color: #ced4da;
+    border-radius: 50%;
+  }
+
+  .icon {
+    color: #fff;
+    height: 30px;
+    width: 20px;
+  }
+
+  .login-slider-title {
+    color: #fff;
+    text-align: center;
+    font-family: Open Sans;
+    font-size: 31px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: -0.31px;
+    text-transform: capitalize;
+  }
+
+  .login-slider-text {
+    color: #fff;
+    text-align: center;
+    font-family: Open Sans;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: -0.2px;
+  }
+
+  .login-divider {
+    height: 1px;
+    background: #ced4da;
+    width: 100%;
+  }
+
+  .login-form {
+    .required-icon {
+      color: #ff0000;
+    }
+
+    .login-field-input {
+      height: 32px;
+      align-items: flex-start;
+      border-radius: 2px;
+      border: 1px solid #ced4da;
+      background: #fff;
+      color: #afaba5;
+    }
+    .login-btn {
+      border-radius: 4px;
+      background: #2f479b;
+      margin-top: 0px;
+      height: 30px;
+    }
+  }
+}

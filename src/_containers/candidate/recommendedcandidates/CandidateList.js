@@ -7,14 +7,9 @@ import {
   CardBody,
   Modal,
   FormGroup,
-  Row,
-  Col,
-  Button,
-  UncontrolledPopover,
-  PopoverHeader,
-  PopoverBody,
 } from "reactstrap";
 import { candidateActions } from "_store";
+import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
 import { useDispatch } from "react-redux";
 import { CandidateProfile } from "../candidateProfile";
@@ -25,6 +20,9 @@ import errorIcon from "../../../assets/utils/images/error_icon.png";
 import successIcon from "../../../assets/utils/images/success_icon.svg";
 import candidatelogo from "../../../assets/utils/images/profile_pic.svg";
 import { useSearchParams } from "react-router-dom";
+
+import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
+import "./candidate.scss";
 
 export function CandidateList() {
   const dispatch = useDispatch();
@@ -45,9 +43,9 @@ export function CandidateList() {
   const [acceptModal, setAcceptModal] = useState(false);
   const [rejectModal, setRejectModal] = useState(false);
   const [rejectConfirmation, setRejectConfirmation] = useState(false);
-  var totalPages = useRef();
-  var pageIndex = useRef(1);
-  var skillDetails = [];
+  let totalPages = useRef();
+  let pageIndex = useRef(1);
+  let skillDetails = [];
 
   var minExp = useRef();
   var maxExp = useRef();
@@ -56,6 +54,8 @@ export function CandidateList() {
   let skillPopover = useRef(false);
   let rejectedCandidateId = useRef();
   let rejectedApplicationId = useRef();
+  const [minExperience, setMinExperience] = useState(null);
+  const [maxExperience, setMaxExperience] = useState(null);
 
   const [reasonList, setReasonList] = useState([
     {
@@ -89,10 +89,6 @@ export function CandidateList() {
     setCandidateList(getCandidateList);
   }, [getCandidateList]);
 
-  const acceptCandidate = function () {
-    window.location.reload();
-  };
-
   const onChangeReason = function (data) {
     rejectReqData.rejectedreasonid = data;
   };
@@ -101,11 +97,10 @@ export function CandidateList() {
     rejectReqData.rejectedcomment = data;
   };
 
-  const rejectCandidateCancel = function () {
-    setRejectModal(!rejectModal);
-  };
-
   const getCandidatesList = async function () {
+    setAcceptModal(false);
+    setRejectConfirmation(false);
+    setRejectModal(false);
     let url =
       "JobApplications/GetJobAppliedCandidatesList/" +
       jobId +
@@ -114,7 +109,7 @@ export function CandidateList() {
       "&pageNumber=" +
       pageIndex.current +
       "&isActive=true&Applicationstatus=Applied";
-    if (searchData.current != "") {
+    if (searchData.current !== "") {
       url += "&searchText=" + searchData.current;
     }
     if (minExp.current != undefined || minExp.current != null) {
@@ -132,7 +127,7 @@ export function CandidateList() {
       Number(response.payload.data.totalRows) / pageSize
     );
 
-    if (totalPages.current * pageSize != response.payload.data.totalRows) {
+    if (totalPages.current * pageSize !== response.payload.data.totalRows) {
       totalPages.current++;
     }
   };
@@ -142,7 +137,7 @@ export function CandidateList() {
     const today = new Date();
     const appliedDate = new Date(date);
     let istoday;
-    if (today == appliedDate) {
+    if (today === appliedDate) {
       istoday = true;
     }
     const diffDays = Math.round(Math.abs((today - appliedDate) / oneDay));
@@ -150,20 +145,30 @@ export function CandidateList() {
       "Applied " +
       (istoday
         ? " Today"
-        : diffDays == 1
+        : Number(diffDays) === 1
         ? +diffDays + " day ago"
         : diffDays + " days ago");
 
     return daysMsg;
   };
 
-  const onHandleExpChange = function (check, event) {
-    check == "min"
-      ? (minExp.current = Number(event))
-      : (maxExp.current = Number(event));
+  const onHandleMinExpChange = function (event) {
+    setMinExperience(event.target.value);
+    if (minExperience && maxExperience) {
+      if (parseInt(event.target.value) > parseInt(maxExperience)) {
+        setIsExpError(true);
+      } else {
+        setIsExpError(false);
+      }
+    } else {
+      setIsExpError(false);
+    }
+  };
 
-    if (minExp.current && maxExp.current) {
-      if (minExp.current > maxExp.current) {
+  const onHandleMaxExpChange = function (event) {
+    setMaxExperience(event.target.value);
+    if (minExperience) {
+      if (parseInt(minExperience) > parseInt(event.target.value)) {
         setIsExpError(true);
       } else {
         setIsExpError(false);
@@ -191,7 +196,7 @@ export function CandidateList() {
 
   const maskEmail = function (inputValue) {
     const username = inputValue.substring(0, inputValue.indexOf("@"));
-    const maskedUsername = "x".repeat(username.length);
+    const maskedUsername = "*".repeat(username.length);
     const maskedValue =
       maskedUsername + inputValue.substring(inputValue.indexOf("@"));
 
@@ -210,9 +215,8 @@ export function CandidateList() {
   const onReset = function () {
     minExp.current = undefined;
     maxExp.current = undefined;
-
-    document.getElementById("minExp").value = undefined;
-    document.getElementById("maxExp").value = undefined;
+    setMinExperience("");
+    setMaxExperience("");
 
     setIsExpError(false);
     getCandidatesList();
@@ -237,14 +241,13 @@ export function CandidateList() {
   };
   const acceptRejectCandidate = async function (check, data) {
     let candidateid;
-
     let jobId;
     let applicationstatusid = 0;
     let rejectedreasonid = rejectReqData.rejectedreasonid;
     let rejectedcomment = rejectReqData.rejectedcomment;
     let currentUserId = 1;
     let applicationstatus;
-    if (check == "reject") {
+    if (check === "reject") {
       applicationstatus = "Rejected";
       candidateid = rejectedCandidateId.current;
       jobId = rejectedApplicationId.current;
@@ -255,7 +258,7 @@ export function CandidateList() {
       candidateid = data.candidateid;
       jobId = data.jobapplicationid;
     }
-    let response = await dispatch(
+    await dispatch(
       candidateActions.acceptRejectCandidate({
         candidateid,
         jobId,
@@ -266,7 +269,7 @@ export function CandidateList() {
         applicationstatus,
       })
     );
-    if (check == "accept") {
+    if (check === "accept") {
       setAcceptModal(!acceptModal);
     } else {
       setRejectModal(!rejectModal);
@@ -299,7 +302,7 @@ export function CandidateList() {
   };
 
   return (
-    <Row>
+    <div>
       {!showCandidate ? (
         <div>
           <PageTitle
@@ -307,47 +310,46 @@ export function CandidateList() {
             jobTitle={jobTitle}
             icon={titlelogo}
           />
-          <Card className="main-card mb-2">
+
+          <Card className="main-card mb-2 candidate-list">
             <CardBody>
               <Row>
-                <Col className="col-md-9">
+                <Col md={12} sm={12} lg={8}>
                   <Row>
-                    <Col className="col-md-3">
-                      <Label>Min Experience</Label>
+                    <Col lg={3} md={12} sm={12}>
+                      <Label className="input-label">Min Experience</Label>
                       <Input
-                        type="number"
+                        type="input"
                         id="minExp"
+                        className="input-text placeholder-input"
                         name="minExp"
-                        placeholder="Min Exp"
-                        value={minExp.current}
+                        placeholder="Enter min experience"
+                        value={minExperience}
                         style={{
                           borderColor: isExpError ? "red" : "#ced4da",
                         }}
-                        onChange={(evt) =>
-                          onHandleExpChange("min", evt.target.value)
-                        }
+                        onInput={(evt) => onHandleMinExpChange(evt)}
                       ></Input>
                     </Col>
 
-                    <Col className="col-md-3">
-                      <Label>Min Experience</Label>
+                    <Col lg={3} md={12} sm={12}>
+                      <Label className="input-label">Max Experience</Label>
                       <Input
-                        type="number"
+                        type="input"
                         id="maxExp"
+                        className="input-text placeholder-input"
                         name="maxExp"
-                        value={maxExp.current}
-                        placeholder="Max Exp"
+                        value={maxExperience}
+                        placeholder="Enter max experience"
                         style={{
                           borderColor: isExpError ? "red" : "#ced4da",
                         }}
-                        onChange={(evt) =>
-                          onHandleExpChange("max", evt.target.value)
-                        }
+                        onChange={(evt) => onHandleMaxExpChange(evt)}
                       ></Input>
                     </Col>
-                    <Col className="col-md-4" style={{ marginTop: "30px" }}>
+                    <Col lg={4} md={12} sm={12} className="filter-btn-mt">
                       <Button
-                        className="col-md-4 me-2"
+                        className="me-2 filter-btn"
                         onClick={(evt) =>
                           !isExpError ? getCandidatesList() : ""
                         }
@@ -362,38 +364,45 @@ export function CandidateList() {
                       </Button>
 
                       <Button
-                        className="col-md-3 me-2"
+                        className=" filter-btn"
                         onClick={(evt) => onReset()}
-                        style={{
-                          cursor: "pointer",
-                        }}
                       >
                         reset
                       </Button>
                     </Col>
                   </Row>
                   {isExpError ? (
-                    <Label style={{ color: "red" }}>
+                    <p className="filter-info-text filter-error-msg">
                       Minimum experience should be less than Max Experience
-                    </Label>
+                    </p>
                   ) : (
-                    ""
+                    <p className="filter-info-text">
+                      Filter candidates by year of experience.
+                    </p>
                   )}
                 </Col>
 
-                <Col className="col-md-3">
+                <Col md={12} sm={12} lg={4}>
                   <div
-                    className={cx("search-wrapper float-end", { active: true })}
-                    style={{ marginTop: "21px" }}
+                    className={cx(
+                      "candidate-search-wrapper search-wrapper candidate-seacrh-mt",
+                      {
+                        active: true,
+                      }
+                    )}
                   >
-                    <div className="input-holder">
+                    <div className="input-holder float-end">
                       <input
                         type="text"
-                        className="search-input"
+                        className="search-input search-placeholder"
                         id="search-input"
                         value={searchText}
                         onInput={(evt) => onSearch(evt.target.value)}
                         placeholder="Search by skill/location"
+                      />
+                      <button
+                        className="btn-close"
+                        onClick={(evt) => onClearSearch()}
                       />
                       <button
                         onClick={(evt) => getCandidatesList()}
@@ -402,132 +411,115 @@ export function CandidateList() {
                         <span />
                       </button>
                     </div>
-                    <button
-                      onClick={(evt) => onClearSearch()}
-                      style={{ left: "220px" }}
-                      className="btn-close"
-                    />
                   </div>
                 </Col>
               </Row>
             </CardBody>
           </Card>
 
-          <Row>
-            <Table responsive borderless className="align-middle mb-0">
-              <thead>
-                <tr style={{ color: "rgb(33, 91, 153)" }}>
-                  <th>Name</th>
-                  <th>Experience</th>
-                  <th>Notice Period</th>
-                  <th>Skills</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              {candidatesList.length > 0 ? (
-                <tbody>
-                  {candidatesList.map((col, ind) => (
-                    <tr
-                      key={`${ind} + ${col.firstname}`}
-                      style={{
-                        backgroundColor: "white",
-                        borderBottom: "2px solid #d6dbe0",
-                      }}
-                    >
-                      <td>
-                        <img
-                          src={candidatelogo}
-                          alt="user-icon"
-                          className="me-2"
-                          style={{ height: "35px" }}
-                        />
-
-                        <span
-                          style={{
-                            color: "rgb(33, 91, 153)",
-                            cursor: "pointer",
-                            fontWeight: "600",
-                          }}
-                          id="Popover"
-                          onClick={(evt) => {
-                            showPopOver(col);
-                          }}
+          <Table
+            responsive
+            borderless
+            className="align-middle mb-0 candidate-table"
+          >
+            <thead>
+              <tr className="candidate-table-header">
+                <th>Name</th>
+                <th>Experience</th>
+                <th>Notice Period</th>
+                <th>Skills</th>
+                <th>Location</th>
+                <th></th>
+              </tr>
+            </thead>
+            {candidatesList.length > 0 ? (
+              <tbody>
+                {candidatesList.map((col) => (
+                  <tr className="candidate-table-body">
+                    <td>
+                      <div className="widget-content p-0">
+                        <div className="widget-content-wrapper">
+                          <div className="widget-content-left me-3">
+                            <div className="widget-content-left">
+                              <img
+                                src={candidatelogo}
+                                className="candidate-logo"
+                                alt=""
+                              />
+                            </div>
+                          </div>
+                          <div className="widget-content-left flex2">
+                            <div className="candidate-name">
+                              <span
+                                id="Popover"
+                                onClick={(evt) => {
+                                  showPopOver(col);
+                                }}
+                              >
+                                {applyMask(col.firstname + col.lastname)}
+                              </span>
+                            </div>
+                            <div className="candidate-primary-skill">
+                              {col.primaryskills}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="candidate-table-data">
+                      {col.experienceyears + " years"}
+                    </td>
+                    <td className="candidate-table-data">{col.noticeperiod}</td>
+                    <td className="candidate-table-data">
+                      {getSkills(col.secondaryskills) + " "}
+                      {skillDetails.length > 3 ? (
+                        <a
+                          className="candidate-more-link"
+                          id="skill-popover"
+                          onClick={(evt) => showSkills(col)}
                         >
-                          {" "}
-                          {applyMask(col.firstname + col.lastname)}
-                        </span>
+                          +{skillDetails.length - 3} More
+                        </a>
+                      ) : (
+                        <></>
+                      )}
+                    </td>
+                    <td className="candidate-table-data">
+                      {col.cityname && col.statename
+                        ? col.cityname + " , " + col.statename
+                        : col.cityname
+                        ? col.cityname
+                        : col.statename}
+                    </td>
 
-                        <Row style={{ marginTop: "-11px", fontSize: "12px" }}>
-                          <span
-                            style={{ marginLeft: "45px", fontWeight: "500" }}
-                          >
-                            {col.primaryskills}
-                          </span>
-                        </Row>
-                      </td>
+                    <td>
+                      <Button
+                        className="me-2 candidate-table-btn profile-btn"
+                        onClick={(evt) => onShowProfile(col)}
+                      >
+                        Profile
+                      </Button>
+                      <Button
+                        className="primary-btn candidate-table-btn table-btn me-2"
+                        onClick={(evt) => acceptRejectCandidate("accept", col)}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        className="primary-btn candidate-table-btn table-btn"
+                        onClick={(evt) => rejectCandidate(col)}
+                      >
+                        Reject
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            ) : (
+              <></>
+            )}
+          </Table>
 
-                      <td className="align-middle">
-                        {col.experienceyears + " years"}
-                      </td>
-                      <td>{col.noticeperiod}</td>
-                      <td>
-                        {getSkills(col.secondaryskills) + " "}
-                        {skillDetails.length > 3 ? (
-                          <a
-                            style={{
-                              color: "#215B99",
-                              borderBottom: "solid 2px",
-                              cursor: "pointer",
-                              fontSize: "13px",
-                            }}
-                            id="skill-popover"
-                            onClick={(evt) => showSkills(col)}
-                          >
-                            +{skillDetails.length - 3} More
-                          </a>
-                        ) : (
-                          <></>
-                        )}
-                      </td>
-                      <td>
-                        <Button
-                          className=" me-2 btn-transition"
-                          style={{
-                            backgroundColor: "rgb(33 91 153)",
-                            cursor: "pointer",
-                            height: "30px",
-                          }}
-                          onClick={(evt) => onShowProfile(col)}
-                        >
-                          <span> Profile</span>
-                        </Button>
-
-                        <Button
-                          className=" me-2 btn-dark"
-                          style={{ cursor: "pointer", height: "30px" }}
-                          onClick={(evt) =>
-                            acceptRejectCandidate("accept", col)
-                          }
-                        >
-                          <span> Accept</span>
-                        </Button>
-                        <Button
-                          className=" me-2 btn-dark"
-                          style={{ cursor: "pointer", height: "30px" }}
-                          onClick={(evt) => rejectCandidate(col)}
-                        >
-                          <span>Reject</span>
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              ) : (
-                <></>
-              )}
-            </Table>
-          </Row>
           <CustomPagination
             totalPages={totalPages.current}
             pageIndex={pageIndex.current}
@@ -544,28 +536,29 @@ export function CandidateList() {
       )}
 
       {isPopOver.current ? (
-        <UncontrolledPopover placement="right" target={"Popover"}>
+        <UncontrolledPopover
+          className="detail-popover"
+          placement="right"
+          target={"Popover"}
+        >
           <PopoverHeader>
             {selectedCandidate ? (
               <div>
                 <Row>
-                  <span
-                    className="menu-header-title"
-                    style={{ color: "#545cd8" }}
-                  >
+                  <span className=" popover-name">
                     {applyMask(
                       selectedCandidate.firstname + selectedCandidate.lastname
                     )}
                   </span>
                 </Row>
-                <Row style={{ fontSize: "12px" }}>
-                  <Col className="col-md-5">
-                    <span className="menu-header-subtitle">
+                <Row>
+                  <Col className="col-md-4">
+                    <span className="popover-job-title">
                       {selectedCandidate.primaryskills}
                     </span>
                   </Col>
-                  <Col className="col-md-7">
-                    <h6 style={{ fontSize: "12px" }} className="float-end">
+                  <Col className="col-md-8">
+                    <h6 className=" popover-job-title float-end">
                       {getApplicationDate(selectedCandidate.applicationdate)}
                     </h6>
                   </Col>
@@ -575,30 +568,28 @@ export function CandidateList() {
               <></>
             )}
           </PopoverHeader>
-          <PopoverBody style={{ fontSize: "13px" }}>
+          <PopoverBody className="popover-content">
             <Row>
               <Col>
-                <Label style={{ fontWeight: "700" }}>Email :</Label>{" "}
+                <Label className="popover-label">Email :</Label>{" "}
                 <span>{maskEmail(selectedCandidate.email)}</span>
               </Col>
             </Row>
             <Row>
               <Col>
-                <Label style={{ fontWeight: "700" }}>Contact :</Label>{" "}
+                <Label className="popover-label">Contact :</Label>{" "}
                 <span>{formatPhoneNumber(selectedCandidate.phonenumber)}</span>
               </Col>
             </Row>
             <Row>
               <Col>
-                <Label style={{ fontWeight: "700" }}>
-                  Willing to Relocate :
-                </Label>{" "}
+                <Label className="popover-label">Willing to Relocate :</Label>{" "}
                 <span>{selectedCandidate.isrelocate ? "No" : "Yes"}</span>
               </Col>
             </Row>
             <Row>
               <Col>
-                <Label style={{ fontWeight: "700" }}>
+                <Label className="popover-label">
                   Video Conference Capabilities :
                 </Label>{" "}
                 <span>
@@ -613,12 +604,18 @@ export function CandidateList() {
       )}
 
       {skillPopover.current ? (
-        <UncontrolledPopover placement="top" target={"skill-popover"}>
-          <PopoverHeader style={{ fontWeight: "600" }}>Skills</PopoverHeader>
-          <PopoverBody style={{ fontSize: "13px" }}>
+        <UncontrolledPopover
+          className="skills-layout"
+          placement="top"
+          target={"skill-popover"}
+        >
+          <PopoverHeader className="skills-popover-header">
+            Skills
+          </PopoverHeader>
+          <PopoverBody>
             {selectedCandidate ? (
               <div>
-                <Row style={{ fontSize: "14px" }}>
+                <Row className="skills-font">
                   {selectedCandidate.secondaryskills}
                 </Row>
               </div>
@@ -631,73 +628,36 @@ export function CandidateList() {
         <></>
       )}
 
-      <Modal isOpen={rejectConfirmation}>
+      <Modal className="modal-dialog-align" isOpen={acceptModal}>
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
               <img src={successIcon} alt="success-icon" />
             </div>
-            <div
-              className="mb-0 d-flex justify-content-center"
-              style={{ fontSize: "25px", fontWeight: "600" }}
-            >
-              Candidate Rejected
-            </div>
-            <div
-              className="mb-3 d-flex justify-content-center"
-              style={{ fontSize: "25px", fontWeight: "600" }}
-            >
-              {" "}
-              Successfully
+            <div className="mb-0 d-flex justify-content-center success-modal-text">
+              Candidate Accepted Successfully
             </div>
             <div>
-              <Row>
-                <Col className="d-flex justify-content-center ">
-                  <Button color="primary" onClick={(evt) => acceptCandidate()}>
-                    OK
-                  </Button>
-                </Col>
+              <Row className="d-flex justify-content-center mb-4 accept-interview-text">
+                Would you like to schedule
               </Row>
-            </div>
-          </CardBody>
-        </Card>
-      </Modal>
-
-      <Modal isOpen={acceptModal}>
-        <Card>
-          <CardBody>
-            <div className="d-flex justify-content-center mb-3">
-              <img src={successIcon} alt="success-icon" />
-            </div>
-            <div
-              className="mb-0 d-flex justify-content-center"
-              style={{ fontSize: "25px", fontWeight: "600" }}
-            >
-              Candidate has been Accepted
-            </div>
-            <div
-              className="mb-3 d-flex justify-content-center"
-              style={{ fontSize: "25px", fontWeight: "600" }}
-            >
-              Successfully
-            </div>
-            <div>
-              <Row
-                style={{ fontSize: "18px" }}
-                className="d-flex justify-content-center mb-4"
-              >
-                Would you like to schedule an interview?
+              <Row className="d-flex justify-content-center mb-4 accept-interview-text">
+                an interview?
               </Row>
               <Row>
-                <Col className="d-flex justify-content-center ">
+                <Col className="d-flex justify-content-center interview-btn">
                   <Button
                     color="primary"
-                    className="me-2"
-                    onClick={(evt) => acceptCandidate()}
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => getCandidatesList()}
                   >
                     Yes
                   </Button>
-                  <Button color="primary" onClick={(evt) => acceptCandidate()}>
+                  <Button
+                    color="primary"
+                    className="success-close-btn"
+                    onClick={(evt) => getCandidatesList()}
+                  >
                     No
                   </Button>
                 </Col>
@@ -707,37 +667,38 @@ export function CandidateList() {
         </Card>
       </Modal>
 
-      <Modal className="lg" isOpen={rejectModal}>
+      <Modal className="modal-dialog-reject-align" isOpen={rejectModal}>
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
               <img src={errorIcon} alt="error-icon" />
             </div>
-            <div
-              className="mb-0 d-flex justify-content-center"
-              style={{ fontSize: "25px", fontWeight: "600" }}
-            >
+            <div className="mb-0 d-flex justify-content-center reject-reason-text">
               Please Provide a Reason for
             </div>
-            <div
-              className="mb-3 d-flex justify-content-center"
-              style={{ fontSize: "25px", fontWeight: "600" }}
-            >
-              {" "}
+            <div className="mb-3 d-flex justify-content-center reject-reason-text">
               Candidate Rejection
             </div>
             <div>
               <Row>
                 <Col className="mb-2">
-                  <Label for="exampleCustomSelectDisabled">
-                    Select Rejection Reason
+                  <Label
+                    className="reject-modal-label"
+                    for="exampleCustomSelectDisabled"
+                  >
+                    Reason
                   </Label>
                   <Input
+                    className="reason-dropdown-input dropdown-placeholder"
                     type="select"
                     id="jobType"
                     name="jobType"
+                    placeholder="Select Reason"
                     onChange={(evt) => onChangeReason(evt.target.value)}
                   >
+                    <option className="dropdown-placeholder">
+                      Select Reason
+                    </option>
                     {reasonList.map((col) => (
                       <option value={col.value}>{col.type}</option>
                     ))}
@@ -747,9 +708,13 @@ export function CandidateList() {
               <Row>
                 <Col>
                   <FormGroup>
-                    <Label for="exampleText">Comment</Label>
+                    <Label className="reject-modal-label" for="exampleText">
+                      Comment
+                    </Label>
                     <Input
                       type="textarea"
+                      className="dropdown-placeholder"
+                      placeholder="Enter comment here"
                       onInput={(evt) => addComment(evt.target.value)}
                       name="text"
                       id="exampleText"
@@ -760,15 +725,14 @@ export function CandidateList() {
               <Row>
                 <Col className="d-flex justify-content-center ">
                   <Button
-                    className="me-2"
-                    color="primary"
+                    className="me-2 reject-modal-btn"
                     onClick={(evt) => acceptRejectCandidate("reject", "")}
                   >
                     submit
                   </Button>
                   <Button
-                    color="primary"
-                    onClick={(evt) => rejectCandidateCancel()}
+                    className="reject-close-btn"
+                    onClick={(evt) => setRejectModal(false)}
                   >
                     Cancel
                   </Button>
@@ -778,6 +742,39 @@ export function CandidateList() {
           </CardBody>
         </Card>
       </Modal>
-    </Row>
+
+      <Modal className="modal-reject-align " isOpen={rejectConfirmation}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Candidate Rejected
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Successfully!
+            </div>
+            <div className="mb-3 d-flex justify-content-center reject-text">
+              {" "}
+              Thank you!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center ">
+                  <Button
+                    color="primary"
+                    onClick={(evt) => getCandidatesList()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+    </div>
   );
 }

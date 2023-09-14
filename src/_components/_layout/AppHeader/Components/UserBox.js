@@ -26,7 +26,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { authActions } from "_store";
 
 export function UserBox() {
-  const authUser = useSelector((x) => x?.auth?.token);
+  const authUser = useSelector(x => x?.auth?.token);
   const dispatch = useDispatch();
   const logout = () => dispatch(authActions.logout());
 

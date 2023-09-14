@@ -7,36 +7,31 @@ class PageTitle extends Component {
     let { heading, subheading, jobTitle, icon } = this.props;
 
     return (
-      <div
-        className="app-page-title"
-        style={{
-          marginRight: "0px",
-          color: "rgb(33, 91, 153)",
-          fontWeight: "600",
-        }}
-      >
-        <div className="page-title-wrapper">
-          <div className="page-title-heading">
-            {icon ? (
-              <div
-                className={cx("page-title-icon", {
-                  "d-none": false,
-                })}
-              >
-                <img src={icon} alt={"icon"} />
-              </div>
-            ) : (
-              <></>
-            )}
+      <div className="page-title-web">
+        <div className="app-page-title title-web">
+          <div className="page-title-wrapper">
+            <div className="page-title-heading">
+              {icon ? (
+                <div
+                  className={cx("page-title-icon", {
+                    "d-none": false,
+                  })}
+                >
+                  <img src={icon} alt="title-icon" />
+                </div>
+              ) : (
+                <></>
+              )}
 
-            <div className="page-title">
-              {heading} {jobTitle}
-              <div
-                className={cx("page-title-subheading", {
-                  "d-none": true,
-                })}
-              >
-                {subheading}
+              <div className="page-title">
+                {heading} {jobTitle}
+                <div
+                  className={cx("page-title-subheading", {
+                    "d-none": true,
+                  })}
+                >
+                  {subheading}
+                </div>
               </div>
             </div>
           </div>
