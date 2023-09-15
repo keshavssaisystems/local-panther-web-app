@@ -317,7 +317,6 @@ export function CreateJob() {
                       label={"Required Skills"}
                       name={"skills"}
                       id={"skills"}
-                      type={"textarea"}
                       placeholder={"Type to search for skill"}
                       showValidation={showRequiredSkillsValidation}
                       validationMessage={"Please enter skills"}

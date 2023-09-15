@@ -3,10 +3,11 @@ import {Label, FormGroup, FormText } from "reactstrap";
 import Select from 'react-select';
 
 export function MultiSelectFormGroup({
-    name, 
-    options = [], 
-    id, 
     label, 
+    id, 
+    name, 
+    placeholder,
+    options = [], 
     defaultOption, 
     validationMessage, 
     showValidation
@@ -16,11 +17,12 @@ export function MultiSelectFormGroup({
             <FormGroup>
                 <Label for={id}> {label} </Label>
                 <Select
+                    id={id}
                     name={name}
+                    placeholder={placeholder}
                     options={options}
                     isMulti={true}
                     isSearchable={true}
-                    placeholder="Select Skills..."
                 /> 
                 {
                     showValidation === true && <FormText color="danger">{validationMessage}</FormText>

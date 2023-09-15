@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { locationActions } from "_store";
-import { Label, Input, FormGroup, FormText } from "reactstrap";
+import { MultiSelectFormGroup } from "_components/formComponents/MultiSelectFormGroup";
 
 export function Location({
   name,
@@ -23,51 +23,21 @@ export function Location({
   const getDropDown = async function (searchText) {
     await dispatch(locationActions.getLocation(searchText));
   };
-  let locationDetails = [];
-  locationDetails = useSelector((state) => state.location.location);
+
+  const data = useSelector((state) => state.location.location ?? []);
+
   return (
     <>
-      <FormGroup>
-        <Label for={id} className="fw-semi-bold">
-          {" "}
-          {label}
-          {mandatory === true && <span style={{ color: "red" }}>* </span>}{" "}
-        </Label>
-        <Input id={id} name={name} type="select">
-          <option key="0" value="">
-            {defaultOption}
-          </option>
-          {locationDetails.length > 0 &&
-            locationDetails.map((options) => (
-              <option
-                key={options.cityid}
-                value={
-                  options.cityid +
-                  "," +
-                  options.stateid +
-                  "," +
-                  options.countryid +
-                  "," +
-                  options.location +
-                  "," +
-                  options.statename +
-                  "," +
-                  options.countryname
-                }
-              >
-                {" "}
-                {options.location +
-                  ", " +
-                  options.statename +
-                  ", " +
-                  options.countryname}{" "}
-              </option>
-            ))}
-        </Input>
-        {showValidation === true && (
-          <FormText color="danger">{validationMessage}</FormText>
-        )}
-      </FormGroup>
+        <MultiSelectFormGroup 
+          label={label}
+          id={id}
+          name={name}
+          placeholder={defaultOption}
+          options={data.map(({cityid: value, ...rest}) => {return {value, label: `${rest.location}, ${rest.statename}`}})}
+          showValidation={showValidation}
+          validationMessage={validationMessage}
+          mandatory={mandatory}
+        />        
     </>
   );
 }
