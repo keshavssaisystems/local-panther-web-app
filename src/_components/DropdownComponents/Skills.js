@@ -3,6 +3,10 @@ import { useSelector } from "react-redux";
 import { MultiSelectFormGroup } from "_components/formComponents/MultiSelectFormGroup";
 
 export function Skills({ 
+    label,
+    id,
+    name,
+    placeholder,
     showValidation, 
     validationMessage, 
     mandatory, 
@@ -15,10 +19,10 @@ export function Skills({
   return (
     <>
       <MultiSelectFormGroup
-        label="Skills"
-        id="skills"
-        name="skills"
-        defaultOption="Select Skills"
+        label={label}
+        id={id}
+        name={name}
+        placeholder={placeholder}
         options={data.map(({skillid: value, skillname: label}) => ({value, label}))}
         showValidation={showValidation}
         validationMessage={validationMessage}
