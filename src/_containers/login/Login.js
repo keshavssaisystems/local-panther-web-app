@@ -178,7 +178,10 @@ export function Login() {
                             </div>
                           </InputGroup>
                           <div className="mt-4 float-end">
-                            <Link className="text-primary forgot-pwd-text me-3 ">
+                            <Link
+                              to="/forgot-password"
+                              className="text-primary forgot-pwd-text me-3 "
+                            >
                               Forgot password?
                             </Link>
 

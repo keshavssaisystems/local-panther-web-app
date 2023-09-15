@@ -16,6 +16,7 @@ import { AppHeader } from "_components/_layout/AppHeader";
 import { AppSidebar } from "_components/_layout/AppSidebar";
 import { AppFooter } from "_components/_layout/AppFooter";
 import "./app.scss";
+import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -41,7 +42,7 @@ export function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/job-list" element={<JobList />} />
+              <Route path="/JobList" element={<JobList />} />
               <Route path="/JobDetail" element={<JobDetail />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/create-job" element={<CreateJob />} />
@@ -49,8 +50,11 @@ export function App() {
               <Route path="/recommended-job" element={<RecommendedJobList />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
-              <Route path="/registration-success" element={<RegistrationSuccess />} />
-              {/* <Route path="*" element={<Navigate to="/" />} /> */}
+              <Route
+                path="/registration-success"
+                element={<RegistrationSuccess />}
+              />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}
