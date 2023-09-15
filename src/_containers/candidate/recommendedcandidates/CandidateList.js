@@ -7,9 +7,14 @@ import {
   CardBody,
   Modal,
   FormGroup,
+  UncontrolledPopover,
+  PopoverHeader,
+  PopoverBody,
+  Row,
+  Col,
+  Button,
 } from "reactstrap";
 import { candidateActions } from "_store";
-import { Row, Col, Button } from "reactstrap";
 import cx from "classnames";
 import { useDispatch } from "react-redux";
 import { CandidateProfile } from "../candidateProfile";
@@ -20,8 +25,8 @@ import errorIcon from "../../../assets/utils/images/error_icon.png";
 import successIcon from "../../../assets/utils/images/success_icon.svg";
 import candidatelogo from "../../../assets/utils/images/profile_pic.svg";
 import { useSearchParams } from "react-router-dom";
-
-import { UncontrolledPopover, PopoverHeader, PopoverBody } from "reactstrap";
+import { applyMask } from "_helpers/helper";
+import { PopOverComp } from "_components/popover/popover";
 import "./candidate.scss";
 
 export function CandidateList() {
@@ -49,7 +54,7 @@ export function CandidateList() {
 
   var minExp = useRef();
   var maxExp = useRef();
-  var isPopOver = useRef(false);
+
   let searchData = useRef("");
   let skillPopover = useRef(false);
   let rejectedCandidateId = useRef();
@@ -132,26 +137,6 @@ export function CandidateList() {
     }
   };
 
-  const getApplicationDate = function (date) {
-    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    const today = new Date();
-    const appliedDate = new Date(date);
-    let istoday;
-    if (today === appliedDate) {
-      istoday = true;
-    }
-    const diffDays = Math.round(Math.abs((today - appliedDate) / oneDay));
-    let daysMsg =
-      "Applied " +
-      (istoday
-        ? " Today"
-        : Number(diffDays) === 1
-        ? +diffDays + " day ago"
-        : diffDays + " days ago");
-
-    return daysMsg;
-  };
-
   const onHandleMinExpChange = function (event) {
     setMinExperience(event.target.value);
     if (minExperience && maxExperience) {
@@ -176,31 +161,6 @@ export function CandidateList() {
     } else {
       setIsExpError(false);
     }
-  };
-
-  const applyMask = function (inputValue) {
-    const numCharsToMask = inputValue.length - (inputValue.length - 2);
-    const maskedValue =
-      "*".repeat(inputValue.length - numCharsToMask) +
-      inputValue.slice(-numCharsToMask);
-
-    return maskedValue;
-  };
-  const formatPhoneNumber = function (inputValue) {
-    const maskedValue = "*".repeat(10 - 4) + inputValue.slice(-4);
-    return `(${maskedValue.substring(0, 3)}) - ${maskedValue.substring(
-      3,
-      6
-    )} - ${maskedValue.substring(6)}`;
-  };
-
-  const maskEmail = function (inputValue) {
-    const username = inputValue.substring(0, inputValue.indexOf("@"));
-    const maskedUsername = "*".repeat(username.length);
-    const maskedValue =
-      maskedUsername + inputValue.substring(inputValue.indexOf("@"));
-
-    return maskedValue;
   };
 
   const onShowProfile = function (data) {
@@ -234,11 +194,6 @@ export function CandidateList() {
     setRejectModal(!rejectModal);
   };
 
-  const showPopOver = function (data) {
-    setselectedCandidate(data);
-    isPopOver.current = false;
-    isPopOver.current = true;
-  };
   const acceptRejectCandidate = async function (check, data) {
     let candidateid;
     let jobId;
@@ -434,8 +389,8 @@ export function CandidateList() {
             </thead>
             {candidatesList.length > 0 ? (
               <tbody>
-                {candidatesList.map((col) => (
-                  <tr className="candidate-table-body">
+                {candidatesList.map((col, ind) => (
+                  <tr key={col.email} className="candidate-table-body">
                     <td>
                       <div className="widget-content p-0">
                         <div className="widget-content-wrapper">
@@ -450,14 +405,10 @@ export function CandidateList() {
                           </div>
                           <div className="widget-content-left flex2">
                             <div className="candidate-name">
-                              <span
-                                id="Popover"
-                                onClick={(evt) => {
-                                  showPopOver(col);
-                                }}
-                              >
+                              <span id={`popover${ind}`}>
                                 {applyMask(col.firstname + col.lastname)}
                               </span>
+                              <PopOverComp data={col} ind={ind} />
                             </div>
                             <div className="candidate-primary-skill">
                               {col.primaryskills}
@@ -533,74 +484,6 @@ export function CandidateList() {
             jobId={jobId}
           ></CandidateProfile>
         </div>
-      )}
-
-      {isPopOver.current ? (
-        <UncontrolledPopover
-          className="detail-popover"
-          placement="right"
-          target={"Popover"}
-        >
-          <PopoverHeader>
-            {selectedCandidate ? (
-              <div>
-                <Row>
-                  <span className=" popover-name">
-                    {applyMask(
-                      selectedCandidate.firstname + selectedCandidate.lastname
-                    )}
-                  </span>
-                </Row>
-                <Row>
-                  <Col className="col-md-4">
-                    <span className="popover-job-title">
-                      {selectedCandidate.primaryskills}
-                    </span>
-                  </Col>
-                  <Col className="col-md-8">
-                    <h6 className=" popover-job-title float-end">
-                      {getApplicationDate(selectedCandidate.applicationdate)}
-                    </h6>
-                  </Col>
-                </Row>
-              </div>
-            ) : (
-              <></>
-            )}
-          </PopoverHeader>
-          <PopoverBody className="popover-content">
-            <Row>
-              <Col>
-                <Label className="popover-label">Email :</Label>{" "}
-                <span>{maskEmail(selectedCandidate.email)}</span>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label className="popover-label">Contact :</Label>{" "}
-                <span>{formatPhoneNumber(selectedCandidate.phonenumber)}</span>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label className="popover-label">Willing to Relocate :</Label>{" "}
-                <span>{selectedCandidate.isrelocate ? "No" : "Yes"}</span>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label className="popover-label">
-                  Video Conference Capabilities :
-                </Label>{" "}
-                <span>
-                  {selectedCandidate.isvideoconference ? "No" : "Yes"}
-                </span>
-              </Col>
-            </Row>
-          </PopoverBody>
-        </UncontrolledPopover>
-      ) : (
-        <></>
       )}
 
       {skillPopover.current ? (
