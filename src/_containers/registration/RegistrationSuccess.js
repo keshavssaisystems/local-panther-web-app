@@ -7,6 +7,7 @@ import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 import { Col, Row, Button, Form, FormGroup, Label, FormFeedback } from "reactstrap";
 
 import { history } from "_helpers";
+import "./registrationsuccess.scss"
 
 import logo from "../../assets/utils/images/panther-logo.png";
 
@@ -27,15 +28,15 @@ export function RegistrationSuccess() {
 
   return (
     <>
-      <div className="h-100">
+      <div className="registrationsuccess-container h-100">
         <Row className="h-100 g-0">
           <Col lg="7" md="12" className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center">
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
-              <img src={logo} width={"130px"} alt="logo" />
+              <img src={logo} width={"130px"} alt="logo" className="logo" />
               <div className="app-logo" />
               <h6>
-                <div className="text-primary"><strong>Account created successfully!</strong></div>
-                <span>
+                <div className="succese-text"><strong>Account created successfully!</strong></div>
+                <span className="success-msg">
                   Please check your register email for email verification.
                 </span>
               </h6>

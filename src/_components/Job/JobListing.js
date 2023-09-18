@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Card, CardBody, Col, CardText } from "reactstrap";
 import { JobCard } from "./JobCard";
 import { CardPagination } from "../common/cardpagination";
-import { JobDetail } from "../job/JobDetail";
+import { JobDetail } from "./JobDetail";
 
 export function JobListing({
   jobData,
