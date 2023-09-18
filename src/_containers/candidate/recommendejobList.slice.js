@@ -41,7 +41,7 @@ function createExtraActions() {
         pageSize,
       }) =>
         await fetchWrapper.get(
-          `${baseUrl}//CandidateRecommendedJob/GetRecommendedJobList?pageSize=5&isActive=true&pageNumber=${pageNo}&candidateId=${candidateId}&searchText=${searchText}&skillIds=${skillId}&jobLocationIds=${locationId}&employmentModeId=${employentModeId}`
+          `${baseUrl}/CandidateRecommendedJob/GetRecommendedJobList?pageSize=5&isActive=true&pageNumber=${pageNo}&candidateId=${candidateId}&searchText=${searchText}&skillIds=${skillId}&jobLocationIds=${locationId}&employmentModeId=${employentModeId}`
         )
     );
   }
