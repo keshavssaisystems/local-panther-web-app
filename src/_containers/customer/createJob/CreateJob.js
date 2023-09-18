@@ -8,7 +8,16 @@ import { Skills } from "_components/dropdownComponents/Skills";
 
 import React, { useState } from "react";
 import "./CreateJob.scss";
-import { Row, Col, Card, CardBody, CardTitle, Button, Form } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  CardTitle,
+  Button,
+  Form,
+  FormText,
+} from "reactstrap";
 import { BsPuzzle } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { createjobActions, skillActions } from "_store";
@@ -33,9 +42,10 @@ export function CreateJob() {
     useState(false);
   const [showResponsibilitiesValidation, setResponsibilitiesValidation] =
     useState(false);
+  const [showMaxMinExperinceCheck, setShowMaxMinExperinceCheck] =
+    useState(false);
   const checkValidation = (event) => {
     event.preventDefault();
-    console.log(event);
     setShowPopup(false);
     setShowPopupWithNextStep(false);
     if (event.target.elements.jobTitle.value === "") {
@@ -66,6 +76,12 @@ export function CreateJob() {
       setMaxExperienceValidation(true);
     }
     if (
+      event.target.elements.minExperience.value >
+      event.target.elements.maxExperience.value
+    ) {
+      setShowMaxMinExperinceCheck(true);
+    }
+    if (
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.jobDescription.value !== "" &&
       event.target.elements.skills.length !== 0 &&
@@ -74,7 +90,9 @@ export function CreateJob() {
       event.target.elements.location.length !== 0 &&
       event.target.elements.rolesResponsibilities.value !== "" &&
       event.target.elements.minExperience.value !== "" &&
-      event.target.elements.maxExperience.value !== ""
+      event.target.elements.maxExperience.value !== "" &&
+      event.target.elements.minExperience.value <
+        event.target.elements.maxExperience.value
     ) {
       onSubmitClick(event);
     }
@@ -297,6 +315,12 @@ export function CreateJob() {
                       validationMessage={"Please enter minimum experience"}
                       mandatory={true}
                     />
+                    {showMaxMinExperinceCheck === true && (
+                      <FormText color="danger">
+                        The Minimun Experience should be less than Maximum
+                        Experience
+                      </FormText>
+                    )}
                   </Col>
                   <Col md="3">
                     <Experience
