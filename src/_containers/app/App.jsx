@@ -47,7 +47,18 @@ export function App() {
               <Route path="/JobDetail" element={<JobDetail />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/create-job" element={<CreateJob />} />
-              <Route path="/candidate-list" element={<CandidateList />} />
+              <Route
+                path="/candidate-list"
+                element={<CandidateList type="candidate" />}
+              />
+              <Route
+                path="/rejected-list"
+                element={<CandidateList type="rejected" />}
+              />
+              <Route
+                path="/accepted-list"
+                element={<CandidateList type="accepted" />}
+              />
               <Route path="/recommended-job" element={<RecommendedJobList />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />

@@ -3,7 +3,7 @@
 @use "sass:math";
 
 .app-page-title {
-  margin: 0rem 0rem $grid-gutter-width 0rem;
+  margin: 0rem 0rem $grid-gutter-width (-$grid-gutter-width);
   padding: $grid-gutter-width;
   position: relative;
 
