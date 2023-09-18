@@ -35,7 +35,6 @@ export function JobCard({
     getSelectedJobId(jobId);
   };
   let skillsData = "-";
-  console.log(additionalData.jobSkillDtos);
   if (additionalData.jobSkillDtos.length > 0) {
     let skillsList = [];
     additionalData.jobSkillDtos.forEach((element) => {
