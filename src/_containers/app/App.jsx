@@ -9,6 +9,7 @@ import { JobDetail } from "_containers/customer/jobs/JobDetail";
 import { CreateJob } from "_containers/customer/createJob/CreateJob";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
+import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
 import { CandidateList } from "_containers/candidate/recommendedcandidates/CandidateList";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
@@ -48,6 +49,7 @@ export function App() {
               <Route path="/recommended-job" element={<RecommendedJobList />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
               {/* <Route path="*" element={<Navigate to="/" />} /> */}
             </Routes>
           </div>
