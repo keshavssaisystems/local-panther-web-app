@@ -35,24 +35,25 @@ export function CreateJob() {
     useState(false);
   const checkValidation = (event) => {
     event.preventDefault();
+    console.log(event);
     setShowPopup(false);
-    // setShowPopupWithNextStep(false);
+    setShowPopupWithNextStep(false);
     if (event.target.elements.jobTitle.value === "") {
       setJobTitleValidation(true);
     }
     if (event.target.elements.jobDescription.value === "") {
       setJobDescriptionValidation(true);
     }
-    // if (event.target.elements.skills.length !== 0) {
-    //   setRequiredSkillsValidation(true);
-    // }
+    if (event.target.elements.skills.length === 0) {
+      setRequiredSkillsValidation(true);
+    }
     if (event.target.elements.department.value === "") {
       setDepartmentValidation(true);
     }
     if (event.target.elements.jobRole.value === "") {
       setJobRoleValidation(true);
     }
-    if (event.target.elements.location.value === "") {
+    if (event.target.elements.location.length === 0) {
       setLocationValidation(true);
     }
     if (event.target.elements.rolesResponsibilities.value === "") {
@@ -67,10 +68,10 @@ export function CreateJob() {
     if (
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.jobDescription.value !== "" &&
-      // event.target.elements.skills.length === 0 &&
+      event.target.elements.skills.length !== 0 &&
       event.target.elements.department.value !== "" &&
       event.target.elements.jobRole.value !== "" &&
-      event.target.elements.location.value !== "" &&
+      event.target.elements.location.length !== 0 &&
       event.target.elements.rolesResponsibilities.value !== "" &&
       event.target.elements.minExperience.value !== "" &&
       event.target.elements.maxExperience.value !== ""
@@ -78,11 +79,11 @@ export function CreateJob() {
       onSubmitClick(event);
     }
   };
-  const getLocationDetails = (locationString) => {
-    let locationDetails = [];
-    let splitDetails = locationString.split(",");
-    locationDetails = [
-      {
+  const getLocationDetails = (locationArray) => {
+    let locationDetailArray = [];
+    locationArray.forEach((locationString) => {
+      let splitDetails = locationString.value.split(", ");
+      let locationDetails = {
         jobid: 0,
         joblocationid: 0,
         location:
@@ -96,9 +97,11 @@ export function CreateJob() {
         regionname: "",
         isactive: true,
         currentUserId: 0,
-      },
-    ];
-    return locationDetails;
+      };
+      locationDetailArray.push(locationDetails);
+    });
+
+    return locationDetailArray;
   };
   let skillsMainArray = useSelector((state) => state.skill.data);
   const getSkillsDetails = (skillsArray) => {
@@ -120,9 +123,7 @@ export function CreateJob() {
     return skillsDetails;
   };
   const onSubmitClick = (event) => {
-    let locationDetails = getLocationDetails(
-      event.target.elements.location.value
-    );
+    let locationDetails = getLocationDetails(event.target.elements.location);
     let skillDetails = getSkillsDetails(event.target.elements.skills);
     let data = {
       jobid: 0,
@@ -150,10 +151,6 @@ export function CreateJob() {
   const createJob = async function (formElement) {
     await dispatch(createjobActions.getCreatejob(formElement));
   };
-  let createJobSuccess = [];
-  createJobSuccess = useSelector((state) => state.createJob);
-  console.log(createJobSuccess);
-
   const handleDepartmentChange = (e) => {
     const {
       target: { value },

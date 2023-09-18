@@ -11,19 +11,36 @@ export function AsyncSelectFormGroup({
   defaultOption,
   validationMessage,
   showValidation,
-  loadOptions
+  loadOptions,
+  mandatory,
 }) {
+  const customStyles = {
+    valueContainer: (provided, state) => ({
+      ...provided,
+      minHeight: "30px",
+      padding: "0 6px",
+    }),
+    input: (provided, state) => ({
+      ...provided,
+      margin: "0px",
+    }),
+  };
   return (
     <>
       <FormGroup>
-        <Label for={id}> {label} </Label>
+        <Label for={id} className="fw-semi-bold">
+          {" "}
+          {label}
+          {mandatory === true && <span style={{ color: "red" }}>* </span>}
+        </Label>
         <AsyncSelect
-          name
-          placeholder
-          defaultOptions={true}
+          name={name}
+          placeholder={placeholder}
+          defaultOptions={defaultOption}
           loadOptions={loadOptions}
           isMulti={true}
-      />
+          styles={customStyles}
+        />
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>
         )}

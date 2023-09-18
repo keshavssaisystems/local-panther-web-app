@@ -1,18 +1,40 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardBody, Form, Button, Col, Row } from "reactstrap";
 import { EmploymentMode } from "_components/dropdownComponents/EmploymentMode";
-import { InputFormGroup } from "_components/formComponents/InputFormGroup";
 import { FilterSearch } from "_components/common/filterSearch";
-import { Skills } from "_components/dropdownComponents/Skills";
+import { SkillsFilter } from "_components/dropdownComponents/SkillsFilter";
+import { Location } from "_components/dropdownComponents/Location";
 
 export function JobFilter({ onFilter, onSearch }) {
   const onSubmitHandler = (event) => {
     event.preventDefault();
+    let processedData = processFormData(event);
     let responseBody = {};
-    responseBody.skills = event.target.elements.skills.value;
-    responseBody.location = event.target.elements.location.value;
+    responseBody.skills = processedData[1].toString();
+    responseBody.location = processedData[0].toString();
     responseBody.employementType = event.target.elements.employmentType.value;
     onFilter(responseBody);
+  };
+  const processFormData = (targetEvent) => {
+    let locationArray = [];
+    let skillsArray = [];
+    let eventLength = targetEvent.target.length;
+    for (let index = 0; index < eventLength; index++) {
+      let getSplitData = targetEvent.target.elements[index].value.split(", ");
+      if (
+        targetEvent.target.elements[index].type === "hidden" &&
+        getSplitData.length > 1
+      ) {
+        locationArray.push(getSplitData[0]);
+      }
+      if (
+        targetEvent.target.elements[index].type === "hidden" &&
+        getSplitData.length === 1
+      ) {
+        skillsArray.push(getSplitData[0]);
+      }
+    }
+    return [locationArray, skillsArray];
   };
   const getSearchValue = (search) => {
     onSearch(search);
@@ -28,24 +50,22 @@ export function JobFilter({ onFilter, onSearch }) {
                 <Form onSubmit={onSubmitHandler}>
                   <Row>
                     <Col>
-                      <InputFormGroup
+                      <Location
                         label={"Location"}
                         name={"location"}
                         id={"location"}
-                        type={"text"}
-                        placeholder={"Search by city"}
+                        defaultOption={"Search by city"}
                         showValidation={false}
                         validationMessage={""}
                         mandatory={false}
                       />
                     </Col>
                     <Col>
-                      <InputFormGroup
+                      <SkillsFilter
                         label={"Skills"}
-                        name={"skills"}
-                        id={"skills"}
-                        type={"text"}
-                        placeholder={"Search skills"}
+                        name={"skillsDD"}
+                        id={"skillsDD"}
+                        defaultOption={"Search skills"}
                         showValidation={false}
                         validationMessage={""}
                         mandatory={false}
