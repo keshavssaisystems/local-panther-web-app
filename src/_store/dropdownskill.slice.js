@@ -43,3 +43,10 @@ export const skillActions = {
   getSkill, // Export the async action
 };
 export const skillReducer = skillSlice.reducer;
+
+export const getSkillsFilter = async (searchText) => {
+  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
+  return await fetchWrapper.get(
+    `${baseUrl}/Skill/GetSkillDropdown?searchText=${searchText}`
+  );
+};

@@ -108,36 +108,56 @@ export function JobDetail({ jobDetails, type }) {
               detail={jobDetail.responsibilities}
             />
             {type === "Open" && (
-              <div className="p-3 mt-3 align-left">
+              <div className="p-3 mt-3 align-left custom-footer-section">
                 <ButtonWithCount
                   buttonName={"Applied"}
                   color={"primary"}
-                  count={0}
+                  count={
+                    jobDetail.totalAppliedCandidates === null
+                      ? 0
+                      : jobDetail.totalAppliedCandidates
+                  }
                   action={"/candidate-list"}
                 />
                 <ButtonWithCount
                   buttonName={"Recommended"}
                   color={"primary"}
-                  count={0}
-                  action={"/recommendedCandidate"}
+                  count={
+                    jobDetail.totalRecommendedCandidates === null
+                      ? 0
+                      : jobDetail.totalRecommendedCandidates
+                  }
+                  action={"/recommended-candidate"}
                 />
                 <ButtonWithCount
                   buttonName={"Liked"}
                   color={"primary"}
-                  count={0}
-                  action={"/likedCandidate"}
+                  count={
+                    jobDetail.totalLikedCandidates === null
+                      ? 0
+                      : jobDetail.totalLikedCandidates
+                  }
+                  action={"/liked-candidate"}
                 />
                 <ButtonWithCount
                   buttonName={"Accepted"}
                   color={"success"}
-                  count={0}
-                  action={"/acceptedCandidate"}
+                  count={
+                    jobDetail.totalAcceptedCandidates === null
+                      ? 0
+                      : jobDetail.totalAcceptedCandidates
+                  }
+                  action={"/accepted-candidate"}
                 />
                 <ButtonWithCount
                   buttonName={"Rejected"}
                   color={"danger"}
-                  count={0}
-                  action={"/rejectedCandidate"}
+                  count={
+                    jobDetail.totalRejectedCandidates === null
+                      ? 0
+                      : jobDetail.totalRejectedCandidates
+                  }
+                  action={"/rejected-candidate"}
                 />
               </div>
             )}

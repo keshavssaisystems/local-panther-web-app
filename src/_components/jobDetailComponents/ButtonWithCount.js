@@ -12,8 +12,8 @@ export function ButtonWithCount({ buttonName, color, count, action }) {
     <>
       <Button color={color} className="mr-10" onClick={navigateTo}>
         {" "}
-        {buttonName}{" "}
-        <span className="badge rounded-pill bg-light">{count}</span>{" "}
+        {buttonName}
+        <span className="badge pill bg-light">{count}</span>{" "}
       </Button>
     </>
   );

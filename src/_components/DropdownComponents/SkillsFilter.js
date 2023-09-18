@@ -1,8 +1,8 @@
 import React from "react";
-import { getLocation } from "_store";
+import { getSkillsFilter } from "_store";
 import { AsyncSelectFormGroup } from "_components/formComponents/AsyncSelectFormGroup";
 
-export function Location({
+export function SkillsFilter({
   name,
   id,
   label,
@@ -13,11 +13,11 @@ export function Location({
 }) {
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
-      const { data = [] } = await getLocation(inputValue);
-      return data.map(({ cityid: value, ...rest }) => {
+      const { data = [] } = await getSkillsFilter(inputValue);
+      return data.map(({ skillid: value, ...rest }) => {
         return {
-          value: `${value}, ${rest.stateid}, ${rest.countryid}, ${rest.location}, ${rest.statename}, ${rest.countryname}`,
-          label: `${rest.location}, ${rest.statename}`,
+          value,
+          label: `${rest.skillname}`,
         };
       });
     }
