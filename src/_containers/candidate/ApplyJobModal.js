@@ -1,9 +1,8 @@
 import { RadioButtonFormGroup } from "_components/formComponents/radioButtonFormGroup";
 import { NoticePeriod } from "_components/dropdownComponents/NoticePeriod";
-import { InputFormGroup } from "_components/formComponents/InputFormGroup";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { applyForJobActions } from "_store";
+import { applyForJobActions, skillActions } from "_store";
 import "./candidate.scss";
 import { FiMapPin } from "react-icons/fi";
 import logo from "../../assets/utils/images/panther-logo.png";
@@ -20,17 +19,26 @@ import {
   Card,
   CardBody,
 } from "reactstrap";
+import { Skills } from "_components/dropdownComponents/Skills";
 
-export function ApplyJobModal({ jobId, heading, subHeading, location }) {
+export function ApplyJobModal({
+  jobId,
+  heading,
+  subHeading,
+  location,
+  department,
+}) {
   const [modal, setModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const toggle = () => {
     setModal(!modal);
   };
-
-  let applyForJob = null;
+  useEffect(() => {
+    dispatch(skillActions.getSkill(department));
+  }, []);
   const onApplyClick = (event) => {
     event.preventDefault();
+    let skillsArray = getSkills(event.target.elements.skills);
     let data = {
       jobapplicationid: 0,
       jobid: jobId,
@@ -46,18 +54,29 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
         event.target.elements.isvideoconference.value === "yes" ? true : false,
       isactive: true,
       currentUserId: 1,
-      skills: event.target.elements.skills.value,
+      skills: skillsArray,
+      jobtitle: heading,
     };
     console.log(data);
     postApplyForJob(data);
     toggle();
     setShowSuccess(true);
   };
+  let skillList = useSelector((state) => state.skill.data);
+  let skillString = "";
+  const getSkills = (skillArray) => {
+    skillArray.forEach((skill) => {
+      let skillData = skillList.filter((element) => {
+        return element.skillid.toString() === skill.value;
+      });
+      skillString += skillData[0].skillname + ",";
+    });
+    return skillString.slice(0, -1);
+  };
   const dispatch = useDispatch();
   const postApplyForJob = async function (formElement) {
     await dispatch(applyForJobActions.postApplyForJob(formElement));
   };
-  applyForJob = useSelector((state) => state.applyForJob);
   return (
     <>
       <Button
@@ -96,14 +115,10 @@ export function ApplyJobModal({ jobId, heading, subHeading, location }) {
             </Col>
           </Row>
           <Form onSubmit={onApplyClick}>
-            <InputFormGroup
+            <Skills
               label={"Additional Skills"}
-              name={"skills"}
-              id={"skills"}
-              type={"textarea"}
-              placeholder={"Type to search for skill"}
               showValidation={false}
-              validationMessage={"Please enter skills"}
+              validationMessage={""}
               mandatory={false}
             />
             <Row>

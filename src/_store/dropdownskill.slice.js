@@ -13,7 +13,7 @@ const initialState = {
 export const getSkill = createAsyncThunk("skill/getSkill", async (id) => {
   const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
   const response = await fetchWrapper.get(
-    `${baseUrl}/DepartmentSkillMapping/GetDepartmentSkillList?departmentId=${id}`
+    `${baseUrl}/DepartmentSkillMapping/GetDepartmentSkillList?departmentId=${id}&pageSize=100`
   );
   return response.data; // Assuming your API response has a "data" property
 });
@@ -28,7 +28,7 @@ const skillSlice = createSlice({
       .addCase(getSkill.pending, (state) => {
         state.error = null;
       })
-      .addCase(getSkill.fulfilled, (state, {payload}) => {
+      .addCase(getSkill.fulfilled, (state, { payload }) => {
         state.data = payload?.departmentSkillMappingList ?? []; // Update the state properly
       })
       .addCase(getSkill.rejected, (state, action) => {

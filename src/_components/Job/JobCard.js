@@ -8,6 +8,7 @@ import {
   BsListStars,
   BsFillFlagFill,
   BsHandThumbsUp,
+  BsFillHandThumbsUpFill,
 } from "react-icons/bs";
 import moment from "moment/moment";
 
@@ -22,11 +23,29 @@ export function JobCard({
   getSelectedJobId,
   selectedJob,
   customer,
+  additionalData,
 }) {
-  let recommendedLevel = 2;
+  let recommendedLevel =
+    additionalData.avgscore === 10
+      ? 1
+      : additionalData.avgscore === 9 || additionalData.avgscore === 8
+      ? 2
+      : 3;
   const navigateToJobDetail = () => {
     getSelectedJobId(jobId);
   };
+  let skillsData = "-";
+  console.log(additionalData.jobSkillDtos);
+  if (additionalData.jobSkillDtos.length > 0) {
+    let skillsList = [];
+    additionalData.jobSkillDtos.forEach((element) => {
+      let skillName = element.skillname == null ? "-" : element.skillname;
+      skillsList.push(skillName);
+    });
+    skillsData = skillsList.toString();
+    skillsData =
+      skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
+  }
   return (
     <>
       <Card
@@ -53,11 +72,12 @@ export function JobCard({
                 <FiMapPin /> {location}
               </p>
               <p className="job-details">
-                <BsBriefcase /> Work Experience : {minExperience}-
-                {maxExperience} Years
+                <BsBriefcase /> Work Experience: {minExperience}-{maxExperience}{" "}
+                Years
               </p>
               <p className="job-details">
-                <BsListStars /> Skills: Core Java, Spring Boot, Mic...
+                <BsListStars /> Skills:{" "}
+                {additionalData.jobSkillDtos.length > 0 ? skillsData : "-"}
               </p>
               {type === "Recommended" && (
                 <p className="job-details mt-2 recommended-success float-end">
@@ -83,7 +103,12 @@ export function JobCard({
                 Posted {moment(createdDate).fromNow()}
                 {type === "Recommended" && (
                   <p className="thumb-icon float-end">
-                    <BsHandThumbsUp />
+                    {additionalData.iscandidateliked === false && (
+                      <BsHandThumbsUp />
+                    )}
+                    {additionalData.iscandidateliked === true && (
+                      <BsFillHandThumbsUpFill />
+                    )}
                   </p>
                 )}
               </div>

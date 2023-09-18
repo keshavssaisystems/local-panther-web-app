@@ -1,96 +1,87 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Row, Col, Card, CardBody, CardTitle } from "reactstrap";
+import React, { useEffect, useState } from "react";
+import { Row, Col } from "reactstrap";
 import { JobListing } from "../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
-import { jobListActions } from "../../_store";
-import { empmodeActions } from "_store";
+import { recommendedjobListActions } from "../../_store";
 import { JobFilter } from "_components/job/JobFilter";
-import { BsFillPeopleFill } from "react-icons/bs";
+import PageTitle from "../../_components/common/pagetitle";
+import titlelogo from "../../assets/utils/images/candidate.svg";
 
 export function RecommendedJobList() {
   const dispatch = useDispatch();
-
-  const [filter, setFilter] = useState({
-    jobId: "",
-    pageNo: 1,
+  let [page, setPage] = useState(1);
+  let filterObj = {
+    candidateId: "1",
+    pageNo: page,
     searchText: "",
-    employentModeId: null,
+    employentModeId: "",
     pageSize: "5",
-  });
-  const onfliterData = (term) => {};
-  let JobList = useSelector((state) => state.jobList);
-  let stateUpdate = "true";
-  var searchData = useRef("");
-  const [pageSize, setPage] = useState(5);
-  const [searchText, setSearchText] = useState("");
-  const [filteredJobList, setFilteredJobList] = useState({});
-
-  const [selectedEmpMode, setSelectedEmpMode] = useState("");
-  const [input, setInput] = useState("");
-  const [list, setList] = useState([]);
-  const empModeData = useSelector((state) => state.empmode.user.data);
-
-  const handleEmpModeChange = (event) => {
-    setSelectedEmpMode(event.target.value);
+    locationId: "",
+    skillId: "",
   };
+  let recommendedJobList = useSelector((state) => state.recommendedjobList);
+  let JobList =
+    recommendedJobList.recommendedjobList.candidateRecommendedJobDtoList;
+  let recommendedTotalRows =
+    recommendedJobList.recommendedjobList.totalRows ?? 0;
   useEffect(() => {
-    getJobList();
+    getRecommendedJobList(filterObj);
   }, []);
-
-  useEffect(() => {
-    setFilteredJobList(JobList);
-  }, [list]);
-  useEffect(() => {
-    dispatch(empmodeActions.getEmpmode());
-  }, [dispatch]);
-
-  const getJobList = async function () {
-    let data = {
-      jobId: "",
-      pageNo: filter.pageNo,
-      pageSize: pageSize,
-      searchText: searchData.current,
-      employentModeId: selectedEmpMode,
+  const getRecommendedJobList = async function (filterObj) {
+    await dispatch(recommendedjobListActions.getrecommendedJobList(filterObj));
+  };
+  const onPageChange = (pageValue) => {
+    setPage(pageValue);
+    let filterOnPageChange = {
+      candidateId: "1",
+      pageNo: page,
+      searchText: "",
+      employentModeId: "",
+      pageSize: "5",
+      locationId: "",
+      skillId: "",
     };
-
-    filter.searchText = searchData.current;
-
-    let response = await dispatch(jobListActions.getJobList(data));
-    setList(response.payload.data.jobList);
+    getRecommendedJobList(filterOnPageChange);
   };
-
-  const collectSearchData = (evt) => {
-    searchData.current = evt.target.value;
-    setInput(evt.target.value);
+  const onfliterData = (filterArray) => {
+    filterObj = {
+      candidateId: "",
+      pageNo: 1,
+      searchText: "",
+      employentModeId: filterArray.employementType,
+      pageSize: "5",
+      skillId: filterArray.skills,
+      locationId: filterArray.location,
+    };
+    getRecommendedJobList(filterObj);
   };
-  const inputClear = () => {
-    searchData.current = "";
-
-    getJobList();
+  const onSearchData = (searchValue) => {
+    filterObj = {
+      candidateId: "1",
+      pageNo: 1,
+      searchText: searchValue,
+      employentModeId: "",
+      pageSize: "5",
+      locationId: "",
+      skillId: "",
+    };
+    getRecommendedJobList(filterObj);
   };
-
-  const onPageChange = (page) => {};
   return (
     <>
       <Row>
         <Col md="12">
-          <Card className="main-card mb-3">
-            <CardBody>
-              <CardTitle className="mb-0">
-                {" "}
-                <BsFillPeopleFill /> Recommended Jobs{" "}
-              </CardTitle>
-            </CardBody>
-          </Card>
+          <PageTitle heading="Recommended Jobs" icon={titlelogo} />
         </Col>
-        <JobFilter onFilter={onfliterData} />
-        <p className="mb-1 row-count">{filteredJobList.totalRows} jobs</p>
-        {filteredJobList.jobList ? (
+        <JobFilter onFilter={onfliterData} onSearch={onSearchData} />
+        <p className="mb-1 row-count">{recommendedTotalRows} jobs</p>
+        {JobList ? (
           <JobListing
-            jobData={filteredJobList}
+            jobData={JobList}
             onPageChange={onPageChange}
             type={"Recommended"}
-            pageSize={pageSize}
+            pageSize={"5"}
+            totalRows={recommendedTotalRows}
           />
         ) : (
           <></>

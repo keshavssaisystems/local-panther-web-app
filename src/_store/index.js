@@ -13,7 +13,7 @@ import { cityReducer } from "./dropdowncity.slice";
 import { noticePeriodReducer } from "../_components/dropdownComponents/noticePeriod.slice";
 import { applyForJobReducer } from "../_containers/candidate/applyForJob.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
-import { recommendedjobListReducer } from "./recommendejobList.slice";
+import { recommendedjobListReducer } from "../_containers/candidate/recommendejobList.slice";
 import { departmentReducer } from "../_components/dropdownComponents/department.slice";
 import { empmodeReducer } from "./dropdownempmode.slice";
 
@@ -31,7 +31,7 @@ export * from "./dropdowncity.slice";
 export * from "../_components/dropdownComponents/noticePeriod.slice";
 export * from "../_containers/candidate/applyForJob.slice";
 export * from "./jobDetail.slice";
-export * from "./recommendejobList.slice";
+export * from "../_containers/candidate/recommendejobList.slice";
 export * from "../_components/dropdownComponents/department.slice";
 export * from "./dropdownempmode.slice";
 
