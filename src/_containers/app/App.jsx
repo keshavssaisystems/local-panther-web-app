@@ -17,6 +17,7 @@ import { AppSidebar } from "_components/_layout/AppSidebar";
 import { AppFooter } from "_components/_layout/AppFooter";
 import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
+import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -53,6 +54,10 @@ export function App() {
               <Route
                 path="/registration-success"
                 element={<RegistrationSuccess />}
+              />
+              <Route
+                path="/forgot-password-success"
+                element={<ForgotPasswordSuccess />}
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>

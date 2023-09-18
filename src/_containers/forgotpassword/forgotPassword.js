@@ -1,25 +1,36 @@
-import React, { Fragment, Component } from "react";
+import React, { Fragment } from "react";
 
 import Slider from "react-slick";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import bg1 from "../../assets/utils/images/originals/buildings.jpg";
+import { authActions } from "_store";
 
-import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
+import {
+  Col,
+  Row,
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Card,
+  CardBody,
+  CardTitle,
+} from "reactstrap";
+import SweetAlert from "react-bootstrap-sweetalert";
 import logo from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
 
 export function ForgotPassword() {
   const dispatch = useDispatch();
-  const authUser = useSelector((x) => x?.auth?.token);
-  const authError = useSelector((x) => x.auth.error);
-  const [error, setError] = useState(false);
+  const [emailError, setError] = useState(false);
+  const [message, setMessage] = useState("");
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -33,20 +44,6 @@ export function ForgotPassword() {
     adaptiveHeight: true,
   });
 
-  useEffect(() => {
-    if (authError) {
-      setError(true);
-      return;
-    }
-    if (authUser) {
-      if (authUser) {
-        history.navigate("/");
-      } else {
-        setError(true);
-      }
-    }
-  }, [authUser, authError]);
-
   // form validation rules
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required"),
@@ -55,10 +52,22 @@ export function ForgotPassword() {
 
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState } = useForm(formOptions);
-  const { errors, isSubmitting } = formState;
+  const { errors } = formState;
 
-  function onSubmit({ email, password }) {
-    // let response = dispatch(authActions.login({ email, password }));
+  async function onSubmit({ email }) {
+    let userId = 0;
+    let loggedInUserId = 0;
+    let emailId = email;
+
+    let response = await dispatch(
+      authActions.forgotPasswordThunk({ userId, emailId, loggedInUserId })
+    );
+    if (response?.error) {
+      setError(true);
+      setMessage(response?.error?.message);
+    } else {
+      history.navigate("/forgot-password-success");
+    }
   }
 
   return (
@@ -148,6 +157,28 @@ export function ForgotPassword() {
             </Col>
           </Col>
         </Row>
+
+        {emailError ? (
+          <div>
+            <Row>
+              <Col md="3">
+                <Card className="mb-3 text-center">
+                  <CardBody>
+                    <CardTitle>Error</CardTitle>
+
+                    <SweetAlert
+                      title={message}
+                      type="error"
+                      onConfirm={() => setError(false)}
+                    />
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </Fragment>
   );

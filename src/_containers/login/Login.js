@@ -68,9 +68,9 @@ export function Login() {
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required"),
     password: Yup.string()
-    .required("Password is required")
-    .min(4, "Password must be at least 4 characters")
-    .max(30, "Password can be at most 30 characters"),
+      .required("Password is required")
+      .min(4, "Password must be at least 4 characters")
+      .max(30, "Password can be at most 30 characters"),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -177,7 +177,7 @@ export function Login() {
                               {errors.password?.message}
                             </div>
                           </InputGroup>
-                          <div className="mt-4 float-end">
+                          <div className="mt-4 mb-3 float-end">
                             <Link
                               to="/forgot-password"
                               className="text-primary forgot-pwd-text me-3 "
