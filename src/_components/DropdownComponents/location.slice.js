@@ -8,6 +8,11 @@ const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
+export const getLocation = async (searchText) => {
+  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
+  return await fetchWrapper.get(`${baseUrl}/Common/GetLocation?searchText=${searchText}`)
+}
+
 // exports
 export const locationActions = { ...slice.actions, ...extraActions };
 export const locationReducer = slice.reducer;
@@ -31,7 +36,7 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getLocation`,
       async (searchText) =>
-        await fetchWrapper.get(`${baseUrl}/Common/GetLocation`)
+        await fetchWrapper.get(`${baseUrl}/Common/GetLocation?searchText=${searchText}`)
     );
   }
 }
@@ -46,8 +51,8 @@ function createExtraReducers() {
         .addCase(pending, (state) => {
           state.loading = true;
         })
-        .addCase(fulfilled, (state, action) => {
-          state.location = action.payload.data;
+        .addCase(fulfilled, (state, { payload: { data = [] } = {} }) => {
+          state.location = data;
           state.loading = false;
         })
         .addCase(rejected, (state, action) => {

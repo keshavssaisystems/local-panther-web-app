@@ -1,8 +1,8 @@
 import React from "react";
 import { Label, FormGroup, FormText } from "reactstrap";
-import Select from "react-select";
+import AsyncSelect from "react-select/async";
 
-export function MultiSelectFormGroup({
+export function AsyncSelectFormGroup({
   label,
   id,
   name,
@@ -11,21 +11,19 @@ export function MultiSelectFormGroup({
   defaultOption,
   validationMessage,
   showValidation,
-  onChange
+  loadOptions
 }) {
   return (
     <>
       <FormGroup>
         <Label for={id}> {label} </Label>
-        <Select
-          id={id}
-          name={name}
-          onChange={onChange}
-          placeholder={placeholder}
-          options={options}
+        <AsyncSelect
+          name
+          placeholder
+          defaultOptions={true}
+          loadOptions={loadOptions}
           isMulti={true}
-          isSearchable={true}
-        />
+      />
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>
         )}
