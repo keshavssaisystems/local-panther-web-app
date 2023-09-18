@@ -9,12 +9,15 @@ import { JobDetail } from "_containers/customer/jobs/JobDetail";
 import { CreateJob } from "_containers/customer/createJob/CreateJob";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
+import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
 import { CandidateList } from "_containers/candidate/recommendedcandidates/CandidateList";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
 import { AppSidebar } from "_components/_layout/AppSidebar";
 import { AppFooter } from "_components/_layout/AppFooter";
 import "./app.scss";
+import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
+import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -59,7 +62,15 @@ export function App() {
               <Route path="/recommended-job" element={<RecommendedJobList />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
-              {/* <Route path="*" element={<Navigate to="/" />} /> */}
+              <Route
+                path="/registration-success"
+                element={<RegistrationSuccess />}
+              />
+              <Route
+                path="/forgot-password-success"
+                element={<ForgotPasswordSuccess />}
+              />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { locationActions } from "_store";
-import { MultiSelectFormGroup } from "_components/formComponents/MultiSelectFormGroup";
+import React from "react";
+import { getLocation } from "_store";
+import { AsyncSelectFormGroup } from "_components/formComponents/AsyncSelectFormGroup";
 
 export function Location({
   name,
@@ -12,28 +11,21 @@ export function Location({
   showValidation,
   mandatory,
 }) {
-  const dispatch = useDispatch();
-  const [search, setSearch] = useState("");
-  useEffect(() => {
-    getDropDown();
-  }, []);
-  const onSearch = () => {
-    getDropDown(search);
-  };
-  const getDropDown = async function (searchText) {
-    await dispatch(locationActions.getLocation(searchText));
-  };
-
-  const data = useSelector((state) => state.location.location ?? []);
+  const loadOptions = async ( inputValue ) => {
+    if (inputValue.length > 2) {
+      const { data = [] } = await getLocation(inputValue);
+      return data.map(({ cityid: value, ...rest }) => { return {value, label: `${rest.location}, ${rest.statename}`} } )  
+    }
+  }
 
   return (
     <>
-        <MultiSelectFormGroup 
+        <AsyncSelectFormGroup
           label={label}
           id={id}
           name={name}
           placeholder={defaultOption}
-          options={data.map(({cityid: value, ...rest}) => {return {value, label: `${rest.location}, ${rest.statename}`}})}
+          loadOptions={loadOptions}
           showValidation={showValidation}
           validationMessage={validationMessage}
           mandatory={mandatory}
