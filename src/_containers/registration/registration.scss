@@ -1,0 +1,68 @@
+.registration-container {
+  .input-label {
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+
+  .logo {
+    width: 246px;
+    height: 100px;
+    top: 211px;
+    left: 186px;
+  }
+
+  .title-text {
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 30px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+
+  .input-label {
+    color: #2f2e2e;
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: -0.14px;
+  }
+
+  .placeholder-name {
+    color: #6c757d;
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+
+  .account-text {
+    color: #2f479b;
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+
+  .btn-text {
+    color: #fff;
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    padding: 12px, 20px, 12px, 20px;
+    background: #2f479b;
+  }
+}

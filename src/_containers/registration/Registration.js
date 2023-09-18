@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 
 import Slider from "react-slick";
+import "./registration.scss";
 
 import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 
@@ -78,17 +79,18 @@ export function Registration() {
 
   return (
     <>
-      <div className="h-100">
+      <div className=" registration-container h-100">
         <Row className="h-100 g-0">
           <Col lg="7" md="12" className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center">
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
-              <img src={logo} width={"130px"} alt="logo" />
+              <div className="">
+                <img src={logo} width={"130px"} alt="logo" className="logo" /></div>
               <div className="app-logo" />
               <h4>
-                <div>Welcome,</div>
-                <span>
+                <div className="title-text">Welcome,</div>
+                <span className="title-text">
                   It only takes a{" "}
-                  <span className="text-success">few seconds</span> to create
+                  <span className="title-text">few seconds</span> to create
                   your account
                 </span>
               </h4>
@@ -97,92 +99,92 @@ export function Registration() {
                   <Row>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="firstName">
+                        <Label for="firstName" className="input-label">
                           <span className="text-danger">*</span> First name
                         </Label>
                         <input
-                            type="text"
-                            name="firstName"
-                            id="firstName"
-                            placeholder="First Name"
-                            {...register("firstName")}
-                            className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
-                          />
+                          type="text"
+                          name="firstName"
+                          id="firstName"
+                          placeholder="Enter first name"
+                          {...register("firstName")}
+                          className={`form-control placeholder-name ${errors.firstName ? "is-invalid" : ""}`}
+                        />
                         <FormFeedback>{errors.firstName?.message}</FormFeedback>
                       </FormGroup>
                     </Col>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="lastName">
+                        <Label for="lastName" className="input-label">
                           <span className="text-danger">*</span> Last name
                         </Label>
                         <input
-                            type="text"
-                            name="lastName"
-                            id="lastName"
-                            placeholder="Last Name"
-                            {...register("lastName")}
-                            className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
-                          />
+                          type="text"
+                          name="lastName"
+                          id="lastName"
+                          placeholder="Enter last name"
+                          {...register("lastName")}
+                          className={`form-control placeholder-name ${errors.lastName ? "is-invalid" : ""}`}
+                        />
                         <FormFeedback>{errors.lastName?.message}</FormFeedback>
 
                       </FormGroup>
                     </Col>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="email">
+                        <Label for="email" className="input-label">
                           <span className="text-danger">*</span> Email
                         </Label>
                         <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="Email"
-                            {...register("email")}
-                            className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                          />
+                          type="email"
+                          name="email"
+                          id="email"
+                          placeholder="Enter email id"
+                          {...register("email")}
+                          className={`form-control placeholder-name ${errors.email ? "is-invalid" : ""}`}
+                        />
                         <FormFeedback>{errors.email?.message}</FormFeedback>
                       </FormGroup>
                     </Col>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="phoneNumber">Phone number</Label>
+                        <Label for="phoneNumber" className="input-label">Phone number</Label>
                         <input
-                            type="text"
-                            name="phoneNumber"
-                            id="phoneNumber"
-                            placeholder="Phone number here..."
-                            {...register("phoneNumber")}
-                            className={`form-control ${errors.phoneNumber ? "is-invalid" : ""}`}
-                          />
+                          type="text"
+                          name="phoneNumber"
+                          id="phoneNumber"
+                          placeholder="Enter phone number"
+                          {...register("phoneNumber")}
+                          className={`form-control placeholder-name ${errors.phoneNumber ? "is-invalid" : ""}`}
+                        />
                         <FormFeedback>{errors.phoneNumber?.message}</FormFeedback>
                       </FormGroup>
                     </Col>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="password">
+                        <Label for="password" className="input-label">
                           <span className="text-danger">*</span> Password
                         </Label>
-                        <input 
-                          placeholder="password" 
+                        <input
+                          placeholder="Enter password"
                           name="password"
                           type="password"
                           id="password"  {...register("password")}
-                          className={`form-control ${errors.password ? "is-invalid" : ""}`} />
+                          className={`form-control placeholder-name ${errors.password ? "is-invalid" : ""}`} />
                         <FormFeedback>{errors.password?.message}</FormFeedback>
                       </FormGroup>
                     </Col>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="confirmPassword">
+                        <Label for="confirmPassword" className="input-label">
                           <span className="text-danger">*</span> Repeat Password
                         </Label>
-                        <input 
+                        <input
                           type="password"
-                          placeholder="confirmPassword" 
+                          placeholder="Enter confirm password"
                           name="confirmPassword"
                           id="confirmPassword"  {...register("confirmPassword")}
-                          className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`} />
+                          className={`form-control placeholder-name ${errors.confirmPassword ? "is-invalid" : ""}`} />
                         <FormFeedback>{errors.confirmPassword?.message}</FormFeedback>
                       </FormGroup>
                     </Col>
@@ -206,12 +208,12 @@ export function Registration() {
                     <FormFeedback>{errors.acceptTerms?.message}</FormFeedback>
                   </FormGroup> */}
                   <div className="mt-4 d-flex align-items-center">
-                    <h5 className="mb-0">
+                    <h5 className="mb-0 account-text">
                       Already have an account?{" "}
-                      <Link to="/login" className="text-primary">Sign in</Link>
+                      <Link to="/login" >Sign in</Link>
                     </h5>
                     <div className="ms-auto">
-                      <Button color="primary" className="btn-wide btn-pill btn-shadow btn-hover-shine" size="lg">
+                      <Button color="primary" className=" btn-text" size="lg">
                         Create Account
                       </Button>
                     </div>
