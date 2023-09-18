@@ -7,9 +7,6 @@ import {
   CardBody,
   Modal,
   FormGroup,
-  UncontrolledPopover,
-  PopoverHeader,
-  PopoverBody,
   Row,
   Col,
   Button,
@@ -26,10 +23,11 @@ import successIcon from "../../../assets/utils/images/success_icon.svg";
 import candidatelogo from "../../../assets/utils/images/profile_pic.svg";
 import { useSearchParams } from "react-router-dom";
 import { applyMask } from "_helpers/helper";
-import { PopOverComp } from "_components/popover/popover";
+import { CandidatePopover } from "_components/popover/candidatepopover";
+import { SkillsPopover } from "_components/popover/skillspopover";
 import "./candidate.scss";
 
-export function CandidateList() {
+export function CandidateList(props) {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   let jobId = searchParams.get("jobId");
@@ -37,7 +35,7 @@ export function CandidateList() {
 
   const [candidatesList, setCandidateList] = useState([]);
   const [getCandidateList, setList] = useState([]);
-  const [showCandidate, setshowCandidate] = useState(false);
+  const [showCandidate, setShowCandidate] = useState(false);
   const [selectedCandidate, setselectedCandidate] = useState();
   const [pageSize, setpageSize] = useState(10);
   const [isExpError, setIsExpError] = useState(false);
@@ -56,7 +54,7 @@ export function CandidateList() {
   var maxExp = useRef();
 
   let searchData = useRef("");
-  let skillPopover = useRef(false);
+  // let skillPopover = useRef(false);
   let rejectedCandidateId = useRef();
   let rejectedApplicationId = useRef();
   const [minExperience, setMinExperience] = useState(null);
@@ -165,7 +163,7 @@ export function CandidateList() {
 
   const onShowProfile = function (data) {
     setselectedCandidate(data);
-    setshowCandidate(true);
+    setShowCandidate(true);
   };
 
   const onSearch = function (data) {
@@ -245,15 +243,58 @@ export function CandidateList() {
     return skillData.join(",");
   };
 
-  const showSkills = (data) => {
-    setselectedCandidate(data);
-    skillPopover.current = false;
-    skillPopover.current = true;
-  };
+  // const showSkills = (data) => {
+  //   setselectedCandidate(data);
+  //   skillPopover.current = false;
+  //   skillPopover.current = true;
+  // };
 
   const handlePageChange = (page) => {
     pageIndex.current = page;
     getCandidatesList();
+  };
+
+  const showButtons = (type, col) => {
+    if (type === "candidate") {
+      return (
+        <>
+          <Button
+            className="primary-btn candidate-table-btn table-btn me-2"
+            onClick={(evt) => acceptRejectCandidate("accept", col)}
+          >
+            Accept
+          </Button>
+          <Button
+            className="primary-btn candidate-table-btn table-btn"
+            onClick={(evt) => rejectCandidate(col)}
+          >
+            Reject
+          </Button>
+        </>
+      );
+    } else if (type === "accepted") {
+      return (
+        <>
+          <Button className="primary-btn candidate-table-btn table-btn me-2">
+            Interview
+          </Button>
+          <Button
+            className="primary-btn candidate-table-btn table-btn"
+            onClick={(evt) => rejectCandidate(col)}
+          >
+            Reject
+          </Button>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button className="primary-btn candidate-table-btn table-btn me-2">
+            Reject Reason
+          </Button>
+        </>
+      );
+    }
   };
 
   return (
@@ -405,10 +446,10 @@ export function CandidateList() {
                           </div>
                           <div className="widget-content-left flex2">
                             <div className="candidate-name">
-                              <span id={`popover${ind}`}>
+                              <span id={`candidatepopover${ind}`}>
                                 {applyMask(col.firstname + col.lastname)}
                               </span>
-                              <PopOverComp data={col} ind={ind} />
+                              <CandidatePopover data={col} ind={ind} />
                             </div>
                             <div className="candidate-primary-skill">
                               {col.primaryskills}
@@ -424,13 +465,16 @@ export function CandidateList() {
                     <td className="candidate-table-data">
                       {getSkills(col.secondaryskills) + " "}
                       {skillDetails.length > 3 ? (
-                        <a
-                          className="candidate-more-link"
-                          id="skill-popover"
-                          onClick={(evt) => showSkills(col)}
-                        >
-                          +{skillDetails.length - 3} More
-                        </a>
+                        <>
+                          <a
+                            className="candidate-more-link"
+                            id={`skillspopover${ind}`}
+                            // onClick={(evt) => showSkills(col)}
+                          >
+                            +{skillDetails.length - 3} More
+                          </a>
+                          <SkillsPopover data={col} ind={ind} />
+                        </>
                       ) : (
                         <></>
                       )}
@@ -450,18 +494,7 @@ export function CandidateList() {
                       >
                         Profile
                       </Button>
-                      <Button
-                        className="primary-btn candidate-table-btn table-btn me-2"
-                        onClick={(evt) => acceptRejectCandidate("accept", col)}
-                      >
-                        Accept
-                      </Button>
-                      <Button
-                        className="primary-btn candidate-table-btn table-btn"
-                        onClick={(evt) => rejectCandidate(col)}
-                      >
-                        Reject
-                      </Button>
+                      {showButtons(props.type, col)}
                     </td>
                   </tr>
                 ))}
@@ -482,11 +515,12 @@ export function CandidateList() {
           <CandidateProfile
             selectedData={selectedCandidate}
             jobId={jobId}
+            setShowCandidate={setShowCandidate}
           ></CandidateProfile>
         </div>
       )}
 
-      {skillPopover.current ? (
+      {/* {skillPopover.current ? (
         <UncontrolledPopover
           className="skills-layout"
           placement="top"
@@ -509,7 +543,7 @@ export function CandidateList() {
         </UncontrolledPopover>
       ) : (
         <></>
-      )}
+      )} */}
 
       <Modal className="modal-dialog-align" isOpen={acceptModal}>
         <Card>
@@ -583,7 +617,9 @@ export function CandidateList() {
                       Select Reason
                     </option>
                     {reasonList.map((col) => (
-                      <option value={col.value}>{col.type}</option>
+                      <option key={col.value} value={col.value}>
+                        {col.type}
+                      </option>
                     ))}
                   </Input>
                 </Col>

@@ -14,12 +14,12 @@ import {
   getApplicationDate,
 } from "_helpers/helper";
 
-export const PopOverComp = (props) => {
+export const CandidatePopover = (props) => {
   return (
     <UncontrolledPopover
       className="detail-popover"
       trigger={"legacy"}
-      target={`popover${props.ind}`}
+      target={`candidatepopover${props.ind}`}
     >
       <PopoverHeader>
         {props.data ? (

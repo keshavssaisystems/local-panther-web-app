@@ -43,7 +43,7 @@ export function CandidateProfile(props) {
   };
 
   const navigateToListPage = function () {
-    window.location.reload();
+    props.setShowCandidate(false);
   };
 
   const applyMask = function (inputValue) {
