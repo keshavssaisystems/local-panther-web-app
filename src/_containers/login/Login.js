@@ -11,19 +11,19 @@ import {
   CardTitle,
   InputGroup,
   InputGroupText,
-  Input,
 } from "reactstrap";
 
 import Slider from "react-slick";
 
-import bg1 from "../../assets/utils/images/originals/buildings.jpg";
 import { BsLinkedin, BsGoogle, BsApple } from "react-icons/bs";
 
 import { Col, Row, Button, Form, FormGroup, Label } from "reactstrap";
 
 import { history } from "_helpers";
 import { authActions } from "_store";
+
 import logo from "../../assets/utils/images/panther-logo.png";
+import bg1 from "../../assets/utils/images/originals/buildings.jpg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./login.scss";
 
@@ -67,16 +67,20 @@ export function Login() {
   // form validation rules
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required"),
-    password: Yup.string().required("Password is required"),
+    password: Yup.string()
+    .required("Password is required")
+    .min(4, "Password must be at least 4 characters")
+    .max(30, "Password can be at most 30 characters"),
   });
+
   const formOptions = { resolver: yupResolver(validationSchema) };
 
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
-  function onSubmit({ email, password }) {
-    let response = dispatch(authActions.login({ email, password }));
+  function onSubmit(payload) {
+    dispatch(authActions.loginThunk(payload));
   }
 
   return (
@@ -133,7 +137,7 @@ export function Login() {
                           </Label>
                           <input
                             type="email"
-                            name="Email"
+                            name="email"
                             id="email"
                             placeholder="Email"
                             {...register("email")}
