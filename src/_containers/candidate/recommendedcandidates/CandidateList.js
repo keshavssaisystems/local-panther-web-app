@@ -32,7 +32,8 @@ export function CandidateList(props) {
   const [searchParams] = useSearchParams();
   let jobId = searchParams.get("jobId");
   jobId = jobId == null ? 3 : jobId;
-
+  const [commentLength, setCommentLength] = useState(0);
+  const [reasonError, setReasonError] = useState(false);
   const [candidatesList, setCandidateList] = useState([]);
   const [getCandidateList, setList] = useState([]);
   const [showCandidate, setShowCandidate] = useState(false);
@@ -50,15 +51,12 @@ export function CandidateList(props) {
   let pageIndex = useRef(1);
   let skillDetails = [];
 
-  var minExp = useRef();
-  var maxExp = useRef();
-
   let searchData = useRef("");
   // let skillPopover = useRef(false);
   let rejectedCandidateId = useRef();
   let rejectedApplicationId = useRef();
-  const [minExperience, setMinExperience] = useState(null);
-  const [maxExperience, setMaxExperience] = useState(null);
+  const [minExperience, setMinExperience] = useState("");
+  const [maxExperience, setMaxExperience] = useState("");
 
   const [reasonList, setReasonList] = useState([
     {
@@ -94,10 +92,12 @@ export function CandidateList(props) {
 
   const onChangeReason = function (data) {
     rejectReqData.rejectedreasonid = data;
+    setReasonError(false);
   };
 
   const addComment = function (data) {
     rejectReqData.rejectedcomment = data;
+    setCommentLength(rejectReqData.rejectedcomment.length);
   };
 
   const getCandidatesList = async function () {
@@ -115,11 +115,11 @@ export function CandidateList(props) {
     if (searchData.current !== "") {
       url += "&searchText=" + searchData.current;
     }
-    if (minExp.current != undefined || minExp.current != null) {
-      url += "&minExperience=" + minExp.current;
+    if (minExperience != "") {
+      url += "&minExperience=" + minExperience;
     }
-    if (maxExp.current != undefined || maxExp.current != null) {
-      url += "&maxExperience=" + maxExp.current;
+    if (maxExperience != "") {
+      url += "&maxExperience=" + maxExperience;
     }
 
     let response = await dispatch(candidateActions.getCandidates({ url }));
@@ -171,8 +171,6 @@ export function CandidateList(props) {
     searchData.current = data;
   };
   const onReset = function () {
-    minExp.current = undefined;
-    maxExp.current = undefined;
     setMinExperience("");
     setMaxExperience("");
 
@@ -201,6 +199,12 @@ export function CandidateList(props) {
     let currentUserId = 1;
     let applicationstatus;
     if (check === "reject") {
+      if (rejectedreasonid == 0) {
+        setReasonError(true);
+        return;
+      } else {
+        setReasonError(false);
+      }
       applicationstatus = "Rejected";
       candidateid = rejectedCandidateId.current;
       jobId = rejectedApplicationId.current;
@@ -356,7 +360,7 @@ export function CandidateList(props) {
                           cursor: !isExpError ? "pointer" : "not-allowed",
                         }}
                       >
-                        submit
+                        Submit
                       </Button>
 
                       <Button
@@ -596,17 +600,20 @@ export function CandidateList(props) {
             <div className="mb-3 d-flex justify-content-center reject-reason-text">
               Candidate Rejection
             </div>
-            <div>
+            <div className="candidate-list">
               <Row>
                 <Col className="mb-2">
                   <Label
                     className="reject-modal-label"
                     for="exampleCustomSelectDisabled"
                   >
-                    Reason
+                    Reason <span className="required-icon">*</span>
                   </Label>
                   <Input
                     className="reason-dropdown-input dropdown-placeholder"
+                    style={{
+                      borderColor: reasonError ? "red" : "#ced4da",
+                    }}
                     type="select"
                     id="jobType"
                     name="jobType"
@@ -622,6 +629,13 @@ export function CandidateList(props) {
                       </option>
                     ))}
                   </Input>
+                  {reasonError ? (
+                    <p className="filter-info-text filter-error-msg">
+                      Reason is required
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                 </Col>
               </Row>
               <Row>
@@ -636,8 +650,14 @@ export function CandidateList(props) {
                       placeholder="Enter comment here"
                       onInput={(evt) => addComment(evt.target.value)}
                       name="text"
+                      maxLength={100}
                       id="exampleText"
                     />
+                    <div>
+                      <span className="dropdown-placeholder float-end">
+                        {commentLength}/100
+                      </span>
+                    </div>
                   </FormGroup>
                 </Col>
               </Row>
@@ -647,7 +667,7 @@ export function CandidateList(props) {
                     className="me-2 reject-modal-btn"
                     onClick={(evt) => acceptRejectCandidate("reject", "")}
                   >
-                    submit
+                    Submit
                   </Button>
                   <Button
                     className="reject-close-btn"
