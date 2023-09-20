@@ -4,18 +4,9 @@ import {
   PopoverHeader,
   PopoverBody,
   Row,
-  Col,
-  Label,
 } from "reactstrap";
-import {
-  applyMask,
-  formatPhoneNumber,
-  maskEmail,
-  getApplicationDate,
-} from "_helpers/helper";
 
 export const SkillsPopover = (props) => {
-  debugger;
   return (
     <UncontrolledPopover
       className="skills-layout"

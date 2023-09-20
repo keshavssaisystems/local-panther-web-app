@@ -21,17 +21,16 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import errorIcon from "../../../assets/utils/images/error_icon.png";
 import successIcon from "../../../assets/utils/images/success_icon.svg";
 import candidatelogo from "../../../assets/utils/images/profile_pic.svg";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { applyMask } from "_helpers/helper";
 import { CandidatePopover } from "_components/popover/candidatepopover";
 import { SkillsPopover } from "_components/popover/skillspopover";
 import "./candidate.scss";
 
-export function CandidateList(props) {
+export const CandidateList = (props) => {
   const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
-  let jobId = searchParams.get("jobId");
-  jobId = jobId == null ? 3 : jobId;
+  const { jobId } = useParams();
+
   const [commentLength, setCommentLength] = useState(0);
   const [reasonError, setReasonError] = useState(false);
   const [candidatesList, setCandidateList] = useState([]);
@@ -52,7 +51,6 @@ export function CandidateList(props) {
   let skillDetails = [];
 
   let searchData = useRef("");
-  // let skillPopover = useRef(false);
   let rejectedCandidateId = useRef();
   let rejectedApplicationId = useRef();
   const [minExperience, setMinExperience] = useState("");
@@ -104,6 +102,12 @@ export function CandidateList(props) {
     setAcceptModal(false);
     setRejectConfirmation(false);
     setRejectModal(false);
+    let listType =
+      props.type === "candidate"
+        ? "Applied"
+        : props.type === "accepted"
+        ? "Accepted"
+        : "Rejected";
     let url =
       "JobApplications/GetJobAppliedCandidatesList/" +
       jobId +
@@ -111,7 +115,7 @@ export function CandidateList(props) {
       pageSize +
       "&pageNumber=" +
       pageIndex.current +
-      "&isActive=true&Applicationstatus=Applied";
+      `&isActive=true&Applicationstatus=${listType}`;
     if (searchData.current !== "") {
       url += "&searchText=" + searchData.current;
     }
@@ -246,12 +250,6 @@ export function CandidateList(props) {
     }
     return skillData.join(",");
   };
-
-  // const showSkills = (data) => {
-  //   setselectedCandidate(data);
-  //   skillPopover.current = false;
-  //   skillPopover.current = true;
-  // };
 
   const handlePageChange = (page) => {
     pageIndex.current = page;
@@ -473,7 +471,6 @@ export function CandidateList(props) {
                           <a
                             className="candidate-more-link"
                             id={`skillspopover${ind}`}
-                            // onClick={(evt) => showSkills(col)}
                           >
                             +{skillDetails.length - 3} More
                           </a>
@@ -523,31 +520,6 @@ export function CandidateList(props) {
           ></CandidateProfile>
         </div>
       )}
-
-      {/* {skillPopover.current ? (
-        <UncontrolledPopover
-          className="skills-layout"
-          placement="top"
-          target={"skill-popover"}
-        >
-          <PopoverHeader className="skills-popover-header">
-            Skills
-          </PopoverHeader>
-          <PopoverBody>
-            {selectedCandidate ? (
-              <div>
-                <Row className="skills-font">
-                  {selectedCandidate.secondaryskills}
-                </Row>
-              </div>
-            ) : (
-              <></>
-            )}
-          </PopoverBody>
-        </UncontrolledPopover>
-      ) : (
-        <></>
-      )} */}
 
       <Modal className="modal-dialog-align" isOpen={acceptModal}>
         <Card>
@@ -716,4 +688,4 @@ export function CandidateList(props) {
       </Modal>
     </div>
   );
-}
+};

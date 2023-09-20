@@ -5,7 +5,6 @@ import { PrivateRoute } from "_components";
 import { Home } from "_containers/home";
 import { Dashboard } from "dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
-import { JobDetail } from "_containers/customer/jobs/JobDetail";
 import { CreateJob } from "_containers/customer/createJob/CreateJob";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
@@ -51,14 +50,7 @@ export function App() {
                   </PrivateRoute>
                 }
               />
-              <Route
-                path="/JobDetail"
-                element={
-                  <PrivateRoute>
-                    <JobDetail />
-                  </PrivateRoute>
-                }
-              />
+
               <Route
                 path="/dashboard"
                 element={
@@ -75,8 +67,9 @@ export function App() {
                   </PrivateRoute>
                 }
               />
+
               <Route
-                path="/candidate-list"
+                path="/candidate-list/:jobId"
                 element={
                   <PrivateRoute>
                     <CandidateList type="candidate" />
@@ -84,7 +77,7 @@ export function App() {
                 }
               />
               <Route
-                path="/rejected-list"
+                path="/rejected-candidate/:jobId"
                 element={
                   <PrivateRoute>
                     <CandidateList type="rejected" />
@@ -92,7 +85,7 @@ export function App() {
                 }
               />
               <Route
-                path="/accepted-list"
+                path="/accepted-candidate/:jobId"
                 element={
                   <PrivateRoute>
                     <CandidateList type="accepted" />

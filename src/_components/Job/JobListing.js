@@ -10,17 +10,21 @@ export function JobListing({
   type,
   pageSize,
   totalRows,
+  page,
+  setPage,
 }) {
   const [selectedClass, setSelectedClass] = useState(
     jobData.length > 0 ? jobData[0].jobid : "2"
   );
-  let selectedJobDetails = [];
+  let selectedJobDetails = jobData.length > 0 ? [jobData[0]] : [];
   let current = Number(totalRows) / pageSize;
   if (current * pageSize !== totalRows) {
     current++;
   }
-  const [page, setPage] = useState(1);
-  const [selectedJobData, setSelectedJobData] = useState(jobData);
+
+  const [selectedJobData, setSelectedJobData] = useState(
+    jobData.length > 0 ? [jobData[0]] : []
+  );
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
@@ -75,11 +79,15 @@ export function JobListing({
           <CardPagination
             totalPages={current}
             pageIndex={page}
-            onCallBack={handlePageChange}
+            onCallBack={(evt) => handlePageChange(evt)}
           ></CardPagination>
         )}
       </Col>
-      <JobDetail jobDetails={selectedJobData} type={type} />
+      {selectedJobData ? (
+        <JobDetail jobDetails={selectedJobData} type={type} />
+      ) : (
+        <></>
+      )}
     </>
   );
 }

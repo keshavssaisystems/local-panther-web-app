@@ -5,7 +5,7 @@ import { FilterSearch } from "_components/common/filterSearch";
 import { SkillsFilter } from "_components/dropdownComponents/SkillsFilter";
 import { Location } from "_components/dropdownComponents/Location";
 
-export function JobFilter({ onFilter, onSearch }) {
+export function JobFilter({ onFilter, onSearch, setPage }) {
   const onSubmitHandler = (event) => {
     event.preventDefault();
     let processedData = processFormData(event);
@@ -13,6 +13,7 @@ export function JobFilter({ onFilter, onSearch }) {
     responseBody.skills = processedData[1].toString();
     responseBody.location = processedData[0].toString();
     responseBody.employementType = event.target.elements.employmentType.value;
+    setPage(1);
     onFilter(responseBody);
   };
   const processFormData = (targetEvent) => {
@@ -37,6 +38,7 @@ export function JobFilter({ onFilter, onSearch }) {
     return [locationArray, skillsArray];
   };
   const getSearchValue = (search) => {
+    setPage(1);
     onSearch(search);
   };
 
@@ -46,7 +48,7 @@ export function JobFilter({ onFilter, onSearch }) {
         <Card className="main-card mb-3">
           <CardBody>
             <Row>
-              <Col md={9}>
+              <Col sm={12} md={12} lg={7} xl={9}>
                 <Form onSubmit={onSubmitHandler}>
                   <Row>
                     <Col>
@@ -85,7 +87,7 @@ export function JobFilter({ onFilter, onSearch }) {
                   </Row>
                 </Form>
               </Col>
-              <Col>
+              <Col sm={12} md={12} lg={5} xl={3}>
                 <FilterSearch
                   placeholder={"Search by job title"}
                   searchValue={getSearchValue}
