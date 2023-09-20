@@ -46,7 +46,6 @@ export function ResetPassword() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit({ email, password }) {
-    debugger;
     // let response = dispatch(authActions.login({ email, password }));
   }
 

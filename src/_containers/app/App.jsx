@@ -43,23 +43,70 @@ export function App() {
                   </PrivateRoute>
                 }
               />
-              <Route path="/job-list" element={<JobList />} />
-              <Route path="/JobDetail" element={<JobDetail />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/create-job" element={<CreateJob />} />
+              <Route
+                path="/job-list"
+                element={
+                  <PrivateRoute>
+                    <JobList />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/JobDetail"
+                element={
+                  <PrivateRoute>
+                    <JobDetail />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/create-job"
+                element={
+                  <PrivateRoute>
+                    <CreateJob />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/candidate-list"
-                element={<CandidateList type="candidate" />}
+                element={
+                  <PrivateRoute>
+                    <CandidateList type="candidate" />
+                  </PrivateRoute>
+                }
               />
               <Route
                 path="/rejected-list"
-                element={<CandidateList type="rejected" />}
+                element={
+                  <PrivateRoute>
+                    <CandidateList type="rejected" />
+                  </PrivateRoute>
+                }
               />
               <Route
                 path="/accepted-list"
-                element={<CandidateList type="accepted" />}
+                element={
+                  <PrivateRoute>
+                    <CandidateList type="accepted" />
+                  </PrivateRoute>
+                }
               />
-              <Route path="/recommended-job" element={<RecommendedJobList />} />
+              <Route
+                path="/recommended-job"
+                element={
+                  <PrivateRoute>
+                    <RecommendedJobList />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route

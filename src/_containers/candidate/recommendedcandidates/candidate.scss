@@ -347,6 +347,9 @@
   text-align: left;
   color: linear-gradient(0deg, #2f2e2e, #2f2e2e);
 }
+.required-icon {
+  color: #ff0000;
+}
 
 .reason-dropdown-input {
   width: 440px;
@@ -401,11 +404,11 @@
 }
 .reject-modal-btn {
   background-color: #2f479b !important;
-  width: 67px !important;
+  width: 70px !important;
 }
 .reject-close-btn {
   background-color: #2f2e2e !important;
-  width: 67px !important;
+  width: 70px !important;
 }
 
 .candidate-search-wrapper {
