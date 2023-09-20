@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { JobListing } from "../../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,12 @@ import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 export function JobList() {
+  const [page, setPage] = useState(1);
+  const [searchVal, setSearchVal] = useState("");
+  const [locVal, setLocVal] = useState("");
+  const [skillsVal, setSkillsVal] = useState("");
+  const [empTypeVal, setEmpTypeVal] = useState("");
+
   const dispatch = useDispatch();
   let filterObj = {
     jobId: "",
@@ -30,11 +36,11 @@ export function JobList() {
     let filterOnPageChange = {
       jobId: "",
       pageNo: page,
-      searchText: "",
-      employentModeId: "",
+      searchText: searchVal,
+      employentModeId: empTypeVal,
       pageSize: "5",
-      skillId: "",
-      locationId: "",
+      skillId: skillsVal,
+      locationId: locVal,
     };
     getJobList(filterOnPageChange);
   };
@@ -42,12 +48,15 @@ export function JobList() {
     filterObj = {
       jobId: "",
       pageNo: 1,
-      searchText: "",
+      searchText: searchVal,
       employentModeId: filterArray.employementType,
       pageSize: "5",
       skillId: filterArray.skills,
       locationId: filterArray.location,
     };
+    setEmpTypeVal(filterArray.employementType);
+    setSkillsVal(filterArray.skills);
+    setLocVal(filterArray.location);
     getJobList(filterObj);
   };
   const onSearchData = (searchValue) => {
@@ -55,11 +64,12 @@ export function JobList() {
       jobId: "",
       pageNo: 1,
       searchText: searchValue,
-      employentModeId: "",
+      employentModeId: empTypeVal,
       pageSize: "5",
-      skillId: "",
-      locationId: "",
+      skillId: skillsVal,
+      locationId: locVal,
     };
+    setSearchVal(searchValue);
     getJobList(filterObj);
   };
   return (
@@ -71,15 +81,22 @@ export function JobList() {
         <JobFilter
           onFilter={(e) => onfliterData(e)}
           onSearch={(e) => onSearchData(e)}
+          setPage={setPage}
         />
         <p className="mb-1 row-count">{JobList.totalRows} jobs</p>
-        <JobListing
-          jobData={JobList.jobList}
-          onPageChange={onPageChange}
-          pageSize={5}
-          type={"Open"}
-          totalRows={JobList.totalRows}
-        />
+        {JobList?.jobList?.length ? (
+          <JobListing
+            jobData={JobList.jobList}
+            onPageChange={onPageChange}
+            pageSize={5}
+            type={"Open"}
+            totalRows={JobList.totalRows}
+            page={page}
+            setPage={setPage}
+          />
+        ) : (
+          <></>
+        )}
       </Row>
     </>
   );

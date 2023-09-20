@@ -12,7 +12,6 @@ export function JobDetail({ jobDetails, type }) {
   let jobDetail = {};
   let skillArray = [];
   let skillsData = "-";
-  loading = true;
   if (jobDetails.length > 0) {
     loading = false;
     jobDetail = jobDetails[0];
@@ -51,7 +50,7 @@ export function JobDetail({ jobDetails, type }) {
                   ? jobDetail.jobLocationDtos[0].location
                   : "-"
               }
-              ApplyButton={type === "Open" ? false : true}
+              ApplyButton={type !== "Open"}
               jobId={jobDetail.jobid}
               department={jobDetail.departmentid ?? 1}
             />
@@ -117,7 +116,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalAppliedCandidates
                   }
-                  action={"/candidate-list"}
+                  action={`/candidate-list/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Recommended"}
@@ -127,7 +126,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalRecommendedCandidates
                   }
-                  action={"/recommended-candidate"}
+                  action={`/recommended-candidate/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Liked"}
@@ -137,7 +136,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalLikedCandidates
                   }
-                  action={"/liked-candidate"}
+                  action={`/liked-candidate/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Accepted"}
@@ -147,7 +146,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalAcceptedCandidates
                   }
-                  action={"/accepted-candidate"}
+                  action={`/accepted-candidate/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Rejected"}
@@ -157,7 +156,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalRejectedCandidates
                   }
-                  action={"/rejected-candidate"}
+                  action={`/rejected-candidate/${jobDetails[0]?.jobid}`}
                 />
               </div>
             )}
