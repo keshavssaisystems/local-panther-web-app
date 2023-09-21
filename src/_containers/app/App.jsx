@@ -6,6 +6,8 @@ import { Home } from "_containers/home";
 import { Dashboard } from "dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
 import { CreateJob } from "_containers/customer/createJob/CreateJob";
+import { ScheduleInterview } from "_containers/customer/scheduleInterview";
+
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
@@ -100,6 +102,15 @@ export function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/scheduled-interview"
+                element={
+                  <PrivateRoute>
+                    <ScheduleInterview />
+                  </PrivateRoute>
+                }
+              />
+
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route

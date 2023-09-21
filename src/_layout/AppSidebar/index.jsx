@@ -14,25 +14,18 @@ export const AppSidebar = () => {
   const [menuItems, setMenuItems] = useState([])
 
   useEffect(() => {
-    let data = []
-    for (let variable of menuDtoList) {
-      let obj = {
-        itemId: variable.path,
-        title: variable.menuname,
-        userroleid: variable.userroleid,
-        rolename: variable.rolename,
-        menuicon: variable.menuicon,
-        modulename: variable.modulename,
-        pathname: variable.path,
-        isview: variable.isview,
-        isadd: variable.isadd,
-        isedit: variable.isedit,
-        isdelete: variable.isdelete,
-        subMenuList: variable.subMenuList
-      }
-      data.push(obj)
-    }
-    setMenuItems(data)
+    const menuItems = menuDtoList?.map(({ 
+      path, 
+      menuname: title, 
+      ...rest 
+    }) => 
+    ({ 
+      itemId: path, 
+      pathname: path, 
+      title, 
+      ...rest }))
+
+    setMenuItems(menuItems);
   }, []);
 
   return (
