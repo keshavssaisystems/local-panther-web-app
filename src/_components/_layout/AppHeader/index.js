@@ -19,10 +19,6 @@ export function AppHeader({
           "header-shadow": enableHeaderShadow,
         })}
         transitionname="HeaderAnimation"
-        transitionAppear={true}
-        transitionAppearTimeout={1500}
-        transitionEnter={false}
-        transitionLeave={false}
       >
         <div
           className={cx("app-header__content", {
