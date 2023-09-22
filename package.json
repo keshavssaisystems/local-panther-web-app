@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "start": "react-scripts start",
-        "build": "react-scripts build",
+        "build": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
         "eject": "react-scripts eject"
     },
     "dependencies": {
@@ -36,6 +36,7 @@
         "ckeditor4": "^4.17.1",
         "ckeditor4-react": "^2.1.0",
         "classnames": "^2.3.1",
+        "cross-env": "^7.0.3",
         "crypto-browserify": "^3.12.0",
         "date-arithmetic": "^4.1.0",
         "date-fns": "^2.28.0",
