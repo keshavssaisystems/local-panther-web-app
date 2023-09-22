@@ -12,12 +12,13 @@ import {
   DropdownMenu,
   UncontrolledButtonDropdown,
 } from "reactstrap";
-import "./scheduleInterview.scss";
 
 import {
   BsPersonVcard,
   BsMailbox,
-  BsPhoneFill
+  BsPhoneFill,
+  BsPlaystation,
+  BsListStars
 } from "react-icons/bs";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -26,7 +27,7 @@ import {
   VerticalTimelineElement,
 } from "react-vertical-timeline-component";
 
-export function InterviewDetail() {
+export function UpcomingDetail() {
   return (
     <>
 
@@ -37,7 +38,7 @@ export function InterviewDetail() {
               <div className="menu-header-content btn-pane-right text-start">
                 <Col lg="6">
                   <h5 className="menu-header-title job-title-details">
-                    Spring Boot Developer
+                    Fullstack developer
                   </h5>
                   <p className="mb-0 mt-0">
                     Graysville, Connecticut, USA
@@ -82,7 +83,7 @@ export function InterviewDetail() {
               <Col className="padding-demo-2">
                 <div className="detail-padding">
                   <h6 className="fw-bold mb-0 job-heading">Name</h6>
-                  <p className="mb-0 mt-1">Vinit Pal</p>
+                  <p className="mb-0 mt-1">Ajay Singh</p>
                 </div>
               </Col>
             </Row>
@@ -97,7 +98,7 @@ export function InterviewDetail() {
               <Col className="padding-demo-2">
                 <div className="detail-padding">
                   <h6 className="fw-bold mb-0 job-heading">Email</h6>
-                  <p className="mb-0 mt-1">vinit@SaiSystems.com</p>
+                  <p className="mb-0 mt-1">ajay@SaiSystems.com</p>
                 </div>
               </Col>
             </Row>
@@ -112,7 +113,37 @@ export function InterviewDetail() {
               <Col className="padding-demo-2">
                 <div className="detail-padding">
                   <h6 className="fw-bold mb-0 job-heading">Mobile: </h6>
-                  <p className="mb-0 mt-1">80850-41177</p>
+                  <p className="mb-0 mt-1">80850-34214</p>
+                </div>
+              </Col>
+            </Row>
+          </div>
+          <div>
+            <Row>
+              <Col md="1" className="padding-demo-1">
+                <div className="detail-padding-icon">
+                  {<BsListStars />}
+                </div>
+              </Col>
+              <Col className="padding-demo-2">
+                <div className="detail-padding">
+                  <h6 className="fw-bold mb-0 job-heading">Skills: </h6>
+                  <p className="mb-0 mt-1">.NET Assemblies,.NET Development,.…</p>
+                </div>
+              </Col>
+            </Row>
+          </div>
+          <div>
+            <Row>
+              <Col md="1" className="padding-demo-1">
+                <div className="detail-padding-icon">
+                  {<BsPlaystation />}
+                </div>
+              </Col>
+              <Col className="padding-demo-2">
+                <div className="detail-padding">
+                  <h6 className="fw-bold mb-0 job-heading">Status: </h6>
+                  <p className="mb-0 mt-1">Confirmed</p>
                 </div>
               </Col>
             </Row>
@@ -192,7 +223,6 @@ export function InterviewDetail() {
             </div>
             <CardFooter className="d-block text-left">
               <Button outline className="mb-2 mr-2 btn-transition btn btn-outline-primary" color="primary"> Take Notes </Button>
-              <Button outline className="mb-2 mr-2 btn-transition" color="primary"> Add Interviewer </Button>
               <Button outline className="mb-2 mr-2 btn-transition" color="secondary"> Cancel </Button>
             </CardFooter>
           </Card>

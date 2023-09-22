@@ -30,6 +30,8 @@ import { BsPuzzle } from "react-icons/bs";
 import { InterviewDetail } from "./interviewDetail";
 import { ScheduleInterviewModal } from "./scheduleInterviewModal";
 
+import { UpcomingTab } from "./upcomingTab";
+
 const customStyles = {
   headRow: {
     style: {
@@ -254,12 +256,7 @@ export function ScheduleInterview() {
 
                     {/* Upcoming */}
                     <TabPane tabId="2">
-                      <p>
-                        Like Aldus PageMaker including versions of Lorem. It
-                        has survived not only five centuries, but also the
-                        leap into electronic typesetting, remaining
-                        essentially unchanged.{" "}
-                      </p>
+                        <UpcomingTab />
                     </TabPane>
 
                     {/* Calender  */}
