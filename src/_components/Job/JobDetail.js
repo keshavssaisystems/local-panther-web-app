@@ -29,7 +29,7 @@ export function JobDetail({ jobDetails, type }) {
 
   return (
     <>
-      <Col md="8">
+      <Col md="8" className="job-detail-cont">
         {loading === true && (
           <Loader
             type="line-scale-pulse-out-rapid"
