@@ -12,7 +12,9 @@ export default function SelectJobType() {
         <Row className="mt-4">
           {/* <Col md={1}></Col> */}
           <Col md={10} style={{ marginLeft: "15px" }}>
-            <CardTitle className="mb-0">Select option</CardTitle>
+            <CardTitle className="mb-0 select-option-label">
+              Select option
+            </CardTitle>
             <p className="mt-0 mb-2 text-muted-custom">
               Please select one option to create a new job
             </p>
