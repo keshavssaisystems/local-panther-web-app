@@ -46,12 +46,12 @@ export const CandidateCardView = (props) => {
       <CardFooter className="auto-margin">
         <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
           <Col>
-            <Button title="accept" className=" btn-icon" color="primary">
+            <Button title="accept" className=" btn-icon" color="success">
               <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="primary">
+            <Button title="reject" className="btn-icon" color="danger">
               <IoIosClose fontSize={"24px"}></IoIosClose>
             </Button>
           </Col>

@@ -49,12 +49,12 @@ export const CandidateListView = (props) => {
         <div>
           <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
             <Col>
-              <Button title="accept" className=" btn-icon" color="primary">
+              <Button title="accept" className=" btn-icon" color="success">
                 <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
               </Button>
             </Col>
             <Col>
-              <Button title="reject" className="btn-icon" color="primary">
+              <Button title="reject" className="btn-icon" color="danger">
                 <IoIosClose fontSize={"24px"}></IoIosClose>
               </Button>
             </Col>
