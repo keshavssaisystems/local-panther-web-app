@@ -12,18 +12,7 @@ import {
   Col,
   Button,
 } from "reactstrap";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-  IoIosMail,
-  IoIosContact,
-  IoIosBriefcase,
-  IoIosStar,
-  IoIosAlbums,
-  IoIosTime,
-} from "react-icons/io";
+import { IoIosCheckmark, IoIosClose, IoIosThumbsUp } from "react-icons/io";
 
 export const CandidateListView = (props) => {
   const columns = memoize((clickHandler) => [
@@ -93,15 +82,19 @@ export const CandidateListView = (props) => {
             </DropdownToggle>
             <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
               <DropdownItem>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Profile</span>
+              </DropdownItem>
+              <DropdownItem>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Schedule interview</span>
               </DropdownItem>
               <DropdownItem>
-                <i className="dropdown-icon lnr-layers">\ </i>
-                <span>Profile</span>
+                <i className="dropdown-icon lnr-license"> </i>
+                <span>Interview details</span>
               </DropdownItem>
               <DropdownItem>
-                <i className="dropdown-icon lnr-trash">\ </i>
+                <i className="dropdown-icon lnr-trash"></i>
                 <span>Delete</span>
               </DropdownItem>
             </DropdownMenu>
@@ -114,42 +107,13 @@ export const CandidateListView = (props) => {
     },
   ]);
 
-  const data = [
-    {
-      candidate: "Ajay Singh",
-      skills: "Java, Mysql, Sql",
-      experience: "5+ Yearas",
-      scheduled: "25/09/2023 3:30 PM",
-      mode: "Telephonic",
-    },
-    {
-      candidate: "Rao Singh",
-      skills: "Java, Sql",
-      experience: "2+ Years",
-      scheduled: "25/09/2023 2:00 PM",
-      mode: "Video",
-    },
-    {
-      candidate: "Ajit Yadav",
-      skills: "Java, Mysql",
-      experience: "3+ Years",
-      scheduled: "25/09/2023 01:00 PM",
-      mode: "Telephonic",
-    },
-    {
-      candidate: "Abhay Singh",
-      skills: "Java, Mysql",
-      experience: "1+ Year",
-      scheduled: "25/09/2023 12:00 PM",
-      mode: "Video",
-    },
-  ];
-
   const handleButtonClick = () => {
     console.log("clicked");
   };
 
-  const handleRowClick = (data) => {};
+  const handleRowClick = (data) => {
+    console.log(data);
+  };
   return (
     <>
       <DataTable
