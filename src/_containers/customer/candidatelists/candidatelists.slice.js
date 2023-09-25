@@ -28,7 +28,6 @@ function createExtraActions() {
   };
 
   function getCandidateJobLists() {
-    debugger;
     return createAsyncThunk(
       `${name}/getCandidateJobLists`,
 
