@@ -16,6 +16,7 @@ import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "../_containers/candidate/recommendejobList.slice";
 import { departmentReducer } from "../_components/dropdownComponents/department.slice";
 import { empmodeReducer } from "./dropdownempmode.slice";
+import { candidateListsReducer } from "_containers/customer/candidatelists/candidatelists.slice";
 
 export * from "./auth.slice";
 export * from "./users.slice";
@@ -34,6 +35,7 @@ export * from "./jobDetail.slice";
 export * from "../_containers/candidate/recommendejobList.slice";
 export * from "../_components/dropdownComponents/department.slice";
 export * from "./dropdownempmode.slice";
+export * from "../_containers/customer/candidatelists/candidatelists.slice";
 
 export const store = configureStore({
   reducer: {
@@ -54,5 +56,6 @@ export const store = configureStore({
     recommendedjobList: recommendedjobListReducer,
     department: departmentReducer,
     empmode: empmodeReducer,
+    candidateLists: candidateListsReducer,
   },
 });

@@ -116,7 +116,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalAppliedCandidates
                   }
-                  action={`/candidate-list/${jobDetails[0]?.jobid}`}
+                  action={`/customer-candidate-applied/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Recommended"}
@@ -126,7 +126,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalRecommendedCandidates
                   }
-                  action={`/recommended-candidate/${jobDetails[0]?.jobid}`}
+                  action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Liked"}
@@ -136,7 +136,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalLikedCandidates
                   }
-                  action={`/liked-candidate/${jobDetails[0]?.jobid}`}
+                  action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Accepted"}
@@ -146,7 +146,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalAcceptedCandidates
                   }
-                  action={`/accepted-candidate/${jobDetails[0]?.jobid}`}
+                  action={`/customer-candidate-accepted/${jobDetails[0]?.jobid}`}
                 />
                 <ButtonWithCount
                   buttonName={"Rejected"}
@@ -156,7 +156,7 @@ export function JobDetail({ jobDetails, type }) {
                       ? 0
                       : jobDetail.totalRejectedCandidates
                   }
-                  action={`/rejected-candidate/${jobDetails[0]?.jobid}`}
+                  action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
                 />
               </div>
             )}

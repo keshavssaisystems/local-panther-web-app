@@ -123,31 +123,31 @@ export function App() {
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route
-                path="/test"
+                path="/customer-candidate-matched/:id"
                 element={<CustomerCandidateLists type={"matched"} />}
               />
               <Route
-                path="/test1"
+                path="/customer-candidate-liked/:id"
                 element={<CustomerCandidateLists type={"liked"} />}
               />
               <Route
-                path="/test2"
+                path="/customer-candidate-maybe/:id"
                 element={<CustomerCandidateLists type={"maybe"} />}
               />
               <Route
-                path="/test3"
+                path="/customer-candidate-applied/:id"
                 element={<CustomerCandidateLists type={"applied"} />}
               />
               <Route
-                path="/test4"
+                path="/customer-candidate-scheduled/:id"
                 element={<CustomerCandidateLists type={"scheduled"} />}
               />
               <Route
-                path="/test5"
+                path="/customer-candidate-accepted/:id"
                 element={<CustomerCandidateLists type={"accepted"} />}
               />
               <Route
-                path="/test6"
+                path="/customer-candidate-rejected/:id"
                 element={<CustomerCandidateLists type={"rejected"} />}
               />
             </Routes>
