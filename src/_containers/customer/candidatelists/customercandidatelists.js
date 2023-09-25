@@ -6,10 +6,15 @@ import { CandidateCardView } from "_components/list/cardview";
 import { IoIosGrid, IoIosListBox } from "react-icons/io";
 import { CandidateListView } from "_components/list/listview";
 import { candidateList } from "./data";
-export const CustomerCandidateLists = () => {
-  const [activeTab, setActiveTab] = useState("1");
+import { CardPagination } from "_components/common/cardpagination";
+export const CustomerCandidateLists = (props) => {
+  const [activeTab, setActiveTab] = useState(props.type);
   const [view, setView] = useState("grid");
-
+  const [pageNo, setPageNo] = useState(1);
+  const pageSize = 9;
+  const handlePageChange = (page) => {
+    setPageNo(page);
+  };
   const toggle = (activetab) => {
     setActiveTab(activetab);
   };
@@ -25,10 +30,10 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "1" })
+                "btn-shadow " + classnames({ active: activeTab === "matched" })
               }
               onClick={() => {
-                toggle("1");
+                toggle("matched");
               }}
             >
               Matched
@@ -36,10 +41,10 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "2" })
+                "btn-shadow " + classnames({ active: activeTab === "liked" })
               }
               onClick={() => {
-                toggle("2");
+                toggle("liked");
               }}
             >
               Liked
@@ -47,10 +52,10 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "3" })
+                "btn-shadow " + classnames({ active: activeTab === "maybe" })
               }
               onClick={() => {
-                toggle("3");
+                toggle("maybe");
               }}
             >
               Maybe
@@ -58,10 +63,10 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "4" })
+                "btn-shadow " + classnames({ active: activeTab === "applied" })
               }
               onClick={() => {
-                toggle("4");
+                toggle("applied");
               }}
             >
               Applied
@@ -69,10 +74,11 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "5" })
+                "btn-shadow " +
+                classnames({ active: activeTab === "scheduled" })
               }
               onClick={() => {
-                toggle("5");
+                toggle("scheduled");
               }}
             >
               Scheduled
@@ -80,10 +86,10 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "6" })
+                "btn-shadow " + classnames({ active: activeTab === "accepted" })
               }
               onClick={() => {
-                toggle("6");
+                toggle("accepted");
               }}
             >
               Accepted
@@ -91,10 +97,10 @@ export const CustomerCandidateLists = () => {
             <Button
               color="primary"
               className={
-                "btn-shadow " + classnames({ active: activeTab === "7" })
+                "btn-shadow " + classnames({ active: activeTab === "rejected" })
               }
               onClick={() => {
-                toggle("7");
+                toggle("rejected");
               }}
             >
               Rejected
@@ -111,81 +117,116 @@ export const CustomerCandidateLists = () => {
 
         <Col>
           <TabContent activeTab={activeTab}>
-            <TabPane tabId="1">
-              <Row xs={12} sm={12} md={6} lg={4} xl={4}>
+            <TabPane tabId="matched">
+              <Row xs={1} sm={1} md={2} lg={3} xl={3}>
                 {candidateList ? (
                   <>
-                    {view === "grid" ? (
-                      candidateList.map((data, ind) => {
+                    {candidateList
+                      .slice((pageNo - 1) * pageSize, pageNo * pageSize)
+                      .map((data, ind) => {
                         return (
                           <Col key={data.jobapplicationid}>
                             <CandidateCardView data={data}></CandidateCardView>
                           </Col>
                         );
-                      })
-                    ) : (
-                      <CandidateListView data={candidateList} />
-                    )}
+                      })}
+                    <CardPagination
+                      totalPages={candidateList.length / pageSize}
+                      pageIndex={pageNo}
+                      onCallBack={(evt) => handlePageChange(evt)}
+                    ></CardPagination>
                   </>
                 ) : (
                   <></>
                 )}
               </Row>
             </TabPane>
-            <TabPane tabId="2">
+            <TabPane tabId="liked">
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged.{" "}
+                <CandidateListView data={candidateList} />
               </p>
             </TabPane>
-            <TabPane tabId="3">
+            <TabPane tabId="maybe">
+              <Row xs={1} sm={1} md={2} lg={3} xl={3}>
+                {candidateList ? (
+                  <>
+                    {candidateList
+                      .slice((pageNo - 1) * pageSize, pageNo * pageSize)
+                      .map((data, ind) => {
+                        return (
+                          <Col key={data.jobapplicationid}>
+                            <CandidateCardView data={data}></CandidateCardView>
+                          </Col>
+                        );
+                      })}
+                    <CardPagination
+                      totalPages={candidateList.length / pageSize}
+                      pageIndex={pageNo}
+                      onCallBack={(evt) => handlePageChange(evt)}
+                    ></CardPagination>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </Row>
+            </TabPane>
+            <TabPane tabId="applied">
               <p>
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only five centuries, but also the leap into electronic
-                typesetting, remaining essentially unchanged.{" "}
+                <CandidateListView data={candidateList} />
               </p>
             </TabPane>
-            <TabPane tabId="4">
+            <TabPane tabId="scheduled">
+              <Row xs={1} sm={1} md={2} lg={3} xl={3}>
+                {candidateList ? (
+                  <>
+                    {candidateList
+                      .slice((pageNo - 1) * pageSize, pageNo * pageSize)
+                      .map((data, ind) => {
+                        return (
+                          <Col key={data.jobapplicationid}>
+                            <CandidateCardView data={data}></CandidateCardView>
+                          </Col>
+                        );
+                      })}
+                    <CardPagination
+                      totalPages={candidateList.length / pageSize}
+                      pageIndex={pageNo}
+                      onCallBack={(evt) => handlePageChange(evt)}
+                    ></CardPagination>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </Row>
+            </TabPane>
+            <TabPane tabId="accepted">
               <p>
-                It was popularised in the 1960s with the release of Letraset
-                sheets containing Lorem Ipsum passages, and more recently with
-                desktop publishing software like Aldus PageMaker including
-                versions of Lorem Ipsum.
+                <CandidateListView data={candidateList} />
               </p>
             </TabPane>
-            <TabPane tabId="5">
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged.{" "}
-              </p>
-            </TabPane>
-            <TabPane tabId="6">
-              <p>
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only five centuries, but also the leap into electronic
-                typesetting, remaining essentially unchanged.{" "}
-              </p>
-            </TabPane>
-            <TabPane tabId="7">
-              <p>
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only five centuries, but also the leap into electronic
-                typesetting, remaining essentially unchanged.{" "}
-              </p>
+            <TabPane tabId="rejected">
+              <Row xs={1} sm={1} md={2} lg={3} xl={3}>
+                {candidateList ? (
+                  <>
+                    {candidateList
+                      .slice((pageNo - 1) * pageSize, pageNo * pageSize)
+                      .map((data, ind) => {
+                        return (
+                          <Col key={data.jobapplicationid}>
+                            <CandidateCardView data={data}></CandidateCardView>
+                          </Col>
+                        );
+                      })}
+                    <CardPagination
+                      totalPages={candidateList.length / pageSize}
+                      pageIndex={pageNo}
+                      onCallBack={(evt) => handlePageChange(evt)}
+                    ></CardPagination>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </Row>
             </TabPane>
           </TabContent>
         </Col>

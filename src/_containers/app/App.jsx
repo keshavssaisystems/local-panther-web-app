@@ -123,7 +123,34 @@ export function App() {
                 element={<ForgotPasswordSuccess />}
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/test" element={<CustomerCandidateLists />} />
+              <Route
+                path="/test"
+                element={<CustomerCandidateLists type={"matched"} />}
+              />
+              <Route
+                path="/test1"
+                element={<CustomerCandidateLists type={"liked"} />}
+              />
+              <Route
+                path="/test2"
+                element={<CustomerCandidateLists type={"maybe"} />}
+              />
+              <Route
+                path="/test3"
+                element={<CustomerCandidateLists type={"applied"} />}
+              />
+              <Route
+                path="/test4"
+                element={<CustomerCandidateLists type={"scheduled"} />}
+              />
+              <Route
+                path="/test5"
+                element={<CustomerCandidateLists type={"accepted"} />}
+              />
+              <Route
+                path="/test6"
+                element={<CustomerCandidateLists type={"rejected"} />}
+              />
             </Routes>
           </div>
           {authUser && <AppFooter />}

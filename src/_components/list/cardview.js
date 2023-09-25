@@ -1,16 +1,16 @@
 import React from "react";
-import { Card, CardBody, CardFooter, Row, Col } from "reactstrap";
+import { Card, CardBody, CardFooter, Row, Col, Button } from "reactstrap";
 import {
   IoIosCheckmark,
   IoIosClose,
   IoIosThumbsUp,
   IoIosHelp,
-  IoIosInformation,
   IoIosMail,
   IoIosContact,
   IoIosBriefcase,
   IoIosStar,
   IoIosAlbums,
+  IoIosTime,
 } from "react-icons/io";
 export const CandidateCardView = (props) => {
   return (
@@ -43,22 +43,36 @@ export const CandidateCardView = (props) => {
           </Col>
         </Row>
       </CardBody>
-      <CardFooter>
-        <Row>
+      <CardFooter className="auto-margin">
+        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
           <Col>
-            <IoIosCheckmark fontSize={"32px"}></IoIosCheckmark>
+            <Button title="accept" className=" btn-icon" color="primary">
+              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+            </Button>
           </Col>
           <Col>
-            <IoIosClose fontSize={"32px"}></IoIosClose>
+            <Button title="reject" className="btn-icon" color="primary">
+              <IoIosClose fontSize={"24px"}></IoIosClose>
+            </Button>
           </Col>
           <Col>
-            <IoIosThumbsUp fontSize={"32px"}></IoIosThumbsUp>
+            <Button title="liked" className=" btn-icon" color="primary">
+              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            </Button>
           </Col>
           <Col>
-            <IoIosHelp fontSize={"32px"}></IoIosHelp>
+            <Button title="maybe" className=" btn-icon" color="primary">
+              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            </Button>
           </Col>
           <Col>
-            <IoIosInformation fontSize={"32px"}></IoIosInformation>
+            <Button
+              title="schedule"
+              className="mb-2 me-2 btn-icon"
+              color="primary"
+            >
+              <IoIosTime fontSize={"24px"}></IoIosTime>
+            </Button>
           </Col>
         </Row>
       </CardFooter>
