@@ -1,99 +1,67 @@
-import React from "react";
-import { Card, CardBody, Form, Button, Col, Row } from "reactstrap";
-import { EmploymentMode } from "_components/dropdownComponents/EmploymentMode";
-import { FilterSearch } from "_components/common/filterSearch";
-import { SkillsFilter } from "_components/dropdownComponents/SkillsFilter";
-import { Location } from "_components/dropdownComponents/Location";
+import React, { useState } from "react";
+import {
+  Card,
+  CardBody,
+  Form,
+  Col,
+  Row,
+  InputGroup,
+  Input,
+  Button,
+} from "reactstrap";
+import { BsSearch } from "react-icons/bs";
 
 export function JobFilter({ onFilter, onSearch, setPage }) {
-  const onSubmitHandler = (event) => {
+  const [placeHolder, setPlaceHolder] = useState("Search");
+  const getSelectData = (event) => {
     event.preventDefault();
-    let processedData = processFormData(event);
-    let responseBody = {};
-    responseBody.skills = processedData[1].toString();
-    responseBody.location = processedData[0].toString();
-    responseBody.employementType = event.target.elements.employmentType.value;
-    setPage(1);
-    onFilter(responseBody);
-  };
-  const processFormData = (targetEvent) => {
-    let locationArray = [];
-    let skillsArray = [];
-    let eventLength = targetEvent.target.length;
-    for (let index = 0; index < eventLength; index++) {
-      let getSplitData = targetEvent.target.elements[index].value.split(", ");
-      if (
-        targetEvent.target.elements[index].type === "hidden" &&
-        getSplitData.length > 1
-      ) {
-        locationArray.push(getSplitData[0]);
-      }
-      if (
-        targetEvent.target.elements[index].type === "hidden" &&
-        getSplitData.length === 1
-      ) {
-        skillsArray.push(getSplitData[0]);
-      }
+    if (event.target.value === "Search") {
+      setPlaceHolder("Search");
+    } else {
+      setPlaceHolder("Search " + event.target.value.toLowerCase());
     }
-    return [locationArray, skillsArray];
   };
-  const getSearchValue = (search) => {
-    setPage(1);
-    onSearch(search);
+  const getFilterValue = (event) => {
+    event.preventDefault();
+    console.log(event);
   };
-
   return (
     <>
       <Col md="12">
-        <Card className="main-card mb-3">
+        <Card className="main-card mb-3 card-filter">
           <CardBody>
-            <Row>
-              <Col sm={12} md={12} lg={7} xl={9}>
-                <Form onSubmit={onSubmitHandler}>
-                  <Row>
-                    <Col>
-                      <Location
-                        label={"Location"}
-                        name={"location"}
-                        id={"location"}
-                        defaultOption={"Search by city"}
-                        showValidation={false}
-                        validationMessage={""}
-                        mandatory={false}
-                      />
-                    </Col>
-                    <Col>
-                      <SkillsFilter
-                        label={"Skills"}
-                        name={"skillsDD"}
-                        id={"skillsDD"}
-                        defaultOption={"Search skills"}
-                        showValidation={false}
-                        validationMessage={""}
-                        mandatory={false}
-                      />
-                    </Col>
-                    <Col>
-                      <EmploymentMode
-                        showValidation={false}
-                        validationMessage={""}
-                        mandatory={false}
-                        defaultOption={"Select Employment Type"}
-                      />
-                    </Col>
-                    <Col>
-                      <Button className="search-button">Search</Button>
-                    </Col>
-                  </Row>
-                </Form>
-              </Col>
-              <Col sm={12} md={12} lg={5} xl={3}>
-                <FilterSearch
-                  placeholder={"Search by job title"}
-                  searchValue={getSearchValue}
-                />
-              </Col>
-            </Row>
+            <Form onSubmit={(e) => getFilterValue(e)}>
+              <Row>
+                <Col sm={6} md={6} lg={5} xl={3}>
+                  <InputGroup>
+                    <Input
+                      name="searchType"
+                      type="select"
+                      className="fw-bold search-dropdown"
+                      onChange={(e) => getSelectData(e)}
+                    >
+                      <option>Search</option>
+                      <option>State</option>
+                      <option>City</option>
+                      <option>Skill</option>
+                      <option>Title</option>
+                    </Input>
+                    <Input
+                      type="search"
+                      placeholder={placeHolder}
+                      name="searchValue"
+                    />
+                    <Button
+                      color={"primary"}
+                      className="input-group-text"
+                      type="submit"
+                    >
+                      <BsSearch />
+                    </Button>
+                  </InputGroup>
+                </Col>
+              </Row>
+            </Form>
           </CardBody>
         </Card>
       </Col>
