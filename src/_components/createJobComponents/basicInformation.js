@@ -13,7 +13,6 @@ import { CKEditor } from "ckeditor4-react";
 import "./createJob.scss";
 
 export function BasicInformation({ data, jobLocationOptions }) {
-  // console.log(data.length);
   const [preValue, setPreValue] = useState({
     companyId: "",
     jobTitle: data.length > 0 ? data[0].jobTitle : "",
@@ -250,7 +249,6 @@ export function BasicInformation({ data, jobLocationOptions }) {
                 id={"companyDetails"}
                 name={"companyDetails"}
                 type={"textarea"}
-                // defaultValue={preValue.companyDetail}
                 placeholder="Enter company deatils"
                 maxLength={1000}
               />

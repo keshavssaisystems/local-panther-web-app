@@ -8,9 +8,7 @@ export default function SelectJobType() {
   return (
     <>
       <div className="form-wizard-content">
-        {/* <div className="divider" /> */}
         <Row className="mt-4">
-          {/* <Col md={1}></Col> */}
           <Col md={10} style={{ marginLeft: "15px" }}>
             <CardTitle className="mb-0 select-option-label">
               Select option

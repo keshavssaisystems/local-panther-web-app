@@ -100,7 +100,10 @@ export default class MultiStep extends React.Component {
 
   render() {
     return (
-      <div onKeyDown={this.handleKeyDown} className="main-heading">
+      <div
+        onKeyDown={this.handleKeyDown}
+        className="main-heading main-wizard-container"
+      >
         <ol className="forms-wizard">{this.renderSteps()}</ol>
         {this.props.steps[this.state.compState].component}
         <div className="divider" />

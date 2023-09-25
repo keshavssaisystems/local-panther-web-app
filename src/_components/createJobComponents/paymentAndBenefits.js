@@ -46,7 +46,7 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 id={"minimumAmount"}
                 name={"minimumAmount"}
                 type={"number"}
-                placeholder="Enter Minimum Amount"
+                placeholder="Enter minimum amount"
               />
             </FormGroup>
           </Col>
@@ -59,7 +59,7 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 id={"maximumAmount"}
                 name={"maximumAmount"}
                 type={"number"}
-                placeholder="Enter Maximum Amount"
+                placeholder="Enter maximum amount"
               />
             </FormGroup>
           </Col>
