@@ -5,7 +5,7 @@ import { PrivateRoute } from "_components";
 import { Home } from "_containers/home";
 import { Dashboard } from "dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
-import { ScheduleInterview } from "_containers/customer/scheduleInterview";
+import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
