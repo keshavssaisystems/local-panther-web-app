@@ -23,7 +23,7 @@ export function UpdateJobDetailModal({
   const [modalContent, setModalContent] = useState(
     <BasicInformation data={data} jobLocationOptions={jobLocationOptions} />
   );
-  const [modalTitle, setModalTitle] = useState("Basic Information");
+  const [modalTitle, setModalTitle] = useState("Basic information");
   const toggle = () => {
     setModal(!modal);
   };
@@ -39,7 +39,7 @@ export function UpdateJobDetailModal({
             jobLocationOptions={jobLocationOptions}
           />
         );
-        setModalTitle("Basic Information");
+        setModalTitle("Basic information");
         break;
       case 2:
         setModalContent(
@@ -52,7 +52,7 @@ export function UpdateJobDetailModal({
             hiringTimelineOption={hiringTimelineOption}
           />
         );
-        setModalTitle("Experience & Schedules");
+        setModalTitle("Experience & schedules");
         break;
       case 3:
         setModalContent(
@@ -61,15 +61,15 @@ export function UpdateJobDetailModal({
             payPeriodTypeOption={payPeriodTypeOption}
           />
         );
-        setModalTitle("Payments & Benefits");
+        setModalTitle("Payments & benefits");
         break;
       case 4:
         setModalContent(<KeyQualification data={data} />);
-        setModalTitle("Key Qualifications");
+        setModalTitle("Key qualifications");
         break;
       case 5:
         setModalContent(<PreScreenApplicant data={data} />);
-        setModalTitle("Pre-screen Applicants");
+        setModalTitle("Pre-screen applicants");
         break;
       default:
         setModalContent(
@@ -78,7 +78,7 @@ export function UpdateJobDetailModal({
             jobLocationOptions={jobLocationOptions}
           />
         );
-        setModalTitle("Basic Information");
+        setModalTitle("Basic information");
         break;
     }
   };

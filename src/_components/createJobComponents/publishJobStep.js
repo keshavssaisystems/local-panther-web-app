@@ -14,7 +14,7 @@ export default function PublishJobStep() {
           </div>
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
-            Your Job with <b>Java Developer</b> has successfully created!
+            Your job with <b>Java Developer</b> has successfully created!
           </div>
           <div className="mt-3 mb-3" />
           <div className="text-center">

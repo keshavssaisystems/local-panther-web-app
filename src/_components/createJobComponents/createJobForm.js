@@ -16,7 +16,7 @@ export default function CreateJob({
   jobLocationOptions,
   payPeriodTypeOption,
 }) {
-  let type = "0";
+  let type = "1";
   const [accordion, setAccordion] = useState([
     true,
     false,
