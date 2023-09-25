@@ -10,497 +10,226 @@ import {
   CardHeader,
   Button,
   FormGroup,
+  Container,
 } from "reactstrap";
+import Tabs from "react-responsive-tabs";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
-import { useParams } from "react-router-dom";
+import { CSSTransition } from "react-transition-group";
+import { ResumeDetails } from "./resumeDetails";
+import { CandidateQualification } from "./candidateQualification";
+import { CandidateEducation } from "./educationalInfo";
+import { PersonalInformation } from "./personalInformation";
+import { CandidateSkills } from "./candidateSkills";
+import { CertificationDetails } from "./certifications";
+import { AdditionalInformation } from "./additionalInfo";
+import { JobPreferences } from "./jobPreferences";
+import {
+  profileActions,
+  getProfileActions,
+  cityActions,
+  genderActions,
+  ethnicityActions,
+} from "_store";
+import { getLocationFilter } from "_store";
 
-export function CandidateProfile(props) {
-  const { id } = useParams();
+export function CandidateProfile() {
   const dispatch = useDispatch();
-  const [selectedCandidate, setSelectedCandidate] = useState(
-    props.selectedData
-  );
-  const [selectedCandidateRes, setSelectedCandidateRes] = useState();
-  const [selectedCandidateList, setSelectedCandidateList] = useState({});
-  const [isOpenAccordian, setOpenAccordian] = useState(true);
-  const [isContactAccordian, setContactAccordian] = useState(false);
-  const [isEducationAccordian, setEducationAccordian] = useState(false);
-  const [isJobAccordian, setJobAccordian] = useState(false);
+  const [dropdownLists, setDropDownLists] = useState({
+    cityDropdown: [],
+    stateDropDown: [],
+    countryDropdown: [],
+    genderDropDown: "",
+    ethnicityDropdown: "",
+    eligibilityDropDown: [
+      {
+        id: 0,
+        name: "Authorized to work in the US",
+      },
+      {
+        id: 1,
+        name: "Sponsorship required",
+      },
+      {
+        id: 2,
+        name: "Not Specified",
+      },
+    ],
+
+    selectedCity: {
+      value: 0,
+      label: "",
+    },
+    selectedState: {
+      value: 0,
+      label: "",
+    },
+    selectedCountry: {
+      value: 0,
+      label: "",
+    },
+    selectedEthnicity: {
+      value: 0,
+      label: "",
+    },
+    selectedGender: {
+      value: 0,
+      label: "",
+    },
+  });
+
+  const [profileData, setProfileData] = useState({
+    personalInfo: {},
+    resumeInfo: {},
+    skillsInfo: [],
+    qualificationsInfo: [],
+    certificationsInfo: [],
+    educationInfo: [],
+    additionalInfo: [],
+    jobPreferenceInfo: [],
+  });
+
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   useEffect(() => {
-    getCandidateDetails();
+    loadPage();
   }, []);
 
-  useEffect(() => {
-    setSelectedCandidateList(selectedCandidateRes);
-  }, [selectedCandidateRes]);
-
-  const getCandidateDetails = async function () {
-    var req = selectedCandidate.candidateid
-      ? selectedCandidate.candidateid
-      : id;
-    let response = await dispatch(candidateActions.getCandidateDetails(req));
-    setSelectedCandidateRes(response.payload.data);
+  const loadPage = async function () {
+    await getDropdownLists();
+    await getPersonalDetails();
   };
 
-  const navigateToListPage = function () {
-    props.setShowCandidate(false);
+  const getDropdownLists = async function () {
+    await dispatch(genderActions.getGender());
+    await dispatch(ethnicityActions.getEthnicity());
   };
 
-  const applyMask = function (inputValue) {
-    if (inputValue) {
-      const numCharsToMask = inputValue.length - (inputValue.length - 2);
-      const maskedValue =
-        "*".repeat(inputValue.length - numCharsToMask) +
-        inputValue.slice(-numCharsToMask);
-
-      return maskedValue;
-    }
-  };
-  const formatPhoneNumber = function (inputValue) {
-    const maskedValue =
-      "*".repeat(10 - 4) + selectedCandidate.phonenumber.slice(-4);
-    return `(${maskedValue.substring(0, 3)}) - ${maskedValue.substring(
-      3,
-      6
-    )} - ${maskedValue.substring(6)}`;
-  };
-
-  const maskEmail = function (inputValue) {
-    // Extract the part before the '@' symbol
-    const username = selectedCandidate.email.substring(
-      0,
-      selectedCandidate.email.indexOf("@")
+  const getPersonalDetails = async function () {
+    let candidateid = userDetails.InternalUserId;
+    let response = await dispatch(getProfileActions.getCandidate(candidateid));
+    let filter_data = response.payload;
+    let organization = filter_data.candidateQualificationsDtos.filter(
+      (x) => x.iscurrentlyworking == true
     );
 
-    // Mask the username with 'x's
-    const maskedUsername = "x".repeat(username.length);
+    let data = {
+      position: organization.length > 0 ? organization[0].jobtitle : "",
+      organization:
+        organization.length > 0 ? organization[0].company : "Not Working",
+      eligibility: dropdownLists.eligibilityDropDown.find(
+        (x) => x.id == filter_data.employmenteligiblity
+      ).name,
+      readyToWork: filter_data.isreadytoworkimmediately ? "Yes" : "No",
+      phonenumber: filter_data.phonenumber,
+      email: filter_data.email,
+      state: filter_data.statename,
+      city: filter_data.cityname,
+      country: filter_data.countryname,
+      dob: new Date(),
+      gender: filter_data.gendername,
+      race: filter_data.ethnicityname,
 
-    // Combine masked username with '@' symbol and domain
-    const maskedValue =
-      maskedUsername +
-      selectedCandidate.email.substring(selectedCandidate.email.indexOf("@"));
+      candidateid: 0,
+      firstname: filter_data.firstname,
+      lastname: filter_data.lastname,
+      genderid: filter_data.genderid,
+      cityid: filter_data.cityid,
+      stateid: filter_data.stateid,
+      countryid: filter_data.countryid,
+      zipcode: filter_data.zipcode,
+      ethnicityid: filter_data.ethnicityid,
+      ethnicity: filter_data.ethnicity,
+      employmenteligiblity: filter_data.employmenteligiblity,
+      isreadytoworkimmediately: filter_data.isreadytoworkimmediately,
+      isactive: true,
+      userid: 0,
+      currentUserId: 0,
+    };
+    let new_data = { ...profileData };
+    new_data.personalInfo = data;
+    new_data.skillsInfo = filter_data.candidateSkillDtos;
+    new_data.resumeInfo = filter_data.candidateResumeDto;
+    new_data.qualificationsInfo = filter_data.candidateQualificationsDtos;
+    new_data.educationInfo = filter_data.candidateEducationDtos;
+    new_data.certificationsInfo = filter_data.candidateCertificationDtos;
+    new_data.additionalInfo = filter_data.candidateAdditionalInformationDtos;
+    setProfileData(new_data);
 
-    return maskedValue;
-  };
+    let dropdown_selected = { ...dropdownLists };
 
-  const showPersonalInfo = function () {
-    setOpenAccordian(!isOpenAccordian);
-  };
-  const showContactInfo = function () {
-    setContactAccordian(!isContactAccordian);
-  };
-  const showEducationInfo = function () {
-    setEducationAccordian(!isEducationAccordian);
-  };
-  const showJobInfo = function () {
-    setJobAccordian(!isJobAccordian);
-  };
-
-  const changeDate = function (date) {
-    function pad(s) {
-      return s < 10 ? "0" + s : s;
-    }
-    var d = new Date(date);
-    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("/");
+    dropdown_selected.selectedCity = {
+      value: filter_data.cityid,
+      label: filter_data.cityname,
+    };
+    dropdown_selected.selectedState = {
+      value: filter_data.stateid,
+      label: filter_data.statename,
+    };
+    dropdown_selected.selectedCountry = {
+      value: filter_data.countryid,
+      label: filter_data.countryname,
+    };
+    dropdown_selected.selectedGender = {
+      value: filter_data.genderid,
+      label: filter_data.gendername,
+    };
+    dropdown_selected.selectedEthnicity = {
+      value: filter_data.ethnicityid,
+      label: filter_data.ethnicityname,
+    };
+    setDropDownLists(dropdown_selected);
   };
 
   return (
     <div>
-      {selectedCandidateList ? (
-        <div>
-          <PageTitle heading="Candidate Profile" icon={candidatelogo} />
-
+      <div className="profile-view">
+        <PageTitle heading="Candidate Profile" icon={candidatelogo} />
+      </div>
+      {profileData.personalInfo.email ? (
+        <div className="profile-view">
           <Row>
-            <Card className="mb-2">
-              <CardHeader id="headingOne">
-                <Button
-                  block
-                  color="link"
-                  className="text-start m-0 p-0"
-                  onClick={() => showPersonalInfo()}
-                  aria-controls="collapseOne"
-                >
-                  <h5 className="m-0 p-0 card-title-text">
-                    Personal Information
-                  </h5>
-                </Button>
-              </CardHeader>
-              <Collapse
-                isOpen={isOpenAccordian}
-                data-parent="#accordion"
-                id="collapseOne"
-                aria-labelledby="headingOne"
-              >
-                <CardBody className="">
-                  <Row className="mb-2">
-                    <FormGroup className="input-label">
-                      <Row>
-                        <Col className="mb-2">
-                          <Label
-                            for="exampleEmail"
-                            className="input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            First Name
-                          </Label>
-                          <Input
-                            disabled
-                            type="text"
-                            name="firstname"
-                            id="firstname"
-                            placeholder="with a placeholder"
-                            value={applyMask(selectedCandidateList.firstname)}
-                          />
-                        </Col>
-
-                        <Col>
-                          <Col>
-                            <Label
-                              className="input-label"
-                              style={{ fontWeight: "600" }}
-                            >
-                              Middle Name :
-                            </Label>
-                            <Input
-                              disabled
-                              type="text"
-                              name="middlename"
-                              id="middlename"
-                              placeholder=""
-                              value=""
-                            />
-                          </Col>
-                        </Col>
-                      </Row>
-
-                      <Row className="mb-2">
-                        <Col className="col-md-6">
-                          <Label
-                            className="me-2 input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Last Name :
-                          </Label>
-                          <Input
-                            type="text"
-                            disabled="true"
-                            id="lastname"
-                            name="lastname"
-                            value={applyMask(selectedCandidateList.lastname)}
-                          />
-                        </Col>
-                        <Col className="col-md-6">
-                          <Label
-                            className="me-2 input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Email :{" "}
-                          </Label>
-                          <Input
-                            type="text"
-                            disabled="true"
-                            id="email"
-                            name="email"
-                            value={maskEmail(selectedCandidateList.email)}
-                          />
-                        </Col>
-                      </Row>
-
-                      <Row className="mb-2">
-                        <Col className="col-md-6">
-                          <Label
-                            className="me-2 input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Contact :
-                          </Label>
-                          <Input
-                            type="text"
-                            disabled="true"
-                            id="contact"
-                            name="contact"
-                            value={formatPhoneNumber(
-                              selectedCandidateList.phonenumber
-                            )}
-                          />
-                        </Col>
-                        <Col className="col-md-6">
-                          <Label
-                            className="me-2 input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Emergency Contact :
-                          </Label>
-                          <Input
-                            type="text"
-                            disabled="true"
-                            id="contact"
-                            name="contact"
-                            value=""
-                          />
-                        </Col>
-                      </Row>
-
-                      <Row className="mb-2">
-                        <Col className="col-md-6">
-                          <Label
-                            className="me-2 input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Date Of Birth
-                          </Label>
-                          <Input
-                            type="text"
-                            disabled="true"
-                            id="lastname"
-                            name="lastname"
-                            value={changeDate(selectedCandidateList.dob)}
-                          />
-                        </Col>
-                        <Col className="col-md-6">
-                          <Label
-                            className="me-2 input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            Video Intro :
-                          </Label>
-                          <Input
-                            type="text"
-                            disabled="true"
-                            id="lastname"
-                            name="lastname"
-                            value="-"
-                          />
-                        </Col>
-                      </Row>
-                    </FormGroup>
-                  </Row>
-                </CardBody>
-              </Collapse>
-            </Card>
-            <Card className="mb-2">
-              <CardHeader id="headingOne">
-                <Button
-                  block
-                  color="link"
-                  className="text-start m-0 p-0"
-                  onClick={() => showContactInfo()}
-                  aria-controls="collapseTwo"
-                >
-                  <h5 className="m-0 p-0 card-title-text">
-                    Contact Information
-                  </h5>
-                </Button>
-              </CardHeader>
-              <Collapse
-                isOpen={isContactAccordian}
-                data-parent="#accordion"
-                id="collapseTwo"
-                aria-labelledby="headingOne"
-              >
-                <CardBody>
-                  <FormGroup>
-                    <Row>
-                      <Col>
-                        <Label
-                          for="exampleEmail"
-                          className="input-label"
-                          style={{ fontWeight: "600" }}
-                        >
-                          City
-                        </Label>
-                        <Input
-                          disabled
-                          type="text"
-                          name="firstname"
-                          id="firstname"
-                          placeholder="with a placeholder"
-                          value={selectedCandidateList.firstname}
-                        />
-                      </Col>
-
-                      <Col>
-                        <Col>
-                          <Label
-                            className="input-label"
-                            style={{ fontWeight: "600" }}
-                          >
-                            State
-                          </Label>
-                          <Input
-                            disabled
-                            type="text"
-                            name="state"
-                            id="state"
-                            placeholder=""
-                            value=""
-                          />
-                        </Col>
-                      </Col>
-                    </Row>
-
-                    <Row className="mb-2">
-                      <Col className="col-md-6">
-                        <Label
-                          className="me-2 input-label"
-                          style={{ fontWeight: "600" }}
-                        >
-                          Country
-                        </Label>
-                        <Input
-                          type="text"
-                          disabled="true"
-                          id="country"
-                          name="country"
-                          value={selectedCandidateList.lastname}
-                        />
-                      </Col>
-                      <Col className="col-md-6">
-                        <Label
-                          className="me-2 input-label"
-                          style={{ fontWeight: "600" }}
-                        >
-                          Zip Code
-                        </Label>
-                        <Input
-                          type="text"
-                          disabled="true"
-                          id="zipcode"
-                          name="zipcode"
-                          value={selectedCandidateList.zipcode}
-                        />
-                      </Col>
-                    </Row>
-                  </FormGroup>
-                </CardBody>
-              </Collapse>
-            </Card>
-            <Card className="mb-2">
-              <CardHeader id="headingOne">
-                <Button
-                  block
-                  color="link"
-                  className="text-start m-0 p-0"
-                  onClick={() => showEducationInfo()}
-                  aria-controls="collapse"
-                >
-                  <h5 className="m-0 p-0 card-title-text">
-                    Education Qualification
-                  </h5>
-                </Button>
-              </CardHeader>
-              <Collapse
-                isOpen={isEducationAccordian}
-                data-parent="#accordion"
-                id="collapse"
-                aria-labelledby="headingOne"
-              >
-                <CardBody></CardBody>
-              </Collapse>
-            </Card>
-            <Card className="mb-2">
-              <CardHeader id="headingOne">
-                <Button
-                  block
-                  color="link"
-                  className="text-start m-0 p-0"
-                  onClick={() => showJobInfo()}
-                  aria-controls="collapse"
-                >
-                  <h5 className="m-0 p-0 card-title-text">
-                    Job Title/Position
-                  </h5>
-                </Button>
-              </CardHeader>
-              <Collapse
-                isOpen={isJobAccordian}
-                data-parent="#accordion"
-                id="collapse"
-                aria-labelledby="headingOne"
-              >
-                <CardBody>
-                  <Row className="mb-2">
-                    <Col className="col-md-6">
-                      <Label
-                        className="me-2 input-label"
-                        style={{ fontWeight: "600" }}
-                      >
-                        Current Position
-                      </Label>
-                      <Input
-                        type="text"
-                        disabled="true"
-                        id="lastname"
-                        name="lastname"
-                        value={selectedCandidateList.primaryskills}
-                      />
-                    </Col>
-                    <Col className="col-md-6">
-                      <Label
-                        className="me-2 input-label"
-                        style={{ fontWeight: "600" }}
-                      >
-                        Notice Period
-                      </Label>
-                      <Input
-                        type="text"
-                        disabled="true"
-                        id="zipcode"
-                        name="zipcode"
-                        value={selectedCandidate.noticeperid}
-                      />
-                    </Col>
-                  </Row>
-                  <Row className="mb-2">
-                    <Col className="col-md-6">
-                      <Label
-                        className="me-2 input-label"
-                        style={{ fontWeight: "600" }}
-                      >
-                        Skills :
-                      </Label>
-                      <Input
-                        type="text"
-                        disabled="true"
-                        id="contact"
-                        name="contact"
-                        value={selectedCandidateList.secondaryskills}
-                      />
-                    </Col>
-                    <Col className="col-md-6">
-                      <Label
-                        className="me-2 input-label"
-                        style={{ fontWeight: "600" }}
-                      >
-                        Experience
-                      </Label>
-                      <Input
-                        type="text"
-                        disabled="true"
-                        id="lastname"
-                        name="lastname"
-                        value={selectedCandidateList.experienceyears + " years"}
-                      />
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Collapse>
-            </Card>
+            <PersonalInformation
+              profileInfo={profileData}
+              dropDownData={dropdownLists}
+              onCallBack={() => loadPage}
+            />
           </Row>
-          <Row style={{ cursor: "pointer" }}>
-            <Col md="2" className="mt-3">
-              <Button
-                style={{ backgroundColor: "rgb(33 91 153)" }}
-                className="mt-1 me-3"
-                onClick={(evt) => navigateToListPage()}
-              >
-                Back
-              </Button>
+          <Row>
+            <Col>
+              <ResumeDetails
+                resumeInfo={profileData.resumeInfo}
+                candidateDetails={profileData.personalInfo}
+                onCallBack={() => loadPage}
+              />
             </Col>
+            <Col>
+              <CandidateSkills
+                skillInfo={profileData.skillsInfo}
+                onCallBack={() => loadPage}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CandidateQualification />
+            </Col>
+            <Col>
+              <CandidateEducation />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <CertificationDetails />
+            </Col>
+            <Col>
+              <AdditionalInformation />
+            </Col>
+          </Row>
+          <Row>
+            <JobPreferences />
           </Row>
         </div>
       ) : (

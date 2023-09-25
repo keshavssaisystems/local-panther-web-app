@@ -1,17 +1,262 @@
-.card-title-text {
-  font-family: Open Sans;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 16px;
-  letter-spacing: -0.01em;
-  text-align: left;
-  color: #2f479b;
+.profile-view {
+  .profile-img {
+    min-width: 100px !important;
+    min-height: 130px !important;
+    margin: 0 1rem 0 0 !important;
+  }
+  .ml-border {
+    border-right: solid 1px #afaba5 !important;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .skills-view {
+    border: solid 1px #afaba5;
+    border-radius: 5px;
+    width: auto;
+    height: 35px;
+  }
+  .link-text {
+    color: #2f479b;
+    cursor: pointer;
+    font-family: Capitana;
+    font-size: 14px;
+    font-weight: 500 !important;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-title-text {
+    font-family: Open Sans;
+    font-size: 18px;
+    font-weight: 600 !important;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+  }
+  .content-title {
+    font-family: Capitana;
+    font-size: 14px;
+    font-weight: 500 !important;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+  }
+  .input-label {
+    font-family: Capitana;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+  .card-label {
+    font-family: Capitana;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 8px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    margin-left: 20px;
+  }
+  .icon-container {
+    font-size: 1.5rem;
+    margin-left: 2px;
+  }
+
+  .content-text {
+    color: #2e2f2f;
+    font-family: Capitana;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+  .candidate-name {
+    font-family: Capitana;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 8px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+    margin-left: 0px;
+  }
+  .candidate-primary-skill {
+    color: #afaba5;
+    font-family: Capitana;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: -0.12px;
+  }
+  .edit-icon {
+    cursor: pointer;
+  }
+  .profile-logo {
+    height: 50px;
+  }
+  .personal-info-label {
+    color: #afaba5;
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 16px;
+    letter-spacing: -0.12px;
+  }
+  .card-p-text {
+    color: #afaba5;
+    font-family: Capitana;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400 !important;
+    line-height: 16px;
+    letter-spacing: -0.12px;
+  }
+  .card-p-text-black {
+    color: #2e2f2f;
+    font-family: Capitana;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400 !important;
+    line-height: 16px;
+    letter-spacing: -0.12px;
+  }
+  .div-box {
+    border: solid 1px #2f2e2e !important;
+    border-radius: 5px;
+  }
+  .nav-link {
+    color: #545cd8;
+    font-weight: 400;
+    font-size: 14px;
+  }
 }
-.input-label {
-  font-family: Capitana;
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 16px;
-  letter-spacing: -0.01em;
-  text-align: left;
+
+.personal-information {
+  .card-title-text {
+    font-family: Capitana;
+    font-size: 20px;
+    font-weight: 400 !important;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2f479b;
+  }
+  .input-label {
+    font-family: Capitana;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+
+  .required-icon {
+    color: #ff0000;
+  }
+
+  .field-input {
+    height: 32px;
+    align-items: flex-start;
+    border-radius: 2px;
+    border: 1px solid #ced4da;
+    background: #fff;
+    color: #afaba5;
+  }
+  .save-btn {
+    border-radius: 4px;
+    background: #2f479b;
+    margin-top: 0px;
+    height: 30px;
+  }
+  .close-btn {
+    background: #6c757d !important;
+    margin-top: 0px;
+    height: 30px;
+    border-radius: 4px;
+  }
+  .placeholder-text {
+    color: #afaba5;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    /* 114.286% */
+    letter-spacing: -0.14px;
+    color: #afaba5;
+  }
+}
+.resume-details {
+  .div-box {
+    border: solid 1px #2f2e2e !important;
+    border-radius: 5px;
+  }
+  .link-text {
+    color: #2f479b;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .save-btn {
+    border-radius: 4px;
+    background: #545cd8;
+    margin-top: 0px;
+    height: 30px;
+  }
+  .close-btn {
+    background: #6c757d !important;
+    margin-top: 0px;
+    height: 30px;
+    border-radius: 4px;
+  }
+  .upload-btn {
+    background-color: #2f479b;
+  }
+  .info-text {
+    font-family: Capitana;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+  }
+  .input-label {
+    font-family: Capitana;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+  }
+  .success-modal-text {
+    font-size: 25px !important;
+    font-weight: 600 !important;
+    line-height: 32px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: #2f479b !important;
+  }
+  .card-label {
+    font-family: Capitana;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 8px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    margin-left: 20px;
+  }
+  .card-title-text {
+    font-family: Capitana;
+    font-size: 20px;
+    font-weight: 600 !important;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2f479b;
+  }
 }

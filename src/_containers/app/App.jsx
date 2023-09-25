@@ -121,6 +121,14 @@ export function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/candidate-profile"
+                element={
+                  <PrivateRoute>
+                    <CandidateProfile />
+                  </PrivateRoute>
+                }
+              />
 
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
