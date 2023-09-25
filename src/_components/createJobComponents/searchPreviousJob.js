@@ -55,13 +55,10 @@ export default function SearchPreviousJob() {
   return (
     <>
       <Row className="mt-4">
-        <Col md={4} style={{ marginLeft: "15px" }}>
+        <Col md={4}>
           <Form onSubmit={getSearchValue}>
             <FormGroup>
-              <div
-                className={cx("search-wrapper", { active: true })}
-                style={{ marginTop: "4px" }}
-              >
+              <div className={cx("search-wrapper", { active: true })}>
                 <div className="input-holder">
                   <input
                     type="text"
