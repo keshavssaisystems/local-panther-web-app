@@ -18,6 +18,7 @@ import { AppFooter } from "_components/_layout/AppFooter";
 import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
+import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -121,6 +122,34 @@ export function App() {
                 element={<ForgotPasswordSuccess />}
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route
+                path="/test"
+                element={<CustomerCandidateLists type={"matched"} />}
+              />
+              <Route
+                path="/test1"
+                element={<CustomerCandidateLists type={"liked"} />}
+              />
+              <Route
+                path="/test2"
+                element={<CustomerCandidateLists type={"maybe"} />}
+              />
+              <Route
+                path="/test3"
+                element={<CustomerCandidateLists type={"applied"} />}
+              />
+              <Route
+                path="/test4"
+                element={<CustomerCandidateLists type={"scheduled"} />}
+              />
+              <Route
+                path="/test5"
+                element={<CustomerCandidateLists type={"accepted"} />}
+              />
+              <Route
+                path="/test6"
+                element={<CustomerCandidateLists type={"rejected"} />}
+              />
             </Routes>
           </div>
           {authUser && <AppFooter />}
