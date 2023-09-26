@@ -11,6 +11,7 @@ import {
   IoIosStar,
   IoIosAlbums,
   IoIosTime,
+  IoIosLocate,
 } from "react-icons/io";
 export const CandidateCardView = (props) => {
   return (
@@ -25,6 +26,10 @@ export const CandidateCardView = (props) => {
             <IoIosContact fontSize={"16px"}></IoIosContact>
             <b>Name:</b>
             {props?.data?.firstname + "  " + props?.data?.lastname}
+          </Col>
+          <Col className="col-12">
+            <IoIosLocate fontSize={"16px"}></IoIosLocate> <b> Location:</b>{" "}
+            {props?.data?.address}
           </Col>
           <Col className="col-12">
             <IoIosBriefcase fontSize={"16px"}></IoIosBriefcase>
