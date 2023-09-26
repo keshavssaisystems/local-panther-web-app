@@ -133,7 +133,7 @@ export function ScheduleInterviewList() {
       experience: "5+ Years",
       jobTitle: "Java Developer",
       scheduled: "25/09/2023 3:30 PM",
-      mode: "Telephonic",
+      mode: "Phone",
     },
     {
       candidate: "Ramesh Kumar",
@@ -149,7 +149,7 @@ export function ScheduleInterviewList() {
       experience: "3+ Years",
       jobTitle: "Java Developer",
       scheduled: "",
-      mode: "Telephonic",
+      mode: "Phone",
     },
     {
       candidate: "Abhay Singh",
@@ -203,6 +203,7 @@ export function ScheduleInterviewList() {
             selectableRows
             persistTableHead
             customStyles={customStyles}
+            pagination
           />
         </Col>
       </Row>
