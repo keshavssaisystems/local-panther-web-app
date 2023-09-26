@@ -16,7 +16,8 @@ export function InterviewDetailsModal({ isOpen = false, type }) {
         isOpen={isOpen}
         fullscreen={"lg"}
         size="lg"
-        backdrop={"static"}
+        backdrop={true}
+        fade={true}
         toggle={toggle}
         className="interview-details-modal"
       >

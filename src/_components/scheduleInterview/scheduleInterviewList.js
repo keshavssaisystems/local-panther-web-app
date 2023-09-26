@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Row,
   Col,
@@ -6,16 +6,32 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Input,
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { ScheduleInterviewModal } from "./scheduleInterviewModal";
-import { InterviewDetail } from "./interviewDetail";
 import { InterviewDetailsModal } from "./interviewDetailsModal";
+import { useSelector, useDispatch } from "react-redux";
+import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
 
 export function ScheduleInterviewList() {
-  const [interviewDetails, setInterviewDetails] = useState(false);
+  const dispatch = useDispatch();
+  const jobList = useSelector((state) => state.candidateLists.jobLists);
+  useEffect(() => {
+    let filterObj = {
+      jobId: "",
+      pageNo: 1,
+      searchText: "",
+      minExperience: "",
+      employentModeId: "",
+      pageSize: "100",
+      skillId: "",
+      locationId: "",
+    };
+    dispatch(candidateListsActions.getCandidateJobLists(filterObj));
+  }, []);
   const customStyles = {
     headRow: {
       style: {
@@ -156,6 +172,26 @@ export function ScheduleInterviewList() {
 
   return (
     <>
+      <Row>
+        <Col md={8}></Col>
+        <Col md={4}>
+          <div className="float-end mb-2">
+            {jobList?.length > 0 ? (
+              <Input type="select" id="customerJobList" name="customerJobList">
+                {jobList.map((data) => {
+                  return (
+                    <option value={data.jobid} key={data.jobid}>
+                      {data.jobtitle + "," + data?.jobLocationDtos[0]?.location}
+                    </option>
+                  );
+                })}
+              </Input>
+            ) : (
+              <></>
+            )}
+          </div>
+        </Col>
+      </Row>
       <Row>
         <Col md="12">
           <DataTable
