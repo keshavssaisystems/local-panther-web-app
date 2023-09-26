@@ -181,7 +181,9 @@ export function ScheduleInterviewList() {
                 {jobList.map((data) => {
                   return (
                     <option value={data.jobid} key={data.jobid}>
-                      {data.jobtitle + "," + data?.jobLocationDtos[0]?.location}
+                      {data.jobtitle +
+                        ", " +
+                        data?.jobLocationDtos[0]?.location}
                     </option>
                   );
                 })}
