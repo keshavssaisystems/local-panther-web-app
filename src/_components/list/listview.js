@@ -17,26 +17,28 @@ import { IoIosCheckmark, IoIosClose, IoIosThumbsUp } from "react-icons/io";
 export const CandidateListView = (props) => {
   const columns = memoize((clickHandler) => [
     {
-      name: "Profile",
-      selector: (row) => row.primaryskills,
-      sortable: true,
-    },
-    {
-      name: "Name",
-      id: "Name",
+      name: "Candidate",
+      id: "Candidate",
       selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
+    {
+      name: "Skills",
+      selector: (row) => row.primaryskills + "," + row.secondaryskills,
+      sortable: true,
+    },
+    {
+      name: "Location",
+      selector: (row) => row.address,
+      sortable: true,
+    },
+
     {
       name: "Experience",
       selector: (row) => row.experienceyears,
       sortable: true,
     },
-    {
-      name: "Skills",
-      selector: (row) => row.secondaryskills,
-      sortable: true,
-    },
+
     {
       name: "Email",
       selector: (row) => row.email,
