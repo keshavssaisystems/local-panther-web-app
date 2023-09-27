@@ -51,8 +51,9 @@ export const CustomerCandidateLists = (props) => {
     navigate(`/customer-candidate-${activetab}/${id}`);
   };
 
-  const onSelectClick = (data) => {
-    console.log(data);
+  const onSelectClick = (evt) => {
+    setSelectedJobId(evt.target.value);
+    navigate(`/customer-candidate-${activeTab}/${parseInt(evt.target.value)}`);
   };
 
   return (
@@ -190,32 +191,32 @@ export const CustomerCandidateLists = (props) => {
             </TabPane>
             <TabPane tabId="liked">
               <p>
-                <CandidateListView data={candidateList} />
+                <CandidateListView type={props.type} data={candidateList} />
               </p>
             </TabPane>
             <TabPane tabId="maybe">
               <p>
-                <CandidateListView data={candidateList} />
+                <CandidateListView type={props.type} data={candidateList} />
               </p>
             </TabPane>
             <TabPane tabId="applied">
               <p>
-                <CandidateListView data={candidateList} />
+                <CandidateListView type={props.type} data={candidateList} />
               </p>
             </TabPane>
             <TabPane tabId="scheduled">
               <p>
-                <CandidateListView data={candidateList} />
+                <CandidateListView type={props.type} data={candidateList} />
               </p>
             </TabPane>
             <TabPane tabId="accepted">
               <p>
-                <CandidateListView data={candidateList} />
+                <CandidateListView type={props.type} data={candidateList} />
               </p>
             </TabPane>
             <TabPane tabId="rejected">
               <p>
-                <CandidateListView data={candidateList} />
+                <CandidateListView type={props.type} data={candidateList} />
               </p>
             </TabPane>
           </TabContent>

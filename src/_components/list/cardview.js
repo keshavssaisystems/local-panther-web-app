@@ -1,86 +1,153 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardBody, CardFooter, Row, Col, Button } from "reactstrap";
 import {
   IoIosCheckmark,
   IoIosClose,
   IoIosThumbsUp,
   IoIosHelp,
-  IoIosMail,
-  IoIosContact,
   IoIosBriefcase,
   IoIosStar,
   IoIosAlbums,
   IoIosTime,
   IoIosLocate,
 } from "react-icons/io";
+import { AcceptModal } from "_components/modal/acceptmodal";
+import { RejectModal } from "_components/modal/rejectmodal";
+import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
+
 export const CandidateCardView = (props) => {
+  const [showAModal, setShowAModal] = useState(false);
+  const [showReModal, setShowReModal] = useState(false);
+  const [showRejSModal, setShowRejSModal] = useState(false);
+  const onAcceptClick = () => {
+    setShowAModal(true);
+  };
+
+  const onRejectClick = () => {
+    setShowReModal(true);
+  };
+
+  const onSubmitRejectModal = (evt) => {
+    setShowReModal(false);
+    setShowRejSModal(true);
+  };
   return (
-    <Card className="main-card mb-3">
-      <CardBody>
-        <Row>
-          <Col className="col-12">
-            <IoIosAlbums fontSize={"16px"}></IoIosAlbums> <b> Profile:</b>{" "}
-            {props?.data?.primaryskills}
-          </Col>
-          <Col className="col-12">
-            <IoIosContact fontSize={"16px"}></IoIosContact>
-            <b>Name:</b>
-            {props?.data?.firstname + "  " + props?.data?.lastname}
-          </Col>
-          <Col className="col-12">
-            <IoIosLocate fontSize={"16px"}></IoIosLocate> <b> Location:</b>{" "}
-            {props?.data?.address}
-          </Col>
-          <Col className="col-12">
-            <IoIosBriefcase fontSize={"16px"}></IoIosBriefcase>
-            <b>Experience:</b>
-            {props?.data?.experienceyears}
-          </Col>
-          <Col className="col-12">
-            <IoIosStar fontSize={"16px"}></IoIosStar>
-            <b>Skills:</b>
-            {props?.data?.secondaryskills}
-          </Col>
-          <Col className="col-12">
-            <IoIosMail fontSize={"16px"}></IoIosMail>
-            <b>Email:</b>
-            {props?.data?.email}
-          </Col>
-        </Row>
-      </CardBody>
-      <CardFooter className="auto-margin">
-        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
-          <Col>
-            <Button title="accept" className=" btn-icon" color="success">
-              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
-            </Button>
-          </Col>
-          <Col>
-            <Button title="reject" className="btn-icon" color="danger">
-              <IoIosClose fontSize={"24px"}></IoIosClose>
-            </Button>
-          </Col>
-          <Col>
-            <Button title="liked" className=" btn-icon" color="primary">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
-            </Button>
-          </Col>
-          <Col>
-            <Button title="maybe" className=" btn-icon" color="primary">
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              title="schedule"
-              className="mb-2 me-2 btn-icon"
-              color="primary"
-            >
-              <IoIosTime fontSize={"24px"}></IoIosTime>
-            </Button>
-          </Col>
-        </Row>
-      </CardFooter>
-    </Card>
+    <>
+      <Card className="main-card mb-3">
+        <CardBody>
+          <Row>
+            <Col className="col-12">
+              <span className="pe-2">
+                <IoIosAlbums fontSize={"16px"}></IoIosAlbums>
+              </span>
+              {props?.data?.profile}
+            </Col>
+
+            {/* <Col className="col-12">
+              <IoIosContact fontSize={"16px"}></IoIosContact>
+              <b>Name:</b>
+              {props?.data?.firstname + "  " + props?.data?.lastname}
+            </Col> */}
+            <Col className="col-12">
+              <span className="pe-2">
+                <IoIosLocate fontSize={"16px"}></IoIosLocate>
+              </span>
+              {props?.data?.address}
+            </Col>
+            <Col className="col-12">
+              <span className="pe-2">
+                <IoIosBriefcase fontSize={"16px"}></IoIosBriefcase>
+              </span>
+
+              {props?.data?.experienceyears}
+            </Col>
+            <Col className="col-12">
+              <span className="pe-2">
+                <IoIosStar fontSize={"16px"}></IoIosStar>
+              </span>
+
+              {props?.data?.primaryskills}
+              {props?.data?.secondaryskills}
+            </Col>
+          </Row>
+        </CardBody>
+        <CardFooter className="auto-margin">
+          <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
+            {/* <Col>
+              <Button
+                title="accept"
+                className=" btn-icon"
+                color="success"
+                onClick={() => onAcceptClick()}
+              >
+                <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+              </Button>
+            </Col> */}
+            <Col>
+              <Button title="liked" className=" btn-icon" color="primary">
+                <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+              </Button>
+            </Col>
+            <Col>
+              <Button title="maybe" className=" btn-icon" color="primary">
+                <IoIosHelp fontSize={"24px"}></IoIosHelp>
+              </Button>
+            </Col>
+            <Col>
+              <Button
+                title="reject"
+                className="btn-icon"
+                color="danger"
+                onClick={() => onRejectClick()}
+              >
+                <IoIosClose fontSize={"24px"}></IoIosClose>
+              </Button>
+            </Col>
+
+            <Col>
+              <Button
+                title="schedule"
+                className="mb-2 me-2 btn-icon"
+                color="primary"
+              >
+                <IoIosTime fontSize={"24px"}></IoIosTime>
+              </Button>
+            </Col>
+          </Row>
+        </CardFooter>
+      </Card>
+      <>
+        {showAModal ? (
+          <AcceptModal
+            isAMOpen={showAModal}
+            onAcceptYesClick={() => setShowAModal(false)}
+            onAcceptNoClick={() => setShowAModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showReModal ? (
+          <RejectModal
+            isRMOpen={showReModal}
+            onCancelReject={() => setShowReModal(false)}
+            onSubmitReject={(evt) => onSubmitRejectModal(evt)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showRejSModal ? (
+          <RejectSuccessModal
+            isRejectConfOpen={showRejSModal}
+            onOkClickRejSuccess={() => setShowRejSModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+    </>
   );
 };

@@ -20,6 +20,7 @@ import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
 import { OnboardCustomer } from "_containers/admin/customer";
+import { CandidateProfile } from "_containers/candidate/candidateProfile";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -154,6 +155,10 @@ export function App() {
               <Route
                 path="/admin-customer"
                 element={<OnboardCustomer></OnboardCustomer>}
+              />
+              <Route
+                path="/candidate-profile/:id"
+                element={<CandidateProfile></CandidateProfile>}
               />
             </Routes>
           </div>
