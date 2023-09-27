@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import PageTitle from "../../_components/common/pagetitle";
+import PageTitle from "../../_components/Common/pagetitle";
 
 import titlelogo from "../../assets/utils/images/candidate.svg";
 import { userActions } from "_store";

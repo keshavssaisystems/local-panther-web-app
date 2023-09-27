@@ -12,7 +12,7 @@ import {
   FormGroup,
 } from "reactstrap";
 import { useDispatch } from "react-redux";
-import PageTitle from "../../_components/common/pagetitle";
+import PageTitle from "../../_components/Common/pagetitle";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
 

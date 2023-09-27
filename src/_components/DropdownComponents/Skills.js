@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { MultiSelectFormGroup } from "_components/formComponents/MultiSelectFormGroup";
+import { MultiSelectFormGroup } from "_components/FormComponents/MultiSelectFormGroup";
 
 export function Skills({
   label,

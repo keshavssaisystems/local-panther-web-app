@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
-import { JobListing } from "../../_components/job/JobListing";
+import { JobListing } from "../../_components/Job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { recommendedjobListActions } from "../../_store";
-import { JobFilter } from "_components/job/JobFilter";
-import PageTitle from "../../_components/common/pagetitle";
+import { JobFilter } from "_components/Job/JobFilter";
+import PageTitle from "../../_components/Common/pagetitle";
 import titlelogo from "../../assets/utils/images/candidate.svg";
 
 export function RecommendedJobList() {

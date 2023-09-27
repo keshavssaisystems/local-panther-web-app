@@ -3,7 +3,7 @@ import { Row, Col, Table, Input, FormGroup, Form, Button } from "reactstrap";
 import cx from "classnames";
 import "./createJob.scss";
 import { BsEye } from "react-icons/bs";
-import { CardPagination } from "_components/common/cardpagination";
+import { CardPagination } from "_components/Common/cardpagination";
 
 export default function SearchPreviousJob() {
   const dummy = [

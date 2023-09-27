@@ -1,5 +1,5 @@
-import { RadioButtonFormGroup } from "_components/formComponents/radioButtonFormGroup";
-import { NoticePeriod } from "_components/dropdownComponents/NoticePeriod";
+import { RadioButtonFormGroup } from "_components/FormComponents/radioButtonFormGroup";
+import { NoticePeriod } from "_components/DropdownComponents/NoticePeriod";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { applyForJobActions, skillActions } from "_store";
@@ -19,7 +19,7 @@ import {
   Card,
   CardBody,
 } from "reactstrap";
-import { Skills } from "_components/dropdownComponents/Skills";
+import { Skills } from "_components/DropdownComponents/Skills";
 
 export function ApplyJobModal({
   jobId,

@@ -19,6 +19,7 @@ import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
+import { CandidateTablist } from "_containers/candidate/candidateTablist";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -49,6 +50,14 @@ export function App() {
                 element={
                   <PrivateRoute>
                     <JobList />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/candidate-tablist"
+                element={
+                  <PrivateRoute>
+                    <CandidateTablist />
                   </PrivateRoute>
                 }
               />
@@ -125,6 +134,34 @@ export function App() {
               <Route
                 path="/customer-candidate-matched/:id"
                 element={<CustomerCandidateLists type={"matched"} />}
+              />
+              <Route
+                path="/candidate-matched"
+                element={<CandidateTablist type={"matched"} />}
+              />
+              <Route
+                path="/candidate-liked"
+                element={<CandidateTablist type={"liked"} />}
+              />
+              <Route
+                path="/candidate-maybe"
+                element={<CandidateTablist type={"maybe"} />}
+              />
+              <Route
+                path="/candidate-scheduled"
+                element={<CandidateTablist type={"scheduled"} />}
+              />
+              <Route
+                path="/candidate-accepted"
+                element={<CandidateTablist type={"accepted"} />}
+              />
+              <Route
+                path="/candidate-rejected"
+                element={<CandidateTablist type={"rejected"} />}
+              />
+              <Route
+                path="/candidate-applied"
+                element={<CandidateTablist type={"applied"} />}
               />
               <Route
                 path="/customer-candidate-liked/:id"
