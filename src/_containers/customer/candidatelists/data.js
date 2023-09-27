@@ -32,6 +32,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 43,
@@ -67,6 +68,7 @@ export const candidateList = [
     rejectedreasonid: 1,
     rejectionreason: "Missing qualifications",
     rejectedcomment: "Fake candidate",
+    profile: "Developer",
   },
   {
     jobapplicationid: 37,
@@ -101,6 +103,7 @@ export const candidateList = [
     rejectedreasonid: 2,
     rejectionreason: "Employment gaps",
     rejectedcomment: "test",
+    profile: "Test Engineer",
   },
   {
     jobapplicationid: 26,
@@ -135,6 +138,7 @@ export const candidateList = [
     rejectedreasonid: 2,
     rejectionreason: "Employment gaps",
     rejectedcomment: "testing ",
+    profile: "IT Manager",
   },
   {
     jobapplicationid: 23,
@@ -169,6 +173,7 @@ export const candidateList = [
     rejectedreasonid: 1,
     rejectionreason: "Missing qualifications",
     rejectedcomment: "",
+    profile: ".Net dev",
   },
   {
     jobapplicationid: 237,
@@ -203,6 +208,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 211,
@@ -237,6 +243,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 202,
@@ -271,6 +278,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 118,
@@ -305,6 +313,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 57,
@@ -340,6 +349,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 42,
@@ -375,6 +385,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
   {
     jobapplicationid: 41,
@@ -410,6 +421,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Developer",
   },
   {
     jobapplicationid: 40,
@@ -444,6 +456,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "PHP",
   },
   {
     jobapplicationid: 39,
@@ -478,6 +491,7 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "C# Developer",
   },
   {
     jobapplicationid: 38,
@@ -512,5 +526,6 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
   },
 ];

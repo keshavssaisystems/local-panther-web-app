@@ -15,8 +15,10 @@ import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
+import { useParams } from "react-router-dom";
 
 export function CandidateProfile(props) {
+  const { id } = useParams();
   const dispatch = useDispatch();
   const [selectedCandidate, setSelectedCandidate] = useState(
     props.selectedData
@@ -37,7 +39,9 @@ export function CandidateProfile(props) {
   }, [selectedCandidateRes]);
 
   const getCandidateDetails = async function () {
-    var req = selectedCandidate.candidateid;
+    var req = selectedCandidate.candidateid
+      ? selectedCandidate.candidateid
+      : id;
     let response = await dispatch(candidateActions.getCandidateDetails(req));
     setSelectedCandidateRes(response.payload.data);
   };
