@@ -3,7 +3,7 @@ import { Row, Col, Table, Input, FormGroup, Form, Button } from "reactstrap";
 import cx from "classnames";
 import "./createJob.scss";
 import { BsEye } from "react-icons/bs";
-import { CardPagination } from "_components/Common/cardpagination";
+import { CardPagination } from "_components/common/cardpagination";
 
 export default function SearchPreviousJob() {
   const dummy = [
@@ -51,7 +51,7 @@ export default function SearchPreviousJob() {
       setShowButton(false);
     }
   };
-  const handlePageChange = () => {};
+  const handlePageChange = () => { };
   return (
     <>
       <Row className="mt-4">

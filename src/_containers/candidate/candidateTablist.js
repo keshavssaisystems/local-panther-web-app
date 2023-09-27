@@ -13,7 +13,7 @@ import classnames from "classnames";
 import { CandidateCardView } from "_components/list/cardview";
 import { CandidateListView } from "_components/list/listview";
 import { candidateList } from "./data";
-import { CardPagination } from "_components/Common/cardpagination";
+import { CardPagination } from "_components/common/cardpagination";
 import { useNavigate } from "react-router-dom";
 import { pageSize } from "_helpers/constants";
 import "./candidateTablist.scss"

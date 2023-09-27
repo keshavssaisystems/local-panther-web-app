@@ -1,4 +1,4 @@
-import { SkillsFilter } from "_components/DropdownComponents/SkillsFilter";
+import { SkillsFilter } from "_components/dropdownComponents/SkillsFilter";
 import React, { useState } from "react";
 import { FormGroup, Form, Row, Col, Button, Label, FormText } from "reactstrap";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { getSkillsFilter } from "_store";
-import { AsyncSelectFormGroup } from "_components/FormComponents/AsyncSelectFormGroup";
+import { AsyncSelectFormGroup } from "_components/formComponents/AsyncSelectFormGroup";
 
 export function SkillsFilter({
   name,

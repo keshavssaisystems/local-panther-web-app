@@ -1,5 +1,5 @@
 import React from "react";
-import PageTitle from "../../../_components/Common/pagetitle";
+import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { Row, Col, Card, CardBody } from "reactstrap";
 import SelectJobType from "../../../_components/createJobComponents/selectJobType";

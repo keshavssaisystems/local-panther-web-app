@@ -15,8 +15,8 @@ import { candidateActions } from "_store";
 import cx from "classnames";
 import { useDispatch } from "react-redux";
 import { CandidateProfile } from "../candidateProfile";
-import PageTitle from "../../../_components/Common/pagetitle";
-import { CustomPagination } from "../../../_components/Common/pagination";
+import PageTitle from "../../../_components/common/pagetitle";
+import { CustomPagination } from "../../../_components/common/pagination";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import errorIcon from "../../../assets/utils/images/error_icon.png";
 import successIcon from "../../../assets/utils/images/success_icon.svg";
@@ -106,8 +106,8 @@ export const CandidateList = (props) => {
       props.type === "candidate"
         ? "Applied"
         : props.type === "accepted"
-        ? "Accepted"
-        : "Rejected";
+          ? "Accepted"
+          : "Rejected";
     let url =
       "JobApplications/GetJobAppliedCandidatesList/" +
       jobId +
@@ -484,8 +484,8 @@ export const CandidateList = (props) => {
                       {col.cityname && col.statename
                         ? col.cityname + " , " + col.statename
                         : col.cityname
-                        ? col.cityname
-                        : col.statename}
+                          ? col.cityname
+                          : col.statename}
                     </td>
 
                     <td>
