@@ -20,6 +20,7 @@ import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
 import { CandidateTablist } from "_containers/candidate/candidateTablist";
+import { OnboardCustomer } from "_containers/admin/customer";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -186,6 +187,10 @@ export function App() {
               <Route
                 path="/customer-candidate-rejected/:id"
                 element={<CustomerCandidateLists type={"rejected"} />}
+              />
+              <Route
+                path="/admin-customer"
+                element={<OnboardCustomer></OnboardCustomer>}
               />
             </Routes>
           </div>
