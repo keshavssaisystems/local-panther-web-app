@@ -10,13 +10,14 @@ export function SkillsFilter({
   validationMessage,
   showValidation,
   mandatory,
+  defaultValue,
 }) {
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
       const { data = [] } = await getSkillsFilter(inputValue);
       return data.map(({ skillid: value, ...rest }) => {
         return {
-          value,
+          value: `${value}, ${rest.skillname}`,
           label: `${rest.skillname}`,
         };
       });
@@ -34,6 +35,7 @@ export function SkillsFilter({
         showValidation={showValidation}
         validationMessage={validationMessage}
         mandatory={mandatory}
+        defaultValue={defaultValue}
       />
     </>
   );

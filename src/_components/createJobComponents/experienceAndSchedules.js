@@ -17,7 +17,57 @@ export function ExperienceAndSchedules({
   jobTypeOption,
   experienceLevelOption,
   hiringTimelineOption,
+  postData,
+  prevStep,
+  previousData,
 }) {
+  const [preValue, setPreValue] = useState({
+    jobType:
+      data === undefined || data.jobType === undefined
+        ? ""
+        : data.jobType.slice(","),
+    workSchedule:
+      data === undefined || data.workSchedule === undefined
+        ? ""
+        : data.workSchedule.slice(","),
+    shift:
+      data === undefined || data.shift === undefined
+        ? ""
+        : data.shift.slice(","),
+    experienceLevel:
+      data === undefined || data.experienceLevel === undefined
+        ? ""
+        : data.experienceLevel,
+    hiringTimeline:
+      data === undefined || data.hiringTimeline === undefined
+        ? ""
+        : data.hiringTimeline,
+  });
+  const [previousValue, setPreviousValue] = useState({
+    jobType:
+      previousData[0] === undefined || previousData[0].jobtypes === undefined
+        ? ""
+        : previousData[0].jobtypes.slice(","),
+    workSchedule:
+      previousData[0] === undefined ||
+      previousData[0].workschedules === undefined
+        ? ""
+        : previousData[0].workschedules.slice(","),
+    shift:
+      previousData[0] === undefined || previousData[0].shifts === undefined
+        ? ""
+        : previousData[0].shifts.slice(","),
+    experienceLevel:
+      previousData[0] === undefined ||
+      previousData[0].experiencelevelid === undefined
+        ? ""
+        : previousData[0].experiencelevelid,
+    hiringTimeline:
+      previousData[0] === undefined ||
+      previousData[0].hiringtimelineid === undefined
+        ? ""
+        : previousData[0].hiringtimelineid,
+  });
   const [jobTypeValidation, setJobTypeValidation] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
@@ -30,14 +80,20 @@ export function ExperienceAndSchedules({
   const saveData = (jobType, event) => {
     let workSchedule = getWorkSchedule(event.target.elements.workSchedule);
     let shift = getShifts(event.target.elements.shifts);
-    let demo = {
+    let data = {
       jobType: jobType,
       workSchedule: workSchedule,
       shift: shift,
       experienceLevel: event.target.elements.experienceLevel.value,
       hiringTimeline: event.target.elements.hiringTimeline.value,
+      shiftsOption: shiftsOption,
+      workScheduleOptions: workScheduleOptions,
+      jobTypeOption: jobTypeOption,
+      experienceLevelOption: experienceLevelOption,
+      hiringTimelineOption: hiringTimelineOption,
     };
-    console.log(demo);
+    postData(data);
+    setPreValue(data);
   };
   const getJobType = (jobTypeArray) => {
     let jobTypeArr = [];
@@ -83,12 +139,17 @@ export function ExperienceAndSchedules({
                       type="checkbox"
                       name={"jobType"}
                       id={"jobType_" + options.id}
+                      defaultChecked={
+                        prevStep === 3
+                          ? preValue.jobType.includes(options.id)
+                          : previousValue.jobType.includes(options.id)
+                      }
                       value={options.id}
                       invalid={jobTypeValidation === true ? true : false}
                     />{" "}
                     {"  "}
                     <Label check for={"jobType_" + options.id}>
-                      {options.jobType}
+                      {options.name}
                     </Label>
                   </div>
                 ))}
@@ -112,11 +173,16 @@ export function ExperienceAndSchedules({
                       type="checkbox"
                       name={"workSchedule"}
                       id={"workSchedule_" + options.id}
+                      defaultChecked={
+                        prevStep === 3
+                          ? preValue.workSchedule.includes(options.id)
+                          : previousValue.workSchedule.includes(options.id)
+                      }
                       value={options.id}
                     />{" "}
                     {"  "}
                     <Label check for={"workSchedule_" + options.id}>
-                      {options.workSchedule}
+                      {options.name}
                     </Label>
                   </div>
                 ))}
@@ -135,11 +201,16 @@ export function ExperienceAndSchedules({
                       type="checkbox"
                       name={"shifts"}
                       id={"shifts_" + options.id}
+                      defaultChecked={
+                        prevStep === 3
+                          ? preValue.shift.includes(options.id)
+                          : previousValue.shift.includes(options.id)
+                      }
                       value={options.id}
                     />{" "}
                     {"  "}
                     <Label check for={"shifts_" + options.id}>
-                      {options.shifts}
+                      {options.name}
                     </Label>
                   </div>
                 ))}
@@ -158,11 +229,21 @@ export function ExperienceAndSchedules({
                 name={"experienceLevel"}
                 type={"select"}
               >
-                <option key={0}>Select experience level</option>
+                <option key={0} value={""}>
+                  Select experience level
+                </option>
                 {experienceLevelOption.length > 0 &&
                   experienceLevelOption.map((options) => (
-                    <option key={options.id} value={options.label}>
-                      {options.label}
+                    <option
+                      key={options.id}
+                      value={options.id}
+                      selected={
+                        prevStep === 3
+                          ? preValue.experienceLevel
+                          : previousValue.experienceLevel === options.id
+                      }
+                    >
+                      {options.name}
                     </option>
                   ))}
               </Input>
@@ -178,11 +259,21 @@ export function ExperienceAndSchedules({
                 name={"hiringTimeline"}
                 type={"select"}
               >
-                <option key={0}>Select hiring timeline</option>
+                <option key={0} value={""}>
+                  Select hiring timeline
+                </option>
                 {hiringTimelineOption.length > 0 &&
                   hiringTimelineOption.map((options) => (
-                    <option key={options.id} value={options.label}>
-                      {options.label}
+                    <option
+                      key={options.id}
+                      value={options.id}
+                      selected={
+                        prevStep === 3
+                          ? preValue.hiringTimeline
+                          : previousValue.hiringTimeline === options.id
+                      }
+                    >
+                      {options.name}
                     </option>
                   ))}
               </Input>

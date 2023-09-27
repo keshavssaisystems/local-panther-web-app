@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Label, Input, FormGroup, Form, Row, Col, Button } from "reactstrap";
-export function PreScreenApplicant({ data }) {
+export function PreScreenApplicant({
+  data,
+  postData,
+  preScreenQuestionsOption,
+  prevStep,
+  previousData,
+}) {
   const inputArr = [
     {
       type: "text",
@@ -8,6 +14,21 @@ export function PreScreenApplicant({ data }) {
       value: "",
     },
   ];
+  let questionArray = [
+    {
+      jobprescreenapplicationid: 0,
+      jobid: 0,
+      iscustomquestion: false,
+      prescreenquestionid: "6",
+      question: "How would you like applicants to record their answers?",
+      isactive: true,
+    },
+  ];
+  if (prevStep === 3 && data.length > 0) {
+    data.forEach((element) => {
+      questionArray.push(element.question);
+    });
+  }
 
   const [customQuestionInput, setCustomQuestionInput] = useState(inputArr);
 
@@ -24,7 +45,40 @@ export function PreScreenApplicant({ data }) {
   };
   const getFormValues = (event) => {
     event.preventDefault();
-    console.log(event);
+    let questionArr = [];
+    if (event.target.elements.question.length > 0) {
+      event.target.elements.question.forEach((element) => {
+        if (element.checked === true) {
+          let questionIdString = element.id.split("_");
+          let obj = {
+            jobprescreenapplicationid: 0,
+            jobid: 0,
+            iscustomquestion: false,
+            prescreenquestionid: questionIdString[1],
+            prescreenquestion: element.value,
+            isactive: true,
+          };
+          questionArr.push(obj);
+        }
+      });
+    }
+    if (
+      event.target.elements.custom_question !== undefined &&
+      event.target.elements.custom_question.length > 0
+    ) {
+      event.target.elements.custom_question.forEach((element) => {
+        let obj = {
+          jobprescreenapplicationid: 0,
+          jobid: 0,
+          iscustomquestion: true,
+          prescreenquestionid: 0,
+          prescreenquestion: element.value,
+          isactive: true,
+        };
+        questionArr.push(obj);
+      });
+    }
+    postData(questionArr);
   };
 
   return (
@@ -32,93 +86,31 @@ export function PreScreenApplicant({ data }) {
       <Form onSubmit={(e) => getFormValues(e)}>
         <Row>
           <Col>
-            <FormGroup>
-              <Input
-                id={"timeAndRange"}
-                name={"timeAndRange"}
-                type={"checkbox"}
-              />{" "}
-              {"  "}
-              <Label className="fw-semi-bold">
-                Please list 2-3 dates and time ranges that you could do an
-                interview.
-              </Label>
-            </FormGroup>
-            <FormGroup>
-              <Input
-                id={"commutedToWorkLocation"}
-                name={"commutedToWorkLocation"}
-                type={"checkbox"}
-              />{" "}
-              {"  "}
-              <Label className="fw-semi-bold">
-                Will you be able to reliably commute to work location for this
-                job?
-              </Label>
-            </FormGroup>
-            <FormGroup>
-              <Input id={"relocate"} name={"relocate"} type={"checkbox"} />{" "}
-              {"  "}
-              <Label className="fw-semi-bold">
-                Will you be able to relocate to be within reasonable commuting
-                distance from work location?
-              </Label>
-            </FormGroup>
-            <FormGroup>
-              <Input
-                id={"authorisedToWorkInUS"}
-                name={"authorisedToWorkInUS"}
-                type={"checkbox"}
-              />{" "}
-              {"  "}
-              <Label className="fw-semi-bold">
-                Authorized to work in the United States
-              </Label>
-            </FormGroup>
-            <FormGroup>
-              <Input
-                id={"preRecordedScreen"}
-                name={"preRecordedScreen"}
-                type={"checkbox"}
-              />{" "}
-              {"  "}
-              <Label className="fw-semi-bold">
-                Request pre-recorded screen
-              </Label>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={3}>
-            <FormGroup>
-              <Label className="fw-semi-bold">
-                How would you like applicants to record their answers?
-              </Label>
-              <FormGroup>
-                <Row>
-                  <Col>
-                    <Input
-                      id={"applicantsRecordAnswer"}
-                      name={"applicantsRecordAnswer"}
-                      type={"radio"}
-                      value={"Audio"}
-                    />{" "}
-                    {"  "}
-                    <Label className="fw-semi-bold">Audio</Label>
-                  </Col>
-                  <Col>
-                    <Input
-                      id={"applicantsRecordAnswer"}
-                      name={"applicantsRecordAnswer"}
-                      type={"radio"}
-                      value={"Video"}
-                    />{" "}
-                    {"  "}
-                    <Label className="fw-semi-bold">Video</Label>
-                  </Col>
-                </Row>
-              </FormGroup>
-            </FormGroup>
+            {preScreenQuestionsOption.length > 0 &&
+              preScreenQuestionsOption.map((options) => (
+                <FormGroup>
+                  <Input
+                    id={
+                      options.questiontype + "_" + options.prescreenquestionid
+                    }
+                    name={"question"}
+                    type={"checkbox"}
+                    value={options.prescreenquestion}
+                    defaultChecked={questionArray.includes(
+                      options.prescreenquestion
+                    )}
+                  />{" "}
+                  {"  "}
+                  <Label
+                    className="fw-semi-bold"
+                    for={
+                      options.questiontype + "_" + options.prescreenquestionid
+                    }
+                  >
+                    {options.prescreenquestion}
+                  </Label>
+                </FormGroup>
+              ))}
           </Col>
         </Row>
         <Row>
@@ -130,7 +122,7 @@ export function PreScreenApplicant({ data }) {
                     <Label className="fw-semi-bold">Custom Question</Label>
                     <Input
                       id={i}
-                      name={"custom_question_" + i}
+                      name={"custom_question"}
                       type={item.type}
                       maxLength="100"
                     />

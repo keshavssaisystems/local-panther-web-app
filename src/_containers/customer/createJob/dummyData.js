@@ -134,7 +134,7 @@ export const jobLocationOptions = [
   },
   {
     id: 3,
-    label: "In-persion",
+    label: "In-person",
   },
   {
     id: 4,

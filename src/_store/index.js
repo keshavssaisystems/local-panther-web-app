@@ -17,6 +17,16 @@ import { recommendedjobListReducer } from "../_containers/candidate/recommendejo
 import { departmentReducer } from "../_components/dropdownComponents/department.slice.js";
 import { empmodeReducer } from "./dropdownempmode.slice";
 import { candidateListsReducer } from "_containers/customer/candidatelists/candidatelists.slice";
+import { jobLocationTypeReducer } from "../_containers/customer/createJob/joblocationtype.slice";
+import { jobTypeReducer } from "../_containers/customer/createJob/jobtype.slice";
+import { workScheduleReducer } from "../_containers/customer/createJob/workschedule.slice";
+import { shiftReducer } from "../_containers/customer/createJob/shifts.slice";
+import { experienceLevelReducer } from "../_containers/customer/createJob/experiencelevel.slice";
+import { hiringTimelineReducer } from "../_containers/customer/createJob/hiringtimeline.slice";
+import { payPeriodTypeReducer } from "../_containers/customer/createJob/payperiodtype.slice";
+import { preScreenQuestionReducer } from "../_containers/customer/createJob/prescreenquestions.slice";
+import { previousJobListReducer } from "../_containers/customer/createJob/previousjoblist.slice";
+import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
 
 export * from "./auth.slice";
 export * from "./users.slice";
@@ -36,6 +46,16 @@ export * from "../_containers/candidate/recommendejobList.slice";
 export * from "../_components/dropdownComponents/department.slice";
 export * from "./dropdownempmode.slice";
 export * from "../_containers/customer/candidatelists/candidatelists.slice";
+export * from "../_containers/customer/createJob/joblocationtype.slice";
+export * from "../_containers/customer/createJob/jobtype.slice";
+export * from "../_containers/customer/createJob/workschedule.slice";
+export * from "../_containers/customer/createJob/shifts.slice";
+export * from "../_containers/customer/createJob/experiencelevel.slice";
+export * from "../_containers/customer/createJob/hiringtimeline.slice";
+export * from "../_containers/customer/createJob/payperiodtype.slice";
+export * from "../_containers/customer/createJob/prescreenquestions.slice";
+export * from "../_containers/customer/createJob/previousjoblist.slice";
+export * from "../_containers/customer/createJob/previousjobdetail.slice";
 
 export const store = configureStore({
   reducer: {
@@ -57,5 +77,15 @@ export const store = configureStore({
     department: departmentReducer,
     empmode: empmodeReducer,
     candidateLists: candidateListsReducer,
+    jobLocationType: jobLocationTypeReducer,
+    jobType: jobTypeReducer,
+    workSchedule: workScheduleReducer,
+    shifts: shiftReducer,
+    experienceLevel: experienceLevelReducer,
+    hiringTimeline: hiringTimelineReducer,
+    payPeriodType: payPeriodTypeReducer,
+    preScreenQuestion: preScreenQuestionReducer,
+    previousJobList: previousJobListReducer,
+    previousJobDetail: previousJobDetailReducer,
   },
 });

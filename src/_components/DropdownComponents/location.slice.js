@@ -9,9 +9,11 @@ const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
 export const getLocation = async (searchText) => {
-  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
-  return await fetchWrapper.get(`${baseUrl}/Common/GetLocation?searchText=${searchText}`)
-}
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+  return await fetchWrapper.get(
+    `${baseUrl}/Common/GetLocation?searchText=${searchText}`
+  );
+};
 
 // exports
 export const locationActions = { ...slice.actions, ...extraActions };
@@ -36,7 +38,9 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getLocation`,
       async (searchText) =>
-        await fetchWrapper.get(`${baseUrl}/Common/GetLocation?searchText=${searchText}`)
+        await fetchWrapper.get(
+          `${baseUrl}/Common/GetLocation?searchText=${searchText}`
+        )
     );
   }
 }
