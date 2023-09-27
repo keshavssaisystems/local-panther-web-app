@@ -14,7 +14,7 @@ import {
   IoIosLocate,
 } from "react-icons/io";
 export const CandidateCardView = (props) => {
-  console.log("+++?",props)
+ 
   return (
     <Card className="main-card mb-3">
       <CardBody>
