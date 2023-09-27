@@ -1,0 +1,76 @@
+.schedule-modal{
+    font-family: Capitana;
+    .btn-primary {
+        color: #fff;
+        background-color: #2F479B;
+        border-color: #2F479B;
+    }
+    .detail-padding{
+        padding-top : 0.5rem !important;
+        padding-bottom: 0.7rem !important;
+    }
+    .heading-custom{
+        font-weight: 500;
+        color : #2F2E2E;
+    }
+    .required-star{
+        color: red;
+    }
+    
+}
+.pl-0{
+    padding-left: 0px !important;
+}
+.interview-details-modal{
+    font-family: Capitana;
+    // .btn-outline-primary {
+    //     color: #2F479B !important;
+    //     border-color: #2F479B !important;
+    // }
+    .dropdown-menu-header {
+        color: #fff;
+        margin-top: -0.65rem;
+        margin-bottom: 0; 
+        position: relative;
+        z-index: 6;
+    }
+    .interview-p-tag{
+        color: #2F479B !important;
+    }
+    .dropdown-menu-header .dropdown-menu-header-inner {
+        margin: -1px -1px 0;
+        padding: 0.5rem 0.5rem 0 0.5rem;
+        position: relative;
+    }
+    .p-custom{
+        padding: 0.5rem 1rem ;
+    }
+}
+
+.upcoming-interview{
+    font-family: Capitana;
+    .dropdown-menu-header {
+        color: #fff;
+        margin-top: -0.65rem;
+        margin-bottom: 0; 
+        position: relative;
+        z-index: 6;
+    }
+    .interview-p-tag{
+        color: #2F479B !important;
+    }
+    .dropdown-menu-header .dropdown-menu-header-inner {
+        margin: -1px -1px 0;
+        padding: 0.5rem 0.5rem 0 0.5rem;
+        position: relative;
+    }
+    .p-custom{
+        padding: 0.5rem 1rem ;
+    }
+}
+
+.upcomming-card{
+    .badge-custom{
+        text-transform: none;
+    }
+}
