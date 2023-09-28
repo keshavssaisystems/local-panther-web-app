@@ -1,0 +1,213 @@
+import React, { useState, useEffect } from "react";
+import {
+  Row,
+  Col,
+  UncontrolledButtonDropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Input,
+} from "reactstrap";
+import DataTable from "react-data-table-component";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { ScheduleInterviewModal } from "./scheduleInterviewModal";
+import { InterviewDetailsModal } from "./interviewDetailsModal";
+import { useSelector, useDispatch } from "react-redux";
+import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
+
+export function ScheduleInterviewList() {
+  const dispatch = useDispatch();
+  const jobList = useSelector((state) => state.candidateLists.jobLists);
+  useEffect(() => {
+    let filterObj = {
+      jobId: "",
+      pageNo: 1,
+      searchText: "",
+      minExperience: "",
+      employentModeId: "",
+      pageSize: "100",
+      skillId: "",
+      locationId: "",
+    };
+    dispatch(candidateListsActions.getCandidateJobLists(filterObj));
+  }, []);
+  const customStyles = {
+    headRow: {
+      style: {
+        borderTopWidth: "0px",
+      },
+    },
+    headCells: {
+      style: {
+        "&:not(:last-of-type)": {
+          borderRightWidth: "0px",
+        },
+      },
+    },
+    cells: {
+      style: {
+        "&:not(:last-of-type)": {
+          borderRightWidth: "0px",
+          cursor: "pointer",
+        },
+      },
+    },
+  };
+  const [openModal, setOpenModal] = useState(false);
+  const [state, setState] = useState({
+    activeTab: "1",
+    transform: true,
+    isDetailPage: false,
+  });
+  const columns = (clickHandler) => [
+    {
+      name: "Candidate",
+      selector: (row) => row.candidate,
+      sortable: true,
+    },
+    {
+      name: "Skills",
+      id: "skills",
+      selector: (row) => row.skills,
+      sortable: true,
+    },
+    {
+      name: "Experience",
+      selector: (row) => row.experience,
+      sortable: true,
+    },
+    {
+      name: "Job",
+      selector: (row) => row.jobTitle,
+      sortable: true,
+    },
+    {
+      name: "Scheduled time",
+      sortable: true,
+      cell: (row) => <ScheduleInterviewModal candidateData={row.scheduled} />,
+    },
+    {
+      name: "Interview mode",
+      selector: (row) => row.mode,
+      sortable: true,
+    },
+    {
+      name: "Action",
+      cell: () => (
+        <div className="d-block w-100 text-center">
+          <UncontrolledButtonDropdown direction="start">
+            <DropdownToggle
+              className="btn-icon btn-icon-only btn btn-link"
+              color="link"
+            >
+              <FontAwesomeIcon icon={faEllipsisV} />
+            </DropdownToggle>
+            <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
+              <DropdownItem onClick={() => setOpenModal(true)}>
+                <i className="dropdown-icon lnr-layers"> </i>
+                <span>Interview detail</span>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="dropdown-icon lnr-layers"> </i>
+                <span>Candidate detail</span>
+              </DropdownItem>
+              <DropdownItem>
+                <i className="dropdown-icon lnr-trash"> </i>
+                <span>Delete</span>
+              </DropdownItem>
+            </DropdownMenu>
+          </UncontrolledButtonDropdown>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+  ];
+
+  const data = [
+    {
+      candidate: "Ajay Singh",
+      skills: "Java, Mysql, Sql",
+      experience: "5+ Years",
+      jobTitle: "Java Developer",
+      scheduled: "25/09/2023 3:30 PM",
+      mode: "Phone",
+    },
+    {
+      candidate: "Ramesh Kumar",
+      skills: "React, Node JS, Express JS",
+      experience: "2+ Years",
+      jobTitle: "Node Developer",
+      scheduled: "25/09/2023 2:00 PM",
+      mode: "Video",
+    },
+    {
+      candidate: "Ajit Yadav",
+      skills: "Java, Mysql",
+      experience: "3+ Years",
+      jobTitle: "Java Developer",
+      scheduled: "",
+      mode: "Phone",
+    },
+    {
+      candidate: "Abhay Singh",
+      skills: "Java, Mysql",
+      experience: "1+ Year",
+      jobTitle: "Java Developer",
+      scheduled: "",
+      mode: "Video",
+    },
+  ];
+
+  const handleButtonClick = () => {
+    console.log("clicked");
+  };
+
+  const handleRowClick = (data) => {
+    // console.log('e :>> ', data);
+    setState({ isDetailPage: true });
+  };
+
+  return (
+    <>
+      <Row>
+        <Col md={8}></Col>
+        <Col md={4}>
+          <div className="float-end mb-2">
+            {jobList?.length > 0 ? (
+              <Input type="select" id="customerJobList" name="customerJobList">
+                {jobList.map((data) => {
+                  return (
+                    <option value={data.jobid} key={data.jobid}>
+                      {data.jobtitle +
+                        ", " +
+                        data?.jobLocationDtos[0]?.location}
+                    </option>
+                  );
+                })}
+              </Input>
+            ) : (
+              <></>
+            )}
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col md="12">
+          <DataTable
+            onRowClicked={handleRowClick}
+            columns={columns(handleButtonClick)}
+            data={data}
+            selectableRows
+            persistTableHead
+            customStyles={customStyles}
+            pagination
+          />
+        </Col>
+      </Row>
+      <InterviewDetailsModal isOpen={openModal} type={"video"} />
+    </>
+  );
+}

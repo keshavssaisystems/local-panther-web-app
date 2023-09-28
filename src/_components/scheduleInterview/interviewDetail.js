@@ -5,20 +5,17 @@ import {
   Button,
   CardHeader,
   CardFooter,
-  Card,
+  Modal,
   CardBody,
   DropdownItem,
   DropdownToggle,
   DropdownMenu,
   UncontrolledButtonDropdown,
+  Card,
 } from "reactstrap";
-import "./scheduleInterview.scss";
+// import "./scheduleInterview.scss";
 
-import {
-  BsPersonVcard,
-  BsMailbox,
-  BsPhoneFill
-} from "react-icons/bs";
+import { BsPersonVcard, BsMailbox, BsPhoneFill } from "react-icons/bs";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
@@ -29,8 +26,13 @@ import {
 export function InterviewDetail() {
   return (
     <>
-
-      <Card>
+      <Modal
+        isOpen={true}
+        fullscreen={"lg"}
+        size="xl"
+        backdrop={"static"}
+        // toggle={toggle}
+      >
         <CardBody>
           <div className="dropdown-menu-header">
             <div className="dropdown-menu-header-inner heading-background">
@@ -39,18 +41,39 @@ export function InterviewDetail() {
                   <h5 className="menu-header-title job-title-details">
                     Spring Boot Developer
                   </h5>
-                  <p className="mb-0 mt-0">
-                    Graysville, Connecticut, USA
-                  </p>
+                  <p className="mb-0 mt-0">Graysville, Connecticut, USA</p>
                 </Col>
-                <Col style={{'display': 'flex', "justify-content": "flex-end"}}>
-                  <Button outline className="mb-2 mr-2 btn-transition btn btn-outline-primary" color="primary"> Invite to interview </Button>
-                  <Button outline className="mb-2 mr-2 btn-transition" color="primary"> Message </Button>
-                  <Button outline className="mb-2 mr-2 btn-transition" color="primary"> Call </Button>
-                  
-                  
+                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button
+                    outline
+                    className="mb-2 mr-2 btn-transition btn btn-outline-primary"
+                    color="primary"
+                  >
+                    {" "}
+                    Invite to interview{" "}
+                  </Button>
+                  <Button
+                    outline
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                  >
+                    {" "}
+                    Message{" "}
+                  </Button>
+                  <Button
+                    outline
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                  >
+                    {" "}
+                    Call{" "}
+                  </Button>
+
                   <UncontrolledButtonDropdown>
-                    <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                    <DropdownToggle
+                      className="btn-icon btn-icon-only"
+                      color="link"
+                    >
                       <i className="pe-7s-menu btn-icon-wrapper" />
                     </DropdownToggle>
                     <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
@@ -75,9 +98,7 @@ export function InterviewDetail() {
           <div>
             <Row>
               <Col md="1" className="padding-demo-1">
-                <div className="detail-padding-icon">
-                  {<BsPersonVcard />}
-                </div>
+                <div className="detail-padding-icon">{<BsPersonVcard />}</div>
               </Col>
               <Col className="padding-demo-2">
                 <div className="detail-padding">
@@ -90,9 +111,7 @@ export function InterviewDetail() {
           <div>
             <Row>
               <Col md="1" className="padding-demo-1">
-                <div className="detail-padding-icon">
-                  {<BsMailbox />}
-                </div>
+                <div className="detail-padding-icon">{<BsMailbox />}</div>
               </Col>
               <Col className="padding-demo-2">
                 <div className="detail-padding">
@@ -105,9 +124,7 @@ export function InterviewDetail() {
           <div>
             <Row>
               <Col md="1" className="padding-demo-1">
-                <div className="detail-padding-icon">
-                  {<BsPhoneFill />}
-                </div>
+                <div className="detail-padding-icon">{<BsPhoneFill />}</div>
               </Col>
               <Col className="padding-demo-2">
                 <div className="detail-padding">
@@ -120,12 +137,17 @@ export function InterviewDetail() {
           <Card>
             <CardHeader className="card-header-tab">
               <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                <i className="header-icon lnr-lighter icon-gradient bg-amy-crisp"> {" "} </i>
+                <i className="header-icon lnr-lighter icon-gradient bg-amy-crisp">
+                  {" "}
+                </i>
                 Interviews
               </div>
               <div className="btn-actions-pane-right text-capitalize actions-icon-btn">
                 <UncontrolledButtonDropdown>
-                  <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                  <DropdownToggle
+                    className="btn-icon btn-icon-only"
+                    color="link"
+                  >
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
@@ -145,64 +167,100 @@ export function InterviewDetail() {
               <PerfectScrollbar>
                 <div className="p-4">
                   <VerticalTimeline layout="1-column">
-                    <VerticalTimelineElement className="vertical-timeline-item"
+                    <VerticalTimelineElement
+                      className="vertical-timeline-item"
                       icon={
-                        <i className="badge badge-dot badge-dot-xl bg-success"> {" "} </i>
+                        <i className="badge badge-dot badge-dot-xl bg-success">
+                          {" "}
+                        </i>
                       }
-                      date="Today">
-                      <h4 className="timeline-title">Interview, at <b className="text-danger">3:00 PM</b></h4>
-                      <p>
-                          03:00 PM 
-                            To
-                          04:00 PM
-                      </p>
-                    </VerticalTimelineElement>
-                    <VerticalTimelineElement className="vertical-timeline-item"
-                      icon={
-                        <i className="badge badge-dot badge-dot-xl bg-warning"> {" "} </i>
-                      }
-                      date="Mode">
-                      <h4  className="timeline-title">
-                        VIDEO {" "}
+                      date="Today"
+                    >
+                      <h4 className="timeline-title">
+                        Interview, at <b className="text-danger">3:00 PM</b>
                       </h4>
+                      <p>03:00 PM To 04:00 PM</p>
+                    </VerticalTimelineElement>
+                    <VerticalTimelineElement
+                      className="vertical-timeline-item"
+                      icon={
+                        <i className="badge badge-dot badge-dot-xl bg-warning">
+                          {" "}
+                        </i>
+                      }
+                      date="Mode"
+                    >
+                      <h4 className="timeline-title">VIDEO </h4>
                       <p>
-                        Interview Link {" "}
-                        
-                        <a href="https://meet.google.com/daj-jvga-hkc" onClick={(e) => e.preventDefault()}>
+                        Interview Link{" "}
+                        <a
+                          href="https://meet.google.com/daj-jvga-hkc"
+                          onClick={(e) => e.preventDefault()}
+                        >
                           Click here to join
-                        </a>
-                        {" "}
+                        </a>{" "}
                         or join by https://meet.google.com/daj-jvga-hkc
                       </p>
                     </VerticalTimelineElement>
-                    <VerticalTimelineElement className="vertical-timeline-item"
+                    <VerticalTimelineElement
+                      className="vertical-timeline-item"
                       icon={
-                        <i className="badge badge-dot badge-dot-xl bg-danger"> {" "} </i>
-                      }>
-                      <h4 className="timeline-title">
-                        Interviewer
-                      </h4>
-                      <p>
-                        Vinit Pal
-                      </p>
+                        <i className="badge badge-dot badge-dot-xl bg-danger">
+                          {" "}
+                        </i>
+                      }
+                    >
+                      <h4 className="timeline-title">Interviewer</h4>
+                      <p>Vinit Pal</p>
                     </VerticalTimelineElement>
                   </VerticalTimeline>
                 </div>
               </PerfectScrollbar>
             </div>
             <CardFooter className="d-block text-left">
-              <Button outline className="mb-2 mr-2 btn-transition btn btn-outline-primary" color="primary"> Take Notes </Button>
-              <Button outline className="mb-2 mr-2 btn-transition" color="primary"> Add Interviewer </Button>
-              <Button outline className="mb-2 mr-2 btn-transition" color="secondary"> Cancel </Button>
+              <Button
+                outline
+                className="mb-2 mr-2 btn-transition btn btn-outline-primary"
+                color="primary"
+              >
+                {" "}
+                Take Notes{" "}
+              </Button>
+              <Button
+                outline
+                className="mb-2 mr-2 btn-transition"
+                color="primary"
+              >
+                {" "}
+                Add Interviewer{" "}
+              </Button>
+              <Button
+                outline
+                className="mb-2 mr-2 btn-transition"
+                color="secondary"
+              >
+                {" "}
+                Cancel{" "}
+              </Button>
             </CardFooter>
           </Card>
 
           <div className="p-3">
             <h6 className="fw-bold">Summary</h6>
-            <p className="mb-0">A: 3 years Java server-side development experience with excellent understanding of core design patterns B: Hands on experience in Java 8 and above versions is MUST C: Hands on experience in spring Boot and Microservices for more than 2 years is required D: Hands on experience in spring Boot and Microservices of consuming and providing REST APIs E: Excellent knowledge of J2EE architecture/design patterns, Object Oriented Design methodologies, SOA, data modelling techniques and SOAPtesting, CI / CD</p>
+            <p className="mb-0">
+              A: 3 years Java server-side development experience with excellent
+              understanding of core design patterns B: Hands on experience in
+              Java 8 and above versions is MUST C: Hands on experience in spring
+              Boot and Microservices for more than 2 years is required D: Hands
+              on experience in spring Boot and Microservices of consuming and
+              providing REST APIs E: Excellent knowledge of J2EE
+              architecture/design patterns, Object Oriented Design
+              methodologies, SOA, data modelling techniques and SOAPtesting, CI
+              / CD
+            </p>
           </div>
         </CardBody>
-      </Card>
+      </Modal>
     </>
   );
 }

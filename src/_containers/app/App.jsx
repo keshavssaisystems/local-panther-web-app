@@ -5,7 +5,7 @@ import { PrivateRoute } from "_components";
 import { Home } from "_containers/home";
 import { Dashboard } from "dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
-import { ScheduleInterview } from "_containers/customer/scheduleInterview";
+import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
@@ -21,6 +21,7 @@ import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPassword
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
 import { CandidateTablist } from "_containers/candidate/candidateTablist";
 import { OnboardCustomer } from "_containers/admin/customer";
+import { CandidateProfile } from "_containers/candidate/candidateProfile";
 
 export function App() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -136,34 +137,7 @@ export function App() {
                 path="/customer-candidate-matched/:id"
                 element={<CustomerCandidateLists type={"matched"} />}
               />
-              <Route
-                path="/candidate-matched"
-                element={<CandidateTablist type={"matched"} />}
-              />
-              <Route
-                path="/candidate-liked"
-                element={<CandidateTablist type={"liked"} />}
-              />
-              <Route
-                path="/candidate-maybe"
-                element={<CandidateTablist type={"maybe"} />}
-              />
-              <Route
-                path="/candidate-scheduled"
-                element={<CandidateTablist type={"scheduled"} />}
-              />
-              <Route
-                path="/candidate-accepted"
-                element={<CandidateTablist type={"accepted"} />}
-              />
-              <Route
-                path="/candidate-rejected"
-                element={<CandidateTablist type={"rejected"} />}
-              />
-              <Route
-                path="/candidate-applied"
-                element={<CandidateTablist type={"applied"} />}
-              />
+
               <Route
                 path="/customer-candidate-liked/:id"
                 element={<CustomerCandidateLists type={"liked"} />}
@@ -191,6 +165,10 @@ export function App() {
               <Route
                 path="/admin-customer"
                 element={<OnboardCustomer></OnboardCustomer>}
+              />
+              <Route
+                path="/candidate-profile/:id"
+                element={<CandidateProfile></CandidateProfile>}
               />
             </Routes>
           </div>

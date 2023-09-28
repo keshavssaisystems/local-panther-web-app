@@ -18,7 +18,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { pageSize } from "_helpers/constants";
 import { useSelector, useDispatch } from "react-redux";
 import { candidateListsActions } from "./candidatelists.slice";
-import "./customercandidatelist.scss"
+import "./customercandidatelist.scss";
 
 export const CustomerCandidateLists = (props) => {
   const [activeTab, setActiveTab] = useState(props.type);
@@ -52,14 +52,22 @@ export const CustomerCandidateLists = (props) => {
     navigate(`/customer-candidate-${activetab}/${id}`);
   };
 
-  const onSelectClick = (data) => {
-    console.log(data);
+  const onSelectClick = (evt) => {
+    setSelectedJobId(evt.target.value);
+    navigate(`/customer-candidate-${activeTab}/${parseInt(evt.target.value)}`);
   };
 
   return (
     <>
       <Row className="customercandidatelist">
-        <Col xs={12} sm={12} md={8} lg={8} xl={8} className="mb-3 tab-selection-text">
+        <Col
+          xs={12}
+          sm={12}
+          md={8}
+          lg={8}
+          xl={8}
+          className="mb-3 tab-selection-text"
+        >
           <ButtonGroup size="lg">
             <Button
               color="primary"
@@ -129,7 +137,6 @@ export const CustomerCandidateLists = (props) => {
               Accepted
             </Button>
             <Button
-
               className={
                 "btn-shadow " + classnames({ active: activeTab === "rejected" })
               }
@@ -191,32 +198,56 @@ export const CustomerCandidateLists = (props) => {
             </TabPane>
             <TabPane tabId="liked">
               <p>
-                <CandidateListView data={candidateList} type="Customer" />
+                <CandidateListView
+                  type={props.type}
+                  data={candidateList}
+                  user="customer"
+                />
               </p>
             </TabPane>
             <TabPane tabId="maybe">
               <p>
-                <CandidateListView data={candidateList} type="Customer" />
+                <CandidateListView
+                  type={props.type}
+                  data={candidateList}
+                  user="customer"
+                />
               </p>
             </TabPane>
             <TabPane tabId="applied">
               <p>
-                <CandidateListView data={candidateList} type="Customer" />
+                <CandidateListView
+                  type={props.type}
+                  data={candidateList}
+                  user="customer"
+                />
               </p>
             </TabPane>
             <TabPane tabId="scheduled">
               <p>
-                <CandidateListView data={candidateList} type="Customer" />
+                <CandidateListView
+                  type={props.type}
+                  data={candidateList}
+                  user="customer"
+                />
               </p>
             </TabPane>
             <TabPane tabId="accepted">
               <p>
-                <CandidateListView data={candidateList} type="Customer" />
+                <CandidateListView
+                  type={props.type}
+                  data={candidateList}
+                  user="customer"
+                />
               </p>
             </TabPane>
             <TabPane tabId="rejected">
               <p>
-                <CandidateListView data={candidateList} type="Customer" />
+                <CandidateListView
+                  type={props.type}
+                  data={candidateList}
+                  user="customer"
+                />
               </p>
             </TabPane>
           </TabContent>

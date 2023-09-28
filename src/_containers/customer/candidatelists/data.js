@@ -32,6 +32,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "25/09/2023 2:00 PM",
+    mode: "Video",
   },
   {
     jobapplicationid: 43,
@@ -67,6 +70,9 @@ export const candidateList = [
     rejectedreasonid: 1,
     rejectionreason: "Missing qualifications",
     rejectedcomment: "Fake candidate",
+    profile: "Developer",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 37,
@@ -101,6 +107,9 @@ export const candidateList = [
     rejectedreasonid: 2,
     rejectionreason: "Employment gaps",
     rejectedcomment: "test",
+    profile: "Test Engineer",
+    scheduled: "5/02/2023 4:00 PM",
+    mode: "Phone",
   },
   {
     jobapplicationid: 26,
@@ -135,6 +144,9 @@ export const candidateList = [
     rejectedreasonid: 2,
     rejectionreason: "Employment gaps",
     rejectedcomment: "testing ",
+    profile: "IT Manager",
+    scheduled: "25/08/2023 3:00 PM",
+    mode: "Video",
   },
   {
     jobapplicationid: 23,
@@ -169,6 +181,9 @@ export const candidateList = [
     rejectedreasonid: 1,
     rejectionreason: "Missing qualifications",
     rejectedcomment: "",
+    profile: ".Net dev",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 237,
@@ -203,6 +218,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "26/09/2023 4:00PM",
+    mode: "Video",
   },
   {
     jobapplicationid: 211,
@@ -237,6 +255,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "30/09/2023 5:00 PM",
+    mode: "Video",
   },
   {
     jobapplicationid: 202,
@@ -271,6 +292,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "15/08/2023 1:00 PM",
+    mode: "Phone",
   },
   {
     jobapplicationid: 118,
@@ -305,6 +329,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 57,
@@ -340,6 +367,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 42,
@@ -375,6 +405,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 41,
@@ -410,6 +443,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Developer",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 40,
@@ -444,6 +480,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "PHP",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 39,
@@ -478,6 +517,9 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "C# Developer",
+    scheduled: "",
+    mode: "",
   },
   {
     jobapplicationid: 38,
@@ -512,5 +554,8 @@ export const candidateList = [
     rejectedreasonid: 0,
     rejectionreason: "",
     rejectedcomment: "",
+    profile: "Java",
+    scheduled: "",
+    mode: "",
   },
 ];
