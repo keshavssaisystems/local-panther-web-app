@@ -20,9 +20,12 @@ import {
 } from "react-icons/io";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { useNavigate } from "react-router-dom";
+import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
+import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 
 export const CandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
+  const [showIDModal, setShowIDModal] = useState(false);
   const navigate = useNavigate();
   const onAcceptClick = () => {
     setShowAModal(true);
@@ -34,6 +37,14 @@ export const CandidateListView = (props) => {
 
   const onDeleteItem = () => {
     //delete functionality here
+  };
+
+  const onInterviewDetails = () => {
+    setShowIDModal(true);
+  };
+
+  const onCloseIdModal = () => {
+    setShowIDModal(false);
   };
   const renderButtons = () => {
     if (props.type === "liked" || props.type === "maybe") {
@@ -136,11 +147,8 @@ export const CandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Profile</span>
             </DropdownItem>
-            <DropdownItem>
-              <i className="dropdown-icon lnr-license"> </i>
-              <span>Schedule interview</span>
-            </DropdownItem>
-            <DropdownItem>
+
+            <DropdownItem onClick={() => onInterviewDetails()}>
               <i className="dropdown-icon lnr-license"> </i>
               <span>Interview details</span>
             </DropdownItem>
@@ -179,8 +187,13 @@ export const CandidateListView = (props) => {
     },
 
     {
-      name: "Email",
-      selector: (row) => row.email,
+      name: "Scheduled time",
+      sortable: true,
+      cell: (row) => <ScheduleInterviewModal candidateData={row.scheduled} />,
+    },
+    {
+      name: "Interview mode",
+      selector: (row) => row.mode,
       sortable: true,
     },
     {
@@ -222,6 +235,17 @@ export const CandidateListView = (props) => {
             isAMOpen={showAModal}
             onAcceptYesClick={() => setShowAModal(false)}
             onAcceptNoClick={() => setShowAModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showIDModal ? (
+          <InterviewDetailsModal
+            isOpen={showIDModal}
+            type={"video"}
+            onClose={() => onCloseIdModal()}
           />
         ) : (
           <></>

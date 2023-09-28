@@ -1,16 +1,19 @@
-.app-main .app-main__outer {
-  max-height: calc(100vh - 120px);
-  overflow-x: auto;
-}
+body {
+  font-family: "capitana", sans-serif !important;
+  .app-main .app-main__outer {
+    max-height: calc(100vh - 120px);
+    overflow-x: auto;
+  }
 
-.app-main .container-row > .row {
-  width: 100%;
-}
+  .app-main .container-row > .row {
+    width: 100%;
+  }
 
-.app-main .right-align {
-  text-align: right;
-}
+  .app-main .right-align {
+    text-align: right;
+  }
 
-.app-main .auto-margin {
-  margin: auto;
+  .app-main .auto-margin {
+    margin: auto;
+  }
 }
