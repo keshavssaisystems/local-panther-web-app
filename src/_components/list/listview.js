@@ -165,8 +165,8 @@ export const CandidateListView = (props) => {
 
   const columns = memoize((clickHandler) => [
     {
-      name: "Customer",
-      id: "Customer",
+      name: "Candidate",
+      id: "Candidate",
       selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
