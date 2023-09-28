@@ -4,12 +4,14 @@ import { usersReducer } from "./users.slice";
 import { jobListReducer } from "./jobList.slice";
 import { locationReducer } from "../_components/dropdownComponents/location.slice";
 import { candidateReducer } from "./candidate.slice";
+import { profileReducer } from "./candidateProfile.slice";
 import { createjobReducer } from "../_containers/customer/createJob/createjob.slice";
 import { employmentModeReducer } from "../_components/dropdownComponents/employmentMode.slice";
 import { skillReducer } from "./dropdownskill.slice";
 import { remoteStatusReducer } from "../_components/dropdownComponents/remoteStatus.slice";
 import { stateReducer } from "./dropdownstate.slice";
 import { cityReducer } from "./dropdowncity.slice";
+import { genderReducer } from "./dropdownGender.slice";
 import { noticePeriodReducer } from "../_components/dropdownComponents/noticePeriod.slice";
 import { applyForJobReducer } from "../_containers/candidate/applyForJob.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
@@ -31,7 +33,10 @@ import { candidatejobListTabReducer } from "_containers/candidate/candidateTabli
 import { scheduleInterviewReducer } from "_containers/customer/scheduleInterview/scheduleinterview.slice";
 import { durationReducer } from "_containers/customer/scheduleInterview/duration.slice";
 import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
+import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
+import { getProfileReducer } from "./getProfile.slice";
 
+export * from "./candidateProfile.slice";
 export * from "./auth.slice";
 export * from "./users.slice";
 export * from "./jobList.slice";
@@ -64,6 +69,10 @@ export * from "../_containers/candidate/candidateTablist.slice";
 export * from "_containers/customer/scheduleInterview/scheduleinterview.slice";
 export * from "_containers/customer/scheduleInterview/duration.slice";
 export * from "_containers/customer/createJob/publishjob.slice";
+export * from "./candidateProfile.slice";
+export * from "./dropdownGender.slice";
+export * from "./dropdownRaceEtnicity.slice";
+export * from "./getProfile.slice";
 
 export const store = configureStore({
   reducer: {
@@ -78,6 +87,7 @@ export const store = configureStore({
     remoteStatus: remoteStatusReducer,
     state: stateReducer,
     city: cityReducer,
+    gender: genderReducer,
     noticePeriod: noticePeriodReducer,
     applyForJob: applyForJobReducer,
     jobDetail: jobDetailReducer,
@@ -99,5 +109,8 @@ export const store = configureStore({
     scheduleInterview: scheduleInterviewReducer,
     duration: durationReducer,
     publishJob: publishJobReducer,
+    profileReducer: profileReducer,
+    ethnicity: ethnicityReducer,
+    getProfile: getProfileReducer,
   },
 });

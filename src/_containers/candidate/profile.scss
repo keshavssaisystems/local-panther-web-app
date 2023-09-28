@@ -15,19 +15,38 @@
     width: auto;
     height: 35px;
   }
+  .skills-view-popup {
+    border: solid 1px #afaba5;
+    border-radius: 5px;
+    width: auto;
+    height: 35px;
+    margin-left: 10px;
+  }
   .link-text {
-    color: #2f479b;
+    color: #2b80fd;
     cursor: pointer;
     font-family: Capitana;
-    font-size: 14px;
-    font-weight: 500 !important;
+    font-size: 16px;
+    font-weight: 400;
     line-height: 16px;
-    letter-spacing: -0.01em;
+    letter-spacing: 0em;
+    text-align: right;
+  }
+
+  .view-link-text {
+    color: #2b80fd;
+    cursor: pointer;
+    font-family: Capitana;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: right;
   }
 
   .card-title-text {
-    font-family: Open Sans;
-    font-size: 18px;
+    font-family: Capitana;
+    font-size: 16px;
     font-weight: 600 !important;
     line-height: 16px;
     letter-spacing: -0.01em;
@@ -36,11 +55,12 @@
   }
   .content-title {
     font-family: Capitana;
-    font-size: 14px;
-    font-weight: 500 !important;
+    font-size: 16px;
+    font-weight: 500;
     line-height: 16px;
-    letter-spacing: -0.01em;
+    letter-spacing: 0em;
     text-align: left;
+
     color: #2e2f2f;
   }
   .input-label {
@@ -66,23 +86,45 @@
   }
 
   .content-text {
-    color: #2e2f2f;
+    color: #2f2e2e;
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+
+  .candidate-job-title {
     font-family: Capitana;
     font-size: 14px;
     font-weight: 400;
-    letter-spacing: -0.01em;
+    line-height: 24px;
+    letter-spacing: 0em;
     text-align: left;
+    color: #2f2e2e;
   }
   .candidate-name {
-    font-family: Capitana;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 8px;
-    letter-spacing: -0.01em;
     text-align: left;
-    color: #2e2f2f;
     margin-left: 0px;
+    font-family: Capitana;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 32px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #2f2e2e;
   }
+  .candidate-label {
+    font-family: Capitana;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #979797;
+  }
+
   .candidate-primary-skill {
     color: #afaba5;
     font-family: Capitana;
@@ -94,6 +136,32 @@
   }
   .edit-icon {
     cursor: pointer;
+    height: 22px;
+    width: 22px;
+  }
+  .icons {
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+    margin-top: -10px;
+  }
+  .save-btn {
+    border-radius: 4px;
+    background: #2f479b;
+    margin-top: 0px;
+    height: 30px;
+  }
+  .close-btn {
+    background: #6c757d !important;
+    margin-top: 0px;
+    height: 30px;
+    border-radius: 4px;
+  }
+  .personal-sec-icon {
+    margin-top: -10px;
+    margin-left: 3px;
+    height: 16px;
+    width: 16px;
   }
   .profile-logo {
     height: 50px;
@@ -119,11 +187,11 @@
   .card-p-text-black {
     color: #2e2f2f;
     font-family: Capitana;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400 !important;
+    font-size: 13px;
+    font-weight: 400;
     line-height: 16px;
-    letter-spacing: -0.12px;
+    letter-spacing: 0em;
+    text-align: left;
   }
   .div-box {
     border: solid 1px #2f2e2e !important;
@@ -134,12 +202,85 @@
     font-weight: 400;
     font-size: 14px;
   }
+  .btn-text {
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #ffffff;
+  }
+  .skills-div {
+    font-family: Capitana;
+    border: 1px solid #afaba5;
+    border-radius: 7px;
+  }
+  .ellipse {
+    height: 40px;
+    width: 40px;
+    background-color: #ced4da;
+    border-radius: 50%;
+  }
+  .pop-skills-div {
+    font-family: Capitana;
+    font-weight: 500 !important;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+    font-size: 12px !important;
+  }
+  .skills-view-text {
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #2f2e2e;
+  }
+  .skills-exp-text {
+    font-family: Capitana;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #979797;
+  }
+  .file-info {
+    font-family: Capitana;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #979797;
+  }
+  .success-close-btn {
+    width: 60px !important;
+    height: 30px;
+    background-color: #2f2e2e;
+  }
+
+  .accept-modal-btn {
+    background-color: #2f479b !important;
+    width: 60px !important;
+    height: 30px;
+  }
 }
 
 .personal-information {
+  .error-class {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #d92550;
+  }
   .card-title-text {
     font-family: Capitana;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400 !important;
     line-height: 16px;
     letter-spacing: -0.01em;
@@ -201,9 +342,10 @@
     cursor: pointer;
     font-weight: 500;
   }
+
   .save-btn {
     border-radius: 4px;
-    background: #545cd8;
+    background: #2f479b;
     margin-top: 0px;
     height: 30px;
   }
@@ -252,7 +394,7 @@
   }
   .card-title-text {
     font-family: Capitana;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600 !important;
     line-height: 16px;
     letter-spacing: -0.01em;

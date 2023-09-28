@@ -25,6 +25,7 @@ import {
 import editIcon from "../../assets/utils/images/pencil.svg";
 
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { BsPencil } from "react-icons/bs";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -35,11 +36,30 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
-import candidatelogo from "../../assets/utils/images/candidate.svg";
+import {
+  shiftsOption,
+  workScheduleOptions,
+  jobTypeOption,
+  experienceLevelOption,
+  hiringTimelineOption,
+  jobLocationOptions,
+  payPeriodTypeOption,
+} from "../../_containers/customer/createJob/dummyData";
 
 export function JobPreferences(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
   const selectDate = function () {};
+
+  const [preferenceDetails, setDetails] = useState({
+    desiredJobTitle: "flexible",
+    specificJobTitle: "Java Developer,UI Developer",
+    desiredJobTypes: "Full-time,Part-time,Contract,Temporary,Internship",
+    workSchedules: "Weekends Only, Weekdays Only, Weekends as needed",
+    shifts: "Days,Night,Evening,Regular 8 hour shift",
+    pay: "$45 per hour",
+    relocate: "New York",
+    workType: "Remote,Hybrid,In-person",
+  });
 
   const [countryList, setCountryList] = useState([]);
 
@@ -61,29 +81,64 @@ export function JobPreferences(props) {
     <div>
       {/* {selectedCandidate ? ( */}
       <div className="profile-view">
-        <Card className="mb-3 profile-view">
-          <Row className="g-0 mt-3">
+        <Card>
+          <div className="mt-3" style={{ marginLeft: "10px" }}>
+            <strong className="card-title-text">Job Preferences</strong>
+            <BsPencil
+              className="icons float-end me-3"
+              onClick={() => setPersonalModal(true)}
+            />
+          </div>
+          <CardBody>
             <Row>
-              <strong>Job Preferences</strong>
-            </Row>
-            <Col sm="12" md="6" xl="6" className="ml-border">
-              <Row>
-                <Col>
-                  <strong>Desired Job Titles</strong>
-                  <br />
-                  <Label>Flexible</Label>
-                </Col>
+              <Col>
+                <Row>
+                  <strong>Desired job titles</strong>
+                  <div>{preferenceDetails.desiredJobTitle}</div>
+                </Row>
                 <hr />
-                <Col className="col-1"></Col>
+                <Row>
+                  <strong>Specific job title</strong>
+                  <div>{preferenceDetails.specificJobTitle}</div>
+                </Row>
                 <hr />
-                <Col>
+                <Row>
+                  <strong>Desired job types</strong>
+                  <div>{preferenceDetails.desiredJobTypes}</div>
+                </Row>
+                <hr />
+                <Row>
+                  <strong>Work schedules</strong>
+                  <div>{preferenceDetails.workSchedules}</div>
+                </Row>
+                <hr />
+                <Row>
+                  <strong>Shifts</strong>
+                  <div>{preferenceDetails.shifts}</div>
+                </Row>
+                <hr />
+              </Col>
+
+              <Col>
+                <Row>
                   <strong>Desired minimum pay</strong>
-                  <Label>$45 per hour</Label>
-                </Col>
+
+                  <div>{preferenceDetails.pay}</div>
+                </Row>
                 <hr />
-              </Row>
-            </Col>
-          </Row>
+                <Row>
+                  <strong>Willing to relocate</strong>
+                  <div>{preferenceDetails.relocate}</div>
+                </Row>
+                <hr />
+                <Row>
+                  <strong>Desired work type</strong>
+                  <div>{preferenceDetails.workType}</div>
+                </Row>
+                <hr />
+              </Col>
+            </Row>
+          </CardBody>
         </Card>
       </div>
 
@@ -101,28 +156,6 @@ export function JobPreferences(props) {
             </ModalHeader>
             <ModalBody>
               <Form onSubmit={handleSubmit(onSubmit)}>
-                <Row className="mb-2">
-                  <Row>
-                    <Col md={4}>
-                      <FormGroup check>
-                        <Input name="authorization" type="radio" />{" "}
-                        <Label check className="input-label">
-                          Flexible
-                        </Label>
-                      </FormGroup>
-                    </Col>
-
-                    <Col md={4}>
-                      <FormGroup check>
-                        <Input name="sponserdCheck" type="radio" />{" "}
-                        <Label check className="input-label">
-                          Specific Job Title
-                        </Label>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Row>
-
                 <Row>
                   <Col md={4}>
                     <FormGroup>
@@ -139,111 +172,93 @@ export function JobPreferences(props) {
                       />
                     </FormGroup>
                   </Col>
-                </Row>
+                  <Col md={4}>
+                    <FormGroup check>
+                      <Input name="authorization" type="radio" />{" "}
+                      <Label check className="input-label">
+                        Flexible
+                      </Label>
+                    </FormGroup>
+                  </Col>
 
-                <Row className="mb-2">
-                  <Col>
+                  <Col md={4}>
                     <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
+                      <Input name="sponserdCheck" type="radio" />{" "}
                       <Label check className="input-label">
-                        FullTime
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        PartTime
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Contract
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Temporary
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Internship
+                        Specific Job Title
                       </Label>
                     </FormGroup>
                   </Col>
                 </Row>
 
-                <Row className="mb-2">
+                <Row>
                   <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Weekdays only
+                    <FormGroup>
+                      <Label className="fw-semi-bold">
+                        Job Type<span style={{ color: "red" }}>* </span>
                       </Label>
+                      {jobTypeOption.length > 0 &&
+                        jobTypeOption.map((options) => (
+                          <div className="form-group-custom">
+                            <Input
+                              key={options.id}
+                              type="checkbox"
+                              name={"jobType"}
+                              id={"jobType_" + options.id}
+                              value={options.id}
+                            />{" "}
+                            {"  "}
+                            <Label check for={"jobType_" + options.id}>
+                              {options.jobType}
+                            </Label>
+                          </div>
+                        ))}
                     </FormGroup>
                   </Col>
                   <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Weekends only
+                    <FormGroup>
+                      <Label for="workSchedule" className="fw-semi-bold">
+                        Work schedules
                       </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col className="col-md-3">
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Weekends as needed
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col></Col>
-                  <Col></Col>
-                </Row>
-
-                <Row className="mb-2">
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Day
-                      </Label>
+                      {workScheduleOptions.length > 0 &&
+                        workScheduleOptions.map((options) => (
+                          <div className="form-group-custom">
+                            <Input
+                              key={options.id}
+                              type="checkbox"
+                              name={"workSchedule"}
+                              id={"workSchedule_" + options.id}
+                              value={options.id}
+                            />{" "}
+                            {"  "}
+                            <Label check for={"workSchedule_" + options.id}>
+                              {options.workSchedule}
+                            </Label>
+                          </div>
+                        ))}
                     </FormGroup>
                   </Col>
                   <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Night
+                    <FormGroup>
+                      <Label for="shifts" className="fw-semi-bold">
+                        Shifts
                       </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Evening
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Regular 8 hour shift
-                      </Label>
+                      {shiftsOption.length > 0 &&
+                        shiftsOption.map((options) => (
+                          <div className="form-group-custom">
+                            <Input
+                              key={options.id}
+                              type="checkbox"
+                              name={"shifts"}
+                              id={"shifts_" + options.id}
+                              value={options.id}
+                            />{" "}
+                            {"  "}
+                            <Label check for={"shifts_" + options.id}>
+                              {options.shifts}
+                            </Label>
+                          </div>
+                        ))}
                     </FormGroup>
                   </Col>
                   <Col></Col>

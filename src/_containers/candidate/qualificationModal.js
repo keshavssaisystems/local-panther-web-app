@@ -29,20 +29,38 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DatePicker from "react-datepicker";
 
 export function QualificationModal(props) {
-  debugger;
+  const [check, setCheck] = useState(props.check);
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [isSave, setSave] = useState(true);
+  const [formDetails, setFormData] = useState([]);
 
-  let data = [
-    {
-      id: 0,
-      jobTitle: "",
-      error: false,
-    },
-  ];
-  const [formDetails, setFormData] = useState(data);
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = function () {
+    let data = [];
+    if (check == "add") {
+      data.push({
+        id: 0,
+        jobTitle: "",
+        organization: "",
+        jobDescription: "",
+        error: false,
+      });
+    } else {
+      data.push({
+        id: 0,
+        jobTitle: props.selected.jobTitle,
+        organization: props.selected.organization,
+        jobDescription: props.selected.jobDescription,
+        error: false,
+      });
+    }
+    setFormData(data);
+  };
 
   const [countryList, setCountryList] = useState([
     {
@@ -55,23 +73,27 @@ export function QualificationModal(props) {
     },
   ]);
 
-  const [tabs, setTabs] = useState([
-    {
-      id: 0,
-    },
-  ]);
-  const [newTabId, setNewTabId] = useState(0);
+  const closeModal = function () {
+    let data = [
+      {
+        id: 0,
+        jobTitle: "",
+        organization: "",
+        jobDescription: "",
+        error: false,
+      },
+    ];
+    setFormData(data);
+    props.onCallBack();
+  };
 
   const removeTabs = function (index) {
-    debugger;
     let new_data = [...formDetails];
     new_data.splice(index, 1);
     setFormData(new_data);
   };
 
   const addMoreTabs = function (index) {
-    debugger;
-
     let new_data = [...formDetails];
     console.log("before" + new_data);
     if (new_data[index - 1].jobTitle == "") {
@@ -85,6 +107,8 @@ export function QualificationModal(props) {
     const newTab = {
       id: index,
       jobTitle: "",
+      organization: "",
+      jobDescription: "",
       error: false,
     };
     setFormData([...formDetails, newTab]);
@@ -120,30 +144,41 @@ export function QualificationModal(props) {
     new_data[index].jobTitle = data;
     new_data[index].error = false;
     setFormData(new_data);
-    onSubmit();
+    // onSubmit();
+  };
+
+  const handleCompanyChange = function (index, data) {
+    let new_data = [...formDetails];
+
+    new_data[index].organization = data;
+    setFormData(new_data);
+  };
+
+  const handleDescriptionChange = function (index, data) {
+    let new_data = [...formDetails];
+
+    new_data[index].jobDescription = data;
+    setFormData(new_data);
   };
 
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
   function onSubmit() {
-    debugger;
-    const keyToCheck = "jobTitle";
+    // const keyToCheck = "jobTitle";
 
-    const emptyKeyIndexes = formDetails
-      .map((item, index) => (item[keyToCheck] == "" ? index : null))
-      .filter((index) => index !== null);
-    debugger;
-    if (emptyKeyIndexes.length > 0) {
-      let new_data = [...formDetails];
+    // const emptyKeyIndexes = formDetails
+    //   .map((item, index) => (item[keyToCheck] == "" ? index : null))
+    //   .filter((index) => index !== null);
+    //
+    // if (emptyKeyIndexes.length > 0) {
 
-      for (let i = 0; i < emptyKeyIndexes.length; i++) {
-        new_data[emptyKeyIndexes[i]].error = true;
-      }
+    // }
 
-      setFormData(new_data);
-      setSave(false);
-    }
+    let new_data = [...formDetails];
+
+    setFormData(new_data);
+    setSave(false);
   }
   const selectDate = function () {};
 
@@ -152,38 +187,41 @@ export function QualificationModal(props) {
       {formDetails.map((item, index) => (
         <div>
           <Form id={index}>
-            <Row>
-              <Col>
-                {index < formDetails.length - 1 ? (
-                  <Label
-                    className="float-end"
-                    style={{
-                      cursor: "pointer",
-                      color: "#2f479b",
-                      borderBottom: "1px solid #2f479b",
-                      fontWeight: "500",
-                    }}
-                    onClick={() => removeTabs(index)}
-                  >
-                    Remove
-                  </Label>
-                ) : (
-                  <Label
-                    className="float-end"
-                    onClick={() => addMoreTabs(index + 1)}
-                    style={{
-                      cursor: "pointer",
-                      color: "#2f479b",
-                      borderBottom: "1px solid #2f479b",
-                      fontWeight: "500",
-                    }}
-                  >
-                    +Add More
-                  </Label>
-                )}
-              </Col>
-            </Row>
-
+            {check == "add" ? (
+              <Row>
+                <Col>
+                  {index < formDetails.length - 1 ? (
+                    <Label
+                      className="float-end"
+                      style={{
+                        cursor: "pointer",
+                        color: "#2f479b",
+                        borderBottom: "1px solid #2f479b",
+                        fontWeight: "500",
+                      }}
+                      onClick={() => removeTabs(index)}
+                    >
+                      Remove
+                    </Label>
+                  ) : (
+                    <Label
+                      className="float-end"
+                      onClick={() => addMoreTabs(index + 1)}
+                      style={{
+                        cursor: "pointer",
+                        color: "#2f479b",
+                        borderBottom: "1px solid #2f479b",
+                        fontWeight: "500",
+                      }}
+                    >
+                      +Add More
+                    </Label>
+                  )}
+                </Col>
+              </Row>
+            ) : (
+              <></>
+            )}
             <Row>
               <Col md={4}>
                 <FormGroup>
@@ -217,9 +255,16 @@ export function QualificationModal(props) {
                     name="company"
                     type="textarea"
                     id="company"
-                    {...register("company")}
+                    value={item.organization}
+                    maxLength={500}
                     className="field-input placeholder-text form-control"
+                    onInput={(evt) =>
+                      handleCompanyChange(index, evt.target.value)
+                    }
                   />
+                  <span className="dropdown-placeholder float-end">
+                    {item.organization ? item.organization.length : 0}/500
+                  </span>
                 </FormGroup>
               </Col>
 
@@ -233,9 +278,16 @@ export function QualificationModal(props) {
                     name="jobDescription"
                     type="textarea"
                     id="jobDescription"
-                    {...register("jobDescription")}
+                    value={item.jobDescription}
+                    maxLength={500}
                     className="field-input placeholder-text form-control"
+                    onInput={(evt) =>
+                      handleDescriptionChange(index, evt.target.value)
+                    }
                   />
+                  <span className="dropdown-placeholder float-end">
+                    {item.jobDescription.length}/500
+                  </span>
                 </FormGroup>
               </Col>
             </Row>
@@ -374,7 +426,7 @@ export function QualificationModal(props) {
                 <Button
                   type="button"
                   className="close-btn"
-                  onClick={() => props.onCallBack()}
+                  onClick={() => closeModal()}
                 >
                   Close
                 </Button>

@@ -7,7 +7,6 @@ import {
   ModalBody,
   CardTitle,
 } from "reactstrap";
-import { candidateActions } from "_store";
 import {
   Row,
   Col,
@@ -22,8 +21,18 @@ import {
   InputGroup,
   Form,
 } from "reactstrap";
+import AsyncSelect from "react-select/async";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-import editIcon from "../../assets/utils/images/pencil.svg";
+import {
+  BsPencil,
+  BsTelephone,
+  BsPinMap,
+  BsGenderFemale,
+  BsGenderMale,
+  BsPeople,
+  BsEnvelope,
+  BsBalloon,
+} from "react-icons/bs";
 
 import profileImg from "../../assets/utils/images/avatars/1.jpg";
 
@@ -31,261 +40,355 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
 import Tabs from "react-responsive-tabs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
-import candidatelogo from "../../assets/utils/images/candidate.svg";
+import {
+  profileActions,
+  getProfileActions,
+  cityActions,
+  genderActions,
+  ethnicityActions,
+} from "_store";
+import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
+  console.log(props);
   const dispatch = useDispatch();
-  const [selectedCandidate, setSelectedCandidate] = useState(
-    props.selectedData
-  );
+  debugger;
+  const [selectedCandidate, setSelectedCandidate] = useState({
+    personalInfo: props.profileInfo.personalInfo,
+    genderList: useSelector((state) => state.gender.genderList),
+    raceList: useSelector((state) => state.ethnicity.ethnicityList),
+    eligibilityList: props.dropDownData.eligibilityDropDown,
+  });
 
-  const [countryList, setCountryList] = useState([
-    {
-      value: 1,
-      type: "USA",
-    },
-    {
-      value: 2,
-      type: "India",
-    },
-  ]);
-  const [genderList, setGenderList] = useState([
-    {
-      value: 1,
-      type: "Male",
-    },
-    {
-      value: 2,
-      type: "Female",
-    },
-  ]);
+  const [requiredErrors, setRequiredErros] = useState({
+    emailError: false,
+    phoneError: false,
+    cityError: false,
+    stateError: false,
+  });
 
-  const [raceList, setRaceList] = useState([
-    { value: 1, type: "Aboriginal" },
+  const [countryList, setCountryList] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
 
-    { value: 2, type: "African American or Black" },
-
-    { value: 3, type: "Asian" },
-
-    { value: 4, name: "European American or White" },
-
-    { value: 5, type: "Native American" },
-
-    { value: 6, type: "Native Hawaiian or Pacific Islander" },
-
-    { value: 7, type: "Māori," },
-
-    { value: 8, type: "Other race" },
-  ]);
-
-  const [authorization, setAuthorization] = useState(false);
-  const [sponserdCheck, setSponserdCheck] = useState(false);
-  const [notSpecifiedCheck, setNotSpecifiedCheck] = useState(false);
+  const [citySelect, setCitySelect] = useState([]);
+  const [stateSelect, setStateSelect] = useState([]);
+  const [countrySelect, setCountrySelect] = useState([]);
+  const [raceSelect, setRaceSelect] = useState([]);
+  const [genderSelect, setGenderSelect] = useState([]);
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const [dob, setDOB] = useState(new Date());
-  const [isEligibilityModal, setEligibilityModal] = useState(false);
-  const [isLocationModal, setLocationModal] = useState(false);
   const [isContactModal, setContactModal] = useState(false);
-  const [isDemographicModal, setDemographicModal] = useState(false);
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-  // form validation rules
-  const validationSchema = Yup.object().shape({
-    firstname: Yup.string().required("Firstname is required").max(50),
-    lastname: Yup.string().required("Lastname is required").max(50),
-    phonenumber: Yup.string()
-      .required("Phone Number is required")
-      .matches(phoneRegExp, "Phone number is not valid")
-      .max(20),
-    email: Yup.string()
-      .required("Email is required")
-      .matches(emailRegex, "Email is not valid")
-      .max(50),
-    city: Yup.string().required("City is required").max(50),
-    state: Yup.string().required("State is required").max(50),
-    location: Yup.string(),
-    country: Yup.string(),
-    address: Yup.string().max(50),
-    zipCode: Yup.string().max(50),
-    gender: Yup.string(),
-  });
 
-  const formOptions = { resolver: yupResolver(validationSchema) };
+  const onSelectCityDropdown = function (data) {
+    let error_data = { ...requiredErrors };
+    setCitySelect(data);
+    error_data.cityError = false;
+    setRequiredErros(error_data);
+  };
+  const onSelectCountryDropdown = function (data) {
+    setCountrySelect(data);
+  };
+  const onSelectStateDropdown = function (data) {
+    let error_data = { ...requiredErrors };
+    setStateSelect(data);
+    error_data.stateError = false;
+    setRequiredErros(error_data);
+  };
+  const onSelectRaceDropdown = function (data) {
+    setRaceSelect(data);
+  };
+  const onSelectGenderDropdown = function (data) {
+    setGenderSelect(data);
+  };
 
-  // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState } = useForm(formOptions);
-  const { errors, isSubmitting } = formState;
-  function onSubmit(payload) {}
-  const selectDate = function () {};
-  const onSelectEligibility = function (check, data) {
-    debugger;
-    if (check === "authorization") {
-      setAuthorization(true);
-      setSponserdCheck(false);
-      setNotSpecifiedCheck(false);
+  function maskPhoneNumber(phoneNumber) {
+    const numericPhoneNumber = phoneNumber.replace(/\D/g, "");
+    const maskedPhoneNumber = `(${numericPhoneNumber.slice(
+      0,
+      3
+    )}) ${numericPhoneNumber.slice(3, 6)}-${numericPhoneNumber.slice(6)}`;
+
+    return maskedPhoneNumber;
+  }
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    const formattedDate = new Date(dateString).toLocaleDateString(
+      undefined,
+      options
+    );
+    return formattedDate;
+  };
+  async function onSubmit(e) {
+    e.preventDefault();
+    let errors = { ...requiredErrors };
+    if (citySelect.length == 0) {
+      errors.cityError = true;
+    } else {
+      errors.cityError = false;
     }
-    if (check === "sponserdCheck") {
-      setAuthorization(false);
-      setSponserdCheck(true);
-      setNotSpecifiedCheck(false);
+    if (stateSelect.length == 0) {
+      errors.stateError = true;
+    } else {
+      errors.stateError = false;
     }
-    if (check === "notSpecifiedCheck") {
-      setAuthorization(false);
-      setSponserdCheck(false);
-      setNotSpecifiedCheck(true);
+    if (errors.cityError || errors.stateError) return;
+
+    let new_data = { ...selectedCandidate };
+    new_data.personalInfo.cityid = citySelect.value;
+    new_data.personalInfo.countryid = countrySelect.value;
+    new_data.personalInfo.stateid = stateSelect.value;
+    new_data.personalInfo.genderid = genderSelect.value;
+    new_data.personalInfo.ethnicityid = raceSelect.value;
+
+    if (
+      new_data.personalInfo.firstname == "" ||
+      new_data.personalInfo.lastname == "" ||
+      new_data.personalInfo.phonenumber == "" ||
+      new_data.personalInfo.email == "" ||
+      new_data.personalInfo.cityid == 0
+    ) {
+      return;
+    } else {
+      let post_data = {
+        candidateid: userDetails.InternalUserId,
+        email: new_data.personalInfo.email,
+        phonenumber: new_data.personalInfo.phonenumber,
+        firstname: new_data.personalInfo.firstname,
+        lastname: new_data.personalInfo.lastname,
+        genderid: new_data.personalInfo.genderid,
+        cityid: new_data.personalInfo.cityid,
+        stateid: new_data.personalInfo.stateid,
+        countryid: new_data.personalInfo.countryid,
+        zipcode: new_data.personalInfo.zipcode,
+        ethnicityid: new_data.personalInfo.ethnicityid,
+        employmenteligiblity: new_data.personalInfo.employmenteligiblity,
+        isreadytoworkimmediately:
+          new_data.personalInfo.isreadytoworkimmediately,
+        isactive: true,
+        userid: userDetails.UserId,
+        currentUserId: userDetails.UserId,
+      };
+
+      let response = await dispatch(
+        profileActions.insertPersonalInfo(post_data)
+      );
+      setContactModal(false);
     }
+  }
+
+  const selectDate = function (data) {
+    let temp_data = { ...selectedCandidate };
+    temp_data.personalInfo.dob = new Date(data);
+    setSelectedCandidate(temp_data);
+  };
+
+  const close = function () {
+    setContactModal(false);
+    // props.onCallBack();
+  };
+
+  useEffect(() => {
+    let country_response;
+    let state_response;
+    country_response = cityList.map(({ countryid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.countryname}`,
+      };
+    });
+    state_response = cityList.map(({ stateid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.statename}`,
+      };
+    });
+    setStateList(state_response);
+    console.log(stateList);
+    setCountryList(country_response);
+  }, [cityList]);
+  const loadOptions = async function (inputValue) {
+    // if (inputValue.length > 2) {
+    const { data = [] } = await getLocationFilter(inputValue);
+    setCityList(data);
+    return data.map(({ cityid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.location}`,
+      };
+    });
+  };
+  const onHandleInputChange = function (check, data) {
+    let new_data = { ...selectedCandidate };
+    let errors = { ...requiredErrors };
+    if (check == "firstname") {
+      new_data.personalInfo.firstname = data;
+    } else if (check == "lastname") {
+      new_data.personalInfo.lastname = data;
+    } else if (check == "address") {
+      new_data.personalInfo.address = data;
+    } else if (check == "email") {
+      new_data.personalInfo.email = data;
+
+      if (!new_data.personalInfo.email.match(emailRegex)) {
+        errors.emailError = true;
+      } else {
+        errors.emailError = false;
+      }
+    } else if (check == "phonenumber") {
+      new_data.personalInfo.phonenumber = data;
+      if (!new_data.personalInfo.phonenumber.match(phoneRegExp)) {
+        errors.phoneError = true;
+      } else {
+        errors.phoneError = false;
+      }
+    } else if (check == "zip") {
+      new_data.personalInfo.zipcode = data;
+    } else if (check == "authorization") {
+      new_data.personalInfo.employmenteligiblity = data;
+    } else if (check == "work") {
+      new_data.personalInfo.isreadytoworkimmediately =
+        data == "on" ? true : false;
+    }
+
+    setSelectedCandidate(new_data);
   };
 
   return (
     <div>
       <Fragment>
         <Card className="mb-3 profile-view">
-          <Row className="g-0">
-            <Col sm="12" md="12" xl="6" className="ml-border">
-              <div className="card no-shadow rm-border bg-transparent widget-chart text-start">
-                <div className="icon-wrapper rounded-circle profile-img">
-                  <img
-                    width={100}
-                    className="rounded-circle"
-                    src={profileImg}
-                    alt=""
+          {selectedCandidate.personalInfo.email ? (
+            <Row className="g-0">
+              <Col sm="12" md="12" xl="6" className=" mb-0">
+                <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
+                  <div className="icon-wrapper rounded-circle profile-img">
+                    <img
+                      width={100}
+                      className="rounded-circle"
+                      src={profileImg}
+                      alt=""
+                    />
+                  </div>
+                  <div className="widget-chart-content">
+                    <div>
+                      <strong className="candidate-name mb-0">
+                        {selectedCandidate.personalInfo.firstname +
+                          " " +
+                          selectedCandidate.personalInfo.lastname}
+                      </strong>
+                      <p className="widget-description text-focus content-text mt-0">
+                        {selectedCandidate.personalInfo.position}
+                      </p>
+                      <p className="candidate-label mt-0 mb-0">
+                        {"at " + selectedCandidate.personalInfo.organization}
+                      </p>
+                    </div>
+                    <div>
+                      <Row>
+                        <Col className="col-12 mb-0">
+                          <Label className="candidate-label mb-0">
+                            Employement Eligibility:{" "}
+                            <strong className="content-text">
+                              {selectedCandidate.personalInfo.eligibility}
+                            </strong>
+                          </Label>
+                        </Col>
+                        <Col>
+                          <Label className="candidate-label mt-0">
+                            Ready to work Immediately:{" "}
+                            <strong className="content-text">
+                              {selectedCandidate.personalInfo.readyToWork}{" "}
+                            </strong>
+                          </Label>
+                        </Col>
+                      </Row>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+
+              <Col sm="12" md="12" xl="3" className="">
+                <Row className="mt-4">
+                  <Col className="mb-2 mt-2">
+                    <BsTelephone className="personal-sec-icon me-2" />
+                    <span className="content-text mt-3">
+                      {maskPhoneNumber(
+                        selectedCandidate.personalInfo.phonenumber
+                      )}
+                    </span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="mb-2">
+                    <BsEnvelope className="personal-sec-icon me-2" />
+                    <span className="content-text">
+                      {selectedCandidate.personalInfo.email}
+                    </span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="mb-2">
+                    <BsPinMap className="personal-sec-icon me-2" />
+                    <span className="content-text">
+                      {" "}
+                      {selectedCandidate.personalInfo.city +
+                        ", " +
+                        selectedCandidate.personalInfo.state +
+                        ", " +
+                        selectedCandidate.personalInfo.country}
+                    </span>
+                  </Col>
+                </Row>
+              </Col>
+              <Col sm="12" md="12" xl="3" className="mt-3">
+                <div className="me-3 float-end">
+                  <BsPencil
+                    className="edit-icon"
+                    onClick={(evt) => setContactModal(true)}
                   />
                 </div>
-                <div className="widget-chart-content">
-                  <div>
-                    <strong className="candidate-name mb-0">John Doe</strong>
-                    <p className="widget-description text-focus content-text mt-0 mb-1">
-                      Lead Java Developer
-                    </p>
-                    <p className="personal-info-label">
-                      at Saisystems Technology
-                    </p>
-                  </div>
-                  <div className="mt-1">
-                    <Row>
-                      <Col>
-                        <Label className="personal-info-label">
-                          Employement Eligibility:{" "}
-                          <strong className="content-text">
-                            Authorized to work in the US{" "}
-                          </strong>
-                        </Label>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <p className="personal-info-label">
-                          Ready to work Immediately:{" "}
-                          <strong className="content-text">Yes </strong>
-                        </p>
-                      </Col>
-                    </Row>
-                  </div>
-                </div>
-              </div>
-            </Col>
-            <Col sm="12" md="12" xl="3" className="ml-border">
-              <Row className="mt-3">
-                <Col className="col-2">
-                  <div className="float-end">
-                    <i className="pe-7s-call icon-container icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1">
-                      {" "}
-                    </i>
-                  </div>
-                </Col>
-                <Col>
-                  <div>
-                    <p className="content-text">(120)456-789</p>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="col-2">
-                  <div className="float-end">
-                    <i className="pe-7s-mail icon-container icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1">
-                      {" "}
-                    </i>
-                  </div>
-                </Col>
-                <Col>
-                  <div>
-                    <p className="content-text">johndoe@gmail.com</p>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="col-2">
-                  <div className=" float-end">
-                    <i className="pe-7s-map-marker icon-container icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1">
-                      {" "}
-                    </i>
-                  </div>
-                </Col>
-                <Col>
-                  <div>
-                    <p className="content-text">Pune,Maharastra,India</p>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-            <Col sm="12" md="12" xl="3" className="mt-3">
-              <div className="me-1">
-                <img
-                  src={editIcon}
-                  alt="edit-icon"
-                  className="float-end me-3 edit-icon"
-                  onClick={(evt) => setContactModal(true)}
-                ></img>
-              </div>
-              <Row className="mt-3">
-                <Col className="col-2">
-                  <div className=" float-end">
-                    <i className="pe-7s-call icon-container icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1">
-                      {" "}
-                    </i>
-                  </div>
-                </Col>
-                <Col>
-                  <Label className="content-text">Sep 12,2001</Label>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="col-2">
-                  <div className=" float-end">
-                    <i className="pe-7s-mail icon-container icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1">
-                      {" "}
-                    </i>
-                  </div>
-                </Col>
-                <Col>
-                  <div>
-                    <p className="content-text">Male</p>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="col-2">
-                  <div className=" float-end">
-                    <i className="pe-7s-map-marker icon-container icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1">
-                      {" "}
-                    </i>
-                  </div>
-                </Col>
-                <Col>
-                  <div>
-                    <p className="content-text">African</p>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                <Row className="mt-3">
+                  <Row>
+                    <Col className="mb-2">
+                      <BsBalloon className="personal-sec-icon me-2" />
+                      <span className="content-text mt-3">
+                        {formatDate(selectedCandidate.personalInfo.dob)}
+                      </span>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="mb-2">
+                      <BsGenderMale className="personal-sec-icon me-2" />
+                      <span className="content-text">
+                        {selectedCandidate.personalInfo.gender}
+                      </span>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="mb-2">
+                      <BsPeople className="personal-sec-icon me-2" />
+                      <span className="content-text">
+                        {selectedCandidate.personalInfo.ethnicity}
+                      </span>
+                    </Col>
+                  </Row>
+                </Row>
+              </Col>
+            </Row>
+          ) : (
+            <></>
+          )}
         </Card>
       </Fragment>
 
@@ -296,17 +399,17 @@ export function PersonalInformation(props) {
             size="lg"
             isOpen={isContactModal}
           >
-            <ModalHeader toggle={isContactModal} charCode="Y">
+            <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 Add/Edit Personal Information
               </strong>
             </ModalHeader>
             <ModalBody>
-              <Form onSubmit={handleSubmit(onSubmit)}>
+              <Form onSubmit={(evt) => onSubmit(evt)}>
                 <Row>
                   <Col md={4}>
                     <FormGroup>
-                      <Label for="email" className="input-label">
+                      <Label for="firstname" className="input-label">
                         First Name <span className="required-icon">*</span>
                       </Label>
                       <input
@@ -314,15 +417,21 @@ export function PersonalInformation(props) {
                         name="firstname"
                         id="firstname"
                         placeholder="Enter First Name"
-                        {...register("firstname")}
+                        maxLength={50}
+                        value={selectedCandidate.personalInfo.firstname}
+                        onInput={(evt) =>
+                          onHandleInputChange("firstname", evt.target.value)
+                        }
                         className={`field-input placeholder-text form-control ${
-                          errors.firstname
+                          selectedCandidate.personalInfo.firstname == ""
                             ? "is-invalid error-text"
-                            : "input-text"
+                            : ""
                         }`}
                       />
                       <div className="invalid-feedback">
-                        {errors.firstname?.message}
+                        {selectedCandidate.personalInfo.firstname == ""
+                          ? "firstname is required"
+                          : ""}
                       </div>
                     </FormGroup>
                   </Col>
@@ -336,14 +445,22 @@ export function PersonalInformation(props) {
                         name="lastname"
                         type="lastname"
                         id="lastname"
-                        {...register("lastname")}
+                        maxLength={50}
+                        value={selectedCandidate.personalInfo.lastname}
+                        onInput={(evt) =>
+                          onHandleInputChange("lastname", evt.target.value)
+                        }
                         className={`field-input placeholder-text form-control ${
-                          errors.lastname ? "is-invalid" : ""
+                          selectedCandidate.personalInfo.lastname == ""
+                            ? "is-invalid"
+                            : ""
                         }`}
                       />
 
                       <div className="invalid-feedback">
-                        {errors.lastname?.message}
+                        {selectedCandidate.personalInfo.lastname == ""
+                          ? "lastname is required"
+                          : ""}
                       </div>
                     </FormGroup>
                   </Col>
@@ -357,14 +474,28 @@ export function PersonalInformation(props) {
                         name="phonenumber"
                         type="text"
                         id="phonenumber"
-                        {...register("phonenumber")}
+                        value={selectedCandidate.personalInfo.phonenumber}
+                        onInput={(evt) =>
+                          onHandleInputChange("phonenumber", evt.target.value)
+                        }
+                        maxLength={20}
                         className={`field-input placeholder-text form-control ${
-                          errors.phonenumber ? "is-invalid" : ""
+                          selectedCandidate.personalInfo.phonenumber == "" ||
+                          selectedCandidate.phoneError
+                            ? "is-invalid"
+                            : ""
                         }`}
                       />
-
                       <div className="invalid-feedback">
-                        {errors.phonenumber?.message}
+                        {selectedCandidate.personalInfo.phonenumber == ""
+                          ? "phone number is required"
+                          : ""}
+                      </div>
+                      <div className="invalid-feedback">
+                        {selectedCandidate.personalInfo.phonenumber != "" &&
+                        selectedCandidate.phoneError
+                          ? "Phone number is not valid"
+                          : ""}
                       </div>
                     </FormGroup>
                   </Col>
@@ -376,116 +507,34 @@ export function PersonalInformation(props) {
                         Email <span className="required-icon">*</span>
                       </Label>
                       <input
-                        type="email"
+                        type="text"
                         name="email"
                         id="email"
                         placeholder="Enter Email"
-                        {...register("email")}
+                        value={selectedCandidate.personalInfo.email}
+                        onInput={(evt) =>
+                          onHandleInputChange("email", evt.target.value)
+                        }
                         className={`field-input placeholder-text form-control ${
-                          errors.email ? "is-invalid error-text" : "input-text"
+                          selectedCandidate.personalInfo.email == "" ||
+                          requiredErrors.emailError
+                            ? "is-invalid"
+                            : ""
                         }`}
                       />
                       <div className="invalid-feedback">
-                        {errors.email?.message}
+                        {selectedCandidate.personalInfo.email == ""
+                          ? "Email is required"
+                          : ""}
                       </div>
-                    </FormGroup>
-                  </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="country" className="input-label">
-                        Country
-                      </Label>
-                      <Input
-                        className="reason-dropdown-input dropdown-placeholder"
-                        type="select"
-                        id="country"
-                        name="country"
-                        placeholder="Select Country"
-                      >
-                        {countryList.map((col) => (
-                          <option key={col.value} value={col.value}>
-                            {col.type}
-                          </option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="address" className="input-label">
-                        Address
-                      </Label>
-                      <input
-                        type="text"
-                        name="address"
-                        id="address"
-                        placeholder="Enter Address"
-                        {...register("address")}
-                        className="field-input placeholder-text form-control input-text"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="city" className="input-label">
-                        City <span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        placeholder="Enter city"
-                        name="city"
-                        type="text"
-                        id="city"
-                        {...register("city")}
-                        className={`field-input placeholder-text form-control ${
-                          errors.city ? "is-invalid" : ""
-                        }`}
-                      />
-
                       <div className="invalid-feedback">
-                        {errors.city?.message}
+                        {selectedCandidate.personalInfo.email != "" &&
+                        requiredErrors.emailError
+                          ? "Email is not valid"
+                          : ""}
                       </div>
                     </FormGroup>
                   </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="state" className="input-label">
-                        State<span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        placeholder="Enter State"
-                        name="state"
-                        type="text"
-                        id="state"
-                        {...register("state")}
-                        className={`field-input placeholder-text form-control ${
-                          errors.state ? "is-invalid" : ""
-                        }`}
-                      />
-
-                      <div className="invalid-feedback">
-                        {errors.state?.message}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="zipCode" className="input-label">
-                        Zip Code
-                      </Label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        id="zipCode"
-                        placeholder="Enter Zip Code"
-                        {...register("zipCode")}
-                        className="field-input placeholder-text form-control input-text"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
                   <Col md={4}>
                     <FormGroup>
                       <Label for="gender" className="input-label">
@@ -499,9 +548,112 @@ export function PersonalInformation(props) {
                           className="form-control"
                           placeholderText="DD/MM/YYYY"
                           selected={dob}
-                          onChange={(evt) => selectDate()}
+                          onChange={(evt) => selectDate(evt)}
                         />
                       </InputGroup>
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      <Label for="address" className="input-label">
+                        Address
+                      </Label>
+                      <input
+                        type="text"
+                        name="address"
+                        id="address"
+                        onInput={(evt) =>
+                          onHandleInputChange("address", evt.target.value)
+                        }
+                        maxLength={50}
+                        placeholder="Enter Address"
+                        className="field-input placeholder-text form-control input-text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={4}>
+                    <FormGroup>
+                      <Label for="city" className="input-label">
+                        City
+                      </Label>
+                      <AsyncSelect
+                        name="skills"
+                        placeholder="Search to select"
+                        loadOptions={loadOptions}
+                        isMulti={false}
+                        value={citySelect}
+                        onChange={(evt) => onSelectCityDropdown(evt)}
+                        styles={{
+                          borderColor: requiredErrors.stateError
+                            ? "#d92550"
+                            : "",
+                        }}
+                      />
+
+                      <div className="error-class">
+                        {requiredErrors.cityError ? "City is required" : ""}
+                      </div>
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      <Label for="state" className="input-label">
+                        State
+                      </Label>
+                      <AsyncSelect
+                        name="state"
+                        placeholder="Select"
+                        defaultOptions={stateList}
+                        isMulti={false}
+                        value={stateSelect}
+                        onChange={(evt) => onSelectStateDropdown(evt)}
+                        styles={{
+                          borderColor: requiredErrors.stateError
+                            ? "#d92550"
+                            : "",
+                        }}
+                      />
+                      <div className="error-class">
+                        {requiredErrors.stateError ? "State is required" : ""}
+                      </div>
+                    </FormGroup>
+                  </Col>
+                  <Col md={4}>
+                    <FormGroup>
+                      <Label for="country" className="input-label">
+                        Country
+                      </Label>
+                      <AsyncSelect
+                        name="country"
+                        placeholder="Select"
+                        defaultOptions={countryList}
+                        isMulti={false}
+                        value={countrySelect}
+                        onChange={(evt) => onSelectCountryDropdown(evt)}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={4}>
+                    <FormGroup>
+                      <Label for="zipCode" className="input-label">
+                        Zip Code
+                      </Label>
+                      <input
+                        type="text"
+                        name="zipCode"
+                        id="zipCode"
+                        maxLength={50}
+                        value={selectedCandidate.personalInfo.zipcode}
+                        onInput={(evt) =>
+                          onHandleInputChange("zip", evt.target.value)
+                        }
+                        placeholder="Enter Zip Code"
+                        className="field-input placeholder-text form-control input-text"
+                      />
                     </FormGroup>
                   </Col>
 
@@ -510,100 +662,65 @@ export function PersonalInformation(props) {
                       <Label for="gender" className="input-label">
                         Gender
                       </Label>
-                      <Input
-                        className="reason-dropdown-input dropdown-placeholder"
-                        type="select"
-                        id="gender"
+
+                      <AsyncSelect
                         name="gender"
-                        placeholder="Select Gender"
-                      >
-                        <option>Select Gender</option>
-                        {genderList.map((col) => (
-                          <option key={col.value} value={col.value}>
-                            {col.type}
-                          </option>
-                        ))}
-                      </Input>
+                        placeholder="Select"
+                        defaultOptions={selectedCandidate.genderList}
+                        isMulti={false}
+                        value={genderSelect}
+                        onChange={(evt) => onSelectGenderDropdown(evt)}
+                      />
                     </FormGroup>
                   </Col>
                   <Col md={4}>
                     <FormGroup>
-                      <Label for="gender" className="input-label">
+                      <Label for="race" className="input-label">
                         Race/Etnicity
                       </Label>
-                      <Input
-                        className="reason-dropdown-input dropdown-placeholder"
-                        type="select"
-                        id="race"
+                      <AsyncSelect
                         name="race"
-                        placeholder="Select Etnicity"
-                      >
-                        <option>Select Etnicity</option>
-                        {raceList.map((col) => (
-                          <option key={col.value} value={col.value}>
-                            {col.type}
-                          </option>
-                        ))}
-                      </Input>
+                        placeholder="Select"
+                        defaultOptions={selectedCandidate.raceList}
+                        isMulti={false}
+                        value={raceSelect}
+                        onChange={(evt) => onSelectRaceDropdown(evt)}
+                      />
                     </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {selectedCandidate.eligibilityList.map((item) => (
+                      <FormGroup check>
+                        <Input
+                          name="eligibility"
+                          type="radio"
+                          checked={
+                            item.id ==
+                            selectedCandidate.personalInfo.employmenteligiblity
+                          }
+                          onClick={(evt) =>
+                            onHandleInputChange("authorization", item.id)
+                          }
+                        />
+                        <Label check className="input-label">
+                          {item.name}
+                        </Label>
+                      </FormGroup>
+                    ))}
                   </Col>
                 </Row>
                 <Row>
                   <Col>
                     <FormGroup check>
                       <Input
-                        name="authorization"
-                        type="radio"
-                        checked={authorization}
-                        onClick={(evt) =>
-                          onSelectEligibility("authorization", evt.target.value)
+                        name="immediateJoin"
+                        type="checkbox"
+                        onChange={(evt) =>
+                          onHandleInputChange("work", evt.target.value)
                         }
                       />{" "}
-                      <Label check className="input-label">
-                        Authorized to work in the US
-                      </Label>
-                    </FormGroup>
-                  </Col>
-
-                  <Col>
-                    <FormGroup check>
-                      <Input
-                        name="sponserdCheck"
-                        type="radio"
-                        onClick={(evt) =>
-                          onSelectEligibility("sponserdCheck", evt.target.value)
-                        }
-                        checked={sponserdCheck}
-                      />{" "}
-                      <Label check className="input-label">
-                        Sponsorship required
-                      </Label>
-                    </FormGroup>
-                  </Col>
-
-                  <Col>
-                    <FormGroup check>
-                      <Input
-                        name="notSpecifiedCheck"
-                        type="radio"
-                        checked={notSpecifiedCheck}
-                        onClick={(evt) =>
-                          onSelectEligibility(
-                            "notSpecifiedCheck",
-                            evt.target.value
-                          )
-                        }
-                      />{" "}
-                      <Label check className="input-label">
-                        Not Specified
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
                       <Label check className="input-label">
                         Ready to work immediately
                       </Label>
@@ -612,18 +729,7 @@ export function PersonalInformation(props) {
                 </Row>
 
                 <div className="float-end">
-                  <Button
-                    disabled={
-                      errors.state ||
-                      errors.firstname ||
-                      errors.lastname ||
-                      errors.city ||
-                      errors.phonenumber ||
-                      errors.email
-                    }
-                    className="me-2 save-btn"
-                    type="submit"
-                  >
+                  <Button className="me-2 save-btn" type="submit">
                     Save
                   </Button>
                   <Button

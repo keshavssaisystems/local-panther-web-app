@@ -38,10 +38,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
+import { AdditionalInfoModal } from "./additionalInfoModal";
 
 export function AdditionalInformation(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
   const selectDate = function () {};
+  const [commentLength, setCommentLength] = useState(0);
+  const [summary, setSummaryLength] = useState("");
+  const [info, setInfoLength] = useState("");
+  const selected = {};
 
   const [additionalDetails, setDetails] = useState([
     {
@@ -80,12 +85,18 @@ export function AdditionalInformation(props) {
   ]);
 
   const [countryList, setCountryList] = useState([]);
-
+  const close = function () {
+    setPersonalModal(false);
+  };
   // form validation rules
   const validationSchema = Yup.object().shape({
-    summary: Yup.string().max(50),
+    summary: Yup.string().max(500, "Summary should not extend 500 characters"),
     language: Yup.string().max(50),
     proficiency: Yup.string().max(50),
+    additionalInfo: Yup.string().max(
+      200,
+      "Summary should not extend 500 characters"
+    ),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -94,6 +105,10 @@ export function AdditionalInformation(props) {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
   function onSubmit(payload) {}
+
+  const handlePageChange = () => {
+    setPersonalModal(false);
+  };
 
   return (
     <div>
@@ -126,7 +141,7 @@ export function AdditionalInformation(props) {
                       <p className="me-2 card-p-text">{item.summary} </p>
                     </Row>
                     <Row>
-                      <strong className="content-title">
+                      <strong className="content-title mb-2">
                         Additional Information
                       </strong>
                       <ul>
@@ -155,7 +170,7 @@ export function AdditionalInformation(props) {
                             <th></th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="card-p-text-black">
                           {item.languages.map((column, ind) => (
                             <tr>
                               <td>{column.name}</td>
@@ -177,9 +192,7 @@ export function AdditionalInformation(props) {
             className="d-flex justify-content-center"
             style={{ border: "none" }}
           >
-            <div className="link-text">
-              View all {additionalDetails.length} Details
-            </div>
+            <div className="view-link-text"></div>
           </CardFooter>
         </Card>
       </div>
@@ -191,95 +204,17 @@ export function AdditionalInformation(props) {
             size="lg"
             isOpen={isPersonalModal}
           >
-            <ModalHeader toggle={isPersonalModal} charCode="Y">
+            <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 Add/Edit Additional Information
               </strong>
             </ModalHeader>
             <ModalBody>
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Row>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="summary" className="input-label">
-                        Summary
-                      </Label>
-                      <Input
-                        placeholder="Enter Summary"
-                        name="summary"
-                        type="textarea"
-                        id="summary"
-                        {...register("educationLevel")}
-                        className="field-input placeholder-text form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="language" className="input-label">
-                        Language
-                      </Label>
-                      <input
-                        placeholder="Enter Language"
-                        name="language"
-                        type="text"
-                        id="language"
-                        {...register("language")}
-                        className="field-input placeholder-text form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="proficiency" className="input-label">
-                        Proficiency
-                      </Label>
-                      <Input
-                        className="reason-dropdown-input dropdown-placeholder"
-                        type="select"
-                        id="proficiency"
-                        name="proficiency"
-                        placeholderText="Select Proficiency"
-                      >
-                        {countryList.map((col) => (
-                          <option key={col.value} value={col.value}>
-                            {col.type}
-                          </option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="state" className="input-label">
-                        Additional Information
-                      </Label>
-                      <Input
-                        placeholder="Enter Additional Information"
-                        name="state"
-                        type="textarea"
-                        id="state"
-                        {...register("state")}
-                        className="field-input placeholder-text form-control"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <div className="float-end">
-                  <Button className="me-2 save-btn" type="submit">
-                    Save
-                  </Button>
-                  <Button
-                    type="button"
-                    className="close-btn"
-                    onClick={() => setPersonalModal(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </Form>
+              <AdditionalInfoModal
+                check={"add"}
+                onCallBack={handlePageChange}
+                selected={selected}
+              />
             </ModalBody>
           </Modal>
         </div>

@@ -23,9 +23,11 @@ import {
 } from "reactstrap";
 
 import "./profile.scss";
+import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import errorIcon from "../../assets/utils/images/error_icon.png";
 import * as Yup from "yup";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { QualificationModal } from "./qualificationModal";
@@ -43,7 +45,9 @@ export function CandidateQualification(props) {
   ]);
 
   const [editModal, setEditModal] = useState(false);
+  const [viewModal, setViewModal] = useState(false);
   const [selectedData, setSelectedData] = useState({});
+  const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
   const [qualificationDetails, setDetails] = useState([
     {
@@ -147,7 +151,6 @@ export function CandidateQualification(props) {
 
   const [newTabId, setNewTabId] = useState(2);
   const addMoreTabs = function () {
-    debugger;
     const newTab = {
       id: 1,
       content: <QualificationModal />,
@@ -158,6 +161,11 @@ export function CandidateQualification(props) {
   };
   const handlePageChange = () => {
     setPersonalModal(false);
+    setEditModal(false);
+  };
+  const close = function () {
+    setPersonalModal(false);
+    setEditModal(false);
   };
 
   return (
@@ -167,7 +175,7 @@ export function CandidateQualification(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
             <PerfectScrollbar>
-              <Row>
+              <Row className="mb-3">
                 <Col>
                   <strong className="card-title-text">Qualifications</strong>
                 </Col>
@@ -188,13 +196,14 @@ export function CandidateQualification(props) {
                       <strong className="me-2 content-title">
                         {item.jobTitle}{" "}
                       </strong>
-                      <img
-                        src={editIcon}
-                        alt="edit-icon"
-                        className=" me-2 edit-icon"
+                      <BsPencil
+                        className="icons"
                         onClick={(evt) => edit(item)}
-                      ></img>
-                      <i className="pe-7s-trash icon-gradient bg-amy-crisp btn-icon-wrapper mb-2 me-1"></i>
+                      />{" "}
+                      <BsTrash3
+                        className="icons"
+                        onClick={() => setDeleteConfirm(true)}
+                      />
                     </Col>
 
                     <p className="mb-0 card-p-text-black">
@@ -227,8 +236,10 @@ export function CandidateQualification(props) {
             className="d-flex justify-content-center"
             style={{ border: "none" }}
           >
-            <div className="link-text">
-              View all {qualificationDetails.length} Details
+            <div className="view-link-text">
+              <span onClick={() => setViewModal(true)}>
+                View all {qualificationDetails.length} Details
+              </span>
             </div>
           </CardFooter>
         </Card>
@@ -241,13 +252,85 @@ export function CandidateQualification(props) {
             size="lg"
             isOpen={isPersonalModal}
           >
-            <ModalHeader toggle={isPersonalModal} charCode="Y">
+            <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 Add/Edit Work Experience
               </strong>
             </ModalHeader>
             <ModalBody>
-              <QualificationModal onCallBack={handlePageChange} />
+              <QualificationModal
+                onCallBack={handlePageChange}
+                selected={selectedData}
+                check={"add"}
+              />
+            </ModalBody>
+          </Modal>
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {viewModal ? (
+        <div>
+          <Modal className="personal-information" size="lg" isOpen={viewModal}>
+            <ModalBody>
+              <div>
+                <CardBody>
+                  <Row className="mt-2 mb-3 float-end">
+                    <span
+                      className="float-end"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setViewModal(false)}
+                    >
+                      X
+                    </span>
+                  </Row>
+                  <Row className="mt-3">
+                    {qualificationDetails.map((item) => (
+                      <div>
+                        <Col>
+                          <strong className="me-2 content-title">
+                            {item.jobTitle}{" "}
+                          </strong>
+                        </Col>
+
+                        <p className="mb-0 card-p-text-black">
+                          {item.organization}
+                          {", "}
+                          {item.city}
+                          {", "}
+                          {item.state}
+                          {", "}
+                          {item.country}
+                          {", "}
+                          {item.zipCode}
+                          {"  "}
+                        </p>
+                        <p className="card-p-text-black">
+                          {item.fromDate}
+                          {" to "}
+                          {item.toDate}
+                          {" ("}
+                          {item.experience}
+                          {")"}
+                        </p>
+                        <p className="card-p-text">{item.jobDescription}</p>
+                      </div>
+                    ))}
+                  </Row>
+                </CardBody>
+                <CardFooter>
+                  <div className="float-end">
+                    <Button
+                      type="button"
+                      className="close-btn"
+                      onClick={() => setViewModal(false)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </CardFooter>
+              </div>
             </ModalBody>
           </Modal>
         </div>
@@ -258,205 +341,60 @@ export function CandidateQualification(props) {
       {editModal ? (
         <div>
           <Modal className="personal-information" size="lg" isOpen={editModal}>
-            <ModalHeader toggle={editModal} charCode="Y">
-              <strong className="card-title-text">Edit Qualification</strong>
+            <ModalHeader toggle={() => close()} charCode="Y">
+              <strong className="card-title-text">
+                Add/Edit Work Experience
+              </strong>
             </ModalHeader>
             <ModalBody>
-              <div>
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Row>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="jobTitle" className="input-label">
-                          Job Title <span className="required-icon">*</span>
-                        </Label>
-                        <input
-                          placeholder="Enter Job Title"
-                          name="jobTitle"
-                          type="text"
-                          id="jobTitle"
-                          value={selectedData.jobTitle}
-                          className={`field-input placeholder-text form-control ${
-                            errors.jobTitle ? "is-invalid" : ""
-                          }`}
-                          {...register("jobTitle")}
-                        />
-                        <div className="invalid-feedback">
-                          {errors.jobTitle ? "Job Title is Required" : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="company" className="input-label">
-                          Company
-                        </Label>
-                        <Input
-                          placeholder="Enter Company"
-                          name="company"
-                          type="textarea"
-                          id="company"
-                          {...register("company")}
-                          className="field-input placeholder-text form-control"
-                        />
-                      </FormGroup>
-                    </Col>
-
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="jobDescription" className="input-label">
-                          Job Description
-                        </Label>
-                        <Input
-                          placeholder="Enter Job Description"
-                          name="jobDescription"
-                          type="textarea"
-                          id="jobDescription"
-                          {...register("jobDescription")}
-                          className="field-input placeholder-text form-control"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="country" className="input-label">
-                          Country
-                        </Label>
-                        <Input
-                          className="reason-dropdown-input dropdown-placeholder"
-                          type="select"
-                          id="country"
-                          name="country"
-                          placeholder="Select Country"
-                        >
-                          {countryList.map((col) => (
-                            <option key={col.value} value={col.value}>
-                              {col.type}
-                            </option>
-                          ))}
-                        </Input>
-                      </FormGroup>
-                    </Col>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="city" className="input-label">
-                          City
-                        </Label>
-                        <input
-                          placeholder="Enter city"
-                          name="city"
-                          type="text"
-                          id="city"
-                          {...register("city")}
-                          className="field-input placeholder-text form-control"
-                        />
-
-                        <div className="invalid-feedback">
-                          {errors.city?.message}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="state" className="input-label">
-                          State
-                        </Label>
-                        <input
-                          placeholder="Enter State"
-                          name="state"
-                          type="text"
-                          id="state"
-                          {...register("state")}
-                          className="field-input placeholder-text form-control"
-                        />
-
-                        <div className="invalid-feedback">
-                          {errors.state?.message}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <FormGroup check>
-                        <Input
-                          name="currentlyWorking"
-                          id="currentlyWorking"
-                          {...register("currentlyWorking")}
-                          type="checkbox"
-                        />{" "}
-                        <Label check className="input-label">
-                          Currently Working
-                        </Label>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-
-                  <Row className="mt-2">
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="gender" className="input-label">
-                          From Date
-                        </Label>
-                        <InputGroup>
-                          <div className="input-group-text">
-                            <FontAwesomeIcon icon={faCalendarAlt} />
-                          </div>
-                          <DatePicker
-                            name="fromDate"
-                            id="fromDate"
-                            className={`field-input placeholder-text form-control ${
-                              errors.fromDate ? "is-invalid" : ""
-                            }`}
-                            placeholderText="DD/MM/YYYY"
-                            {...register("fromDate")}
-                          />
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="gender" className="input-label">
-                          To Date
-                        </Label>
-                        <InputGroup>
-                          <div className="input-group-text">
-                            <FontAwesomeIcon icon={faCalendarAlt} />
-                          </div>
-                          <DatePicker
-                            name="toDate"
-                            id="toDate"
-                            className="form-control"
-                            placeholderText="DD/MM/YYYY"
-                            {...register("toDate")}
-                          />
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <div className="float-end">
-                    <Button className="me-2 save-btn" type="submit">
-                      Save
-                    </Button>
-                    <Button
-                      type="button"
-                      className="close-btn"
-                      onClick={() => setEditModal(false)}
-                    >
-                      Close
-                    </Button>
-                  </div>
-                </Form>
-              </div>
+              <QualificationModal
+                onCallBack={handlePageChange}
+                selected={selectedData}
+                check={"edit"}
+              />
             </ModalBody>
           </Modal>
         </div>
       ) : (
         <></>
       )}
+      <Modal
+        className="modal-reject-align profile-view"
+        isOpen={deleteConfirmation}
+      >
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              want to delete the Qualification!!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setDeleteConfirm(false)}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    className="success-close-btn"
+                    onClick={(evt) => setDeleteConfirm(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
     </div>
   );
 }

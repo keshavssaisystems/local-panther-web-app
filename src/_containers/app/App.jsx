@@ -122,7 +122,7 @@ export function App() {
                 }
               />
               <Route
-                path="/candidate-profile"
+                path="/profile"
                 element={
                   <PrivateRoute>
                     <CandidateProfile />
