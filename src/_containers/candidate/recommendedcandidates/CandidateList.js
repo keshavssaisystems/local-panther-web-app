@@ -106,8 +106,8 @@ export const CandidateList = (props) => {
       props.type === "candidate"
         ? "Applied"
         : props.type === "accepted"
-        ? "Accepted"
-        : "Rejected";
+          ? "Accepted"
+          : "Rejected";
     let url =
       "JobApplications/GetJobAppliedCandidatesList/" +
       jobId +
@@ -484,8 +484,8 @@ export const CandidateList = (props) => {
                       {col.cityname && col.statename
                         ? col.cityname + " , " + col.statename
                         : col.cityname
-                        ? col.cityname
-                        : col.statename}
+                          ? col.cityname
+                          : col.statename}
                     </td>
 
                     <td>

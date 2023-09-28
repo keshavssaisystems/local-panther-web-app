@@ -19,6 +19,7 @@ import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
+import { CandidateTablist } from "_containers/candidate/candidateTablist";
 import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 
@@ -51,6 +52,14 @@ export function App() {
                 element={
                   <PrivateRoute>
                     <JobList />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/candidate-tablist"
+                element={
+                  <PrivateRoute>
+                    <CandidateTablist />
                   </PrivateRoute>
                 }
               />
@@ -128,6 +137,7 @@ export function App() {
                 path="/customer-candidate-matched/:id"
                 element={<CustomerCandidateLists type={"matched"} />}
               />
+
               <Route
                 path="/customer-candidate-liked/:id"
                 element={<CustomerCandidateLists type={"liked"} />}

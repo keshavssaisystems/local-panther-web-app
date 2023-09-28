@@ -51,7 +51,7 @@ export default function SearchPreviousJob() {
       setShowButton(false);
     }
   };
-  const handlePageChange = () => {};
+  const handlePageChange = () => { };
   return (
     <>
       <Row className="mt-4">

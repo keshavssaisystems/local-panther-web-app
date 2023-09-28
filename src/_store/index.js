@@ -14,7 +14,7 @@ import { noticePeriodReducer } from "../_components/dropdownComponents/noticePer
 import { applyForJobReducer } from "../_containers/candidate/applyForJob.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "../_containers/candidate/recommendejobList.slice";
-import { departmentReducer } from "../_components/dropdownComponents/department.slice";
+import { departmentReducer } from "../_components/dropdownComponents/department.slice.js";
 import { empmodeReducer } from "./dropdownempmode.slice";
 import { candidateListsReducer } from "_containers/customer/candidatelists/candidatelists.slice";
 

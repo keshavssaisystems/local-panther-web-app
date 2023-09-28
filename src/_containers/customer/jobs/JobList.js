@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
+// import { JobListing } from "../../../_components/job/JobListing";
 import { JobListing } from "../../../_components/job/JobListing";
 import { useDispatch, useSelector } from "react-redux";
 import { jobListActions } from "_store";
