@@ -41,6 +41,7 @@ import {
 import { useDispatch } from "react-redux";
 
 import "./profile.scss";
+import { profileSkillsActions } from "_store";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
@@ -174,7 +175,7 @@ export function CandidateSkills(props) {
       let id = JSON.parse(localStorage.getItem("userDetails")).InternalUserId;
       let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
 
-      let data = selectedSkillData.map(({ ...rest }) => {
+      let payload = selectedSkillData.map(({ ...rest }) => {
         return {
           candidateid: id,
           yearsofexperience: `${rest.experience}`,
@@ -185,12 +186,8 @@ export function CandidateSkills(props) {
         };
       });
       debugger;
-      const currentUserId = Number(
-        JSON.parse(localStorage.getItem("userDetails")).UserId
-      );
-      let response = await dispatch(
-        profileActions.addSkills(id, currentUserId, data)
-      );
+      dispatch(profileSkillsActions.updateSkillThunk(id, payload));
+
       debugger;
     }
   };

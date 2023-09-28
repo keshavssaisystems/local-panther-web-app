@@ -29,6 +29,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DatePicker from "react-datepicker";
 
 export function QualificationModal(props) {
+  debugger;
   const [check, setCheck] = useState(props.check);
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
@@ -53,8 +54,8 @@ export function QualificationModal(props) {
     } else {
       data.push({
         id: 0,
-        jobTitle: props.selected.jobTitle,
-        organization: props.selected.organization,
+        jobTitle: props.selected.jobtitle,
+        organization: props.selected.company,
         jobDescription: props.selected.jobDescription,
         error: false,
       });

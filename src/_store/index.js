@@ -35,6 +35,7 @@ import { durationReducer } from "_containers/customer/scheduleInterview/duration
 import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
 import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
 import { getProfileReducer } from "./getProfile.slice";
+import { profileSkillsReducer } from "./profileSkills.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -73,6 +74,7 @@ export * from "./candidateProfile.slice";
 export * from "./dropdownGender.slice";
 export * from "./dropdownRaceEtnicity.slice";
 export * from "./getProfile.slice";
+export * from "./profileSkills.slice";
 
 export const store = configureStore({
   reducer: {
@@ -112,5 +114,6 @@ export const store = configureStore({
     profileReducer: profileReducer,
     ethnicity: ethnicityReducer,
     getProfile: getProfileReducer,
+    profileSkills: profileSkillsReducer,
   },
 });

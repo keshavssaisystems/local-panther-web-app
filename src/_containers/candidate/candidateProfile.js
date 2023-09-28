@@ -214,7 +214,10 @@ export function CandidateProfile() {
           </Row>
           <Row>
             <Col>
-              <CandidateQualification />
+              <CandidateQualification
+                qualificationInfo={profileData.qualificationsInfo}
+                onCallBack={() => loadPage}
+              />
             </Col>
             <Col>
               <CandidateEducation />

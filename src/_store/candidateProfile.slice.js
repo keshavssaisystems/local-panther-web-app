@@ -17,6 +17,9 @@ const resumeDeleteReducer = deleteResumeReducer();
 const addSkillReducer = addSkillsReducer();
 const addSkillAction = addSkillsActions();
 
+const qualificationDeleteActions = deleteQualificationActions();
+const qualificationRemoveReducer = deleteQualificationReducer();
+
 const slice = createSlice({
   name,
   initialState,
@@ -25,6 +28,7 @@ const slice = createSlice({
   resumeAddReducer,
   resumeDeleteReducer,
   addSkillReducer,
+  qualificationRemoveReducer,
 });
 
 const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
@@ -37,8 +41,11 @@ export const profileActions = {
   ...addResumeAction,
   ...deleteResumeActions,
   ...addSkillAction,
+  ...qualificationDeleteActions,
 };
 export const profileReducer = slice.reducer;
+
+const candidateId = JSON.parse(localStorage.getItem("userDetails")).UserId;
 
 function createInitialState() {
   return {
@@ -236,11 +243,12 @@ function addSkillsActions() {
     return createAsyncThunk(
       `${name}/addSkills`,
 
-      async (id, currentUserId, data) =>
+      async (id, skills_data) => {
         await fetchWrapper.put(
-          `${baseUrl}/CandidateSkill/UpdateCandidateSkill/${id}/${currentUserId}`,
-          data
-        )
+          `${baseUrl}/CandidateSkill/UpdateCandidateSkill/${id}/${candidateId}`,
+          skills_data
+        );
+      }
     );
   }
 }
@@ -258,6 +266,41 @@ function addSkillsReducer() {
         .addCase(fulfilled, (state, action) => {
           state.personalInfo = true;
         })
+        .addCase(rejected, (state, action) => {
+          state.error = action.error;
+        });
+    }
+  };
+}
+
+function deleteQualificationActions() {
+  return {
+    deleteQualification: deleteQualification(),
+  };
+
+  function deleteQualification() {
+    return createAsyncThunk(
+      `${name}/Candidate/deleteQualification`,
+      async (id) =>
+        await fetchWrapper.delete(
+          `https://panther-api-dev.azurewebsites.net/api/CandidateQualifications/${id}`
+        )
+    );
+  }
+}
+
+function deleteQualificationReducer() {
+  return (builder) => {
+    deleteQualification();
+
+    function deleteQualification() {
+      var { pending, fulfilled, rejected } =
+        qualificationDeleteActions.deleteQualification;
+      builder
+        .addCase(pending, (state) => {
+          state.error = null;
+        })
+        .addCase(fulfilled, (state, payload) => {})
         .addCase(rejected, (state, action) => {
           state.error = action.error;
         });

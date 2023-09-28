@@ -21,6 +21,7 @@ import {
   FormGroup,
   Form,
 } from "reactstrap";
+import { profileActions } from "_store";
 
 import "./profile.scss";
 import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
@@ -37,76 +38,22 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
+import { useDispatch, useSelector } from "react-redux";
 
 export function CandidateQualification(props) {
+  debugger;
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [tabs, setTabs] = useState([
     { id: 1, title: "Tab 1", content: <QualificationModal /> },
   ]);
 
+  const dispatch = useDispatch();
   const [editModal, setEditModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
   const [selectedData, setSelectedData] = useState({});
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
-  const [qualificationDetails, setDetails] = useState([
-    {
-      id: 1,
-      jobTitle: "Lead Java Developer (Consultant 1)",
-      organization: "Saisystems Technology",
-      city: "California",
-      state: "Los Angeles",
-      country: "United States",
-      zipCode: 90001,
-      fromDate: "September 2021",
-      toDate: "Present",
-      experience: "2 years 1 month",
-      jobDescription:
-        "Seeking a skilled Java developer to design,develop,and maintain high-performance Java applications.Strong expertise in Java Programming,data integration,and web development. Proficiency in Java frameworks like Spring and Hibernate.Knowledge of front-end technologies version controls,and testing frameworks,version Controls,and testing frameworks.Colloborative team player with problem solving skills.Join us to create cutting-edge software solutions.",
-    },
-    {
-      id: 2,
-      jobTitle: "Lead UI Developer (Consultant 1)",
-      organization: "Saisystems Technology",
-      city: "Pune",
-      state: "Maharastra",
-      country: "India",
-      zipCode: 90001,
-      fromDate: "September 2021",
-      toDate: "Present",
-      experience: "2 years 1 month",
-      jobDescription:
-        "Seeking a skilled Java developer to design,develop,and maintain high-performance Java applications.Strong expertise in Java Programming,data integration,and web development. Proficiency in Java frameworks like Spring and Hibernate.Knowledge of front-end technologies version controls,and testing frameworks,version Controls,and testing frameworks.Colloborative team player with problem solving skills.Join us to create cutting-edge software solutions.",
-    },
-    {
-      id: 3,
-      jobTitle: "Lead UI Developer (Consultant 1)",
-      organization: "Saisystems Technology",
-      city: "Pune",
-      state: "Maharastra",
-      country: "India",
-      zipCode: 90001,
-      fromDate: "September 2021",
-      toDate: "Present",
-      experience: "2 years 1 month",
-      jobDescription:
-        "Seeking a skilled Java developer to design,develop,and maintain high-performance Java applications.Strong expertise in Java Programming,data integration,and web development. Proficiency in Java frameworks like Spring and Hibernate.Knowledge of front-end technologies version controls,and testing frameworks,version Controls,and testing frameworks.Colloborative team player with problem solving skills.Join us to create cutting-edge software solutions.",
-    },
-    {
-      id: 4,
-      jobTitle: "Lead UI Developer (Consultant 1)",
-      organization: "Saisystems Technology",
-      city: "Pune",
-      state: "Maharastra",
-      country: "India",
-      zipCode: 90001,
-      fromDate: "September 2021",
-      toDate: "Present",
-      experience: "2 years 1 month",
-      jobDescription:
-        "Seeking a skilled Java developer to design,develop,and maintain high-performance Java applications.Strong expertise in Java Programming,data integration,and web development. Proficiency in Java frameworks like Spring and Hibernate.Knowledge of front-end technologies version controls,and testing frameworks,version Controls,and testing frameworks.Colloborative team player with problem solving skills.Join us to create cutting-edge software solutions.",
-    },
-  ]);
+  const [qualificationDetails, setDetails] = useState(props.qualificationInfo);
 
   const [countryList, setCountryList] = useState([
     {
@@ -118,6 +65,15 @@ export function CandidateQualification(props) {
       type: "India",
     },
   ]);
+
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    const formattedDate = new Date(dateString).toLocaleDateString(
+      undefined,
+      options
+    );
+    return formattedDate;
+  };
 
   const validationSchema = Yup.object().shape({
     jobTitle: Yup.string().required("Job Title is required").max(50),
@@ -148,7 +104,16 @@ export function CandidateQualification(props) {
     setSelectedData(data);
     setEditModal(true);
   };
+  const deleteData = async function (id) {
+    debugger;
+    let response = await dispatch(profileActions.deleteQualification(id));
+    debugger;
+    setDeleteConfirm(true);
+  };
 
+  const loadData = function () {
+    props.onCallBack();
+  };
   const [newTabId, setNewTabId] = useState(2);
   const addMoreTabs = function () {
     const newTab = {
@@ -194,7 +159,7 @@ export function CandidateQualification(props) {
                   <div>
                     <Col>
                       <strong className="me-2 content-title">
-                        {item.jobTitle}{" "}
+                        {item.jobtitle}{" "}
                       </strong>
                       <BsPencil
                         className="icons"
@@ -202,31 +167,33 @@ export function CandidateQualification(props) {
                       />{" "}
                       <BsTrash3
                         className="icons"
-                        onClick={() => setDeleteConfirm(true)}
+                        onClick={() =>
+                          deleteData(item.candidatequalificationid)
+                        }
                       />
                     </Col>
 
                     <p className="mb-0 card-p-text-black">
-                      {item.organization}
+                      {item.company}
                       {", "}
-                      {item.city}
+                      {item.cityname}
                       {", "}
-                      {item.state}
+                      {item.statename}
                       {", "}
-                      {item.country}
+                      {item.countryname}
                       {", "}
                       {item.zipCode}
                       {"  "}
                     </p>
                     <p className="card-p-text-black">
-                      {item.fromDate}
+                      {formatDate(item.startdate)}
                       {" to "}
-                      {item.toDate}
-                      {" ("}
+                      {formatDate(item.enddate)}
+                      {/* {" ("}
                       {item.experience}
-                      {")"}
+                      {")"} */}
                     </p>
-                    <p className="card-p-text">{item.jobDescription}</p>
+                    {/* <p className="card-p-text">{item.jobDescription}</p> */}
                   </div>
                 ))}
               </Row>
@@ -290,31 +257,31 @@ export function CandidateQualification(props) {
                       <div>
                         <Col>
                           <strong className="me-2 content-title">
-                            {item.jobTitle}{" "}
+                            {item.jobtitle}{" "}
                           </strong>
                         </Col>
 
                         <p className="mb-0 card-p-text-black">
-                          {item.organization}
+                          {item.company}
                           {", "}
-                          {item.city}
+                          {item.cityname}
                           {", "}
-                          {item.state}
+                          {item.statename}
                           {", "}
-                          {item.country}
+                          {item.countryname}
                           {", "}
                           {item.zipCode}
                           {"  "}
                         </p>
                         <p className="card-p-text-black">
-                          {item.fromDate}
+                          {formatDate(item.startdate)}
                           {" to "}
-                          {item.toDate}
+                          {formatDate(item.enddate)}
                           {" ("}
                           {item.experience}
                           {")"}
                         </p>
-                        <p className="card-p-text">{item.jobDescription}</p>
+                        {/* <p className="card-p-text">{item.jobDescription}</p> */}
                       </div>
                     ))}
                   </Row>
@@ -368,26 +335,20 @@ export function CandidateQualification(props) {
               <img src={errorIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              Are you sure
+              Qualification Deleted Successfully
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Qualification!!
+              Thank you!
             </div>
             <div>
               <Row>
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => setDeleteConfirm(false)}
+                    onClick={(evt) => loadData()}
                   >
-                    YES
-                  </Button>
-                  <Button
-                    className="success-close-btn"
-                    onClick={(evt) => setDeleteConfirm(false)}
-                  >
-                    NO
+                    OK
                   </Button>
                 </Col>
               </Row>
