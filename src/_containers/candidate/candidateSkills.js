@@ -25,6 +25,7 @@ import {
   Form,
 } from "reactstrap";
 import { profileActions } from "_store";
+import axios from "axios";
 import { SkillsFilter } from "../../_components/dropdownComponents/SkillsFilter";
 import { getSkillsFilter } from "_store";
 
@@ -42,6 +43,8 @@ import { useDispatch } from "react-redux";
 
 import "./profile.scss";
 import { profileSkillsActions } from "_store";
+import errorIcon from "../../assets/utils/images/error_icon.png";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
@@ -54,20 +57,46 @@ export function CandidateSkills(props) {
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
 
-  const customStyles = {
-    valueContainer: (provided, state) => ({
-      ...provided,
-      minHeight: "30px",
-      padding: "0 6px",
-    }),
-    input: (provided, state) => ({
-      ...provided,
-      margin: "0px",
-    }),
+  const config = {
+    headers: {
+      "content-type": "application/json",
+    },
   };
 
-  const [selectedData, setSelectedData] = useState({});
+  useEffect(() => {
+    setPreData();
+  }, []);
 
+  const setPreData = function () {
+    let data = [...skillsMultiple];
+
+    let selectedData = [...selectedSkillData];
+
+    data = getResponse.map(({ ...rest }) => {
+      return {
+        value: rest.skillid,
+        label: rest.skillname,
+      };
+    });
+
+    selectedData = getResponse.map(({ ...rest }) => {
+      return {
+        id: rest.skillid,
+        name: rest.skillname,
+        experience: rest.yearsofexperience,
+      };
+    });
+
+    setSkillsMultiple(data);
+    setSelectedSkillData(selectedData);
+  };
+
+  const closeModal = function () {
+    setSuccess(false);
+    setError(false);
+    props.onCallBack();
+  };
+  const [selectedData, setSelectedData] = useState({});
   const [skills, setSkills] = useState([]);
   const [skillsTemp, setSkillsTemp] = useState([]);
 
@@ -99,6 +128,7 @@ export function CandidateSkills(props) {
   ]);
 
   const removeSkills = function (data) {
+    debugger;
     let filter_data = skills.find((x) => x.value == data.value);
     if (data) {
       let new_array = [...skills];
@@ -109,7 +139,13 @@ export function CandidateSkills(props) {
     let multiple_skills_new = multiple_skills.filter(function (obj) {
       return obj.value !== data.value;
     });
+
+    let data_new = selectedSkillData.filter(function (obj) {
+      return obj.id !== data.value;
+    });
+
     setSkillsMultiple(multiple_skills_new);
+    setSelectedSkillData(data_new);
   };
 
   useEffect(() => {
@@ -175,18 +211,22 @@ export function CandidateSkills(props) {
       let id = JSON.parse(localStorage.getItem("userDetails")).InternalUserId;
       let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
 
-      let payload = selectedSkillData.map(({ ...rest }) => {
+      let payload = selectedSkillData.map((rest) => {
         return {
-          candidateid: id,
-          yearsofexperience: `${rest.experience}`,
-          candidateskillid: `${rest.id}`,
-          skillid: `${rest.id}`,
-          currentUserId: `${rest.userId}`,
+          candidateid: Number(id),
+          yearsofexperience:
+            rest.experience == "" ? 0 : parseInt(rest.experience),
+          skillid: rest.id,
+          currentUserId: parseInt(userId),
           isactive: true,
         };
       });
-      debugger;
-      dispatch(profileSkillsActions.updateSkillThunk(id, payload));
+
+      console.log(payload);
+      const candidateId = JSON.parse(
+        localStorage.getItem("userDetails")
+      ).UserId;
+      dispatch(profileSkillsActions.updateSkillThunk({ id, payload, userId }));
 
       debugger;
     }
@@ -213,13 +253,21 @@ export function CandidateSkills(props) {
     });
     setSkills(filtered_data);
   };
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
 
-  const removeView = function (data) {
-    let new_array = [...viewSkills];
-    let data_new = new_array.filter(function (obj) {
-      return obj.skillname !== data.skillname;
-    });
-    setViewSkills(data_new);
+  const removeView = async function (data) {
+    debugger;
+    let id = data.candidateskillid;
+    let response = await dispatch(profileSkillsActions.deleteSkillThunk(id));
+    debugger;
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
+    }
   };
 
   const onSelectExperience = function (selectedSkill, data) {
@@ -241,7 +289,7 @@ export function CandidateSkills(props) {
       <div className="profile-view">
         <Row>
           <Col sm="12" lg="12">
-            <Card className="main-card mb-3" style={{ height: "168%" }}>
+            <Card className="main-card mb-3">
               <div className="mt-3" style={{ marginLeft: "10px" }}>
                 <Row className="mb-3">
                   <Col>
@@ -267,10 +315,12 @@ export function CandidateSkills(props) {
                     >
                       <strong className="skills-view-text">
                         {" "}
-                        {item.skillname + ", "}
+                        {item.skillname + " "}
                       </strong>
                       <span className="skills-exp-text me-1">
-                        {item.yearsofexperience + " "}
+                        {item.yearsofexperience
+                          ? item.yearsofexperience + "years "
+                          : ""}
                       </span>
                       <span
                         aria-hidden="true"
@@ -358,6 +408,7 @@ export function CandidateSkills(props) {
                                   onChange={(evt) =>
                                     onSelectExperience(item, evt.target.value)
                                   }
+                                  // value={getExpLabel(item.experience)}
                                 >
                                   <option key={0}>
                                     Select experience level
@@ -426,6 +477,64 @@ export function CandidateSkills(props) {
       ) : (
         <></>
       )}
+
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              {message}
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Thank you!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Something went wrong
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again later
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
     </div>
   );
 }

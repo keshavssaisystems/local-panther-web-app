@@ -17,12 +17,14 @@ import Tabs from "react-responsive-tabs";
 import { profileActions } from "_store";
 import { useDispatch } from "react-redux";
 import { BsDownload, BsTrash3, BsUpload } from "react-icons/bs";
+import axios from "axios";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
 import editIcon from "../../assets/utils/images/pencil.svg";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDropzone } from "react-dropzone";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 
@@ -64,6 +66,11 @@ export function ResumeDetails(props) {
 
   const addEditResume = async function (acceptedFiles) {
     let response;
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    };
     debugger;
     if (resumeDetails) {
       const form = new FormData();
@@ -80,28 +87,53 @@ export function ResumeDetails(props) {
         JSON.parse(localStorage.getItem("userDetails")).UserId
       );
       let candidateresumeid = resumeDetails.candidateresumeid;
-      response = await dispatch(
-        await profileActions.updateResume(candidateresumeid, form)
-      );
+
+      axios
+        .put(
+          "https://panther-api-dev.azurewebsites.net/PutResume/" +
+            resumeDetails.candidateresumeid,
+          form,
+          config
+        )
+        .then((result) => {
+          debugger;
+          if (result.data.statusCode == 204) {
+            setSuccess(true);
+          } else {
+            setError(true);
+          }
+        })
+        .catch((error) => {
+          debugger;
+        });
     } else {
       const form = new FormData();
-      debugger;
       form.append(
         "Candidateid",
         JSON.parse(localStorage.getItem("userDetails")).InternalUserId
       );
       form.append("Resumefile", acceptedFiles[0]);
 
-      response = await dispatch(profileActions.addResume(form));
-    }
-    if (response.payload) {
-      if (response.payload.status == "Success") {
-        setSuccess(true);
-      } else {
-        setError(true);
-      }
-    } else {
-      setError(true);
+      axios
+        .post(
+          "https://panther-api-dev.azurewebsites.net/PostResume",
+          form,
+          config
+        )
+        .then((result) => {
+          if (result.payload) {
+            if (result.payload.status == "Success") {
+              setSuccess(true);
+            } else {
+              setError(true);
+            }
+          } else {
+            setError(true);
+          }
+        })
+        .catch((error) => {
+          debugger;
+        });
     }
 
     // props.onCallBack();
@@ -378,7 +410,7 @@ export function ResumeDetails(props) {
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
-              <img src={errorIcon} alt="success-icon" />
+              <img src={successIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
               Resume Uploaded Successfully

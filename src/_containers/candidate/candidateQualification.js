@@ -175,15 +175,10 @@ export function CandidateQualification(props) {
 
                     <p className="mb-0 card-p-text-black">
                       {item.company}
-                      {", "}
                       {item.cityname}
-                      {", "}
                       {item.statename}
-                      {", "}
                       {item.countryname}
-                      {", "}
                       {item.zipCode}
-                      {"  "}
                     </p>
                     <p className="card-p-text-black">
                       {formatDate(item.startdate)}

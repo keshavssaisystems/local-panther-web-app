@@ -46,6 +46,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
+
+import errorIcon from "../../assets/utils/images/error_icon.png";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 import {
   profileActions,
   getProfileActions,
@@ -73,15 +76,46 @@ export function PersonalInformation(props) {
     stateError: false,
   });
 
-  const [countryList, setCountryList] = useState([]);
-  const [stateList, setStateList] = useState([]);
-  const [cityList, setCityList] = useState([]);
-
   const [citySelect, setCitySelect] = useState([]);
   const [stateSelect, setStateSelect] = useState([]);
   const [countrySelect, setCountrySelect] = useState([]);
   const [raceSelect, setRaceSelect] = useState([]);
   const [genderSelect, setGenderSelect] = useState([]);
+  useEffect(() => {
+    loadSelectedData();
+  }, []);
+  const loadSelectedData = function () {
+    debugger;
+    let countryData = [...countrySelect];
+    countryData.push(props.dropDownData.selectedCountry);
+
+    setCountrySelect(countryData);
+
+    let stateData = [...stateSelect];
+    stateData.push(props.dropDownData.selectedState);
+    setStateSelect(stateData);
+
+    let cityData = [...citySelect];
+    cityData.push(props.dropDownData.selectedCity);
+    setCitySelect(cityData);
+
+    let genderData = [...genderSelect];
+    genderData.push(props.dropDownData.selectedGender);
+    setGenderSelect(genderData);
+
+    let ethnicityData = [...raceSelect];
+    ethnicityData.push(props.dropDownData.selectedEthnicity);
+    setRaceSelect(ethnicityData);
+  };
+
+  const [countryList, setCountryList] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
+
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
+
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const [dob, setDOB] = useState(new Date());
@@ -92,24 +126,35 @@ export function PersonalInformation(props) {
 
   const onSelectCityDropdown = function (data) {
     let error_data = { ...requiredErrors };
-    setCitySelect(data);
+    let new_data = [];
+    new_data.push(data);
+
+    setCitySelect(new_data);
     error_data.cityError = false;
     setRequiredErros(error_data);
   };
   const onSelectCountryDropdown = function (data) {
-    setCountrySelect(data);
+    let new_data = [];
+    new_data.push(data);
+    setCountrySelect(new_data);
   };
   const onSelectStateDropdown = function (data) {
     let error_data = { ...requiredErrors };
-    setStateSelect(data);
+    let new_data = [];
+    new_data.push(data);
+    setStateSelect(new_data);
     error_data.stateError = false;
     setRequiredErros(error_data);
   };
   const onSelectRaceDropdown = function (data) {
+    let new_data = [];
+    new_data.push(new_data);
     setRaceSelect(data);
   };
   const onSelectGenderDropdown = function (data) {
-    setGenderSelect(data);
+    let new_data = [];
+    new_data.push(data);
+    setGenderSelect(new_data);
   };
 
   function maskPhoneNumber(phoneNumber) {
@@ -145,11 +190,16 @@ export function PersonalInformation(props) {
     if (errors.cityError || errors.stateError) return;
 
     let new_data = { ...selectedCandidate };
-    new_data.personalInfo.cityid = citySelect.value;
-    new_data.personalInfo.countryid = countrySelect.value;
-    new_data.personalInfo.stateid = stateSelect.value;
-    new_data.personalInfo.genderid = genderSelect.value;
-    new_data.personalInfo.ethnicityid = raceSelect.value;
+    debugger;
+    new_data.personalInfo.cityid = citySelect[0].value;
+    new_data.personalInfo.countryid = countrySelect[0]
+      ? countrySelect[0].value
+      : 0;
+    new_data.personalInfo.stateid = stateSelect[0].value;
+    new_data.personalInfo.genderid = genderSelect[0]
+      ? genderSelect[0].value
+      : 0;
+    new_data.personalInfo.ethnicityid = raceSelect[0] ? raceSelect[0].value : 0;
 
     if (
       new_data.personalInfo.firstname == "" ||
@@ -183,6 +233,12 @@ export function PersonalInformation(props) {
       let response = await dispatch(
         profileActions.insertPersonalInfo(post_data)
       );
+      if (response.payload) {
+        setSuccess(true);
+        setMessage(response.payload.message);
+      } else {
+        setError(true);
+      }
       setContactModal(false);
     }
   }
@@ -196,6 +252,11 @@ export function PersonalInformation(props) {
   const close = function () {
     setContactModal(false);
     // props.onCallBack();
+  };
+  const closeModal = function () {
+    setSuccess(false);
+    setError(false);
+    props.onCallBack();
   };
 
   useEffect(() => {
@@ -584,6 +645,7 @@ export function PersonalInformation(props) {
                         loadOptions={loadOptions}
                         isMulti={false}
                         value={citySelect}
+                        // defaultOptions={citySelect}
                         onChange={(evt) => onSelectCityDropdown(evt)}
                         styles={{
                           borderColor: requiredErrors.stateError
@@ -721,7 +783,10 @@ export function PersonalInformation(props) {
                           onHandleInputChange("work", evt.target.value)
                         }
                       />{" "}
-                      <Label check className="input-label">
+                      <Label
+                        check={selectedCandidate.personalInfo.readyToWork}
+                        className="input-label"
+                      >
                         Ready to work immediately
                       </Label>
                     </FormGroup>
@@ -747,6 +812,63 @@ export function PersonalInformation(props) {
       ) : (
         <></>
       )}
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              {message}
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Thank you!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Something went wrong
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again later
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
     </div>
   );
 }

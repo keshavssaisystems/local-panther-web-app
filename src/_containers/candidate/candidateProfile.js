@@ -202,7 +202,7 @@ export function CandidateProfile() {
               <ResumeDetails
                 resumeInfo={profileData.resumeInfo}
                 candidateDetails={profileData.personalInfo}
-                onCallBack={() => loadPage}
+                onCallBack={loadPage}
               />
             </Col>
             <Col>
