@@ -36,6 +36,7 @@ import { publishJobReducer } from "_containers/customer/createJob/publishjob.sli
 import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
 import { getProfileReducer } from "./getProfile.slice";
 import { profileSkillsReducer } from "./profileSkills.slice";
+import { qualificationsReducer } from "./qualificationSkills.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -75,6 +76,7 @@ export * from "./dropdownGender.slice";
 export * from "./dropdownRaceEtnicity.slice";
 export * from "./getProfile.slice";
 export * from "./profileSkills.slice";
+export * from "./qualificationSkills.slice";
 
 export const store = configureStore({
   reducer: {
@@ -115,5 +117,6 @@ export const store = configureStore({
     ethnicity: ethnicityReducer,
     getProfile: getProfileReducer,
     profileSkills: profileSkillsReducer,
+    qualifications: qualificationsReducer,
   },
 });

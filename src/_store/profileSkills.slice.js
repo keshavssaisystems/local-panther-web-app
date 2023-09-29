@@ -14,19 +14,9 @@ export const updateSkillThunk = createAsyncThunk(
   }
 );
 
-export const addQualificationThunk = createAsyncThunk(
-  `${name}/addQualificationThunk`,
-  async (id, qualification_data) => {
-    console.log(qualification_data);
-    const LOGIN_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/CandidateQualifications/${id}`;
-    return await fetchWrapper.put(LOGIN_END_POINT, qualification_data);
-  }
-);
-
 export const deleteSkillThunk = createAsyncThunk(
   `${name}/deleteSkillThunk`,
   async (id) => {
-    debugger;
     console.log("triggered--");
     const SKILL_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/CandidateSkill/${id}`;
     return await fetchWrapper.delete(SKILL_END_POINT);
@@ -57,14 +47,6 @@ const profileSkillSlice = createSlice({
     [deleteSkillThunk.rejected]: (state, action) => {
       state.error = action.error;
     },
-
-    [addQualificationThunk.pending]: (state, { payload }) => {
-      state.error = null;
-    },
-    [addQualificationThunk.fulfilled]: (state, payload) => {},
-    [addQualificationThunk.rejected]: (state, action) => {
-      state.error = action.error;
-    },
   },
 });
 
@@ -72,7 +54,6 @@ const profileSkillSlice = createSlice({
 export const profileSkillsActions = {
   ...profileSkillSlice.actions,
   updateSkillThunk,
-  addQualificationThunk,
   deleteSkillThunk,
 };
 

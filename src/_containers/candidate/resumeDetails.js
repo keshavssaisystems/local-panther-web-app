@@ -71,7 +71,7 @@ export function ResumeDetails(props) {
         "content-type": "multipart/form-data",
       },
     };
-    debugger;
+
     if (resumeDetails) {
       const form = new FormData();
       form.append("Candidateresumeid", resumeDetails.candidateresumeid);
@@ -96,16 +96,13 @@ export function ResumeDetails(props) {
           config
         )
         .then((result) => {
-          debugger;
           if (result.data.statusCode == 204) {
             setSuccess(true);
           } else {
             setError(true);
           }
         })
-        .catch((error) => {
-          debugger;
-        });
+        .catch((error) => {});
     } else {
       const form = new FormData();
       form.append(
@@ -131,9 +128,7 @@ export function ResumeDetails(props) {
             setError(true);
           }
         })
-        .catch((error) => {
-          debugger;
-        });
+        .catch((error) => {});
     }
 
     // props.onCallBack();

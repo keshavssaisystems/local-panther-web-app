@@ -41,7 +41,6 @@ import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 
 export function CandidateQualification(props) {
-  debugger;
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [tabs, setTabs] = useState([
     { id: 1, title: "Tab 1", content: <QualificationModal /> },
@@ -105,9 +104,8 @@ export function CandidateQualification(props) {
     setEditModal(true);
   };
   const deleteData = async function (id) {
-    debugger;
     let response = await dispatch(profileActions.deleteQualification(id));
-    debugger;
+
     setDeleteConfirm(true);
   };
 

@@ -128,7 +128,6 @@ export function CandidateSkills(props) {
   ]);
 
   const removeSkills = function (data) {
-    debugger;
     let filter_data = skills.find((x) => x.value == data.value);
     if (data) {
       let new_array = [...skills];
@@ -172,7 +171,6 @@ export function CandidateSkills(props) {
   };
 
   const onSelectPopSkills = function (data) {
-    debugger;
     let new_array = [...skillsMultiple];
     new_array.push(data);
     setSkillsMultiple(new_array);
@@ -227,8 +225,6 @@ export function CandidateSkills(props) {
         localStorage.getItem("userDetails")
       ).UserId;
       dispatch(profileSkillsActions.updateSkillThunk({ id, payload, userId }));
-
-      debugger;
     }
   };
   const loadOptions = async function (inputValue) {
@@ -258,10 +254,9 @@ export function CandidateSkills(props) {
   const [message, setMessage] = useState(false);
 
   const removeView = async function (data) {
-    debugger;
     let id = data.candidateskillid;
     let response = await dispatch(profileSkillsActions.deleteSkillThunk(id));
-    debugger;
+
     if (response.payload) {
       setSuccess(true);
       setMessage(response.payload.message);
@@ -271,7 +266,6 @@ export function CandidateSkills(props) {
   };
 
   const onSelectExperience = function (selectedSkill, data) {
-    debugger;
     const index = selectedSkillData.findIndex(
       (x) => x.id == selectedSkill.value
     );
@@ -280,7 +274,6 @@ export function CandidateSkills(props) {
     new_array[index].experience = data;
 
     setSelectedSkillData(new_array);
-    debugger;
   };
 
   return (

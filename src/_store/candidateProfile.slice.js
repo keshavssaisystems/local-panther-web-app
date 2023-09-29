@@ -239,7 +239,6 @@ function addSkillsActions() {
   };
 
   function addSkills() {
-    debugger;
     return createAsyncThunk(
       `${name}/addSkills`,
 

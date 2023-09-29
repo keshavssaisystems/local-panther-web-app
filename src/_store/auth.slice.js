@@ -8,7 +8,7 @@ const name = "auth";
 export const loginThunk = createAsyncThunk(
   `${name}/loginThunk`,
   async (payload) => {
-    const LOGIN_END_POINT = `${process.env.REACT_APP_USER_API_URL}/api/Auth/Login`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/Auth/Login`;
     return await fetchWrapper.post(LOGIN_END_POINT, payload);
   }
 );
@@ -17,7 +17,7 @@ export const loginThunk = createAsyncThunk(
 export const registerThunk = createAsyncThunk(
   `${name}/registerThunk`,
   async (payload) => {
-    const REGISTRATION_END_POINT = `${process.env.REACT_APP_USER_API_URL}/api/User/RegisterCandidateNew`;
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/User/RegisterCandidateNew`;
     return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
   }
 );
@@ -26,7 +26,7 @@ export const registerThunk = createAsyncThunk(
 export const forgotPasswordThunk = createAsyncThunk(
   `${name}/forgotPasswordThunk`,
   async (payload) => {
-    const REGISTRATION_END_POINT = `${process.env.REACT_APP_USER_API_URL}/api/User/ForgotUserPassword`;
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/User/ForgotUserPassword`;
     return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
   }
 );

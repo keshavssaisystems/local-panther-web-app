@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Label, Input } from "reactstrap";
-import { candidateActions } from "_store";
+import { qualificationSlice } from "_store";
 import {
   Row,
   Col,
@@ -64,8 +64,8 @@ export function QualificationModal(props) {
         cityid: 0,
         stateid: 0,
         iscurrentlyworking: true,
-        startdate: "",
-        enddate: "",
+        startdate: null,
+        enddate: null,
         isactive: true,
         currentUserId: 13960,
 
@@ -144,7 +144,7 @@ export function QualificationModal(props) {
     let new_data = [...formDetails];
     new_data.splice(index, 1);
     setFormData(new_data);
-    debugger;
+
     let state_details = [...stateSelect];
     let city_details = [...citySelect];
     let country_details = [...countrySelect];
@@ -166,7 +166,7 @@ export function QualificationModal(props) {
       console.log(formDetails);
       return;
     }
-    debugger;
+
     const newTab = {
       id: index,
       jobTitle: "",
@@ -212,7 +212,6 @@ export function QualificationModal(props) {
   };
 
   const onSelectCityDropdown = function (data, index) {
-    debugger;
     let form_details = [...formDetails];
     let city_details = [...citySelect];
     city_details.push(data);
@@ -246,7 +245,8 @@ export function QualificationModal(props) {
   };
 
   let user = JSON.parse(localStorage.getItem("userDetails"));
-  function onSubmit() {
+
+  async function onSubmit() {
     let new_data = [...formDetails];
 
     let filtered_data = formDetails.map(({ skillid: value, ...rest }) => {
@@ -265,56 +265,24 @@ export function QualificationModal(props) {
         currentUserId: rest.currentUserId,
       };
     });
-
+    let qualification_data = filtered_data[0];
+    let response;
     if (check == "edit") {
       let id = formDetails[0].id;
-
-      axios
-        .put(
-          "https://panther-api-dev.azurewebsites.net/api/CandidateQualifications/" +
-            id,
-          filtered_data[0],
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((result) => {
-          if (result.data.statusCode == 204) {
-            setSuccess(true);
-            setMessage(result.data.message);
-          } else {
-            setError(true);
-          }
-        })
-        .catch((error) => {});
+      response = await dispatch(
+        qualificationSlice.updateQualificationThunk({ id, qualification_data })
+      );
     } else {
-      axios
-        .post(
-          "https://panther-api-dev.azurewebsites.net/api/CandidateQualifications",
-          filtered_data[0],
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((result) => {
-          if (result.data.status == "Success") {
-            setSuccess(true);
-            setMessage(result.data.message);
-          } else {
-            setError(true);
-          }
-        })
-        .catch((error) => {});
+      response = await dispatch(
+        qualificationSlice.addQualificationThunk(filtered_data)
+      );
     }
-
-    // profileSkillsActions.addQualificationThunk(id, qualification_data)
-
-    setFormData(new_data);
-    setSave(false);
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
+    }
   }
   const selectDate = function () {};
 
@@ -323,7 +291,7 @@ export function QualificationModal(props) {
       {formDetails.map((item, index) => (
         <div>
           <Form id={index}>
-            {/* {check == "add" ? (
+            {check == "add" ? (
               <Row>
                 <Col>
                   {index < formDetails.length - 1 ? (
@@ -357,7 +325,7 @@ export function QualificationModal(props) {
               </Row>
             ) : (
               <></>
-            )} */}
+            )}
             <Row>
               <Col md={4}>
                 <FormGroup>

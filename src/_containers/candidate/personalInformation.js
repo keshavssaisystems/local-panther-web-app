@@ -61,7 +61,7 @@ import { getLocationFilter } from "_store";
 export function PersonalInformation(props) {
   console.log(props);
   const dispatch = useDispatch();
-  debugger;
+
   const [selectedCandidate, setSelectedCandidate] = useState({
     personalInfo: props.profileInfo.personalInfo,
     genderList: useSelector((state) => state.gender.genderList),
@@ -85,7 +85,6 @@ export function PersonalInformation(props) {
     loadSelectedData();
   }, []);
   const loadSelectedData = function () {
-    debugger;
     let countryData = [...countrySelect];
     countryData.push(props.dropDownData.selectedCountry);
 
@@ -190,7 +189,7 @@ export function PersonalInformation(props) {
     if (errors.cityError || errors.stateError) return;
 
     let new_data = { ...selectedCandidate };
-    debugger;
+
     new_data.personalInfo.cityid = citySelect[0].value;
     new_data.personalInfo.countryid = countrySelect[0]
       ? countrySelect[0].value
