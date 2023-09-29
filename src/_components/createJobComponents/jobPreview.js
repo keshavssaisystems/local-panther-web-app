@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Row, Col } from "reactstrap";
 import "./createJob.scss";
-// import { JobDetailsDummy } from "../../_containers/customer/createJob/dummyData";
 
 export default function JobPreview({ previewData, editdata }) {
   console.log(previewData);

@@ -134,16 +134,11 @@ export function BasicInformation({
     event.target.elements.city.value === ""
       ? setCityValidation(true)
       : setCityValidation(false);
-    // descriptionData === ""
-    //   ? setDescriptionValidation(true)
-    //   : setDescriptionValidation(false);
     if (
       event.target.elements.companyName.value !== "" &&
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.openPositions.value !== "" &&
       event.target.elements.city.value !== ""
-      // descriptionData !== "" &&
-      // data === undefined
     ) {
       saveData(event);
     }
@@ -323,14 +318,6 @@ export function BasicInformation({
               <Label for="city" className="fw-semi-bold">
                 City<span style={{ color: "red" }}>* </span>
               </Label>
-              {/* <Input
-                id={"city"}
-                name={"city"}
-                type={"text"}
-                defaultValue={preValue.cityId}
-                placeholder="Search city"
-                invalid={cityValidation === true ? true : false}
-              /> */}
               <AsyncSelect
                 name={"city"}
                 placeholder="Search city"
