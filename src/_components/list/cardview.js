@@ -1,19 +1,32 @@
 import React, { useState } from "react";
-import { Card, CardBody, CardFooter, Row, Col, Button } from "reactstrap";
 import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-  IoIosBriefcase,
-  IoIosStar,
-  IoIosAlbums,
-  IoIosTime,
-  IoIosLocate,
-} from "react-icons/io";
+  Card,
+  CardBody,
+  CardFooter,
+  Row,
+  Col,
+  Button,
+  ButtonGroup,
+} from "reactstrap";
+
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
+import { FiMapPin } from "react-icons/fi";
+import {
+  BsBriefcase,
+  BsListStars,
+  BsAward,
+  BsFillFlagFill,
+  BsHandThumbsUp,
+  BsFillHandThumbsUpFill,
+  BsStar,
+  BsQuestionCircle,
+  BsCheckCircle,
+  BsXCircle,
+  BsClock,
+} from "react-icons/bs";
+import "./cardview.scss";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -33,14 +46,11 @@ export const CandidateCardView = (props) => {
   };
   return (
     <>
-      <Card className="main-card mb-3">
+      <Card className="main-card mb-3 cust-cand-card">
         <CardBody>
           <Row>
             <Col className="col-12">
-              <span className="pe-2">
-                <IoIosAlbums fontSize={"16px"}></IoIosAlbums>
-              </span>
-              {props?.data?.jobtitle}
+              <div className="card-title">{props?.data?.jobtitle}</div>
             </Col>
 
             {/* <Col className="col-12">
@@ -49,70 +59,105 @@ export const CandidateCardView = (props) => {
               {props?.data?.firstname + "  " + props?.data?.lastname}
             </Col> */}
             <Col className="col-12">
-              <span className="pe-2">
-                <IoIosLocate fontSize={"16px"}></IoIosLocate>
-              </span>
-              {props?.data?.locationaddress}
+              <p className="card-details">
+                <span className="pe-2">
+                  <FiMapPin size={"16px"} />
+                </span>
+                {props?.data?.locationaddress}
+              </p>
+            </Col>
+
+            <Col className="col-12">
+              <p className="card-details">
+                <span className="pe-2">
+                  <BsBriefcase size={"16px"} />
+                </span>
+                Work Experience: {props?.data?.minexperience}-{" "}
+                {props?.data?.maxexperience} Years
+              </p>
             </Col>
             <Col className="col-12">
-              <span className="pe-2">
-                <IoIosBriefcase fontSize={"16px"}></IoIosBriefcase>
-              </span>
-
-              {props?.data?.email}
+              <p className="card-details">
+                <span className="pe-2">
+                  <BsListStars size={"16px"} />
+                </span>
+                Education: {props?.data?.jobSkillDtos}
+              </p>
             </Col>
             <Col className="col-12">
-              <span className="pe-2">
-                <IoIosStar fontSize={"16px"}></IoIosStar>
-              </span>
-
-              {props?.data?.primaryskills}
-              {props?.data?.secondaryskills}
+              <p className="card-details">
+                <span className="pe-2">
+                  <BsStar size={"16px"} />
+                </span>
+                Skills: {props?.data?.jobSkillDtos}
+              </p>
+            </Col>
+            <Col className="col-12">
+              <p className="card-details">
+                <span className="pe-2">
+                  <BsAward size={"16px"} />
+                </span>
+                Credentails MCP
+              </p>
             </Col>
           </Row>
         </CardBody>
         <CardFooter className="auto-margin">
-          <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
-            {/* <Col>
+          <Row noGutters>
+            <ButtonGroup size="sm">
+              {/* <Col>
               <Button
                 title="accept"
                 className=" btn-icon"
                 color="success"
                 onClick={() => onAcceptClick()}
               >
-                <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+                <BsCheckCircle />
               </Button>
             </Col> */}
-            <Col>
-              <Button title="liked" className=" btn-icon" color="primary">
-                <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
-              </Button>
-            </Col>
-            <Col>
-              <Button title="maybe" className=" btn-icon" color="primary">
-                <IoIosHelp fontSize={"24px"}></IoIosHelp>
-              </Button>
-            </Col>
-            <Col>
+
               <Button
+                outline
+                title="liked"
+                className="btn-icon"
+                color="primary"
+                size="sm"
+              >
+                Like <BsHandThumbsUp></BsHandThumbsUp>
+              </Button>
+
+              <Button
+                outline
+                title="maybe"
+                className="btn-icon"
+                color="primary"
+                size="sm"
+              >
+                Maybe <BsQuestionCircle></BsQuestionCircle>
+              </Button>
+
+              <Button
+                outline
                 title="reject"
                 className="btn-icon"
-                color="danger"
-                onClick={() => onRejectClick()}
-              >
-                <IoIosClose fontSize={"24px"}></IoIosClose>
-              </Button>
-            </Col>
-
-            <Col>
-              <Button
-                title="schedule"
-                className="mb-2 me-2 btn-icon"
                 color="primary"
+                onClick={() => onRejectClick()}
+                size="sm"
               >
-                <IoIosTime fontSize={"24px"}></IoIosTime>
+                Reject <BsXCircle></BsXCircle>
               </Button>
-            </Col>
+
+              <Button
+                outline
+                title="schedule"
+                className="btn-icon"
+                color="primary"
+                size="sm"
+              >
+                Schedule
+                <BsClock />
+              </Button>
+            </ButtonGroup>
           </Row>
         </CardFooter>
       </Card>

@@ -66,7 +66,7 @@ function createExtraActions() {
         jobId,
       }) =>
         await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&isCustomerLike=${isCustomerLike}&isCustomerMaybe=${isCustomerMaybe}&isCustomerAccepted=${isCustomerAccepted}&isCustomerReject=${isCustomerReject}&isCustomerScheduled=${isCustomerScheduled}&isCandidateApply=${isCandidateApply}&jobId=${jobId}`
+          `${newUrl}/CandidateRecommendedJob/GetRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&isCustomerLike=${isCustomerLike}&isCustomerMaybe=${isCustomerMaybe}&isCustomerAccepted=${isCustomerAccepted}&isCustomerReject=${isCustomerReject}&isCustomerScheduled=${isCustomerScheduled}&isCandidateApply=${isCandidateApply}`
         )
     );
   }
