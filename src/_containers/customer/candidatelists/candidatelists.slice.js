@@ -17,31 +17,56 @@ function createInitialState() {
   return {
     loading: false,
     jobLists: [],
+    rejectDrpDwnList: [],
+    candidateList: [],
+    totalRecords: 0,
   };
 }
 
 function createExtraActions() {
-  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
-
+  const newUrl = `${process.env.REACT_APP_NEW_API_URL}`;
   return {
-    getCandidateJobLists: getCandidateJobLists(),
+    getDrpDwnJobLists: getDrpDwnJobLists(),
+    getRejectDropDown: getRejectDropDown(),
+    getCandidateLists: getCandidateLists(),
   };
 
-  function getCandidateJobLists() {
+  function getDrpDwnJobLists() {
     return createAsyncThunk(
-      `${name}/getCandidateJobLists`,
+      `${name}/getDrpDwnJobLists`,
+
+      async () => await fetchWrapper.get(`${newUrl}/Job/GetJobDropdown`)
+    );
+  }
+
+  function getRejectDropDown() {
+    return createAsyncThunk(
+      `${name}/getRejectDropDown`,
+
+      async () =>
+        await fetchWrapper.get(
+          `${newUrl}/RejectionReason/GetRejectionReasonDropdown`
+        )
+    );
+  }
+
+  function getCandidateLists() {
+    return createAsyncThunk(
+      `${name}/getCandidateLists`,
 
       async ({
-        jobId,
-        pageNo,
-        searchText,
-        locationId,
-        employentModeId,
+        pageNumber,
         pageSize,
-        skillId,
+        isCustomerLike,
+        isCustomerMaybe,
+        isCustomerAccepted,
+        isCustomerReject,
+        isCustomerScheduled,
+        isCandidateApply,
+        jobId,
       }) =>
         await fetchWrapper.get(
-          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=&pageSize=${pageSize}&pageNumber=${pageNo}&searchText=${searchText}&jobLocationIds=${locationId}&employmentmodeid=${employentModeId}&skillIds=${skillId}`
+          `${newUrl}/CandidateRecommendedJob/GetRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&isCustomerLike=${isCustomerLike}&isCustomerMaybe=${isCustomerMaybe}&isCustomerAccepted=${isCustomerAccepted}&isCustomerReject=${isCustomerReject}&isCustomerScheduled=${isCustomerScheduled}&isCandidateApply=${isCandidateApply}&jobId=${jobId}`
         )
     );
   }
@@ -49,17 +74,58 @@ function createExtraActions() {
 
 function createExtraReducers() {
   return (builder) => {
-    getCandidateJobLists();
+    getDrpDwnJobLists();
+    getRejectDropDown();
+    getCandidateLists();
 
-    function getCandidateJobLists() {
-      let { pending, fulfilled, rejected } = extraActions.getCandidateJobLists;
+    function getDrpDwnJobLists() {
+      let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
         .addCase(pending, (state) => {
           state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
           state.loading = false;
-          state.jobLists = action.payload.data.jobList;
+          state.jobLists = action?.payload?.data ? action.payload.data : [];
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+        });
+    }
+
+    function getRejectDropDown() {
+      let { pending, fulfilled, rejected } = extraActions.getRejectDropDown;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.loading = false;
+          state.rejectDrpDwnList = action?.payload?.data
+            ? action?.payload?.data
+            : [];
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+        });
+    }
+
+    function getCandidateLists() {
+      let { pending, fulfilled, rejected } = extraActions.getCandidateLists;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.loading = false;
+          state.candidateList = action?.payload?.data
+            ?.candidateRecommendedJobDtoList
+            ? action?.payload?.data?.candidateRecommendedJobDtoList
+            : [];
+
+          state.totalRecords = action?.payload?.data?.totalRows
+            ? action?.payload?.data?.totalRows
+            : 0;
         })
         .addCase(rejected, (state, action) => {
           state.loading = false;
