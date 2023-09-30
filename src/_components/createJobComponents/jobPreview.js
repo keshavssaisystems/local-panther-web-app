@@ -1,9 +1,94 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Col } from "reactstrap";
 import "./createJob.scss";
-import { JobDetailsDummy } from "../../_containers/customer/createJob/dummyData";
 
-export default function DuplicateJob() {
+export default function JobPreview({ previewData, editdata }) {
+  console.log(previewData);
+  useEffect(() => {
+    editdata(previewData);
+  }, [previewData]);
+  let jobLocationData = "-";
+  let jobTypeData = "-";
+  let workScheduleData = "-";
+  let shiftData = "-";
+  let hiringTimelineData = "-";
+  let experinceLevelData = "-";
+  let payPeriodTypeData = "-";
+  if (
+    previewData.basicInformation.jobLocation !== "" &&
+    previewData.basicInformation.jobLoactionOptions !== undefined
+  ) {
+    previewData.basicInformation.jobLoactionOptions.forEach((element) => {
+      if (Number(previewData.basicInformation.jobLocation) === element.id) {
+        jobLocationData = element.name;
+      }
+    });
+  }
+  let jobTypeString = [];
+  if (previewData.experienceSchedule.jobType !== "") {
+    previewData.experienceSchedule.jobTypeOption.forEach((element) => {
+      if (previewData.experienceSchedule.jobType.includes(element.id)) {
+        jobTypeString.push(element.name);
+      }
+    });
+    jobTypeData = jobTypeString.toString();
+  }
+  let workScheduleString = [];
+  if (previewData.experienceSchedule.workSchedule !== "") {
+    previewData.experienceSchedule.workScheduleOptions.forEach((element) => {
+      if (previewData.experienceSchedule.workSchedule.includes(element.id)) {
+        workScheduleString.push(element.name);
+      }
+    });
+    workScheduleData = workScheduleString.toString();
+  }
+  let shiftString = [];
+  if (previewData.experienceSchedule.shift !== "") {
+    previewData.experienceSchedule.shiftsOption.forEach((element) => {
+      if (previewData.experienceSchedule.shift.includes(element.id)) {
+        shiftString.push(element.name);
+      }
+    });
+    shiftData = shiftString.toString();
+  }
+  if (previewData.experienceSchedule.hiringTimeline !== "") {
+    previewData.experienceSchedule.hiringTimelineOption.forEach((element) => {
+      if (
+        element.id === Number(previewData.experienceSchedule.hiringTimeline)
+      ) {
+        hiringTimelineData = element.name;
+      }
+    });
+  }
+  if (previewData.experienceSchedule.experienceLevel !== "") {
+    previewData.experienceSchedule.experienceLevelOption.forEach((element) => {
+      if (
+        Number(previewData.experienceSchedule.experienceLevel) === element.id
+      ) {
+        experinceLevelData = element.name;
+      }
+    });
+  }
+  if (previewData.paymentBenifits.payPeriodType !== "") {
+    previewData.paymentBenifits.payPeriodTypeOption.forEach((element) => {
+      if (Number(previewData.paymentBenifits.payPeriodType) === element.id) {
+        payPeriodTypeData = element.name;
+      }
+    });
+  }
+  let mustHaveArray = [];
+  let niceToHaveArray = [];
+  if (previewData.keyQualification.length > 0) {
+    let keyQualificationOption = previewData.keyQualification;
+    keyQualificationOption.forEach((element) => {
+      if (element.isrequired === true) {
+        mustHaveArray.push(element.skillname);
+      }
+      if (element.isrequired === false) {
+        niceToHaveArray.push(element.skillname);
+      }
+    });
+  }
   return (
     <>
       <Row className="mt-4">
@@ -17,14 +102,22 @@ export default function DuplicateJob() {
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Company name</h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {JobDetailsDummy.jobCompanyDtos.companyname}
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.companyId === undefined
+                      ? "-"
+                      : previewData.basicInformation.companyId}
                   </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job title</h6>
-                  <p className="mb-0 mt-1 mr-1">{JobDetailsDummy.jobtitle}</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.jobTitle === undefined
+                      ? "-"
+                      : previewData.basicInformation.jobTitle}
+                  </p>
                 </div>
               </Col>
               <Col>
@@ -33,14 +126,22 @@ export default function DuplicateJob() {
                     Number of positions
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {JobDetailsDummy.noofopenposition}
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.noOfPostions === undefined
+                      ? "-"
+                      : previewData.basicInformation.noOfPostions}
                   </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job location</h6>
-                  <p className="mb-0 mt-1 mr-1">{"Full Time"}</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.jobLocation === undefined
+                      ? "-"
+                      : jobLocationData}
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -49,26 +150,44 @@ export default function DuplicateJob() {
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Address</h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {"Centerville Country, AR-7"}
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.address === undefined
+                      ? "-"
+                      : previewData.basicInformation.address}
                   </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">City</h6>
-                  <p className="mb-0 mt-1 mr-1">{"Centreville"}</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.cityName === undefined
+                      ? "-"
+                      : previewData.basicInformation.cityName}
+                  </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">State</h6>
-                  <p className="mb-0 mt-1 mr-1">{"Arkansas"}</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.stateName === undefined
+                      ? "-"
+                      : previewData.basicInformation.stateName}
+                  </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Zip code</h6>
-                  <p className="mb-0 mt-1 mr-1">{"728 29"}</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.zipcode === undefined
+                      ? "-"
+                      : previewData.basicInformation.zipcode}
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -76,15 +195,27 @@ export default function DuplicateJob() {
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Description</h6>
-                  <p className="mb-2 mt-1 mr-1">
-                    {JobDetailsDummy.description}
-                  </p>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        previewData.basicInformation === undefined ||
+                        previewData.basicInformation.description === undefined
+                          ? "-"
+                          : previewData.basicInformation.description,
+                    }}
+                    className="mb-2 mt-1 mr-1"
+                  />
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Company details</h6>
-                  <p className="mb-2 mt-1 mr-1">{JobDetailsDummy.pitch}</p>
+                  <p className="mb-2 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.companyDetail === undefined
+                      ? "-"
+                      : previewData.basicInformation.companyDetail}
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -100,20 +231,33 @@ export default function DuplicateJob() {
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job Type</h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {JobDetailsDummy.employmentmodename}
+                    {previewData.experienceSchedule === undefined ||
+                    previewData.experienceSchedule.jobType === undefined
+                      ? "-"
+                      : jobTypeData}
+                  </p>
+                </div>
+              </Col>
+              <Col>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Work schedules</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.experienceSchedule === undefined ||
+                    previewData.experienceSchedule.workSchedule === undefined
+                      ? "-"
+                      : workScheduleData}
                   </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Experience level</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">Work schedules</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.experienceSchedule === undefined ||
+                    previewData.experienceSchedule.experienceLevel === undefined
+                      ? "-"
+                      : experinceLevelData}
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -121,13 +265,23 @@ export default function DuplicateJob() {
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Shifts</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.experienceSchedule === undefined ||
+                    previewData.experienceSchedule.shift === undefined
+                      ? "-"
+                      : shiftData}
+                  </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Hiring timeline</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.experienceSchedule === undefined ||
+                    previewData.experienceSchedule.hiringTimeline === undefined
+                      ? "-"
+                      : hiringTimelineData}
+                  </p>
                 </div>
               </Col>
               <Col></Col>
@@ -143,19 +297,34 @@ export default function DuplicateJob() {
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Pay period type</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.paymentBenifits === undefined ||
+                    previewData.paymentBenifits.payPeriodType === undefined
+                      ? "-"
+                      : payPeriodTypeData}
+                  </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Minimum amount</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.paymentBenifits === undefined ||
+                    previewData.paymentBenifits.minimumAmount === undefined
+                      ? "-"
+                      : previewData.paymentBenifits.minimumAmount}
+                  </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Maximum amount</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.paymentBenifits === undefined ||
+                    previewData.paymentBenifits.maximumAmount === undefined
+                      ? "-"
+                      : previewData.paymentBenifits.maximumAmount}
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -165,13 +334,24 @@ export default function DuplicateJob() {
                   <h6 className="mb-0 job-heading-custom">
                     Compensation package
                   </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.paymentBenifits === undefined ||
+                    previewData.paymentBenifits.compensationPackage ===
+                      undefined
+                      ? "-"
+                      : previewData.paymentBenifits.compensationPackage}
+                  </p>
                 </div>
               </Col>
               <Col>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Benefits</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.paymentBenifits === undefined ||
+                    previewData.paymentBenifits.benefits === undefined
+                      ? "-"
+                      : previewData.paymentBenifits.benefits}
+                  </p>
                 </div>
               </Col>
               <Col></Col>
@@ -196,13 +376,25 @@ export default function DuplicateJob() {
               <Col md={4}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Must have</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.keyQualification.length > 0
+                      ? mustHaveArray.length > 0
+                        ? mustHaveArray.toString()
+                        : "-"
+                      : "-"}
+                  </p>
                 </div>
               </Col>
               <Col md={4}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Nice to have</h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.keyQualification.length > 0
+                      ? niceToHaveArray.length > 0
+                        ? niceToHaveArray.toString()
+                        : "-"
+                      : "-"}
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -214,59 +406,17 @@ export default function DuplicateJob() {
           </p>
           <div className="information-section">
             <Row>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">
-                    Please list 2-3 dates and time ranges that you could do an
-                    interview
-                  </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">
-                    Will you be able to reliably commute to work location for
-                    this job?
-                  </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">
-                    Will you be able to relocate to be within reasonable
-                    commuting distance from work location?
-                  </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">
-                    Authorized to work in the United States:
-                  </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">
-                    Request pre-recorded screen:
-                  </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
-              <Col>
-                <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">
-                    How would you like applicants to record their answers?
-                  </h6>
-                  <p className="mb-0 mt-1 mr-1">-</p>
-                </div>
-              </Col>
+              {previewData.preScreen.length > 0 &&
+                previewData.preScreen.map((options) => (
+                  <Col md={4}>
+                    <div className="detail-padding">
+                      <h6 className="mb-0 job-heading-custom">
+                        {options.prescreenquestion}
+                      </h6>
+                      {/* <p className="mb-0 mt-1 mr-1">-</p> */}
+                    </div>
+                  </Col>
+                ))}
             </Row>
           </div>
         </Col>

@@ -3,14 +3,47 @@ import { Row, Col, FormGroup, Label, Input, CardTitle, Form } from "reactstrap";
 import SearchPreviousJob from "./searchPreviousJob";
 import "./createJob.scss";
 
-export default function SelectJobType() {
+export default function SelectJobType({
+  getJobTypeData,
+  jobList,
+  postSearch,
+  readyForNextStep,
+  page,
+  setPage,
+  onPageChange,
+}) {
+  const [jobType, setJobType] = useState("new_template");
   const [showJobTable, setShowJobTable] = useState(false);
+  const getOldJobId = (event) => {
+    getJobTypeData({
+      type: jobType,
+      jobId: event,
+    });
+    readyForNextStep(false);
+  };
+  const onButtonClick = (event) => {
+    setJobType(event.target.value);
+    if (
+      event.target.value === "previous_template" ||
+      event.target.value === "recommendation_template"
+    ) {
+      setShowJobTable(true);
+    } else {
+      setShowJobTable(false);
+      getJobTypeData({
+        type: event.target.value,
+        jobId: "",
+      });
+      readyForNextStep(false);
+    }
+  };
+
   return (
     <>
       <div className="form-wizard-content">
         <Row className="mt-4">
           <Col md={10} style={{ marginLeft: "15px" }}>
-            <CardTitle className="mb-0 select-option-label">
+            <CardTitle className="mb-1 select-option-label">
               Select option
             </CardTitle>
             <p className="mt-0 mb-2 text-muted-custom">
@@ -23,7 +56,7 @@ export default function SelectJobType() {
                   name="jobType"
                   id="previous"
                   value={"previous_template"}
-                  onClick={() => setShowJobTable(true)}
+                  onClick={(e) => onButtonClick(e)}
                 />
                 <Label for="previous" check className="radio-label-custom">
                   Use a previous job as a template
@@ -39,7 +72,7 @@ export default function SelectJobType() {
                   name="jobType"
                   id="new"
                   value={"new_template"}
-                  onClick={() => setShowJobTable(false)}
+                  onClick={(e) => onButtonClick(e)}
                 />
                 <Label for="new" check className="radio-label-custom">
                   Start with new
@@ -53,7 +86,7 @@ export default function SelectJobType() {
                   name="jobType"
                   id="recommendation"
                   value={"recommendation_template"}
-                  onClick={() => setShowJobTable(true)}
+                  onClick={(e) => onButtonClick(e)}
                 />
                 <Label
                   for="recommendation"
@@ -70,7 +103,16 @@ export default function SelectJobType() {
             </Form>
           </Col>
         </Row>
-        {showJobTable === true && <SearchPreviousJob />}
+        {showJobTable === true && (
+          <SearchPreviousJob
+            getJobId={(e) => getOldJobId(e)}
+            jobList={jobList}
+            postSearch={(e) => postSearch(e)}
+            onPageChange={onPageChange}
+            page={page}
+            setPage={setPage}
+          />
+        )}
       </div>
     </>
   );
