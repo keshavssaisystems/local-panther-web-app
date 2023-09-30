@@ -1,0 +1,29 @@
+.cust-cand-card {
+  .card-title {
+    font-family: Open Sans, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2f479b;
+  }
+
+  .card-details {
+    font-family: Capitana, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+  }
+  p {
+    margin-bottom: 4px;
+  }
+
+  .card-footer {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}

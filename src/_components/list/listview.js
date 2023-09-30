@@ -23,6 +23,20 @@ import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleIn
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
+import {
+  BsBriefcase,
+  BsListStars,
+  BsAward,
+  BsFillFlagFill,
+  BsHandThumbsUp,
+  BsFillHandThumbsUpFill,
+  BsStar,
+  BsQuestionCircle,
+  BsCheckCircle,
+  BsXCircle,
+  BsClock,
+  BsX,
+} from "react-icons/bs";
 
 export const CandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -62,60 +76,112 @@ export const CandidateListView = (props) => {
   const renderButtons = () => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
+        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
           <Col>
-            <Button title="liked" className=" btn-icon" color="primary">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
-            </Button>
-          </Col>
-          <Col>
-            <Button title="maybe" className=" btn-icon" color="primary">
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            <Button
+              outline
+              size="sm"
+              title="liked"
+              className=" btn-icon"
+              color="primary"
+            >
+              <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
             <Button
+              outline
+              size="sm"
+              title="maybe"
+              className=" btn-icon"
+              color="primary"
+            >
+              <BsQuestionCircle></BsQuestionCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="danger"
+              color="primary"
             >
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+              <BsXCircle></BsXCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="schedule"
+              className="btn-icon"
+              color="primary"
+            >
+              <BsClock></BsClock>
             </Button>
           </Col>
         </Row>
       );
     } else if (props.type === "applied") {
       return (
-        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
+        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
           <Col>
             <Button
+              outline
+              size="sm"
               title="accept"
               onClick={() => onAcceptClick()}
               className="btn-icon"
-              color="success"
+              color="primary"
             >
-              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+              <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="liked" className=" btn-icon" color="primary">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            <Button
+              outline
+              size="sm"
+              title="liked"
+              className=" btn-icon"
+              color="primary"
+            >
+              <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="primary">
+            <Button
+              outline
+              size="sm"
+              title="maybe"
+              className=" btn-icon"
+              color="primary"
+            >
               <IoIosHelp fontSize={"24px"}></IoIosHelp>
             </Button>
           </Col>
           <Col>
             <Button
+              outline
+              size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="danger"
+              color="primary"
             >
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+              <BsXCircle></BsXCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="schedule"
+              className="btn-icon"
+              color="primary"
+            >
+              <BsClock></BsClock>
             </Button>
           </Col>
         </Row>
@@ -125,43 +191,120 @@ export const CandidateListView = (props) => {
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
             <Button
+              outline
+              size="sm"
               title="accept"
               onClick={() => onAcceptClick()}
               className="btn-icon"
-              color="success"
+              color="primary"
             >
-              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+              <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
             <Button
+              outline
+              size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="danger"
+              color="primary"
             >
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+              <BsXCircle></BsXCircle>
             </Button>
           </Col>
         </Row>
       );
     } else if (props.type === "accepted") {
       return (
-        <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
+        <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
             <Button
+              outline
+              size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="danger"
+              color="primary"
             >
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+              <BsXCircle></BsXCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="schedule"
+              className="btn-icon"
+              color="primary"
+            >
+              <BsClock></BsClock>
             </Button>
           </Col>
         </Row>
       );
     } else if (props.type === "rejected") {
-      return false;
+      return (
+        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="accept"
+              onClick={() => onAcceptClick()}
+              className="btn-icon"
+              color="primary"
+            >
+              <BsCheckCircle></BsCheckCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="liked"
+              className=" btn-icon"
+              color="primary"
+            >
+              <BsHandThumbsUp></BsHandThumbsUp>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="maybe"
+              className=" btn-icon"
+              color="primary"
+            >
+              <BsQuestionCircle></BsQuestionCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="reject"
+              onClick={() => onRejectClick()}
+              className="btn-icon"
+              color="primary"
+            >
+              <BsXCircle></BsXCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="schedule"
+              className="btn-icon"
+              color="primary"
+            >
+              <BsClock></BsClock>
+            </Button>
+          </Col>
+        </Row>
+      );
     }
   };
 
@@ -184,10 +327,6 @@ export const CandidateListView = (props) => {
             <DropdownItem onClick={() => onInterviewDetails()}>
               <i className="dropdown-icon lnr-license"> </i>
               <span>Interview details</span>
-            </DropdownItem>
-            <DropdownItem onClick={() => onDeleteItem()}>
-              <i className="dropdown-icon lnr-trash"></i>
-              <span>Delete</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledButtonDropdown>

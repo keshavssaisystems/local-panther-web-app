@@ -83,291 +83,370 @@ export const CustomerCandidateLists = (props) => {
 
   return (
     <>
-      {!loading ? (
-        <Row className="customercandidatelist">
-          <Col
-            xs={12}
-            sm={12}
-            md={8}
-            lg={8}
-            xl={8}
-            className="mb-3 tab-selection-text"
-          >
-            <ButtonGroup size="lg">
-              <Button
-                color="primary"
-                className={
-                  "btn-shadow " +
-                  classnames({ active: activeTab === "matched" })
-                }
-                onClick={() => {
-                  toggle("matched");
-                }}
-              >
-                Matched
-              </Button>
-              <Button
-                color="primary"
-                className={
-                  "btn-shadow " + classnames({ active: activeTab === "liked" })
-                }
-                onClick={() => {
-                  toggle("liked");
-                }}
-              >
-                Liked
-              </Button>
-              <Button
-                color="primary"
-                className={
-                  "btn-shadow " + classnames({ active: activeTab === "maybe" })
-                }
-                onClick={() => {
-                  toggle("maybe");
-                }}
-              >
-                Maybe
-              </Button>
-              <Button
-                color="primary"
-                className={
-                  "btn-shadow " +
-                  classnames({ active: activeTab === "applied" })
-                }
-                onClick={() => {
-                  toggle("applied");
-                }}
-              >
-                Applied
-              </Button>
-              <Button
-                color="primary"
-                className={
-                  "btn-shadow " +
-                  classnames({ active: activeTab === "scheduled" })
-                }
-                onClick={() => {
-                  toggle("scheduled");
-                }}
-              >
-                Scheduled
-              </Button>
-              <Button
-                color="primary"
-                className={
-                  "btn-shadow " +
-                  classnames({ active: activeTab === "accepted" })
-                }
-                onClick={() => {
-                  toggle("accepted");
-                }}
-              >
-                Accepted
-              </Button>
-              <Button
-                className={
-                  "btn-shadow " +
-                  classnames({ active: activeTab === "rejected" })
-                }
-                onClick={() => {
-                  toggle("rejected");
-                }}
-              >
-                Rejected
-              </Button>
-            </ButtonGroup>
-          </Col>
-          <Col
-            xs={12}
-            sm={12}
-            md={4}
-            lg={4}
-            xl={4}
-            className="mb-3 right-align"
-          >
-            {jobList?.length > 0 ? (
-              <Input
-                value={selectedJobId}
-                onChange={(evt) => onSelectClick(evt)}
-                type="select"
-                id="customerJobList"
-                name="customerJobList"
-              >
-                {jobList.map((data) => {
-                  return (
-                    <option value={data.jobid} key={data.jobid}>
-                      {data.jobtitle + "," + data?.locationaddress}
-                    </option>
-                  );
-                })}
-              </Input>
-            ) : (
-              <></>
-            )}
-          </Col>
+      <Row className="customercandidatelist">
+        <Col
+          xs={12}
+          sm={12}
+          md={8}
+          lg={8}
+          xl={8}
+          className="mb-3 tab-selection-text"
+        >
+          <ButtonGroup size="lg">
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "matched" })
+              }
+              onClick={() => {
+                toggle("matched");
+              }}
+            >
+              Matched
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "liked" })
+              }
+              onClick={() => {
+                toggle("liked");
+              }}
+            >
+              Liked
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition " +
+                classnames({ active: activeTab === "maybe" })
+              }
+              onClick={() => {
+                toggle("maybe");
+              }}
+            >
+              Maybe
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "applied" })
+              }
+              onClick={() => {
+                toggle("applied");
+              }}
+            >
+              Applied
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "scheduled" })
+              }
+              onClick={() => {
+                toggle("scheduled");
+              }}
+            >
+              Scheduled
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "accepted" })
+              }
+              onClick={() => {
+                toggle("accepted");
+              }}
+            >
+              Accepted
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "rejected" })
+              }
+              onClick={() => {
+                toggle("rejected");
+              }}
+            >
+              Rejected
+            </Button>
+          </ButtonGroup>
+        </Col>
+        <Col xs={12} sm={12} md={4} lg={4} xl={4} className="mb-3 right-align">
+          {jobList?.length > 0 ? (
+            <Input
+              value={selectedJobId}
+              onChange={(evt) => onSelectClick(evt)}
+              type="select"
+              id="customerJobList"
+              name="customerJobList"
+            >
+              {jobList.map((data) => {
+                return (
+                  <option value={data.jobid} key={data.jobid}>
+                    {data.jobtitle + "," + data?.locationaddress}
+                  </option>
+                );
+              })}
+            </Input>
+          ) : (
+            <></>
+          )}
+        </Col>
 
-          <Col>
-            <TabContent activeTab={activeTab}>
-              <TabPane tabId="matched">
-                {candidateList?.length > 0 ? (
+        <Col>
+          <TabContent activeTab={activeTab}>
+            <TabPane tabId="matched">
+              {loading ? (
+                <>
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                </>
+              ) : (
+                <>
+                  {candidateList?.length > 0 ? (
+                    <>
+                      <Row xs={1} sm={1} md={2} lg={3} xl={3}>
+                        {candidateList.map((data, ind) => {
+                          return (
+                            <Col key={data.jobapplicationid}>
+                              <CandidateCardView
+                                data={data}
+                                rejectDrpDwnList={rejectDrpDwnList}
+                              ></CandidateCardView>
+                            </Col>
+                          );
+                        })}
+                      </Row>
+                      <CardPagination
+                        totalPages={totalRecords / cardPageSize}
+                        pageIndex={pageNo}
+                        onCallBack={(evt) => handlePageChange(evt)}
+                      ></CardPagination>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </>
+              )}
+            </TabPane>
+            <TabPane tabId="liked">
+              <p>
+                {loading ? (
                   <>
-                    <Row xs={1} sm={1} md={2} lg={3} xl={3}>
-                      {candidateList.map((data, ind) => {
-                        return (
-                          <Col key={data.jobapplicationid}>
-                            <CandidateCardView
-                              data={data}
-                              rejectDrpDwnList={rejectDrpDwnList}
-                            ></CandidateCardView>
-                          </Col>
-                        );
-                      })}
-                    </Row>
-                    <CardPagination
-                      totalPages={totalRecords / cardPageSize}
-                      pageIndex={pageNo}
-                      onCallBack={(evt) => handlePageChange(evt)}
-                    ></CardPagination>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
                   </>
                 ) : (
-                  <></>
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CandidateListView
+                          type={props.type}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                        />
+                        <CardPagination
+                          totalPages={totalRecords / listPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
                 )}
-              </TabPane>
-              <TabPane tabId="liked">
-                <p>
-                  {candidateList?.length > 0 ? (
-                    <>
-                      <CandidateListView
-                        type={props.type}
-                        data={candidateList}
-                        user="customer"
-                        rejectDrpDwnList={rejectDrpDwnList}
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / listPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </p>
-              </TabPane>
-              <TabPane tabId="maybe">
-                <p>
-                  {candidateList?.length > 0 ? (
-                    <>
-                      <CandidateListView
-                        type={props.type}
-                        data={candidateList}
-                        user="customer"
-                        rejectDrpDwnList={rejectDrpDwnList}
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / listPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </p>
-              </TabPane>
-              <TabPane tabId="applied">
-                <p>
-                  {candidateList?.length > 0 ? (
-                    <>
-                      <CandidateListView
-                        type={props.type}
-                        data={candidateList}
-                        user="customer"
-                        rejectDrpDwnList={rejectDrpDwnList}
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / listPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </p>
-              </TabPane>
-              <TabPane tabId="scheduled">
-                <p>
-                  {candidateList?.length > 0 ? (
-                    <>
-                      <CandidateListView
-                        type={props.type}
-                        data={candidateList}
-                        user="customer"
-                        rejectDrpDwnList={rejectDrpDwnList}
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / listPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </p>
-              </TabPane>
-              <TabPane tabId="accepted">
-                <p>
-                  {candidateList?.length > 0 ? (
-                    <>
-                      <CandidateListView
-                        type={props.type}
-                        data={candidateList}
-                        user="customer"
-                        rejectDrpDwnList={rejectDrpDwnList}
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / listPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </p>
-              </TabPane>
-              <TabPane tabId="rejected">
-                <p>
-                  {candidateList?.length > 0 ? (
-                    <>
-                      <CandidateListView
-                        type={props.type}
-                        data={candidateList}
-                        user="customer"
-                        rejectDrpDwnList={rejectDrpDwnList}
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / listPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </p>
-              </TabPane>
-            </TabContent>
-          </Col>
-        </Row>
-      ) : (
+              </p>
+            </TabPane>
+            <TabPane tabId="maybe">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CandidateListView
+                          type={props.type}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                        />
+                        <CardPagination
+                          totalPages={totalRecords / listPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="applied">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CandidateListView
+                          type={props.type}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                        />
+                        <CardPagination
+                          totalPages={totalRecords / listPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="scheduled">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CandidateListView
+                          type={props.type}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                        />
+                        <CardPagination
+                          totalPages={totalRecords / listPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="accepted">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CandidateListView
+                          type={props.type}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                        />
+                        <CardPagination
+                          totalPages={totalRecords / listPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="rejected">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CandidateListView
+                          type={props.type}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                        />
+                        <CardPagination
+                          totalPages={totalRecords / listPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+          </TabContent>
+        </Col>
+      </Row>
+      {/* ) : (
         <Loader
           type="line-scale-pulse-out-rapid"
           className="d-flex justify-content-center"
         />
-      )}
+      )} */}
     </>
   );
 };
