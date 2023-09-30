@@ -1,81 +1,96 @@
 import React from "react";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import { Row, Col, Card, CardBody, CardText } from "reactstrap";
 import "./scheduledInterview.scss";
 import {
-  BsLink,
   BsListStars,
-  BsCalendarCheck,
-  BsPlaystation,
-  BsCameraVideo,
+  BsCalendar2Date,
+  BsClock,
   BsPersonBoundingBox,
   BsPersonCheck,
 } from "react-icons/bs";
+import moment from "moment-timezone";
 
-export function UpcomingCard() {
+export function UpcomingCard({ upcomingList }) {
   return (
     <>
-      <Card className={"mb-2 card-border-custom upcomming-card"}>
-        <CardBody>
-          <Row>
-            <Col md="12">
-              <Row className="mb-2">
-                <Col md="7">
-                  <div className="job-title">Ajay Singh</div>
-                  <div className="muted-name">ajaysingh@gmail.com</div>
-                </Col>
-                <Col md="5">
-                  <div className="mb-2 me-2 badge bg-success float-end badge-custom">
-                    Confirmed
-                  </div>
+      {upcomingList.length > 0 &&
+        upcomingList.map((interview) => (
+          <Card
+            className={
+              4 === interview.scheduleinterviewid
+                ? "mb-2 card-border-custom upcomming-card"
+                : "mb-2 upcomming-card"
+            }
+          >
+            <CardBody>
+              <Row>
+                <Col md="12">
+                  <Row className="mb-2">
+                    <Col md="7">
+                      <div className="job-title">{interview.candidatename}</div>
+                      <div className="muted-name">ajaysingh@gmail.com</div>
+                    </Col>
+                    {interview.isaccepted === true && (
+                      <Col md="5">
+                        <div className="mb-2 me-2 badge bg-success float-end badge-custom">
+                          Scheduled
+                        </div>
+                      </Col>
+                    )}
+                    {interview.isaccepted === false &&
+                      interview.isrejected === false && (
+                        <Col md="5">
+                          <div className="mb-2 me-2 badge bg-warning float-end badge-custom">
+                            Awaiting confirmation
+                          </div>
+                        </Col>
+                      )}
+                    {interview.isrejected === true && (
+                      <Col md="5">
+                        <div className="mb-2 me-2 badge bg-danger float-end badge-custom">
+                          Rejected
+                        </div>
+                      </Col>
+                    )}
+                  </Row>
+                  <p className="job-details">
+                    <BsPersonCheck className="icon-settings" /> Applied for{" "}
+                    {interview.jobtitle}
+                  </p>
+                  <p className="job-details">
+                    <BsCalendar2Date className="icon-settings" /> Scheduled for{" "}
+                    {moment(
+                      moment(interview.scheduledate).format("MMM D, YYYY") +
+                        " " +
+                        interview.starttime
+                    ).format("MMM D, YYYY,  hh:mm a")}
+                  </p>
+                  <p className="job-details">
+                    <BsListStars className="icon-settings" /> Mode-{" "}
+                    {interview.format}
+                  </p>
+                  <p className="job-details">
+                    <BsClock className="icon-settings" /> Request sent on{" "}
+                    {moment(interview.createddate).format("MMM D, YYYY")}
+                  </p>
+                  <p className="job-details">
+                    <BsPersonBoundingBox className="icon-settings" />{" "}
+                    Interviewer: {interview.intervieweremailids}
+                  </p>
                 </Col>
               </Row>
-              <p className="job-details">
-                <BsPersonCheck /> Job title: Java Developer, Shelton, CT, 06611
-              </p>
-              <p className="job-details">
-                <BsCalendarCheck /> Today, 03:00 PM TO 04:00 PM EST
-              </p>
-              <p className="job-details">
-                <BsListStars /> Mode: Video
-              </p>
-              <p className="job-details">
-                <BsPersonBoundingBox /> Interviewer: iswatirupatirao@gmail.com
-              </p>
-            </Col>
-          </Row>
-        </CardBody>
-      </Card>
-      <Card className={"mb-2 card-border-custom upcomming-card"}>
-        <CardBody>
-          <Row>
-            <Col md="12">
-              <Row className="mb-2">
-                <Col md="7">
-                  <div className="job-title">Rajesh Kumar</div>
-                  <div className="muted-name">rajkumar@gmail.com</div>
-                </Col>
-                <Col md="5">
-                  <div className="mb-2 me-2 badge bg-warning float-end badge-custom">
-                    Awaiting confirmation
-                  </div>
-                </Col>
-              </Row>
-              <p className="job-details">
-                <BsPersonCheck /> Job title: Java Developer, Shelton, CT, 06611
-              </p>
-              <p className="job-details">
-                <BsCalendarCheck /> Today, 05:00 PM TO 05:30 PM EST
-              </p>
-              <p className="job-details">
-                <BsListStars /> Mode: Phone
-              </p>
-              <p className="job-details">
-                <BsPersonBoundingBox /> Interviewer: mikegins@gmail.com
-              </p>
-            </Col>
-          </Row>
-        </CardBody>
-      </Card>
+            </CardBody>
+          </Card>
+        ))}
+      {upcomingList.length === 0 && (
+        <Card>
+          <CardBody>
+            <CardText className="mb-0 text-center">
+              <b>No upcoming interview scheduled...</b>
+            </CardText>
+          </CardBody>
+        </Card>
+      )}
     </>
   );
 }

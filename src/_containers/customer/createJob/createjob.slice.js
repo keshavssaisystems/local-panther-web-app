@@ -1,56 +1,46 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
 import { fetchWrapper } from "_helpers";
 
-// create slice
+// create slice name
 const name = "createjob";
-const initialState = createInitialState();
-const extraActions = createExtraActions();
-const extraReducers = createExtraReducers();
-const slice = createSlice({ name, initialState, extraReducers });
 
-// exports
-export const createjobActions = { ...slice.actions, ...extraActions };
-export const createjobReducer = slice.reducer;
-
-function createInitialState() {
-  return {
-    jobDetails: [],
-    loading: false,
-  };
-}
-
-function createExtraActions() {
-  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
-
-  return {
-    getCreatejob: getCreatejob(),
-  };
-
-  function getCreatejob() {
-    return createAsyncThunk(`${name}/getCreatejob`, async (jobData) => {
-      await fetchWrapper.post(`${baseUrl}/job`, { ...jobData });
-    });
+// getCreatejobThunk thunk
+export const getCreatejobThunk = createAsyncThunk(
+  `${name}/getCreatejobThunk`,
+  async (jobData) => {
+    const CREATE_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/job`;
+    return await fetchWrapper.post(CREATE_JOB_END_POINT, jobData);
   }
-}
+);
 
-function createExtraReducers() {
-  return (builder) => {
-    getCreatejob();
+// Create the slice
+const createjobSlice = createSlice({
+  name,
+  initialState: {
+    createjob: [],
+    loading: false,
+  },
+  reducers: {},
 
-    function getCreatejob() {
-      var { pending, fulfilled, rejected } = extraActions.getCreatejob;
-      builder
-        .addCase(pending, (state) => {
-          state.loading = true;
-        })
-        .addCase(fulfilled, (state, action) => {
-          state.jobDetails = action;
-          state.loading = false;
-        })
-        .addCase(rejected, (state, action) => {
-          state.error = action.error;
-        });
-    }
-  };
-}
+  extraReducers: {
+    [getCreatejobThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCreatejobThunk.fulfilled]: (state, action) => {
+      state.createjob = action.payload.data;
+      state.loading = false;
+    },
+    [getCreatejobThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+  },
+});
+
+// Export the actions and reducer
+export const createjobActions = {
+  ...createjobSlice.actions,
+  getCreatejobThunk,
+};
+
+export const createjobReducer = createjobSlice.reducer;

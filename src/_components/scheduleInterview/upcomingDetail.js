@@ -13,10 +13,43 @@ import {
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import { BsCheckLg, BsCameraVideo } from "react-icons/bs";
+import { BsLink45Deg, BsCameraVideo } from "react-icons/bs";
 import { TakeNotesModal } from "./takeNotesModal";
+import moment from "moment-timezone";
 
-export function UpcomingDetail() {
+export function UpcomingDetail({ interviewDetails }) {
+  let scheduled = moment(interviewDetails.scheduledate).format("MMM D, YYYY");
+  let currentDay = moment().format("YYYY-MM-DD");
+  let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
+  let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
+  let scheduledDate = moment(interviewDetails.scheduledate).format(
+    "YYYY-MM-DD"
+  );
+  if (scheduledDate === currentDay) {
+    scheduled = "Today";
+  }
+  if (scheduledDate === yesterdayDate) {
+    scheduled = "Yesterday";
+  }
+  if (scheduledDate === tomorrowDate) {
+    scheduled = "Tommorow";
+  }
+  let startTime = moment(
+    moment(interviewDetails.scheduledate).format("MMM D, YYYY") +
+      " " +
+      interviewDetails.starttime
+  )
+    .tz("America/New_York")
+    .format("hh:mm a");
+  let startDate =
+    moment(interviewDetails.scheduledate).format("MMM D, YYYY") +
+    " " +
+    startTime;
+  let durationArr =
+    interviewDetails.duration !== undefined
+      ? interviewDetails.duration.split(" ")
+      : [];
+  let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
   return (
     <>
       <Card className="upcoming-interview">
@@ -25,7 +58,9 @@ export function UpcomingDetail() {
             <div className="dropdown-menu-header-inner">
               <div className="menu-header-content btn-pane-right">
                 <Col lg="4">
-                  <h6 className="job-main-heading mb-0">Ajay Singh</h6>
+                  <h6 className="job-main-heading mb-0">
+                    {interviewDetails.candidatename}
+                  </h6>
                 </Col>
                 <Col style={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
@@ -86,19 +121,26 @@ export function UpcomingDetail() {
           <div className="p-custom">
             <p className="mb-0">
               <h6 className="fw-bold mb-0 job-heading">Mobile</h6>
-              (987)-654-3210
+              {interviewDetails.textremaindernumbers}
             </p>
           </div>
           <div className="p-custom">
             <p className="mb-0">
               <h6 className="fw-bold mb-0 job-heading">Skills</h6>
-              Java, Spring Boot, React JS, SQL Server ...
+              {interviewDetails.candidateskills === ""
+                ? "-"
+                : interviewDetails.candidateskills}
             </p>
           </div>
           <div className="p-custom">
             <p className="mb-0">
               <h6 className="fw-bold mb-0 job-heading">Status</h6>
-              Scheduled
+              {interviewDetails.isaccepted === true &&
+              interviewDetails.isrejected === false
+                ? "Scheduled"
+                : interviewDetails.isrejected === true
+                ? "Rejected"
+                : "Awaiting confirmation"}
             </p>
           </div>
           <Card className="mt-3">
@@ -130,24 +172,30 @@ export function UpcomingDetail() {
             </CardHeader>
             <CardBody>
               <div className="p-custom">
-                <p className="mb-0">Today : 3:00 PM to 4:00 PM</p>
-              </div>
-              <div className="p-custom">
-                <p className="mb-0">Mode : Video</p>
-              </div>
-              <div className="p-custom">
                 <p className="mb-0">
-                  Interview link :{" "}
-                  <a
-                    href="https://meet.google.com/daj-jvga-hkc"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Click here to join
-                  </a>
+                  {scheduled} at {startTime} to {endTime}
                 </p>
               </div>
               <div className="p-custom">
-                <p className="mb-0">Interviewer : iswatirupatirao@gmail.com</p>
+                <p className="mb-0">Mode : {interviewDetails.format}</p>
+              </div>
+              {interviewDetails.isappvideocall === false && (
+                <div className="p-custom">
+                  <p className="mb-0">
+                    Interview link :{" "}
+                    <a
+                      href={interviewDetails.videolink}
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <BsLink45Deg /> Click here to join
+                    </a>
+                  </p>
+                </div>
+              )}
+              <div className="p-custom">
+                <p className="mb-0">
+                  Interviewer : {interviewDetails.intervieweremailids}
+                </p>
               </div>
             </CardBody>
             <CardFooter className="d-block text-left">
@@ -166,39 +214,26 @@ export function UpcomingDetail() {
 
           <div className="p-3">
             <h6 className="fw-bold">Summary</h6>
-            <p className="mb-0">
-              A: 3 years Java server-side development experience with excellent
-              understanding of core design patterns B: Hands on experience in
-              Java 8 and above versions is MUST
-            </p>
+            <p className="mb-0">{interviewDetails.messagetocandidate}</p>
           </div>
           <div className="p-3">
             <h6 className="fw-bold">Application questions</h6>
-            <p className="mb-0">
-              A: 3 years Java server-side development experience with excellent
-              understanding of core design patterns B: Hands on experience in
-              Java 8 and above versions is MUST
-            </p>
+            <p className="mb-0">-</p>
           </div>
           <div className="p-3">
             <h6 className="fw-bold">Phase pre-screen</h6>
-            <p className="mb-0">
-              A: 3 years Java server-side development experience with excellent
-              understanding of core design patterns B: Hands on experience in
-              Java 8 and above versions is MUST
-            </p>
+            <p className="mb-0">-</p>
           </div>
           <div className="p-3">
             <h6 className="fw-bold">Skills test</h6>
-            <p className="mb-0">
-              A: 3 years Java server-side development experience with excellent
-              understanding of core design patterns B: Hands on experience in
-              Java 8 and above versions is MUST
-            </p>
+            <p className="mb-0">-</p>
           </div>
           <div className="divider" />
           <div className="d-block text-center mb-1">
-            <h6 className="fw-bold">Request sent on Sept 17, 2023</h6>
+            <h6 className="fw-bold">
+              Request sent on{" "}
+              {moment(interviewDetails.createddate).format("MMM D, YYYY")}
+            </h6>
           </div>
         </CardBody>
       </Card>

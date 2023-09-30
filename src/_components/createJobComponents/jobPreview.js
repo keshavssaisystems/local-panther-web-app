@@ -69,7 +69,10 @@ export default function JobPreview({ previewData, editdata }) {
       }
     });
   }
-  if (previewData.paymentBenifits.payPeriodType !== "") {
+  if (
+    previewData.paymentBenifits.payPeriodType !== undefined &&
+    previewData.paymentBenifits.payPeriodType !== ""
+  ) {
     previewData.paymentBenifits.payPeriodTypeOption.forEach((element) => {
       if (Number(previewData.paymentBenifits.payPeriodType) === element.id) {
         payPeriodTypeData = element.name;

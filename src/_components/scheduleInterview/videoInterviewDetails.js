@@ -15,15 +15,49 @@ import {
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
 import { BsCheckLg } from "react-icons/bs";
+import moment from "moment-timezone";
 
-export function VideoInterviewDetails() {
+export function VideoInterviewDetails({ interviewDetail }) {
+  console.log(interviewDetail);
+  let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
+  let currentDay = moment().format("YYYY-MM-DD");
+  let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
+  let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
+  let scheduledDate = moment(interviewDetail.scheduledate).format("YYYY-MM-DD");
+  if (scheduledDate === currentDay) {
+    scheduled = "Today";
+  }
+  if (scheduledDate === yesterdayDate) {
+    scheduled = "Yesterday";
+  }
+  if (scheduledDate === tomorrowDate) {
+    scheduled = "Tommorow";
+  }
+  let startTime = moment(
+    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+      " " +
+      interviewDetail.starttime
+  )
+    .tz("America/New_York")
+    .format("hh:mm a");
+  let startDate =
+    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+    " " +
+    startTime;
+  let durationArr =
+    interviewDetail.duration !== undefined
+      ? interviewDetail.duration.split(" ")
+      : [];
+  let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
   return (
     <>
       <div className="dropdown-menu-header">
         <div className="dropdown-menu-header-inner">
           <div className="menu-header-content btn-pane-right">
             <Col lg="4">
-              <h6 className="job-main-heading mb-0">Ajay Singh</h6>
+              <h6 className="job-main-heading mb-0">
+                {interviewDetail.candidatename}
+              </h6>
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
@@ -103,10 +137,7 @@ export function VideoInterviewDetails() {
         </div>
       </div>
       <div className="p-custom">
-        <p className="mb-0">ajaysingh@gmail.com</p>
-      </div>
-      <div className="p-custom">
-        <p className="mb-0">Applied to Java Developer, Shelton, CT, 06611</p>
+        <p className="mb-0">Applied for {interviewDetail.jobtitle}</p>
       </div>
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
@@ -116,44 +147,52 @@ export function VideoInterviewDetails() {
             </i>
             Interviews
           </div>
-          <div className="btn-actions-pane-right text-capitalize actions-icon-btn">
-            <UncontrolledButtonDropdown>
-              <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                <FaEllipsisV />
-              </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                <DropdownItem>
-                  <i className="dropdown-icon lnr-inbox"> </i>
-                  <span>Edit</span>
-                </DropdownItem>
-                <DropdownItem>
-                  <i className="dropdown-icon lnr-file-empty"> </i>
-                  <span>Cancel</span>
-                </DropdownItem>
-              </DropdownMenu>
-            </UncontrolledButtonDropdown>
-          </div>
         </CardHeader>
         <CardBody>
-          <div className="p-custom">
-            <p className="mb-0">Today : 3:00 PM to 4:00 PM</p>
-          </div>
-          <div className="p-custom">
-            <p className="mb-0">Mode : Video</p>
-          </div>
-          <div className="p-custom">
-            <p className="mb-0">
-              Interview link :{" "}
-              <a
-                href="https://meet.google.com/daj-jvga-hkc"
-                onClick={(e) => e.preventDefault()}
-              >
-                Click here to join
-              </a>
-            </p>
-          </div>
-          <div className="p-custom">
-            <p className="mb-0">Interviewer : iswatirupatirao@gmail.com</p>
+          <div>
+            <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
+              <UncontrolledButtonDropdown>
+                <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                  <FaEllipsisV />
+                </DropdownToggle>
+                <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
+                  <DropdownItem>
+                    <i className="dropdown-icon lnr-inbox"> </i>
+                    <span>Edit</span>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <i className="dropdown-icon lnr-file-empty"> </i>
+                    <span>Cancel</span>
+                  </DropdownItem>
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
+            </div>
+            <div className="p-custom">
+              <p className="mb-0">
+                {scheduled} : {startTime} to {endTime}
+              </p>
+            </div>
+            <div className="p-custom">
+              <p className="mb-0">Mode : {interviewDetail.format}</p>
+            </div>
+            {interviewDetail.isappvideocall === false && (
+              <div className="p-custom">
+                <p className="mb-0">
+                  Interview link :{" "}
+                  <a
+                    href={interviewDetail.videolink}
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    Click here to join
+                  </a>
+                </p>
+              </div>
+            )}
+            <div className="p-custom">
+              <p className="mb-0">
+                Interviewer : {interviewDetail.intervieweremailids}
+              </p>
+            </div>
           </div>
         </CardBody>
         <CardFooter className="d-block text-left">
@@ -180,35 +219,19 @@ export function VideoInterviewDetails() {
 
       <div className="p-3">
         <h6 className="fw-bold">Summary</h6>
-        <p className="mb-0">
-          A: 3 years Java server-side development experience with excellent
-          understanding of core design patterns B: Hands on experience in Java 8
-          and above versions is MUST
-        </p>
+        <p className="mb-0">{interviewDetail.messagetocandidate}</p>
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Application questions</h6>
-        <p className="mb-0">
-          A: 3 years Java server-side development experience with excellent
-          understanding of core design patterns B: Hands on experience in Java 8
-          and above versions is MUST
-        </p>
+        <p className="mb-0">-</p>
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Phase pre-screen</h6>
-        <p className="mb-0">
-          A: 3 years Java server-side development experience with excellent
-          understanding of core design patterns B: Hands on experience in Java 8
-          and above versions is MUST
-        </p>
+        <h6 className="fw-bold">Pre-screen</h6>
+        <p className="mb-0">-</p>
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Skills test</h6>
-        <p className="mb-0">
-          A: 3 years Java server-side development experience with excellent
-          understanding of core design patterns B: Hands on experience in Java 8
-          and above versions is MUST
-        </p>
+        <p className="mb-0">-</p>
       </div>
       <div className="divider" />
       <div className="d-block text-center mb-1">

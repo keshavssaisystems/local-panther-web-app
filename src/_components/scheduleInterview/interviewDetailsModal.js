@@ -4,7 +4,13 @@ import "./scheduledInterview.scss";
 import { VideoInterviewDetails } from "./videoInterviewDetails";
 import { TelephonicInterviewDetails } from "./telephonicInterviewDetails";
 
-export function InterviewDetailsModal({ isOpen = false, type, onClose }) {
+export function InterviewDetailsModal({
+  isOpen = false,
+  type,
+  onClose,
+  interviewDetail,
+}) {
+  console.log(interviewDetail);
   const [modal, setModal] = useState(false);
 
   const toggle = () => {
@@ -24,7 +30,9 @@ export function InterviewDetailsModal({ isOpen = false, type, onClose }) {
       >
         <ModalHeader toggle={() => onClose()}>Interview details</ModalHeader>
         <ModalBody className="pt-4">
-          {type === "video" && <VideoInterviewDetails />}
+          {type === "video" && (
+            <VideoInterviewDetails interviewDetail={interviewDetail} />
+          )}
           {type === "phone" && <TelephonicInterviewDetails />}
         </ModalBody>
       </Modal>
