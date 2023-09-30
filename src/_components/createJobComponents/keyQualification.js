@@ -2,33 +2,75 @@ import { SkillsFilter } from "_components/dropdownComponents/SkillsFilter";
 import React, { useState } from "react";
 import { FormGroup, Form, Row, Col, Button, Label, FormText } from "reactstrap";
 
-export function KeyQualification({ data }) {
+export function KeyQualification({ data, postData, prevStep, previousData }) {
+  let keyQualificationArr1 = [];
+  let keyQualificationArr2 = [];
+  if (prevStep === 3 && data.length > 0) {
+    data.forEach((element) => {
+      if (element.isrequired === true) {
+        keyQualificationArr1.push({
+          value: element.skillid + ", " + element.skillName,
+          label: element.skillName,
+        });
+      }
+      if (element.isrequired === false) {
+        keyQualificationArr2.push({
+          value: element.skillid + ", " + element.skillName,
+          label: element.skillName,
+        });
+      }
+    });
+  }
+  const [preValue, setPreValue] = useState({
+    mustHave:
+      data === undefined || data.mustHave === undefined ? "" : data.mustHave,
+    niceToHave:
+      data === undefined || data.niceToHave === undefined
+        ? ""
+        : data.niceToHave,
+  });
   const [mustHaveValidation, setMustHaveValidation] = useState(false);
-  const getStringData = (data) => {
+  const getStringData = (data, type) => {
     let dataArray = [];
     if (data.length === undefined) {
-      return data.value;
+      let skillArr = data.value.split(", ");
+      return [
+        {
+          jobkeyqualifications: 0,
+          jobid: 0,
+          skillid: skillArr[0],
+          skillname: skillArr[1],
+          isrequired: type,
+          isactive: true,
+        },
+      ];
     }
     if (data.length !== undefined) {
       data.forEach((element) => {
-        dataArray.push(element.value);
+        let skillArr = element.value.split(", ");
+        let obj = {
+          jobkeyqualifications: 0,
+          jobid: 0,
+          skillid: skillArr[0],
+          skillname: skillArr[1],
+          isrequired: type,
+          isactive: true,
+        };
+        dataArray.push(obj);
       });
-      return dataArray.toString();
+      return dataArray;
     }
   };
   const getFormData = (event) => {
     event.preventDefault();
-    let mustHave = getStringData(event.target.elements.mustHave);
-    let niceToHave = getStringData(event.target.elements.niceToHave);
+    let mustHave = getStringData(event.target.elements.mustHave, true);
+    let niceToHave = getStringData(event.target.elements.niceToHave, false);
     if (mustHave === "") {
       setMustHaveValidation(true);
     } else {
       setMustHaveValidation(false);
-      let data = {
-        mustHave: mustHave,
-        niceToHave: niceToHave,
-      };
-      console.log(data);
+      let data = mustHave.concat(niceToHave);
+      postData(data);
     }
   };
   return (
@@ -44,6 +86,16 @@ export function KeyQualification({ data }) {
                 id={"mustHave"}
                 name={"mustHave"}
                 label={"Must have"}
+                defaultValue={[
+                  {
+                    value: "2, .NET Development",
+                    label: ".NET Development",
+                  },
+                  {
+                    value: "4, .NET Framework 1",
+                    label: ".NET Framework 1",
+                  },
+                ]}
               />
               {mustHaveValidation === true && (
                 <FormText color="danger">
@@ -58,6 +110,7 @@ export function KeyQualification({ data }) {
                 id={"niceToHave"}
                 name={"niceToHave"}
                 label={"Nice to have"}
+                defaultValue={keyQualificationArr2}
               />
             </FormGroup>
           </Col>

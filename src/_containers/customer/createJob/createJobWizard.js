@@ -1,25 +1,125 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import { Row, Col, Card, CardBody, Button } from "reactstrap";
 import SelectJobType from "../../../_components/createJobComponents/selectJobType";
 import CreateJob from "../../../_components/createJobComponents/createJobForm";
 import JobPreview from "../../../_components/createJobComponents/jobPreview";
 import PublishJobStep from "../../../_components/createJobComponents/publishJobStep";
-import MultiStep from "../../../_components/createJobComponents/multiStep";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  shiftsOption,
-  workScheduleOptions,
-  jobTypeOption,
-  experienceLevelOption,
-  hiringTimelineOption,
-  jobLocationOptions,
-  payPeriodTypeOption,
-} from "./dummyData";
+  createjobActions,
+  jobLocationTypeActions,
+  jobTypeActions,
+  workScheduleActions,
+  shiftActions,
+  experienceLevelActions,
+  hiringTimelineActions,
+  payPeriodTypeActions,
+  preScreenQuestionActions,
+  previousJobListActions,
+  previousJobDetailActions,
+} from "_store";
 
 export function CreateJobWizard() {
+  const [page, setPage] = useState(1);
+  const [buttonDisable, setButtonDisable] = useState(true);
+  const [previousStep, setPreviousStep] = useState(1);
+  const [jobType, setJobType] = useState("new_template");
+  const [jobData, setJobData] = useState({});
+  const [jobPreviewData, setJobPreviewData] = useState({});
+  useEffect(() => {
+    getOptions();
+    getPreviousJobData({
+      pageNo: page,
+      searchText: "",
+    });
+  }, []);
+  const getOptionsData = (event) => {
+    if (
+      event.type === "previous_template" ||
+      event.type === "recommendation_template"
+    ) {
+      getJobDetail(event.jobId);
+    }
+    setJobType(event.type);
+  };
+  const getJobDetail = async function (jobId) {
+    await dispatch(previousJobDetailActions.getPreviousJobDetailThunk(jobId));
+  };
+  const getPreviousJobData = async function (searchArr) {
+    await dispatch(previousJobListActions.getPreviousJobListThunk(searchArr));
+  };
+  const getDataForPreview = (event) => {
+    setJobPreviewData(event);
+  };
+  const editJob = (jobData) => {
+    setJobData(jobData);
+    setPreviousStep(3);
+  };
+  const requiredData = (data) => {
+    createJob(data);
+  };
+  const getSearchValue = (data) => {
+    getPreviousJobData({
+      pageNo: page,
+      searchText: data,
+    });
+  };
+  const dispatch = useDispatch();
+  const createJob = async function (formElement) {
+    await dispatch(createjobActions.getCreatejob(formElement));
+  };
+  const getOptions = async function () {
+    await dispatch(jobLocationTypeActions.getJobLocationTypeThunk());
+    await dispatch(jobTypeActions.getJobTypeThunk());
+    await dispatch(workScheduleActions.getWorkScheduleThunk());
+    await dispatch(shiftActions.getShiftThunk());
+    await dispatch(experienceLevelActions.getExperienceLevelThunk());
+    await dispatch(hiringTimelineActions.getHiringTimelineThunk());
+    await dispatch(payPeriodTypeActions.getPayPeriodTypeThunk());
+    await dispatch(preScreenQuestionActions.getPreScreenQuestionThunk());
+  };
+  const jobLocationOptions = useSelector(
+    (state) => state.jobLocationType.jobLocationType
+  );
+  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const workScheduleOptions = useSelector(
+    (state) => state.workSchedule.workSchedule
+  );
+  const jobTypeOption = useSelector((state) => state.jobType.jobType);
+  const experienceLevelOption = useSelector(
+    (state) => state.experienceLevel.experienceLevel
+  );
+  const hiringTimelineOption = useSelector(
+    (state) => state.hiringTimeline.hiringTimeline
+  );
+  const payPeriodTypeOption = useSelector(
+    (state) => state.payPeriodType.payPeriodType
+  );
+  const preScreenQuestionsOption = useSelector(
+    (state) => state.preScreenQuestion.preScreenQuestion
+  );
+  const jobList = useSelector((state) => state.previousJobList.previousJobList);
+  const jobDetail = useSelector(
+    (state) => state.previousJobDetail.previousJobDetail
+  );
+
   const steps = [
-    { name: "Select option", component: <SelectJobType /> },
+    {
+      name: "Select option",
+      component: (
+        <SelectJobType
+          getJobTypeData={(e) => getOptionsData(e)}
+          jobList={jobList}
+          postSearch={(e) => getSearchValue(e)}
+          readyForNextStep={(e) => setButtonDisable(e)}
+          onPageChange={getPreviousJobData}
+          page={page}
+          setPage={setPage}
+        />
+      ),
+    },
     {
       name: "Create/update job",
       component: (
@@ -31,12 +131,106 @@ export function CreateJobWizard() {
           hiringTimelineOption={hiringTimelineOption}
           jobLocationOptions={jobLocationOptions}
           payPeriodTypeOption={payPeriodTypeOption}
+          preScreenQuestionsOption={preScreenQuestionsOption}
+          type={jobType}
+          previousStep={previousStep}
+          jobData={jobData}
+          previousData={jobDetail}
+          JobDataForPreview={(e) => getDataForPreview(e)}
         />
       ),
     },
-    { name: "Preview job", component: <JobPreview /> },
-    { name: "Create job", component: <PublishJobStep /> },
+    {
+      name: "Preview job",
+      component: (
+        <JobPreview previewData={jobPreviewData} editdata={(e) => editJob(e)} />
+      ),
+    },
+    {
+      name: "Create job",
+      component: (
+        <PublishJobStep
+          reqData={jobPreviewData}
+          responseData={(e) => requiredData(e)}
+        />
+      ),
+    },
   ];
+  const getNavStates = (indx, length) => {
+    let styles = [];
+    for (let i = 0; i < length; i++) {
+      if (i < indx) {
+        styles.push("done");
+      } else if (i === indx) {
+        styles.push("doing");
+      } else {
+        styles.push("todo");
+      }
+    }
+    return { current: indx, styles: styles };
+  };
+  const checkNavState = (currentStep, stepsLength) => {
+    if (currentStep > 0 && currentStep < stepsLength - 1) {
+      setPreviousButton(true);
+      setNextButton(true);
+      return {
+        previousBtn: true,
+        nextBtn: true,
+      };
+    } else if (currentStep === 0) {
+      setPreviousButton(false);
+      setNextButton(true);
+      return {
+        previousBtn: false,
+        nextBtn: true,
+      };
+    } else {
+      setPreviousButton(true);
+      setNextButton(false);
+      return {
+        previousBtn: true,
+        nextBtn: false,
+      };
+    }
+  };
+  const [previousBtn, setPreviousButton] = useState(false);
+  const [nextBtn, setNextButton] = useState(true);
+  const [compState, setCompState] = useState(0);
+  const [navigationState, setNavigationState] = useState(
+    getNavStates(0, steps.length)
+  );
+  const setNavState = (next) => {
+    setNavigationState(getNavStates(next, steps.length));
+    if (next < steps.length) {
+      setCompState(next);
+    }
+    checkNavState(next, steps.length);
+  };
+  const handleKeyDown = (evt) => {
+    if (evt.which === 13) {
+      this.next();
+    }
+  };
+  const next = () => {
+    setNavState(compState + 1);
+  };
+
+  const previous = () => {
+    if (compState > 0) {
+      setNavState(compState - 1);
+    }
+  };
+  const getClassName = (className, i) => {
+    return className + "-" + navigationState.styles[i];
+  };
+  const renderSteps = () => {
+    return steps.map((s, i) => (
+      <li className={getClassName("form-wizard-step", i)} key={i} value={i}>
+        <em>{i + 1}</em>
+        <span className="steps-lable-custom">{steps[i].name}</span>
+      </li>
+    ));
+  };
   return (
     <>
       <PageTitle heading="Create New Job" icon={titlelogo} />
@@ -44,7 +238,40 @@ export function CreateJobWizard() {
         <Col>
           <Card className="main-card mb-3">
             <CardBody>
-              <MultiStep showNavigation={true} steps={steps} />
+              <div
+                onKeyDown={handleKeyDown}
+                className="main-heading main-wizard-container"
+              >
+                <ol className="forms-wizard">{renderSteps()}</ol>
+                {steps[compState].component}
+                {compState !== 3 && (
+                  <>
+                    <div className="divider" />
+                    <div className="clearfix">
+                      <div style={true ? {} : { display: "none" }}>
+                        <Button
+                          color="secondary"
+                          className="btn-shadow float-start btn-wide btn-pill"
+                          outline
+                          style={previousBtn ? {} : { display: "none" }}
+                          onClick={previous}
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          color="primary"
+                          className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
+                          style={nextBtn ? {} : { display: "none" }}
+                          onClick={next}
+                          disabled={buttonDisable}
+                        >
+                          Continue
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </CardBody>
           </Card>
         </Col>

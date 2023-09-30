@@ -1,18 +1,70 @@
 import React, { useState } from "react";
 import { Label, Input, FormGroup, Form, Row, Col, Button } from "reactstrap";
 
-export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
-  const [paymentAndBenefits, setPaymentAndBenefits] = useState();
+export function PaymentAndBenefits({
+  data,
+  payPeriodTypeOption,
+  postData,
+  prevStep,
+  previousData,
+}) {
+  const [preValue, setPreValue] = useState({
+    payPeriodType:
+      data === undefined || data.payPeriodType === undefined
+        ? ""
+        : data.payPeriodType,
+    minimumAmount:
+      data === undefined || data.minimumAmount === undefined
+        ? ""
+        : data.minimumAmount,
+    maximumAmount:
+      data === undefined || data.maximumAmount === undefined
+        ? ""
+        : data.maximumAmount,
+    compensationPackage:
+      data === undefined || data.compensationPackage === undefined
+        ? ""
+        : data.compensationPackage,
+    benefits:
+      data === undefined || data.benefits === undefined ? "" : data.benefits,
+  });
+  const [previousValue, setPreviousValue] = useState({
+    payPeriodType:
+      previousData[0] === undefined ||
+      previousData[0].payperiodtypeid === undefined
+        ? ""
+        : previousData[0].payperiodtypeid,
+    minimumAmount:
+      previousData[0] === undefined ||
+      previousData[0].minimumamount === undefined
+        ? ""
+        : previousData[0].minimumamount,
+    maximumAmount:
+      previousData[0] === undefined ||
+      previousData[0].maximumamount === undefined
+        ? ""
+        : previousData[0].maximumamount,
+    compensationPackage:
+      previousData[0] === undefined ||
+      previousData[0].compensationpackage === undefined
+        ? ""
+        : previousData[0].compensationpackage,
+    benefits:
+      previousData[0] === undefined || previousData[0].benefits === undefined
+        ? ""
+        : previousData[0].benefits,
+  });
   const getFormData = (event) => {
     event.preventDefault();
-    setPaymentAndBenefits({
+    let data = {
       payPeriodType: event.target.elements.payPeriodType.value,
       minimumAmount: event.target.elements.minimumAmount.value,
       maximumAmount: event.target.elements.maximumAmount.value,
       compensationPackage: event.target.elements.compensationPackage.value,
       benefits: event.target.elements.benefits.value,
-    });
-    console.log(paymentAndBenefits);
+      payPeriodTypeOption: payPeriodTypeOption,
+    };
+    postData(data);
   };
   return (
     <>
@@ -27,11 +79,21 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 name={"payPeriodType"}
                 type={"select"}
               >
-                <option key={0}>Select pay period type</option>
+                <option key={0} value={""}>
+                  Select pay period type
+                </option>
                 {payPeriodTypeOption.length > 0 &&
                   payPeriodTypeOption.map((options) => (
-                    <option key={options.id} value={options.label}>
-                      {options.label}
+                    <option
+                      key={options.id}
+                      value={options.id}
+                      selected={
+                        prevStep === 3
+                          ? preValue.payPeriodType
+                          : previousValue.payPeriodType === options.id
+                      }
+                    >
+                      {options.name}
                     </option>
                   ))}
               </Input>
@@ -46,6 +108,11 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 id={"minimumAmount"}
                 name={"minimumAmount"}
                 type={"number"}
+                defaultValue={
+                  prevStep === 3
+                    ? preValue.minimumAmount
+                    : previousValue.minimumAmount
+                }
                 placeholder="Enter minimum amount"
               />
             </FormGroup>
@@ -59,6 +126,11 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 id={"maximumAmount"}
                 name={"maximumAmount"}
                 type={"number"}
+                defaultValue={
+                  prevStep === 3
+                    ? preValue.maximumAmount
+                    : previousValue.maximumAmount
+                }
                 placeholder="Enter maximum amount"
               />
             </FormGroup>
@@ -76,6 +148,11 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 name={"compensationPackage"}
                 type={"textarea"}
                 placeholder="Enter compensation package"
+                defaultValue={
+                  prevStep === 3
+                    ? preValue.compensationPackage
+                    : previousValue.compensationPackage
+                }
                 maxLength={1000}
               />
             </FormGroup>
@@ -90,6 +167,9 @@ export function PaymentAndBenefits({ data, payPeriodTypeOption }) {
                 name={"benefits"}
                 type={"textarea"}
                 placeholder="Enter benefits"
+                defaultValue={
+                  prevStep === 3 ? preValue.benefits : previousValue.benefits
+                }
                 maxLength={1000}
               />
             </FormGroup>

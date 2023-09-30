@@ -1,49 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Row, Col, Table, Input, FormGroup, Form, Button } from "reactstrap";
 import cx from "classnames";
 import "./createJob.scss";
 import { BsEye } from "react-icons/bs";
 import { CardPagination } from "_components/common/cardpagination";
+import moment from "moment/moment";
+import { JobShortDetailModal } from "./jobShortDetailModal";
 
-export default function SearchPreviousJob() {
-  const dummy = [
-    {
-      jobId: "1",
-      jobTitle: "Java Developer",
-      dateCreated: "Sept 02, 2023",
-      location: "Graysville, Connecticut, USA",
-    },
-    {
-      jobId: "2",
-      jobTitle: "React Developer",
-      dateCreated: "Sept 05, 2023",
-      location: "Graysville, Connecticut, USA",
-    },
-    {
-      jobId: "3",
-      jobTitle: "Angular Developer",
-      dateCreated: "Sept 13, 2023",
-      location: "Graysville, Connecticut, USA",
-    },
-    {
-      jobId: "4",
-      jobTitle: "IOS Developer",
-      dateCreated: "Sept 20, 2023",
-      location: "Triana, Alaska, USA",
-    },
-  ];
+export default function SearchPreviousJob({
+  getJobId,
+  jobList,
+  postSearch,
+  page,
+  setPage,
+  onPageChange,
+}) {
+  let current = Number(jobList.totalRows) / 5;
+  if (current * 5 !== jobList.totalRows) {
+    current++;
+  }
   const [showButton, setShowButton] = useState(false);
   const getSearchValue = (event) => {
     event.preventDefault();
-    console.log(event.target.elements.search.value);
+    postSearch(event.target.elements.search.value);
   };
   const removeSearchValue = (event) => {
     event.preventDefault();
     event.target.form[0].value = "";
-    console.log("");
     setShowButton(false);
+    postSearch("");
   };
-
   const onSearch = (event) => {
     if (event.target.value.length > 0) {
       setShowButton(true);
@@ -51,11 +37,17 @@ export default function SearchPreviousJob() {
       setShowButton(false);
     }
   };
-  const handlePageChange = () => { };
+  const getJobIdOnClick = (event) => {
+    getJobId(event.target.value);
+  };
+  const handlePageChange = useCallback((page) => {
+    setPage(page);
+    onPageChange(page);
+  });
   return (
     <>
       <Row className="mt-4">
-        <Col md={4}>
+        <Col md={4} className="ml-15">
           <Form onSubmit={getSearchValue}>
             <FormGroup>
               <div className={cx("search-wrapper", { active: true })}>
@@ -85,7 +77,7 @@ export default function SearchPreviousJob() {
         </Col>
       </Row>
       <Row>
-        <Col md={11} style={{ marginLeft: "15px" }}>
+        <Col md={11} className="ml-15">
           <Table className="mb-0" striped bordered>
             <thead>
               <tr>
@@ -97,24 +89,25 @@ export default function SearchPreviousJob() {
               </tr>
             </thead>
             <tbody>
-              {dummy.length > 0 &&
-                dummy.map((job) => (
-                  <tr key={job.jobId}>
+              {jobList.jobList.length > 0 &&
+                jobList.jobList.map((job) => (
+                  <tr key={job.jobid}>
                     <td align="center">
                       <Input
                         type="radio"
                         name="jobs"
-                        id="jobRows"
-                        value={job.jobId}
+                        id={"jobRows_" + job.jobid}
+                        value={job.jobid}
+                        onClick={(e) => getJobIdOnClick(e)}
                       />
                     </td>
-                    <td>{job.jobTitle}</td>
-                    <td>{job.dateCreated}</td>
-                    <td>{job.location}</td>
+                    <td>{job.jobtitle}</td>
                     <td>
-                      <Button color="primary" className="action-button">
-                        <BsEye className="action-icon" />
-                      </Button>
+                      {moment(job.jobcreatedatetime).format("MMM D, YYYY")}
+                    </td>
+                    <td>{job.cityname + ", " + job.statename}</td>
+                    <td>
+                      <JobShortDetailModal data={job} />
                     </td>
                   </tr>
                 ))}
@@ -126,9 +119,9 @@ export default function SearchPreviousJob() {
         <Col md={11}>
           <div className="float-end custom-pagination-div">
             <CardPagination
-              totalPages={1}
-              pageIndex={1}
-              onCallBack={handlePageChange}
+              totalPages={jobList.totalRows}
+              pageIndex={page}
+              onCallBack={(evt) => handlePageChange(evt)}
             ></CardPagination>
           </div>
         </Col>

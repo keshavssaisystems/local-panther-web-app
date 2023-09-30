@@ -56,7 +56,6 @@
         font-size: 13px;
         font-style: normal;
         font-weight: 400;
-        letter-spacing: -0.13px;
     }
     
     .table-header-custom{
@@ -126,5 +125,26 @@
         line-height: 16px !important;
         letter-spacing: -0.16px !important;
         text-transform: none !important;
+    }
+}
+
+.ml-15{
+    margin-left: 15px !important;
+}
+
+.detail-job-modal{
+    .information-section{
+        font-family: Capitana;
+        margin-left: 1rem;
+    }
+    .detail-padding{
+        padding-top : 1rem !important;
+        padding-bottom: 0.5rem !important;
+        padding-left: 1.2rem !important;
+        padding-right: 0rem !important;
+    }
+    .job-heading-custom{
+        font-weight: 700;
+        color : #2F2E2E;
     }
 }

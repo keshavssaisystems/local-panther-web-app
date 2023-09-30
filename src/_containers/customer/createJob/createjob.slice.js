@@ -21,7 +21,7 @@ function createInitialState() {
 }
 
 function createExtraActions() {
-  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
 
   return {
     getCreatejob: getCreatejob(),
