@@ -19,14 +19,17 @@ import {
   IoIosHelp,
 } from "react-icons/io";
 import { AcceptModal } from "_components/modal/acceptmodal";
-import { useNavigate } from "react-router-dom";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
+import { RejectModal } from "_components/modal/rejectmodal";
+import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
 
 export const CandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
-  const navigate = useNavigate();
+  const [showReModal, setShowReModal] = useState(false);
+  const [showRejSModal, setShowRejSModal] = useState(false);
+
   const onAcceptClick = () => {
     setShowAModal(true);
   };
@@ -47,6 +50,15 @@ export const CandidateListView = (props) => {
   const onCloseIdModal = () => {
     setShowIDModal(false);
   };
+
+  const onRejectClick = () => {
+    setShowReModal(true);
+  };
+
+  const onSubmitRejectModal = (evt) => {
+    setShowReModal(false);
+    setShowRejSModal(true);
+  };
   const renderButtons = () => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
@@ -62,7 +74,12 @@ export const CandidateListView = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger">
+            <Button
+              title="reject"
+              onClick={() => onRejectClick()}
+              className="btn-icon"
+              color="danger"
+            >
               <IoIosClose fontSize={"24px"}></IoIosClose>
             </Button>
           </Col>
@@ -92,7 +109,12 @@ export const CandidateListView = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger">
+            <Button
+              title="reject"
+              onClick={() => onRejectClick()}
+              className="btn-icon"
+              color="danger"
+            >
               <IoIosClose fontSize={"24px"}></IoIosClose>
             </Button>
           </Col>
@@ -112,7 +134,12 @@ export const CandidateListView = (props) => {
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger">
+            <Button
+              title="reject"
+              onClick={() => onRejectClick()}
+              className="btn-icon"
+              color="danger"
+            >
               <IoIosClose fontSize={"24px"}></IoIosClose>
             </Button>
           </Col>
@@ -122,7 +149,12 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger">
+            <Button
+              title="reject"
+              onClick={() => onRejectClick()}
+              className="btn-icon"
+              color="danger"
+            >
               <IoIosClose fontSize={"24px"}></IoIosClose>
             </Button>
           </Col>
@@ -170,27 +202,29 @@ export const CandidateListView = (props) => {
       selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
-    {
-      name: "Skills",
-      selector: (row) => row.primaryskills + "," + row.secondaryskills,
-      sortable: true,
-    },
+    // {
+    //   name: "Skills",
+    //   selector: (row) => row.primaryskills + "," + row.secondaryskills,
+    //   sortable: true,
+    // },
     {
       name: "Location",
-      selector: (row) => row.address,
+      selector: (row) => row.locationaddress,
       sortable: true,
     },
 
     {
-      name: "Experience",
-      selector: (row) => row.experienceyears,
+      name: "Email",
+      selector: (row) => row.email,
       sortable: true,
     },
 
     {
       name: "Scheduled time",
       sortable: true,
-      cell: (row) => <ScheduleInterviewModal candidateData={row.scheduled} />,
+      cell: (row) => (
+        <ScheduleInterviewModal candidateData={row.customerscheduleddatetime} />
+      ),
     },
     {
       name: "Interview mode",
@@ -267,7 +301,12 @@ export const CandidateListView = (props) => {
               </Button>
             </Col>
             <Col>
-              <Button title="reject" className="btn-icon" color="danger">
+              <Button
+                title="reject"
+                onClick={() => onRejectClick()}
+                className="btn-icon"
+                color="danger"
+              >
                 <IoIosClose fontSize={"20px"}></IoIosClose>
               </Button>
             </Col>
@@ -328,7 +367,7 @@ export const CandidateListView = (props) => {
         }
         selectableRows
         persistTableHead
-        pagination
+        // pagination
       />
       <>
         {showAModal ? (
@@ -347,6 +386,28 @@ export const CandidateListView = (props) => {
             isOpen={showIDModal}
             type={"video"}
             onClose={() => onCloseIdModal()}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showReModal ? (
+          <RejectModal
+            isRMOpen={showReModal}
+            onCancelReject={() => setShowReModal(false)}
+            onSubmitReject={(evt) => onSubmitRejectModal(evt)}
+            rejectDrpDwnList={props.rejectDrpDwnList}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showRejSModal ? (
+          <RejectSuccessModal
+            isRejectConfOpen={showRejSModal}
+            onOkClickRejSuccess={() => setShowRejSModal(false)}
           />
         ) : (
           <></>

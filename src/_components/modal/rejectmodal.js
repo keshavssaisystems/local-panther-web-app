@@ -16,20 +16,6 @@ export const RejectModal = (props) => {
   const [reason, setReason] = useState("");
   const [selReason, setSelReason] = useState("");
   const [reasonErr, setReasonErr] = useState(false);
-  const reasonList = [
-    {
-      value: 1,
-      type: "Location Issue",
-    },
-    {
-      value: 2,
-      type: "Skills not matched",
-    },
-    {
-      value: 3,
-      type: "Fake Profile",
-    },
-  ];
 
   const onChangeReason = (evt) => {
     setReasonErr(false);
@@ -62,37 +48,43 @@ export const RejectModal = (props) => {
           <div className="candidate-list">
             <Row>
               <Col className="mb-2">
-                <Label
-                  className="reject-modal-label"
-                  for="exampleCustomSelectDisabled"
-                >
-                  Reason <span className="required-icon">*</span>
-                </Label>
-                <Input
-                  className="reason-dropdown-input dropdown-placeholder"
-                  style={{
-                    borderColor: reasonErr ? "red" : "#ced4da",
-                  }}
-                  type="select"
-                  id="jobType"
-                  name="jobType"
-                  placeholder="Select Reason"
-                  onChange={(evt) => onChangeReason(evt.target.value)}
-                  value={selReason}
-                >
-                  <option className="dropdown-placeholder">
-                    Select Reason
-                  </option>
-                  {reasonList.map((col) => (
-                    <option key={col.value} value={col.value}>
-                      {col.type}
-                    </option>
-                  ))}
-                </Input>
-                {reasonErr ? (
-                  <p className="filter-info-text filter-error-msg">
-                    Reason is required
-                  </p>
+                {props.rejectDrpDwnList ? (
+                  <>
+                    <Label
+                      className="reject-modal-label"
+                      for="exampleCustomSelectDisabled"
+                    >
+                      Reason <span className="required-icon">*</span>
+                    </Label>
+                    <Input
+                      className="reason-dropdown-input dropdown-placeholder"
+                      style={{
+                        borderColor: reasonErr ? "red" : "#ced4da",
+                      }}
+                      type="select"
+                      id="jobType"
+                      name="jobType"
+                      placeholder="Select Reason"
+                      onChange={(evt) => onChangeReason(evt.target.value)}
+                      value={selReason}
+                    >
+                      <option className="dropdown-placeholder">
+                        Select Reason
+                      </option>
+                      {props.rejectDrpDwnList.map((col) => (
+                        <option key={col.id} value={col.id}>
+                          {col.name}
+                        </option>
+                      ))}
+                    </Input>
+                    {reasonErr ? (
+                      <p className="filter-info-text filter-error-msg">
+                        Reason is required
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </>
                 ) : (
                   <></>
                 )}

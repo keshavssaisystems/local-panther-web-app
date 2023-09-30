@@ -40,7 +40,7 @@ export const CandidateCardView = (props) => {
               <span className="pe-2">
                 <IoIosAlbums fontSize={"16px"}></IoIosAlbums>
               </span>
-              {props?.data?.profile}
+              {props?.data?.jobtitle}
             </Col>
 
             {/* <Col className="col-12">
@@ -52,14 +52,14 @@ export const CandidateCardView = (props) => {
               <span className="pe-2">
                 <IoIosLocate fontSize={"16px"}></IoIosLocate>
               </span>
-              {props?.data?.address}
+              {props?.data?.locationaddress}
             </Col>
             <Col className="col-12">
               <span className="pe-2">
                 <IoIosBriefcase fontSize={"16px"}></IoIosBriefcase>
               </span>
 
-              {props?.data?.experienceyears}
+              {props?.data?.email}
             </Col>
             <Col className="col-12">
               <span className="pe-2">
@@ -133,6 +133,7 @@ export const CandidateCardView = (props) => {
             isRMOpen={showReModal}
             onCancelReject={() => setShowReModal(false)}
             onSubmitReject={(evt) => onSubmitRejectModal(evt)}
+            rejectDrpDwnList={props.rejectDrpDwnList}
           />
         ) : (
           <></>
