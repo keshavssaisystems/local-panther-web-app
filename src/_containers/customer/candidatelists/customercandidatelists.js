@@ -304,7 +304,15 @@ export const CustomerCandidateLists = (props) => {
                       ></CardPagination>
                     </>
                   ) : (
-                    <></>
+                    <>
+                      {candidateList.length === 0 && !loading ? (
+                        <Row style={{ textAlign: "center" }}>
+                          <Col>No Records found!</Col>
+                        </Row>
+                      ) : (
+                        ""
+                      )}
+                    </>
                   )}
                 </>
               )}
@@ -340,7 +348,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -377,7 +393,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -414,7 +438,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -451,7 +483,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -488,7 +528,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -525,7 +573,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}

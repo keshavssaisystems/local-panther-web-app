@@ -65,7 +65,7 @@ export const CustCandidateListView = (props) => {
   };
 
   const onInterviewDetails = () => {
-    setShowIDModal(true);
+    // setShowIDModal(true);
   };
 
   const onCloseIdModal = () => {
@@ -397,9 +397,7 @@ export const CustCandidateListView = (props) => {
     {
       name: "Scheduled time",
       sortable: true,
-      cell: (row) => (
-        <ScheduleInterviewModal candidateData={row.customerscheduleddatetime} />
-      ),
+      cell: (row) => row.customerscheduleddatetime,
     },
     {
       name: "Interview mode",
