@@ -11,7 +11,7 @@ import {
 } from "reactstrap";
 import classnames from "classnames";
 import { CandidateCardView } from "_components/list/cardview";
-import { CandidateListView } from "_components/list/listview";
+import { CustCandidateListView } from "_components/list/custlistview";
 import { CardPagination } from "_components/common/cardpagination";
 import { useParams, useNavigate } from "react-router-dom";
 import { cardPageSize, listPageSize } from "_helpers/constants";
@@ -322,7 +322,7 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
@@ -359,7 +359,7 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
@@ -396,7 +396,7 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
@@ -433,7 +433,7 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
@@ -470,7 +470,7 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
@@ -507,7 +507,7 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
