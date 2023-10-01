@@ -21,35 +21,25 @@ import {
   InputGroup,
   Form,
 } from "reactstrap";
-
-import editIcon from "../../assets/utils/images/pencil.svg";
-
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { BsPencil } from "react-icons/bs";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import DatePicker from "react-datepicker";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
-import {
-  shiftsOption,
-  workScheduleOptions,
-  jobTypeOption,
-  experienceLevelOption,
-  hiringTimelineOption,
-  jobLocationOptions,
-  payPeriodTypeOption,
-} from "../../_containers/customer/createJob/dummyData";
 
 export function JobPreferences(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
   const selectDate = function () {};
-
+  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const workScheduleOptions = useSelector(
+    (state) => state.workSchedule.workSchedule
+  );
+  const jobTypeOption = useSelector((state) => state.jobType.jobType);
+  const experienceLevelOption = useSelector(
+    (state) => state.experienceLevel.experienceLevel
+  );
   const [preferenceDetails, setDetails] = useState({
     desiredJobTitle: "flexible",
     specificJobTitle: "Java Developer,UI Developer",
