@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { history, fetchWrapper } from "_helpers";
 import jwtDecode from "jwt-decode";
-
 // create slice name
 const name = "auth";
 
@@ -48,7 +47,10 @@ const authSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToekn");
+      localStorage.removeItem("userId");
       localStorage.removeItem("userDetails");
+      localStorage.clear();
+
       history.navigate("/login");
     },
   },
@@ -66,7 +68,7 @@ const authSlice = createSlice({
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
       const decodedData = jwtDecode(token);
-
+      localStorage.setItem("userId", decodedData.UserId);
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
 
       // get return url from location state or default to home page

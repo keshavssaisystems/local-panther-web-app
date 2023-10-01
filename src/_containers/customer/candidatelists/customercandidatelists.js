@@ -11,13 +11,14 @@ import {
 } from "reactstrap";
 import classnames from "classnames";
 import { CandidateCardView } from "_components/list/cardview";
-import { CandidateListView } from "_components/list/listview";
+import { CustCandidateListView } from "_components/list/custlistview";
 import { CardPagination } from "_components/common/cardpagination";
 import { useParams, useNavigate } from "react-router-dom";
 import { cardPageSize, listPageSize } from "_helpers/constants";
 import { useSelector, useDispatch } from "react-redux";
 import { candidateListsActions } from "./candidatelists.slice";
 import Loader from "react-loaders";
+import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
 
 export const CustomerCandidateLists = (props) => {
@@ -26,6 +27,13 @@ export const CustomerCandidateLists = (props) => {
   const [pageNo, setPageNo] = useState(1);
   const { id } = useParams();
   const [selectedJobId, setSelectedJobId] = useState(id);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const jobList = useSelector((state) => state.candidateLists.jobLists);
@@ -81,6 +89,54 @@ export const CustomerCandidateLists = (props) => {
     navigate(`/customer-candidate-${activeTab}/${parseInt(evt.target.value)}`);
   };
 
+  const onActionClick = async (evt, type) => {
+    if (type === "like") {
+      let res = await dispatch(
+        candidateListsActions.putLikedCandidate({ id: evt })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+        onGetPageList(pageNo, props.type, id);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+    } else if (type === "maybe") {
+      let res = await dispatch(
+        candidateListsActions.putMayBeCandidate({ id: evt })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+        onGetPageList(pageNo, props.type, id);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+    }
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+
+  const onUpdateList = () => {
+    onGetPageList(pageNo, props.type, id);
+  };
   return (
     <>
       <Row className="customercandidatelist">
@@ -229,6 +285,13 @@ export const CustomerCandidateLists = (props) => {
                               <CandidateCardView
                                 data={data}
                                 rejectDrpDwnList={rejectDrpDwnList}
+                                onActionClick={(e, type) =>
+                                  onActionClick(e, type)
+                                }
+                                showSweetAlert={({ title, type }) =>
+                                  showSweetAlert({ title, type })
+                                }
+                                updateList={() => onUpdateList()}
                               ></CandidateCardView>
                             </Col>
                           );
@@ -241,7 +304,15 @@ export const CustomerCandidateLists = (props) => {
                       ></CardPagination>
                     </>
                   ) : (
-                    <></>
+                    <>
+                      {candidateList.length === 0 && !loading ? (
+                        <Row style={{ textAlign: "center" }}>
+                          <Col>No Records found!</Col>
+                        </Row>
+                      ) : (
+                        ""
+                      )}
+                    </>
                   )}
                 </>
               )}
@@ -259,11 +330,16 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -272,7 +348,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -291,11 +375,16 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -304,7 +393,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -323,11 +420,16 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -336,7 +438,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -355,11 +465,16 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -368,7 +483,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -387,11 +510,16 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -400,7 +528,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -419,11 +555,16 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
-                        <CandidateListView
+                        <CustCandidateListView
                           type={props.type}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -432,7 +573,15 @@ export const CustomerCandidateLists = (props) => {
                         ></CardPagination>
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
                 )}
@@ -441,12 +590,16 @@ export const CustomerCandidateLists = (props) => {
           </TabContent>
         </Col>
       </Row>
-      {/* ) : (
-        <Loader
-          type="line-scale-pulse-out-rapid"
-          className="d-flex justify-content-center"
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
         />
-      )} */}
+        {showAlert.description}
+      </>
     </>
   );
 };
