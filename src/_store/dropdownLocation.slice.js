@@ -10,7 +10,7 @@ const initialState = {
 };
 
 // Define the async action
-export const getSkill = createAsyncThunk("skill/getSkill", async (id) => {
+export const getSkill = createAsyncThunk("location/getLocation", async (id) => {
   const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
   const response = await fetchWrapper.get(
     `${baseUrl}/DepartmentSkillMapping/GetDepartmentSkillList?departmentId=${id}&pageSize=100`
@@ -20,7 +20,7 @@ export const getSkill = createAsyncThunk("skill/getSkill", async (id) => {
 
 // Create the slice
 const skillSlice = createSlice({
-  name: "skill",
+  name: "location",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -45,7 +45,7 @@ export const skillActions = {
 export const skillReducer = skillSlice.reducer;
 
 export const getSkillsFilter = async (searchText) => {
-  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_JOB_API_URL}/api`;
   return await fetchWrapper.get(
     `${baseUrl}/Skill/GetSkillDropdown?searchText=${searchText}`
   );
