@@ -14,6 +14,7 @@ import {
   Form,
 } from "reactstrap";
 import Tabs from "react-responsive-tabs";
+import { formatDate } from "_helpers/helper";
 import { profileActions } from "_store";
 import { useDispatch } from "react-redux";
 import { BsDownload, BsTrash3, BsUpload } from "react-icons/bs";
@@ -38,7 +39,7 @@ export function ResumeDetails(props) {
   const [fileName, setFileName] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-
+  const [sizeError, setSizeError] = useState(false);
   const [isModal, setModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
@@ -52,17 +53,17 @@ export function ResumeDetails(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    props.onCallBack();
+    window.location.reload();
   };
   const [acceptedFiles, setAcceptedFiles] = useState([]);
 
-  const formatDate = function () {
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    const formattedDate = new Date(
-      resumeDetails.uploadeddate
-    ).toLocaleDateString(undefined, options);
-    return formattedDate;
-  };
+  // const formatDate = function () {
+  //   const options = { year: "numeric", month: "short", day: "numeric" };
+  //   const formattedDate = new Date(
+  //     resumeDetails.uploadeddate
+  //   ).toLocaleDateString(undefined, options);
+  //   return formattedDate;
+  // };
 
   const addEditResume = async function (acceptedFiles) {
     let response;
@@ -139,16 +140,22 @@ export function ResumeDetails(props) {
 
     let response = await dispatch(profileActions.deleteResume(resumeId));
     setDeleteConfirm(false);
-    props.onCallBack();
+    window.location.reload();
   };
 
   const onDrop = (acceptedFiles) => {
+    if (acceptedFiles[0].size > 2 * 1024 * 1024) {
+      setSizeError(true);
+
+      return;
+    }
+
     addEditResume(acceptedFiles);
   };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    allow: "application/pdf",
+    accept: ".pdf, .docx, .rtf",
   });
 
   const getFileName = function () {
@@ -449,6 +456,35 @@ export function ResumeDetails(props) {
                   <Button
                     className="me-2 accept-modal-btn"
                     onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={sizeError}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              File size should not exceed 2 MB
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setSizeError(false)}
                   >
                     OK
                   </Button>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Label, Input } from "reactstrap";
-import { candidateActions } from "_store";
+import { getLocationFilter, educationDetailsSlice } from "_store";
 import {
   Row,
   Col,
@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import Tabs from "react-responsive-tabs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 
 import { useForm } from "react-hook-form";
@@ -27,58 +27,133 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
+import AsyncSelect from "react-select/async";
+
+import errorIcon from "../../assets/utils/images/error_icon.png";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 
 export function EducationModal(props) {
   const [check, setCheck] = useState(props.check);
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-  const [isPersonalModal, setPersonalModal] = useState(false);
-  const [isSave, setSave] = useState(true);
   const [formDetails, setFormData] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     loadData();
   }, []);
 
+  const [countryList, setCountryList] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
+
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
+
+  const [educationList, setEducationList] = useState(
+    useSelector((state) => state.educationLevelReducer.educationList)
+  );
+
   const loadData = function () {
     let data = [];
     if (check == "add") {
       data.push({
-        id: 0,
-        educationLevel: "",
+        candidateeducationid: 0,
         error: false,
+        education: {
+          value: 0,
+          label: "",
+        },
+
+        candidateid: 0,
+
+        fieldofstudy: "",
+        school: "",
+        city: [
+          {
+            value: 0,
+            label: "",
+          },
+        ],
+        state: [
+          {
+            value: 0,
+            label: "",
+          },
+        ],
+        country: [
+          {
+            value: 0,
+            label: "",
+          },
+        ],
+        iscurrentlystudying: true,
+        startdate: new Date(),
+        enddate: new Date(),
+        isactive: false,
+        currentUserId: null,
       });
     } else {
       data.push({
-        id: 0,
-        educationLevel: props.selected.educationLevel,
         error: false,
+        candidateeducationid: props.selected.candidateeducationid,
+        education: {
+          value: props.selected.candidateeducationid,
+          label: props.selected.levelofeducation,
+        },
+
+        candidateid: 0,
+
+        fieldofstudy: props.selected.fieldofstudy,
+        school: props.selected.school,
+        city: {
+          value: props.selected.cityid,
+          label: props.selected.cityname,
+        },
+
+        state: {
+          value: props.selected.stateid,
+          label: props.selected.statename,
+        },
+
+        country: {
+          value: props.selected.countryid,
+          label: props.selected.countryname,
+        },
+        iscurrentlystudying: props.selected.iscurrentlystudying,
+        startdate: props.selected.startdate
+          ? new Date(props.selected.startdate)
+          : new Date(),
+        enddate: props.selected.enddate
+          ? new Date(props.selected.enddate)
+          : new Date(),
+        isactive: props.selected.isactive,
+        currentUserId: null,
       });
     }
     setFormData(data);
   };
-
-  const [countryList, setCountryList] = useState([
-    {
-      value: 1,
-      type: "USA",
-    },
-    {
-      value: 2,
-      type: "India",
-    },
-  ]);
+  useEffect(() => {
+    let country_response;
+    let state_response;
+    country_response = cityList.map(({ countryid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.countryname}`,
+      };
+    });
+    state_response = cityList.map(({ stateid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.statename}`,
+      };
+    });
+    setStateList(state_response);
+    console.log(stateList);
+    setCountryList(country_response);
+  }, [cityList]);
 
   const closeModal = function () {
-    let data = [
-      {
-        id: 0,
-        educationLevel: "",
-        error: false,
-      },
-    ];
-    setFormData(data);
-    props.onCallBack();
+    window.location.reload();
   };
 
   const removeTabs = function (index) {
@@ -86,19 +161,23 @@ export function EducationModal(props) {
     new_data.splice(index, 1);
     setFormData(new_data);
   };
-  const handleChange = function (index, data) {
-    let new_data = [...formDetails];
 
-    new_data[index].educationLevel = data;
-    new_data[index].error = false;
-    setFormData(new_data);
-    onSubmit();
+  const loadOptions = async function (inputValue) {
+    // if (inputValue.length > 2) {
+    const { data = [] } = await getLocationFilter(inputValue);
+    setCityList(data);
+    return data.map(({ cityid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.location}`,
+      };
+    });
   };
 
   const addMoreTabs = function (index) {
     let new_data = [...formDetails];
     console.log("before" + new_data);
-    if (new_data[index - 1].educationLevel == "") {
+    if (new_data[index - 1].levelofeducation == "") {
       new_data[index - 1].error = true;
       setFormData(new_data);
 
@@ -108,7 +187,7 @@ export function EducationModal(props) {
 
     const newTab = {
       id: index,
-      educationLevel: "",
+      levelofeducation: "",
       error: false,
     };
     setFormData([...formDetails, newTab]);
@@ -126,11 +205,50 @@ export function EducationModal(props) {
     // onSubmit();
   };
 
-  function onSubmit() {
-    const keyToCheck = "educationLevel";
+  const onHandleInputChange = function (check, data, index) {
+    let new_data = [...formDetails];
+    let dropdown = {
+      value: 0,
+      label: "",
+    };
+    if (check == "levelofeducation") {
+      dropdown.value = data.value;
+      dropdown.label = data.label;
+
+      new_data[index].education = dropdown;
+    } else if (check == "studyField") {
+      new_data[index].fieldofstudy = data;
+    } else if (check == "school") {
+      new_data[index].school = data;
+    } else if (check == "city") {
+      dropdown.value = data.value;
+      dropdown.label = data.label;
+      new_data[index].city = dropdown;
+    } else if (check == "state") {
+      dropdown.value = data.value;
+      dropdown.label = data.label;
+      new_data[index].state = dropdown;
+    } else if (check == "country") {
+      dropdown.value = data.value;
+      dropdown.label = data.label;
+
+      new_data[index].country = dropdown;
+    } else if (check == "currentlyStudying") {
+      new_data[index].iscurrentlystudying = data;
+    } else if (check == "fromdate") {
+      new_data[index].startdate = new Date(data);
+    } else if (check == "todate") {
+      new_data[index].enddate = new Date(data);
+    }
+
+    setFormData(new_data);
+  };
+
+  async function onSubmit() {
+    const keyToCheck = "label";
 
     // const emptyKeyIndexes = formDetails
-    //   .map((item, index) => (item[keyToCheck] == "" ? index : null))
+    //   .map((item, index) => (item.education[keyToCheck] == "" ? index : null))
     //   .filter((index) => index !== null);
     //
     // if (emptyKeyIndexes.length > 0) {
@@ -139,14 +257,64 @@ export function EducationModal(props) {
     //   for (let i = 0; i < emptyKeyIndexes.length; i++) {
     //     new_data[emptyKeyIndexes[i]].error = true;
     //   }
-
+    //   return;
     // }
-    let new_data = [...formDetails];
-    setFormData(new_data);
-    setSave(false);
-  }
 
-  const selectDate = function () {};
+    let error_data = [...formDetails];
+    for (let i = 0; i < formDetails.length; i++) {
+      if (formDetails[i].education.label == "") {
+        error_data[i].error = true;
+        setFormData(error_data);
+        return;
+      }
+    }
+
+    let new_data = [...formDetails];
+    let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+
+    let filtered_data = formDetails.map(({ skillid: value, ...rest }) => {
+      return {
+        candidateeducationid: rest.candidateeducationid,
+        candidateid: Number(userDetails.InternalUserId),
+        levelofeducation: rest.education.label,
+        fieldofstudy: rest.fieldofstudy,
+        school: rest.school,
+        countryid: rest.country.value,
+        cityid: rest.city.value,
+        stateid: rest.state.value,
+        iscurrentlystudying: rest.iscurrentlystudying,
+        startdate: rest.startdate
+          ? new Date(rest.startdate).toISOString()
+          : null,
+        enddate: rest.startdate ? new Date(rest.enddate).toISOString() : null,
+        isactive: true,
+        currentUserId: parseInt(userDetails.UserId),
+      };
+    });
+
+    let response;
+    let education_data = filtered_data[0];
+    let id = filtered_data[0].candidateeducationid;
+    if (check == "add") {
+      response = await dispatch(
+        educationDetailsSlice.addEducationThunk(filtered_data)
+      );
+    } else {
+      response = await dispatch(
+        educationDetailsSlice.updateEducationThunk({
+          id,
+          education_data,
+        })
+      );
+    }
+
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
+    }
+  }
 
   return (
     <div>
@@ -190,25 +358,24 @@ export function EducationModal(props) {
           <Row>
             <Col md={4}>
               <FormGroup>
-                <Label for="educationLevel" className="input-label">
+                <Label for="levelofeducation" className="input-label">
                   Level of Education
                   <span className="required-icon"> *</span>
                 </Label>
-                <input
-                  placeholder="Enter Level of Education"
-                  name="educationLevel"
-                  type="text"
-                  id="educationLevel"
-                  maxLength={50}
-                  value={formDetails[index].educationLevel}
-                  onInput={(evt) => handleChange(index, evt.target.value)}
-                  className={`field-input placeholder-text form-control ${
-                    item.error ? "is-invalid" : ""
-                  }`}
+
+                <AsyncSelect
+                  placeholder="Select Level of Education"
+                  name="levelofeducation"
+                  defaultOptions={educationList}
+                  isMulti={false}
+                  value={item.education}
+                  onChange={(evt) =>
+                    onHandleInputChange("levelofeducation", evt, index, index)
+                  }
                 />
 
-                <div className="invalid-feedback">
-                  {item.error ? "Level of Education is Required" : ""}
+                <div style={{ color: "#ff0000", fontSize: "12px" }}>
+                  {item.error ? "Level of education is required" : ""}
                 </div>
               </FormGroup>
             </Col>
@@ -223,6 +390,10 @@ export function EducationModal(props) {
                   type="text"
                   id="studyField"
                   maxLength={50}
+                  value={item.fieldofstudy}
+                  onInput={(evt) =>
+                    onHandleInputChange("studyField", evt.target.value, index)
+                  }
                   className="field-input placeholder-text form-control"
                 />
               </FormGroup>
@@ -232,14 +403,18 @@ export function EducationModal(props) {
                 <Label for="school" className="input-label">
                   School
                 </Label>
-                <Input
-                  className="field-input placeholder-text form-control"
+                <input
+                  placeholder="Enter School"
+                  name="school"
                   type="text"
                   id="school"
-                  name="school"
                   maxLength={50}
-                  placeholder="Enter School"
-                ></Input>
+                  value={item.school}
+                  onInput={(evt) =>
+                    onHandleInputChange("school", evt.target.value, index)
+                  }
+                  className="field-input placeholder-text form-control"
+                />
               </FormGroup>
             </Col>
           </Row>
@@ -249,13 +424,13 @@ export function EducationModal(props) {
                 <Label for="city" className="input-label">
                   City
                 </Label>
-                <input
-                  placeholder="Enter city"
-                  name="city"
-                  type="text"
-                  id="city"
-                  maxLength={50}
-                  className="field-input placeholder-text form-control"
+                <AsyncSelect
+                  name="skills"
+                  placeholder="Search to select"
+                  loadOptions={loadOptions}
+                  isMulti={false}
+                  value={item.city.value}
+                  onChange={(evt) => onHandleInputChange("city", evt, index)}
                 />
               </FormGroup>
             </Col>
@@ -264,13 +439,13 @@ export function EducationModal(props) {
                 <Label for="state" className="input-label">
                   State
                 </Label>
-                <input
-                  placeholder="Enter State"
+                <AsyncSelect
                   name="state"
-                  type="text"
-                  id="state"
-                  maxLength={50}
-                  className="field-input placeholder-text form-control"
+                  placeholder="Select"
+                  defaultOptions={stateList}
+                  isMulti={false}
+                  value={item.state}
+                  onChange={(evt) => onHandleInputChange("state", evt, index)}
                 />
               </FormGroup>
             </Col>
@@ -280,19 +455,14 @@ export function EducationModal(props) {
                 <Label for="country" className="input-label">
                   Country
                 </Label>
-                <Input
-                  className="reason-dropdown-input dropdown-placeholder"
-                  type="select"
-                  id="country"
+                <AsyncSelect
                   name="country"
-                  placeholder="Select Country"
-                >
-                  {countryList.map((col) => (
-                    <option key={col.value} value={col.value}>
-                      {col.type}
-                    </option>
-                  ))}
-                </Input>
+                  placeholder="Select"
+                  defaultOptions={countryList}
+                  isMulti={false}
+                  value={item.country}
+                  onChange={(evt) => onHandleInputChange("country", evt, index)}
+                />
               </FormGroup>
             </Col>
           </Row>
@@ -303,6 +473,14 @@ export function EducationModal(props) {
                   type="checkbox"
                   name="currentlyStudying"
                   id="currentlyStudying"
+                  checked={item.iscurrentlystudying}
+                  onChange={(evt) =>
+                    onHandleInputChange(
+                      "currentlyStudying",
+                      evt.target.value,
+                      index
+                    )
+                  }
                 />{" "}
                 <Label check className="input-label">
                   Currently Studying
@@ -323,10 +501,12 @@ export function EducationModal(props) {
                   <DatePicker
                     name="fromDate"
                     id="fromDate"
-                    className="field-input placeholder-text form-control"
                     placeholderText="DD/MM/YYYY"
-                    selected={fromDate}
-                    onChange={(evt) => selectDate()}
+                    selected={item.startdate}
+                    className="form-control"
+                    onChange={(evt) =>
+                      onHandleInputChange("fromdate", evt, index)
+                    }
                   />
                 </InputGroup>
               </FormGroup>
@@ -345,8 +525,10 @@ export function EducationModal(props) {
                     id="toDate"
                     className="form-control"
                     placeholderText="DD/MM/YYYY"
-                    selected={toDate}
-                    onChange={(evt) => selectDate()}
+                    selected={item.enddate}
+                    onChange={(evt) =>
+                      onHandleInputChange("todate", evt, index)
+                    }
                   />
                 </InputGroup>
               </FormGroup>
@@ -376,6 +558,64 @@ export function EducationModal(props) {
           )}
         </Form>
       ))}
+
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              {message}
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Thank you!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Something went wrong
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again later
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
     </div>
   );
 }

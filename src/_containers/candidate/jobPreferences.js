@@ -90,54 +90,60 @@ export function JobPreferences(props) {
             />
           </div>
           <CardBody>
-            <Row>
-              <Col>
-                <Row>
-                  <strong>Desired job titles</strong>
-                  <div>{preferenceDetails.desiredJobTitle}</div>
-                </Row>
-                <hr />
-                <Row>
-                  <strong>Specific job title</strong>
-                  <div>{preferenceDetails.specificJobTitle}</div>
-                </Row>
-                <hr />
-                <Row>
-                  <strong>Desired job types</strong>
-                  <div>{preferenceDetails.desiredJobTypes}</div>
-                </Row>
-                <hr />
-                <Row>
-                  <strong>Work schedules</strong>
-                  <div>{preferenceDetails.workSchedules}</div>
-                </Row>
-                <hr />
-                <Row>
-                  <strong>Shifts</strong>
-                  <div>{preferenceDetails.shifts}</div>
-                </Row>
-                <hr />
-              </Col>
+            {preferenceDetails ? (
+              <Row>
+                <Col>
+                  <Row>
+                    <strong>Desired job titles</strong>
+                    <div>{preferenceDetails.desiredJobTitle}</div>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <strong>Specific job title</strong>
+                    <div>{preferenceDetails.specificJobTitle}</div>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <strong>Desired job types</strong>
+                    <div>{preferenceDetails.desiredJobTypes}</div>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <strong>Work schedules</strong>
+                    <div>{preferenceDetails.workSchedules}</div>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <strong>Shifts</strong>
+                    <div>{preferenceDetails.shifts}</div>
+                  </Row>
+                  <hr />
+                </Col>
 
-              <Col>
-                <Row>
-                  <strong>Desired minimum pay</strong>
+                <Col>
+                  <Row>
+                    <strong>Desired minimum pay</strong>
 
-                  <div>{preferenceDetails.pay}</div>
-                </Row>
-                <hr />
-                <Row>
-                  <strong>Willing to relocate</strong>
-                  <div>{preferenceDetails.relocate}</div>
-                </Row>
-                <hr />
-                <Row>
-                  <strong>Desired work type</strong>
-                  <div>{preferenceDetails.workType}</div>
-                </Row>
-                <hr />
-              </Col>
-            </Row>
+                    <div>{preferenceDetails.pay}</div>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <strong>Willing to relocate</strong>
+                    <div>{preferenceDetails.relocate}</div>
+                  </Row>
+                  <hr />
+                  <Row>
+                    <strong>Desired work type</strong>
+                    <div>{preferenceDetails.workType}</div>
+                  </Row>
+                  <hr />
+                </Col>
+              </Row>
+            ) : (
+              <div className="d-flex justify-content-center">
+                No Data available
+              </div>
+            )}
           </CardBody>
         </Card>
       </div>
@@ -220,8 +226,8 @@ export function JobPreferences(props) {
                       <Label for="workSchedule" className="fw-semi-bold">
                         Work schedules
                       </Label>
-                      {workScheduleOptions.length > 0 &&
-                        workScheduleOptions.map((options) => (
+                      {workScheduleOptions?.length > 0 &&
+                        workScheduleOptions?.map((options) => (
                           <div className="form-group-custom">
                             <Input
                               key={options.id}
@@ -243,8 +249,8 @@ export function JobPreferences(props) {
                       <Label for="shifts" className="fw-semi-bold">
                         Shifts
                       </Label>
-                      {shiftsOption.length > 0 &&
-                        shiftsOption.map((options) => (
+                      {shiftsOption?.length > 0 &&
+                        shiftsOption?.map((options) => (
                           <div className="form-group-custom">
                             <Input
                               key={options.id}

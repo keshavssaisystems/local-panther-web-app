@@ -9,6 +9,7 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import editIcon from "../../assets/utils/images/pencil.svg";
+
 import {
   Row,
   Col,
@@ -22,7 +23,8 @@ import {
   Form,
 } from "reactstrap";
 import { profileActions } from "_store";
-
+import { formatDate } from "_helpers/helper";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
 import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
 
@@ -54,25 +56,14 @@ export function CandidateQualification(props) {
 
   const [qualificationDetails, setDetails] = useState(props.qualificationInfo);
 
-  const [countryList, setCountryList] = useState([
-    {
-      value: 1,
-      type: "USA",
-    },
-    {
-      value: 2,
-      type: "India",
-    },
-  ]);
-
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    const formattedDate = new Date(dateString).toLocaleDateString(
-      undefined,
-      options
-    );
-    return formattedDate;
-  };
+  // const formatDate = (dateString) => {
+  //   const options = { year: "numeric", month: "short", day: "numeric" };
+  //   const formattedDate = new Date(dateString).toLocaleDateString(
+  //     undefined,
+  //     options
+  //   );
+  //   return formattedDate;
+  // };
 
   const validationSchema = Yup.object().shape({
     jobTitle: Yup.string().required("Job Title is required").max(50),
@@ -94,7 +85,9 @@ export function CandidateQualification(props) {
       otherwise: Yup.string(), // No requirement when something is not enabled
     }),
   });
-
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
@@ -106,11 +99,16 @@ export function CandidateQualification(props) {
   const deleteData = async function (id) {
     let response = await dispatch(profileActions.deleteQualification(id));
 
-    setDeleteConfirm(true);
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
+    }
   };
 
-  const loadData = function () {
-    props.onCallBack();
+  const closeModal = function () {
+    window.location.reload();
   };
   const [newTabId, setNewTabId] = useState(2);
   const addMoreTabs = function () {
@@ -153,46 +151,56 @@ export function CandidateQualification(props) {
                 </Col>
               </Row>
               <Row>
-                {qualificationDetails.map((item) => (
-                  <div>
-                    <Col>
-                      <strong className="me-2 content-title">
-                        {item.jobtitle}{" "}
-                      </strong>
-                      <BsPencil
-                        className="icons"
-                        onClick={(evt) => edit(item)}
-                      />{" "}
-                      <BsTrash3
-                        className="icons"
-                        onClick={() =>
-                          deleteData(item.candidatequalificationid)
-                        }
-                      />
-                    </Col>
+                {qualificationDetails.length > 0 ? (
+                  qualificationDetails.map((item) => (
+                    <div>
+                      <Col>
+                        <strong className="me-2 content-title">
+                          {item.jobtitle}{" "}
+                        </strong>
+                        <div className="float-end">
+                          <BsPencil
+                            className="icons"
+                            onClick={(evt) => edit(item)}
+                          />{" "}
+                          <BsTrash3
+                            className="icons me-3"
+                            onClick={() =>
+                              deleteData(item.candidatequalificationid)
+                            }
+                          />
+                        </div>
+                      </Col>
 
-                    <p className="mb-0 card-p-text-black">
-                      {item.company}
-                      {item.cityname}
-                      {item.statename}
-                      {item.countryname}
-                      {item.zipCode}
-                    </p>
-                    <p className="card-p-text-black">
-                      {formatDate(item.startdate)}
-                      {" to "}
-                      {formatDate(item.enddate)}
-                      {/* {" ("}
+                      <span className="mb-0 card-p-text-black">
+                        {item.company}
+                      </span>
+                      <span>
+                        {item.cityname}
+                        {item.statename}
+                        {item.countryname}
+                        {item.zipCode}
+                      </span>
+                      <p className="card-p-text-black">
+                        {formatDate(item.startdate)}
+                        {" to "}
+                        {formatDate(item.enddate)}
+                        {/* {" ("}
                       {item.experience}
                       {")"} */}
-                    </p>
-                    {/* <p className="card-p-text">{item.jobDescription}</p> */}
+                      </p>
+                      <p className="card-p-text">{item.jobdescription}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    No Data available
                   </div>
-                ))}
+                )}
               </Row>
             </PerfectScrollbar>
           </div>
-          <CardFooter
+          {/* <CardFooter
             className="d-flex justify-content-center"
             style={{ border: "none" }}
           >
@@ -201,7 +209,7 @@ export function CandidateQualification(props) {
                 View all {qualificationDetails.length} Details
               </span>
             </div>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </div>
 
@@ -246,7 +254,7 @@ export function CandidateQualification(props) {
                     </span>
                   </Row>
                   <Row className="mt-3">
-                    {qualificationDetails.map((item) => (
+                    {qualificationDetails?.map((item) => (
                       <div>
                         <Col>
                           <strong className="me-2 content-title">
@@ -318,17 +326,14 @@ export function CandidateQualification(props) {
       ) : (
         <></>
       )}
-      <Modal
-        className="modal-reject-align profile-view"
-        isOpen={deleteConfirmation}
-      >
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
-              <img src={errorIcon} alt="success-icon" />
+              <img src={successIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              Qualification Deleted Successfully
+              {message}
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
@@ -339,7 +344,36 @@ export function CandidateQualification(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => loadData()}
+                    onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Something went wrong
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again later
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => closeModal()}
                   >
                     OK
                   </Button>

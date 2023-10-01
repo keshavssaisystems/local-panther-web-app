@@ -7,7 +7,7 @@ import {
   ModalBody,
   CardTitle,
 } from "reactstrap";
-import { candidateActions } from "_store";
+import { certificateDetailsSlice } from "_store";
 import {
   Row,
   Col,
@@ -20,13 +20,13 @@ import {
   FormGroup,
   Form,
 } from "reactstrap";
+import { formatDate } from "_helpers/helper";
 import editIcon from "../../assets/utils/images/pencil.svg";
 import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+import errorIcon from "../../assets/utils/images/error_icon.png";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 import { CertificationsModal } from "./certificationsModal";
 import "./profile.scss";
 
@@ -44,55 +44,23 @@ export function CertificationDetails(props) {
   );
   const [editModal, setEditModal] = useState(false);
 
-  const [countryList, setCountryList] = useState([
-    {
-      value: 1,
-      type: "USA",
-    },
-    {
-      value: 2,
-      type: "India",
-    },
-  ]);
+  const [deleteId, setDeleteId] = useState(0);
+  const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const [selectedData, setSelectedData] = useState({});
-  const [certificationDetails, setDetails] = useState([
-    {
-      id: 1,
-      name: "Certified Project Management Professional(PMP)",
-      expired: "No",
-      fromDate: "August 2022",
-      toDate: "May 2023",
-      description:
-        "This certification demonstrates expertise in project management methodologies and practices.Issued by the Project Management Institute(PMI),it signifies the ability to lead and manage complex projects.",
-    },
-    {
-      id: 2,
-      name: "Certified ScrumMaster(CSM)",
-      expired: "No",
-      fromDate: "August 2022",
-      toDate: "May 2023",
-      description:
-        "This certification demonstrates expertise in project management methodologies and practices.Issued by the Project Management Institute(PMI),it signifies the ability to lead and manage complex projects.",
-    },
-    {
-      id: 3,
-      name: "Microsoft Certified Azure Administrator",
-      expired: "No",
-      fromDate: "August 2022",
-      toDate: "May 2023",
-      description:
-        "This certification demonstrates expertise in project management methodologies and practices.Issued by the Project Management Institute(PMI),it signifies the ability to lead and manage complex projects.",
-    },
-    {
-      id: 4,
-      name: "Certified Project Management Professional(PMP)",
-      expired: "No",
-      fromDate: "August 2022",
-      toDate: "May 2023",
-      description:
-        "This certification demonstrates expertise in project management methodologies and practices.Issued by the Project Management Institute(PMI),it signifies the ability to lead and manage complex projects.",
-    },
-  ]);
+  const [certificationDetails, setDetails] = useState(props.certificationsInfo);
+
+  // const formatDate = (dateString) => {
+  //   if (dateString) {
+  //     const options = { year: "numeric", month: "short", day: "numeric" };
+  //     const formattedDate = new Date(dateString).toLocaleDateString(
+  //       undefined,
+  //       options
+  //     );
+  //     return formattedDate;
+  //   } else {
+  //     return "";
+  //   }
+  // };
 
   const [isPersonalModal, setPersonalModal] = useState(false);
   const phoneRegExp =
@@ -104,6 +72,9 @@ export function CertificationDetails(props) {
   const [toDate, setToDate] = useState(new Date());
   const selectDate = function () {};
   const [viewModal, setViewModal] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
 
   const close = function () {
     setPersonalModal(false);
@@ -116,6 +87,23 @@ export function CertificationDetails(props) {
   const handlePageChange = () => {
     setPersonalModal(false);
     setEditModal(false);
+  };
+
+  const deleteModal = function (id) {
+    setDeleteId(id);
+    setDeleteConfirm(true);
+  };
+
+  const deleteQualification = async function () {
+    let response = await dispatch(
+      certificateDetailsSlice.deletecertificateThunk(deleteId)
+    );
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
+    }
   };
 
   return (
@@ -142,29 +130,66 @@ export function CertificationDetails(props) {
                 </Col>
               </Row>
               <Row>
-                {certificationDetails.map((item) => (
+                {certificationDetails ? (
                   <div>
-                    <strong className="me-2 content-title">{item.name} </strong>
-                    <BsPencil
-                      className="icons"
-                      onClick={() => edit(item)}
-                    />{" "}
-                    <BsTrash3 className="icons" />
-                    <p className="mb-0 card-p-text-black">
-                      Does not Expired: {item.expired}
-                    </p>
-                    <p className="card-p-text-black">
-                      {item.fromDate}
-                      {" to "}
-                      {item.toDate}
-                    </p>
-                    <p className="card-p-text">{item.description}</p>
+                    {certificationDetails.length > 0 ? (
+                      certificationDetails.map((item, index) => (
+                        <div>
+                          <strong className="me-2 content-title">
+                            {certificationDetails[index].certificationname}{" "}
+                          </strong>
+                          <div className="float-end">
+                            <BsPencil
+                              className="icons"
+                              onClick={() => edit(item)}
+                            />{" "}
+                            <BsTrash3
+                              className="icons me-3"
+                              onClick={() =>
+                                deleteModal(
+                                  certificationDetails[index]
+                                    .candidatecertificationid
+                                )
+                              }
+                            />
+                          </div>
+                          <p className="mb-0 card-p-text-black">
+                            Expired:{" "}
+                            {certificationDetails[index].isexpired
+                              ? "Yes"
+                              : "No"}
+                          </p>
+                          <p className="card-p-text-black">
+                            {certificationDetails[index].startdate
+                              ? formatDate(
+                                  certificationDetails[index].startdate
+                                )
+                              : ""}
+                            {" to "}
+                            {certificationDetails[index].enddate
+                              ? formatDate(certificationDetails[index].enddate)
+                              : ""}
+                          </p>
+                          <p className="card-p-text">
+                            {certificationDetails[index].description}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="d-flex justify-content-center">
+                        No Data available
+                      </div>
+                    )}
                   </div>
-                ))}
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    No Data available
+                  </div>
+                )}
               </Row>
             </PerfectScrollbar>
           </div>
-          <CardFooter
+          {/* <CardFooter
             className="d-flex justify-content-center"
             style={{ border: "none" }}
           >
@@ -174,7 +199,7 @@ export function CertificationDetails(props) {
                 View all {certificationDetails.length} Details
               </span>
             </div>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </div>
 
@@ -196,94 +221,6 @@ export function CertificationDetails(props) {
                 selected={selectedData}
                 onCallBack={handlePageChange}
               />
-              {/* <Form onSubmit={handleSubmit(onSubmit)}>
-                <Row>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="certification" className="input-label">
-                        Certification/License
-                        <span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        placeholder="Enter Certification/license"
-                        maxLength={50}
-                        name="certification"
-                        type="text"
-                        id="certification"
-                        {...register("certification")}
-                        className={`field-input placeholder-text form-control ${
-                          errors.certification ? "is-invalid" : ""
-                        }`}
-                      />
-
-                      <div className="invalid-feedback">
-                        {errors.certification?.message}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <FormGroup check>
-                      <Input name="immediateJoin" type="checkbox" />{" "}
-                      <Label check className="input-label">
-                        Does not Expire
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row className="mt-2">
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="gender" className="input-label">
-                        From Date
-                      </Label>
-                      <InputGroup>
-                        <div className="input-group-text">
-                          <FontAwesomeIcon icon={faCalendarAlt} />
-                        </div>
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="DD/MM/YYYY"
-                          selected={fromDate}
-                          onChange={(evt) => selectDate()}
-                        />
-                      </InputGroup>
-                    </FormGroup>
-                  </Col>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="gender" className="input-label">
-                        To Date
-                      </Label>
-                      <InputGroup>
-                        <div className="input-group-text">
-                          <FontAwesomeIcon icon={faCalendarAlt} />
-                        </div>
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="DD/MM/YYYY"
-                          selected={toDate}
-                          onChange={(evt) => selectDate()}
-                        />
-                      </InputGroup>
-                    </FormGroup>
-                  </Col>
-                </Row>
-
-                <div className="float-end">
-                  <Button className="me-2 save-btn" type="submit">
-                    Save
-                  </Button>
-                  <Button
-                    type="button"
-                    className="close-btn"
-                    onClick={() => setPersonalModal(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </Form> */}
             </ModalBody>
           </Modal>
         </div>
@@ -328,20 +265,23 @@ export function CertificationDetails(props) {
                     </span>
                   </Row>
                   <Row className="mt-3">
-                    {certificationDetails.map((item) => (
+                    {certificationDetails?.map((item, index) => (
                       <div>
                         <strong className="me-2 content-title">
-                          {item.name}{" "}
+                          {certificationDetails[index].name}{" "}
                         </strong>
                         <p className="mb-0 card-p-text-black">
-                          Does not Expired: {item.expired}
+                          Does not Expired:{" "}
+                          {certificationDetails[index].expired}
                         </p>
                         <p className="card-p-text-black">
-                          {item.fromDate}
+                          {certificationDetails[index].fromDate}
                           {" to "}
-                          {item.toDate}
+                          {certificationDetails[index].toDate}
                         </p>
-                        <p className="card-p-text">{item.description}</p>
+                        <p className="card-p-text">
+                          {certificationDetails[index].description}
+                        </p>
                       </div>
                     ))}
                   </Row>
@@ -364,6 +304,43 @@ export function CertificationDetails(props) {
       ) : (
         <></>
       )}
+      <Modal
+        className="modal-reject-align profile-view"
+        isOpen={deleteConfirmation}
+      >
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              want to delete the Qualification!!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => deleteQualification(false)}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    className="success-close-btn"
+                    onClick={(evt) => setDeleteConfirm(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
     </div>
   );
 }

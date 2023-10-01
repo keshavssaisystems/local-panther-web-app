@@ -22,6 +22,7 @@ import {
   Form,
 } from "reactstrap";
 import AsyncSelect from "react-select/async";
+import { formatDate } from "_helpers/helper";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import {
   BsPencil,
@@ -76,35 +77,44 @@ export function PersonalInformation(props) {
     stateError: false,
   });
 
-  const [citySelect, setCitySelect] = useState([]);
-  const [stateSelect, setStateSelect] = useState([]);
-  const [countrySelect, setCountrySelect] = useState([]);
-  const [raceSelect, setRaceSelect] = useState([]);
-  const [genderSelect, setGenderSelect] = useState([]);
+  const [citySelect, setCitySelect] = useState("");
+  const [stateSelect, setStateSelect] = useState("");
+  const [countrySelect, setCountrySelect] = useState("");
+  const [raceSelect, setRaceSelect] = useState("");
+  const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
     loadSelectedData();
   }, []);
   const loadSelectedData = function () {
-    let countryData = [...countrySelect];
-    countryData.push(props.dropDownData.selectedCountry);
+    if (props.dropDownData.selectedCountry.value != 0) {
+      let countryData = [...countrySelect];
+      countryData.push(props.dropDownData.selectedCountry);
 
-    setCountrySelect(countryData);
+      setCountrySelect(countryData);
+    }
 
-    let stateData = [...stateSelect];
-    stateData.push(props.dropDownData.selectedState);
-    setStateSelect(stateData);
+    if (props.dropDownData.selectedState.value != 0) {
+      let stateData = [...stateSelect];
+      stateData.push(props.dropDownData.selectedState);
+      setStateSelect(stateData);
+    }
 
-    let cityData = [...citySelect];
-    cityData.push(props.dropDownData.selectedCity);
-    setCitySelect(cityData);
+    if (props.dropDownData.selectedCity.value != 0) {
+      let cityData = [...citySelect];
+      cityData.push(props.dropDownData.selectedCity);
+      setCitySelect(cityData);
+    }
+    if (props.dropDownData.selectedGender.value != 0) {
+      let genderData = [...genderSelect];
+      genderData.push(props.dropDownData.selectedGender);
+      setGenderSelect(genderData);
+    }
 
-    let genderData = [...genderSelect];
-    genderData.push(props.dropDownData.selectedGender);
-    setGenderSelect(genderData);
-
-    let ethnicityData = [...raceSelect];
-    ethnicityData.push(props.dropDownData.selectedEthnicity);
-    setRaceSelect(ethnicityData);
+    if (props.dropDownData.selectedEthnicity.value != 0) {
+      let ethnicityData = [...raceSelect];
+      ethnicityData.push(props.dropDownData.selectedEthnicity);
+      setRaceSelect(ethnicityData);
+    }
   };
 
   const [countryList, setCountryList] = useState([]);
@@ -147,8 +157,8 @@ export function PersonalInformation(props) {
   };
   const onSelectRaceDropdown = function (data) {
     let new_data = [];
-    new_data.push(new_data);
-    setRaceSelect(data);
+    new_data.push(data);
+    setRaceSelect(new_data);
   };
   const onSelectGenderDropdown = function (data) {
     let new_data = [];
@@ -165,16 +175,17 @@ export function PersonalInformation(props) {
 
     return maskedPhoneNumber;
   }
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    const formattedDate = new Date(dateString).toLocaleDateString(
-      undefined,
-      options
-    );
-    return formattedDate;
-  };
+  // const formatDate = (dateString) => {
+  //   const options = { year: "numeric", month: "short", day: "numeric" };
+  //   const formattedDate = new Date(dateString).toLocaleDateString(
+  //     undefined,
+  //     options
+  //   );
+  //   return formattedDate;
+  // };
   async function onSubmit(e) {
     e.preventDefault();
+
     let errors = { ...requiredErrors };
     if (citySelect.length == 0) {
       errors.cityError = true;
@@ -186,8 +197,10 @@ export function PersonalInformation(props) {
     } else {
       errors.stateError = false;
     }
-    if (errors.cityError || errors.stateError) return;
-
+    if (errors.cityError || errors.stateError) {
+      setRequiredErros(errors);
+      return;
+    }
     let new_data = { ...selectedCandidate };
 
     new_data.personalInfo.cityid = citySelect[0].value;
@@ -255,7 +268,7 @@ export function PersonalInformation(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    props.onCallBack();
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -351,7 +364,10 @@ export function PersonalInformation(props) {
                         {selectedCandidate.personalInfo.position}
                       </p>
                       <p className="candidate-label mt-0 mb-0">
-                        {"at " + selectedCandidate.personalInfo.organization}
+                        {selectedCandidate.personalInfo.organization ==
+                        "Not Working"
+                          ? selectedCandidate.personalInfo.organization
+                          : "at " + selectedCandidate.personalInfo.organization}
                       </p>
                     </div>
                     <div>
@@ -401,12 +417,15 @@ export function PersonalInformation(props) {
                   <Col className="mb-2">
                     <BsPinMap className="personal-sec-icon me-2" />
                     <span className="content-text">
-                      {" "}
-                      {selectedCandidate.personalInfo.city +
-                        ", " +
-                        selectedCandidate.personalInfo.state +
-                        ", " +
-                        selectedCandidate.personalInfo.country}
+                      {selectedCandidate.personalInfo.city
+                        ? selectedCandidate.personalInfo.city +
+                          ", " +
+                          selectedCandidate.personalInfo.state
+                        : ""}
+
+                      {selectedCandidate.personalInfo.country
+                        ? ", " + selectedCandidate.personalInfo.country
+                        : ""}
                     </span>
                   </Col>
                 </Row>
@@ -636,15 +655,15 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="city" className="input-label">
-                        City
+                        City <span className="required-icon">*</span>
                       </Label>
                       <AsyncSelect
                         name="skills"
                         placeholder="Search to select"
+                        placeholderText="search"
                         loadOptions={loadOptions}
                         isMulti={false}
                         value={citySelect}
-                        // defaultOptions={citySelect}
                         onChange={(evt) => onSelectCityDropdown(evt)}
                         styles={{
                           borderColor: requiredErrors.stateError
@@ -661,7 +680,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="state" className="input-label">
-                        State
+                        State <span className="required-icon">*</span>
                       </Label>
                       <AsyncSelect
                         name="state"
@@ -752,7 +771,7 @@ export function PersonalInformation(props) {
                 </Row>
                 <Row>
                   <Col>
-                    {selectedCandidate.eligibilityList.map((item) => (
+                    {selectedCandidate?.eligibilityList?.map((item) => (
                       <FormGroup check>
                         <Input
                           name="eligibility"
@@ -778,15 +797,16 @@ export function PersonalInformation(props) {
                       <Input
                         name="immediateJoin"
                         type="checkbox"
+                        checked={
+                          selectedCandidate.personalInfo
+                            .isreadytoworkimmediately
+                        }
                         onChange={(evt) =>
                           onHandleInputChange("work", evt.target.value)
                         }
                       />{" "}
-                      <Label
-                        check={selectedCandidate.personalInfo.readyToWork}
-                        className="input-label"
-                      >
-                        Ready to work immediately
+                      <Label className="input-label">
+                        Ready to work immediately{" "}
                       </Label>
                     </FormGroup>
                   </Col>

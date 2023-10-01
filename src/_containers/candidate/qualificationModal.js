@@ -52,6 +52,8 @@ export function QualificationModal(props) {
     loadData();
   }, []);
 
+  let user = JSON.parse(localStorage.getItem("userDetails"));
+
   const loadData = function () {
     let data = [...formDetails];
     if (check == "add") {
@@ -67,7 +69,7 @@ export function QualificationModal(props) {
         startdate: null,
         enddate: null,
         isactive: true,
-        currentUserId: 13960,
+        currentUserId: user.userId,
 
         error: false,
       });
@@ -77,6 +79,14 @@ export function QualificationModal(props) {
         jobTitle: props.selected.jobtitle,
         organization: props.selected.company,
         jobDescription: props.selected.jobdescription,
+        countryid: props.selected.countryid,
+        cityid: props.selected.cityid,
+        stateid: props.selected.stateid,
+        iscurrentlyworking: props.selected.iscurrentlyworking,
+        startdate: new Date(props.selected.startdate),
+        enddate: new Date(props.selected.enddate),
+        isactive: props.selected.isactive,
+        currentUserId: user.userId,
         error: false,
       });
     }
@@ -108,7 +118,6 @@ export function QualificationModal(props) {
   const [citySelect, setCitySelect] = useState([]);
   const [stateSelect, setStateSelect] = useState([]);
   const [countrySelect, setCountrySelect] = useState([]);
-
   useEffect(() => {
     let country_response;
     let state_response;
@@ -241,13 +250,29 @@ export function QualificationModal(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    props.onCallBack();
+    window.location.reload();
   };
-
-  let user = JSON.parse(localStorage.getItem("userDetails"));
 
   async function onSubmit() {
     let new_data = [...formDetails];
+
+    const keyToCheck = "jobTitle";
+
+    const emptyKeyIndexes = formDetails
+      .map((item, index) => (item[keyToCheck] == "" ? index : null))
+      .filter((index) => index !== null);
+
+    if (emptyKeyIndexes.length > 0) {
+      let new_data = [...formDetails];
+
+      for (let i = 0; i < emptyKeyIndexes.length; i++) {
+        new_data[emptyKeyIndexes[i]].error = true;
+      }
+
+      setFormData(new_data);
+      setSave(false);
+      return;
+    }
 
     let filtered_data = formDetails.map(({ skillid: value, ...rest }) => {
       return {
@@ -337,7 +362,7 @@ export function QualificationModal(props) {
                     name="jobTitle"
                     type="text"
                     id="jobTitle"
-                    value={index.jobTitle}
+                    value={item.jobTitle}
                     className={`field-input placeholder-text form-control ${
                       item.error ? "is-invalid" : ""
                     }`}
@@ -351,58 +376,6 @@ export function QualificationModal(props) {
                 </FormGroup>
               </Col>
 
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="company" className="input-label">
-                    Company
-                  </Label>
-                  <Input
-                    placeholder="Enter Company"
-                    name="company"
-                    type="textarea"
-                    id="company"
-                    value={item.organization}
-                    maxLength={500}
-                    className="field-input placeholder-text form-control"
-                    onInput={(evt) =>
-                      handleInputChange("company", index, evt.target.value)
-                    }
-                  />
-                  <span className="dropdown-placeholder float-end">
-                    {item.organization ? item.organization.length : 0}/500
-                  </span>
-                </FormGroup>
-              </Col>
-
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="jobDescription" className="input-label">
-                    Job Description
-                  </Label>
-                  <Input
-                    placeholder="Enter Job Description"
-                    name="jobDescription"
-                    type="textarea"
-                    id="jobDescription"
-                    value={item.jobdescription}
-                    maxLength={500}
-                    className="field-input placeholder-text form-control"
-                    onInput={(evt) =>
-                      handleInputChange("description", index, evt.target.value)
-                    }
-                  />
-
-                  {item.jobdescription ? (
-                    <span className="dropdown-placeholder float-end">
-                      {item.jobdescription.length}/500
-                    </span>
-                  ) : (
-                    <></>
-                  )}
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
               <Col md={4}>
                 <FormGroup>
                   <Label for="city" className="input-label">
@@ -434,6 +407,8 @@ export function QualificationModal(props) {
                   />
                 </FormGroup>
               </Col>
+            </Row>
+            <Row>
               <Col md={4}>
                 <FormGroup>
                   <Label for="country" className="input-label">
@@ -483,7 +458,7 @@ export function QualificationModal(props) {
                       id="fromDate"
                       placeholderText="DD/MM/YYYY"
                       className="form-control"
-                      selected={fromDate}
+                      selected={item.startdate}
                       onChange={(evt) =>
                         handleInputChange("fromDate", index, evt)
                       }
@@ -505,7 +480,7 @@ export function QualificationModal(props) {
                       id="toDate"
                       className="form-control"
                       placeholderText="DD/MM/YYYY"
-                      selected={toDate}
+                      selected={item.enddate}
                       onChange={(evt) =>
                         handleInputChange("toDate", index, evt)
                       }
@@ -514,7 +489,58 @@ export function QualificationModal(props) {
                 </FormGroup>
               </Col>
             </Row>
+            <Row>
+              <Col>
+                <FormGroup>
+                  <Label for="jobDescription" className="input-label">
+                    Job Description
+                  </Label>
+                  <Input
+                    placeholder="Enter Job Description"
+                    name="jobDescription"
+                    type="textarea"
+                    id="jobDescription"
+                    value={item.jobDescription}
+                    maxLength={500}
+                    className="field-input placeholder-text form-control"
+                    onInput={(evt) =>
+                      handleInputChange("description", index, evt.target.value)
+                    }
+                  />
 
+                  {item.jobDescription ? (
+                    <span className="dropdown-placeholder float-end">
+                      {item.jobDescription.length}/500
+                    </span>
+                  ) : (
+                    <></>
+                  )}
+                </FormGroup>
+              </Col>
+
+              <Col>
+                <FormGroup>
+                  <Label for="company" className="input-label">
+                    Company
+                  </Label>
+                  <Input
+                    placeholder="Enter Company"
+                    name="company"
+                    type="textarea"
+                    id="company"
+                    value={item.organization}
+                    maxLength={500}
+                    className="field-input placeholder-text form-control"
+                    onInput={(evt) =>
+                      handleInputChange("company", index, evt.target.value)
+                    }
+                  />
+                  <span className="dropdown-placeholder float-end">
+                    {item.organization ? item.organization.length : 0}/500
+                  </span>
+                </FormGroup>
+              </Col>
+            </Row>
             {index < formDetails.length - 1 ? <hr /> : <></>}
 
             {index == formDetails.length - 1 ? (

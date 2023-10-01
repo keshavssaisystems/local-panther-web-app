@@ -31,7 +31,7 @@ const slice = createSlice({
   qualificationRemoveReducer,
 });
 
-const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
 
 // exports
 export const profileActions = {
@@ -45,7 +45,7 @@ export const profileActions = {
 };
 export const profileReducer = slice.reducer;
 
-const candidateId = JSON.parse(localStorage.getItem("userDetails")).UserId;
+const candidateId = JSON.parse(localStorage.getItem("userDetails"))?.UserId;
 
 function createInitialState() {
   return {

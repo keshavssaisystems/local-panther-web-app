@@ -37,6 +37,12 @@ import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
 import { getProfileReducer } from "./getProfile.slice";
 import { profileSkillsReducer } from "./profileSkills.slice";
 import { qualificationsReducer } from "./qualificationSkills.slice";
+import { educationReducer } from "./dropDownEducation.slice";
+import { educationDataReducer } from "./education.slice";
+import { certificateDataReducer } from "./certications.slice";
+import { certificationTypeReducer } from "./dropDownCertification.slice";
+import { ProficiencyReducer } from "./dropDownProficiency.slice";
+import { additionalInfoDataReducer } from "./additionalInfo.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -77,6 +83,12 @@ export * from "./dropdownRaceEtnicity.slice";
 export * from "./getProfile.slice";
 export * from "./profileSkills.slice";
 export * from "./qualificationSkills.slice";
+export * from "./dropDownEducation.slice";
+export * from "./education.slice";
+export * from "./certications.slice";
+export * from "./dropDownCertification.slice";
+export * from "./dropDownProficiency.slice";
+export * from "./additionalInfo.slice";
 
 export const store = configureStore({
   reducer: {
@@ -118,5 +130,11 @@ export const store = configureStore({
     getProfile: getProfileReducer,
     profileSkills: profileSkillsReducer,
     qualifications: qualificationsReducer,
+    educationLevelReducer: educationReducer,
+    educationDetailsReducer: educationDataReducer,
+    certificationReducer: certificateDataReducer,
+    certificateType: certificationTypeReducer,
+    ProficiencyList: ProficiencyReducer,
+    additionalInfoReducer: additionalInfoDataReducer,
   },
 });

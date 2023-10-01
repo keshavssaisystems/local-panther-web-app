@@ -27,11 +27,12 @@ import { CertificationDetails } from "./certifications";
 import { AdditionalInformation } from "./additionalInfo";
 import { JobPreferences } from "./jobPreferences";
 import {
-  profileActions,
+  educationActions,
   getProfileActions,
-  cityActions,
+  ProficiencyActions,
   genderActions,
   ethnicityActions,
+  certificationTypeActions,
 } from "_store";
 import { getLocationFilter } from "_store";
 
@@ -105,6 +106,9 @@ export function CandidateProfile() {
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());
     await dispatch(ethnicityActions.getEthnicity());
+    await dispatch(certificationTypeActions.certificationType());
+    await dispatch(ProficiencyActions.Proficiency());
+    let reponse = await dispatch(educationActions.getEducation());
   };
 
   const getPersonalDetails = async function () {
@@ -178,7 +182,7 @@ export function CandidateProfile() {
     };
     dropdown_selected.selectedEthnicity = {
       value: filter_data.ethnicityid,
-      label: filter_data.ethnicityname,
+      label: filter_data.ethnicity,
     };
     setDropDownLists(dropdown_selected);
   };
@@ -194,7 +198,7 @@ export function CandidateProfile() {
             <PersonalInformation
               profileInfo={profileData}
               dropDownData={dropdownLists}
-              onCallBack={() => loadPage}
+              onCallBack={() => loadPage()}
             />
           </Row>
           <Row>
@@ -202,13 +206,13 @@ export function CandidateProfile() {
               <ResumeDetails
                 resumeInfo={profileData.resumeInfo}
                 candidateDetails={profileData.personalInfo}
-                onCallBack={loadPage}
+                onCallBack={() => loadPage()}
               />
             </Col>
             <Col>
               <CandidateSkills
                 skillInfo={profileData.skillsInfo}
-                onCallBack={() => loadPage}
+                onCallBack={() => loadPage()}
               />
             </Col>
           </Row>
@@ -216,16 +220,22 @@ export function CandidateProfile() {
             <Col>
               <CandidateQualification
                 qualificationInfo={profileData.qualificationsInfo}
-                onCallBack={() => loadPage}
+                onCallBack={() => loadPage()}
               />
             </Col>
             <Col>
-              <CandidateEducation />
+              <CandidateEducation
+                educationInfo={profileData.educationInfo}
+                onCallBack={() => loadPage()}
+              />
             </Col>
           </Row>
           <Row>
             <Col>
-              <CertificationDetails />
+              <CertificationDetails
+                certificationsInfo={profileData.certificationsInfo}
+                onCallBack={() => loadPage()}
+              />
             </Col>
             <Col>
               <AdditionalInformation />

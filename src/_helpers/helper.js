@@ -42,3 +42,33 @@ export const getApplicationDate = function (date) {
 
   return daysMsg;
 };
+export const formatDate = function (dateString) {
+  // Parse the input date string
+  const date = new Date(dateString);
+
+  // Define month names as an array
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Get the month, day, and year components
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  // Create the formatted date string
+  const formattedDate = `${month} ${day}, ${year}`;
+
+  return formattedDate;
+};

@@ -8,7 +8,7 @@ export const updateQualificationThunk = createAsyncThunk(
   `${name}/updateQualificationThunk`,
   async ({ id, qualification_data }) => {
     console.log(qualification_data);
-    const LOGIN_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/CandidateQualifications/${id}`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateQualifications/${id}`;
     return await fetchWrapper.put(LOGIN_END_POINT, qualification_data);
   }
 );
@@ -17,7 +17,7 @@ export const addQualificationThunk = createAsyncThunk(
   `${name}/addQualificationThunk`,
   async (qualification_data) => {
     console.log(qualification_data);
-    const LOGIN_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/CandidateQualifications/AddCandidateQualificationList`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateQualifications/AddCandidateQualificationList`;
     return await fetchWrapper.post(LOGIN_END_POINT, qualification_data);
   }
 );

@@ -5,11 +5,10 @@ import { history, fetchWrapper } from "_helpers";
 const name = "profile-skills";
 
 // login thunk
-// const candidateId = JSON.parse(localStorage.getItem("userDetails")).UserId;
 export const updateSkillThunk = createAsyncThunk(
   `${name}/updateSkillThunk`,
   async ({ id, payload, userId }) => {
-    const SKILL_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/CandidateSkill/UpdateCandidateSkill/${id}/${userId}`;
+    const SKILL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateSkill/UpdateCandidateSkill/${id}/${userId}`;
     return await fetchWrapper.put(SKILL_END_POINT, payload);
   }
 );
@@ -18,7 +17,7 @@ export const deleteSkillThunk = createAsyncThunk(
   `${name}/deleteSkillThunk`,
   async (id) => {
     console.log("triggered--");
-    const SKILL_END_POINT = `${process.env.REACT_APP_PANTHER_URL}/api/CandidateSkill/${id}`;
+    const SKILL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateSkill/${id}`;
     return await fetchWrapper.delete(SKILL_END_POINT);
   }
 );

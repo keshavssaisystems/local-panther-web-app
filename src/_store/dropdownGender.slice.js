@@ -12,7 +12,7 @@ const initialState = {
 
 // Define the async action
 export const getGender = createAsyncThunk("gender/getGender", async () => {
-  const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
   const response = await fetchWrapper.get(
     `${baseUrl}/Common/GetCommonDropdown?searchText=gender`
   );

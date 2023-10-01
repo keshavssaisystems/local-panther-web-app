@@ -94,38 +94,11 @@ export function CandidateSkills(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    props.onCallBack();
+    window.location.reload();
   };
   const [selectedData, setSelectedData] = useState({});
   const [skills, setSkills] = useState([]);
   const [skillsTemp, setSkillsTemp] = useState([]);
-
-  const [viewSkills, setViewSkills] = useState([
-    {
-      name: "HTML",
-      experience: "5 years",
-    },
-    {
-      name: "JavaScript",
-      experience: "7 years",
-    },
-    {
-      name: "C#",
-      experience: "2 years",
-    },
-    {
-      name: "Java",
-      experience: "1 year",
-    },
-    {
-      name: "React Js",
-      experience: "1 year",
-    },
-    {
-      name: "Angular",
-      experience: "2 years",
-    },
-  ]);
 
   const removeSkills = function (data) {
     let filter_data = skills.find((x) => x.value == data.value);
@@ -164,7 +137,13 @@ export function CandidateSkills(props) {
 
   const onSelectSkillsDropdown = function (data) {
     setSkillsMultiple(data);
-    console.log(skillsMultiple);
+
+    let new_data = [...skills];
+    let index = skills.findIndex((x) => x.value == data[data.length - 1].value);
+
+    new_data.splice(index, 1);
+
+    setSkills(new_data);
   };
   const close = function () {
     setPersonalModal(false);
@@ -220,11 +199,15 @@ export function CandidateSkills(props) {
         };
       });
 
-      console.log(payload);
-      const candidateId = JSON.parse(
-        localStorage.getItem("userDetails")
-      ).UserId;
-      dispatch(profileSkillsActions.updateSkillThunk({ id, payload, userId }));
+      let response = await dispatch(
+        profileSkillsActions.updateSkillThunk({ id, payload, userId })
+      );
+      if (response.payload) {
+        setSuccess(true);
+        setMessage(response.payload.message);
+      } else {
+        setError(true);
+      }
     }
   };
   const loadOptions = async function (inputValue) {
@@ -283,7 +266,10 @@ export function CandidateSkills(props) {
         <Row>
           <Col sm="12" lg="12">
             <Card className="main-card mb-3">
-              <div className="mt-3" style={{ marginLeft: "10px" }}>
+              <div
+                className="mt-3 scroll-area-sm"
+                style={{ marginLeft: "10px" }}
+              >
                 <Row className="mb-3">
                   <Col>
                     <strong className="card-title-text">Skills</strong>
@@ -299,33 +285,45 @@ export function CandidateSkills(props) {
                   </Col>
                 </Row>
                 <Row style={{ marginLeft: "2px" }} className="d-flex flex-row">
-                  {getResponse.map((item) => (
-                    <Button
-                      className="
+                  {getResponse.length > 0 ? (
+                    getResponse.map((item) => (
+                      <Button
+                        className="
                        mb-2 me-2 skills-view btn-shadow btn-outline-2x"
-                      outline
-                      color="light"
-                    >
-                      <strong className="skills-view-text">
-                        {" "}
-                        {item.skillname + " "}
-                      </strong>
-                      <span className="skills-exp-text me-1">
-                        {item.yearsofexperience
-                          ? item.yearsofexperience + "years "
-                          : ""}
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        style={{ fontSize: "15px", cursor: "pointer" }}
-                        onClick={(evt) => removeView(item)}
+                        outline
+                        color="light"
                       >
-                        x
-                      </span>
-                    </Button>
-                  ))}
+                        <strong className="skills-view-text">
+                          {" "}
+                          {item.skillname + " "}
+                        </strong>
+                        <span className="skills-exp-text me-1">
+                          {item.yearsofexperience
+                            ? item.yearsofexperience + "years "
+                            : ""}
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          style={{ fontSize: "15px", cursor: "pointer" }}
+                          onClick={(evt) => removeView(item)}
+                        >
+                          x
+                        </span>
+                      </Button>
+                    ))
+                  ) : (
+                    <div className="d-flex justify-content-center">
+                      No Data available
+                    </div>
+                  )}
                 </Row>
               </div>
+              <CardFooter
+                className="d-flex justify-content-center"
+                style={{ border: "none" }}
+              >
+                <div className="view-link-text"></div>
+              </CardFooter>
             </Card>
           </Col>
         </Row>
@@ -363,7 +361,7 @@ export function CandidateSkills(props) {
                   </Col>
 
                   <Row className="mt-2">
-                    {skillsMultiple.map((item) => (
+                    {skillsMultiple?.map((item) => (
                       <div>
                         <Row>
                           <Col md={4}>
@@ -406,8 +404,8 @@ export function CandidateSkills(props) {
                                   <option key={0}>
                                     Select experience level
                                   </option>
-                                  {experienceLevelOption.length > 0 &&
-                                    experienceLevelOption.map((options) => (
+                                  {experienceLevelOption?.length > 0 &&
+                                    experienceLevelOption?.map((options) => (
                                       <option
                                         key={options.id}
                                         value={options.id}
@@ -438,7 +436,7 @@ export function CandidateSkills(props) {
                   </Label>
                 </Row>
                 <Row className="skills-div mb-3 mt-2">
-                  {skills.map((item) => (
+                  {skills?.map((item) => (
                     <Button
                       className="
                        mb-1 me-2 mt-3 skills-view-popup btn-shadow btn-outline-2x"
