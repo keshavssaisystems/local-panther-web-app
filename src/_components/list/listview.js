@@ -475,9 +475,7 @@ export const CandidateListView = (props) => {
     {
       name: "Scheduled time",
       sortable: true,
-      cell: (row) => (
-        <ScheduleInterviewModal candidateData={row.customerscheduleddatetime} />
-      ),
+      cell: (row) => <ScheduleInterviewModal candidateData={row} />,
     },
     {
       name: "Interview mode",

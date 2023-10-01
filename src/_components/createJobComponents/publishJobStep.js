@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Button } from "reactstrap";
 
-export default function PublishJobStep({ reqData, responseData }) {
+export default function PublishJobStep({ reqData, responseData, publishJob }) {
   useEffect(() => {
     let data = [
       {
@@ -35,10 +35,10 @@ export default function PublishJobStep({ reqData, responseData }) {
           jobexperiencescheduleid: 0,
           jobid: 0,
           jobtypes: reqData.experienceSchedule.jobType,
-          experiencelevel: reqData.experienceSchedule.experienceLevel,
+          experiencelevel: Number(reqData.experienceSchedule.experienceLevel),
           workschedules: reqData.experienceSchedule.workSchedule,
           shifts: reqData.experienceSchedule.shift,
-          hiringtimelineid: reqData.experienceSchedule.hiringTimeline,
+          hiringtimelineid: Number(reqData.experienceSchedule.hiringTimeline),
           isactive: true,
         },
       ],
@@ -50,7 +50,7 @@ export default function PublishJobStep({ reqData, responseData }) {
         {
           jobpaymentsbenifitsid: 0,
           jobid: 0,
-          payperiodtypeid: reqData.paymentBenifits.payPeriodType,
+          payperiodtypeid: Number(reqData.paymentBenifits.payPeriodType),
           minimumamount: reqData.paymentBenifits.minimumAmount,
           maximumamount: reqData.paymentBenifits.maximumAmount,
           compensationpackage: reqData.paymentBenifits.compensationPackage,
@@ -58,7 +58,8 @@ export default function PublishJobStep({ reqData, responseData }) {
           isactive: true,
         },
       ],
-      jobPrescreenApplicationDtos: reqData.preScreen,
+      jobPrescreenApplicationDtos:
+        reqData.preScreen.length === undefined ? null : reqData.preScreen,
     };
     console.log(main);
     responseData(main);
@@ -92,7 +93,12 @@ export default function PublishJobStep({ reqData, responseData }) {
               Create new job
             </Button>{" "}
             {"   "}
-            <Button color="success" size="lg" className="btn-shadow btn-wide">
+            <Button
+              color="success"
+              size="lg"
+              className="btn-shadow btn-wide"
+              onClick={(e) => publishJob(true)}
+            >
               Publish job
             </Button>
           </div>

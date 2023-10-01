@@ -59,9 +59,7 @@ export function JobShortDetailModal({ data }) {
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Current Status</h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {data.applicationstatus === null
-                      ? "-"
-                      : data.applicationstatus}
+                    {data.jobstatus === null ? "-" : data.jobstatus}
                   </p>
                 </div>
               </Col>

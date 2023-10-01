@@ -49,6 +49,7 @@
         "jquery": "^3.6.0",
         "loaders.css": "^0.1.2",
         "moment": "^2.29.1",
+        "moment-timezone": "^0.5.43",
         "namor": "^2.0.3",
         "pe7-icon": "^1.0.4",
         "rc-slider": "^9.7.5",

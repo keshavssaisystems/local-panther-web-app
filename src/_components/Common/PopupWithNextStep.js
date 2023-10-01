@@ -18,6 +18,7 @@ export function PopupWithNextStep({
   const navigate = useNavigate();
   const yesClick = () => {
     setShow(!show);
+    window.location.reload(false);
     navigate(yesAction);
   };
   const noClick = () => {

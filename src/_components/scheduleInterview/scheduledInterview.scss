@@ -46,7 +46,9 @@
         padding: 0.5rem 1rem ;
     }
 }
-
+.mr-2{
+    margin-right: 5px ;
+}
 .upcoming-interview{
     font-family: Capitana;
     .dropdown-menu-header {
@@ -72,5 +74,8 @@
 .upcomming-card{
     .badge-custom{
         text-transform: none;
+    }
+    .icon-settings{
+        margin-bottom: 4px !important;
     }
 }

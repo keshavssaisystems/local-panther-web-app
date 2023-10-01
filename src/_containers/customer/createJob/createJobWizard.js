@@ -19,7 +19,9 @@ import {
   preScreenQuestionActions,
   previousJobListActions,
   previousJobDetailActions,
+  publishJobActions,
 } from "_store";
+import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 
 export function CreateJobWizard() {
   const [page, setPage] = useState(1);
@@ -28,6 +30,7 @@ export function CreateJobWizard() {
   const [jobType, setJobType] = useState("new_template");
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
+  const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
   useEffect(() => {
     getOptions();
     getPreviousJobData({
@@ -68,7 +71,7 @@ export function CreateJobWizard() {
   };
   const dispatch = useDispatch();
   const createJob = async function (formElement) {
-    await dispatch(createjobActions.getCreatejob(formElement));
+    await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
   const getOptions = async function () {
     await dispatch(jobLocationTypeActions.getJobLocationTypeThunk());
@@ -104,7 +107,16 @@ export function CreateJobWizard() {
   const jobDetail = useSelector(
     (state) => state.previousJobDetail.previousJobDetail
   );
-
+  const newJobDetails = useSelector((state) => state.createJob.createjob);
+  console.log(newJobDetails);
+  const publishNewJob = async function () {
+    let jobId = newJobDetails.jobid;
+    let payload = {
+      currentUserId: 81,
+    };
+    await dispatch(publishJobActions.getPublishJobThunk({ jobId, payload }));
+    setShowPopupWithNextStep(!showPopupWithNextStep);
+  };
   const steps = [
     {
       name: "Select option",
@@ -152,6 +164,7 @@ export function CreateJobWizard() {
         <PublishJobStep
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
+          publishJob={(e) => publishNewJob(e)}
         />
       ),
     },
@@ -276,6 +289,16 @@ export function CreateJobWizard() {
           </Card>
         </Col>
       </Row>
+      {showPopupWithNextStep === true && (
+        <PopupWithNextStep
+          type={"success"}
+          message={"The job has been posted"}
+          action={true}
+          nextStepMessage={"Do you want to create a new job?"}
+          noAction={"/job-list"}
+          yesAction={"/create-job"}
+        />
+      )}
     </>
   );
 }
