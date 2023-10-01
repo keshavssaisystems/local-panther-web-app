@@ -27,7 +27,7 @@ import { payPeriodTypeReducer } from "../_containers/customer/createJob/payperio
 import { preScreenQuestionReducer } from "../_containers/customer/createJob/prescreenquestions.slice";
 import { previousJobListReducer } from "../_containers/customer/createJob/previousjoblist.slice";
 import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
-
+import { candidatejobListTabReducer } from "_containers/candidate/candidateTablist.slice";
 export * from "./auth.slice";
 export * from "./users.slice";
 export * from "./jobList.slice";
@@ -56,6 +56,7 @@ export * from "../_containers/customer/createJob/payperiodtype.slice";
 export * from "../_containers/customer/createJob/prescreenquestions.slice";
 export * from "../_containers/customer/createJob/previousjoblist.slice";
 export * from "../_containers/customer/createJob/previousjobdetail.slice";
+export * from "../_containers/candidate/candidateTablist.slice";
 
 export const store = configureStore({
   reducer: {
@@ -87,5 +88,8 @@ export const store = configureStore({
     preScreenQuestion: preScreenQuestionReducer,
     previousJobList: previousJobListReducer,
     previousJobDetail: previousJobDetailReducer,
+
+    tabListReducer: candidatejobListTabReducer,
+    
   },
 });

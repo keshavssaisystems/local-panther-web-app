@@ -1,8 +1,15 @@
 import React from "react";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import { Row, Col, Card, CardBody,Button } from "reactstrap";
 import "./job.scss";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
+import {
+  IoIosCheckmark,
+  IoIosClose,
+  IoIosThumbsUp,
+  IoIosHelp,
+
+} from "react-icons/io";
 import {
   BsBriefcase,
   BsListStars,
@@ -111,6 +118,40 @@ export function JobCard({
                   </p>
                 )}
               </div>
+              {type === "Candidate" && (
+                <>
+
+
+
+                  <Button title="liked" className=" btn-icon mt-2" color="light">
+                    <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+                  </Button>
+
+
+                  <Button title="maybe" className=" btn-icon" color="light">
+                    <IoIosHelp fontSize={"24px"}></IoIosHelp>
+                  </Button>
+
+
+                  <Button
+                    title="reject"
+                    className="btn-icon"
+                    color="light"
+                  // onClick={() => onRejectClick()}
+                  >
+                    <IoIosClose fontSize={"24px"}></IoIosClose>
+                  </Button>
+
+
+
+                  <Button
+                    title="Apply"
+                    className=" btn-icon"
+                    color="light"
+                  >
+                    <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+                  </Button>
+                </>)}
             </Col>
           </Row>
         </CardBody>
