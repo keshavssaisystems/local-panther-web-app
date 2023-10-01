@@ -10,10 +10,10 @@ const initialState = {
 };
 
 // Define the async action
-export const getCity = createAsyncThunk("city/getCity", async () => {
-  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
+export const getCity = createAsyncThunk("city/getCity", async (inputValue) => {
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
   const response = await fetchWrapper.get(
-    `${baseUrl}/Common/GetCommonDropdown?searchText=city`
+    `${baseUrl}/api/Common/GetLocation?searchText=${inputValue}`
   );
 
   return response.data; // Assuming your API response has a "data" property
@@ -44,3 +44,10 @@ export const cityActions = {
   getCity, // Export the async action
 };
 export const cityReducer = citySlice.reducer;
+
+export const getLocationFilter = async (searchText) => {
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+  return await fetchWrapper.get(
+    `${baseUrl}/Common/GetLocation?searchText=${searchText}`
+  );
+};

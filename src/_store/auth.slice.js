@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { history, fetchWrapper } from "_helpers";
+import jwtDecode from "jwt-decode";
 
 // create slice name
 const name = "auth";
@@ -8,7 +9,7 @@ const name = "auth";
 export const loginThunk = createAsyncThunk(
   `${name}/loginThunk`,
   async (payload) => {
-    const LOGIN_END_POINT = `${process.env.REACT_APP_USER_API_URL}/api/Auth/Login`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Login`;
     return await fetchWrapper.post(LOGIN_END_POINT, payload);
   }
 );
@@ -17,7 +18,7 @@ export const loginThunk = createAsyncThunk(
 export const registerThunk = createAsyncThunk(
   `${name}/registerThunk`,
   async (payload) => {
-    const REGISTRATION_END_POINT = `${process.env.REACT_APP_USER_API_URL}/api/User/RegisterCandidateNew`;
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
     return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
   }
 );
@@ -26,7 +27,7 @@ export const registerThunk = createAsyncThunk(
 export const forgotPasswordThunk = createAsyncThunk(
   `${name}/forgotPasswordThunk`,
   async (payload) => {
-    const REGISTRATION_END_POINT = `${process.env.REACT_APP_USER_API_URL}/api/User/ForgotUserPassword`;
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/ForgotUserPassword`;
     return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
   }
 );
@@ -47,6 +48,7 @@ const authSlice = createSlice({
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToekn");
+      localStorage.removeItem("userDetails");
       history.navigate("/login");
     },
   },
@@ -63,6 +65,9 @@ const authSlice = createSlice({
       localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
+      const decodedData = jwtDecode(token);
+
+      localStorage.setItem("userDetails", JSON.stringify(decodedData));
 
       // get return url from location state or default to home page
       const { from } = history.location.state || {
