@@ -29,17 +29,7 @@ import axios from "axios";
 import { SkillsFilter } from "../../_components/dropdownComponents/SkillsFilter";
 import { getSkillsFilter } from "_store";
 
-import {
-  shiftsOption,
-  workScheduleOptions,
-  jobTypeOption,
-  experienceLevelOption,
-  hiringTimelineOption,
-  jobLocationOptions,
-  payPeriodTypeOption,
-} from "../../_containers/customer/createJob/dummyData";
-
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./profile.scss";
 import { profileSkillsActions } from "_store";
@@ -54,6 +44,15 @@ export function CandidateSkills(props) {
   const [mustHaveValidation, setMustHaveValidation] = useState(false);
   const [selectedPopSkills, setSelectedSkills] = useState([]);
   const [skillsMultiple, setSkillsMultiple] = useState([]);
+
+  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const workScheduleOptions = useSelector(
+    (state) => state.workSchedule.workSchedule
+  );
+  const jobTypeOption = useSelector((state) => state.jobType.jobType);
+  const experienceLevelOption = useSelector(
+    (state) => state.experienceLevel.experienceLevel
+  );
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
 
