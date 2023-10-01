@@ -30,7 +30,7 @@ export const RejectModal = (props) => {
       setReasonErr(true);
       return false;
     }
-    props.onSubmitReject();
+    props.onSubmitReject(selReason, reason);
   };
   return (
     <Modal className="modal-dialog-reject-align" isOpen={props.isRMOpen}>

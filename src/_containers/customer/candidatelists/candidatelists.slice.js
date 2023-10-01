@@ -29,6 +29,10 @@ function createExtraActions() {
     getDrpDwnJobLists: getDrpDwnJobLists(),
     getRejectDropDown: getRejectDropDown(),
     getCandidateLists: getCandidateLists(),
+    putLikedCandidate: putLikedCandidate(),
+    putMayBeCandidate: putMayBeCandidate(),
+    putRejectCandidate: putRejectCandidate(),
+    putAcceptedCandidate: putAcceptedCandidate(),
   };
 
   function getDrpDwnJobLists() {
@@ -70,6 +74,56 @@ function createExtraActions() {
         )
     );
   }
+
+  function putLikedCandidate() {
+    return createAsyncThunk(
+      `${name}/putLikedCandidate`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerLiked/${id}`
+        )
+    );
+  }
+
+  function putMayBeCandidate() {
+    return createAsyncThunk(
+      `${name}/putMayBeCandidate`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerMaybe/${id}`
+        )
+    );
+  }
+
+  function putRejectCandidate() {
+    return createAsyncThunk(
+      `${name}/putRejectCandidate`,
+
+      async ({
+        id,
+        customerrejectedcomment,
+        customerrejectedreasonid,
+        currentUserId,
+      }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerRejected/${id}`,
+          { customerrejectedcomment, customerrejectedreasonid, currentUserId }
+        )
+    );
+  }
+
+  function putAcceptedCandidate() {
+    return createAsyncThunk(
+      `${name}/putAcceptedCandidate`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerAccepted/${id}`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -77,7 +131,10 @@ function createExtraReducers() {
     getDrpDwnJobLists();
     getRejectDropDown();
     getCandidateLists();
-
+    putLikedCandidate();
+    putMayBeCandidate();
+    putRejectCandidate();
+    putAcceptedCandidate();
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -129,6 +186,62 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           state.loading = false;
+        });
+    }
+
+    function putLikedCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putLikedCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+
+    function putMayBeCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putMayBeCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+
+    function putRejectCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putRejectCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+
+    function putAcceptedCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putAcceptedCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
         });
     }
   };

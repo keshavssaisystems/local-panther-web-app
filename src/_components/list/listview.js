@@ -24,28 +24,35 @@ import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDe
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
 import {
-  BsBriefcase,
-  BsListStars,
-  BsAward,
-  BsFillFlagFill,
   BsHandThumbsUp,
-  BsFillHandThumbsUpFill,
-  BsStar,
   BsQuestionCircle,
   BsCheckCircle,
   BsXCircle,
   BsClock,
-  BsX,
 } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
 
 export const CandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
+  const [currCRJId, setCurrCRJId] = useState("");
+  const dispatch = useDispatch();
 
-  const onAcceptClick = () => {
-    setShowAModal(true);
+  const onAcceptClick = async (candidaterecommendedjobid) => {
+    let res = await dispatch(
+      candidateListsActions.putAcceptedCandidate({
+        id: candidaterecommendedjobid,
+      })
+    );
+
+    if (res.payload.statusCode === 204) {
+      setShowAModal(true);
+    } else {
+      //No action needed
+    }
   };
 
   const showProfile = (candId) => {
@@ -65,18 +72,104 @@ export const CandidateListView = (props) => {
     setShowIDModal(false);
   };
 
-  const onRejectClick = () => {
+  const onRejectClick = (candidaterecommendedjobid) => {
+    setCurrCRJId(candidaterecommendedjobid);
     setShowReModal(true);
   };
 
-  const onSubmitRejectModal = (evt) => {
+  const onSubmitRejectModal = async (reasonid, comment) => {
+    let userId = localStorage.getItem("userId");
+    let res = await dispatch(
+      candidateListsActions.putRejectCandidate({
+        id: currCRJId,
+        customerrejectedcomment: comment,
+        customerrejectedreasonid: reasonid,
+        currentUserId: userId,
+      })
+    );
+    debugger;
     setShowReModal(false);
-    setShowRejSModal(true);
+    if (res.payload.statusCode === 204) {
+      setShowRejSModal(true);
+    } else {
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+    // setShowReModal(false);
+    // setShowRejSModal(true);
   };
-  const renderButtons = () => {
+  const renderButtons = (candidaterecommendedjobid) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
         <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
+          <Col>
+            <Button
+              active={props.type === "liked"}
+              outline
+              size="sm"
+              title="liked"
+              className=" btn-icon"
+              color="primary"
+              onClick={() => onActionClick("like", candidaterecommendedjobid)}
+            >
+              <BsHandThumbsUp></BsHandThumbsUp>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              active={props.type === "maybe"}
+              outline
+              size="sm"
+              title="maybe"
+              className=" btn-icon"
+              color="primary"
+              onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
+            >
+              <BsQuestionCircle></BsQuestionCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="reject"
+              onClick={() => onRejectClick(candidaterecommendedjobid)}
+              className="btn-icon"
+              color="primary"
+            >
+              <BsXCircle></BsXCircle>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="schedule"
+              className="btn-icon"
+              color="primary"
+            >
+              <BsClock></BsClock>
+            </Button>
+          </Col>
+        </Row>
+      );
+    } else if (props.type === "applied") {
+      return (
+        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
+          <Col>
+            <Button
+              outline
+              size="sm"
+              title="accept"
+              onClick={() => onAcceptClick(candidaterecommendedjobid)}
+              className="btn-icon"
+              color="primary"
+            >
+              <BsCheckCircle></BsCheckCircle>
+            </Button>
+          </Col>
           <Col>
             <Button
               outline
@@ -124,68 +217,6 @@ export const CandidateListView = (props) => {
           </Col>
         </Row>
       );
-    } else if (props.type === "applied") {
-      return (
-        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="accept"
-              onClick={() => onAcceptClick()}
-              className="btn-icon"
-              color="primary"
-            >
-              <BsCheckCircle></BsCheckCircle>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-            >
-              <BsHandThumbsUp></BsHandThumbsUp>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="primary"
-            >
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="reject"
-              onClick={() => onRejectClick()}
-              className="btn-icon"
-              color="primary"
-            >
-              <BsXCircle></BsXCircle>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="schedule"
-              className="btn-icon"
-              color="primary"
-            >
-              <BsClock></BsClock>
-            </Button>
-          </Col>
-        </Row>
-      );
     } else if (props.type === "scheduled") {
       return (
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
@@ -194,7 +225,7 @@ export const CandidateListView = (props) => {
               outline
               size="sm"
               title="accept"
-              onClick={() => onAcceptClick()}
+              onClick={() => onAcceptClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="primary"
             >
@@ -251,7 +282,7 @@ export const CandidateListView = (props) => {
               outline
               size="sm"
               title="accept"
-              onClick={() => onAcceptClick()}
+              onClick={() => onAcceptClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="primary"
             >
@@ -282,6 +313,7 @@ export const CandidateListView = (props) => {
           </Col>
           <Col>
             <Button
+              active={props.type === "rejected"}
               outline
               size="sm"
               title="reject"
@@ -373,7 +405,7 @@ export const CandidateListView = (props) => {
     {
       name: "Interest",
       width: "220px",
-      cell: () => <div>{renderButtons()}</div>,
+      cell: (row) => <div>{renderButtons(row.candidaterecommendedjobid)}</div>,
       ignoreRowClick: true,
       button: true,
     },
@@ -494,6 +526,21 @@ export const CandidateListView = (props) => {
   const handleRowClick = (data) => {
     console.log(data);
   };
+
+  const onActionClick = (type, candidaterecommendedjobid) => {
+    props.onActionClick(candidaterecommendedjobid, type);
+  };
+
+  const onCloseRejSModal = () => {
+    setShowRejSModal(false);
+    props.updateList();
+  };
+
+  const onCloseAMModal = () => {
+    setShowAModal(false);
+    props.updateList();
+  };
+
   return (
     <>
       <DataTable
@@ -512,7 +559,7 @@ export const CandidateListView = (props) => {
         {showAModal ? (
           <AcceptModal
             isAMOpen={showAModal}
-            onAcceptYesClick={() => setShowAModal(false)}
+            onAcceptYesClick={() => onCloseAMModal()}
             onAcceptNoClick={() => setShowAModal(false)}
           />
         ) : (
@@ -546,7 +593,7 @@ export const CandidateListView = (props) => {
         {showRejSModal ? (
           <RejectSuccessModal
             isRejectConfOpen={showRejSModal}
-            onOkClickRejSuccess={() => setShowRejSModal(false)}
+            onOkClickRejSuccess={() => onCloseRejSModal(false)}
           />
         ) : (
           <></>

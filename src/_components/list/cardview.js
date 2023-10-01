@@ -8,7 +8,6 @@ import {
   Button,
   ButtonGroup,
 } from "reactstrap";
-
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
@@ -17,21 +16,21 @@ import {
   BsBriefcase,
   BsListStars,
   BsAward,
-  BsFillFlagFill,
   BsHandThumbsUp,
-  BsFillHandThumbsUpFill,
   BsStar,
   BsQuestionCircle,
-  BsCheckCircle,
   BsXCircle,
   BsClock,
 } from "react-icons/bs";
+import { useDispatch } from "react-redux";
+import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
 import "./cardview.scss";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
+  const dispatch = useDispatch();
   const onAcceptClick = () => {
     setShowAModal(true);
   };
@@ -40,9 +39,34 @@ export const CandidateCardView = (props) => {
     setShowReModal(true);
   };
 
-  const onSubmitRejectModal = (evt) => {
+  const onSubmitRejectModal = async (reasonid, comment) => {
+    let userId = localStorage.getItem("userId");
+    let res = await dispatch(
+      candidateListsActions.putRejectCandidate({
+        id: props?.data?.candidaterecommendedjobid,
+        customerrejectedcomment: comment,
+        customerrejectedreasonid: reasonid,
+        currentUserId: userId,
+      })
+    );
     setShowReModal(false);
-    setShowRejSModal(true);
+    if (res.payload.statusCode === 204) {
+      setShowRejSModal(true);
+    } else {
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
+  const onActionClick = (type) => {
+    props.onActionClick(props?.data?.candidaterecommendedjobid, type);
+  };
+
+  const onCloseRejSModal = () => {
+    setShowRejSModal(false);
+    props.updateList();
   };
   return (
     <>
@@ -122,6 +146,7 @@ export const CandidateCardView = (props) => {
                 className="btn-icon"
                 color="primary"
                 size="sm"
+                onClick={() => onActionClick("like")}
               >
                 Like <BsHandThumbsUp></BsHandThumbsUp>
               </Button>
@@ -132,6 +157,7 @@ export const CandidateCardView = (props) => {
                 className="btn-icon"
                 color="primary"
                 size="sm"
+                onClick={() => onActionClick("maybe")}
               >
                 Maybe <BsQuestionCircle></BsQuestionCircle>
               </Button>
@@ -177,7 +203,9 @@ export const CandidateCardView = (props) => {
           <RejectModal
             isRMOpen={showReModal}
             onCancelReject={() => setShowReModal(false)}
-            onSubmitReject={(evt) => onSubmitRejectModal(evt)}
+            onSubmitReject={(reason, comment) =>
+              onSubmitRejectModal(reason, comment)
+            }
             rejectDrpDwnList={props.rejectDrpDwnList}
           />
         ) : (
@@ -188,7 +216,7 @@ export const CandidateCardView = (props) => {
         {showRejSModal ? (
           <RejectSuccessModal
             isRejectConfOpen={showRejSModal}
-            onOkClickRejSuccess={() => setShowRejSModal(false)}
+            onOkClickRejSuccess={() => onCloseRejSModal()}
           />
         ) : (
           <></>

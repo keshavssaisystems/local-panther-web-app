@@ -47,6 +47,7 @@
         "https-browserify": "^1.0.0",
         "install": "^0.13.0",
         "jquery": "^3.6.0",
+        "jwt-decode": "^3.1.2",
         "loaders.css": "^0.1.2",
         "moment": "^2.29.1",
         "namor": "^2.0.3",
