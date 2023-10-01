@@ -27,6 +27,10 @@ import { payPeriodTypeReducer } from "../_containers/customer/createJob/payperio
 import { preScreenQuestionReducer } from "../_containers/customer/createJob/prescreenquestions.slice";
 import { previousJobListReducer } from "../_containers/customer/createJob/previousjoblist.slice";
 import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
+import { candidatejobListTabReducer } from "_containers/candidate/candidateTablist.slice";
+import { scheduleInterviewReducer } from "_containers/customer/scheduleInterview/scheduleinterview.slice";
+import { durationReducer } from "_containers/customer/scheduleInterview/duration.slice";
+import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
 
 export * from "./auth.slice";
 export * from "./users.slice";
@@ -56,6 +60,10 @@ export * from "../_containers/customer/createJob/payperiodtype.slice";
 export * from "../_containers/customer/createJob/prescreenquestions.slice";
 export * from "../_containers/customer/createJob/previousjoblist.slice";
 export * from "../_containers/customer/createJob/previousjobdetail.slice";
+export * from "../_containers/candidate/candidateTablist.slice";
+export * from "_containers/customer/scheduleInterview/scheduleinterview.slice";
+export * from "_containers/customer/scheduleInterview/duration.slice";
+export * from "_containers/customer/createJob/publishjob.slice";
 
 export const store = configureStore({
   reducer: {
@@ -87,5 +95,9 @@ export const store = configureStore({
     preScreenQuestion: preScreenQuestionReducer,
     previousJobList: previousJobListReducer,
     previousJobDetail: previousJobDetailReducer,
+    tabListReducer: candidatejobListTabReducer,
+    scheduleInterview: scheduleInterviewReducer,
+    duration: durationReducer,
+    publishJob: publishJobReducer,
   },
 });

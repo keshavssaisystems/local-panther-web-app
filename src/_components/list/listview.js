@@ -23,6 +23,7 @@ import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleIn
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
+import { ApplyModal } from "_components/modal/applymodal";
 import {
   BsHandThumbsUp,
   BsQuestionCircle,
@@ -39,6 +40,7 @@ export const CandidateListView = (props) => {
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
   const [currCRJId, setCurrCRJId] = useState("");
+  const [showApModal, setShowApModal] = useState(false);
   const dispatch = useDispatch();
 
   const onAcceptClick = async (candidaterecommendedjobid) => {
@@ -75,6 +77,9 @@ export const CandidateListView = (props) => {
   const onRejectClick = (candidaterecommendedjobid) => {
     setCurrCRJId(candidaterecommendedjobid);
     setShowReModal(true);
+  };
+  const onApplyClick = () => {
+    setShowApModal(true);
   };
 
   const onSubmitRejectModal = async (reasonid, comment) => {
@@ -339,7 +344,114 @@ export const CandidateListView = (props) => {
       );
     }
   };
-
+  const renderButtonsForCustomView = () => {
+    if (props.type === "liked" || props.type === "maybe") {
+      return (
+        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
+          <Col>
+            <Button
+              title="apply"
+              onClick={() => onApplyClick()}
+              className="btn-icon"
+              color="light"
+            >
+              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="liked" className=" btn-icon" color="light">
+              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="maybe" className=" btn-icon" color="light">
+              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="reject" className="btn-icon" color="light">
+              <IoIosClose fontSize={"24px"}></IoIosClose>
+            </Button>
+          </Col>
+        </Row>
+      );
+    } else if (props.type === "applied") {
+      return (
+        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
+          <Col>
+            <Button title="liked" className=" btn-icon" color="light">
+              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="maybe" className=" btn-icon" color="light">
+              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="reject" className="btn-icon" color="light">
+              <IoIosClose fontSize={"24px"}></IoIosClose>
+            </Button>
+          </Col>
+        </Row>
+      );
+    } else if (props.type === "Interview") {
+      return (
+        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
+          <Col>
+            <Button
+              title="apply"
+              onClick={() => onApplyClick()}
+              className="btn-icon"
+              color="light"
+            >
+              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="liked" className=" btn-icon" color="light">
+              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="maybe" className=" btn-icon" color="light">
+              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="reject" className="btn-icon" color="light">
+              <IoIosClose fontSize={"24px"}></IoIosClose>
+            </Button>
+          </Col>
+        </Row>
+      );
+    } else if (props.type === "accepted") {
+      return (
+        <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
+          <Col>
+            <Button title="reject" className="btn-icon" color="light">
+              <IoIosClose fontSize={"24px"}></IoIosClose>
+            </Button>
+          </Col>
+        </Row>
+      );
+    } else if (props.type === "rejected") {
+      return (
+        <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
+          <Col>
+            <Button title="liked" className=" btn-icon" color="light">
+              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            </Button>
+          </Col>
+          <Col>
+            <Button title="maybe" className="btn-icon" color="light">
+              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            </Button>
+          </Col>
+        </Row>
+      );
+    }
+  };
   const renderMenu = (candidateid) => {
     return (
       <div className="d-block w-100 text-center">
@@ -393,9 +505,7 @@ export const CandidateListView = (props) => {
     {
       name: "Scheduled time",
       sortable: true,
-      cell: (row) => (
-        <ScheduleInterviewModal candidateData={row.customerscheduleddatetime} />
-      ),
+      cell: (row) => <ScheduleInterviewModal candidateData={row} />,
     },
     {
       name: "Interview mode",
@@ -422,12 +532,12 @@ export const CandidateListView = (props) => {
     {
       name: "Job ID",
       id: "Candidate",
-      selector: (row) => row.jobapplicationid,
+      selector: (row) => row.jobid,
       sortable: true,
     },
     {
       name: "Title",
-      selector: (row) => row.title,
+      selector: (row) => row.jobtitle,
       sortable: true,
     },
     {
@@ -438,58 +548,14 @@ export const CandidateListView = (props) => {
 
     {
       name: "Location",
-      selector: (row) => row.address,
-      sortable: true,
-    },
-
-    {
-      name: "Experience",
-      selector: (row) => row.experienceyears,
+      selector: (row) => row.locationaddress,
       sortable: true,
     },
 
     {
       name: "Interest",
       width: "170px",
-      cell: () => (
-        <div>
-          <Row
-            xs={5}
-            sm={5}
-            md={5}
-            lg={5}
-            xl={5}
-            className="candidate-listview-tab"
-          >
-            <Col>
-              <Button title="accept" className="btn-icon" color="success">
-                <IoIosCheckmark fontSize={"20px"} className=""></IoIosCheckmark>
-              </Button>
-            </Col>
-            <Col>
-              <Button title="liked" className=" btn-icon" color="primary">
-                <IoIosHelp fontSize={"20px"}></IoIosHelp>
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                title="reject"
-                onClick={() => onRejectClick()}
-                className="btn-icon"
-                color="danger"
-              >
-                <IoIosClose fontSize={"20px"}></IoIosClose>
-              </Button>
-            </Col>
-
-            <Col>
-              <Button title="liked" className=" btn-icon" color="primary">
-                <IoIosThumbsUp fontSize={"20px"}></IoIosThumbsUp>
-              </Button>
-            </Col>
-          </Row>
-        </div>
-      ),
+      cell: () => <div>{renderButtonsForCustomView(props)}</div>,
       ignoreRowClick: true,
       button: true,
     },
@@ -507,7 +573,12 @@ export const CandidateListView = (props) => {
             <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
               <DropdownItem>
                 <i className="dropdown-icon lnr-layers"></i>
-                <span>View interview details</span>
+                <span>View</span>
+              </DropdownItem>
+
+              <DropdownItem>
+                <i className="dropdown-icon lnr-license"> </i>
+                <span>Interview details</span>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledButtonDropdown>
@@ -594,6 +665,17 @@ export const CandidateListView = (props) => {
           <RejectSuccessModal
             isRejectConfOpen={showRejSModal}
             onOkClickRejSuccess={() => onCloseRejSModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showApModal ? (
+          <ApplyModal
+            isAMOpen={showApModal}
+            onApplyYesClick={() => setShowApModal(false)}
+            onApplyNoClick={() => setShowApModal(false)}
           />
         ) : (
           <></>
