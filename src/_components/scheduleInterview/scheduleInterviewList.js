@@ -6,12 +6,14 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Button,
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { ScheduleInterviewModal } from "./scheduleInterviewModal";
 import { InterviewDetailsModal } from "./interviewDetailsModal";
+import moment from "moment-timezone";
 
 export function ScheduleInterviewList({
   candidateList,
@@ -41,6 +43,7 @@ export function ScheduleInterviewList({
     },
   };
   const [openModal, setOpenModal] = useState(false);
+  const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const columns = (clickHandler) => [
     {
       name: "Candidate",
@@ -58,11 +61,29 @@ export function ScheduleInterviewList({
       name: "Scheduled time",
       sortable: true,
       cell: (row) => (
-        <ScheduleInterviewModal
-          candidateData={row}
-          durationOptions={durationOptions}
-          postData={(e) => postData(e)}
-        />
+        <>
+          {row.scheduledate === "" && (
+            <Button
+              color="link"
+              className="pl-0"
+              onClick={(e) => openScheduleModalPopup(e)}
+            >
+              {" "}
+              Schedule{" "}
+            </Button>
+          )}
+          {row.scheduledate !== "" &&
+            moment(row.scheduledate)
+              .tz("Etc/UTC")
+              .format("MMM Do YYYY h:mm a") + " (UTC)"}
+          <ScheduleInterviewModal
+            candidateData={row}
+            durationOptions={durationOptions}
+            postData={(e) => postData(e)}
+            isOpen={openScheduleModal}
+            onClose={() => onCloseScheduleModal()}
+          />
+        </>
       ),
     },
     {
@@ -121,7 +142,6 @@ export function ScheduleInterviewList({
   const openInterviewDeatils = (event) => {
     setOpenModal(true);
     console.log(event.target.value);
-    // setInterviewDeatils;
   };
 
   const handleRowClick = (data) => {
@@ -130,6 +150,13 @@ export function ScheduleInterviewList({
   };
   const onCloseIdModal = () => {
     setOpenModal(false);
+  };
+  const onCloseScheduleModal = () => {
+    setOpenScheduleModal(false);
+  };
+  const openScheduleModalPopup = (event) => {
+    setOpenScheduleModal(true);
+    console.log(event.target.value);
   };
   return (
     <>
@@ -150,7 +177,11 @@ export function ScheduleInterviewList({
         isOpen={openModal}
         type={"video"}
         onClose={() => onCloseIdModal()}
-        interviewDetail={candidateList.length > 0 ? candidateList[0] : {}}
+        interviewDetail={
+          candidateList.length !== undefined && candidateList.length > 0
+            ? candidateList[0]
+            : {}
+        }
       />
     </>
   );
