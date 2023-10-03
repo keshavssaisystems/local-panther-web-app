@@ -40,7 +40,6 @@ export default function SearchPreviousJob({
     getJobId(event.target.value);
   };
   const handlePageChange = (page) => {
-    console.log(page);
     setPage(page);
     onPageChange(page);
   };

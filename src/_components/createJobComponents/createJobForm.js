@@ -82,13 +82,11 @@ export default function CreateJob({
       keyQualification: type === "KQ" ? event : keyQualificationData,
       preScreen: type === "PS" ? event : preScreenData,
     };
-    console.log(data);
     JobDataForPreview(data);
     setSetFormData(data);
   };
   useEffect(() => {
     if (type === "previous_template") {
-      console.log(previousData);
       let data = {
         basicInformation: {
           companyId: "Saisystems Technology",

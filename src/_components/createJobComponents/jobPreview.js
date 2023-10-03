@@ -3,7 +3,6 @@ import { Row, Col } from "reactstrap";
 import "./createJob.scss";
 
 export default function JobPreview({ previewData, editdata }) {
-  console.log(previewData);
   useEffect(() => {
     editdata(previewData);
   }, [previewData]);

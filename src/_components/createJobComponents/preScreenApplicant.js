@@ -55,7 +55,6 @@ export function PreScreenApplicant({
   };
   const getFormValues = (event) => {
     event.preventDefault();
-    console.log(event);
     let questionArr = [];
     if (event.target.elements.question.length > 0) {
       event.target.elements.question.forEach((element) => {
