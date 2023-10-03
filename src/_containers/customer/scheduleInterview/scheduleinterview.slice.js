@@ -4,6 +4,15 @@ import { fetchWrapper } from "_helpers";
 // create slice name
 const name = "scheduleInterview";
 
+// getDurationThunk thunk
+export const getDurationThunk = createAsyncThunk(
+  `${name}/getDurationThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=duration`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // getScheduleInterviewThunk thunk
 export const getScheduleInterviewThunk = createAsyncThunk(
   `${name}/getScheduleInterviewThunk`,
@@ -26,8 +35,17 @@ export const postScheduleInterviewThunk = createAsyncThunk(
 export const getUpcomingInterviewListThunk = createAsyncThunk(
   `${name}/getUpcomingInterviewListThunk`,
   async () => {
-    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&startDate=2023-09-30T00%3A00%3A00&endDate=2023-10-30T00%3A00%3A00&isPaginationRequired=false`;
+    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=1&isActive=true&startDate=2023-09-30T00%3A00%3A00&endDate=2023-10-30T00%3A00%3A00`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT);
+  }
+);
+
+// getUpcomingInterviewListWOPaginationThunk thunk
+export const getUpcomingInterviewListWOPaginationThunk = createAsyncThunk(
+  `${name}/getUpcomingInterviewListWOPaginationThunk`,
+  async () => {
+    const UPCOMING_INTEVRIEW_END_POINT_V2 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&startDate=2023-09-30T00%3A00%3A00&endDate=2023-10-30T00%3A00%3A00&isPaginationRequired=false`;
+    return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V2);
   }
 );
 
@@ -35,13 +53,26 @@ export const getUpcomingInterviewListThunk = createAsyncThunk(
 const scheduleInterviewSlice = createSlice({
   name,
   initialState: {
+    duration: [],
     scheduleInterview: [],
     upcomingInterview: [],
+    upcomingInterviewWOPagination: [],
     loading: false,
   },
   reducers: {},
 
   extraReducers: {
+    [getDurationThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getDurationThunk.fulfilled]: (state, action) => {
+      state.duration = action.payload.data;
+      state.loading = false;
+    },
+    [getDurationThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
     [getScheduleInterviewThunk.pending]: (state) => {
       state.loading = true;
     },
@@ -73,6 +104,17 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getUpcomingInterviewListWOPaginationThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getUpcomingInterviewListWOPaginationThunk.fulfilled]: (state, action) => {
+      state.upcomingInterviewWOPagination = action.payload.data;
+      state.loading = false;
+    },
+    [getUpcomingInterviewListWOPaginationThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -82,6 +124,8 @@ export const scheduleInterviewActions = {
   getScheduleInterviewThunk,
   postScheduleInterviewThunk,
   getUpcomingInterviewListThunk,
+  getUpcomingInterviewListWOPaginationThunk,
+  getDurationThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

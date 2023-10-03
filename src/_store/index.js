@@ -31,7 +31,6 @@ import { previousJobListReducer } from "../_containers/customer/createJob/previo
 import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
 import { candidatejobListTabReducer } from "_containers/candidate/candidateTablist.slice";
 import { scheduleInterviewReducer } from "_containers/customer/scheduleInterview/scheduleinterview.slice";
-import { durationReducer } from "_containers/customer/scheduleInterview/duration.slice";
 import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
 import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
 import { getProfileReducer } from "./getProfile.slice";
@@ -75,7 +74,6 @@ export * from "../_containers/customer/createJob/previousjoblist.slice";
 export * from "../_containers/customer/createJob/previousjobdetail.slice";
 export * from "../_containers/candidate/candidateTablist.slice";
 export * from "_containers/customer/scheduleInterview/scheduleinterview.slice";
-export * from "_containers/customer/scheduleInterview/duration.slice";
 export * from "_containers/customer/createJob/publishjob.slice";
 export * from "./candidateProfile.slice";
 export * from "./dropdownGender.slice";
@@ -123,7 +121,6 @@ export const store = configureStore({
     previousJobDetail: previousJobDetailReducer,
     tabListReducer: candidatejobListTabReducer,
     scheduleInterview: scheduleInterviewReducer,
-    duration: durationReducer,
     publishJob: publishJobReducer,
     profileReducer: profileReducer,
     ethnicity: ethnicityReducer,
