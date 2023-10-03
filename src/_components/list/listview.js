@@ -32,7 +32,7 @@ import {
   BsClock,
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
-import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
+import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 
 export const CandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -45,7 +45,7 @@ export const CandidateListView = (props) => {
 
   const onAcceptClick = async (candidaterecommendedjobid) => {
     let res = await dispatch(
-      candidateListsActions.putAcceptedCandidate({
+      customerCandidateListsActions.putAcceptedCandidate({
         id: candidaterecommendedjobid,
       })
     );
@@ -85,14 +85,14 @@ export const CandidateListView = (props) => {
   const onSubmitRejectModal = async (reasonid, comment) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
-      candidateListsActions.putRejectCandidate({
+      customerCandidateListsActions.putRejectCandidate({
         id: currCRJId,
         customerrejectedcomment: comment,
         customerrejectedreasonid: reasonid,
         currentUserId: userId,
       })
     );
-    debugger;
+
     setShowReModal(false);
     if (res.payload.statusCode === 204) {
       setShowRejSModal(true);

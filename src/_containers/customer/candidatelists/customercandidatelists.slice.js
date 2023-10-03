@@ -2,15 +2,18 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "../../../_helpers";
 
 // create slice
-const name = "candidateList";
+const name = "customerCandidateList";
 const initialState = createInitialState();
 const extraActions = createExtraActions();
 const extraReducers = createExtraReducers();
 const slice = createSlice({ name, initialState, extraReducers });
 
 // exports
-export const candidateListsActions = { ...slice.actions, ...extraActions };
-export const candidateListsReducer = slice.reducer;
+export const customerCandidateListsActions = {
+  ...slice.actions,
+  ...extraActions,
+};
+export const customerCandidateListsReducer = slice.reducer;
 
 // implementation
 function createInitialState() {
@@ -20,6 +23,7 @@ function createInitialState() {
     rejectDrpDwnList: [],
     candidateList: [],
     totalRecords: 0,
+    durationOptions: [],
   };
 }
 
@@ -33,6 +37,8 @@ function createExtraActions() {
     putMayBeCandidate: putMayBeCandidate(),
     putRejectCandidate: putRejectCandidate(),
     putAcceptedCandidate: putAcceptedCandidate(),
+    getDurationOptions: getDurationOptions(),
+    postScheduleInterview: postScheduleInterview(),
   };
 
   function getDrpDwnJobLists() {
@@ -124,6 +130,25 @@ function createExtraActions() {
         )
     );
   }
+  function getDurationOptions() {
+    return createAsyncThunk(
+      `${name}/getDurationOptions`,
+
+      async () =>
+        await fetchWrapper.get(
+          `${newUrl}/Common/GetCommonDropdown?searchText=duration`
+        )
+    );
+  }
+
+  function postScheduleInterview() {
+    return createAsyncThunk(
+      `${name}/postScheduleInterview`,
+
+      async (payload) =>
+        await fetchWrapper.post(`${newUrl}/ScheduledInterview`, payload)
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -135,6 +160,9 @@ function createExtraReducers() {
     putMayBeCandidate();
     putRejectCandidate();
     putAcceptedCandidate();
+    getDurationOptions();
+    postScheduleInterview();
+
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -242,6 +270,37 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           //no action
+        });
+    }
+
+    function getDurationOptions() {
+      let { pending, fulfilled, rejected } = extraActions.getDurationOptions;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.loading = false;
+          state.durationOptions = action?.payload?.data
+            ? action.payload.data
+            : [];
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+        });
+    }
+
+    function postScheduleInterview() {
+      let { pending, fulfilled, rejected } = extraActions.postScheduleInterview;
+      builder
+        .addCase(pending, (state) => {
+          //No action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //No action
+        })
+        .addCase(rejected, (state, action) => {
+          //No action
         });
     }
   };

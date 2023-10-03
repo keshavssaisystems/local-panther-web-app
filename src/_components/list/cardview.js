@@ -23,13 +23,15 @@ import {
   BsClock,
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
-import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
+import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
+import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import "./cardview.scss";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
+  const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
   const dispatch = useDispatch();
   const onAcceptClick = () => {
     setShowAModal(true);
@@ -42,7 +44,7 @@ export const CandidateCardView = (props) => {
   const onSubmitRejectModal = async (reasonid, comment) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
-      candidateListsActions.putRejectCandidate({
+      customerCandidateListsActions.putRejectCandidate({
         id: props?.data?.candidaterecommendedjobid,
         customerrejectedcomment: comment,
         customerrejectedreasonid: reasonid,
@@ -68,6 +70,31 @@ export const CandidateCardView = (props) => {
     setShowRejSModal(false);
     props.updateList();
   };
+
+  const onScheduleInterview = () => {
+    setShowSchdIntSModal(true);
+  };
+
+  const getFormData = (formData) => {
+    postScheduledInterview(formData);
+  };
+  const postScheduledInterview = async function (formData) {
+    let res = await dispatch(
+      customerCandidateListsActions.postScheduleInterview(formData)
+    );
+    if (res.payload.statusCode === 201) {
+      setShowSchdIntSModal(false);
+      props.showSweetAlert({ title: res.payload.message, type: "success" });
+
+      props.updateList();
+    } else {
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
@@ -179,6 +206,7 @@ export const CandidateCardView = (props) => {
                 className="btn-icon"
                 color="primary"
                 size="sm"
+                onClick={() => onScheduleInterview()}
               >
                 Schedule
                 <BsClock />
@@ -217,6 +245,22 @@ export const CandidateCardView = (props) => {
           <RejectSuccessModal
             isRejectConfOpen={showRejSModal}
             onOkClickRejSuccess={() => onCloseRejSModal()}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {" "}
+        {showSchdIntModal ? (
+          <ScheduleInterviewModal
+            candidateData={props.data}
+            durationOptions={props.durationOptions}
+            postData={(e) => {
+              getFormData(e);
+            }}
+            isOpen={showSchdIntModal}
+            onClose={() => setShowSchdIntSModal(false)}
           />
         ) : (
           <></>

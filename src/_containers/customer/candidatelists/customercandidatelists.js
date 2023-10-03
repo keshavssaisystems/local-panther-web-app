@@ -16,7 +16,7 @@ import { CardPagination } from "_components/common/cardpagination";
 import { useParams, useNavigate } from "react-router-dom";
 import { cardPageSize, listPageSize } from "_helpers/constants";
 import { useSelector, useDispatch } from "react-redux";
-import { candidateListsActions } from "./candidatelists.slice";
+import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
@@ -36,23 +36,26 @@ export const CustomerCandidateLists = (props) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const jobList = useSelector((state) => state.candidateLists.jobLists);
+  const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
-    (state) => state.candidateLists.rejectDrpDwnList
+    (state) => state.customerCandidateList.rejectDrpDwnList
   );
   const candidateList = useSelector(
-    (state) => state.candidateLists.candidateList
+    (state) => state.customerCandidateList.candidateList
   );
 
   const totalRecords = useSelector(
-    (state) => state.candidateLists.totalRecords
+    (state) => state.customerCandidateList.totalRecords
   );
-  const loading = useSelector((state) => state.candidateLists.loading);
-
+  const loading = useSelector((state) => state.customerCandidateList.loading);
+  const durationOptions = useSelector(
+    (state) => state.customerCandidateList.durationOptions
+  );
   useEffect(() => {
-    dispatch(candidateListsActions.getDrpDwnJobLists());
-    dispatch(candidateListsActions.getRejectDropDown());
+    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
+    dispatch(customerCandidateListsActions.getRejectDropDown());
+    dispatch(customerCandidateListsActions.getDurationOptions());
   }, []);
 
   useEffect(() => {
@@ -71,7 +74,7 @@ export const CustomerCandidateLists = (props) => {
       isCandidateApply: type === "applied",
       jobId: id,
     };
-    dispatch(candidateListsActions.getCandidateLists(candObj));
+    dispatch(customerCandidateListsActions.getCandidateLists(candObj));
   };
 
   const handlePageChange = (page) => {
@@ -92,7 +95,7 @@ export const CustomerCandidateLists = (props) => {
   const onActionClick = async (evt, type) => {
     if (type === "like") {
       let res = await dispatch(
-        candidateListsActions.putLikedCandidate({ id: evt })
+        customerCandidateListsActions.putLikedCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
@@ -105,7 +108,7 @@ export const CustomerCandidateLists = (props) => {
       }
     } else if (type === "maybe") {
       let res = await dispatch(
-        candidateListsActions.putMayBeCandidate({ id: evt })
+        customerCandidateListsActions.putMayBeCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
@@ -137,6 +140,7 @@ export const CustomerCandidateLists = (props) => {
   const onUpdateList = () => {
     onGetPageList(pageNo, props.type, id);
   };
+
   return (
     <>
       <Row className="customercandidatelist">
@@ -292,6 +296,7 @@ export const CustomerCandidateLists = (props) => {
                                   showSweetAlert({ title, type })
                                 }
                                 updateList={() => onUpdateList()}
+                                durationOptions={durationOptions}
                               ></CandidateCardView>
                             </Col>
                           );
@@ -340,6 +345,7 @@ export const CustomerCandidateLists = (props) => {
                             showSweetAlert({ title, type })
                           }
                           updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -385,6 +391,7 @@ export const CustomerCandidateLists = (props) => {
                             showSweetAlert({ title, type })
                           }
                           updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -430,6 +437,7 @@ export const CustomerCandidateLists = (props) => {
                             showSweetAlert({ title, type })
                           }
                           updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -475,6 +483,7 @@ export const CustomerCandidateLists = (props) => {
                             showSweetAlert({ title, type })
                           }
                           updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -520,6 +529,7 @@ export const CustomerCandidateLists = (props) => {
                             showSweetAlert({ title, type })
                           }
                           updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}
@@ -565,6 +575,7 @@ export const CustomerCandidateLists = (props) => {
                             showSweetAlert({ title, type })
                           }
                           updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
                         />
                         <CardPagination
                           totalPages={totalRecords / listPageSize}

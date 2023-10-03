@@ -18,7 +18,7 @@ import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "../_containers/candidate/recommendejobList.slice";
 import { departmentReducer } from "../_components/dropdownComponents/department.slice.js";
 import { empmodeReducer } from "./dropdownempmode.slice";
-import { candidateListsReducer } from "_containers/customer/candidatelists/candidatelists.slice";
+import { customerCandidateListsReducer } from "_containers/customer/candidatelists/customercandidatelists.slice";
 import { jobLocationTypeReducer } from "../_containers/customer/createJob/joblocationtype.slice";
 import { jobTypeReducer } from "../_containers/customer/createJob/jobtype.slice";
 import { workScheduleReducer } from "../_containers/customer/createJob/workschedule.slice";
@@ -62,7 +62,7 @@ export * from "./jobDetail.slice";
 export * from "../_containers/candidate/recommendejobList.slice";
 export * from "../_components/dropdownComponents/department.slice";
 export * from "./dropdownempmode.slice";
-export * from "../_containers/customer/candidatelists/candidatelists.slice";
+export * from "../_containers/customer/candidatelists/customercandidatelists.slice";
 export * from "../_containers/customer/createJob/joblocationtype.slice";
 export * from "../_containers/customer/createJob/jobtype.slice";
 export * from "../_containers/customer/createJob/workschedule.slice";
@@ -110,7 +110,7 @@ export const store = configureStore({
     recommendedjobList: recommendedjobListReducer,
     department: departmentReducer,
     empmode: empmodeReducer,
-    candidateLists: candidateListsReducer,
+    customerCandidateList: customerCandidateListsReducer,
     jobLocationType: jobLocationTypeReducer,
     jobType: jobTypeReducer,
     workSchedule: workScheduleReducer,

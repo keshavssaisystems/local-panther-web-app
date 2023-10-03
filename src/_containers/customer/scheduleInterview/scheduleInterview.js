@@ -19,7 +19,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  candidateListsActions,
+  customerCandidateListsActions,
   scheduleInterviewActions,
   durationActions,
 } from "_store";
@@ -39,14 +39,14 @@ export function ScheduleInterview() {
   useEffect(() => {
     getCandidateList();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    dispatch(candidateListsActions.getDrpDwnJobLists());
+    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(durationActions.getDurationThunk());
   }, []);
   const candidateList = useSelector(
     (state) => state.scheduleInterview.scheduleInterview.scheduledInterviewList
   );
   const durationOptions = useSelector((state) => state.duration.duration);
-  const jobList = useSelector((state) => state.candidateLists.jobLists);
+  const jobList = useSelector((state) => state.customerCandidateList.jobLists);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview.scheduledInterviewList
   );
