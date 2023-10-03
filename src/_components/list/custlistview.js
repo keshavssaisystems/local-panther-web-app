@@ -32,6 +32,7 @@ import {
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
+import "./custlistview.scss";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -62,8 +63,9 @@ export const CustCandidateListView = (props) => {
     // navigate(`/candidate-profile/${candId}`);
   };
 
-  const onInterviewDetails = () => {
-    // setShowIDModal(true);
+  const onInterviewDetails = (row) => {
+    setSelectedRowData(row);
+    setShowIDModal(true);
   };
 
   const onCloseIdModal = () => {
@@ -369,10 +371,10 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const renderMenu = (candidateid) => {
+  const renderMenu = (candidateid, row) => {
     return (
       <div className="d-block w-100 text-center">
-        <UncontrolledButtonDropdown direction="start">
+        <UncontrolledButtonDropdown className="menu-ellipses" direction="start">
           <DropdownToggle
             className="btn-icon btn-icon-only btn btn-link"
             color="link"
@@ -385,7 +387,7 @@ export const CustCandidateListView = (props) => {
               <span>Profile</span>
             </DropdownItem>
 
-            <DropdownItem onClick={() => onInterviewDetails()}>
+            <DropdownItem onClick={() => onInterviewDetails(row)}>
               <i className="dropdown-icon lnr-license"> </i>
               <span>Interview details</span>
             </DropdownItem>
@@ -397,9 +399,11 @@ export const CustCandidateListView = (props) => {
 
   const columns = memoize((clickHandler) => [
     {
-      name: "Candidate",
+      name: <span className="table-title">Candidate</span>,
       id: "Candidate",
-      selector: (row) => row.firstname + " " + row.lastname,
+      selector: (row) => (
+        <span className="table-cell">{row.firstname + " " + row.lastname}</span>
+      ),
       sortable: true,
     },
     // {
@@ -408,39 +412,45 @@ export const CustCandidateListView = (props) => {
     //   sortable: true,
     // },
     {
-      name: "Location",
-      selector: (row) => row.locationaddress,
+      name: <span className="table-title">Location</span>,
+      selector: (row) => (
+        <span className="table-cell">{row.locationaddress}</span>
+      ),
       sortable: true,
     },
 
     {
-      name: "Email",
-      selector: (row) => row.email,
+      name: <span className="table-title">Email</span>,
+      selector: (row) => <span className="table-cell">{row.email}</span>,
       sortable: true,
     },
 
     {
-      name: "Scheduled time",
+      name: <span className="table-title">Scheduled time</span>,
       sortable: true,
-      cell: (row) => row.customerscheduleddatetime,
+      cell: (row) => (
+        <span className="table-cell">{row.customerscheduleddatetime}</span>
+      ),
     },
     {
-      name: "Interview mode",
-      selector: (row) => row.mode,
+      name: <span className="table-title">Interview mode</span>,
+      selector: (row) => <span className="table-cell">{row.mode}</span>,
       sortable: true,
     },
     {
-      name: "Interest",
+      name: <span className="table-title">Interest</span>,
       width: "220px",
       cell: (row) => (
-        <div>{renderButtons(row.candidaterecommendedjobid, row)}</div>
+        <div className="list-btn-group">
+          {renderButtons(row.candidaterecommendedjobid, row)}
+        </div>
       ),
       ignoreRowClick: true,
       button: true,
     },
     {
-      name: "Action",
-      cell: (row) => <>{renderMenu(row.candidateid)}</>,
+      name: <span className="table-title">Action</span>,
+      cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
@@ -583,6 +593,7 @@ export const CustCandidateListView = (props) => {
         selectableRows
         persistTableHead
         // pagination
+        className="cust-list-view"
       />
       <>
         {showAModal ? (
@@ -601,6 +612,7 @@ export const CustCandidateListView = (props) => {
             isOpen={showIDModal}
             type={"video"}
             onClose={() => onCloseIdModal()}
+            interviewDetail={selectedRowData}
           />
         ) : (
           <></>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
+import "./cardpagination.scss";
 
 export function CardPagination(props) {
   var totalPages = Math.round(props.totalPages);
@@ -11,7 +12,11 @@ export function CardPagination(props) {
     for (let page = 1; page <= totalPages; page++) {
       if (page <= 3 || page > totalPages - 3) {
         items.push(
-          <PaginationItem key={page} active={pageIndex === page}>
+          <PaginationItem
+            className="middle-page"
+            key={page}
+            active={pageIndex === page}
+          >
             <PaginationLink onClick={() => props.onCallBack(page)}>
               {page}
             </PaginationLink>
@@ -23,7 +28,7 @@ export function CardPagination(props) {
   };
 
   return (
-    <Pagination className="d-flex justify-content-center">
+    <Pagination className="d-flex justify-content-center pagination-cont">
       <PaginationItem disabled={pageIndex === 1}>
         <PaginationLink
           previous

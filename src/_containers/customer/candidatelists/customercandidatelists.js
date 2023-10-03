@@ -20,6 +20,7 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
+import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
   const [activeTab, setActiveTab] = useState(props.type);
@@ -41,13 +42,14 @@ export const CustomerCandidateLists = (props) => {
   const rejectDrpDwnList = useSelector(
     (state) => state.customerCandidateList.rejectDrpDwnList
   );
-  const candidateList = useSelector(
-    (state) => state.customerCandidateList.candidateList
-  );
+  // const candidateList = useSelector(
+  //   (state) => state.customerCandidateList.candidateList
+  // );
 
-  const totalRecords = useSelector(
-    (state) => state.customerCandidateList.totalRecords
-  );
+  // const totalRecords = useSelector(
+  //   (state) => state.customerCandidateList.totalRecords
+  // );
+
   const loading = useSelector((state) => state.customerCandidateList.loading);
   const durationOptions = useSelector(
     (state) => state.customerCandidateList.durationOptions
@@ -152,7 +154,7 @@ export const CustomerCandidateLists = (props) => {
           xl={8}
           className="mb-3 tab-selection-text"
         >
-          <ButtonGroup size="lg">
+          <ButtonGroup size="lg" className="cust-btn-tabs">
             <Button
               outline
               color="primary"
@@ -258,7 +260,9 @@ export const CustomerCandidateLists = (props) => {
               {jobList.map((data) => {
                 return (
                   <option value={data.jobid} key={data.jobid}>
-                    {data.jobtitle + "," + data?.locationaddress}
+                    {data?.jobtitle && data?.locationaddress
+                      ? data.jobtitle + "," + data?.locationaddress
+                      : data.jobtitle}
                   </option>
                 );
               })}

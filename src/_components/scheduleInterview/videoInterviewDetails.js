@@ -56,7 +56,11 @@ export function VideoInterviewDetails({ interviewDetail }) {
           <div className="menu-header-content btn-pane-right">
             <Col lg="4">
               <h6 className="job-main-heading mb-0">
-                {interviewDetail.candidatename}
+                {interviewDetail?.candidatename
+                  ? interviewDetail?.candidatename
+                  : interviewDetail?.firstname && interviewDetail?.lastname
+                  ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+                  : ""}
               </h6>
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
