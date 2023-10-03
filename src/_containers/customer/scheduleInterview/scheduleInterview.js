@@ -37,6 +37,9 @@ export function ScheduleInterview() {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(candidateListsActions.getDrpDwnJobLists());
     dispatch(scheduleInterviewActions.getDurationThunk());
+    dispatch(
+      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk()
+    );
   }, []);
   const candidateList = useSelector(
     (state) => state.scheduleInterview.scheduleInterview.scheduledInterviewList
@@ -48,10 +51,18 @@ export function ScheduleInterview() {
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview.scheduledInterviewList
   );
+  const upcomingInterviewsWOPagination = useSelector(
+    (state) =>
+      state.scheduleInterview.upcomingInterviewWOPagination
+        .scheduledInterviewList
+  );
   const localizer = momentLocalizer(moment);
   let upData = [];
-  if (upcomingInterviews !== undefined && upcomingInterviews.length > 0) {
-    upcomingInterviews.forEach((upcomingInterview) => {
+  if (
+    upcomingInterviewsWOPagination !== undefined &&
+    upcomingInterviewsWOPagination.length > 0
+  ) {
+    upcomingInterviewsWOPagination.forEach((upcomingInterview) => {
       let startDate = moment(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
