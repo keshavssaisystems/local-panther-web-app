@@ -99,14 +99,31 @@ export function ScheduleInterviewModal({
       ? setInterviewAddressValidation(true)
       : setInterviewAddressValidation(false);
     if (
-      event.target.elements.scheduleDate.value !== "" ||
-      event.target.elements.scheduleStartTime.value !== "" ||
-      event.target.elements.duration.value !== "" ||
-      (formatButton === 1 &&
-        event.target.elements.videoMode.value === "third-party-video" &&
-        event.target.elements.videoLink.value !== "") ||
-      (formatButton === 3 &&
-        event.target.elements.interviewAddress.value !== "")
+      event.target.elements.scheduleDate.value !== "" &&
+      event.target.elements.scheduleStartTime.value !== "" &&
+      event.target.elements.duration.value !== "" &&
+      formatButton === 1 &&
+      event.target.elements.videoMode.value === "third-party-video" &&
+      event.target.elements.videoLink.value !== ""
+    ) {
+      getFormData(event);
+    }
+
+    if (
+      event.target.elements.scheduleDate.value !== "" &&
+      event.target.elements.scheduleStartTime.value !== "" &&
+      event.target.elements.duration.value !== "" &&
+      formatButton === 3 &&
+      event.target.elements.interviewAddress.value !== ""
+    ) {
+      getFormData(event);
+    }
+
+    if (
+      event.target.elements.scheduleDate.value !== "" &&
+      event.target.elements.scheduleStartTime.value !== "" &&
+      event.target.elements.duration.value !== "" &&
+      formatButton === 2
     ) {
       getFormData(event);
     }

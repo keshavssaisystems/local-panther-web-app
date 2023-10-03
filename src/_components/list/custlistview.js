@@ -31,7 +31,7 @@ import {
   BsClock,
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
-import { candidateListsActions } from "../../_containers/customer/candidatelists/candidatelists.slice";
+import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -39,11 +39,13 @@ export const CustCandidateListView = (props) => {
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
   const [currCRJId, setCurrCRJId] = useState("");
+  const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState("");
   const dispatch = useDispatch();
 
   const onAcceptClick = async (candidaterecommendedjobid) => {
     let res = await dispatch(
-      candidateListsActions.putAcceptedCandidate({
+      customerCandidateListsActions.putAcceptedCandidate({
         id: candidaterecommendedjobid,
       })
     );
@@ -58,10 +60,6 @@ export const CustCandidateListView = (props) => {
   const showProfile = (candId) => {
     // need updated path
     // navigate(`/candidate-profile/${candId}`);
-  };
-
-  const onDeleteItem = () => {
-    //delete functionality here
   };
 
   const onInterviewDetails = () => {
@@ -80,14 +78,14 @@ export const CustCandidateListView = (props) => {
   const onSubmitRejectModal = async (reasonid, comment) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
-      candidateListsActions.putRejectCandidate({
+      customerCandidateListsActions.putRejectCandidate({
         id: currCRJId,
         customerrejectedcomment: comment,
         customerrejectedreasonid: reasonid,
         currentUserId: userId,
       })
     );
-    debugger;
+
     setShowReModal(false);
     if (res.payload.statusCode === 204) {
       setShowRejSModal(true);
@@ -97,10 +95,33 @@ export const CustCandidateListView = (props) => {
         type: "danger",
       });
     }
-    // setShowReModal(false);
-    // setShowRejSModal(true);
   };
-  const renderButtons = (candidaterecommendedjobid) => {
+
+  const onScheduleClick = (row) => {
+    setSelectedRowData(row);
+    setShowSchdIntSModal(true);
+  };
+
+  const getFormData = (formData) => {
+    postScheduledInterview(formData);
+  };
+  const postScheduledInterview = async function (formData) {
+    let res = await dispatch(
+      customerCandidateListsActions.postScheduleInterview(formData)
+    );
+    if (res.payload.statusCode === 201) {
+      setShowSchdIntSModal(false);
+      props.showSweetAlert({ title: res.payload.message, type: "success" });
+
+      props.updateList();
+    } else {
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+  const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
         <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
@@ -149,6 +170,7 @@ export const CustCandidateListView = (props) => {
               title="schedule"
               className="btn-icon"
               color="primary"
+              onClick={() => onScheduleClick(row)}
             >
               <BsClock></BsClock>
             </Button>
@@ -213,6 +235,7 @@ export const CustCandidateListView = (props) => {
               title="schedule"
               className="btn-icon"
               color="primary"
+              onClick={() => onScheduleClick(row)}
             >
               <BsClock></BsClock>
             </Button>
@@ -270,6 +293,7 @@ export const CustCandidateListView = (props) => {
               title="schedule"
               className="btn-icon"
               color="primary"
+              onClick={() => onScheduleClick(row)}
             >
               <BsClock></BsClock>
             </Button>
@@ -335,6 +359,7 @@ export const CustCandidateListView = (props) => {
               title="schedule"
               className="btn-icon"
               color="primary"
+              onClick={() => onScheduleClick(row)}
             >
               <BsClock></BsClock>
             </Button>
@@ -407,7 +432,9 @@ export const CustCandidateListView = (props) => {
     {
       name: "Interest",
       width: "220px",
-      cell: (row) => <div>{renderButtons(row.candidaterecommendedjobid)}</div>,
+      cell: (row) => (
+        <div>{renderButtons(row.candidaterecommendedjobid, row)}</div>
+      ),
       ignoreRowClick: true,
       button: true,
     },
@@ -595,7 +622,24 @@ export const CustCandidateListView = (props) => {
         {showRejSModal ? (
           <RejectSuccessModal
             isRejectConfOpen={showRejSModal}
-            onOkClickRejSuccess={() => onCloseRejSModal(false)}
+            onOkClickRejSuccess={() => onCloseRejSModal()}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+
+      <>
+        {" "}
+        {showSchdIntModal ? (
+          <ScheduleInterviewModal
+            candidateData={selectedRowData}
+            durationOptions={props.durationOptions}
+            postData={(e) => {
+              getFormData(e);
+            }}
+            isOpen={showSchdIntModal}
+            onClose={() => setShowSchdIntSModal(false)}
           />
         ) : (
           <></>

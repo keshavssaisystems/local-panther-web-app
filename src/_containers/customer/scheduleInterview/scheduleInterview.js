@@ -18,7 +18,10 @@ import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
-import { candidateListsActions, scheduleInterviewActions } from "_store";
+import {
+  customerCandidateListsActions,
+  scheduleInterviewActions,
+} from "_store";
 
 export function ScheduleInterview() {
   const [selectedJobId, setSelectedJobId] = useState(5);
@@ -35,7 +38,7 @@ export function ScheduleInterview() {
   useEffect(() => {
     getCandidateList();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    dispatch(candidateListsActions.getDrpDwnJobLists());
+    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk()
@@ -44,10 +47,12 @@ export function ScheduleInterview() {
   const candidateList = useSelector(
     (state) => state.scheduleInterview.scheduleInterview.scheduledInterviewList
   );
+
+  const jobList = useSelector((state) => state.customerCandidateList.jobLists);
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
-  const jobList = useSelector((state) => state.candidateLists.jobLists);
+
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview.scheduledInterviewList
   );
