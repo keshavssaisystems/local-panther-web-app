@@ -21,6 +21,8 @@ export function ScheduleInterviewModal({
   candidateData,
   durationOptions,
   postData,
+  isOpen = false,
+  onClose,
 }) {
   const [videoModeCheck, setVideoModeCheck] = useState(1);
   const [timeOption, setTimeOption] = useState([]);
@@ -162,25 +164,16 @@ export function ScheduleInterviewModal({
   };
   return (
     <>
-      {candidateData.scheduledate === "" && (
-        <Button color="link" className="pl-0" onClick={toggle}>
-          {" "}
-          Schedule{" "}
-        </Button>
-      )}
-      {candidateData.scheduledate !== "" &&
-        moment(candidateData.scheduledate)
-          .tz("Etc/UTC")
-          .format("MMM Do YYYY h:mm a") + " (UTC)"}
       <Modal
-        isOpen={modal}
+        isOpen={isOpen}
         fullscreen={"lg"}
         size="xl"
         backdrop={"static"}
         toggle={toggle}
         className="schedule-modal"
+        onClosed={() => onClose()}
       >
-        <ModalHeader toggle={toggle}>Schedule interview</ModalHeader>
+        <ModalHeader toggle={() => onClose()}>Schedule interview</ModalHeader>
         <ModalBody className="pt-4">
           <Form onSubmit={(e) => getFormValidation(e)}>
             <Col md="12">

@@ -119,29 +119,23 @@ export function UpcomingDetail({ interviewDetails }) {
             <p className="mb-0">ajaysingh@gmail.com</p>
           </div>
           <div className="p-custom">
-            <p className="mb-0">
-              <h6 className="fw-bold mb-0 job-heading">Mobile</h6>
-              {interviewDetails.textremaindernumbers}
-            </p>
+            <h6 className="fw-bold mb-0 job-heading">Mobile</h6>
+            {interviewDetails.textremaindernumbers}
           </div>
           <div className="p-custom">
-            <p className="mb-0">
-              <h6 className="fw-bold mb-0 job-heading">Skills</h6>
-              {interviewDetails.candidateskills === ""
-                ? "-"
-                : interviewDetails.candidateskills}
-            </p>
+            <h6 className="fw-bold mb-0 job-heading">Skills</h6>
+            {interviewDetails.candidateskills === ""
+              ? "-"
+              : interviewDetails.candidateskills}
           </div>
           <div className="p-custom">
-            <p className="mb-0">
-              <h6 className="fw-bold mb-0 job-heading">Status</h6>
-              {interviewDetails.isaccepted === true &&
-              interviewDetails.isrejected === false
-                ? "Scheduled"
-                : interviewDetails.isrejected === true
-                ? "Rejected"
-                : "Awaiting confirmation"}
-            </p>
+            <h6 className="fw-bold mb-0 job-heading">Status</h6>
+            {interviewDetails.isaccepted === true &&
+            interviewDetails.isrejected === false
+              ? "Scheduled"
+              : interviewDetails.isrejected === true
+              ? "Rejected"
+              : "Awaiting confirmation"}
           </div>
           <Card className="mt-3">
             <CardHeader className="card-header-tab">
