@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardHeader, Button, Collapse, CardBody } from "reactstrap";
 import { BasicInformation } from "./basicInformation";
 import { ExperienceAndSchedules } from "./experienceAndSchedules";
@@ -20,6 +20,8 @@ export default function CreateJob({
   JobDataForPreview,
   previousStep,
   previousData,
+  bIFormSubmitted,
+  esFormSubmitted,
 }) {
   const [basicInformationData, setBasicInformationData] = useState(
     previousStep === 3 ? jobData.basicInformation : {}
@@ -83,6 +85,54 @@ export default function CreateJob({
     JobDataForPreview(data);
     setSetFormData(data);
   };
+  useEffect(() => {
+    if (type === "previous_template") {
+      let data = {
+        basicInformation: {
+          companyId: "Saisystems Technology",
+          jobTitle: previousData.jobtitle,
+          noOfPostions: previousData.noofopenposition,
+          jobLocation: previousData.joblocationid,
+          address: previousData.locationaddress,
+          cityId: previousData.cityid,
+          stateId: previousData.stateid,
+          cityName: previousData.cityname,
+          stateName: previousData.statename,
+          zipcode: previousData.zipcode,
+          description: previousData.description,
+          companyDetail: previousData.companydetails,
+          jobLoactionOptions: jobLocationOptions,
+        },
+        experienceSchedule: {
+          jobType: previousData.jobExperienceScheduleDtos[0].jobtypes,
+          workSchedule: previousData.jobExperienceScheduleDtos[0].workschedules,
+          shift: previousData.jobExperienceScheduleDtos[0].shifts,
+          experienceLevel:
+            previousData.jobExperienceScheduleDtos[0].experiencelevelid,
+          hiringTimeline:
+            previousData.jobExperienceScheduleDtos[0].hiringtimelineid,
+          shiftsOption: shiftsOption,
+          workScheduleOptions: workScheduleOptions,
+          jobTypeOption: jobTypeOption,
+          experienceLevelOption: workScheduleOptions,
+          hiringTimelineOption: hiringTimelineOption,
+        },
+        paymentBenifits: {
+          payPeriodType: previousData.jobPaymentBenefitDtos[0].payperiodtypeid,
+          minimumAmount: previousData.jobPaymentBenefitDtos[0].minimumamount,
+          maximumAmount: previousData.jobPaymentBenefitDtos[0].maximumamount,
+          compensationPackage:
+            previousData.jobPaymentBenefitDtos[0].compensationpackage,
+          benefits: previousData.jobPaymentBenefitDtos[0].benefits,
+          payPeriodTypeOption: payPeriodTypeOption,
+        },
+        keyQualification: previousData.jobKeyQualificationDtos,
+        preScreen: {},
+      };
+      JobDataForPreview(data);
+    }
+  }, []);
+
   return (
     <>
       <div className="form-wizard-content">
@@ -113,6 +163,7 @@ export default function CreateJob({
                   postData={(e) => getBIPostData(e)}
                   prevStep={previousStep}
                   previousData={previousData}
+                  bIFormSubmitted={bIFormSubmitted}
                 />
               </CardBody>
             </Collapse>
@@ -146,6 +197,7 @@ export default function CreateJob({
                   postData={(e) => getESPostData(e)}
                   prevStep={previousStep}
                   previousData={previousData.jobExperienceScheduleDtos ?? {}}
+                  esFormSubmitted={esFormSubmitted}
                 />
               </CardBody>
             </Collapse>

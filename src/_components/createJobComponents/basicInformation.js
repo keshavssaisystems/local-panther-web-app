@@ -20,7 +20,9 @@ export function BasicInformation({
   postData,
   prevStep,
   previousData,
+  bIFormSubmitted,
 }) {
+  const [successMessage, setSuccessMessage] = useState(false);
   const [stateData, setStateData] = useState({});
   const customStyles = {
     valueContainer: (provided, state) => ({
@@ -119,7 +121,6 @@ export function BasicInformation({
   const [cityValidation, setCityValidation] = useState(false);
   const [stateOnchange, setStateOnChange] = useState(false);
   const [descriptionValidation, setDescriptionValidation] = useState(false);
-
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -178,6 +179,8 @@ export function BasicInformation({
     };
     postData(data);
     setPreValue(data);
+    setSuccessMessage(true);
+    bIFormSubmitted(true);
   };
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
@@ -439,6 +442,14 @@ export function BasicInformation({
         <Button color="primary" className="float-end mb-3">
           Save
         </Button>
+        {successMessage === true && (
+          <FormText
+            color="success"
+            className="d-flex align-items-center justify-content-center"
+          >
+            Basic information added successfully{" "}
+          </FormText>
+        )}
       </Form>
     </>
   );

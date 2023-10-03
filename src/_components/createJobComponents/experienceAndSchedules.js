@@ -20,7 +20,9 @@ export function ExperienceAndSchedules({
   postData,
   prevStep,
   previousData,
+  esFormSubmitted,
 }) {
+  const [successMessage, setSuccessMessage] = useState(false);
   const [preValue, setPreValue] = useState({
     jobType:
       data === undefined || data.jobType === undefined
@@ -94,6 +96,8 @@ export function ExperienceAndSchedules({
     };
     postData(data);
     setPreValue(data);
+    setSuccessMessage(true);
+    esFormSubmitted(true);
   };
   const getJobType = (jobTypeArray) => {
     let jobTypeArr = [];
@@ -285,6 +289,14 @@ export function ExperienceAndSchedules({
         <Button color="primary" className="float-end mb-3">
           Save
         </Button>
+        {successMessage === true && (
+          <FormText
+            color="success"
+            className="d-flex align-items-center justify-content-center"
+          >
+            Experience & schedules added successfully{" "}
+          </FormText>
+        )}
       </Form>
     </>
   );

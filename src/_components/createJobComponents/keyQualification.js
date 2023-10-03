@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FormGroup, Form, Row, Col, Button, Label, FormText } from "reactstrap";
 
 export function KeyQualification({ data, postData, prevStep, previousData }) {
+  const [successMessage, setSuccessMessage] = useState(false);
   let keyQualificationArr1 = [];
   let keyQualificationArr2 = [];
   if (prevStep === 3 && data.length > 0) {
@@ -71,6 +72,7 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
       setMustHaveValidation(false);
       let data = mustHave.concat(niceToHave);
       postData(data);
+      setSuccessMessage(true);
     }
   };
   return (
@@ -115,6 +117,14 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
             </FormGroup>
           </Col>
         </Row>
+        {successMessage === true && (
+          <FormText
+            color="success"
+            className="d-flex align-items-center justify-content-center"
+          >
+            Key qualification added successfully{" "}
+          </FormText>
+        )}
         <Button color="primary" className="float-end mb-3">
           Save
         </Button>

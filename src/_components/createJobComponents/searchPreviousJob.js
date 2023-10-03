@@ -1,8 +1,7 @@
-import React, { useState, useCallback } from "react";
-import { Row, Col, Table, Input, FormGroup, Form, Button } from "reactstrap";
+import React, { useState } from "react";
+import { Row, Col, Table, Input, FormGroup, Form } from "reactstrap";
 import cx from "classnames";
 import "./createJob.scss";
-import { BsEye } from "react-icons/bs";
 import { CardPagination } from "_components/common/cardpagination";
 import moment from "moment/moment";
 import { JobShortDetailModal } from "./jobShortDetailModal";
@@ -40,10 +39,10 @@ export default function SearchPreviousJob({
   const getJobIdOnClick = (event) => {
     getJobId(event.target.value);
   };
-  const handlePageChange = useCallback((page) => {
+  const handlePageChange = (page) => {
     setPage(page);
     onPageChange(page);
-  });
+  };
   return (
     <>
       <Row className="mt-4">
@@ -57,7 +56,7 @@ export default function SearchPreviousJob({
                     className="search-input"
                     id="search"
                     name="search"
-                    placeholder={"Search by job title, location"}
+                    placeholder={"Search by job title"}
                     onChange={(e) => onSearch(e)}
                   />
                   <button className="search-icon">
@@ -89,8 +88,8 @@ export default function SearchPreviousJob({
               </tr>
             </thead>
             <tbody>
-              {jobList.jobList.length > 0 &&
-                jobList.jobList.map((job) => (
+              {jobList?.jobList?.length > 0 &&
+                jobList?.jobList?.map((job) => (
                   <tr key={job.jobid}>
                     <td align="center">
                       <Input
@@ -119,7 +118,7 @@ export default function SearchPreviousJob({
         <Col md={11}>
           <div className="float-end custom-pagination-div">
             <CardPagination
-              totalPages={jobList.totalRows}
+              totalPages={current}
               pageIndex={page}
               onCallBack={(evt) => handlePageChange(evt)}
             ></CardPagination>
