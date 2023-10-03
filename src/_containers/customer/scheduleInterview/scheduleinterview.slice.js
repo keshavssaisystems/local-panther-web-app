@@ -4,6 +4,15 @@ import { fetchWrapper } from "_helpers";
 // create slice name
 const name = "scheduleInterview";
 
+// getDurationThunk thunk
+export const getDurationThunk = createAsyncThunk(
+  `${name}/getDurationThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=duration`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // getScheduleInterviewThunk thunk
 export const getScheduleInterviewThunk = createAsyncThunk(
   `${name}/getScheduleInterviewThunk`,
@@ -35,6 +44,7 @@ export const getUpcomingInterviewListThunk = createAsyncThunk(
 const scheduleInterviewSlice = createSlice({
   name,
   initialState: {
+    duration: [],
     scheduleInterview: [],
     upcomingInterview: [],
     loading: false,
@@ -42,6 +52,17 @@ const scheduleInterviewSlice = createSlice({
   reducers: {},
 
   extraReducers: {
+    [getDurationThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getDurationThunk.fulfilled]: (state, action) => {
+      state.duration = action.payload.data;
+      state.loading = false;
+    },
+    [getDurationThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
     [getScheduleInterviewThunk.pending]: (state) => {
       state.loading = true;
     },
@@ -82,6 +103,7 @@ export const scheduleInterviewActions = {
   getScheduleInterviewThunk,
   postScheduleInterviewThunk,
   getUpcomingInterviewListThunk,
+  getDurationThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

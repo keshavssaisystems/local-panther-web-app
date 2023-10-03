@@ -18,11 +18,7 @@ import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  candidateListsActions,
-  scheduleInterviewActions,
-  durationActions,
-} from "_store";
+import { candidateListsActions, scheduleInterviewActions } from "_store";
 
 export function ScheduleInterview() {
   const [selectedJobId, setSelectedJobId] = useState(5);
@@ -40,12 +36,14 @@ export function ScheduleInterview() {
     getCandidateList();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(candidateListsActions.getDrpDwnJobLists());
-    dispatch(durationActions.getDurationThunk());
+    dispatch(scheduleInterviewActions.getDurationThunk());
   }, []);
   const candidateList = useSelector(
     (state) => state.scheduleInterview.scheduleInterview.scheduledInterviewList
   );
-  const durationOptions = useSelector((state) => state.duration.duration);
+  const durationOptions = useSelector(
+    (state) => state.scheduleInterview.duration
+  );
   const jobList = useSelector((state) => state.candidateLists.jobLists);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview.scheduledInterviewList
@@ -118,6 +116,27 @@ export function ScheduleInterview() {
       setToggleVar(tab);
     }
   };
+  const [selectedClass, setSelectedClass] = useState(
+    upcomingInterviews !== undefined && upcomingInterviews.length > 0
+      ? upcomingInterviews[0].scheduleinterviewid
+      : "2"
+  );
+  const [selectedJobData, setSelectedJobData] = useState(
+    upcomingInterviews !== undefined && upcomingInterviews.length > 0
+      ? [upcomingInterviews[0]]
+      : []
+  );
+  let selectedJobDetails =
+    upcomingInterviews !== undefined && upcomingInterviews.length > 0
+      ? [upcomingInterviews[0]]
+      : [];
+  const getSelectedInterview = (scheduleinterviewid) => {
+    selectedJobDetails = upcomingInterviews.filter((element) => {
+      return element.scheduleinterviewid === scheduleinterviewid;
+    });
+    setSelectedJobData(selectedJobDetails);
+    setSelectedClass(scheduleinterviewid);
+  };
   return (
     <>
       <PageTitle heading="Interview" icon={titlelogo} />
@@ -181,7 +200,7 @@ export function ScheduleInterview() {
                   xl={4}
                   className="mb-3 right-align"
                 >
-                  {jobList?.length > 0 ? (
+                  {jobList !== undefined && jobList?.length > 0 ? (
                     <Input
                       value={selectedJobId}
                       onChange={(evt) => onSelectClick(evt)}
@@ -232,14 +251,14 @@ export function ScheduleInterview() {
             {toggleVar === "upcoming" && (
               <Row>
                 <Col lg="4">
-                  <UpcomingCard upcomingList={upcomingInterviews} />
+                  <UpcomingCard
+                    upcomingList={upcomingInterviews}
+                    selectedInterview={selectedClass}
+                    getSelectedInterviewId={(e) => getSelectedInterview(e)}
+                  />
                 </Col>
                 <Col lg="8">
-                  <UpcomingDetail
-                    interviewDetails={
-                      upcomingInterviews.length > 0 ? upcomingInterviews[1] : {}
-                    }
-                  />
+                  <UpcomingDetail interviewDetails={selectedJobData[0]} />
                 </Col>
               </Row>
             )}

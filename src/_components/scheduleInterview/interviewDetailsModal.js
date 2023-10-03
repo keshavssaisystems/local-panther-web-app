@@ -10,7 +10,6 @@ export function InterviewDetailsModal({
   onClose,
   interviewDetail,
 }) {
-  console.log(interviewDetail);
   const [modal, setModal] = useState(false);
 
   const toggle = () => {
