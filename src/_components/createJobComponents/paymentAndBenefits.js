@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Label, Input, FormGroup, Form, Row, Col, Button } from "reactstrap";
+import {
+  Label,
+  Input,
+  FormGroup,
+  Form,
+  Row,
+  Col,
+  Button,
+  FormText,
+} from "reactstrap";
 
 export function PaymentAndBenefits({
   data,
@@ -8,6 +17,7 @@ export function PaymentAndBenefits({
   prevStep,
   previousData,
 }) {
+  const [successMessage, setSuccessMessage] = useState(false);
   const [preValue, setPreValue] = useState({
     payPeriodType:
       data === undefined || data.payPeriodType === undefined
@@ -65,6 +75,7 @@ export function PaymentAndBenefits({
       payPeriodTypeOption: payPeriodTypeOption,
     };
     postData(data);
+    setSuccessMessage(true);
   };
   return (
     <>
@@ -175,6 +186,14 @@ export function PaymentAndBenefits({
             </FormGroup>
           </Col>
         </Row>
+        {successMessage === true && (
+          <FormText
+            color="success"
+            className="d-flex align-items-center justify-content-center"
+          >
+            Payment & benefits added successfully{" "}
+          </FormText>
+        )}
         <Button color="primary" className="float-end mb-3">
           Save
         </Button>

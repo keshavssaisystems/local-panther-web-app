@@ -25,6 +25,7 @@ import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 
 export function CreateJobWizard() {
   const [page, setPage] = useState(1);
+  const [searchData, setSearchData] = useState("");
   const [buttonDisable, setButtonDisable] = useState(true);
   const [previousStep, setPreviousStep] = useState(1);
   const [jobType, setJobType] = useState("new_template");
@@ -35,7 +36,7 @@ export function CreateJobWizard() {
     getOptions();
     getPreviousJobData({
       pageNo: page,
-      searchText: "",
+      searchText: searchData,
     });
   }, []);
   const getOptionsData = (event) => {
@@ -64,8 +65,9 @@ export function CreateJobWizard() {
     createJob(data);
   };
   const getSearchValue = (data) => {
+    setSearchData(data);
     getPreviousJobData({
-      pageNo: page,
+      pageNo: 1,
       searchText: data,
     });
   };
@@ -108,7 +110,6 @@ export function CreateJobWizard() {
     (state) => state.previousJobDetail.previousJobDetail
   );
   const newJobDetails = useSelector((state) => state.createJob.createjob);
-  console.log(newJobDetails);
   const publishNewJob = async function () {
     let jobId = newJobDetails.jobid;
     let payload = {
@@ -116,6 +117,22 @@ export function CreateJobWizard() {
     };
     await dispatch(publishJobActions.getPublishJobThunk({ jobId, payload }));
     setShowPopupWithNextStep(!showPopupWithNextStep);
+  };
+  const onPageChange = (page) => {
+    getPreviousJobData({
+      pageNo: page,
+      searchText: searchData,
+    });
+  };
+  const [BIStatus, setBIStatus] = useState(false);
+  const [ESStatus, setESStatus] = useState(false);
+  const getBIStatus = (event) => {
+    console.log(event);
+    setBIStatus(event);
+  };
+  const getESStatus = (event) => {
+    console.log(event);
+    setESStatus(event);
   };
   const steps = [
     {
@@ -126,7 +143,7 @@ export function CreateJobWizard() {
           jobList={jobList}
           postSearch={(e) => getSearchValue(e)}
           readyForNextStep={(e) => setButtonDisable(e)}
-          onPageChange={getPreviousJobData}
+          onPageChange={onPageChange}
           page={page}
           setPage={setPage}
         />
@@ -149,6 +166,8 @@ export function CreateJobWizard() {
           jobData={jobData}
           previousData={jobDetail}
           JobDataForPreview={(e) => getDataForPreview(e)}
+          bIFormSubmitted={(e) => getBIStatus(e)}
+          esFormSubmitted={(e) => getESStatus(e)}
         />
       ),
     },
@@ -232,6 +251,9 @@ export function CreateJobWizard() {
     if (compState > 0) {
       setNavState(compState - 1);
     }
+    if (compState === 0) {
+      setButtonDisable(true);
+    }
   };
   const getClassName = (className, i) => {
     return className + "-" + navigationState.styles[i];
@@ -271,15 +293,28 @@ export function CreateJobWizard() {
                         >
                           Previous
                         </Button>
-                        <Button
-                          color="primary"
-                          className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
-                          style={nextBtn ? {} : { display: "none" }}
-                          onClick={next}
-                          disabled={buttonDisable}
-                        >
-                          Continue
-                        </Button>
+                        {(compState !== 1 || jobType !== "new_template") && (
+                          <Button
+                            color="primary"
+                            className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
+                            style={nextBtn ? {} : { display: "none" }}
+                            onClick={next}
+                            disabled={buttonDisable}
+                          >
+                            Continue
+                          </Button>
+                        )}
+                        {compState === 1 && jobType === "new_template" && (
+                          <Button
+                            color="primary"
+                            className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
+                            style={nextBtn ? {} : { display: "none" }}
+                            onClick={next}
+                            disabled={BIStatus === false || ESStatus === false}
+                          >
+                            Continue
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </>

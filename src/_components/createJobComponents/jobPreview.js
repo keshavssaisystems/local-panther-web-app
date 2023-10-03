@@ -26,7 +26,7 @@ export default function JobPreview({ previewData, editdata }) {
   }
   let jobTypeString = [];
   if (previewData.experienceSchedule.jobType !== "") {
-    previewData.experienceSchedule.jobTypeOption.forEach((element) => {
+    previewData.experienceSchedule.jobTypeOption?.forEach((element) => {
       if (previewData.experienceSchedule.jobType.includes(element.id)) {
         jobTypeString.push(element.name);
       }
@@ -35,8 +35,8 @@ export default function JobPreview({ previewData, editdata }) {
   }
   let workScheduleString = [];
   if (previewData.experienceSchedule.workSchedule !== "") {
-    previewData.experienceSchedule.workScheduleOptions.forEach((element) => {
-      if (previewData.experienceSchedule.workSchedule.includes(element.id)) {
+    previewData.experienceSchedule.workScheduleOptions?.forEach((element) => {
+      if (previewData.experienceSchedule.workSchedule?.includes(element.id)) {
         workScheduleString.push(element.name);
       }
     });
@@ -44,7 +44,7 @@ export default function JobPreview({ previewData, editdata }) {
   }
   let shiftString = [];
   if (previewData.experienceSchedule.shift !== "") {
-    previewData.experienceSchedule.shiftsOption.forEach((element) => {
+    previewData.experienceSchedule.shiftsOption?.forEach((element) => {
       if (previewData.experienceSchedule.shift.includes(element.id)) {
         shiftString.push(element.name);
       }
@@ -52,7 +52,7 @@ export default function JobPreview({ previewData, editdata }) {
     shiftData = shiftString.toString();
   }
   if (previewData.experienceSchedule.hiringTimeline !== "") {
-    previewData.experienceSchedule.hiringTimelineOption.forEach((element) => {
+    previewData.experienceSchedule.hiringTimelineOption?.forEach((element) => {
       if (
         element.id === Number(previewData.experienceSchedule.hiringTimeline)
       ) {
@@ -81,8 +81,8 @@ export default function JobPreview({ previewData, editdata }) {
   }
   let mustHaveArray = [];
   let niceToHaveArray = [];
-  if (previewData.keyQualification.length > 0) {
-    let keyQualificationOption = previewData.keyQualification;
+  if (previewData.keyQualification?.length > 0) {
+    let keyQualificationOption = previewData?.keyQualification;
     keyQualificationOption.forEach((element) => {
       if (element.isrequired === true) {
         mustHaveArray.push(element.skillname);
@@ -380,7 +380,7 @@ export default function JobPreview({ previewData, editdata }) {
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Must have</h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {previewData.keyQualification.length > 0
+                    {previewData.keyQualification?.length > 0
                       ? mustHaveArray.length > 0
                         ? mustHaveArray.toString()
                         : "-"
@@ -392,7 +392,7 @@ export default function JobPreview({ previewData, editdata }) {
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Nice to have</h6>
                   <p className="mb-0 mt-1 mr-1">
-                    {previewData.keyQualification.length > 0
+                    {previewData.keyQualification?.length > 0
                       ? niceToHaveArray.length > 0
                         ? niceToHaveArray.toString()
                         : "-"
@@ -409,8 +409,8 @@ export default function JobPreview({ previewData, editdata }) {
           </p>
           <div className="information-section">
             <Row>
-              {previewData.preScreen.length > 0 &&
-                previewData.preScreen.map((options) => (
+              {previewData.preScreen?.length > 0 &&
+                previewData.preScreen?.map((options) => (
                   <Col md={4}>
                     <div className="detail-padding">
                       <h6 className="mb-0 job-heading-custom">

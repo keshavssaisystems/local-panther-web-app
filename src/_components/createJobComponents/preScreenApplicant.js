@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Label, Input, FormGroup, Form, Row, Col, Button } from "reactstrap";
+import {
+  Label,
+  Input,
+  FormGroup,
+  Form,
+  Row,
+  Col,
+  Button,
+  FormText,
+} from "reactstrap";
 export function PreScreenApplicant({
   data,
   postData,
@@ -7,6 +16,7 @@ export function PreScreenApplicant({
   prevStep,
   previousData,
 }) {
+  const [successMessage, setSuccessMessage] = useState(false);
   const inputArr = [
     {
       type: "text",
@@ -45,6 +55,7 @@ export function PreScreenApplicant({
   };
   const getFormValues = (event) => {
     event.preventDefault();
+    console.log(event);
     let questionArr = [];
     if (event.target.elements.question.length > 0) {
       event.target.elements.question.forEach((element) => {
@@ -78,7 +89,22 @@ export function PreScreenApplicant({
         questionArr.push(obj);
       });
     }
+    if (
+      event.target.elements.custom_question !== undefined &&
+      event.target.elements.custom_question.length === undefined
+    ) {
+      let obj = {
+        jobprescreenapplicationid: 0,
+        jobid: 0,
+        iscustomquestion: true,
+        prescreenquestionid: 0,
+        prescreenquestion: event.target.elements.custom_question.value,
+        isactive: true,
+      };
+      questionArr.push(obj);
+    }
     postData(questionArr);
+    setSuccessMessage(true);
   };
 
   return (
@@ -137,7 +163,14 @@ export function PreScreenApplicant({
             + Add another
           </Button>
         )}
-
+        {successMessage === true && (
+          <FormText
+            color="success"
+            className="d-flex align-items-center justify-content-center"
+          >
+            Pre-screen questions added successfully{" "}
+          </FormText>
+        )}
         <Button color="primary" className="float-end mb-3">
           Save
         </Button>
