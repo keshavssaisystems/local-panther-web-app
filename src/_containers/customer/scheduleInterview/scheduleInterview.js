@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
@@ -15,32 +15,45 @@ import "./scheduleInterview.scss";
 import { ScheduleInterviewList } from "_components/scheduleInterview/scheduleInterviewList";
 import { UpcomingCard } from "_components/scheduleInterview/upcomingCard";
 import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
+import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import { candidateListsActions, scheduleInterviewActions } from "_store";
 
 export function ScheduleInterview() {
+  const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(5);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
-    getCandidateList();
+    getCandidateList(evt.target.value);
   };
   const dispatch = useDispatch();
-  const getCandidateList = async function () {
-    await dispatch(
-      scheduleInterviewActions.getScheduleInterviewThunk({ selectedJobId })
-    );
+  const getCandidateList = async function (jobId) {
+    await dispatch(scheduleInterviewActions.getScheduleInterviewThunk(jobId));
   };
   useEffect(() => {
-    getCandidateList();
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(selectedJobId);
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(candidateListsActions.getDrpDwnJobLists());
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(
-      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk()
+      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
+        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+        end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
+      })
     );
   }, []);
+  const getUpcomingData = async function (filterdata) {
+    await dispatch(
+      scheduleInterviewActions.getUpcomingInterviewListThunk(filterdata)
+    );
+  };
   const candidateList = useSelector(
     (state) => state.scheduleInterview.scheduleInterview.scheduledInterviewList
   );
@@ -49,7 +62,7 @@ export function ScheduleInterview() {
   );
   const jobList = useSelector((state) => state.candidateLists.jobLists);
   const upcomingInterviews = useSelector(
-    (state) => state.scheduleInterview.upcomingInterview.scheduledInterviewList
+    (state) => state.scheduleInterview.upcomingInterview
   );
   const upcomingInterviewsWOPagination = useSelector(
     (state) =>
@@ -89,11 +102,9 @@ export function ScheduleInterview() {
         .format("hh:mm a");
       let interviewData = {
         id: upcomingInterview.scheduleinterviewid,
+        data: upcomingInterview,
+        format: upcomingInterview.format,
         title:
-          startTime +
-          "-" +
-          endTime +
-          " : " +
           upcomingInterview.candidatename +
           " (" +
           upcomingInterview.jobtitle +
@@ -128,26 +139,51 @@ export function ScheduleInterview() {
     }
   };
   const [selectedClass, setSelectedClass] = useState(
-    upcomingInterviews !== undefined && upcomingInterviews.length > 0
-      ? upcomingInterviews[0].scheduleinterviewid
-      : "2"
+    upcomingInterviews.scheduledInterviewList !== undefined &&
+      upcomingInterviews.scheduledInterviewList.length > 0
+      ? upcomingInterviews.scheduledInterviewList[0].scheduleinterviewid
+      : null
   );
   const [selectedJobData, setSelectedJobData] = useState(
-    upcomingInterviews !== undefined && upcomingInterviews.length > 0
-      ? [upcomingInterviews[0]]
+    upcomingInterviews.scheduledInterviewList !== undefined &&
+      upcomingInterviews.scheduledInterviewList.length > 0
+      ? [upcomingInterviews.scheduledInterviewList[0]]
       : []
   );
   let selectedJobDetails =
-    upcomingInterviews !== undefined && upcomingInterviews.length > 0
-      ? [upcomingInterviews[0]]
+    upcomingInterviews.scheduledInterviewList !== undefined &&
+    upcomingInterviews.scheduledInterviewList.length > 0
+      ? [upcomingInterviews.scheduledInterviewList[0]]
       : [];
   const getSelectedInterview = (scheduleinterviewid) => {
-    selectedJobDetails = upcomingInterviews.filter((element) => {
-      return element.scheduleinterviewid === scheduleinterviewid;
-    });
+    selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
+      (element) => {
+        return element.scheduleinterviewid === scheduleinterviewid;
+      }
+    );
     setSelectedJobData(selectedJobDetails);
     setSelectedClass(scheduleinterviewid);
   };
+
+  const onPageChange = (page) => {
+    let filterOnPageChange = {
+      pageNo: page,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    };
+    getUpcomingData(filterOnPageChange);
+  };
+  const [openModal, setOpenModal] = useState(false);
+  const [popupData, setPopupData] = useState({});
+  const [popupType, setPopupType] = useState("video");
+  const onCloseIdModal = () => {
+    setOpenModal(false);
+  };
+  const handleSelectEvent = useCallback((event) => {
+    setPopupData(event.data);
+    setOpenModal(true);
+    setPopupType(event.format);
+  }, []);
   return (
     <>
       <PageTitle heading="Interview" icon={titlelogo} />
@@ -248,6 +284,7 @@ export function ScheduleInterview() {
                     startAccessor="start"
                     endAccessor="end"
                     popup
+                    onSelectEvent={handleSelectEvent}
                     eventPropGetter={(upData) => {
                       const backgroundColor = upData.color
                         ? upData.color
@@ -263,9 +300,14 @@ export function ScheduleInterview() {
               <Row>
                 <Col lg="4">
                   <UpcomingCard
-                    upcomingList={upcomingInterviews}
+                    upcomingList={upcomingInterviews.scheduledInterviewList}
                     selectedInterview={selectedClass}
                     getSelectedInterviewId={(e) => getSelectedInterview(e)}
+                    totalRows={upcomingInterviews.totalRows}
+                    pageSize={5}
+                    page={page}
+                    setPage={setPage}
+                    onPageChange={onPageChange}
                   />
                 </Col>
                 <Col lg="8">
@@ -289,6 +331,7 @@ export function ScheduleInterview() {
                       const fontSize = "0.8rem";
                       return { style: { backgroundColor, fontSize } };
                     }}
+                    onSelectEvent={handleSelectEvent}
                   />
                 </CardBody>
               </Card>
@@ -306,6 +349,12 @@ export function ScheduleInterview() {
             )}
           </Col>
         </Row>
+        <InterviewDetailsModal
+          isOpen={openModal}
+          type={popupType.toLowerCase()}
+          onClose={() => onCloseIdModal()}
+          interviewDetail={popupData}
+        />
       </Container>
     </>
   );

@@ -8,19 +8,34 @@ import {
   BsPersonBoundingBox,
 } from "react-icons/bs";
 import moment from "moment-timezone";
+import { CardPagination } from "../common/cardpagination";
 
 export function UpcomingCard({
   upcomingList,
   selectedInterview,
   getSelectedInterviewId,
+  totalRows,
+  pageSize,
+  page,
+  setPage,
+  onPageChange,
 }) {
+  let current = Number(totalRows) / pageSize;
+  if (current * pageSize !== totalRows) {
+    current++;
+  }
   const navigateToInterviewDetail = (scheduleinterviewid) => {
     getSelectedInterviewId(scheduleinterviewid);
   };
+  const handlePageChange = (page) => {
+    console.log(page);
+    setPage(page);
+    onPageChange(page);
+  };
   return (
     <>
-      {upcomingList.length > 0 &&
-        upcomingList.map((interview) => (
+      {upcomingList?.length > 0 &&
+        upcomingList?.map((interview) => (
           <Card
             className={
               selectedInterview === interview.scheduleinterviewid
@@ -90,7 +105,7 @@ export function UpcomingCard({
             </CardBody>
           </Card>
         ))}
-      {upcomingList.length === 0 && (
+      {upcomingList?.length === 0 && (
         <Card>
           <CardBody>
             <CardText className="mb-0 text-center">
@@ -98,6 +113,13 @@ export function UpcomingCard({
             </CardText>
           </CardBody>
         </Card>
+      )}
+      {upcomingList?.length > 0 && (
+        <CardPagination
+          totalPages={current}
+          pageIndex={page}
+          onCallBack={(evt) => handlePageChange(evt)}
+        ></CardPagination>
       )}
     </>
   );

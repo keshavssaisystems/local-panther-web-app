@@ -16,7 +16,7 @@ export const getDurationThunk = createAsyncThunk(
 // getScheduleInterviewThunk thunk
 export const getScheduleInterviewThunk = createAsyncThunk(
   `${name}/getScheduleInterviewThunk`,
-  async ({ selectedJobId }) => {
+  async (selectedJobId) => {
     const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/GetAccpetedCandidateWithScheduledDetails/${selectedJobId}?pageSize=10&pageNumber=1&isActive=true`;
     return await fetchWrapper.get(DROPDOWN_END_POINT);
   }
@@ -34,8 +34,8 @@ export const postScheduleInterviewThunk = createAsyncThunk(
 // getUpcomingInterviewListThunk thunk
 export const getUpcomingInterviewListThunk = createAsyncThunk(
   `${name}/getUpcomingInterviewListThunk`,
-  async () => {
-    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=1&isActive=true&startDate=2023-09-30T00%3A00%3A00&endDate=2023-10-30T00%3A00%3A00`;
+  async ({ pageNo, start, end }) => {
+    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=${pageNo}&isActive=true&startDate=${start}&endDate=${end}`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT);
   }
 );
@@ -43,8 +43,8 @@ export const getUpcomingInterviewListThunk = createAsyncThunk(
 // getUpcomingInterviewListWOPaginationThunk thunk
 export const getUpcomingInterviewListWOPaginationThunk = createAsyncThunk(
   `${name}/getUpcomingInterviewListWOPaginationThunk`,
-  async () => {
-    const UPCOMING_INTEVRIEW_END_POINT_V2 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&startDate=2023-09-30T00%3A00%3A00&endDate=2023-10-30T00%3A00%3A00&isPaginationRequired=false`;
+  async ({ start, end }) => {
+    const UPCOMING_INTEVRIEW_END_POINT_V2 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&startDate=${start}&endDate=${end}&isPaginationRequired=false`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V2);
   }
 );
