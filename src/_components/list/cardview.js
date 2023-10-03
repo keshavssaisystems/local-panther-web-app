@@ -104,6 +104,10 @@ export const CandidateCardView = (props) => {
               <div className="card-title">{props?.data?.jobtitle}</div>
             </Col>
 
+            <Col>
+              <div className="card-details-op">{props?.data?.companyname}</div>
+            </Col>
+
             {/* <Col className="col-12">
               <IoIosContact fontSize={"16px"}></IoIosContact>
               <b>Name:</b>
@@ -155,7 +159,7 @@ export const CandidateCardView = (props) => {
         </CardBody>
         <CardFooter className="auto-margin">
           <Row noGutters>
-            <ButtonGroup size="sm">
+            <ButtonGroup className="card-btn-grp" size="sm">
               {/* <Col>
               <Button
                 title="accept"
@@ -208,8 +212,7 @@ export const CandidateCardView = (props) => {
                 size="sm"
                 onClick={() => onScheduleInterview()}
               >
-                Schedule
-                <BsClock />
+                Schedule <BsClock />
               </Button>
             </ButtonGroup>
           </Row>
