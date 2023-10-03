@@ -14,11 +14,11 @@ import {
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import { BsCheckLg } from "react-icons/bs";
+import { BsCheckLg, BsPersonVideo2 } from "react-icons/bs";
 import moment from "moment-timezone";
+import { TakeNotesModal } from "./takeNotesModal";
 
 export function VideoInterviewDetails({ interviewDetail }) {
-  console.log(interviewDetail);
   let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
@@ -142,10 +142,8 @@ export function VideoInterviewDetails({ interviewDetail }) {
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
-            <i className="header-icon lnr-lighter icon-gradient bg-amy-crisp">
-              {" "}
-            </i>
-            Interviews
+            <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
+            Interview
           </div>
         </CardHeader>
         <CardBody>
@@ -196,15 +194,7 @@ export function VideoInterviewDetails({ interviewDetail }) {
           </div>
         </CardBody>
         <CardFooter className="d-block text-left">
-          <Button
-            outline
-            className="mb-2 mr-2 btn-transition btn btn-outline-primary"
-            color="primary"
-            size={"sm"}
-          >
-            {" "}
-            Take notes{" "}
-          </Button>
+          <TakeNotesModal />
           <Button
             outline
             className="mb-2 mr-2 btn-transition"

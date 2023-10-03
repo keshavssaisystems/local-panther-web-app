@@ -6,20 +6,29 @@ import {
   BsCalendar2Date,
   BsClock,
   BsPersonBoundingBox,
-  BsPersonCheck,
 } from "react-icons/bs";
 import moment from "moment-timezone";
 
-export function UpcomingCard({ upcomingList }) {
+export function UpcomingCard({
+  upcomingList,
+  selectedInterview,
+  getSelectedInterviewId,
+}) {
+  const navigateToInterviewDetail = (scheduleinterviewid) => {
+    getSelectedInterviewId(scheduleinterviewid);
+  };
   return (
     <>
       {upcomingList.length > 0 &&
         upcomingList.map((interview) => (
           <Card
             className={
-              4 === interview.scheduleinterviewid
+              selectedInterview === interview.scheduleinterviewid
                 ? "mb-2 card-border-custom upcomming-card"
                 : "mb-2 upcomming-card"
+            }
+            onClick={() =>
+              navigateToInterviewDetail(interview.scheduleinterviewid)
             }
           >
             <CardBody>
@@ -28,7 +37,10 @@ export function UpcomingCard({ upcomingList }) {
                   <Row className="mb-2">
                     <Col md="7">
                       <div className="job-title">{interview.candidatename}</div>
-                      <div className="muted-name">ajaysingh@gmail.com</div>
+                      <div className="muted-name">
+                        {" "}
+                        Applied for {interview.jobtitle}
+                      </div>
                     </Col>
                     {interview.isaccepted === true && (
                       <Col md="5">
@@ -53,10 +65,6 @@ export function UpcomingCard({ upcomingList }) {
                       </Col>
                     )}
                   </Row>
-                  <p className="job-details">
-                    <BsPersonCheck className="icon-settings" /> Applied for{" "}
-                    {interview.jobtitle}
-                  </p>
                   <p className="job-details">
                     <BsCalendar2Date className="icon-settings" /> Scheduled for{" "}
                     {moment(
