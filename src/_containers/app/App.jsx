@@ -22,6 +22,8 @@ import { CustomerCandidateLists } from "_containers/customer/candidatelists/cust
 import { CandidateTablist } from "_containers/candidate/candidateTablist";
 import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
+import { Policy } from "_containers/policy";
+import { Terms } from "_containers/terms";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 
 export function App() {
@@ -205,6 +207,8 @@ export function App() {
                 }
               /> */}
 
+              <Route path="/policy" element={<Policy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route
