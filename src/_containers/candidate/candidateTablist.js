@@ -4,7 +4,7 @@ import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
 import classnames from "classnames";
 import { CandidateCardView } from "_components/list/cardview";
 import { JobListing } from "../../_components/job/JobListing";
-import { jobListActions } from "_store";
+import { jobListActions, matchedJobActions } from "_store";
 import { CandidateListView } from "_components/list/listview";
 
 import { CardPagination } from "_components/common/cardpagination";
@@ -21,6 +21,17 @@ export const CandidateTablist = (props) => {
     const [pageNo, setPageNo] = useState(1);
     const [page, setPage] = useState(1);
     const { id } = useParams();
+    let JobList = useSelector((state) => state.jobList);
+    const candidateList = useSelector((state) => state.tabListReducer.jobTabList);
+    const candidateListdata = useSelector(
+        (state) => state.tabListReducer.candidatejobTabList
+    );
+
+    const { matchedJob } = useSelector((state) => state.candidateMatchJob);
+    console.log('jk',matchedJob)
+    const { totalRecords } = useSelector((state) => state.tabListReducer);
+    const { loading } = useSelector((state) => state.tabListReducer);
+
     const onPageChange = (page) => {
         let filterOnPageChange = {
             jobId: "",
@@ -39,51 +50,66 @@ export const CandidateTablist = (props) => {
         locationId: "",
     };
     useEffect(() => {
+
+        let userId = { candidateId: localStorage.getItem("candidateId") };
+
+        dispatch(matchedJobActions.getmatchedJob(userId));
         getJobList(filterObj);
     }, []);
     const getJobList = async function (filterObj) {
         await dispatch(jobListActions.getJobList(filterObj));
     };
-    let JobList = useSelector((state) => state.jobList);
-    const candidateList = useSelector((state) => state.tabListReducer.jobTabList);
-    const candidateListdata = useSelector((state) => state.tabListReducer.candidatejobTabList);
 
-    const totalRecords = useSelector(
-        (state) => state.tabListReducer.totalRecords
-    );
-    const loading = useSelector((state) => state.tabListReducer.loading);
     const handlePageChange = (page) => {
         setPageNo(page);
-        onGetPageList(page, props.type, id);
+        // onGetPageList(page, props.type, id);
     };
+
     const toggle = (val) => {
+
         setActiveTab(val);
 
+        let candidateRecommendedJobStatusId;
+
+        switch (val) {
+            case "liked":
+                candidateRecommendedJobStatusId = 1;
+                break;
+            case "maybe":
+                candidateRecommendedJobStatusId = 2;
+                break;
+            case "applied":
+                candidateRecommendedJobStatusId = 3;
+                break;
+            case "accepted":
+                candidateRecommendedJobStatusId = 5;
+                break;
+            case "Interview":
+                candidateRecommendedJobStatusId = 4;
+                break;
+            case "rejected":
+                candidateRecommendedJobStatusId = 6;
+                break;
+            default:
+
+                break;
+        }
 
         let candObj = {
-
             pageNumber: pageNo,
             pageSize: val === "matched" ? cardPageSize : listPageSize,
-            isCandidateLike: val === "liked" ? true : false,
-            isCandidateMaybe: val === "maybe" ? true : false,
-            isCandidateAccepted: val === "accepted" ? true : false,
-            isCandidateReject: val === "rejected" ? true : false,
-            isCandidateApply: val === "applied" ? true : false,
-            jobId: "",
-
-
+            candidateRecommendedJobStatusId: candidateRecommendedJobStatusId,
         };
 
+
         dispatch(candidatejobListTabActions.getcandidateJobList(candObj));
-
-
-
     };
+
     useEffect(() => {
         onGetPageList(pageNo, props.type, id);
     }, [props.type, id]);
     const onGetPageList = (pageNo, type, id) => {
-        console.log("demo");
+
         let candObj = {
             pageNumber: pageNo,
             pageSize: type === "matched" ? cardPageSize : listPageSize,
@@ -93,7 +119,6 @@ export const CandidateTablist = (props) => {
             isCandidateReject: type === "rejected",
             isCandidateApply: type === "applied",
             jobId: "",
-
         };
 
         dispatch(candidatejobListTabActions.getcandidateJobList(candObj));
@@ -195,10 +220,11 @@ export const CandidateTablist = (props) => {
                     <TabContent activeTab={activeTab}>
                         <TabPane tabId="matched">
                             <Row>
-                                <p className="mb-1 row-count">{JobList.totalRows} jobs</p>
+                                <p className="mb-1 row-count">{matchedJob.totalRows} jobs</p>
+
                                 {JobList?.jobList?.length ? (
                                     <JobListing
-                                        jobData={JobList.jobList}
+                                        jobData={matchedJob.candidateRecommendedJobDtoList}
                                         onPageChange={onPageChange}
                                         pageSize={5}
                                         type="Candidate"
@@ -221,7 +247,6 @@ export const CandidateTablist = (props) => {
                                 <CardPagination
                                     totalPages={totalRecords / listPageSize}
                                     pageIndex={pageNo}
-
                                     onCallBack={(evt) => handlePageChange(evt)}
                                 ></CardPagination>
                             </p>

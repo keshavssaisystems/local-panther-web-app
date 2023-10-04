@@ -33,10 +33,10 @@ function createExtraActions() {
       `${name}/getrecommendedJobList`,
 
       async ({
-        pageSize, pageNumber, isCandidateMaybe, isCandidateAccepted, isCandidateReject, jobId, isCandidateLike,isCandidateApply
+        pageSize, pageNumber, candidateRecommendedJobStatusId
       }) =>
         await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&isCandidateMaybe=${isCandidateMaybe}&isCandidateAccepted=${isCandidateAccepted}&isCandidateReject=${isCandidateReject}&isCandidateLike=${isCandidateLike}&isCandidateApply=${isCandidateApply}&jobId=${jobId}`
+          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
         )
     );
   }
