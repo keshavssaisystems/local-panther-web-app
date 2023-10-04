@@ -86,6 +86,7 @@ export function CandidateSkills(props) {
     setPersonalModal(false);
     setSuccess(false);
     setError(false);
+    setMustHaveValidation(false);
     props.onCallBack();
   };
   const [selectedData, setSelectedData] = useState({});
@@ -326,7 +327,13 @@ export function CandidateSkills(props) {
               <Form onSubmit={(e) => getFormData(e)}>
                 <Row>
                   <Col md={6}>
-                    <FormGroup>
+                    <FormGroup
+                      styles={{
+                        borderColor: mustHaveValidation
+                          ? "#d92550 !important"
+                          : "",
+                      }}
+                    >
                       <Label for={skills} className="input-label">
                         Skills <span style={{ color: "red" }}>* </span>
                       </Label>
@@ -334,10 +341,15 @@ export function CandidateSkills(props) {
                         name="skills"
                         placeholder="Search to select"
                         loadOptions={loadOptions}
-                        className={mustHaveValidation ? "is-invalid" : ""}
+                        // className={mustHaveValidation ? "is-invalid" : ""}
                         isMulti={true}
                         value={skillsMultiple}
                         onChange={(evt) => onSelectSkillsDropdown(evt)}
+                        styles={{
+                          borderColor: mustHaveValidation
+                            ? "#d92550 !important"
+                            : "",
+                        }}
                       />
                       {mustHaveValidation === true && (
                         <FormText color="danger">Skills is Required</FormText>
