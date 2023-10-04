@@ -121,11 +121,9 @@ export function CreateJobWizard() {
   const [BIStatus, setBIStatus] = useState(false);
   const [ESStatus, setESStatus] = useState(false);
   const getBIStatus = (event) => {
-    console.log(event);
     setBIStatus(event);
   };
   const getESStatus = (event) => {
-    console.log(event);
     setESStatus(event);
   };
   const steps = [

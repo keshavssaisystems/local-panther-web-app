@@ -126,6 +126,14 @@ export function ExperienceAndSchedules({
     });
     return shiftArr.toString();
   };
+  let expLevelSelected =
+    prevStep === 3
+      ? Number(preValue.experienceLevel)
+      : previousValue.experienceLevel;
+  let hiringSelected =
+    prevStep === 3
+      ? Number(preValue.hiringTimeline)
+      : previousValue.hiringTimeline;
   return (
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
@@ -241,11 +249,7 @@ export function ExperienceAndSchedules({
                     <option
                       key={options.id}
                       value={options.id}
-                      selected={
-                        prevStep === 3
-                          ? preValue.experienceLevel
-                          : previousValue.experienceLevel === options.id
-                      }
+                      selected={expLevelSelected === options.id}
                     >
                       {options.name}
                     </option>
@@ -271,11 +275,7 @@ export function ExperienceAndSchedules({
                     <option
                       key={options.id}
                       value={options.id}
-                      selected={
-                        prevStep === 3
-                          ? preValue.hiringTimeline
-                          : previousValue.hiringTimeline === options.id
-                      }
+                      selected={hiringSelected === options.id}
                     >
                       {options.name}
                     </option>
