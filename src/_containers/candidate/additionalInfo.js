@@ -24,8 +24,7 @@ import {
 } from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-
-import DatePicker from "react-datepicker";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDispatch } from "react-redux";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
@@ -34,6 +33,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
 import { AdditionalInfoModal } from "./additionalInfoModal";
+import { useSelector } from "react-redux";
 
 export function AdditionalInformation(props) {
   const dispatch = useDispatch();
@@ -42,44 +42,62 @@ export function AdditionalInformation(props) {
   const [commentLength, setCommentLength] = useState(0);
   const [summary, setSummaryLength] = useState("");
   const [info, setInfoLength] = useState("");
-  const selected = {};
+  const [selected, setSelectedData] = useState({});
   const [deleteId, setDeleteId] = useState(0);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
-  const [additionalDetails, setDetails] = useState([
-    {
-      id: 1,
-      summary:
-        "Highly motivated and results-driven professional with a strong background in software development and project management.Dedicated to delivering high-quality solutions and exceeding client expectations.Adept at colloborating with cross-functional teams to achieve project goals and deadlines.",
-      additionalInfo: [
-        {
-          name: "Technical Skills",
-          value: "Java,Python,C++,SQL",
-        },
-        {
-          name: "volunteerExp",
-          value: "Mentorship program for underprivileged youth",
-        },
-        {
-          name: "hobbies",
-          value: "Hiking,playing guitar",
-        },
-      ],
-      languages: [
-        {
-          name: "Telugu",
-          type: "Fluent",
-        },
-        {
-          name: "English",
-          type: "Fluent",
-        },
-        {
-          name: "Hindi",
-          type: "Beginner",
-        },
-      ],
-    },
-  ]);
+
+  const additional_details = useSelector(
+    (state) => state.getProfile.profileData.additionalInfo
+  );
+
+  const [additionalDetails, setDetails] = useState([]);
+  const [getResponse, setGetResponse] = useState([]);
+
+  useEffect(() => {
+    setDetails(additional_details);
+
+    let data = [];
+
+    let language = [];
+
+    additional_details.forEach((item) => {
+      let obj = {
+        summary: item.summary,
+        additionalInfo: item.additionalinformation,
+        language: [],
+        candidateadditioninformationid: item.candidateadditioninformationid,
+      };
+      let lan_data = {
+        name: item.language,
+        proficiency: item.proficiency,
+      };
+      language.push(lan_data);
+      data.push(obj);
+    });
+    data.language = language;
+    let filter_data = [...getResponse];
+    filter_data = data;
+    setGetResponse(filter_data);
+  }, [additional_details]);
+
+  const edit = function (check, data) {
+    let new_data;
+    if (check == "add") {
+      new_data = data;
+    } else {
+      new_data = additionalDetails
+        ? additionalDetails.find(
+            (x) =>
+              x.candidateadditioninformationid ==
+              data.candidateadditioninformationid
+          )
+        : additionalDetails;
+    }
+
+    setSelectedData(new_data);
+    setPersonalModal(true);
+  };
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
@@ -107,7 +125,10 @@ export function AdditionalInformation(props) {
   function onSubmit(payload) {}
 
   const handlePageChange = () => {
+    setSuccess(false);
     setPersonalModal(false);
+    setDeleteConfirm(false);
+    props.onCallBack();
   };
   const deleteModal = function (id) {
     setDeleteId(id);
@@ -118,6 +139,7 @@ export function AdditionalInformation(props) {
     let response = await dispatch(
       additionalInfoDetailsSlice.deleteadditionalInfoThunk(deleteId)
     );
+    setDeleteConfirm(false);
     if (response.payload) {
       setSuccess(true);
       setMessage(response.payload.message);
@@ -132,94 +154,92 @@ export function AdditionalInformation(props) {
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-lg" style={{ marginLeft: "10px" }}>
-            <PerfectScrollbar>
-              <Row className="mb-2">
-                <Col>
-                  <strong className="card-title-text">
-                    Additional Information
-                  </strong>
-                </Col>
+            <Row className="mb-2">
+              <Col>
+                <strong className="card-title-text">
+                  Additional information
+                </strong>
+              </Col>
+              <Col>
+                <Label
+                  className="float-end me-3 link-text"
+                  onClick={(evt) => edit("add")}
+                >
+                  Add
+                </Label>
+              </Col>
+            </Row>
 
-                <Col style={{ marginTop: "10px" }}>
-                  <div className="float-end">
-                    <BsPencil
-                      className="icons"
-                      onClick={(evt) => setPersonalModal(true)}
-                    />{" "}
-                    <BsTrash3
-                      className="me-3 icons"
-                      onClick={() => deleteModal(additionalDetails.id)}
-                    />
-                  </div>
-                </Col>
-              </Row>
+            {getResponse.length > 0 ? (
               <Row>
-                {additionalDetails.length > 0 ? (
-                  additionalDetails.map((item) => (
-                    <div>
-                      <Row>
+                {getResponse.map((item) => (
+                  <div>
+                    <Row>
+                      <Col>
                         <strong className="content-title mb-1">Summary</strong>
-                        <p className="me-2 card-p-text">{item.summary} </p>
-                      </Row>
-                      <Row>
-                        <strong className="content-title mb-2">
-                          Additional Information
-                        </strong>
-                        <ul>
-                          {item.additionalInfo.map((col) => (
-                            <li>
-                              <Label className="card-p-text-black">
-                                {col.name}: {col.value}
-                              </Label>
-                            </li>
-                          ))}
-                        </ul>
-                      </Row>
-                      <Row>
-                        <strong className="content-title">Languages</strong>
-                        <Table
-                          responsive
-                          borderless
-                          className="align-middle mb-0 candidate-table"
-                        >
-                          <thead>
-                            <tr className="candidate-table-header">
-                              <th>Language</th>
-                              <th>Proficiency</th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody className="card-p-text-black">
-                            {item.languages.map((column, ind) => (
-                              <tr>
-                                <td>{column.name}</td>
-                                <td>{column.type}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
-                      </Row>
+                      </Col>
+
+                      <Col style={{ marginTop: "10px" }}>
+                        <div className="float-end">
+                          <BsPencil
+                            className="icons"
+                            onClick={(evt) => edit("edit", item)}
+                          />{" "}
+                          <BsTrash3
+                            className="me-3 icons"
+                            onClick={() =>
+                              deleteModal(item.candidateadditioninformationid)
+                            }
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                    <p className="me-2 card-p-text">{item.summary} </p>
+                    <div>
+                      {item.additionalinformation
+                        ? item.additionalinformation
+                        : "-"}
                     </div>
-                  ))
-                ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data available
                   </div>
-                )}
+                ))}
+                <Row>
+                  <Row>
+                    <strong className="content-title">Languages</strong>
+                    <Table
+                      responsive
+                      borderless
+                      className="align-middle mb-0 candidate-table"
+                    >
+                      <thead>
+                        <tr className="candidate-table-header">
+                          <th>Language</th>
+                          <th>Proficiency</th>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody className="card-p-text-black">
+                        {getResponse.language.map((column, ind) => (
+                          <tr>
+                            <td>{column.name}</td>
+                            <td>{column.proficiency}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </Row>
+                </Row>
               </Row>
-            </PerfectScrollbar>
+            ) : (
+              <div className="d-flex justify-content-center">
+                No Data Available
+              </div>
+            )}
           </div>
-          {/* <CardFooter
-            className="d-flex justify-content-center"
-            style={{ border: "none" }}
-          >
-            <div className="view-link-text"></div>
-          </CardFooter> */}
         </Card>
       </div>
 
@@ -238,7 +258,7 @@ export function AdditionalInformation(props) {
             <ModalBody>
               <AdditionalInfoModal
                 check={"add"}
-                onCallBack={handlePageChange}
+                onCallAdditionalInfo={() => handlePageChange()}
                 selected={selected}
               />
             </ModalBody>
@@ -277,6 +297,63 @@ export function AdditionalInformation(props) {
                     onClick={(evt) => setDeleteConfirm(false)}
                   >
                     NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              {message}
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => handlePageChange()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Something went wrong
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again later
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setError(false)}
+                  >
+                    OK
                   </Button>
                 </Col>
               </Row>

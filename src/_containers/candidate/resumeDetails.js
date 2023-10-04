@@ -1,30 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Label, Input, CardFooter, ModalHeader, ModalBody } from "reactstrap";
-import { candidateActions } from "_store";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  CardHeader,
-  Button,
-  FormGroup,
-  Form,
-} from "reactstrap";
-import Tabs from "react-responsive-tabs";
+import { Label, ModalBody } from "reactstrap";
+import { Row, Col, Modal, Card, CardBody, Button, FormGroup } from "reactstrap";
 import { formatDate } from "_helpers/helper";
 import { profileActions } from "_store";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BsDownload, BsTrash3, BsUpload } from "react-icons/bs";
 import axios from "axios";
-
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
-import editIcon from "../../assets/utils/images/pencil.svg";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDropzone } from "react-dropzone";
 import errorIcon from "../../assets/utils/images/error_icon.png";
@@ -32,12 +14,15 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
 
-  const [resumeDetails, setResumeDetails] = useState(props.resumeInfo);
+  const resumeDetails = useSelector(
+    (state) => state.getProfile.profileData.resumeInfo
+  );
   const [candidateDetails, setCandidateDetails] = useState(
     props.candidateDetails
   );
   const [fileName, setFileName] = useState("");
   const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [sizeError, setSizeError] = useState(false);
   const [isModal, setModal] = useState(false);
@@ -53,20 +38,10 @@ export function ResumeDetails(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    window.location.reload();
+    props.onCallBack();
   };
-  const [acceptedFiles, setAcceptedFiles] = useState([]);
-
-  // const formatDate = function () {
-  //   const options = { year: "numeric", month: "short", day: "numeric" };
-  //   const formattedDate = new Date(
-  //     resumeDetails.uploadeddate
-  //   ).toLocaleDateString(undefined, options);
-  //   return formattedDate;
-  // };
 
   const addEditResume = async function (acceptedFiles) {
-    let response;
     const config = {
       headers: {
         "content-type": "multipart/form-data",
@@ -99,6 +74,7 @@ export function ResumeDetails(props) {
         .then((result) => {
           if (result.data.statusCode == 204) {
             setSuccess(true);
+            setMessage(result.payload.message);
           } else {
             setError(true);
           }
@@ -119,9 +95,10 @@ export function ResumeDetails(props) {
           config
         )
         .then((result) => {
-          if (result.payload) {
-            if (result.payload.status == "Success") {
+          if (result.data) {
+            if (result.data.status == "Success") {
               setSuccess(true);
+              setMessage(result.data.message);
             } else {
               setError(true);
             }
@@ -131,20 +108,25 @@ export function ResumeDetails(props) {
         })
         .catch((error) => {});
     }
-
-    // props.onCallBack();
   };
 
   const deleteResume = async function () {
     let resumeId = resumeDetails.candidateresumeid;
 
     let response = await dispatch(profileActions.deleteResume(resumeId));
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
+    }
+
     setDeleteConfirm(false);
-    window.location.reload();
+    props.onCallBack();
   };
 
   const onDrop = (acceptedFiles) => {
-    if (acceptedFiles[0].size > 2 * 1024 * 1024) {
+    if (acceptedFiles[0].size > 5 * 1024 * 1024) {
       setSizeError(true);
 
       return;
@@ -183,12 +165,14 @@ export function ResumeDetails(props) {
 
   return (
     <div>
-      {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Row>
           <Col sm="12" lg="12">
             <Card className="card-hover-shadow-2x mb-3">
-              <div className="mt-3" style={{ marginLeft: "10px" }}>
+              <div
+                className="mt-3 scroll-area-md"
+                style={{ marginLeft: "10px" }}
+              >
                 <Row className="mb-2">
                   <Col>
                     <strong className="card-title-text">Resume</strong>
@@ -244,7 +228,7 @@ export function ResumeDetails(props) {
                     </Label>
                   </p>
                 </Row>
-                <Row className="me-2 mb-2 ml-5" style={{ marginLeft: "2px" }}>
+                <Row className="me-2 ml-5" style={{ marginLeft: "2px" }}>
                   <Col className="div-box me-1">
                     <Row className="mt-2">
                       <p className="card-p-text-black">
@@ -415,12 +399,9 @@ export function ResumeDetails(props) {
               <img src={successIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              Resume Uploaded Successfully
+              {message}
             </div>
-            <div className="mb-3 d-flex justify-content-center rejected-success-text">
-              {" "}
-              Thank you!
-            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text"></div>
             <div>
               <Row>
                 <Col className="d-flex justify-content-center">
@@ -473,7 +454,7 @@ export function ResumeDetails(props) {
               <img src={errorIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              File size should not exceed 2 MB
+              File size should not exceed 5 MB
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}

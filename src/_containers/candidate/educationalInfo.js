@@ -1,40 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-} from "reactstrap";
+import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { educationDetailsSlice } from "_store";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  CardHeader,
-  Button,
-  FormGroup,
-  InputGroup,
-  Form,
-} from "reactstrap";
+import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { formatDate } from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import { EducationModal } from "./educationModal";
 
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { BsPencil, BsTrash3 } from "react-icons/bs";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
-
-import DatePicker from "react-datepicker";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import { useDispatch } from "react-redux";
-import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 
 import successIcon from "../../assets/utils/images/success_icon.svg";
@@ -46,66 +21,62 @@ export function CandidateEducation(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
-  const [educationalDetails, setDetails] = useState(props.educationInfo);
+  const educational_details = useSelector(
+    (state) => state.getProfile.profileData.educationInfo
+  );
+
+  const [educationalDetails, setDetails] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
 
-  let data = [
-    {
-      candidateeducationid: 0,
-      candidateid: 0,
-      levelofeducation: "",
-      fieldofstudy: "",
-      school: "",
-      city: [
-        {
-          cityid: 0,
-          cityname: "",
-        },
-      ],
-      state: [
-        {
-          stateid: 0,
-          statename: "",
-        },
-      ],
-      country: [
-        {
-          countryid: 0,
-          countryname: "",
-        },
-      ],
-      iscurrentlystudying: true,
-      startdate: null,
-      enddate: null,
-      isactive: false,
-      currentUserId: null,
-    },
-  ];
+  useEffect(() => {
+    setDetails(educational_details);
+  }, [educational_details]);
 
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [selectedData, setSelectedData] = useState({});
-  const selectDate = function () {};
+  const getText = function (data) {
+    let text = "";
+    if (data.school != "") {
+      text = data.school;
+      if (data.cityname != "") {
+        text += ", " + data.cityname;
+      }
+      if (data.statename != "") {
+        text += ", " + data.statename;
+      }
+      if (data.countryname != "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.cityname != "") {
+      text = data.cityname;
+      if (data.statename != "") {
+        text += ", " + data.statename;
+      }
+      if (data.countryname != "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.statename != "") {
+      text = data.statename;
+      if (data.countryname != "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.countryname != "") {
+      text = data.countryname;
+      text += data.countryname;
+    }
 
-  // const formatDate = (dateString) => {
-  //   const options = { year: "numeric", month: "short", day: "numeric" };
-  //   const formattedDate = new Date(dateString).toLocaleDateString(
-  //     undefined,
-  //     options
-  //   );
-  //   return formattedDate;
-  // };
+    return text;
+  };
 
-  function onSubmit(payload) {}
   const close = function () {
     setPersonalModal(false);
   };
   const handlePageChange = () => {
     setPersonalModal(false);
     setEditModal(false);
+    props.onCallBack();
   };
 
   const edit = function (data) {
@@ -113,7 +84,9 @@ export function CandidateEducation(props) {
     setEditModal(true);
   };
   const closeModal = function () {
-    window.location.reload();
+    setSuccess(false);
+    setError(false);
+    props.onCallBack();
   };
 
   const deleteModal = function (data) {
@@ -133,13 +106,24 @@ export function CandidateEducation(props) {
     }
   };
 
+  const getTitle = function (item) {
+    let text = "";
+    if (item.levelofeducation != "" && item.levelofeducation) {
+      text = item.levelofeducation;
+      if (item.fieldofstudy != "" && item.fieldofstudy) {
+        text += ", " + item.fieldofstudy;
+      }
+    } else if (item.fieldofstudy != "" && item.fieldofstudy) {
+      text = item.fieldofstudy;
+    }
+    return text;
+  };
+
   return (
     <div>
-      {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
-            {/* <PerfectScrollbar> */}
             <Row>
               <Col>
                 <strong className="card-title-text">Education</strong>
@@ -160,8 +144,7 @@ export function CandidateEducation(props) {
                   <div className="mb-2">
                     <Col>
                       <strong className="me-2 content-title">
-                        {item.levelofeducation} {", "}
-                        {item.fieldofstudy}
+                        {getTitle(item)}
                       </strong>
                       <div className="float-end">
                         <BsPencil
@@ -177,13 +160,7 @@ export function CandidateEducation(props) {
                       </div>
                     </Col>
                     <Label className="mb-0 mt-0 card-p-text-black">
-                      {item.school}
-                      {item.cityname ? ", " + item.cityname : ""}
-                      {item.statename ? ", " + item.statename : ""}
-                      {item.countryname ? ", " + item.countryname : ""}
-                      {/* {", "}
-                    {item.zipCode}
-                    {"  "} */}
+                      {getText(item)}
                     </Label>
 
                     {item.iscurrentlystudying ? (
@@ -205,18 +182,7 @@ export function CandidateEducation(props) {
                 </div>
               )}
             </Row>
-            {/* </PerfectScrollbar> */}
           </div>
-          {/* <CardFooter
-            className="d-flex justify-content-center"
-            style={{ border: "none" }}
-          >
-            <div className="view-link-text">
-              <span onClick={() => setViewModal(true)}>
-                View all {educationalDetails.length} Details
-              </span>
-            </div>
-          </CardFooter> */}
         </Card>
       </div>
 
@@ -234,7 +200,7 @@ export function CandidateEducation(props) {
             </ModalHeader>
             <ModalBody>
               <EducationModal
-                onCallBack={handlePageChange}
+                onCallEducation={() => handlePageChange()}
                 selected={selectedData}
                 check={"add"}
               />
@@ -255,7 +221,7 @@ export function CandidateEducation(props) {
             </ModalHeader>
             <ModalBody>
               <EducationModal
-                onCallBack={handlePageChange}
+                onCallEducation={() => handlePageChange()}
                 selected={selectedData}
                 check={"edit"}
               />
@@ -389,7 +355,6 @@ export function CandidateEducation(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              Thank you!
             </div>
             <div>
               <Row>

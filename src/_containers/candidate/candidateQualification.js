@@ -1,45 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-} from "reactstrap";
-import { Link } from "react-router-dom";
-import editIcon from "../../assets/utils/images/pencil.svg";
+import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  InputGroup,
-  Button,
-  FormGroup,
-  Form,
-} from "reactstrap";
+import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { profileActions } from "_store";
 import { formatDate } from "_helpers/helper";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
-import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
-
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { BsPencil, BsTrash3 } from "react-icons/bs";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import * as Yup from "yup";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { QualificationModal } from "./qualificationModal";
-
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 
 export function CandidateQualification(props) {
@@ -52,46 +22,20 @@ export function CandidateQualification(props) {
   const [editModal, setEditModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
   const [selectedData, setSelectedData] = useState({});
-  const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
-  const [qualificationDetails, setDetails] = useState(props.qualificationInfo);
+  const qualification_Details = useSelector(
+    (state) => state.getProfile.profileData.qualificationsInfo
+  );
+  const [qualificationDetails, setDetails] = useState([]);
 
-  // const formatDate = (dateString) => {
-  //   const options = { year: "numeric", month: "short", day: "numeric" };
-  //   const formattedDate = new Date(dateString).toLocaleDateString(
-  //     undefined,
-  //     options
-  //   );
-  //   return formattedDate;
-  // };
+  useEffect(() => {
+    setDetails(qualification_Details);
+  }, [qualification_Details]);
 
-  const validationSchema = Yup.object().shape({
-    jobTitle: Yup.string().required("Job Title is required").max(50),
-    company: Yup.string().max(500),
-    jobDescription: Yup.string().max(500),
-    city: Yup.string().required("City is required").max(50),
-    state: Yup.string().required("State is required").max(50),
-    country: Yup.string(),
-    currentlyWorking: Yup.string(),
-    fromDate: Yup.string().when("currentlyWorking", {
-      is: true,
-      then: Yup.string().required("From Date is Required"),
-      otherwise: Yup.string(), // No requirement when something is not enabled
-    }),
-
-    toDate: Yup.string().when("currentlyWorking", {
-      is: true,
-      then: Yup.string().required("To Date is Required"),
-      otherwise: Yup.string(), // No requirement when something is not enabled
-    }),
-  });
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
-  const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, handleSubmit, formState } = useForm(formOptions);
-  const { errors, isSubmitting } = formState;
-  function onSubmit(payload) {}
+
   const edit = function (data) {
     setSelectedData(data);
     setEditModal(true);
@@ -108,7 +52,9 @@ export function CandidateQualification(props) {
   };
 
   const closeModal = function () {
-    window.location.reload();
+    setSuccess(false);
+    setError(false);
+    props.onCallBack();
   };
   const [newTabId, setNewTabId] = useState(2);
   const addMoreTabs = function () {
@@ -118,20 +64,54 @@ export function CandidateQualification(props) {
     };
     setTabs([...tabs, newTab]);
     setNewTabId(newTabId + 1);
-    console.log(tabs);
   };
-  const handlePageChange = () => {
+  const handlePageChange = function () {
     setPersonalModal(false);
     setEditModal(false);
+    props.onCallBack();
   };
   const close = function () {
     setPersonalModal(false);
     setEditModal(false);
   };
 
+  const getText = function (data) {
+    let text = "";
+    if (data.company != "") {
+      text = data.company;
+      if (data.cityname != "" && data.cityname) {
+        text += ", " + data.cityname;
+      }
+      if (data.statename != "" && data.statename) {
+        text += ", " + data.statename;
+      }
+
+      if (data.countryname != "" && data.countryname) {
+        text += ", " + data.countryname;
+      }
+    } else if (data.cityname != "") {
+      text = data.cityname;
+      if (data.statename != "" && data.statename) {
+        text += ", " + data.statename;
+      }
+      if (data.countryname != "" && data.countryname) {
+        text += ", " + data.countryname;
+      }
+    } else if (data.statename != "" && data.statename) {
+      text = data.statename;
+      if (data.countryname != "" && data.countryname) {
+        text += ", " + data.countryname;
+      }
+    } else if (data.countryname != "" && data.countryname) {
+      text = data.countryname;
+      text += data.countryname;
+    }
+
+    return text;
+  };
+
   return (
     <div>
-      {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
@@ -151,9 +131,9 @@ export function CandidateQualification(props) {
                 </Col>
               </Row>
               <Row>
-                {qualificationDetails.length > 0 ? (
+                {qualificationDetails?.length > 0 ? (
                   qualificationDetails.map((item) => (
-                    <div>
+                    <div className="mb-2">
                       <Col>
                         <strong className="me-2 content-title">
                           {item.jobtitle}{" "}
@@ -173,23 +153,18 @@ export function CandidateQualification(props) {
                       </Col>
 
                       <span className="mb-0 card-p-text-black">
-                        {item.company}
+                        {getText(item)}
                       </span>
-                      <span>
-                        {item.cityname}
-                        {item.statename}
-                        {item.countryname}
-                        {item.zipCode}
-                      </span>
-                      <p className="card-p-text-black">
-                        {formatDate(item.startdate)}
-                        {" to "}
-                        {formatDate(item.enddate)}
-                        {/* {" ("}
-                      {item.experience}
-                      {")"} */}
-                      </p>
-                      <p className="card-p-text">{item.jobdescription}</p>
+
+                      {item.startdate ? (
+                        <div className="card-p-text-black">
+                          {formatDate(item.startdate)}
+                          {" to "}
+                          {formatDate(item.enddate)}
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   ))
                 ) : (
@@ -200,16 +175,6 @@ export function CandidateQualification(props) {
               </Row>
             </PerfectScrollbar>
           </div>
-          {/* <CardFooter
-            className="d-flex justify-content-center"
-            style={{ border: "none" }}
-          >
-            <div className="view-link-text">
-              <span onClick={() => setViewModal(true)}>
-                View all {qualificationDetails.length} Details
-              </span>
-            </div>
-          </CardFooter> */}
         </Card>
       </div>
 
@@ -227,7 +192,7 @@ export function CandidateQualification(props) {
             </ModalHeader>
             <ModalBody>
               <QualificationModal
-                onCallBack={handlePageChange}
+                OnCallQualification={() => handlePageChange()}
                 selected={selectedData}
                 check={"add"}
               />
@@ -274,14 +239,18 @@ export function CandidateQualification(props) {
                           {item.zipCode}
                           {"  "}
                         </p>
-                        <p className="card-p-text-black">
-                          {formatDate(item.startdate)}
-                          {" to "}
-                          {formatDate(item.enddate)}
-                          {" ("}
-                          {item.experience}
-                          {")"}
-                        </p>
+                        {item.startdate != null ? (
+                          <p className="card-p-text-black">
+                            {formatDate(item.startdate)}
+                            {" to "}
+                            {formatDate(item.enddate)}
+                            {" ("}
+                            {item.experience}
+                            {")"}
+                          </p>
+                        ) : (
+                          <></>
+                        )}
                         {/* <p className="card-p-text">{item.jobDescription}</p> */}
                       </div>
                     ))}
@@ -316,7 +285,7 @@ export function CandidateQualification(props) {
             </ModalHeader>
             <ModalBody>
               <QualificationModal
-                onCallBack={handlePageChange}
+                OnCallQualification={() => handlePageChange()}
                 selected={selectedData}
                 check={"edit"}
               />
@@ -337,7 +306,6 @@ export function CandidateQualification(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              Thank you!
             </div>
             <div>
               <Row>

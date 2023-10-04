@@ -44,6 +44,11 @@ export const getApplicationDate = function (date) {
 };
 export const formatDate = function (dateString) {
   // Parse the input date string
+
+  if (!dateString) {
+    return;
+  }
+
   const date = new Date(dateString);
 
   // Define month names as an array

@@ -1,76 +1,37 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-} from "reactstrap";
+import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { certificateDetailsSlice } from "_store";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  InputGroup,
-  Button,
-  FormGroup,
-  Form,
-} from "reactstrap";
+import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { formatDate } from "_helpers/helper";
-import editIcon from "../../assets/utils/images/pencil.svg";
-import { BsPencil, BsTrash3, BsUpload } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { BsPencil, BsTrash3 } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { CertificationsModal } from "./certificationsModal";
 import "./profile.scss";
 
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import DatePicker from "react-datepicker";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 export function CertificationDetails(props) {
   const dispatch = useDispatch();
-  const [selectedCandidate, setSelectedCandidate] = useState(
-    props.selectedData
-  );
   const [editModal, setEditModal] = useState(false);
 
   const [deleteId, setDeleteId] = useState(0);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const [selectedData, setSelectedData] = useState({});
-  const [certificationDetails, setDetails] = useState(props.certificationsInfo);
+  const [certificationDetails, setDetails] = useState([]);
 
-  // const formatDate = (dateString) => {
-  //   if (dateString) {
-  //     const options = { year: "numeric", month: "short", day: "numeric" };
-  //     const formattedDate = new Date(dateString).toLocaleDateString(
-  //       undefined,
-  //       options
-  //     );
-  //     return formattedDate;
-  //   } else {
-  //     return "";
-  //   }
-  // };
+  const certification_details = useSelector(
+    (state) => state.getProfile.profileData.certificationsInfo
+  );
+
+  useEffect(() => {
+    setDetails(certification_details);
+  }, [certification_details]);
 
   const [isPersonalModal, setPersonalModal] = useState(false);
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-  const addEditPersonalInfo = function () {
-    setPersonalModal(true);
-  };
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-  const selectDate = function () {};
+
   const [viewModal, setViewModal] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -86,7 +47,11 @@ export function CertificationDetails(props) {
 
   const handlePageChange = () => {
     setPersonalModal(false);
+    setDeleteConfirm(false);
     setEditModal(false);
+    setSuccess(false);
+    setError(false);
+    props.onCallBack();
   };
 
   const deleteModal = function (id) {
@@ -108,12 +73,11 @@ export function CertificationDetails(props) {
 
   return (
     <div>
-      {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-lg" style={{ marginLeft: "10px" }}>
             <PerfectScrollbar>
-              <Row>
+              <Row className="mb-2">
                 <Col>
                   <strong className="card-title-text">
                     Certifications and licenses
@@ -170,9 +134,6 @@ export function CertificationDetails(props) {
                               ? formatDate(certificationDetails[index].enddate)
                               : ""}
                           </p>
-                          <p className="card-p-text">
-                            {certificationDetails[index].description}
-                          </p>
                         </div>
                       ))
                     ) : (
@@ -189,17 +150,6 @@ export function CertificationDetails(props) {
               </Row>
             </PerfectScrollbar>
           </div>
-          {/* <CardFooter
-            className="d-flex justify-content-center"
-            style={{ border: "none" }}
-          >
-            <div className="view-link-text">
-              <span onClick={() => setViewModal(true)}>
-                {" "}
-                View all {certificationDetails.length} Details
-              </span>
-            </div>
-          </CardFooter> */}
         </Card>
       </div>
 
@@ -219,7 +169,7 @@ export function CertificationDetails(props) {
               <CertificationsModal
                 check={"add"}
                 selected={selectedData}
-                onCallBack={handlePageChange}
+                onCallCertification={() => handlePageChange()}
               />
             </ModalBody>
           </Modal>
@@ -240,7 +190,7 @@ export function CertificationDetails(props) {
               <CertificationsModal
                 check={"edit"}
                 selected={selectedData}
-                onCallBack={handlePageChange}
+                onCallCertification={() => handlePageChange()}
               />
             </ModalBody>
           </Modal>
@@ -334,6 +284,63 @@ export function CertificationDetails(props) {
                     onClick={(evt) => setDeleteConfirm(false)}
                   >
                     NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={successIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              {message}
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => handlePageChange()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Something went wrong
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again later
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => handlePageChange()}
+                  >
+                    OK
                   </Button>
                 </Col>
               </Row>

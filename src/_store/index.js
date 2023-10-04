@@ -44,6 +44,9 @@ import { ProficiencyReducer } from "./dropDownProficiency.slice";
 import { additionalInfoDataReducer } from "./additionalInfo.slice";
 import { custJobListReducer } from "_containers/customer/newjobs/custjobs.slice";
 import { matchedJobReducer } from "_containers/candidate/matchJob.slice";
+import { jobTitleReducer } from "./dropDownJobTitle.slice";
+import { payPeriodReducer } from "./dropDownPayPeriod.slice";
+import { jobPreferenceDataReducer } from "./jobPreference.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -91,6 +94,9 @@ export * from "./dropDownProficiency.slice";
 export * from "./additionalInfo.slice";
 export * from "../_containers/customer/newjobs/custjobs.slice";
 export * from "_containers/candidate/matchJob.slice";
+export * from "./dropDownJobTitle.slice";
+export * from "./dropDownPayPeriod.slice";
+export * from "./jobPreference.slice";
 
 export const store = configureStore({
   reducer: {
@@ -140,5 +146,7 @@ export const store = configureStore({
     custJobListReducer: custJobListReducer,
     candidateMatchJob: matchedJobReducer,
     tabListReducer: candidateJobListTabReducer,
+    getJobTitle: jobTitleReducer,
+    getPayPeriod: payPeriodReducer,
   },
 });

@@ -1,4 +1,16 @@
 .profile-view {
+  .filter-info-text {
+    font-family: Capitana;
+    font-size: 10px;
+    font-style: normal;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    color: #2e2f2f;
+  }
+  .filter-error-msg {
+    color: #ff0000 !important;
+  }
   .profile-img {
     min-width: 100px !important;
     min-height: 130px !important;
@@ -194,7 +206,7 @@
     text-align: left;
   }
   .div-box {
-    border: solid 1px #2f2e2e !important;
+    border: solid 1px #afaba5 !important;
     border-radius: 5px;
   }
   .nav-link {
@@ -334,7 +346,7 @@
 }
 .resume-details {
   .div-box {
-    border: solid 1px #2f2e2e !important;
+    border: solid 1px #afaba5 !important;
     border-radius: 5px;
   }
   .link-text {
