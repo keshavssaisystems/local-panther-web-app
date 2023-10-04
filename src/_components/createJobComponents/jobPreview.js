@@ -60,7 +60,7 @@ export default function JobPreview({ previewData, editdata }) {
     });
   }
   if (previewData.experienceSchedule.experienceLevel !== "") {
-    previewData.experienceSchedule.experienceLevelOption.forEach((element) => {
+    previewData.experienceSchedule.experienceLevelOption?.forEach((element) => {
       if (
         Number(previewData.experienceSchedule.experienceLevel) === element.id
       ) {

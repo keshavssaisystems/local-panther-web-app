@@ -26,7 +26,7 @@ import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 export function CreateJobWizard() {
   const [page, setPage] = useState(1);
   const [searchData, setSearchData] = useState("");
-  const [buttonDisable, setButtonDisable] = useState(true);
+  const [buttonDisable, setButtonDisable] = useState(false);
   const [previousStep, setPreviousStep] = useState(1);
   const [jobType, setJobType] = useState("new_template");
   const [jobData, setJobData] = useState({});
@@ -117,12 +117,6 @@ export function CreateJobWizard() {
     };
     await dispatch(publishJobActions.getPublishJobThunk({ jobId, payload }));
     setShowPopupWithNextStep(!showPopupWithNextStep);
-  };
-  const onPageChange = (page) => {
-    getPreviousJobData({
-      pageNo: page,
-      searchText: searchData,
-    });
   };
   const [BIStatus, setBIStatus] = useState(false);
   const [ESStatus, setESStatus] = useState(false);
@@ -281,15 +275,17 @@ export function CreateJobWizard() {
                     <div className="divider" />
                     <div className="clearfix">
                       <div style={true ? {} : { display: "none" }}>
-                        <Button
-                          color="secondary"
-                          className="btn-shadow float-start btn-wide btn-pill"
-                          outline
-                          style={previousBtn ? {} : { display: "none" }}
-                          onClick={previous}
-                        >
-                          Previous
-                        </Button>
+                        {compState !== 1 && (
+                          <Button
+                            color="secondary"
+                            className="btn-shadow float-start btn-wide btn-pill"
+                            outline
+                            style={previousBtn ? {} : { display: "none" }}
+                            onClick={previous}
+                          >
+                            Previous
+                          </Button>
+                        )}
                         {(compState !== 1 || jobType !== "new_template") && (
                           <Button
                             color="primary"

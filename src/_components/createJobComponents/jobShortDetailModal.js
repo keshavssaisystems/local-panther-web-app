@@ -25,7 +25,7 @@ export function JobShortDetailModal({ data }) {
         <ModalBody className="detail-job-modal">
           <div className="information-section">
             <Row>
-              <Col>
+              <Col md={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Company name</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -33,7 +33,7 @@ export function JobShortDetailModal({ data }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job title</h6>
                   <p className="mb-0 mt-1 mr-1">
