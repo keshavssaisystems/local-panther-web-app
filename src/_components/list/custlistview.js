@@ -129,12 +129,12 @@ export const CustCandidateListView = (props) => {
         <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
           <Col>
             <Button
-              active={props.type === "liked"}
-              outline
+              disabled={props.type === "liked"}
+              // outline
               size="sm"
               title="liked"
               className=" btn-icon"
-              color="primary"
+              color="secondary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
             >
               <BsHandThumbsUp></BsHandThumbsUp>
@@ -142,12 +142,12 @@ export const CustCandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              active={props.type === "maybe"}
-              outline
+              disabled={props.type === "maybe"}
+              // outline
               size="sm"
               title="maybe"
               className=" btn-icon"
-              color="primary"
+              color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
             >
               <BsQuestionCircle></BsQuestionCircle>
@@ -155,12 +155,12 @@ export const CustCandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="reject"
               onClick={() => onRejectClick(candidaterecommendedjobid)}
               className="btn-icon"
-              color="primary"
+              color="danger"
             >
               <BsXCircle></BsXCircle>
             </Button>
@@ -184,23 +184,23 @@ export const CustCandidateListView = (props) => {
         <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="accept"
               onClick={() => onAcceptClick(candidaterecommendedjobid)}
               className="btn-icon"
-              color="primary"
+              color="success"
             >
               <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="liked"
               className=" btn-icon"
-              color="primary"
+              color="secondary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
             >
               <BsHandThumbsUp></BsHandThumbsUp>
@@ -208,11 +208,11 @@ export const CustCandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="maybe"
               className=" btn-icon"
-              color="primary"
+              color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
             >
               <BsQuestionCircle></BsQuestionCircle>
@@ -220,12 +220,12 @@ export const CustCandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="primary"
+              color="danger"
             >
               <BsXCircle></BsXCircle>
             </Button>
@@ -249,24 +249,24 @@ export const CustCandidateListView = (props) => {
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="accept"
               onClick={() => onAcceptClick(candidaterecommendedjobid)}
               className="btn-icon"
-              color="primary"
+              color="success"
             >
               <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="primary"
+              color="danger"
             >
               <BsXCircle></BsXCircle>
             </Button>
@@ -278,12 +278,12 @@ export const CustCandidateListView = (props) => {
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="primary"
+              color="success"
             >
               <BsXCircle></BsXCircle>
             </Button>
@@ -307,23 +307,23 @@ export const CustCandidateListView = (props) => {
         <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="accept"
               onClick={() => onAcceptClick(candidaterecommendedjobid)}
               className="btn-icon"
-              color="primary"
+              color="success"
             >
               <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="liked"
               className=" btn-icon"
-              color="primary"
+              color="secondary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
             >
               <BsHandThumbsUp></BsHandThumbsUp>
@@ -331,11 +331,11 @@ export const CustCandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              outline
+              // outline
               size="sm"
               title="maybe"
               className=" btn-icon"
-              color="primary"
+              color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
             >
               <BsQuestionCircle></BsQuestionCircle>
@@ -343,13 +343,13 @@ export const CustCandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              active={props.type === "rejected"}
-              outline
+              disabled={props.type === "rejected"}
+              // outline
               size="sm"
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="primary"
+              color="danger"
             >
               <BsXCircle></BsXCircle>
             </Button>
