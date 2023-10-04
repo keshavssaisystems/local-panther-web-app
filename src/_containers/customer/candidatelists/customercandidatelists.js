@@ -20,7 +20,7 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
-import { candidateList, totalRecords } from "./data";
+// import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
   const [activeTab, setActiveTab] = useState(
@@ -44,13 +44,13 @@ export const CustomerCandidateLists = (props) => {
   const rejectDrpDwnList = useSelector(
     (state) => state.customerCandidateList.rejectDrpDwnList
   );
-  // const candidateList = useSelector(
-  //   (state) => state.customerCandidateList.candidateList
-  // );
+  const candidateList = useSelector(
+    (state) => state.customerCandidateList.candidateList
+  );
 
-  // const totalRecords = useSelector(
-  //   (state) => state.customerCandidateList.totalRecords
-  // );
+  const totalRecords = useSelector(
+    (state) => state.customerCandidateList.totalRecords
+  );
 
   const loading = useSelector((state) => state.customerCandidateList.loading);
   const durationOptions = useSelector(
