@@ -20,6 +20,7 @@ export function ScheduleInterviewList({
   durationOptions,
   postData,
 }) {
+  console.log(candidateList);
   const customStyles = {
     headRow: {
       style: {
@@ -62,27 +63,24 @@ export function ScheduleInterviewList({
       sortable: true,
       cell: (row) => (
         <>
-          {row.scheduledate === "" && (
+          {row.scheduledate === null && (
             <Button
               color="link"
               className="pl-0"
-              onClick={(e) => openScheduleModalPopup(e)}
+              onClick={(e) => openScheduleModalPopup(row)}
             >
               {" "}
               Schedule{" "}
             </Button>
           )}
-          {row.scheduledate !== "" &&
-            moment(row.scheduledate)
-              .tz("Etc/UTC")
-              .format("MMM Do YYYY h:mm a") + " (UTC)"}
-          <ScheduleInterviewModal
-            candidateData={row}
-            durationOptions={durationOptions}
-            postData={(e) => postData(e)}
-            isOpen={openScheduleModal}
-            onClose={() => onCloseScheduleModal()}
-          />
+          {row.scheduledate !== null &&
+            moment(
+              moment(row.scheduledate).format("YYYY-MM-DD") +
+                "T" +
+                row.starttime
+            )
+              .tz("America/New_York")
+              .format("MM/DD/YYYY h:mm a")}
         </>
       ),
     },
@@ -108,19 +106,19 @@ export function ScheduleInterviewList({
               <FontAwesomeIcon icon={faEllipsisV} />
             </DropdownToggle>
             <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-              {row.scheduledate !== "" && (
+              {row.scheduledate !== null && (
                 <DropdownItem
                   value={row.scheduleinterviewid}
-                  onClick={(e) => openInterviewDeatils(e)}
+                  onClick={(e) => openInterviewDeatils(row)}
                 >
                   <i className="dropdown-icon lnr-layers"> </i>
                   <span value={row.scheduleinterviewid}>Interview detail</span>
                 </DropdownItem>
               )}
-              <DropdownItem>
+              {/* <DropdownItem>
                 <i className="dropdown-icon lnr-layers"> </i>
                 <span>Candidate detail</span>
-              </DropdownItem>
+              </DropdownItem> */}
               <DropdownItem>
                 <i className="dropdown-icon lnr-trash"> </i>
                 <span>Delete</span>
@@ -138,25 +136,23 @@ export function ScheduleInterviewList({
   const handleButtonClick = () => {
     console.log("clicked");
   };
-
-  const openInterviewDeatils = (event) => {
+  const [selectedJobDetails, setSelectedJobDetails] = useState({});
+  const openInterviewDeatils = (data) => {
     setOpenModal(true);
-    console.log(event.target.value);
+    setSelectedJobDetails(data);
   };
 
-  const handleRowClick = (data) => {
-    // console.log('e :>> ', data);
-    // setState({ isDetailPage: true });
-  };
+  const handleRowClick = (data) => {};
   const onCloseIdModal = () => {
     setOpenModal(false);
   };
   const onCloseScheduleModal = () => {
     setOpenScheduleModal(false);
   };
+  const [selectedJobData, setSelectedJobData] = useState({});
   const openScheduleModalPopup = (event) => {
     setOpenScheduleModal(true);
-    console.log(event.target.value);
+    setSelectedJobData(event);
   };
   return (
     <>
@@ -175,13 +171,16 @@ export function ScheduleInterviewList({
       </Row>
       <InterviewDetailsModal
         isOpen={openModal}
-        type={"video"}
+        type={selectedJobDetails.format}
         onClose={() => onCloseIdModal()}
-        interviewDetail={
-          candidateList.length !== undefined && candidateList.length > 0
-            ? candidateList[0]
-            : {}
-        }
+        interviewDetail={selectedJobDetails}
+      />
+      <ScheduleInterviewModal
+        candidateData={selectedJobData}
+        durationOptions={durationOptions}
+        postData={(e) => postData(e)}
+        isOpen={openScheduleModal}
+        onClose={() => onCloseScheduleModal()}
       />
     </>
   );

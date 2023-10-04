@@ -3,6 +3,24 @@ import React, { useState } from "react";
 import { FormGroup, Form, Row, Col, Button, Label, FormText } from "reactstrap";
 
 export function KeyQualification({ data, postData, prevStep, previousData }) {
+  let prevKeyQualificationArr1 = [];
+  let prevKeyQualificationArr2 = [];
+  if (prevStep === 1 && previousData.length > 0) {
+    previousData.forEach((element) => {
+      if (element.isrequired === true) {
+        prevKeyQualificationArr1.push({
+          value: element.skillid + ", " + element.skillname,
+          label: element.skillname,
+        });
+      }
+      if (element.isrequired === false) {
+        prevKeyQualificationArr2.push({
+          value: element.skillid + ", " + element.skillname,
+          label: element.skillname,
+        });
+      }
+    });
+  }
   const [successMessage, setSuccessMessage] = useState(false);
   let keyQualificationArr1 = [];
   let keyQualificationArr2 = [];
@@ -10,14 +28,14 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
     data.forEach((element) => {
       if (element.isrequired === true) {
         keyQualificationArr1.push({
-          value: element.skillid + ", " + element.skillName,
-          label: element.skillName,
+          value: element.skillid + ", " + element.skillname,
+          label: element.skillname,
         });
       }
       if (element.isrequired === false) {
         keyQualificationArr2.push({
-          value: element.skillid + ", " + element.skillName,
-          label: element.skillName,
+          value: element.skillid + ", " + element.skillname,
+          label: element.skillname,
         });
       }
     });
@@ -88,16 +106,11 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
                 id={"mustHave"}
                 name={"mustHave"}
                 label={"Must have"}
-                defaultValue={[
-                  {
-                    value: "2, .NET Development",
-                    label: ".NET Development",
-                  },
-                  {
-                    value: "4, .NET Framework 1",
-                    label: ".NET Framework 1",
-                  },
-                ]}
+                defaultValue={
+                  prevStep === 3
+                    ? keyQualificationArr1
+                    : prevKeyQualificationArr1
+                }
               />
               {mustHaveValidation === true && (
                 <FormText color="danger">
@@ -112,7 +125,11 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
                 id={"niceToHave"}
                 name={"niceToHave"}
                 label={"Nice to have"}
-                defaultValue={keyQualificationArr2}
+                defaultValue={
+                  prevStep === 3
+                    ? keyQualificationArr2
+                    : prevKeyQualificationArr2
+                }
               />
             </FormGroup>
           </Col>

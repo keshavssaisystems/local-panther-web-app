@@ -28,7 +28,6 @@ export function UpcomingCard({
     getSelectedInterviewId(scheduleinterviewid);
   };
   const handlePageChange = (page) => {
-    console.log(page);
     setPage(page);
     onPageChange(page);
   };
