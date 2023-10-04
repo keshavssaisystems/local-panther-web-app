@@ -359,7 +359,7 @@ export function PersonalInformation(props) {
     <div>
       <Fragment>
         <Card className="mb-3 profile-view">
-          {selectedCandidate_temp.personalInfo.email ? (
+          {selectedCandidate.personalInfo.email ? (
             <Row className="g-0">
               <Col sm="12" md="12" xl="6" className=" mb-0">
                 <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
@@ -374,20 +374,19 @@ export function PersonalInformation(props) {
                   <div className="widget-chart-content">
                     <div>
                       <strong className="candidate-name mb-0">
-                        {selectedCandidate_temp.personalInfo.firstname +
+                        {selectedCandidate.personalInfo.firstname +
                           " " +
                           selectedCandidate_temp.personalInfo.lastname}
                       </strong>
                       <p className="widget-description text-focus content-text mt-0">
-                        {selectedCandidate_temp.personalInfo.position}
+                        {selectedCandidate.personalInfo.position}
                       </p>
                       <p className="candidate-label mt-0 mb-0">
-                        {selectedCandidate_temp.personalInfo.organization ==
+                        {selectedCandidate.personalInfo.organization ==
                           "Not working" ||
-                        selectedCandidate_temp.personalInfo.organization != ""
-                          ? "at " +
-                            selectedCandidate_temp.personalInfo.organization
-                          : selectedCandidate_temp.personalInfo.organization}
+                        selectedCandidate.personalInfo.organization != ""
+                          ? "at " + selectedCandidate.personalInfo.organization
+                          : selectedCandidate.personalInfo.organization}
                       </p>
                     </div>
                     <div>
@@ -396,7 +395,7 @@ export function PersonalInformation(props) {
                           <Label className="candidate-label mb-0">
                             Employement eligibility:{" "}
                             <strong className="content-text">
-                              {selectedCandidate_temp.personalInfo.eligibility}
+                              {selectedCandidate.personalInfo.eligibility}
                             </strong>
                           </Label>
                         </Col>
@@ -404,7 +403,7 @@ export function PersonalInformation(props) {
                           <Label className="candidate-label mt-0">
                             Ready to work immediately:{" "}
                             <strong className="content-text">
-                              {selectedCandidate_temp.personalInfo.readyToWork}{" "}
+                              {selectedCandidate.personalInfo.readyToWork}{" "}
                             </strong>
                           </Label>
                         </Col>
@@ -420,7 +419,7 @@ export function PersonalInformation(props) {
                     <BsTelephone className="personal-sec-icon me-2" />
                     <span className="content-text mt-3">
                       {maskPhoneNumber(
-                        selectedCandidate_temp.personalInfo.phonenumber
+                        selectedCandidate.personalInfo.phonenumber
                       )}
                     </span>
                   </Col>
@@ -429,25 +428,25 @@ export function PersonalInformation(props) {
                   <Col className="mb-2">
                     <BsEnvelope className="personal-sec-icon me-2" />
                     <span className="content-text">
-                      {selectedCandidate_temp.personalInfo.email}
+                      {selectedCandidate.personalInfo.email}
                     </span>
                   </Col>
                 </Row>
                 <Row>
                   <Col className="mb-2">
-                    {selectedCandidate_temp.personalInfo.city != "" ||
-                    selectedCandidate_temp.personalInfo.country != "" ? (
+                    {selectedCandidate.personalInfo.city != "" ||
+                    selectedCandidate.personalInfo.country != "" ? (
                       <div>
                         <BsPinMap className="personal-sec-icon me-2" />
                         <span className="content-text">
-                          {selectedCandidate_temp.personalInfo.city
-                            ? selectedCandidate_temp.personalInfo.city +
+                          {selectedCandidate.personalInfo.city
+                            ? selectedCandidate.personalInfo.city +
                               ", " +
-                              selectedCandidate_temp.personalInfo.state
+                              selectedCandidate.personalInfo.state
                             : ""}
 
-                          {selectedCandidate_temp.personalInfo.country
-                            ? ", " + selectedCandidate_temp.personalInfo.country
+                          {selectedCandidate.personalInfo.country
+                            ? ", " + selectedCandidate.personalInfo.country
                             : ""}
                         </span>
                       </div>
