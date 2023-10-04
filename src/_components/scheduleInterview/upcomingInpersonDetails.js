@@ -166,11 +166,6 @@ export function UpcomingInpersonDetails({ interviewDetails }) {
               </div>
               <div className="p-custom">
                 <p className="mb-0">
-                  Interviewer address : {interviewDetails?.interviewaddress}
-                </p>
-              </div>
-              <div className="p-custom">
-                <p className="mb-0">
                   Interviewer : {interviewDetails?.intervieweremailids}
                 </p>
               </div>
