@@ -24,12 +24,141 @@ import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 
 export function App() {
-  const authUser = useSelector((x) => x?.auth?.token);
+  const authUser = useSelector((state) => state.auth.token);
+  const userroleid = useSelector((state) => state.auth.userroleid);
 
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
   history.location = useLocation();
+
+  const renderRoutes = (userroleid) => {
+    if (userroleid === 1) {
+      return (
+        <>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin-customer"
+            element={<OnboardCustomer></OnboardCustomer>}
+          />
+        </>
+      );
+    } else if (userroleid === 2) {
+      return (
+        <>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/job-list"
+            element={
+              <PrivateRoute>
+                <JobList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/create-job"
+            element={
+              <PrivateRoute>
+                <CreateJobWizard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/scheduled-interview"
+            element={
+              <PrivateRoute>
+                <ScheduleInterview />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customer-candidate-matched/:id"
+            element={<CustomerCandidateLists type={"matched"} />}
+          />
+
+          <Route
+            path="/customer-candidate-liked/:id"
+            element={<CustomerCandidateLists type={"liked"} />}
+          />
+          <Route
+            path="/customer-candidate-maybe/:id"
+            element={<CustomerCandidateLists type={"maybe"} />}
+          />
+          <Route
+            path="/customer-candidate-applied/:id"
+            element={<CustomerCandidateLists type={"applied"} />}
+          />
+          <Route
+            path="/customer-candidate-scheduled/:id"
+            element={<CustomerCandidateLists type={"scheduled"} />}
+          />
+          <Route
+            path="/customer-candidate-accepted/:id"
+            element={<CustomerCandidateLists type={"accepted"} />}
+          />
+          <Route
+            path="/customer-candidate-rejected/:id"
+            element={<CustomerCandidateLists type={"rejected"} />}
+          />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/job-list"
+            element={
+              <PrivateRoute>
+                <CandidateTablist />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/recommended-job"
+            element={
+              <PrivateRoute>
+                <RecommendedJobList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <CandidateProfile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/candidate-profile/:id"
+            element={<CandidateProfile></CandidateProfile>}
+          />
+        </>
+      );
+    }
+  };
 
   return (
     <>
@@ -39,49 +168,18 @@ export function App() {
         <div className={authUser ? `app-main__outer` : ""}>
           <div className="app-main__inner">
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <Home />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/job-list"
-                element={
-                  <PrivateRoute>
-                    <JobList />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/candidate-tablist"
-                element={
-                  <PrivateRoute>
-                    <CandidateTablist />
-                  </PrivateRoute>
-                }
-              />
+              {renderRoutes(userroleid)}
 
-              <Route
+              {/* <Route
                 path="/dashboard"
                 element={
                   <PrivateRoute>
                     <Dashboard />
                   </PrivateRoute>
                 }
-              />
-              <Route
-                path="/create-job"
-                element={
-                  <PrivateRoute>
-                    <CreateJobWizard />
-                  </PrivateRoute>
-                }
-              />
+              /> */}
 
-              <Route
+              {/* <Route
                 path="/candidate-list/:jobId"
                 element={
                   <PrivateRoute>
@@ -104,31 +202,7 @@ export function App() {
                     <CandidateList type="accepted" />
                   </PrivateRoute>
                 }
-              />
-              <Route
-                path="/recommended-job"
-                element={
-                  <PrivateRoute>
-                    <RecommendedJobList />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/scheduled-interview"
-                element={
-                  <PrivateRoute>
-                    <ScheduleInterview />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <PrivateRoute>
-                    <CandidateProfile />
-                  </PrivateRoute>
-                }
-              />
+              /> */}
 
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
@@ -141,43 +215,6 @@ export function App() {
                 element={<ForgotPasswordSuccess />}
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route
-                path="/customer-candidate-matched/:id"
-                element={<CustomerCandidateLists type={"matched"} />}
-              />
-
-              <Route
-                path="/customer-candidate-liked/:id"
-                element={<CustomerCandidateLists type={"liked"} />}
-              />
-              <Route
-                path="/customer-candidate-maybe/:id"
-                element={<CustomerCandidateLists type={"maybe"} />}
-              />
-              <Route
-                path="/customer-candidate-applied/:id"
-                element={<CustomerCandidateLists type={"applied"} />}
-              />
-              <Route
-                path="/customer-candidate-scheduled/:id"
-                element={<CustomerCandidateLists type={"scheduled"} />}
-              />
-              <Route
-                path="/customer-candidate-accepted/:id"
-                element={<CustomerCandidateLists type={"accepted"} />}
-              />
-              <Route
-                path="/customer-candidate-rejected/:id"
-                element={<CustomerCandidateLists type={"rejected"} />}
-              />
-              <Route
-                path="/admin-customer"
-                element={<OnboardCustomer></OnboardCustomer>}
-              />
-              <Route
-                path="/candidate-profile/:id"
-                element={<CandidateProfile></CandidateProfile>}
-              />
             </Routes>
           </div>
           {authUser && <AppFooter />}

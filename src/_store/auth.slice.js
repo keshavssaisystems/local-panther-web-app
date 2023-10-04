@@ -36,8 +36,13 @@ const authSlice = createSlice({
   name,
   initialState: {
     // initialize state from local storage to enable user to stay logged in
-    menuList: JSON.parse(localStorage.getItem("menuList")),
-    token: localStorage.getItem("token"),
+    menuList: localStorage.getItem("menuList")
+      ? JSON.parse(localStorage.getItem("menuList"))
+      : [],
+    userroleid: localStorage.getItem("userroleid")
+      ? parseInt(localStorage.getItem("userroleid"))
+      : "",
+    token: localStorage.getItem("token") ? localStorage.getItem("token") : "",
     error: null,
   },
   reducers: {
@@ -49,6 +54,7 @@ const authSlice = createSlice({
       localStorage.removeItem("refreshToekn");
       localStorage.removeItem("userId");
       localStorage.removeItem("userDetails");
+      localStorage.removeItem("userroleid");
       localStorage.clear();
 
       history.navigate("/login");
@@ -69,6 +75,20 @@ const authSlice = createSlice({
       localStorage.setItem("refreshToken", refreshToken);
       const decodedData = jwtDecode(token);
       localStorage.setItem("userId", decodedData.UserId);
+      localStorage.setItem(
+        "userroleid",
+        decodedData.role.toLowerCase() === "admin"
+          ? 1
+          : decodedData.role.toLowerCase() === "customer"
+          ? 2
+          : 3
+      );
+      state.userroleid =
+        decodedData.role.toLowerCase() === "admin"
+          ? 1
+          : decodedData.role.toLowerCase() === "customer"
+          ? 2
+          : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
 
       // get return url from location state or default to home page
