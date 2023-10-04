@@ -8,9 +8,6 @@ export default function SelectJobType({
   jobList,
   postSearch,
   readyForNextStep,
-  page,
-  setPage,
-  onPageChange,
 }) {
   const [jobType, setJobType] = useState("new_template");
   const [showJobTable, setShowJobTable] = useState(false);
@@ -108,9 +105,6 @@ export default function SelectJobType({
             getJobId={(e) => getOldJobId(e)}
             jobList={jobList}
             postSearch={(e) => postSearch(e)}
-            onPageChange={onPageChange}
-            page={page}
-            setPage={setPage}
           />
         )}
       </div>

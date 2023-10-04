@@ -8,7 +8,7 @@ const name = "previousJobList";
 export const getPreviousJobListThunk = createAsyncThunk(
   `${name}/getPreviousJobListThunk`,
   async ({ pageNo, searchText }) => {
-    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=5&pageNumber=${pageNo}&searchText=${searchText}`;
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}`;
     return await fetchWrapper.get(PRESCREEN_END_POINT);
   }
 );
