@@ -203,7 +203,7 @@ export function ScheduleInterview() {
   }, []);
   return (
     <>
-      <PageTitle heading="Interview" icon={titlelogo} />
+      <PageTitle heading="Interviews" icon={titlelogo} />
       <Container fluid className="card-schedule-interview">
         <Row>
           <Col md="12">

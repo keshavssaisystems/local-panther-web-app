@@ -80,7 +80,7 @@ export default function PublishJobStep({ reqData, responseData, publishJob }) {
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
             Your job with <b>{reqData.basicInformation.jobTitle}</b> has
-            successfully created & save as draft!
+            successfully created & saved as draft!
           </div>
           <div className="mt-3 mb-3" />
           <div className="text-center">

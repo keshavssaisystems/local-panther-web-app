@@ -27,6 +27,9 @@ import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
 import { Contact } from "_containers/Contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
+import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
+import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
+import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConstruction";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -45,7 +48,63 @@ export function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <AdminUnderConstruction title={"Dashboard"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/customers"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Customers"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/candidate-list"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Candidates"} />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/calendar"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Calendar"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Users"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/roles"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Roles"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/menu-mapping"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Menu mapping"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report"
+            element={
+              <PrivateRoute>
+                <AdminUnderConstruction title={"Reports"} />
               </PrivateRoute>
             }
           />
@@ -62,7 +121,7 @@ export function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <CustomerUnderConstruction title={"Dashboard"} />
               </PrivateRoute>
             }
           />
@@ -119,6 +178,20 @@ export function App() {
             path="/customer-candidate-rejected/:id"
             element={<CustomerCandidateLists type={"rejected"} />}
           />
+          <Route
+            path="/report"
+            element={
+            <PrivateRoute>
+              <CustomerUnderConstruction title={"Reports"} />
+            </PrivateRoute> }
+          />
+          <Route
+            path="/candidate-list"
+            element={
+            <PrivateRoute>
+              <CustomerUnderConstruction title={"Candidate list"} />
+            </PrivateRoute> }
+          />
         </>
       );
     } else {
@@ -128,7 +201,7 @@ export function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <CandidateUnderConstruction title={"Dashboard"} />
               </PrivateRoute>
             }
           />
@@ -159,6 +232,14 @@ export function App() {
           <Route
             path="/candidate-profile/:id"
             element={<CandidateProfile></CandidateProfile>}
+          />
+          <Route
+            path="/calendar"
+            element={
+              <PrivateRoute>
+                <CandidateUnderConstruction title={"Calendar"} />
+              </PrivateRoute>
+            }
           />
         </>
       );

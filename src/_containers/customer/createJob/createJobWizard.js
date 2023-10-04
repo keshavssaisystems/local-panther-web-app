@@ -292,7 +292,7 @@ export function CreateJobWizard() {
                             onClick={next}
                             disabled={buttonDisable}
                           >
-                            Continue
+                            {compState === 2 ? "Confirm & create" : "Continue"}
                           </Button>
                         )}
                         {compState === 1 && jobType === "new_template" && (
