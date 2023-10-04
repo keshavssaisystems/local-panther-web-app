@@ -1,32 +1,17 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-  FormText,
-} from "reactstrap";
-import { Link } from "react-router-dom";
+import { Label, Input, ModalHeader, ModalBody, FormText } from "reactstrap";
 import AsyncSelect from "react-select/async";
-import { candidateActions } from "_store";
 import {
   Row,
   Col,
   Modal,
   Card,
   CardBody,
-  Collapse,
-  CardHeader,
   Button,
   FormGroup,
-  InputGroup,
   Form,
 } from "reactstrap";
-import { profileActions } from "_store";
-import axios from "axios";
-import { SkillsFilter } from "../../_components/dropdownComponents/SkillsFilter";
+
 import { getSkillsFilter } from "_store";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -38,11 +23,15 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
-  const [getResponse, setResponse] = useState(props.skillInfo);
+
+  const get_response = useSelector(
+    (state) => state.getProfile.profileData.skillsInfo
+  );
+
+  const [getResponse, setResponse] = useState([]);
+
   const [isPersonalModal, setPersonalModal] = useState(false);
-  const selectDate = function () {};
   const [mustHaveValidation, setMustHaveValidation] = useState(false);
-  const [selectedPopSkills, setSelectedSkills] = useState([]);
   const [skillsMultiple, setSkillsMultiple] = useState([]);
 
   const shiftsOption = useSelector((state) => state.shifts.shift);
@@ -55,45 +44,52 @@ export function CandidateSkills(props) {
   );
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
+  const experienceLevelOption = useSelector(
+    (state) => state.experienceLevel.experienceLevel
+  );
 
-  const config = {
-    headers: {
-      "content-type": "application/json",
-    },
-  };
-
+  const [selectedExp, setSelectedExp] = useState([]);
   useEffect(() => {
-    setPreData();
-  }, []);
-
-  const setPreData = function () {
+    setResponse(get_response);
     let data = [...skillsMultiple];
 
     let selectedData = [...selectedSkillData];
 
-    data = getResponse.map(({ ...rest }) => {
+    data = get_response?.map(({ ...rest }) => {
       return {
         value: rest.skillid,
         label: rest.skillname,
+        experience: rest.yearsofexperience,
       };
     });
 
-    selectedData = getResponse.map(({ ...rest }) => {
+    selectedData = get_response?.map(({ ...rest }) => {
       return {
         id: rest.skillid,
         name: rest.skillname,
         experience: rest.yearsofexperience,
       };
     });
-
+    debugger;
     setSkillsMultiple(data);
     setSelectedSkillData(selectedData);
-  };
+    debugger;
+    let selected_exp = [...selectedExp];
+    selected_exp = get_response?.map(({ ...rest }) => {
+      return {
+        id: rest.yearsofexperience,
+        name: experienceLevelOption.find((x) => x.id == rest.yearsofexperience)
+          .name,
+      };
+    });
+    setSelectedExp(selected_exp);
+  }, [get_response]);
 
   const closeModal = function () {
+    setPersonalModal(false);
     setSuccess(false);
     setError(false);
-    window.location.reload();
+    props.onCallBack();
   };
   const [selectedData, setSelectedData] = useState({});
   const [skills, setSkills] = useState([]);
@@ -131,14 +127,15 @@ export function CandidateSkills(props) {
     });
     setSkills(data);
     setSkillsTemp(data);
-    console.log(skills);
   }, [selectedData]);
 
   const onSelectSkillsDropdown = function (data) {
     setSkillsMultiple(data);
 
     let new_data = [...skills];
-    let index = skills.findIndex((x) => x.value == data[data.length - 1].value);
+    let index = skills.findIndex(
+      (x) => x.value == data[data.length - 1]?.value
+    );
 
     new_data.splice(index, 1);
 
@@ -222,7 +219,7 @@ export function CandidateSkills(props) {
   };
 
   const loadDefaultOptions = async function () {
-    const { data = [] } = await getSkillsFilter("net");
+    const { data = [] } = await getSkillsFilter("java");
     let filtered_data = data.map(({ skillid: value, ...rest }) => {
       return {
         value,
@@ -257,16 +254,14 @@ export function CandidateSkills(props) {
 
     setSelectedSkillData(new_array);
   };
-
   return (
     <div>
-      {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Row>
           <Col sm="12" lg="12">
             <Card className="main-card mb-3">
               <div
-                className="mt-3 scroll-area-sm"
+                className="mt-3 scroll-area-md"
                 style={{ marginLeft: "10px" }}
               >
                 <Row className="mb-3">
@@ -283,8 +278,8 @@ export function CandidateSkills(props) {
                     </Label>
                   </Col>
                 </Row>
-                <Row style={{ marginLeft: "2px" }} className="d-flex flex-row">
-                  {getResponse.length > 0 ? (
+                <Row style={{ marginLeft: "2px" }}>
+                  {getResponse?.length > 0 ? (
                     getResponse.map((item) => (
                       <Button
                         className="
@@ -317,12 +312,6 @@ export function CandidateSkills(props) {
                   )}
                 </Row>
               </div>
-              <CardFooter
-                className="d-flex justify-content-center"
-                style={{ border: "none" }}
-              >
-                <div className="view-link-text"></div>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
@@ -398,7 +387,6 @@ export function CandidateSkills(props) {
                                   onChange={(evt) =>
                                     onSelectExperience(item, evt.target.value)
                                   }
-                                  // value={getExpLabel(item.experience)}
                                 >
                                   <option key={0}>
                                     Select experience level
@@ -406,10 +394,11 @@ export function CandidateSkills(props) {
                                   {experienceLevelOption?.length > 0 &&
                                     experienceLevelOption?.map((options) => (
                                       <option
+                                        selected={options.id == item.experience}
                                         key={options.id}
                                         value={options.id}
                                       >
-                                        {options.label}
+                                        {options.name}
                                       </option>
                                     ))}
                                 </Input>

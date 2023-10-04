@@ -7,20 +7,15 @@ import {
   Modal,
   Card,
   CardBody,
-  Collapse,
   InputGroup,
   Button,
   FormGroup,
   Form,
 } from "reactstrap";
-import { Link } from "react-router-dom";
-import Tabs from "react-responsive-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import PageTitle from "../../_components/common/pagetitle";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import * as Yup from "yup";
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
@@ -53,12 +48,14 @@ export function CertificationsModal(props) {
         candidateid: 0,
         certificationtypeid: 0,
         isexpired: true,
-        startdate: new Date(),
-        enddate: new Date(),
+        startdate: "",
+        enddate: "",
         description: "",
         isactive: true,
         currentUserId: 0,
         error: false,
+        fromDateValid: false,
+        fromDateReq: false,
       };
     } else {
       data = {
@@ -74,28 +71,15 @@ export function CertificationsModal(props) {
         currentUserId: 0,
         error: false,
         certificationname: props.selected.certificationname,
+        fromDateValid: false,
+        fromDateReq: false,
       };
     }
     setFormData(data);
   };
 
   const closeModal = function () {
-    let data = [
-      {
-        candidatecertificationid: 0,
-        candidateid: 0,
-        certificationtypeid: 0,
-        isexpired: true,
-        startdate: new Date(),
-        enddate: new Date(),
-        description: "",
-        isactive: true,
-        currentUserId: 0,
-        error: false,
-      },
-    ];
-    setFormData(data);
-    window.location.reload();
+    props.onCallCertification();
   };
 
   // const removeTabs = function (index) {
@@ -106,12 +90,10 @@ export function CertificationsModal(props) {
 
   // const addMoreTabs = function (index) {
   //   let new_data = [...formDetails];
-  //   console.log("before" + new_data);
   //   if (new_data[index - 1].name == "") {
   //     new_data[index - 1].error = true;
   //     setFormData(new_data);
 
-  //     console.log(formDetails);
   //     return;
   //   }
 
@@ -128,10 +110,7 @@ export function CertificationsModal(props) {
   //     error: false,
   //   };
   //   setFormData([...formDetails, newTab]);
-  //   console.log(formDetails);
   // };
-
-  // form validation rules
 
   const onHandleInputChange = function (check, data) {
     let new_data = { ...formDetails };
@@ -146,13 +125,35 @@ export function CertificationsModal(props) {
         new_data.error = false;
       }
     } else if (check == "expired") {
-      new_data.isexpired = data == "on" ? true : false;
-    } else if (check == "fromdate") {
-      new_data.startdate = data;
-    } else if (check == "todate") {
-      new_data.enddate = data;
+      new_data.isexpired = !new_data.isexpired;
     } else if (check == "description") {
       new_data.description = data;
+    } else if (check == "fromdate") {
+      if (new_data.enddate) {
+        if (new Date(data) > new Date(new_data.enddate)) {
+          new_data.fromDateValid = true;
+        } else {
+          new_data.fromDateValid = false;
+          new_data.startdate = data;
+        }
+      } else {
+        new_data.fromDateValid = false;
+        new_data.startdate = data;
+      }
+    } else if (check == "todate") {
+      new_data.enddate = data;
+
+      if (new_data.startdate) {
+        if (new Date(data) < new Date(new_data.startdate)) {
+          new_data.fromDateValid = true;
+        } else {
+          new_data.fromDateValid = false;
+          new_data.enddate = data;
+        }
+      } else {
+        new_data.fromDateValid = false;
+        new_data.enddate = data;
+      }
     }
     setFormData(new_data);
   };
@@ -208,7 +209,7 @@ export function CertificationsModal(props) {
     }
   }
   return (
-    <div>
+    <div className="profile-view">
       {/* {formDetails.map((item, index) => ( */}
       <Form>
         {/* {check == "add" ? (
@@ -249,19 +250,21 @@ export function CertificationsModal(props) {
 
         <Row>
           {typeList.map((item) => (
-            <FormGroup check>
-              <Input
-                name="eligibility"
-                type="radio"
-                checked={item.id == formDetails.certificationtypeid}
-                onChange={(evt) =>
-                  onHandleInputChange("certificateType", item.id)
-                }
-              />
-              <Label check className="input-label">
-                {item.name}
-              </Label>
-            </FormGroup>
+            <Col>
+              <FormGroup check>
+                <Input
+                  name="eligibility"
+                  type="radio"
+                  checked={item.id == formDetails.certificationtypeid}
+                  onChange={(evt) =>
+                    onHandleInputChange("certificateType", item.id)
+                  }
+                />
+                <Label check className="input-label">
+                  {item.name}
+                </Label>
+              </FormGroup>
+            </Col>
           ))}
         </Row>
 
@@ -270,7 +273,7 @@ export function CertificationsModal(props) {
             <FormGroup>
               <Label for="certification" className="input-label">
                 Certification/License
-                <span className="required-icon">*</span>
+                <span className="required-icon"> *</span>
               </Label>
               <input
                 placeholder="Enter Certification/license"
@@ -286,7 +289,7 @@ export function CertificationsModal(props) {
               />
 
               <div className="invalid-feedback">
-                {formDetails.error ? "Skills is required" : ""}
+                {formDetails.error ? "Certifications is required" : ""}
               </div>
             </FormGroup>
           </Col>
@@ -297,13 +300,13 @@ export function CertificationsModal(props) {
               <Input
                 name="immediateJoin"
                 type="checkbox"
-                checked={!formDetails.isexpired}
+                checked={formDetails.isexpired}
                 onInput={(evt) =>
                   onHandleInputChange("expired", evt.target.value)
                 }
               />{" "}
               <Label check className="input-label">
-                Does not Expire
+                Does not expire
               </Label>
             </FormGroup>
           </Col>
@@ -312,7 +315,7 @@ export function CertificationsModal(props) {
           <Col md={4}>
             <FormGroup>
               <Label for="fromdate" className="input-label">
-                From Date
+                From date
               </Label>
               <InputGroup>
                 <div className="input-group-text">
@@ -327,12 +330,17 @@ export function CertificationsModal(props) {
                   selected={formDetails.startdate}
                 />
               </InputGroup>
+              <div className="filter-info-text filter-error-msg">
+                {formDetails.fromDateValid
+                  ? "From Date should be less than To Date"
+                  : ""}
+              </div>
             </FormGroup>
           </Col>
           <Col md={4}>
             <FormGroup>
               <Label for="todate" className="input-label">
-                To Date
+                To date
               </Label>
               <InputGroup>
                 <div className="input-group-text">

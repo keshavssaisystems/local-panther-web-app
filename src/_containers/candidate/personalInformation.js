@@ -62,12 +62,17 @@ import { getLocationFilter } from "_store";
 export function PersonalInformation(props) {
   console.log(props);
   const dispatch = useDispatch();
-
   const [selectedCandidate, setSelectedCandidate] = useState({
-    personalInfo: props.profileInfo.personalInfo,
+    personalInfo: useSelector(
+      (state) => state.getProfile.profileData.personalInfo
+    ),
     genderList: useSelector((state) => state.gender.genderList),
     raceList: useSelector((state) => state.ethnicity.ethnicityList),
     eligibilityList: props.dropDownData.eligibilityDropDown,
+  });
+
+  const [selectedCandidate_temp, setSelectedCandidateTemp] = useState({
+    personalInfo: props.profileInfo.personalInfo,
   });
 
   const [requiredErrors, setRequiredErros] = useState({
@@ -117,6 +122,8 @@ export function PersonalInformation(props) {
     }
   };
 
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
@@ -201,7 +208,7 @@ export function PersonalInformation(props) {
       setRequiredErros(errors);
       return;
     }
-    let new_data = { ...selectedCandidate };
+    let new_data = { ...selectedCandidate_temp };
 
     new_data.personalInfo.cityid = citySelect[0].value;
     new_data.personalInfo.countryid = countrySelect[0]
@@ -255,10 +262,19 @@ export function PersonalInformation(props) {
     }
   }
 
+  const checkCityValid = function () {
+    if (citySelect[0].value == 0) {
+      setCityReqError(true);
+    } else {
+      setCityReqError(false);
+    }
+  };
+
   const selectDate = function (data) {
-    let temp_data = { ...selectedCandidate };
+    let temp_data = { ...selectedCandidate_temp };
     temp_data.personalInfo.dob = new Date(data);
     setSelectedCandidate(temp_data);
+    setDOB(new Date(data));
   };
 
   const close = function () {
@@ -268,7 +284,8 @@ export function PersonalInformation(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    window.location.reload();
+    // window.location.reload();
+    props.onCallBack();
   };
 
   useEffect(() => {
@@ -302,7 +319,7 @@ export function PersonalInformation(props) {
     });
   };
   const onHandleInputChange = function (check, data) {
-    let new_data = { ...selectedCandidate };
+    let new_data = { ...selectedCandidate_temp };
     let errors = { ...requiredErrors };
     if (check == "firstname") {
       new_data.personalInfo.firstname = data;
@@ -365,16 +382,17 @@ export function PersonalInformation(props) {
                       </p>
                       <p className="candidate-label mt-0 mb-0">
                         {selectedCandidate.personalInfo.organization ==
-                        "Not Working"
-                          ? selectedCandidate.personalInfo.organization
-                          : "at " + selectedCandidate.personalInfo.organization}
+                          "Not working" ||
+                        selectedCandidate.personalInfo.organization != ""
+                          ? "at " + selectedCandidate.personalInfo.organization
+                          : selectedCandidate.personalInfo.organization}
                       </p>
                     </div>
                     <div>
                       <Row>
                         <Col className="col-12 mb-0">
                           <Label className="candidate-label mb-0">
-                            Employement Eligibility:{" "}
+                            Employement eligibility:{" "}
                             <strong className="content-text">
                               {selectedCandidate.personalInfo.eligibility}
                             </strong>
@@ -382,7 +400,7 @@ export function PersonalInformation(props) {
                         </Col>
                         <Col>
                           <Label className="candidate-label mt-0">
-                            Ready to work Immediately:{" "}
+                            Ready to work immediately:{" "}
                             <strong className="content-text">
                               {selectedCandidate.personalInfo.readyToWork}{" "}
                             </strong>
@@ -415,18 +433,25 @@ export function PersonalInformation(props) {
                 </Row>
                 <Row>
                   <Col className="mb-2">
-                    <BsPinMap className="personal-sec-icon me-2" />
-                    <span className="content-text">
-                      {selectedCandidate.personalInfo.city
-                        ? selectedCandidate.personalInfo.city +
-                          ", " +
-                          selectedCandidate.personalInfo.state
-                        : ""}
+                    {selectedCandidate.personalInfo.city != "" ||
+                    selectedCandidate.personalInfo.country != "" ? (
+                      <div>
+                        <BsPinMap className="personal-sec-icon me-2" />
+                        <span className="content-text">
+                          {selectedCandidate.personalInfo.city
+                            ? selectedCandidate.personalInfo.city +
+                              ", " +
+                              selectedCandidate.personalInfo.state
+                            : ""}
 
-                      {selectedCandidate.personalInfo.country
-                        ? ", " + selectedCandidate.personalInfo.country
-                        : ""}
-                    </span>
+                          {selectedCandidate.personalInfo.country
+                            ? ", " + selectedCandidate.personalInfo.country
+                            : ""}
+                        </span>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </Col>
                 </Row>
               </Col>
@@ -440,26 +465,44 @@ export function PersonalInformation(props) {
                 <Row className="mt-3">
                   <Row>
                     <Col className="mb-2">
-                      <BsBalloon className="personal-sec-icon me-2" />
-                      <span className="content-text mt-3">
-                        {formatDate(selectedCandidate.personalInfo.dob)}
-                      </span>
+                      {selectedCandidate.personalInfo.dob != "" ? (
+                        <div>
+                          <BsBalloon className="personal-sec-icon me-2" />
+                          <span className="content-text mt-3">
+                            {formatDate(selectedCandidate.personalInfo.dob)}
+                          </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      <BsGenderMale className="personal-sec-icon me-2" />
-                      <span className="content-text">
-                        {selectedCandidate.personalInfo.gender}
-                      </span>
+                      {selectedCandidate.personalInfo.gender != "" ? (
+                        <div>
+                          <BsGenderMale className="personal-sec-icon me-2" />
+                          <span className="content-text">
+                            {selectedCandidate.personalInfo.gender}
+                          </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      <BsPeople className="personal-sec-icon me-2" />
-                      <span className="content-text">
-                        {selectedCandidate.personalInfo.ethnicity}
-                      </span>
+                      {selectedCandidate.personalInfo.ethnicity != "" ? (
+                        <div>
+                          <BsPeople className="personal-sec-icon me-2" />
+                          <span className="content-text">
+                            {selectedCandidate.personalInfo.ethnicity}
+                          </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                 </Row>
@@ -480,7 +523,7 @@ export function PersonalInformation(props) {
           >
             <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
-                Add/Edit Personal Information
+                Add/Edit personal information
               </strong>
             </ModalHeader>
             <ModalBody>
@@ -489,7 +532,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="firstname" className="input-label">
-                        First Name <span className="required-icon">*</span>
+                        First name <span className="required-icon">*</span>
                       </Label>
                       <input
                         type="text"
@@ -517,7 +560,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="password" className="input-label">
-                        Last Name <span className="required-icon">*</span>
+                        Last name <span className="required-icon">*</span>
                       </Label>
                       <input
                         placeholder="Enter Last Name"
@@ -617,7 +660,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="gender" className="input-label">
-                        Birth Year
+                        Birth year
                       </Label>
                       <InputGroup>
                         <div className="input-group-text">
@@ -627,6 +670,7 @@ export function PersonalInformation(props) {
                           className="form-control"
                           placeholderText="DD/MM/YYYY"
                           selected={dob}
+                          showYearDropdown={true}
                           onChange={(evt) => selectDate(evt)}
                         />
                       </InputGroup>
@@ -688,12 +732,13 @@ export function PersonalInformation(props) {
                         defaultOptions={stateList}
                         isMulti={false}
                         value={stateSelect}
-                        onChange={(evt) => onSelectStateDropdown(evt)}
+                        onSelect={(evt) => onSelectStateDropdown(evt)}
                         styles={{
                           borderColor: requiredErrors.stateError
                             ? "#d92550"
                             : "",
                         }}
+                        onMenuOpen={() => checkCityValid()}
                       />
                       <div className="error-class">
                         {requiredErrors.stateError ? "State is required" : ""}
@@ -712,6 +757,7 @@ export function PersonalInformation(props) {
                         isMulti={false}
                         value={countrySelect}
                         onChange={(evt) => onSelectCountryDropdown(evt)}
+                        onMenuOpen={() => checkCityValid()}
                       />
                     </FormGroup>
                   </Col>
@@ -720,7 +766,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="zipCode" className="input-label">
-                        Zip Code
+                        Zip code
                       </Label>
                       <input
                         type="text"
@@ -879,6 +925,35 @@ export function PersonalInformation(props) {
                   <Button
                     className="me-2 accept-modal-btn"
                     onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={cityReqError}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Please select City to filter
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              State and Country
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setCityReqError(false)}
                   >
                     OK
                   </Button>

@@ -6,9 +6,9 @@ const name = "jobPreference";
 
 export const updatejobPreferenceThunk = createAsyncThunk(
   `${name}/updatejobPreferenceThunk`,
-  async ({ id, certification_data }) => {
-    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateCertification/${id}`;
-    return await fetchWrapper.put(LOGIN_END_POINT, certification_data);
+  async ({ id, formDetails }) => {
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateJobPreference/${id}`;
+    return await fetchWrapper.put(LOGIN_END_POINT, formDetails);
   }
 );
 
@@ -16,7 +16,7 @@ export const addjobPreferenceThunk = createAsyncThunk(
   `${name}/addjobPreferenceThunk`,
   async (qualification_data) => {
     console.log(qualification_data);
-    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateCertification`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateJobPreference`;
     return await fetchWrapper.post(LOGIN_END_POINT, qualification_data);
   }
 );
@@ -24,7 +24,7 @@ export const addjobPreferenceThunk = createAsyncThunk(
 export const deletejobPreferenceThunk = createAsyncThunk(
   `${name}/deletejobPreferenceThunk`,
   async (deleteId) => {
-    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateCertification/${deleteId}`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateJobPreference/${deleteId}`;
     return await fetchWrapper.delete(LOGIN_END_POINT);
   }
 );
@@ -62,11 +62,11 @@ const jobPreferenceDataSlice = createSlice({
   },
 });
 
-export const jobPreferenceDetailsSlice = {
+export const jobPreferenceDetailsActions = {
   ...jobPreferenceDataSlice.actions,
   addjobPreferenceThunk,
   updatejobPreferenceThunk,
   deletejobPreferenceThunk,
 };
 
-export const jobPreferenceDataReducer = jobPreferenceDetailsSlice.reducer;
+export const jobPreferenceDataReducer = jobPreferenceDataSlice.reducer;

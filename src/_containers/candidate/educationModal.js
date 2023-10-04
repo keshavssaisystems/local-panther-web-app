@@ -7,20 +7,13 @@ import {
   Modal,
   Card,
   CardBody,
-  Collapse,
   InputGroup,
   Button,
   FormGroup,
   Form,
 } from "reactstrap";
-import { Link } from "react-router-dom";
-import Tabs from "react-responsive-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import PageTitle from "../../_components/common/pagetitle";
 
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
@@ -87,9 +80,11 @@ export function EducationModal(props) {
           },
         ],
         iscurrentlystudying: true,
-        startdate: new Date(),
-        enddate: new Date(),
+        startdate: "",
+        enddate: "",
         isactive: false,
+        fromDateValid: false,
+        fromDateReq: false,
         currentUserId: null,
       });
     } else {
@@ -128,6 +123,8 @@ export function EducationModal(props) {
           : new Date(),
         isactive: props.selected.isactive,
         currentUserId: null,
+        fromDateValid: false,
+        fromDateReq: false,
       });
     }
     setFormData(data);
@@ -148,12 +145,12 @@ export function EducationModal(props) {
       };
     });
     setStateList(state_response);
-    console.log(stateList);
     setCountryList(country_response);
   }, [cityList]);
 
   const closeModal = function () {
-    window.location.reload();
+    props.onCallEducation();
+    // window.location.reload();
   };
 
   const removeTabs = function (index) {
@@ -176,33 +173,50 @@ export function EducationModal(props) {
 
   const addMoreTabs = function (index) {
     let new_data = [...formDetails];
-    console.log("before" + new_data);
-    if (new_data[index - 1].levelofeducation == "") {
+    if (new_data[index - 1].education.value == 0) {
       new_data[index - 1].error = true;
       setFormData(new_data);
-
-      console.log(formDetails);
       return;
     }
 
     const newTab = {
-      id: index,
-      levelofeducation: "",
+      candidateeducationid: 0,
       error: false,
+      education: {
+        value: 0,
+        label: "",
+      },
+
+      candidateid: 0,
+
+      fieldofstudy: "",
+      school: "",
+      city: [
+        {
+          value: 0,
+          label: "",
+        },
+      ],
+      state: [
+        {
+          value: 0,
+          label: "",
+        },
+      ],
+      country: [
+        {
+          value: 0,
+          label: "",
+        },
+      ],
+      iscurrentlystudying: true,
+      startdate: new Date(),
+      enddate: new Date(),
+      isactive: false,
+      currentUserId: null,
     };
-    setFormData([...formDetails, newTab]);
-    console.log(formDetails);
-  };
-
-  // form validation rules
-
-  const collectTitle = function (index, data) {
-    let new_data = [...formDetails];
-
-    new_data[index].jobTitle = data;
-    new_data[index].error = false;
+    new_data.push(newTab);
     setFormData(new_data);
-    // onSubmit();
   };
 
   const onHandleInputChange = function (check, data, index) {
@@ -236,30 +250,35 @@ export function EducationModal(props) {
     } else if (check == "currentlyStudying") {
       new_data[index].iscurrentlystudying = data;
     } else if (check == "fromdate") {
-      new_data[index].startdate = new Date(data);
+      if (new_data[index].enddate) {
+        if (new Date(data) > new Date(new_data[index].enddate)) {
+          new_data[index].fromDateValid = true;
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].startdate = data;
+        }
+      } else {
+        new_data[index].fromDateValid = false;
+        new_data[index].startdate = data;
+      }
     } else if (check == "todate") {
-      new_data[index].enddate = new Date(data);
-    }
+      new_data[index].enddate = data;
 
+      if (new_data[index].startdate) {
+        if (new Date(data) < new Date(new_data[index].startdate)) {
+          new_data[index].fromDateValid = true;
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].enddate = data;
+        }
+      } else {
+        new_data[index].fromDateValid = false;
+        new_data[index].enddate = data;
+      }
+    }
     setFormData(new_data);
   };
-
   async function onSubmit() {
-    const keyToCheck = "label";
-
-    // const emptyKeyIndexes = formDetails
-    //   .map((item, index) => (item.education[keyToCheck] == "" ? index : null))
-    //   .filter((index) => index !== null);
-    //
-    // if (emptyKeyIndexes.length > 0) {
-    //   let new_data = [...formDetails];
-
-    //   for (let i = 0; i < emptyKeyIndexes.length; i++) {
-    //     new_data[emptyKeyIndexes[i]].error = true;
-    //   }
-    //   return;
-    // }
-
     let error_data = [...formDetails];
     for (let i = 0; i < formDetails.length; i++) {
       if (formDetails[i].education.label == "") {
@@ -269,7 +288,6 @@ export function EducationModal(props) {
       }
     }
 
-    let new_data = [...formDetails];
     let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
     let filtered_data = formDetails.map(({ skillid: value, ...rest }) => {
@@ -317,39 +335,46 @@ export function EducationModal(props) {
   }
 
   return (
-    <div>
+    <div className="profile-view">
       {formDetails.map((item, index) => (
         <Form>
           {check == "add" ? (
             <Row>
               <Col>
-                {index < formDetails.length - 1 ? (
-                  <Label
-                    className="float-end"
-                    style={{
-                      cursor: "pointer",
-                      color: "#2f479b",
-                      borderBottom: "1px solid #2f479b",
-                      fontWeight: "500",
-                    }}
-                    onClick={() => removeTabs(index)}
-                  >
-                    Remove
-                  </Label>
-                ) : (
-                  <Label
-                    className="float-end"
-                    onClick={() => addMoreTabs(index + 1)}
-                    style={{
-                      cursor: "pointer",
-                      color: "#2f479b",
-                      borderBottom: "1px solid #2f479b",
-                      fontWeight: "500",
-                    }}
-                  >
-                    +Add More
-                  </Label>
-                )}
+                <div className="float-end">
+                  {formDetails.length > 1 ? (
+                    <Label
+                      className="me-2"
+                      style={{
+                        cursor: "pointer",
+                        color: "#2f479b",
+                        borderBottom: "1px solid #2f479b",
+                        fontWeight: "500",
+                      }}
+                      onClick={() => removeTabs(index)}
+                    >
+                      Remove
+                    </Label>
+                  ) : (
+                    <></>
+                  )}
+                  {index == formDetails.length - 1 ? (
+                    <Label
+                      className="float-end"
+                      onClick={() => addMoreTabs(index + 1)}
+                      style={{
+                        cursor: "pointer",
+                        color: "#2f479b",
+                        borderBottom: "1px solid #2f479b",
+                        fontWeight: "500",
+                      }}
+                    >
+                      +Add More
+                    </Label>
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </Col>
             </Row>
           ) : (
@@ -359,7 +384,7 @@ export function EducationModal(props) {
             <Col md={4}>
               <FormGroup>
                 <Label for="levelofeducation" className="input-label">
-                  Level of Education
+                  Level of education
                   <span className="required-icon"> *</span>
                 </Label>
 
@@ -382,7 +407,7 @@ export function EducationModal(props) {
             <Col md={4}>
               <FormGroup>
                 <Label for="studyField" className="input-label">
-                  Field of Study
+                  Field of study
                 </Label>
                 <input
                   placeholder="Enter Field of Study"
@@ -509,6 +534,11 @@ export function EducationModal(props) {
                     }
                   />
                 </InputGroup>
+                <div className="filter-info-text filter-error-msg">
+                  {item.fromDateValid
+                    ? "From Date should be less than To Date"
+                    : ""}
+                </div>
               </FormGroup>
             </Col>
             <Col md={4}>
