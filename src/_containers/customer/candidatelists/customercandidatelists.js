@@ -278,6 +278,7 @@ export const CustomerCandidateLists = (props) => {
               id="customerJobList"
               name="customerJobList"
             >
+              <option value={""}></option>
               {jobList.map((data) => {
                 return (
                   <option value={data.jobid} key={data.jobid}>
