@@ -311,30 +311,40 @@ export function ResumeDetails(props) {
                 >
                   Build your own Resume!!
                 </div>
-                <div
+                {/* <div
                   className="mb-0 d-flex justify-content-center "
                   style={{ fontWeight: "500", fontSize: "18px" }}
+                >
+                 
+                </div> */}
+
+                <div
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
                 >
                   Please fill Profile, Resume, Qualifications,
                 </div>
                 <div
-                  className="mb-0 d-flex justify-content-center "
-                  style={{ fontWeight: "500", fontSize: "18px" }}
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
                 >
                   Education,Skills, Certifications and
                 </div>
+
                 <div
-                  className="mb-0 d-flex justify-content-center "
-                  style={{ fontWeight: "500", fontSize: "18px" }}
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
                 >
-                  licenses, Additional Information,Job preferences
+                  licenses, Additional Information, Job
                 </div>
+
                 <div
-                  className="mb-0 d-flex justify-content-center "
-                  style={{ fontWeight: "500", fontSize: "18px" }}
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
                 >
-                  to create your own template
+                  preferences to create your own template
                 </div>
+
                 <Row>
                   <Col className="d-flex justify-content-center interview-btn">
                     <Button

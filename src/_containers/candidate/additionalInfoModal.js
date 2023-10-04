@@ -28,7 +28,7 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
 
-  const [check, setCheck] = useState(true);
+  const [check, setCheck] = useState(props.check);
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [isSave, setSave] = useState(true);
   const [success, setSuccess] = useState(false);
@@ -52,7 +52,6 @@ export function AdditionalInfoModal(props) {
         },
       ];
     } else {
-      setCheck(false);
       data = [
         {
           candidateadditioninformationid:
@@ -95,7 +94,7 @@ export function AdditionalInfoModal(props) {
   const removeTabs = function (index) {
     let new_data = [...formDetails];
 
-    new_data.language.splice(index, 1);
+    new_data.splice(index, 1);
 
     setFormData(new_data);
   };
@@ -129,6 +128,11 @@ export function AdditionalInfoModal(props) {
       new_data[index].proficiency = data;
     } else if (check == "summary") {
       new_data[index].summary = data;
+      if (data != "") {
+        new_data[index].error = false;
+      } else {
+        new_data[index].error = true;
+      }
     } else if (check == "additionalInfo") {
       new_data[index].additionalInfo = data;
     }
@@ -162,7 +166,7 @@ export function AdditionalInfoModal(props) {
         summary: rest.summary,
         language: rest.language,
         proficiencyid: Number(rest.proficiency),
-        additionalinformation: rest.additionalInfo,
+        additionalinformation: rest.additionalInfo ? rest.additionalInfo : "",
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
         isactive: true,

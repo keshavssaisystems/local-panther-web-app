@@ -247,7 +247,7 @@ export function CertificationsModal(props) {
           ) : (
             <></>
           )} */}
-
+        {/* 
         <Row>
           {typeList.map((item) => (
             <Col>
@@ -266,9 +266,40 @@ export function CertificationsModal(props) {
               </FormGroup>
             </Col>
           ))}
-        </Row>
+        </Row> */}
 
         <Row>
+          <Col md={4}>
+            <div>
+              <FormGroup>
+                <Label for={"experienceLevel"} className="fw-semi-bold">
+                  Certification type
+                </Label>
+
+                <Input
+                  id={"eligibility"}
+                  name={"eligibility"}
+                  type={"select"}
+                  onChange={(evt) =>
+                    onHandleInputChange("certificateType", evt.target.value)
+                  }
+                >
+                  <option key={0}>Select Certification Type</option>
+                  {typeList?.length > 0 &&
+                    typeList?.map((options) => (
+                      <option
+                        selected={options.id == formDetails.certificationtypeid}
+                        key={options.id}
+                        value={options.id}
+                      >
+                        {options.name}
+                      </option>
+                    ))}
+                </Input>
+              </FormGroup>
+            </div>
+          </Col>
+
           <Col md={4}>
             <FormGroup>
               <Label for="certification" className="input-label">
@@ -312,11 +343,10 @@ export function CertificationsModal(props) {
           </Col>
         </Row>
         <Row className="mt-2">
+          <Label>Time period</Label>
+
           <Col md={4}>
             <FormGroup>
-              <Label for="fromdate" className="input-label">
-                From date
-              </Label>
               <InputGroup>
                 <div className="input-group-text">
                   <FontAwesomeIcon icon={faCalendarAlt} />
@@ -328,6 +358,7 @@ export function CertificationsModal(props) {
                   placeholderText="DD/MM/YYYY"
                   onSelect={(evt) => onHandleInputChange("fromdate", evt)}
                   selected={formDetails.startdate}
+                  showYearDropdown={true}
                 />
               </InputGroup>
               <div className="filter-info-text filter-error-msg">
@@ -339,9 +370,6 @@ export function CertificationsModal(props) {
           </Col>
           <Col md={4}>
             <FormGroup>
-              <Label for="todate" className="input-label">
-                To date
-              </Label>
               <InputGroup>
                 <div className="input-group-text">
                   <FontAwesomeIcon icon={faCalendarAlt} />
@@ -352,6 +380,7 @@ export function CertificationsModal(props) {
                   className="form-control"
                   placeholderText="DD/MM/YYYY"
                   selected={formDetails.enddate}
+                  showYearDropdown={true}
                   onSelect={(evt) => onHandleInputChange("todate", evt)}
                 />
               </InputGroup>
