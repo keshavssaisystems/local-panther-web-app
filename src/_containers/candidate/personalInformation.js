@@ -68,9 +68,10 @@ export function PersonalInformation(props) {
     ),
     genderList: useSelector((state) => state.gender.genderList),
     raceList: useSelector((state) => state.ethnicity.ethnicityList),
-    eligibilityList: props.dropDownData.eligibilityDropDown,
+    eligibilityList: useSelector(
+      (state) => state.getProfile.dropdownLists.eligibilityDropDown
+    ),
   });
-
   const [selectedCandidate_temp, setSelectedCandidateTemp] = useState({
     personalInfo: props.profileInfo.personalInfo,
   });
@@ -134,7 +135,7 @@ export function PersonalInformation(props) {
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
-  const [dob, setDOB] = useState(new Date());
+  const [dob, setDOB] = useState(null);
   const [isContactModal, setContactModal] = useState(false);
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -245,6 +246,7 @@ export function PersonalInformation(props) {
         isreadytoworkimmediately:
           new_data.personalInfo.isreadytoworkimmediately,
         isactive: true,
+        dob: new_data.dob,
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
       };
@@ -351,14 +353,14 @@ export function PersonalInformation(props) {
         data == "on" ? true : false;
     }
 
-    setSelectedCandidate(new_data);
+    setSelectedCandidateTemp(new_data);
   };
 
   return (
     <div>
       <Fragment>
         <Card className="mb-3 profile-view">
-          {selectedCandidate.personalInfo.email ? (
+          {selectedCandidate_temp.personalInfo.email ? (
             <Row className="g-0">
               <Col sm="12" md="12" xl="6" className=" mb-0">
                 <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
@@ -373,19 +375,20 @@ export function PersonalInformation(props) {
                   <div className="widget-chart-content">
                     <div>
                       <strong className="candidate-name mb-0">
-                        {selectedCandidate.personalInfo.firstname +
+                        {selectedCandidate_temp.personalInfo.firstname +
                           " " +
-                          selectedCandidate.personalInfo.lastname}
+                          selectedCandidate_temp.personalInfo.lastname}
                       </strong>
                       <p className="widget-description text-focus content-text mt-0">
-                        {selectedCandidate.personalInfo.position}
+                        {selectedCandidate_temp.personalInfo.position}
                       </p>
                       <p className="candidate-label mt-0 mb-0">
-                        {selectedCandidate.personalInfo.organization ==
+                        {selectedCandidate_temp.personalInfo.organization ==
                           "Not working" ||
-                        selectedCandidate.personalInfo.organization != ""
-                          ? "at " + selectedCandidate.personalInfo.organization
-                          : selectedCandidate.personalInfo.organization}
+                        selectedCandidate_temp.personalInfo.organization != ""
+                          ? "at " +
+                            selectedCandidate_temp.personalInfo.organization
+                          : selectedCandidate_temp.personalInfo.organization}
                       </p>
                     </div>
                     <div>
@@ -394,7 +397,7 @@ export function PersonalInformation(props) {
                           <Label className="candidate-label mb-0">
                             Employement eligibility:{" "}
                             <strong className="content-text">
-                              {selectedCandidate.personalInfo.eligibility}
+                              {selectedCandidate_temp.personalInfo.eligibility}
                             </strong>
                           </Label>
                         </Col>
@@ -402,7 +405,7 @@ export function PersonalInformation(props) {
                           <Label className="candidate-label mt-0">
                             Ready to work immediately:{" "}
                             <strong className="content-text">
-                              {selectedCandidate.personalInfo.readyToWork}{" "}
+                              {selectedCandidate_temp.personalInfo.readyToWork}{" "}
                             </strong>
                           </Label>
                         </Col>
@@ -418,7 +421,7 @@ export function PersonalInformation(props) {
                     <BsTelephone className="personal-sec-icon me-2" />
                     <span className="content-text mt-3">
                       {maskPhoneNumber(
-                        selectedCandidate.personalInfo.phonenumber
+                        selectedCandidate_temp.personalInfo.phonenumber
                       )}
                     </span>
                   </Col>
@@ -427,25 +430,25 @@ export function PersonalInformation(props) {
                   <Col className="mb-2">
                     <BsEnvelope className="personal-sec-icon me-2" />
                     <span className="content-text">
-                      {selectedCandidate.personalInfo.email}
+                      {selectedCandidate_temp.personalInfo.email}
                     </span>
                   </Col>
                 </Row>
                 <Row>
                   <Col className="mb-2">
-                    {selectedCandidate.personalInfo.city != "" ||
-                    selectedCandidate.personalInfo.country != "" ? (
+                    {selectedCandidate_temp.personalInfo.city != "" ||
+                    selectedCandidate_temp.personalInfo.country != "" ? (
                       <div>
                         <BsPinMap className="personal-sec-icon me-2" />
                         <span className="content-text">
-                          {selectedCandidate.personalInfo.city
-                            ? selectedCandidate.personalInfo.city +
+                          {selectedCandidate_temp.personalInfo.city
+                            ? selectedCandidate_temp.personalInfo.city +
                               ", " +
-                              selectedCandidate.personalInfo.state
+                              selectedCandidate_temp.personalInfo.state
                             : ""}
 
-                          {selectedCandidate.personalInfo.country
-                            ? ", " + selectedCandidate.personalInfo.country
+                          {selectedCandidate_temp.personalInfo.country
+                            ? ", " + selectedCandidate_temp.personalInfo.country
                             : ""}
                         </span>
                       </div>
@@ -469,7 +472,9 @@ export function PersonalInformation(props) {
                         <div>
                           <BsBalloon className="personal-sec-icon me-2" />
                           <span className="content-text mt-3">
-                            {formatDate(selectedCandidate.personalInfo.dob)}
+                            {formatDate(
+                              selectedCandidate_temp.personalInfo.dob
+                            )}
                           </span>
                         </div>
                       ) : (
@@ -479,11 +484,11 @@ export function PersonalInformation(props) {
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      {selectedCandidate.personalInfo.gender != "" ? (
+                      {selectedCandidate_temp.personalInfo.gender != "" ? (
                         <div>
                           <BsGenderMale className="personal-sec-icon me-2" />
                           <span className="content-text">
-                            {selectedCandidate.personalInfo.gender}
+                            {selectedCandidate_temp.personalInfo.gender}
                           </span>
                         </div>
                       ) : (
@@ -493,11 +498,11 @@ export function PersonalInformation(props) {
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      {selectedCandidate.personalInfo.ethnicity != "" ? (
+                      {selectedCandidate_temp.personalInfo.ethnicity != "" ? (
                         <div>
                           <BsPeople className="personal-sec-icon me-2" />
                           <span className="content-text">
-                            {selectedCandidate.personalInfo.ethnicity}
+                            {selectedCandidate_temp.personalInfo.ethnicity}
                           </span>
                         </div>
                       ) : (
@@ -669,7 +674,11 @@ export function PersonalInformation(props) {
                         <DatePicker
                           className="form-control"
                           placeholderText="DD/MM/YYYY"
-                          selected={dob}
+                          selected={
+                            selectedCandidate.personalInfo.dob
+                              ? new Date(selectedCandidate.personalInfo.dob)
+                              : null
+                          }
                           showYearDropdown={true}
                           onChange={(evt) => selectDate(evt)}
                         />
@@ -773,7 +782,7 @@ export function PersonalInformation(props) {
                         name="zipCode"
                         id="zipCode"
                         maxLength={50}
-                        value={selectedCandidate.personalInfo.zipcode}
+                        value={selectedCandidate_temp.personalInfo.zipcode}
                         onInput={(evt) =>
                           onHandleInputChange("zip", evt.target.value)
                         }
@@ -792,7 +801,7 @@ export function PersonalInformation(props) {
                       <AsyncSelect
                         name="gender"
                         placeholder="Select"
-                        defaultOptions={selectedCandidate.genderList}
+                        defaultOptions={selectedCandidate_temp.genderList}
                         isMulti={false}
                         value={genderSelect}
                         onChange={(evt) => onSelectGenderDropdown(evt)}
@@ -807,7 +816,7 @@ export function PersonalInformation(props) {
                       <AsyncSelect
                         name="race"
                         placeholder="Select"
-                        defaultOptions={selectedCandidate.raceList}
+                        defaultOptions={selectedCandidate_temp.raceList}
                         isMulti={false}
                         value={raceSelect}
                         onChange={(evt) => onSelectRaceDropdown(evt)}
@@ -824,7 +833,8 @@ export function PersonalInformation(props) {
                           type="radio"
                           checked={
                             item.id ==
-                            selectedCandidate.personalInfo.employmenteligiblity
+                            selectedCandidate_temp.personalInfo
+                              .employmenteligiblity
                           }
                           onClick={(evt) =>
                             onHandleInputChange("authorization", item.id)
@@ -844,7 +854,7 @@ export function PersonalInformation(props) {
                         name="immediateJoin"
                         type="checkbox"
                         checked={
-                          selectedCandidate.personalInfo
+                          selectedCandidate_temp.personalInfo
                             .isreadytoworkimmediately
                         }
                         onChange={(evt) =>
