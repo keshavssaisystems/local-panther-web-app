@@ -46,6 +46,8 @@ export function AdditionalInformation(props) {
   const [deleteId, setDeleteId] = useState(0);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
+  const [check, setCheck] = useState("");
+
   const additional_details = useSelector(
     (state) => state.getProfile.profileData.additionalInfo
   );
@@ -84,7 +86,9 @@ export function AdditionalInformation(props) {
     let new_data;
     if (check == "add") {
       new_data = data;
+      setCheck("add");
     } else {
+      setCheck("edit");
       new_data = additionalDetails
         ? additionalDetails.find(
             (x) =>
@@ -257,7 +261,7 @@ export function AdditionalInformation(props) {
             </ModalHeader>
             <ModalBody>
               <AdditionalInfoModal
-                check={"add"}
+                check={check}
                 onCallAdditionalInfo={() => handlePageChange()}
                 selected={selected}
               />

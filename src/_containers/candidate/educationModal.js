@@ -527,6 +527,7 @@ export function EducationModal(props) {
                     name="fromDate"
                     id="fromDate"
                     placeholderText="MM/DD/YYYY"
+                    showYearDropdown={true}
                     selected={item.startdate}
                     className="form-control"
                     onChange={(evt) =>
@@ -555,6 +556,7 @@ export function EducationModal(props) {
                     id="toDate"
                     className="form-control"
                     placeholderText="MM/DD/YYYY"
+                    showYearDropdown={true}
                     selected={item.enddate}
                     onChange={(evt) =>
                       onHandleInputChange("todate", evt, index)
