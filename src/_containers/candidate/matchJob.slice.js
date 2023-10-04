@@ -34,7 +34,7 @@ function createExtraActions() {
         candidateId
       }) =>
         await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetRecommendedJobAndCandidateList?pageSize=${10}&candidateId=${candidateId}`
+          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList`
         )
     );
   }
@@ -50,11 +50,13 @@ function createExtraReducers() {
         .addCase(pending, (state) => {
           state.matchedJob = { loading: true };
         })
-        .addCase(fulfilled, (state, action) => {
-          state.matchedJob = action.payload.data;
-          state.totalRows = action.payload.data.totalRows;
+        .addCase(fulfilled, (state, { payload }) => {
+          state.loading = false;
+          state.matchedJob = payload.data;
+          state.totalRows = payload.data.totalRows;
         })
         .addCase(rejected, (state, action) => {
+          state.loading = false;
           state.matchedJob = { error: action.error };
         });
     }

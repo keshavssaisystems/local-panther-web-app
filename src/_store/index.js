@@ -29,7 +29,7 @@ import { payPeriodTypeReducer } from "../_containers/customer/createJob/payperio
 import { preScreenQuestionReducer } from "../_containers/customer/createJob/prescreenquestions.slice";
 import { previousJobListReducer } from "../_containers/customer/createJob/previousjoblist.slice";
 import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
-import { candidatejobListTabReducer } from "_containers/candidate/candidateTablist.slice";
+import { candidateJobListTabReducer } from "_containers/candidate/candidateTablist.slice";
 import { scheduleInterviewReducer } from "_containers/customer/scheduleInterview/scheduleinterview.slice";
 import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
 import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
@@ -139,6 +139,6 @@ export const store = configureStore({
     additionalInfoReducer: additionalInfoDataReducer,
     custJobListReducer: custJobListReducer,
     candidateMatchJob: matchedJobReducer,
-    tabListReducer: candidatejobListTabReducer,
+    tabListReducer: candidateJobListTabReducer,
   },
 });

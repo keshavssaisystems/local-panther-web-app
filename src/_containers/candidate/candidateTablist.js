@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
 import classnames from "classnames";
-import { CandidateCardView } from "_components/list/cardview";
 import { JobListing } from "../../_components/job/JobListing";
 import { jobListActions, matchedJobActions } from "_store";
 import { CandidateListView } from "_components/list/listview";
 
 import { CardPagination } from "_components/common/cardpagination";
-import { pageSize } from "_helpers/constants";
 import { useSelector, useDispatch } from "react-redux";
 import { cardPageSize, listPageSize } from "_helpers/constants";
-import { candidatejobListTabActions } from "./candidateTablist.slice";
+import { candidateJobListTabActions } from "_store";
 
 import "./candidateTablist.scss";
 
@@ -22,16 +20,14 @@ export const CandidateTablist = (props) => {
     const [page, setPage] = useState(1);
     const { id } = useParams();
     let JobList = useSelector((state) => state.jobList);
-    const candidateList = useSelector((state) => state.tabListReducer.jobTabList);
+
     const candidateListdata = useSelector(
         (state) => state.tabListReducer.candidatejobTabList
     );
 
     const { matchedJob } = useSelector((state) => state.candidateMatchJob);
-    console.log('jk',matchedJob)
     const { totalRecords } = useSelector((state) => state.tabListReducer);
-    const { loading } = useSelector((state) => state.tabListReducer);
-
+    
     const onPageChange = (page) => {
         let filterOnPageChange = {
             jobId: "",
@@ -98,11 +94,11 @@ export const CandidateTablist = (props) => {
         let candObj = {
             pageNumber: pageNo,
             pageSize: val === "matched" ? cardPageSize : listPageSize,
-            candidateRecommendedJobStatusId: candidateRecommendedJobStatusId,
+            ...(candidateRecommendedJobStatusId && { candidateRecommendedJobStatusId })
         };
 
 
-        dispatch(candidatejobListTabActions.getcandidateJobList(candObj));
+        dispatch(candidateJobListTabActions.getRecommendedJobListThunk(candObj));
     };
 
     useEffect(() => {
@@ -121,7 +117,7 @@ export const CandidateTablist = (props) => {
             jobId: "",
         };
 
-        dispatch(candidatejobListTabActions.getcandidateJobList(candObj));
+        dispatch(candidateJobListTabActions.getRecommendedJobListThunk(candObj));
     };
 
     return (
