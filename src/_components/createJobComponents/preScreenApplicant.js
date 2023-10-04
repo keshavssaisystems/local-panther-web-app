@@ -21,7 +21,6 @@ export function PreScreenApplicant({
     previousData.forEach((element) => {
       prevDataArr.push(element.prescreenquestion);
     });
-    console.log(prevDataArr);
   }
   const [successMessage, setSuccessMessage] = useState(false);
   const inputArr = [
