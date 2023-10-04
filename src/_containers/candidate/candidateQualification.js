@@ -306,7 +306,6 @@ export function CandidateQualification(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              Thank you!
             </div>
             <div>
               <Row>
