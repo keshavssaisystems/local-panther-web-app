@@ -143,9 +143,6 @@ export function CreateJobWizard() {
           jobList={jobList}
           postSearch={(e) => getSearchValue(e)}
           readyForNextStep={(e) => setButtonDisable(e)}
-          onPageChange={onPageChange}
-          page={page}
-          setPage={setPage}
         />
       ),
     },

@@ -2,18 +2,10 @@ import React, { useState } from "react";
 import { Row, Col, Table, Input, FormGroup, Form } from "reactstrap";
 import cx from "classnames";
 import "./createJob.scss";
-import { CardPagination } from "_components/common/cardpagination";
 import moment from "moment/moment";
 import { JobShortDetailModal } from "./jobShortDetailModal";
 
-export default function SearchPreviousJob({
-  getJobId,
-  jobList,
-  postSearch,
-  page,
-  setPage,
-  onPageChange,
-}) {
+export default function SearchPreviousJob({ getJobId, jobList, postSearch }) {
   let current = Number(jobList.totalRows) / 5;
   if (current * 5 !== jobList.totalRows) {
     current++;
@@ -38,10 +30,6 @@ export default function SearchPreviousJob({
   };
   const getJobIdOnClick = (event) => {
     getJobId(event.target.value);
-  };
-  const handlePageChange = (page) => {
-    setPage(page);
-    onPageChange(page);
   };
   return (
     <>
@@ -112,17 +100,6 @@ export default function SearchPreviousJob({
                 ))}
             </tbody>
           </Table>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={11}>
-          <div className="float-end custom-pagination-div">
-            <CardPagination
-              totalPages={current}
-              pageIndex={page}
-              onCallBack={(evt) => handlePageChange(evt)}
-            ></CardPagination>
-          </div>
         </Col>
       </Row>
     </>

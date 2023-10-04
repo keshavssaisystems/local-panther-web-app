@@ -217,7 +217,7 @@ export function BasicInformation({
                 id={"companyName"}
                 name={"companyName"}
                 type={"text"}
-                value={"Saisystems Technology"}
+                value={"Adams - Runolfsdottir"}
                 disabled
               />
               {companyValidation === true && (
