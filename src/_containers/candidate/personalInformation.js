@@ -74,6 +74,11 @@ export function PersonalInformation(props) {
   });
   const [selectedCandidate_temp, setSelectedCandidateTemp] = useState({
     personalInfo: props.profileInfo.personalInfo,
+    genderList: useSelector((state) => state.gender.genderList),
+    raceList: useSelector((state) => state.ethnicity.ethnicityList),
+    eligibilityList: useSelector(
+      (state) => state.getProfile.dropdownLists.eligibilityDropDown
+    ),
   });
 
   const [requiredErrors, setRequiredErros] = useState({
@@ -183,14 +188,7 @@ export function PersonalInformation(props) {
 
     return maskedPhoneNumber;
   }
-  // const formatDate = (dateString) => {
-  //   const options = { year: "numeric", month: "short", day: "numeric" };
-  //   const formattedDate = new Date(dateString).toLocaleDateString(
-  //     undefined,
-  //     options
-  //   );
-  //   return formattedDate;
-  // };
+
   async function onSubmit(e) {
     e.preventDefault();
 
@@ -323,6 +321,7 @@ export function PersonalInformation(props) {
   const onHandleInputChange = function (check, data) {
     let new_data = { ...selectedCandidate_temp };
     let errors = { ...requiredErrors };
+
     if (check == "firstname") {
       new_data.personalInfo.firstname = data;
     } else if (check == "lastname") {
@@ -350,10 +349,10 @@ export function PersonalInformation(props) {
       new_data.personalInfo.employmenteligiblity = data;
     } else if (check == "work") {
       new_data.personalInfo.isreadytoworkimmediately =
-        data == "on" ? true : false;
+        !new_data.personalInfo.isreadytoworkimmediately;
     }
 
-    setSelectedCandidateTemp(new_data);
+    setSelectedCandidate(new_data);
   };
 
   return (
@@ -826,7 +825,7 @@ export function PersonalInformation(props) {
                 </Row>
                 <Row>
                   <Col>
-                    {selectedCandidate?.eligibilityList?.map((item) => (
+                    {selectedCandidate_temp?.eligibilityList?.map((item) => (
                       <FormGroup check>
                         <Input
                           name="eligibility"
