@@ -4,7 +4,7 @@ import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 import { Home } from "_containers/home";
 import { Dashboard } from "dashboard";
-import { JobList } from "_containers/customer/jobs/JobList";
+// import { JobList } from "_containers/customer/jobs/JobList";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
@@ -22,6 +22,7 @@ import { CustomerCandidateLists } from "_containers/customer/candidatelists/cust
 import { CandidateTablist } from "_containers/candidate/candidateTablist";
 import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
+import { CustJobList } from "_containers/customer/newjobs/custjobs";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -65,7 +66,7 @@ export function App() {
             path="/job-list"
             element={
               <PrivateRoute>
-                <JobList />
+                <CustJobList />
               </PrivateRoute>
             }
           />
