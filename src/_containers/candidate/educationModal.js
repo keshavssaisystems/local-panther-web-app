@@ -526,7 +526,7 @@ export function EducationModal(props) {
                   <DatePicker
                     name="fromDate"
                     id="fromDate"
-                    placeholderText="DD/MM/YYYY"
+                    placeholderText="MM/DD/YYYY"
                     selected={item.startdate}
                     className="form-control"
                     onChange={(evt) =>
@@ -554,7 +554,7 @@ export function EducationModal(props) {
                     name="toDate"
                     id="toDate"
                     className="form-control"
-                    placeholderText="DD/MM/YYYY"
+                    placeholderText="MM/DD/YYYY"
                     selected={item.enddate}
                     onChange={(evt) =>
                       onHandleInputChange("todate", evt, index)
