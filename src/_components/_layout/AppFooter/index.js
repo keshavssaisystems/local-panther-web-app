@@ -25,7 +25,24 @@ export function AppFooter() {
               </Link>
           </div>
         </div>
-        <div className="app-footer-right"></div>
+        <div className="app-footer-right">
+        <div className="footer-dots">
+            <div className="dots-separator" />
+              <Link
+                to="/security"
+                className="text-primary account-text me-3"
+              >
+                Security
+              </Link>
+            <div className="dots-separator" />
+             <Link
+                to="/contact"
+                className="text-primary account-text me-3"
+              >
+                Contact
+              </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

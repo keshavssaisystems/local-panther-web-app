@@ -24,6 +24,8 @@ import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
+import { Security } from "_containers/security";
+import { Contact } from "_containers/Contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 
 export function App() {
@@ -209,6 +211,8 @@ export function App() {
 
               <Route path="/policy" element={<Policy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/security" element={<Security />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route
