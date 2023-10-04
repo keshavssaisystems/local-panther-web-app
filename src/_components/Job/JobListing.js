@@ -25,10 +25,12 @@ export function JobListing({
   const [selectedJobData, setSelectedJobData] = useState(
     jobData?.length > 0 ? [jobData[0]] : []
   );
+  
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
   }, []);
+
   const getSelectedJob = (jobId) => {
     selectedJobDetails = jobData.filter((element) => {
       return element.jobid === jobId;
@@ -36,6 +38,7 @@ export function JobListing({
     setSelectedJobData(selectedJobDetails);
     setSelectedClass(jobId);
   };
+  
   return (
     <>
       <Col md="4">

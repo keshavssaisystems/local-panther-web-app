@@ -1,6 +1,11 @@
-import React from "react";
-import { Row, Col, Card, CardBody, Button, CardFooter, ButtonGroup } from "reactstrap";
 import "./job.scss";
+import React, { useState } from "react";
+import { Row, Col, Card, CardBody, Button, CardFooter, ButtonGroup } from "reactstrap";
+import moment from "moment/moment";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { useDispatch, useSelector } from "react-redux";
+import { candidateJobListTabActions, candidateAcceptThunk, candidateLikeThunk, candidateMayBeThunk, getRecommendedJobListThunk } from "_store";
+
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
 
@@ -16,8 +21,6 @@ import {
 } from "react-icons/bs";
 
 
-import moment from "moment/moment";
-import { useDispatch } from "react-redux";
 
 export function JobCard({
   name,
@@ -32,7 +35,10 @@ export function JobCard({
   customer,
   additionalData,
 }) {
+
   const dispatch = useDispatch();
+  const { sweetAlert } = useSelector(state => state?.tabListReducer)
+
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -55,22 +61,30 @@ export function JobCard({
   }
 
   const handleLike = (jobId) => {
-    console.log('jobId :>> ', jobId);
-    dispatch()
+    dispatch(candidateLikeThunk(jobId));
+    getRecommendedJobList();
   }
   
   const handleMayBe = (jobId) => {
-    console.log('jobId :>> ', jobId);
-    dispatch()
+    dispatch(candidateMayBeThunk(jobId));
+    getRecommendedJobList();
   }
   
   const handleApply = (jobId) => {
-    console.log('jobId :>> ', jobId);
-    dispatch()
+    dispatch(candidateAcceptThunk(jobId));
+    getRecommendedJobList();
   }
 
   const handleReject = () => {
 
+  }
+
+  const getRecommendedJobList = () => {
+    let payload = {
+      pageNumber: 1,
+      pageSize: 9,
+    };
+    dispatch(getRecommendedJobListThunk(payload))
   }
 
   return (
@@ -196,6 +210,16 @@ export function JobCard({
           </>
         )}
       </Card>
+
+      <>
+        {" "}
+        <SweetAlert
+          title={sweetAlert?.title}
+          show={sweetAlert?.show}
+          type={sweetAlert?.type}
+          onConfirm={() => dispatch(candidateJobListTabActions.closeSweetAlert())}
+        />
+      </>
     </>
   );
 }
