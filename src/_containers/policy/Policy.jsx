@@ -8,6 +8,7 @@ export function Policy() {
     <div>
       <PageTitle heading="Policy" icon={titlelogo} />
       <p>Privacy Policy</p>
+      <h3>Under Construction</h3>
     </div>
   );
 }

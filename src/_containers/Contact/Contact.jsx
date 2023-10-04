@@ -8,6 +8,7 @@ export function Contact() {
     <div>
       <PageTitle heading="Contact" icon={titlelogo} />
       <p>Contact</p>
+      <h3>Under Construction</h3>
     </div>
   );
 }

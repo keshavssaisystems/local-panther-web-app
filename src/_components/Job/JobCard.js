@@ -5,6 +5,7 @@ import moment from "moment/moment";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useDispatch, useSelector } from "react-redux";
 import { candidateJobListTabActions, candidateAcceptThunk, candidateLikeThunk, candidateMayBeThunk, getRecommendedJobListThunk } from "_store";
+import { RejectModal } from "_components/modal/rejectmodal";
 
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
@@ -37,7 +38,11 @@ export function JobCard({
 }) {
 
   const dispatch = useDispatch();
+  const rejectDrpDwnList = useSelector(
+    (state) => state.customerCandidateList.rejectDrpDwnList
+  );
   const { sweetAlert } = useSelector(state => state?.tabListReducer)
+  const [rejectModel, setRejectModel] = useState({ show: false, jobId: 0 });
 
   let recommendedLevel =
     additionalData.avgscore === 10
@@ -75,8 +80,8 @@ export function JobCard({
     getRecommendedJobList();
   }
 
-  const handleReject = () => {
-
+  const handleReject = (jobId) => {
+    setRejectModel({ show: true, jobId })
   }
 
   const getRecommendedJobList = () => {
@@ -190,6 +195,7 @@ export function JobCard({
                     className="btn-icon"
                     color="primary"
                     size="sm"
+                    onClick={() => handleReject(jobId)}
                   >
                     Reject <BsXCircle />
                   </Button>
@@ -211,15 +217,21 @@ export function JobCard({
         )}
       </Card>
 
-      <>
-        {" "}
-        <SweetAlert
-          title={sweetAlert?.title}
-          show={sweetAlert?.show}
-          type={sweetAlert?.type}
-          onConfirm={() => dispatch(candidateJobListTabActions.closeSweetAlert())}
-        />
-      </>
+      <RejectModal
+        isRMOpen={rejectModel.show}
+        onCancelReject={() => setRejectModel({show: false})}
+        // onSubmitReject={(reason, comment) =>
+        //   onSubmitRejectModal(reason, comment)
+        // }
+        rejectDrpDwnList={rejectDrpDwnList}
+      />
+
+      <SweetAlert
+        title={sweetAlert?.title}
+        show={sweetAlert?.show}
+        type={sweetAlert?.type}
+        onConfirm={() => dispatch(candidateJobListTabActions.closeSweetAlert())}
+      />
     </>
   );
 }

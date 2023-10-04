@@ -8,6 +8,7 @@ export function Terms() {
     <div>
       <PageTitle heading="Terms" icon={titlelogo} />
       <p>Terms</p>
+      <h3>Under Construction</h3>
     </div>
   );
 }

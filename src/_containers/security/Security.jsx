@@ -8,6 +8,7 @@ export function Security() {
     <div>
       <PageTitle heading="Security" icon={titlelogo} />
       <p>Security</p>
+      <h3>Under Construction</h3>
     </div>
   );
 }
