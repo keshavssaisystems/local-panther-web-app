@@ -20,7 +20,7 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
-// import { candidateList, totalRecords } from "./data";
+import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
   const [activeTab, setActiveTab] = useState(
@@ -44,13 +44,13 @@ export const CustomerCandidateLists = (props) => {
   const rejectDrpDwnList = useSelector(
     (state) => state.customerCandidateList.rejectDrpDwnList
   );
-  const candidateList = useSelector(
-    (state) => state.customerCandidateList.candidateList
-  );
+  // const candidateList = useSelector(
+  //   (state) => state.customerCandidateList.candidateList
+  // );
 
-  const totalRecords = useSelector(
-    (state) => state.customerCandidateList.totalRecords
-  );
+  // const totalRecords = useSelector(
+  //   (state) => state.customerCandidateList.totalRecords
+  // );
 
   const loading = useSelector((state) => state.customerCandidateList.loading);
   const durationOptions = useSelector(
@@ -105,9 +105,16 @@ export const CustomerCandidateLists = (props) => {
     onGetPageList(page, props.type, id);
   };
   const toggle = (activetab) => {
-    setPageNo(1);
-    setActiveTab(activetab);
-    navigate(`/customer-candidate-${activetab}/${id}`);
+    if (id) {
+      setPageNo(1);
+      setActiveTab(activetab);
+      navigate(`/customer-candidate-${activetab}/${id}`);
+    } else {
+      showSweetAlert({
+        title: "Please select a job from job list.",
+        type: "danger",
+      });
+    }
   };
 
   const onSelectClick = (evt) => {
