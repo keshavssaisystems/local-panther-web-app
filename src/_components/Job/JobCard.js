@@ -1,15 +1,16 @@
 import React from "react";
-import { Row, Col, Card, CardBody,Button } from "reactstrap";
+import { Row, Col, Card, CardBody, Button } from "reactstrap";
 import "./job.scss";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
 
-} from "react-icons/io";
+import {
+
+  BsQuestionCircle,
+  BsCheckCircle,
+  BsXCircle,
+
+} from "react-icons/bs";
 import {
   BsBriefcase,
   BsListStars,
@@ -36,15 +37,15 @@ export function JobCard({
     additionalData.avgscore === 10
       ? 1
       : additionalData.avgscore === 9 || additionalData.avgscore === 8
-      ? 2
-      : 3;
+        ? 2
+        : 3;
   const navigateToJobDetail = () => {
     getSelectedJobId(jobId);
   };
   let skillsData = "-";
-  if (additionalData.jobSkillDtos.length > 0) {
+  if (additionalData?.jobSkillDtos?.length > 0) {
     let skillsList = [];
-    additionalData.jobSkillDtos.forEach((element) => {
+    additionalData?.jobSkillDtos?.forEach((element) => {
       let skillName = element.skillname == null ? "-" : element.skillname;
       skillsList.push(skillName);
     });
@@ -83,7 +84,7 @@ export function JobCard({
               </p>
               <p className="job-details">
                 <BsListStars /> Skills:{" "}
-                {additionalData.jobSkillDtos.length > 0 ? skillsData : "-"}
+                {additionalData.jobSkillDtos?.length > 0 ? skillsData : "-"}
               </p>
               {type === "Recommended" && (
                 <p className="job-details mt-2 recommended-success float-end">
@@ -124,12 +125,12 @@ export function JobCard({
 
 
                   <Button title="liked" className=" btn-icon mt-2" color="light">
-                    <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+                    <BsHandThumbsUp></BsHandThumbsUp>
                   </Button>
 
 
                   <Button title="maybe" className=" btn-icon" color="light">
-                    <IoIosHelp fontSize={"24px"}></IoIosHelp>
+                    <BsQuestionCircle></BsQuestionCircle>
                   </Button>
 
 
@@ -139,7 +140,7 @@ export function JobCard({
                     color="light"
                   // onClick={() => onRejectClick()}
                   >
-                    <IoIosClose fontSize={"24px"}></IoIosClose>
+                    <BsXCircle></BsXCircle>
                   </Button>
 
 
@@ -149,7 +150,7 @@ export function JobCard({
                     className=" btn-icon"
                     color="light"
                   >
-                    <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+                    <BsCheckCircle></BsCheckCircle>
                   </Button>
                 </>)}
             </Col>

@@ -16,10 +16,10 @@ export function JobDetail({ jobDetails, type }) {
     loading = false;
     jobDetail = jobDetails[0];
     jobDetail.jobSkillDtos !== undefined &&
-      jobDetail.jobSkillDtos.map((skills) => skillArray.push(skills.skillname));
-    if (jobDetail.jobSkillDtos.length > 0) {
+      jobDetail?.jobSkillDtos?.map((skills) => skillArray.push(skills.skillname));
+    if (jobDetail?.jobSkillDtos?.length > 0) {
       let skillsList = [];
-      jobDetail.jobSkillDtos.forEach((element) => {
+      jobDetail?.jobSkillDtos.forEach((element) => {
         let skillName = element.skillname == null ? "-" : element.skillname;
         skillsList.push(skillName);
       });
@@ -46,7 +46,7 @@ export function JobDetail({ jobDetails, type }) {
                   : jobDetail.jobCompanyDtos.companyname
               }
               location={
-                jobDetail.jobLocationDtos.length > 0
+                jobDetail?.jobLocationDtos?.length > 0
                   ? jobDetail.jobLocationDtos[0].location
                   : "-"
               }
