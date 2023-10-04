@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
@@ -28,8 +28,13 @@ import { authActions } from "_store";
 
 export function UserBox() {
   const authUser = useSelector(x => x?.auth?.token);
+  const [userDetail, setUserDetail] = useState({})
   const dispatch = useDispatch();
   const logout = () => dispatch(authActions.logout());
+  useEffect(() => {
+    const detail = JSON.parse(localStorage.getItem('userDetails')) || {}
+    setUserDetail({ ...detail });
+  }, [])
 
   // only show nav when logged in
   if (!authUser) return null;
@@ -45,7 +50,7 @@ export function UserBox() {
                   <img
                     width={42}
                     className="rounded-circle"
-                    src={avatar1}
+                    src={userDetail?.Profilephotopath?.length ? userDetail?.Profilephotopath :  avatar1}
                     alt=""
                   />
                   <FontAwesomeIcon
@@ -75,10 +80,10 @@ export function UserBox() {
                             </div>
                             <div className="widget-content-left">
                               <div className="widget-heading">
-                                Alina Mcloughlin
+                                {userDetail?.FirstName} {" "} {userDetail?.LastName}
                               </div>
                               <div className="widget-subheading opacity-8">
-                                A short profile description
+                                {userDetail?.role}
                               </div>
                             </div>
                             <div className="widget-content-right ms-2">
@@ -185,8 +190,8 @@ export function UserBox() {
               </UncontrolledButtonDropdown>
             </div>
             <div className="widget-content-left  ms-3 header-user-info">
-              <div className="widget-heading">Alina Mclourd</div>
-              <div className="widget-subheading">VP People Manager</div>
+              <div className="widget-heading">{userDetail.FirstName} {" "} {userDetail.LastName}</div>
+              <div className="widget-subheading">{userDetail.role}</div>
             </div>
           </div>
         </div>

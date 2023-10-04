@@ -1,24 +1,23 @@
 import React from "react";
-import { Row, Col, Card, CardBody, Button } from "reactstrap";
+import { Row, Col, Card, CardBody, Button, CardFooter, ButtonGroup } from "reactstrap";
 import "./job.scss";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
 
-import {
-
-  BsQuestionCircle,
-  BsCheckCircle,
-  BsXCircle,
-
-} from "react-icons/bs";
 import {
   BsBriefcase,
   BsListStars,
   BsFillFlagFill,
   BsHandThumbsUp,
   BsFillHandThumbsUpFill,
+  BsQuestionCircle,
+  BsCheckCircle,
+  BsXCircle,
 } from "react-icons/bs";
+
+
 import moment from "moment/moment";
+import { useDispatch } from "react-redux";
 
 export function JobCard({
   name,
@@ -33,6 +32,7 @@ export function JobCard({
   customer,
   additionalData,
 }) {
+  const dispatch = useDispatch();
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -53,6 +53,26 @@ export function JobCard({
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
+
+  const handleLike = (jobId) => {
+    console.log('jobId :>> ', jobId);
+    dispatch()
+  }
+  
+  const handleMayBe = (jobId) => {
+    console.log('jobId :>> ', jobId);
+    dispatch()
+  }
+  
+  const handleApply = (jobId) => {
+    console.log('jobId :>> ', jobId);
+    dispatch()
+  }
+
+  const handleReject = () => {
+
+  }
+
   return (
     <>
       <Card
@@ -119,43 +139,62 @@ export function JobCard({
                   </p>
                 )}
               </div>
-              {type === "Candidate" && (
-                <>
-
-
-
-                  <Button title="liked" className=" btn-icon mt-2" color="light">
-                    <BsHandThumbsUp></BsHandThumbsUp>
-                  </Button>
-
-
-                  <Button title="maybe" className=" btn-icon" color="light">
-                    <BsQuestionCircle></BsQuestionCircle>
-                  </Button>
-
-
-                  <Button
-                    title="reject"
-                    className="btn-icon"
-                    color="light"
-                  // onClick={() => onRejectClick()}
-                  >
-                    <BsXCircle></BsXCircle>
-                  </Button>
-
-
-
-                  <Button
-                    title="Apply"
-                    className=" btn-icon"
-                    color="light"
-                  >
-                    <BsCheckCircle></BsCheckCircle>
-                  </Button>
-                </>)}
+              
             </Col>
           </Row>
-        </CardBody>
+        </CardBody>        
+        {type === "Candidate" && (
+          <>
+            <CardFooter className="auto-margin">
+              <Row noGutters>
+                <ButtonGroup className="card-btn-grp" size="sm">
+                  <Button
+                    outline
+                    title="liked"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleLike(jobId)}
+                  >
+                    Like <BsHandThumbsUp />
+                  </Button>
+
+                  <Button
+                    outline
+                    title="maybe"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleMayBe(jobId)}
+                  >
+                    Maybe <BsQuestionCircle />
+                  </Button>
+
+                  <Button
+                    outline
+                    title="reject"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                  >
+                    Reject <BsXCircle />
+                  </Button>
+
+                  <Button
+                    outline
+                    title="schedule"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleApply(jobId)}
+                  >
+                    Apply <BsCheckCircle />
+                  </Button>
+                </ButtonGroup>
+              </Row>
+            </CardFooter>
+          </>
+        )}
       </Card>
     </>
   );
