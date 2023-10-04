@@ -1,10 +1,11 @@
 import React from "react";
-import { Card, Col } from "reactstrap";
+import { Card, Col, Row } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import { ButtonWithCount } from "../../../_components/jobDetailComponents/ButtonWithCount";
 import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsHeader";
 import Loader from "react-loaders";
+import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 
 export function CustJobDetail({ jobDetails, type }) {
@@ -107,6 +108,61 @@ export function CustJobDetail({ jobDetails, type }) {
     }
   };
 
+  const returnAdditionalCriteria = () => {
+    if (
+      jobDetail?.jobKeyQualificationDtos &&
+      jobDetail?.jobKeyQualificationDtos?.length > 0
+    ) {
+      return (
+        <ul>
+          {jobDetail?.jobKeyQualificationDtos.map((item) => (
+            <li key={item.skillid}>
+              <Row>
+                <Col md={9} lg={9}>
+                  {item.skillname}
+                </Col>
+                <Col md={3} lg={3} className="right-align">
+                  {item.isrequired ? (
+                    <img
+                      src={customerIcons.green_check}
+                      alt="green check"
+                    ></img>
+                  ) : (
+                    <img
+                      src={customerIcons.yellow_check}
+                      alt="yellow check"
+                    ></img>
+                  )}
+                </Col>
+              </Row>
+            </li>
+          ))}
+        </ul>
+      );
+    } else {
+      return "";
+    }
+  };
+
+  const returnPrescreenInfo = () => {
+    if (
+      jobDetail?.jobPrescreenApplicationDtos &&
+      jobDetail?.jobPrescreenApplicationDtos?.length > 0
+    ) {
+      return (
+        <ul>
+          {jobDetail?.jobPrescreenApplicationDtos.map((item) => (
+            <li key={item.jobprescreenapplicationid}>
+              {item.prescreenquestion}
+            </li>
+          ))}
+        </ul>
+      );
+    } else {
+      return "";
+    }
+  };
+
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -204,12 +260,24 @@ export function CustJobDetail({ jobDetails, type }) {
             />
 
             <HeadingAndDetailWithoutIcon
-              heading={"Additional crieteria for role"}
-              detail={""}
+              heading={"Additional crieteria for the role"}
+              detail={
+                jobDetail?.jobKeyQualificationDtos &&
+                jobDetail?.jobKeyQualificationDtos?.length > 0
+                  ? returnAdditionalCriteria()
+                  : ""
+              }
+              type={"list"}
             />
             <HeadingAndDetailWithoutIcon
               heading={"Pre-screen applicants"}
-              detail={""}
+              detail={
+                jobDetail?.jobPrescreenApplicationDtos &&
+                jobDetail?.jobPrescreenApplicationDtos?.length > 0
+                  ? returnPrescreenInfo()
+                  : ""
+              }
+              type={"list"}
             />
             {type === "Open" && (
               <div className="p-3 mt-3 align-left custom-footer-section">

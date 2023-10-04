@@ -119,6 +119,8 @@ export function App() {
             path="/customer-candidate-rejected/:id"
             element={<CustomerCandidateLists type={"rejected"} />}
           />
+
+          <Route path="/candidate-list" element={<CustomerCandidateLists />} />
         </>
       );
     } else {

@@ -150,7 +150,7 @@ export const CustJobList = () => {
           )}
         </Row>
         <Row>
-          <Col>
+          <Col md={4} lg={4}>
             {jobList?.length > 0 ? (
               <>
                 <CardPagination

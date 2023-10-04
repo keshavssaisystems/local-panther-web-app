@@ -23,7 +23,9 @@ import "./customercandidatelist.scss";
 // import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
-  const [activeTab, setActiveTab] = useState(props.type);
+  const [activeTab, setActiveTab] = useState(
+    props.type ? props.type : "matched"
+  );
 
   const [pageNo, setPageNo] = useState(1);
   const { id } = useParams();
@@ -64,16 +66,35 @@ export const CustomerCandidateLists = (props) => {
     onGetPageList(pageNo, props.type, id);
   }, [props.type, id]);
 
+  const returnStatusId = () => {
+    if (props.type === "liked") {
+      return 1;
+    } else if (props.type === "maybe") {
+      return 2;
+    } else if (props.type === "applied") {
+      return 3;
+    } else if (props.type === "scheduled") {
+      return 4;
+    } else if (props.type === "accepted") {
+      return 5;
+    } else if (props.type === "rejected") {
+      return 6;
+    } else {
+      return "";
+    }
+  };
+
   const onGetPageList = (pageNo, type, id) => {
     let candObj = {
       pageNumber: pageNo,
       pageSize: type === "matched" ? cardPageSize : listPageSize,
-      isCustomerLike: type === "liked",
-      isCustomerMaybe: type === "maybe",
-      isCustomerAccepted: type === "accepted",
-      isCustomerReject: type === "rejected",
-      isCustomerScheduled: type === "scheduled",
-      isCandidateApply: type === "applied",
+      // isCustomerLike: type === "liked",
+      // isCustomerMaybe: type === "maybe",
+      // isCustomerAccepted: type === "accepted",
+      // isCustomerReject: type === "rejected",
+      // isCustomerScheduled: type === "scheduled",
+      // isCandidateApply: type === "applied,
+      customerRecommendedJobStatusId: returnStatusId(),
       jobId: id,
     };
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
