@@ -16,6 +16,8 @@ import {
   BsFillHandThumbsUpFill,
 } from "react-icons/bs";
 import moment from "moment/moment";
+import customerIcons from "../../../assets/utils/images/customer";
+
 import "../../../_components/job/job.scss";
 
 export function CustJobCard({
@@ -51,6 +53,35 @@ export function CustJobCard({
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
+
+  const renderStatusIcon = (data) => {
+    if (data.isclosed) {
+      return (
+        <div>
+          {" "}
+          <img src={customerIcons.closed_ic} alt="closed icon"></img>{" "}
+          <img src={customerIcons.closed} alt="closed text"></img>
+        </div>
+      );
+    } else if (data.isdraft) {
+      return (
+        <div>
+          {" "}
+          <img src={customerIcons.draft_ic} alt="draft icon"></img>{" "}
+          <img src={customerIcons.draft} alt="darft text"></img>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          {" "}
+          <img src={customerIcons.publish_ic} alt="publish icon"></img>{" "}
+          <img src={customerIcons.publish} alt="publish text"></img>
+        </div>
+      );
+    }
+  };
+
   return (
     <>
       <Card
@@ -111,19 +142,26 @@ export function CustJobCard({
                   <BsFillFlagFill /> Least Recommended
                 </p>
               )}
-              <div className="muted-name mt-2">
-                Posted {moment(createdDate).fromNow()}
-                {type === "Recommended" && (
-                  <p className="thumb-icon float-end">
-                    {additionalData.iscandidateliked === false && (
-                      <BsHandThumbsUp />
-                    )}
-                    {additionalData.iscandidateliked === true && (
-                      <BsFillHandThumbsUpFill />
-                    )}
-                  </p>
-                )}
-              </div>
+              <Row>
+                <Col md={9} lg={9}>
+                  <div className="muted-name mt-2">
+                    Posted {moment(createdDate).fromNow()}
+                    {/* {type === "Recommended" && (
+                      <p className="thumb-icon float-end">
+                        {additionalData.iscandidateliked === false && (
+                          <BsHandThumbsUp />
+                        )}
+                        {additionalData.iscandidateliked === true && (
+                          <BsFillHandThumbsUpFill />
+                        )}
+                      </p>
+                    )} */}
+                  </div>
+                </Col>
+                <Col md={3} lg={3} className="mt-2 right-align">
+                  {renderStatusIcon(additionalData)}
+                </Col>
+              </Row>
               {type === "Candidate" && (
                 <>
                   <Button

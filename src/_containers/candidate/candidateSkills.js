@@ -67,10 +67,10 @@ export function CandidateSkills(props) {
         experience: rest.yearsofexperience,
       };
     });
-    debugger;
+
     setSkillsMultiple(data);
     setSelectedSkillData(selectedData);
-    debugger;
+
     let selected_exp = [...selectedExp];
     selected_exp = get_response?.map(({ ...rest }) => {
       return {

@@ -68,7 +68,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/calendar"
             element={
               <PrivateRoute>
@@ -178,19 +178,15 @@ export function App() {
             path="/customer-candidate-rejected/:id"
             element={<CustomerCandidateLists type={"rejected"} />}
           />
+
+          <Route path="/candidate-list" element={<CustomerCandidateLists />} />
           <Route
             path="/report"
             element={
-            <PrivateRoute>
-              <CustomerUnderConstruction title={"Reports"} />
-            </PrivateRoute> }
-          />
-          <Route
-            path="/candidate-list"
-            element={
-            <PrivateRoute>
-              <CustomerUnderConstruction title={"Candidate list"} />
-            </PrivateRoute> }
+              <PrivateRoute>
+                <CustomerUnderConstruction title={"Reports"} />
+              </PrivateRoute>
+            }
           />
         </>
       );
