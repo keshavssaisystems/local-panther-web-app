@@ -16,6 +16,13 @@ export function PreScreenApplicant({
   prevStep,
   previousData,
 }) {
+  let prevDataArr = [];
+  if (prevStep === 1 && previousData.length > 0) {
+    previousData.forEach((element) => {
+      prevDataArr.push(element.prescreenquestion);
+    });
+    console.log(prevDataArr);
+  }
   const [successMessage, setSuccessMessage] = useState(false);
   const inputArr = [
     {
@@ -36,7 +43,7 @@ export function PreScreenApplicant({
   ];
   if (prevStep === 3 && data.length > 0) {
     data.forEach((element) => {
-      questionArray.push(element.question);
+      questionArray.push(element.prescreenquestion);
     });
   }
 
@@ -121,9 +128,11 @@ export function PreScreenApplicant({
                     name={"question"}
                     type={"checkbox"}
                     value={options.prescreenquestion}
-                    defaultChecked={questionArray.includes(
-                      options.prescreenquestion
-                    )}
+                    defaultChecked={
+                      prevStep === 3
+                        ? questionArray.includes(options.prescreenquestion)
+                        : prevDataArr.includes(options.prescreenquestion)
+                    }
                   />{" "}
                   {"  "}
                   <Label

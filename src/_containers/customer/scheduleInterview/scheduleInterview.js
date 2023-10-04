@@ -23,10 +23,12 @@ import {
   customerCandidateListsActions,
   scheduleInterviewActions,
 } from "_store";
+import { Popup } from "_components/common/Popup";
 
 export function ScheduleInterview() {
+  const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedJobId, setSelectedJobId] = useState(5);
+  const [selectedJobId, setSelectedJobId] = useState(27);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
     getCandidateList(evt.target.value);
@@ -132,8 +134,17 @@ export function ScheduleInterview() {
     postScheduledInterview(formData);
   };
   const postScheduledInterview = async function (formData) {
+    setShowPopup(true);
     await dispatch(
       scheduleInterviewActions.postScheduleInterviewThunk(formData)
+    );
+    getCandidateList(selectedJobId);
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+    dispatch(
+      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
+        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+        end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
+      })
     );
   };
 
@@ -180,11 +191,12 @@ export function ScheduleInterview() {
   };
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
-  const [popupType, setPopupType] = useState("video");
+  const [popupType, setPopupType] = useState("Video");
   const onCloseIdModal = () => {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
+    console.log(event);
     setPopupData(event.data);
     setOpenModal(true);
     setPopupType(event.format);
@@ -210,6 +222,7 @@ export function ScheduleInterview() {
                     className={"btn-shadow "}
                     onClick={() => {
                       toggle("availabilty");
+                      setShowPopup(false);
                     }}
                   >
                     Availabilty
@@ -219,6 +232,7 @@ export function ScheduleInterview() {
                     className={"btn-shadow"}
                     onClick={() => {
                       toggle("upcoming");
+                      setShowPopup(false);
                     }}
                   >
                     Upcoming
@@ -228,6 +242,7 @@ export function ScheduleInterview() {
                     className={"btn-shadow "}
                     onClick={() => {
                       toggle("calendar");
+                      setShowPopup(false);
                     }}
                   >
                     Calendar
@@ -316,7 +331,13 @@ export function ScheduleInterview() {
                   />
                 </Col>
                 <Col lg="8">
-                  <UpcomingDetail interviewDetails={selectedJobData[0]} />
+                  <UpcomingDetail
+                    interviewDetails={
+                      selectedJobData[0] === undefined
+                        ? upcomingInterviews.scheduledInterviewList[0]
+                        : selectedJobData[0]
+                    }
+                  />
                 </Col>
               </Row>
             )}
@@ -342,21 +363,30 @@ export function ScheduleInterview() {
               </Card>
             )}
             {toggleVar === "schedule" && (
-              <Card>
-                <CardBody>
-                  <ScheduleInterviewList
-                    candidateList={candidateList}
-                    durationOptions={durationOptions}
-                    postData={(e) => getFormData(e)}
+              <>
+                <Card>
+                  <CardBody>
+                    <ScheduleInterviewList
+                      candidateList={candidateList}
+                      durationOptions={durationOptions}
+                      postData={(e) => getFormData(e)}
+                    />
+                  </CardBody>
+                </Card>
+                {showPopup === true && (
+                  <Popup
+                    type={"success"}
+                    message={"Interview scheduled"}
+                    action={true}
                   />
-                </CardBody>
-              </Card>
+                )}
+              </>
             )}
           </Col>
         </Row>
         <InterviewDetailsModal
           isOpen={openModal}
-          type={popupType.toLowerCase()}
+          type={popupType}
           onClose={() => onCloseIdModal()}
           interviewDetail={popupData}
         />

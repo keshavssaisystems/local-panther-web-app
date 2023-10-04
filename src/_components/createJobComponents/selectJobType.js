@@ -25,13 +25,13 @@ export default function SelectJobType({
       event.target.value === "recommendation_template"
     ) {
       setShowJobTable(true);
+      readyForNextStep(true);
     } else {
       setShowJobTable(false);
       getJobTypeData({
         type: event.target.value,
         jobId: "",
       });
-      readyForNextStep(false);
     }
   };
 
@@ -69,6 +69,7 @@ export default function SelectJobType({
                   name="jobType"
                   id="new"
                   value={"new_template"}
+                  defaultChecked={true}
                   onClick={(e) => onButtonClick(e)}
                 />
                 <Label for="new" check className="radio-label-custom">

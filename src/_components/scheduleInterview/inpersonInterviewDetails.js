@@ -8,10 +8,10 @@ import {
   CardBody,
 } from "reactstrap";
 import "./scheduledInterview.scss";
-import { BsFillTelephoneFill } from "react-icons/bs";
+import { BsPerson } from "react-icons/bs";
 import moment from "moment-timezone";
 
-export function TelephonicInterviewDetails({ interviewDetail }) {
+export function InpersonInterviewDetails({ interviewDetail }) {
   let scheduled = moment(interviewDetail?.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
@@ -79,7 +79,7 @@ export function TelephonicInterviewDetails({ interviewDetail }) {
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
-            <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp" />
+            <BsPerson className="header-icon icon-gradient bg-amy-crisp" />
             Interview
           </div>
         </CardHeader>
@@ -99,35 +99,6 @@ export function TelephonicInterviewDetails({ interviewDetail }) {
           </div>
         </CardBody>
         <CardFooter className="d-block text-left">
-          <h6 className="fw-bold">Did they answer?</h6>
-          <p className="mb-2">Save answer as a note and nofity the candidate</p>
-          <Button
-            outline
-            className="mb-2 mr-2 btn-transition btn btn-outline-primary"
-            color="primary"
-            size={"sm"}
-          >
-            {" "}
-            Answered{" "}
-          </Button>
-          <Button
-            outline
-            className="mb-2 mr-2 btn-transition"
-            color="alternate"
-            size={"sm"}
-          >
-            {" "}
-            Left a voicemail{" "}
-          </Button>
-          <Button
-            outline
-            className="mb-2 mr-2 btn-transition"
-            color="danger"
-            size={"sm"}
-          >
-            {" "}
-            No answer{" "}
-          </Button>
           <Button
             outline
             className="mb-2 mr-2 btn-transition"

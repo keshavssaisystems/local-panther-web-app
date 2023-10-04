@@ -435,6 +435,7 @@ export function BasicInformation({
                 }
                 placeholder="Enter company deatils"
                 maxLength={1000}
+                className={"textarea-height-custom"}
               />
             </FormGroup>
           </Col>

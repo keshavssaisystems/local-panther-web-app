@@ -162,7 +162,7 @@ export function ScheduleInterviewModal({
           ? event.target.elements.videoMode.value === "third-party-video"
             ? false
             : true
-          : "",
+          : false,
       videolink:
         formatButton === 1 &&
         event.target.elements.videoMode.value === "third-party-video"
@@ -176,8 +176,8 @@ export function ScheduleInterviewModal({
       isactive: true,
       currentUserId: 0,
     };
-    console.log(data);
     postData(data);
+    onClose();
   };
   return (
     <>
@@ -198,13 +198,15 @@ export function ScheduleInterviewModal({
                 <Col md={4}>
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Candidate</h6>
-                    <p className="mb-0 mt-1 mr-1">{candidateData.candidate}</p>
+                    <p className="mb-0 mt-1 mr-1">
+                      {candidateData.candidatename}
+                    </p>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Job title</h6>
-                    <p className="mb-0 mt-1 mr-1">{candidateData.jobTitle}</p>
+                    <p className="mb-0 mt-1 mr-1">{candidateData.jobtitle}</p>
                   </div>
                 </Col>
                 <Col></Col>
