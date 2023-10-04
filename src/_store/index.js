@@ -42,6 +42,7 @@ import { certificateDataReducer } from "./certications.slice";
 import { certificationTypeReducer } from "./dropDownCertification.slice";
 import { ProficiencyReducer } from "./dropDownProficiency.slice";
 import { additionalInfoDataReducer } from "./additionalInfo.slice";
+import { custJobListReducer } from "_containers/customer/newjobs/custjobs.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -87,6 +88,7 @@ export * from "./certications.slice";
 export * from "./dropDownCertification.slice";
 export * from "./dropDownProficiency.slice";
 export * from "./additionalInfo.slice";
+export * from "../_containers/customer/newjobs/custjobs.slice";
 
 export const store = configureStore({
   reducer: {
@@ -133,5 +135,6 @@ export const store = configureStore({
     certificateType: certificationTypeReducer,
     ProficiencyList: ProficiencyReducer,
     additionalInfoReducer: additionalInfoDataReducer,
+    custJobListReducer: custJobListReducer,
   },
 });
