@@ -44,9 +44,6 @@ export function CandidateSkills(props) {
   );
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
-  const experienceLevelOption = useSelector(
-    (state) => state.experienceLevel.experienceLevel
-  );
 
   const [selectedExp, setSelectedExp] = useState([]);
   useEffect(() => {
