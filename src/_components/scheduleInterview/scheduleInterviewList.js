@@ -20,6 +20,7 @@ export function ScheduleInterviewList({
   durationOptions,
   postData,
 }) {
+  console.log(candidateList);
   const customStyles = {
     headRow: {
       style: {
@@ -73,7 +74,11 @@ export function ScheduleInterviewList({
             </Button>
           )}
           {row.scheduledate !== null &&
-            moment(row.scheduledate)
+            moment(
+              moment(row.scheduledate).format("YYYY-MM-DD") +
+                "T" +
+                row.starttime
+            )
               .tz("America/New_York")
               .format("MM/DD/YYYY h:mm a")}
         </>
