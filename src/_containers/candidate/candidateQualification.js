@@ -112,7 +112,6 @@ export function CandidateQualification(props) {
 
   return (
     <div>
-      {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
@@ -134,7 +133,7 @@ export function CandidateQualification(props) {
               <Row>
                 {qualificationDetails?.length > 0 ? (
                   qualificationDetails.map((item) => (
-                    <div>
+                    <div className="mb-2">
                       <Col>
                         <strong className="me-2 content-title">
                           {item.jobtitle}{" "}
@@ -162,14 +161,10 @@ export function CandidateQualification(props) {
                           {formatDate(item.startdate)}
                           {" to "}
                           {formatDate(item.enddate)}
-                          {/* {" ("}
-                      {item.experience}
-                      {")"} */}
                         </div>
                       ) : (
                         <></>
                       )}
-                      {/* <p className="card-p-text">{item.jobdescription}</p> */}
                     </div>
                   ))
                 ) : (
@@ -180,16 +175,6 @@ export function CandidateQualification(props) {
               </Row>
             </PerfectScrollbar>
           </div>
-          {/* <CardFooter
-            className="d-flex justify-content-center"
-            style={{ border: "none" }}
-          >
-            <div className="view-link-text">
-              <span onClick={() => setViewModal(true)}>
-                View all {qualificationDetails.length} Details
-              </span>
-            </div>
-          </CardFooter> */}
         </Card>
       </div>
 
