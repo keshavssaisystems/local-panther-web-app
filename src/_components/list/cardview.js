@@ -94,6 +94,19 @@ export const CandidateCardView = (props) => {
       });
     }
   };
+
+  const returnSkills = () => {
+    if (
+      props?.data?.jobKeyQualificationDtos &&
+      props?.data?.jobKeyQualificationDtos?.length > 0
+    ) {
+      return props?.data?.jobKeyQualificationDtos
+        .map((element) => element.skillname)
+        .join(", ");
+    } else {
+      return "";
+    }
+  };
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
@@ -128,24 +141,29 @@ export const CandidateCardView = (props) => {
                 <span className="pe-2">
                   <BsBriefcase size={"16px"} />
                 </span>
-                Work Experience: {props?.data?.minexperience}-{" "}
-                {props?.data?.maxexperience} Years
+                Work Experience:
+                {props?.data?.jobExperienceScheduleDtos &&
+                props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
+                {/* Work Experience: {props?.data?.minexperience}-{" "}
+                {props?.data?.maxexperience} Years */}
               </p>
             </Col>
-            <Col className="col-12">
+            {/* <Col className="col-12">
               <p className="card-details">
                 <span className="pe-2">
                   <BsListStars size={"16px"} />
                 </span>
                 Education: {props?.data?.jobSkillDtos}
               </p>
-            </Col>
+            </Col> */}
             <Col className="col-12">
               <p className="card-details">
                 <span className="pe-2">
                   <BsStar size={"16px"} />
                 </span>
-                Skills: {props?.data?.jobSkillDtos}
+                Skills: {returnSkills()}
               </p>
             </Col>
             <Col className="col-12">
