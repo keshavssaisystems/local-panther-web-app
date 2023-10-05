@@ -12,7 +12,6 @@ import AdminDashboardDetails from "_containers/admin/AdminDashboardDetails";
 
 import titlelogo from "../../assets/utils/images/candidate.svg";
 import { userActions } from "_store";
-import { Alert } from "reactstrap";
 import CustomerDashboardDetails from "_containers/customer/CustomerDashboardDetails";
 import CandidateDashboardDetails from "_containers/candidate/CandidateDashboardDetails";
 
