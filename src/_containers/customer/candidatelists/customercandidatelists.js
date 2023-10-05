@@ -182,7 +182,7 @@ export const CustomerCandidateLists = (props) => {
           xl={8}
           className="mb-3 tab-selection-text"
         >
-          <ButtonGroup size="lg" className="cust-btn-tabs">
+          <ButtonGroup size="md" className="cust-btn-tabs">
             <Button
               outline
               color="primary"
