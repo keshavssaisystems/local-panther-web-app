@@ -292,10 +292,18 @@ export function App() {
                 }
               /> */}
 
-              <Route path="/policy" element={<Policy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/security" element={<Security />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path="/policy" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Policy"} />
+              </PrivateRoute>} />
+              <Route path="/terms" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Terms"} />
+              </PrivateRoute>} />
+              <Route path="/security" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Security"} />
+              </PrivateRoute>} />
+              <Route path="/contact" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Contact"} />
+              </PrivateRoute>} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route

@@ -179,10 +179,11 @@ export function AdditionalInfoModal(props) {
       );
     } else {
       let id = filtered_data[0].candidateadditioninformationid;
+      let additional_info = filtered_data[0];
       response = await dispatch(
         additionalInfoDetailsSlice.updateadditionalInfoThunk({
           id,
-          filtered_data,
+          additional_info,
         })
       );
     }

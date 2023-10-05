@@ -133,9 +133,9 @@ export function CandidateProfile() {
     );
 
     let data = {
-      position: organization.length > 0 ? organization[0].jobtitle : "",
+      position: organization?.length > 0 ? organization[0].jobtitle : "",
       organization:
-        organization.length > 0 ? organization[0].company : "Not Working",
+        organization?.length > 0 ? organization[0].company : "Not Working",
       eligibility: dropdownLists.eligibilityDropDown.find(
         (x) => x.id == filter_data.employmenteligiblity
       ).name,
