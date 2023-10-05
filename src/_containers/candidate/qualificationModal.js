@@ -487,7 +487,7 @@ export function QualificationModal(props) {
                       id="fromDate"
                       placeholderText="DD/MM/YYYY"
                       className="form-control"
-                      showYearDropdown={true}
+                      showYearPicker
                       selected={item.startdate}
                       onChange={(evt) =>
                         handleInputChange("fromDate", index, evt)
