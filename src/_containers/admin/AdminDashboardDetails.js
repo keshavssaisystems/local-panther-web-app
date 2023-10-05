@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-
 import avatar1 from "assets/utils/images/avatars/1.jpg";
 import avatar2 from "assets/utils/images/avatars/2.jpg";
 import avatar3 from "assets/utils/images/avatars/3.jpg";
 import avatar4 from "assets/utils/images/avatars/4.jpg";
+import "./adminDashboardDetails.scss";
 
 import {
   Row,
@@ -21,11 +21,12 @@ import {
   CardFooter,
 } from "reactstrap";
 
-
 import {
   faQuestionCircle,
   faBusinessTime,
   faEllipsisV,
+  faAngleUp,
+  faAngleDown
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -138,30 +139,31 @@ export default class AdminDashboardDetails extends Component {
         <TransitionGroup>
           <CSSTransition component="div" classNames="TabsAnimation" appear={true}
             timeout={1500} enter={false} exit={false}>
-            <div>  
+            <div className="adminDashboardDetails"> 
               <Alert className="mbg-3" color="info" isOpen={this.state.visible} toggle={this.onDismiss}>
                 <span className="pe-2">
                   <FontAwesomeIcon icon={faQuestionCircle} />
                 </span>
                 This dashboard is in making. Some features may not work!
               </Alert>
+
+              <Row >
+                <Col xs="9" sm="9" md="9" lg="9" xl="9" >
               <Row>
-                <Col md="6" lg="3">
-                  <Card className="card-shadow-primary mb-3 widget-chart widget-chart2 text-start">
+                <Col xs="1" sm="1" md="3" lg="3">
+                  <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
                     <div className="widget-chat-wrapper-outer">
                       <div className="widget-chart-content">
-                        <div className="widget-chart-flex">
-                          <div className="widget-numbers mb-0 w-100">
-                            <div className="widget-chart-flex">
-                              <div className="fsize-4">
-                                5,456
-                              </div>
-                              <div className="ms-auto">
-                                <div className="widget-title ms-auto font-size-lg fw-normal text-muted">
-                                  <small className="opacity-5">active</small>
-                                  <span className="text-dark ps-2">Clients</span>
-                                </div>
-                              </div>
+                        <div className="widget-title opacity-5">
+                          active Clients
+                        </div>
+                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                          <div className="widget-chart-flex align-items-center">
+                            <div>
+                              <span className="opacity-10 text-success pe-2">
+                                <FontAwesomeIcon icon={faAngleUp} />
+                              </span>
+                              234
                             </div>
                           </div>
                         </div>
@@ -169,23 +171,20 @@ export default class AdminDashboardDetails extends Component {
                     </div>
                   </Card>
                 </Col>
-                <Col md="6" lg="3">
-                  <Card className="card-shadow-primary mb-3 widget-chart widget-chart2 text-start">
+                <Col xs="1" sm="2" md="3" lg="3">
+                  <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-danger border-danger">
                     <div className="widget-chat-wrapper-outer">
                       <div className="widget-chart-content">
-                        <div className="widget-chart-flex">
-                          <div className="widget-numbers mb-0 w-100">
-                            <div className="widget-chart-flex">
-                              <div className="fsize-4 ">
-                                <small className="opacity-5 text-muted"></small>
-                                4,764
-                              </div>
-                              <div className="ms-auto">
-                                <div className="widget-title ms-auto font-size-lg fw-normal text-muted">
-                                  <small className="opacity-5">active</small>
-                                  <span className="text-dark ps-2">Hiring managers</span>
-                                </div>
-                              </div>
+                        <div className="widget-title opacity-5">
+                          active Hiring managers
+                        </div>
+                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                          <div className="widget-chart-flex align-items-center">
+                            <div>
+                              <span className="opacity-10 text-danger pe-2">
+                                <FontAwesomeIcon icon={faAngleDown} />
+                              </span>
+                              71
                             </div>
                           </div>
                         </div>
@@ -193,25 +192,20 @@ export default class AdminDashboardDetails extends Component {
                     </div>
                   </Card>
                 </Col>
-                <Col md="6" lg="3">
-                  <Card className="card-shadow-primary mb-3 widget-chart widget-chart2 text-start">
+                <Col xs="1" sm="2" md="3" lg="3">
+                  <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-warning border-warning">
                     <div className="widget-chat-wrapper-outer">
                       <div className="widget-chart-content">
-                        <div className="widget-chart-flex">
-                          <div className="widget-numbers mb-0 w-100">
-                            <div className="widget-chart-flex">
-                              <div className="fsize-4">
-                                {/* <span className="text-success pe-2">
-                                  <FontAwesomeIcon icon={faAngleDown} />
-                                </span> */}
-                                1.5M
-                              </div>
-                              <div className="ms-auto">
-                                <div className="widget-title ms-auto font-size-lg fw-normal text-muted">
-                                  <small className="opacity-5">active</small>
-                                  <span className="text-dark ps-2">Candidates</span>
-                                </div>
-                              </div>
+                        <div className="widget-title opacity-5">
+                          active Candidates
+                        </div>
+                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                          <div className="widget-chart-flex align-items-center">
+                            <div>
+                              <span className="opacity-10 text-danger pe-2">
+                                <FontAwesomeIcon icon={faAngleDown} />
+                              </span>
+                              1,45M
                             </div>
                           </div>
                         </div>
@@ -219,22 +213,20 @@ export default class AdminDashboardDetails extends Component {
                     </div>
                   </Card>
                 </Col>
-                <Col md="6" lg="3">
-                  <Card className="card-shadow-primary mb-3 widget-chart widget-chart2 text-start">
+                <Col xs="1" sm="2" md="3" lg="3">
+                  <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-success border-success">
                     <div className="widget-chat-wrapper-outer">
                       <div className="widget-chart-content">
-                        <div className="widget-chart-flex">
-                          <div className="widget-numbers mb-0 w-100">
-                            <div className="widget-chart-flex">
-                              <div className="fsize-4">
-                                31,564
-                              </div>
-                              <div className="ms-auto">
-                                <div className="widget-title ms-auto font-size-lg fw-normal text-muted">
-                                  <small className="opacity-5">open</small>
-                                  <span className="text-dark ps-2">Jobs</span>
-                                </div>
-                              </div>
+                        <div className="widget-title opacity-5">
+                          open Jobs
+                        </div>
+                        <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                          <div className="widget-chart-flex align-items-center">
+                            <div>
+                              <span className="opacity-10 text-success pe-2">
+                                <FontAwesomeIcon icon={faAngleUp} />
+                              </span>
+                              34
                             </div>
                           </div>
                         </div>
@@ -242,7 +234,7 @@ export default class AdminDashboardDetails extends Component {
                     </div>
                   </Card>
                 </Col>
-              </Row>
+              </Row>             
               <CardHeader className="mbg-3 h-auto ps-0 pe-0 bg-transparent no-border">
                 <div className="card-header-title fsize-2 text-capitalize fw-normal">
                   Interview stats
@@ -557,6 +549,90 @@ export default class AdminDashboardDetails extends Component {
                 <CardFooter className="d-block p-4 text-center">
                 </CardFooter>
               </Card>
+              </Col>
+              <Col xs="3" sm="3" md="3" lg="3">
+                  <Row >
+                  <Col xs="1" sm="1" md="1" lg="1">
+                    <div className="dividerheight vr"></div>
+                  </Col>
+                  <Col xs="10" sm="10" md="10" lg="10">
+                      <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
+                        <div className="widget-chat-wrapper-outer">
+                          <div className="widget-chart-content">
+                            <div className="widget-title opacity-5">
+                              Today's interview
+                            </div>
+                            <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                              <div className="widget-chart-flex align-items-center">
+                                <div>
+                                  <span className="opacity-10 text-success pe-2">
+                                    <FontAwesomeIcon icon={faAngleUp} />
+                                  </span>
+                                  14
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
+                        <div className="widget-chat-wrapper-outer">
+                          <div className="widget-chart-content">
+                            <div className="widget-title opacity-5">
+                              Upcoming interview
+                            </div>
+                            <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                              <div className="widget-chart-flex align-items-center">
+                                <div>
+                                  <span className="opacity-10 text-success pe-2">
+                                    <FontAwesomeIcon icon={faAngleUp} />
+                                  </span>
+                                  54
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
+                        <div className="widget-chat-wrapper-outer">
+                          <div className="widget-chart-content">
+                            <div className="widget-title opacity-5">
+                              Interview history
+                            </div>
+                            <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                              <div className="widget-chart-flex align-items-center">
+                                <div>
+                                  ...
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
+                        <div className="widget-chat-wrapper-outer">
+                          <div className="widget-chart-content">
+                            <div className="widget-title opacity-5">
+                              New candidate registrations
+                            </div>
+                            <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                              <div className="widget-chart-flex align-items-center">
+                                <div>
+                                  <span className="opacity-10 text-danger pe-2">
+                                    <FontAwesomeIcon icon={faAngleDown} />
+                                  </span>
+                                  54
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
             </div>
           </CSSTransition>
         </TransitionGroup>

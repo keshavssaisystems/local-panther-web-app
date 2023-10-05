@@ -1,11 +1,7 @@
+import React from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/Common/pagetitle";
-import React, { Fragment } from "react";
-import { Route } from "react-router-dom";
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // DASHBOARDS
 import AdminDashboardDetails from "_containers/admin/AdminDashboardDetails";
