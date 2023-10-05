@@ -105,7 +105,7 @@ const getProfileSlice = createSlice({
         );
 
         let data = {
-          position: organization.length > 0 ? organization[0].jobtitle : "",
+          position: organization?.length > 0 ? organization[0].jobtitle : "",
           organization:
             organization.length > 0 ? organization[0].company : "Not Working",
           eligibility: state.dropdownLists.eligibilityDropDown.find(

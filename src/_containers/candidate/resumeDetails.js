@@ -264,7 +264,7 @@ export function ResumeDetails(props) {
                           </label>
                         </Row>
                         <span className="file-info">
-                          Support formats:doc, docx, pdf,rtf, upto 2 MB
+                          Support formats:doc, docx, pdf,rtf, upto 5 MB
                         </span>
                       </div>
                     </Row>

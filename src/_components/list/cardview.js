@@ -94,18 +94,19 @@ export const CandidateCardView = (props) => {
       });
     }
   };
-
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
         <CardBody>
           <Row>
             <Col className="col-12">
-              <div className="card-title">{props?.data?.jobtitle}</div>
+              <div className="card-title">
+                {props?.data?.firstname + " " + props?.data?.lastname}
+              </div>
             </Col>
 
             <Col>
-              <div className="card-details-op">{props?.data?.companyname}</div>
+              <div className="card-details-op">{props?.data?.jobtitle}</div>
             </Col>
 
             {/* <Col className="col-12">
