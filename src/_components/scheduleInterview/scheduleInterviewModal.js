@@ -346,7 +346,7 @@ export function ScheduleInterviewModal({
                         name="videoMode"
                         id="thirdPartyVideo"
                         value={"third-party-video"}
-                        checked
+                        defaultChecked
                         onClick={() => onVideoModeChange(1)}
                         onChange={() => onVideoModeChange(1)}
                       />{" "}

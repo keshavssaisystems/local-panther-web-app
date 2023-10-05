@@ -21,7 +21,7 @@ export function JobShortDetailModal({ data }) {
         size="xl"
         backdrop={"static"}
       >
-        <ModalHeader toggle={toggle}>{"Job Deatils"}</ModalHeader>
+        <ModalHeader toggle={toggle}>{"Job Details"}</ModalHeader>
         <ModalBody className="detail-job-modal">
           <div className="information-section">
             <Row>
