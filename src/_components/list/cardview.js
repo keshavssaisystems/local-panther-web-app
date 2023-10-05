@@ -94,7 +94,6 @@ export const CandidateCardView = (props) => {
       });
     }
   };
-  console.log(props?.data);
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
