@@ -225,6 +225,7 @@ export function EducationModal(props) {
       value: 0,
       label: "",
     };
+    debugger;
     if (check == "levelofeducation") {
       dropdown.value = data.value;
       dropdown.label = data.label;
@@ -454,7 +455,7 @@ export function EducationModal(props) {
                   placeholder="Search to select"
                   loadOptions={loadOptions}
                   isMulti={false}
-                  value={item.city.value}
+                  value={item.city}
                   onChange={(evt) => onHandleInputChange("city", evt, index)}
                 />
               </FormGroup>

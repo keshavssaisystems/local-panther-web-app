@@ -228,15 +228,17 @@ export function PersonalInformation(props) {
     }
     let new_data = { ...selectedCandidate_temp };
 
-    new_data.personalInfo.cityid = citySelect[0].value;
+    new_data.personalInfo.cityid = citySelect[0]?.value;
     new_data.personalInfo.countryid = countrySelect[0]
-      ? countrySelect[0].value
+      ? countrySelect[0]?.value
       : 0;
     new_data.personalInfo.stateid = stateSelect[0].value;
     new_data.personalInfo.genderid = genderSelect[0]
-      ? genderSelect[0].value
+      ? genderSelect[0]?.value
       : 0;
-    new_data.personalInfo.ethnicityid = raceSelect[0] ? raceSelect[0].value : 0;
+    new_data.personalInfo.ethnicityid = raceSelect[0]
+      ? raceSelect[0]?.value
+      : 0;
 
     if (
       new_data.personalInfo.firstname == "" ||
@@ -282,7 +284,7 @@ export function PersonalInformation(props) {
   }
 
   const checkCityValid = function () {
-    if (citySelect[0].value == 0) {
+    if (citySelect[0]?.value == 0) {
       setCityReqError(true);
     } else {
       setCityReqError(false);
