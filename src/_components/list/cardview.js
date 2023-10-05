@@ -113,9 +113,18 @@ export const CandidateCardView = (props) => {
         <CardBody>
           <Row>
             <Col className="col-12">
-              <div className="card-title">
-                {props?.data?.firstname + " " + props?.data?.lastname}
-              </div>
+              <Row>
+                <Col className="col-10">
+                  <div className="card-title">
+                    {props?.data?.firstname + " " + props?.data?.lastname}
+                  </div>
+                </Col>
+                <Col className="col-2">
+                  {/* <div className="card-title right-align">
+                    {props?.data?.avgscore}
+                  </div> */}
+                </Col>
+              </Row>
             </Col>
 
             <Col>
