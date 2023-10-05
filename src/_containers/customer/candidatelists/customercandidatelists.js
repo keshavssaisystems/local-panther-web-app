@@ -23,13 +23,14 @@ import "./customercandidatelist.scss";
 // import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState(
-    props.type ? props.type : "matched"
+    props.type && id !== undefined ? props.type : "matched"
   );
 
   const [pageNo, setPageNo] = useState(1);
-  const { id } = useParams();
-  const [selectedJobId, setSelectedJobId] = useState(id);
+
+  const [selectedJobId, setSelectedJobId] = useState(id ? id : "");
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -60,24 +61,30 @@ export const CustomerCandidateLists = (props) => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
+    if (
+      window.location.pathname &&
+      window.location.pathname.includes("candidate-list")
+    ) {
+      onGetPageList(pageNo, props.type, "");
+    }
   }, []);
 
   useEffect(() => {
     onGetPageList(pageNo, props.type, id);
   }, [props.type, id]);
 
-  const returnStatusId = () => {
-    if (props.type === "liked") {
+  const returnStatusId = (type) => {
+    if (type === "liked") {
       return 1;
-    } else if (props.type === "maybe") {
+    } else if (type === "maybe") {
       return 2;
-    } else if (props.type === "applied") {
+    } else if (type === "applied") {
       return 3;
-    } else if (props.type === "scheduled") {
+    } else if (type === "scheduled") {
       return 4;
-    } else if (props.type === "accepted") {
+    } else if (type === "accepted") {
       return 5;
-    } else if (props.type === "rejected") {
+    } else if (type === "rejected") {
       return 6;
     } else {
       return "";
@@ -94,7 +101,7 @@ export const CustomerCandidateLists = (props) => {
       // isCustomerReject: type === "rejected",
       // isCustomerScheduled: type === "scheduled",
       // isCandidateApply: type === "applied,
-      customerRecommendedJobStatusId: returnStatusId(),
+      customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id,
     };
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
@@ -110,10 +117,9 @@ export const CustomerCandidateLists = (props) => {
       setActiveTab(activetab);
       navigate(`/customer-candidate-${activetab}/${id}`);
     } else {
-      showSweetAlert({
-        title: "Please select a job from job list.",
-        type: "danger",
-      });
+      setPageNo(1);
+      setActiveTab(activetab);
+      onGetPageList(pageNo, activetab, "");
     }
   };
 
@@ -285,7 +291,9 @@ export const CustomerCandidateLists = (props) => {
               id="customerJobList"
               name="customerJobList"
             >
-              <option value={""}></option>
+              <option selected value="">
+                Select a job
+              </option>
               {jobList.map((data) => {
                 return (
                   <option value={data.jobid} key={data.jobid}>

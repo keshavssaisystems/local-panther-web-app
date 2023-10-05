@@ -2,7 +2,11 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard, CustomerDashboard, CandidateDashboard } from "_containers/dashboard/Dashboard";
+import {
+  AdminDashboard,
+  CustomerDashboard,
+  CandidateDashboard,
+} from "_containers/dashboard/Dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
@@ -178,7 +182,10 @@ export function App() {
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
-          <Route path="/candidate-list" element={<CustomerCandidateLists />} />
+          <Route
+            path="/candidate-list"
+            element={<CustomerCandidateLists type={"matched"} />}
+          />
           <Route
             path="/report"
             element={
