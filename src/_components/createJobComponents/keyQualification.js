@@ -82,28 +82,32 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
   };
   const getFormData = (event) => {
     event.preventDefault();
+    let mustHaveHasData = false;
+    let niceToHaveHasData = false;
     let mustHave = getStringData(event.target.elements.mustHave, true);
     let niceToHave = getStringData(event.target.elements.niceToHave, false);
-    let data = null;
     if (
-      event.target.elements.mustHave.value !== "" &&
-      event.target.elements.niceToHave.value !== ""
+      event.target.elements.mustHave.value !== "" ||
+      event.target.elements.mustHave.length > 0
     ) {
+      mustHaveHasData = true;
+    }
+    if (
+      event.target.elements.niceToHave.value !== "" ||
+      event.target.elements.niceToHave.length > 0
+    ) {
+      niceToHaveHasData = true;
+    }
+    let data = null;
+    if (mustHaveHasData === true && niceToHaveHasData === true) {
       data = mustHave.concat(niceToHave);
     }
-    if (
-      event.target.elements.mustHave.value !== "" &&
-      event.target.elements.niceToHave.value === ""
-    ) {
+    if (mustHaveHasData === true && niceToHaveHasData === false) {
       data = mustHave;
     }
-    if (
-      event.target.elements.mustHave.value === "" &&
-      event.target.elements.niceToHave.value !== ""
-    ) {
+    if (mustHaveHasData === false && niceToHaveHasData === true) {
       data = niceToHave;
     }
-    console.log(data);
     postData(data);
     setSuccessMessage(true);
   };
