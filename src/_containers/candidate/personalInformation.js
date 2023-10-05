@@ -60,7 +60,6 @@ import {
 import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
-  console.log(props);
   const dispatch = useDispatch();
 
   const genderList_temp = useSelector((state) => state.gender.genderList);
@@ -340,7 +339,6 @@ export function PersonalInformation(props) {
       };
     });
     setStateList(state_response);
-    console.log(stateList);
     setCountryList(country_response);
   }, [cityList]);
   const loadOptions = async function (inputValue) {

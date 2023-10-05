@@ -225,7 +225,6 @@ export function EducationModal(props) {
       value: 0,
       label: "",
     };
-    debugger;
     if (check == "levelofeducation") {
       dropdown.value = data.value;
       dropdown.label = data.label;
