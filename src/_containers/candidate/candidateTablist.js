@@ -15,6 +15,7 @@ import "./candidateTablist.scss";
 
 export const CandidateTablist = (props) => {
     const [activeTab, setActiveTab] = useState("matched");
+    const [candidateId, setCandidateId] = useState(0);
     const dispatch = useDispatch();
     const [pageNo, setPageNo] = useState(1);
     const [page, setPage] = useState(1);
@@ -46,12 +47,13 @@ export const CandidateTablist = (props) => {
         locationId: "",
     };
     useEffect(() => {
+        let candidateId = JSON.parse(localStorage.getItem("userDetails")).InternalUserId;
+        setCandidateId(candidateId);
 
-        let userId = { candidateId: localStorage.getItem("candidateId") };
-
-        dispatch(matchedJobActions.getmatchedJob(userId));
+        dispatch(matchedJobActions.getmatchedJob(candidateId));
         getJobList(filterObj);
     }, []);
+
     const getJobList = async function (filterObj) {
         await dispatch(jobListActions.getJobList(filterObj));
     };
@@ -92,6 +94,7 @@ export const CandidateTablist = (props) => {
         }
 
         let candObj = {
+            candidateId,
             pageNumber: pageNo,
             pageSize: val === "matched" ? cardPageSize : listPageSize,
             ...(candidateRecommendedJobStatusId && { candidateRecommendedJobStatusId })
@@ -107,6 +110,7 @@ export const CandidateTablist = (props) => {
     const onGetPageList = (pageNo, type, id) => {
 
         let candObj = {
+            candidateId,
             pageNumber: pageNo,
             pageSize: type === "matched" ? cardPageSize : listPageSize,
             isCandidateLike: type === "liked",
