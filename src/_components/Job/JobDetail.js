@@ -5,7 +5,6 @@ import { HeadingAndDetailWithDiv } from "../jobDetailComponents/HeadingAndDetail
 import { HeadingAndDetailWithoutIcon } from "../jobDetailComponents/HeadingAndDetailWithoutIcon";
 import { ButtonWithCount } from "../jobDetailComponents/ButtonWithCount";
 import { DetailsHeader } from "../jobDetailComponents/DetailsHeader";
-import Loader from "react-loaders";
 
 export function JobDetail({ jobDetails, type }) {
   let loading = true;
