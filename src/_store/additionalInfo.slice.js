@@ -6,9 +6,9 @@ const name = "additionalInfo";
 
 export const updateadditionalInfoThunk = createAsyncThunk(
   `${name}/updateadditionalInfoThunk`,
-  async ({ id, certification_data }) => {
+  async ({ id, filtered_data }) => {
     const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateAdditionalInformations/${id}`;
-    return await fetchWrapper.put(LOGIN_END_POINT, certification_data);
+    return await fetchWrapper.put(LOGIN_END_POINT, filtered_data);
   }
 );
 
@@ -16,7 +16,7 @@ export const addadditionalInfoThunk = createAsyncThunk(
   `${name}/addadditionalInfoThunk`,
   async (qualification_data) => {
     console.log(qualification_data);
-    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateAdditionalInformations/AddCandidateAdditionalInformations`;
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateAdditionalInformations/AddCandidateAdditionalInformationList`;
     return await fetchWrapper.post(LOGIN_END_POINT, qualification_data);
   }
 );

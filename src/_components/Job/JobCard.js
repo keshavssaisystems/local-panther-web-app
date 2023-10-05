@@ -1,23 +1,27 @@
-import React from "react";
-import { Row, Col, Card, CardBody,Button } from "reactstrap";
 import "./job.scss";
+import React, { useState } from "react";
+import { Row, Col, Card, CardBody, Button, CardFooter, ButtonGroup } from "reactstrap";
+import moment from "moment/moment";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { useDispatch, useSelector } from "react-redux";
+import { candidateJobListTabActions, candidateAcceptThunk, candidateLikeThunk, candidateMayBeThunk, getRecommendedJobListThunk } from "_store";
+import { RejectModal } from "_components/modal/rejectmodal";
+
 import logo from "../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
 
-} from "react-icons/io";
 import {
   BsBriefcase,
   BsListStars,
   BsFillFlagFill,
   BsHandThumbsUp,
   BsFillHandThumbsUpFill,
+  BsQuestionCircle,
+  BsCheckCircle,
+  BsXCircle,
 } from "react-icons/bs";
-import moment from "moment/moment";
+
+
 
 export function JobCard({
   name,
@@ -32,19 +36,27 @@ export function JobCard({
   customer,
   additionalData,
 }) {
+
+  const dispatch = useDispatch();
+  const rejectDrpDwnList = useSelector(
+    (state) => state.customerCandidateList.rejectDrpDwnList
+  );
+  const { sweetAlert } = useSelector(state => state?.tabListReducer)
+  const [rejectModel, setRejectModel] = useState({ show: false, jobId: 0 });
+
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
       : additionalData.avgscore === 9 || additionalData.avgscore === 8
-      ? 2
-      : 3;
+        ? 2
+        : 3;
   const navigateToJobDetail = () => {
     getSelectedJobId(jobId);
   };
   let skillsData = "-";
-  if (additionalData.jobSkillDtos.length > 0) {
+  if (additionalData?.jobSkillDtos?.length > 0) {
     let skillsList = [];
-    additionalData.jobSkillDtos.forEach((element) => {
+    additionalData?.jobSkillDtos?.forEach((element) => {
       let skillName = element.skillname == null ? "-" : element.skillname;
       skillsList.push(skillName);
     });
@@ -52,6 +64,34 @@ export function JobCard({
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
+
+  const handleLike = (jobId) => {
+    dispatch(candidateLikeThunk(jobId));
+    getRecommendedJobList();
+  }
+  
+  const handleMayBe = (jobId) => {
+    dispatch(candidateMayBeThunk(jobId));
+    getRecommendedJobList();
+  }
+  
+  const handleApply = (jobId) => {
+    dispatch(candidateAcceptThunk(jobId));
+    getRecommendedJobList();
+  }
+
+  const handleReject = (jobId) => {
+    setRejectModel({ show: true, jobId })
+  }
+
+  const getRecommendedJobList = () => {
+    let payload = {
+      pageNumber: 1,
+      pageSize: 9,
+    };
+    dispatch(getRecommendedJobListThunk(payload))
+  }
+
   return (
     <>
       <Card
@@ -83,7 +123,7 @@ export function JobCard({
               </p>
               <p className="job-details">
                 <BsListStars /> Skills:{" "}
-                {additionalData.jobSkillDtos.length > 0 ? skillsData : "-"}
+                {additionalData.jobSkillDtos?.length > 0 ? skillsData : "-"}
               </p>
               {type === "Recommended" && (
                 <p className="job-details mt-2 recommended-success float-end">
@@ -118,44 +158,80 @@ export function JobCard({
                   </p>
                 )}
               </div>
-              {type === "Candidate" && (
-                <>
-
-
-
-                  <Button title="liked" className=" btn-icon mt-2" color="light">
-                    <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
-                  </Button>
-
-
-                  <Button title="maybe" className=" btn-icon" color="light">
-                    <IoIosHelp fontSize={"24px"}></IoIosHelp>
-                  </Button>
-
-
-                  <Button
-                    title="reject"
-                    className="btn-icon"
-                    color="light"
-                  // onClick={() => onRejectClick()}
-                  >
-                    <IoIosClose fontSize={"24px"}></IoIosClose>
-                  </Button>
-
-
-
-                  <Button
-                    title="Apply"
-                    className=" btn-icon"
-                    color="light"
-                  >
-                    <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
-                  </Button>
-                </>)}
+              
             </Col>
           </Row>
-        </CardBody>
+        </CardBody>        
+        {type === "Candidate" && (
+          <>
+            <CardFooter className="auto-margin">
+              <Row noGutters>
+                <ButtonGroup className="card-btn-grp" size="sm">
+                  <Button
+                    outline
+                    title="liked"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleLike(jobId)}
+                  >
+                    Like <BsHandThumbsUp />
+                  </Button>
+
+                  <Button
+                    outline
+                    title="maybe"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleMayBe(jobId)}
+                  >
+                    Maybe <BsQuestionCircle />
+                  </Button>
+
+                  <Button
+                    outline
+                    title="reject"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleReject(jobId)}
+                  >
+                    Reject <BsXCircle />
+                  </Button>
+
+                  <Button
+                    outline
+                    title="schedule"
+                    className="btn-icon"
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleApply(jobId)}
+                  >
+                    Apply <BsCheckCircle />
+                  </Button>
+                </ButtonGroup>
+              </Row>
+            </CardFooter>
+          </>
+        )}
       </Card>
+
+      <RejectModal
+        isRMOpen={rejectModel.show}
+        onCancelReject={() => setRejectModel({show: false})}
+        // onSubmitReject={(reason, comment) =>
+        //   onSubmitRejectModal(reason, comment)
+        // }
+        rejectDrpDwnList={rejectDrpDwnList}
+      />
+
+      <SweetAlert
+        title={sweetAlert?.title}
+        show={sweetAlert?.show}
+        type={sweetAlert?.type}
+        onConfirm={() => dispatch(candidateJobListTabActions.closeSweetAlert())}
+      />
     </>
   );
 }

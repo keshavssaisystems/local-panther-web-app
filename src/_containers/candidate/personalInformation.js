@@ -62,12 +62,23 @@ import { getLocationFilter } from "_store";
 export function PersonalInformation(props) {
   console.log(props);
   const dispatch = useDispatch();
-
   const [selectedCandidate, setSelectedCandidate] = useState({
+    personalInfo: useSelector(
+      (state) => state.getProfile.profileData.personalInfo
+    ),
+    genderList: useSelector((state) => state.gender.genderList),
+    raceList: useSelector((state) => state.ethnicity.ethnicityList),
+    eligibilityList: useSelector(
+      (state) => state.getProfile.dropdownLists.eligibilityDropDown
+    ),
+  });
+  const [selectedCandidate_temp, setSelectedCandidateTemp] = useState({
     personalInfo: props.profileInfo.personalInfo,
     genderList: useSelector((state) => state.gender.genderList),
     raceList: useSelector((state) => state.ethnicity.ethnicityList),
-    eligibilityList: props.dropDownData.eligibilityDropDown,
+    eligibilityList: useSelector(
+      (state) => state.getProfile.dropdownLists.eligibilityDropDown
+    ),
   });
 
   const [requiredErrors, setRequiredErros] = useState({
@@ -117,6 +128,8 @@ export function PersonalInformation(props) {
     }
   };
 
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
   const [cityList, setCityList] = useState([]);
@@ -127,7 +140,7 @@ export function PersonalInformation(props) {
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
-  const [dob, setDOB] = useState(new Date());
+  const [dob, setDOB] = useState(null);
   const [isContactModal, setContactModal] = useState(false);
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -175,14 +188,7 @@ export function PersonalInformation(props) {
 
     return maskedPhoneNumber;
   }
-  // const formatDate = (dateString) => {
-  //   const options = { year: "numeric", month: "short", day: "numeric" };
-  //   const formattedDate = new Date(dateString).toLocaleDateString(
-  //     undefined,
-  //     options
-  //   );
-  //   return formattedDate;
-  // };
+
   async function onSubmit(e) {
     e.preventDefault();
 
@@ -201,7 +207,7 @@ export function PersonalInformation(props) {
       setRequiredErros(errors);
       return;
     }
-    let new_data = { ...selectedCandidate };
+    let new_data = { ...selectedCandidate_temp };
 
     new_data.personalInfo.cityid = citySelect[0].value;
     new_data.personalInfo.countryid = countrySelect[0]
@@ -238,6 +244,7 @@ export function PersonalInformation(props) {
         isreadytoworkimmediately:
           new_data.personalInfo.isreadytoworkimmediately,
         isactive: true,
+        dob: new_data.dob,
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
       };
@@ -255,10 +262,19 @@ export function PersonalInformation(props) {
     }
   }
 
+  const checkCityValid = function () {
+    if (citySelect[0].value == 0) {
+      setCityReqError(true);
+    } else {
+      setCityReqError(false);
+    }
+  };
+
   const selectDate = function (data) {
-    let temp_data = { ...selectedCandidate };
+    let temp_data = { ...selectedCandidate_temp };
     temp_data.personalInfo.dob = new Date(data);
     setSelectedCandidate(temp_data);
+    setDOB(new Date(data));
   };
 
   const close = function () {
@@ -268,7 +284,8 @@ export function PersonalInformation(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    window.location.reload();
+    // window.location.reload();
+    props.onCallBack();
   };
 
   useEffect(() => {
@@ -302,8 +319,9 @@ export function PersonalInformation(props) {
     });
   };
   const onHandleInputChange = function (check, data) {
-    let new_data = { ...selectedCandidate };
+    let new_data = { ...selectedCandidate_temp };
     let errors = { ...requiredErrors };
+
     if (check == "firstname") {
       new_data.personalInfo.firstname = data;
     } else if (check == "lastname") {
@@ -331,7 +349,7 @@ export function PersonalInformation(props) {
       new_data.personalInfo.employmenteligiblity = data;
     } else if (check == "work") {
       new_data.personalInfo.isreadytoworkimmediately =
-        data == "on" ? true : false;
+        !new_data.personalInfo.isreadytoworkimmediately;
     }
 
     setSelectedCandidate(new_data);
@@ -341,7 +359,7 @@ export function PersonalInformation(props) {
     <div>
       <Fragment>
         <Card className="mb-3 profile-view">
-          {selectedCandidate.personalInfo.email ? (
+          {selectedCandidate_temp.personalInfo.email ? (
             <Row className="g-0">
               <Col sm="12" md="12" xl="6" className=" mb-0">
                 <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
@@ -356,35 +374,37 @@ export function PersonalInformation(props) {
                   <div className="widget-chart-content">
                     <div>
                       <strong className="candidate-name mb-0">
-                        {selectedCandidate.personalInfo.firstname +
+                        {selectedCandidate_temp.personalInfo.firstname +
                           " " +
-                          selectedCandidate.personalInfo.lastname}
+                          selectedCandidate_temp.personalInfo.lastname}
                       </strong>
                       <p className="widget-description text-focus content-text mt-0">
-                        {selectedCandidate.personalInfo.position}
+                        {selectedCandidate_temp.personalInfo.position}
                       </p>
                       <p className="candidate-label mt-0 mb-0">
-                        {selectedCandidate.personalInfo.organization ==
-                        "Not Working"
-                          ? selectedCandidate.personalInfo.organization
-                          : "at " + selectedCandidate.personalInfo.organization}
+                        {selectedCandidate_temp.personalInfo.organization ==
+                          "Not working" ||
+                        selectedCandidate_temp.personalInfo.organization != ""
+                          ? "at " +
+                            selectedCandidate_temp.personalInfo.organization
+                          : selectedCandidate_temp.personalInfo.organization}
                       </p>
                     </div>
                     <div>
                       <Row>
                         <Col className="col-12 mb-0">
                           <Label className="candidate-label mb-0">
-                            Employement Eligibility:{" "}
+                            Employement eligibility:{" "}
                             <strong className="content-text">
-                              {selectedCandidate.personalInfo.eligibility}
+                              {selectedCandidate_temp.personalInfo.eligibility}
                             </strong>
                           </Label>
                         </Col>
                         <Col>
                           <Label className="candidate-label mt-0">
-                            Ready to work Immediately:{" "}
+                            Ready to work immediately:{" "}
                             <strong className="content-text">
-                              {selectedCandidate.personalInfo.readyToWork}{" "}
+                              {selectedCandidate_temp.personalInfo.readyToWork}{" "}
                             </strong>
                           </Label>
                         </Col>
@@ -400,7 +420,7 @@ export function PersonalInformation(props) {
                     <BsTelephone className="personal-sec-icon me-2" />
                     <span className="content-text mt-3">
                       {maskPhoneNumber(
-                        selectedCandidate.personalInfo.phonenumber
+                        selectedCandidate_temp.personalInfo.phonenumber
                       )}
                     </span>
                   </Col>
@@ -409,24 +429,31 @@ export function PersonalInformation(props) {
                   <Col className="mb-2">
                     <BsEnvelope className="personal-sec-icon me-2" />
                     <span className="content-text">
-                      {selectedCandidate.personalInfo.email}
+                      {selectedCandidate_temp.personalInfo.email}
                     </span>
                   </Col>
                 </Row>
                 <Row>
                   <Col className="mb-2">
-                    <BsPinMap className="personal-sec-icon me-2" />
-                    <span className="content-text">
-                      {selectedCandidate.personalInfo.city
-                        ? selectedCandidate.personalInfo.city +
-                          ", " +
-                          selectedCandidate.personalInfo.state
-                        : ""}
+                    {selectedCandidate_temp.personalInfo.city != "" ||
+                    selectedCandidate_temp.personalInfo.country != "" ? (
+                      <div>
+                        <BsPinMap className="personal-sec-icon me-2" />
+                        <span className="content-text">
+                          {selectedCandidate_temp.personalInfo.city
+                            ? selectedCandidate_temp.personalInfo.city +
+                              ", " +
+                              selectedCandidate_temp.personalInfo.state
+                            : ""}
 
-                      {selectedCandidate.personalInfo.country
-                        ? ", " + selectedCandidate.personalInfo.country
-                        : ""}
-                    </span>
+                          {selectedCandidate_temp.personalInfo.country
+                            ? ", " + selectedCandidate_temp.personalInfo.country
+                            : ""}
+                        </span>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </Col>
                 </Row>
               </Col>
@@ -440,26 +467,46 @@ export function PersonalInformation(props) {
                 <Row className="mt-3">
                   <Row>
                     <Col className="mb-2">
-                      <BsBalloon className="personal-sec-icon me-2" />
-                      <span className="content-text mt-3">
-                        {formatDate(selectedCandidate.personalInfo.dob)}
-                      </span>
+                      {selectedCandidate.personalInfo.dob != "" ? (
+                        <div>
+                          <BsBalloon className="personal-sec-icon me-2" />
+                          <span className="content-text mt-3">
+                            {formatDate(
+                              selectedCandidate_temp.personalInfo.dob
+                            )}
+                          </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      <BsGenderMale className="personal-sec-icon me-2" />
-                      <span className="content-text">
-                        {selectedCandidate.personalInfo.gender}
-                      </span>
+                      {selectedCandidate_temp.personalInfo.gender != "" ? (
+                        <div>
+                          <BsGenderMale className="personal-sec-icon me-2" />
+                          <span className="content-text">
+                            {selectedCandidate_temp.personalInfo.gender}
+                          </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      <BsPeople className="personal-sec-icon me-2" />
-                      <span className="content-text">
-                        {selectedCandidate.personalInfo.ethnicity}
-                      </span>
+                      {selectedCandidate_temp.personalInfo.ethnicity != "" ? (
+                        <div>
+                          <BsPeople className="personal-sec-icon me-2" />
+                          <span className="content-text">
+                            {selectedCandidate_temp.personalInfo.ethnicity}
+                          </span>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Col>
                   </Row>
                 </Row>
@@ -480,7 +527,7 @@ export function PersonalInformation(props) {
           >
             <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
-                Add/Edit Personal Information
+                Add/Edit personal information
               </strong>
             </ModalHeader>
             <ModalBody>
@@ -489,7 +536,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="firstname" className="input-label">
-                        First Name <span className="required-icon">*</span>
+                        First name <span className="required-icon">*</span>
                       </Label>
                       <input
                         type="text"
@@ -517,7 +564,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="password" className="input-label">
-                        Last Name <span className="required-icon">*</span>
+                        Last name <span className="required-icon">*</span>
                       </Label>
                       <input
                         placeholder="Enter Last Name"
@@ -617,7 +664,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="gender" className="input-label">
-                        Birth Year
+                        Birth year
                       </Label>
                       <InputGroup>
                         <div className="input-group-text">
@@ -626,7 +673,12 @@ export function PersonalInformation(props) {
                         <DatePicker
                           className="form-control"
                           placeholderText="DD/MM/YYYY"
-                          selected={dob}
+                          selected={
+                            selectedCandidate.personalInfo.dob
+                              ? new Date(selectedCandidate.personalInfo.dob)
+                              : null
+                          }
+                          showYearDropdown={true}
                           onChange={(evt) => selectDate(evt)}
                         />
                       </InputGroup>
@@ -688,12 +740,13 @@ export function PersonalInformation(props) {
                         defaultOptions={stateList}
                         isMulti={false}
                         value={stateSelect}
-                        onChange={(evt) => onSelectStateDropdown(evt)}
+                        onSelect={(evt) => onSelectStateDropdown(evt)}
                         styles={{
                           borderColor: requiredErrors.stateError
                             ? "#d92550"
                             : "",
                         }}
+                        onMenuOpen={() => checkCityValid()}
                       />
                       <div className="error-class">
                         {requiredErrors.stateError ? "State is required" : ""}
@@ -712,6 +765,7 @@ export function PersonalInformation(props) {
                         isMulti={false}
                         value={countrySelect}
                         onChange={(evt) => onSelectCountryDropdown(evt)}
+                        onMenuOpen={() => checkCityValid()}
                       />
                     </FormGroup>
                   </Col>
@@ -720,14 +774,14 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="zipCode" className="input-label">
-                        Zip Code
+                        Zip code
                       </Label>
                       <input
                         type="text"
                         name="zipCode"
                         id="zipCode"
                         maxLength={50}
-                        value={selectedCandidate.personalInfo.zipcode}
+                        value={selectedCandidate_temp.personalInfo.zipcode}
                         onInput={(evt) =>
                           onHandleInputChange("zip", evt.target.value)
                         }
@@ -746,7 +800,7 @@ export function PersonalInformation(props) {
                       <AsyncSelect
                         name="gender"
                         placeholder="Select"
-                        defaultOptions={selectedCandidate.genderList}
+                        defaultOptions={selectedCandidate_temp.genderList}
                         isMulti={false}
                         value={genderSelect}
                         onChange={(evt) => onSelectGenderDropdown(evt)}
@@ -761,7 +815,7 @@ export function PersonalInformation(props) {
                       <AsyncSelect
                         name="race"
                         placeholder="Select"
-                        defaultOptions={selectedCandidate.raceList}
+                        defaultOptions={selectedCandidate_temp.raceList}
                         isMulti={false}
                         value={raceSelect}
                         onChange={(evt) => onSelectRaceDropdown(evt)}
@@ -771,14 +825,15 @@ export function PersonalInformation(props) {
                 </Row>
                 <Row>
                   <Col>
-                    {selectedCandidate?.eligibilityList?.map((item) => (
+                    {selectedCandidate_temp?.eligibilityList?.map((item) => (
                       <FormGroup check>
                         <Input
                           name="eligibility"
                           type="radio"
                           checked={
                             item.id ==
-                            selectedCandidate.personalInfo.employmenteligiblity
+                            selectedCandidate_temp.personalInfo
+                              .employmenteligiblity
                           }
                           onClick={(evt) =>
                             onHandleInputChange("authorization", item.id)
@@ -798,7 +853,7 @@ export function PersonalInformation(props) {
                         name="immediateJoin"
                         type="checkbox"
                         checked={
-                          selectedCandidate.personalInfo
+                          selectedCandidate_temp.personalInfo
                             .isreadytoworkimmediately
                         }
                         onChange={(evt) =>
@@ -879,6 +934,35 @@ export function PersonalInformation(props) {
                   <Button
                     className="me-2 accept-modal-btn"
                     onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={cityReqError}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Please select City to filter
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              State and Country
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setCityReqError(false)}
                   >
                     OK
                   </Button>

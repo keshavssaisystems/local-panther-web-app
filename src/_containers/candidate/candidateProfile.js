@@ -27,12 +27,18 @@ import { CertificationDetails } from "./certifications";
 import { AdditionalInformation } from "./additionalInfo";
 import { JobPreferences } from "./jobPreferences";
 import {
+  getJobTitleActions,
   educationActions,
   getProfileActions,
   ProficiencyActions,
   genderActions,
   ethnicityActions,
   certificationTypeActions,
+  workScheduleActions,
+  jobTypeActions,
+  shiftActions,
+  getpayPeriodActions,
+  experienceLevelActions,
 } from "_store";
 import { getLocationFilter } from "_store";
 
@@ -100,6 +106,7 @@ export function CandidateProfile() {
 
   const loadPage = async function () {
     await getDropdownLists();
+
     await getPersonalDetails();
   };
 
@@ -109,13 +116,19 @@ export function CandidateProfile() {
     await dispatch(certificationTypeActions.certificationType());
     await dispatch(ProficiencyActions.Proficiency());
     let reponse = await dispatch(educationActions.getEducation());
+    await dispatch(workScheduleActions.getWorkScheduleThunk());
+    await dispatch(jobTypeActions.getJobTypeThunk());
+    await dispatch(shiftActions.getShiftThunk());
+    await dispatch(getJobTitleActions.getJobTitle());
+    await dispatch(getpayPeriodActions.getpayPeriod());
+    await dispatch(experienceLevelActions.getExperienceLevelThunk());
   };
 
   const getPersonalDetails = async function () {
     let candidateid = userDetails.InternalUserId;
     let response = await dispatch(getProfileActions.getCandidate(candidateid));
     let filter_data = response.payload;
-    let organization = filter_data.candidateQualificationsDtos.filter(
+    let organization = filter_data?.candidateQualificationsDtos?.filter(
       (x) => x.iscurrentlyworking == true
     );
 
@@ -156,7 +169,7 @@ export function CandidateProfile() {
     new_data.personalInfo = data;
     new_data.skillsInfo = filter_data.candidateSkillDtos;
     new_data.resumeInfo = filter_data.candidateResumeDto;
-    new_data.qualificationsInfo = filter_data.candidateQualificationsDtos;
+    new_data.qualificationsInfo = filter_data?.candidateQualificationsDtos;
     new_data.educationInfo = filter_data.candidateEducationDtos;
     new_data.certificationsInfo = filter_data.candidateCertificationDtos;
     new_data.additionalInfo = filter_data.candidateAdditionalInformationDtos;
@@ -238,11 +251,11 @@ export function CandidateProfile() {
               />
             </Col>
             <Col>
-              <AdditionalInformation />
+              <AdditionalInformation onCallBack={() => loadPage()} />
             </Col>
           </Row>
           <Row>
-            <JobPreferences />
+            <JobPreferences onCallBack={() => loadPage()} />
           </Row>
         </div>
       ) : (

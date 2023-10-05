@@ -14,21 +14,23 @@ export function JobListing({
   setPage,
 }) {
   const [selectedClass, setSelectedClass] = useState(
-    jobData.length > 0 ? jobData[0].jobid : "2"
+    jobData?.length > 0 ? jobData[0].jobid : "2"
   );
-  let selectedJobDetails = jobData.length > 0 ? [jobData[0]] : [];
+  let selectedJobDetails = jobData?.length > 0 ? [jobData[0]] : [];
   let current = Number(totalRows) / pageSize;
   if (current * pageSize !== totalRows) {
     current++;
   }
 
   const [selectedJobData, setSelectedJobData] = useState(
-    jobData.length > 0 ? [jobData[0]] : []
+    jobData?.length > 0 ? [jobData[0]] : []
   );
+  
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
   }, []);
+
   const getSelectedJob = (jobId) => {
     selectedJobDetails = jobData.filter((element) => {
       return element.jobid === jobId;
@@ -36,10 +38,11 @@ export function JobListing({
     setSelectedJobData(selectedJobDetails);
     setSelectedClass(jobId);
   };
+  
   return (
     <>
       <Col md="4">
-        {jobData.length > 0 &&
+        {jobData?.length > 0 &&
           jobData.map((job) => (
             <JobCard
               key={job.jobid}
@@ -52,7 +55,7 @@ export function JobListing({
               minExperience={job.minexperience}
               maxExperience={job.maxexperience}
               location={
-                job.jobLocationDtos.length > 0
+                job.jobLocationDtos?.length > 0
                   ? job.jobLocationDtos[0].location
                   : "-"
               }
@@ -66,7 +69,7 @@ export function JobListing({
               additionalData={job}
             />
           ))}
-        {jobData.length === 0 && (
+        {jobData?.length === 0 && (
           <Card>
             <CardBody>
               <CardText className="mb-0 text-center">
@@ -75,7 +78,7 @@ export function JobListing({
             </CardBody>
           </Card>
         )}
-        {jobData.length > 0 && (
+        {jobData?.length > 0 && (
           <CardPagination
             totalPages={current}
             pageIndex={page}

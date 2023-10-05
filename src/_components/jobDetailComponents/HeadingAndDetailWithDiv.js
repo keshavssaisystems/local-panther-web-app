@@ -7,6 +7,10 @@ import {
   BsPersonAdd,
   BsBuildings,
   BsPersonVcard,
+  BsCashStack,
+  BsStopwatch,
+  BsPersonGear,
+  BsPinMap,
 } from "react-icons/bs";
 import { Col, Row } from "reactstrap";
 
@@ -23,6 +27,10 @@ export function HeadingAndDetailWithDiv({ heading, detail, iconId }) {
               {iconId === 4 && <BsListStars />}
               {iconId === 5 && <BsBriefcase />}
               {iconId === 6 && <BsPersonAdd />}
+              {iconId === 7 && <BsCashStack />}
+              {iconId === 8 && <BsStopwatch />}
+              {iconId === 9 && <BsPersonGear />}
+              {iconId === 10 && <BsPinMap />}
             </div>
           </Col>
           <Col className="padding-demo-2">

@@ -29,7 +29,7 @@ import { payPeriodTypeReducer } from "../_containers/customer/createJob/payperio
 import { preScreenQuestionReducer } from "../_containers/customer/createJob/prescreenquestions.slice";
 import { previousJobListReducer } from "../_containers/customer/createJob/previousjoblist.slice";
 import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
-import { candidatejobListTabReducer } from "_containers/candidate/candidateTablist.slice";
+import { candidateJobListTabReducer } from "_containers/candidate/candidateTablist.slice";
 import { scheduleInterviewReducer } from "_containers/customer/scheduleInterview/scheduleinterview.slice";
 import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
 import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
@@ -42,6 +42,11 @@ import { certificateDataReducer } from "./certications.slice";
 import { certificationTypeReducer } from "./dropDownCertification.slice";
 import { ProficiencyReducer } from "./dropDownProficiency.slice";
 import { additionalInfoDataReducer } from "./additionalInfo.slice";
+import { custJobListReducer } from "_containers/customer/newjobs/custjobs.slice";
+import { matchedJobReducer } from "_containers/candidate/matchJob.slice";
+import { jobTitleReducer } from "./dropDownJobTitle.slice";
+import { payPeriodReducer } from "./dropDownPayPeriod.slice";
+import { jobPreferenceDataReducer } from "./jobPreference.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -87,6 +92,11 @@ export * from "./certications.slice";
 export * from "./dropDownCertification.slice";
 export * from "./dropDownProficiency.slice";
 export * from "./additionalInfo.slice";
+export * from "../_containers/customer/newjobs/custjobs.slice";
+export * from "_containers/candidate/matchJob.slice";
+export * from "./dropDownJobTitle.slice";
+export * from "./dropDownPayPeriod.slice";
+export * from "./jobPreference.slice";
 
 export const store = configureStore({
   reducer: {
@@ -119,7 +129,7 @@ export const store = configureStore({
     preScreenQuestion: preScreenQuestionReducer,
     previousJobList: previousJobListReducer,
     previousJobDetail: previousJobDetailReducer,
-    tabListReducer: candidatejobListTabReducer,
+
     scheduleInterview: scheduleInterviewReducer,
     publishJob: publishJobReducer,
     profileReducer: profileReducer,
@@ -133,5 +143,10 @@ export const store = configureStore({
     certificateType: certificationTypeReducer,
     ProficiencyList: ProficiencyReducer,
     additionalInfoReducer: additionalInfoDataReducer,
+    custJobListReducer: custJobListReducer,
+    candidateMatchJob: matchedJobReducer,
+    tabListReducer: candidateJobListTabReducer,
+    getJobTitle: jobTitleReducer,
+    getPayPeriod: payPeriodReducer,
   },
 });

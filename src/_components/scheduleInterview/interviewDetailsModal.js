@@ -3,6 +3,7 @@ import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import "./scheduledInterview.scss";
 import { VideoInterviewDetails } from "./videoInterviewDetails";
 import { TelephonicInterviewDetails } from "./telephonicInterviewDetails";
+import { InpersonInterviewDetails } from "./inpersonInterviewDetails";
 
 export function InterviewDetailsModal({
   isOpen = false,
@@ -29,10 +30,15 @@ export function InterviewDetailsModal({
       >
         <ModalHeader toggle={() => onClose()}>Interview details</ModalHeader>
         <ModalBody className="pt-4">
-          {type === "video" && (
+          {type === "Video" && (
             <VideoInterviewDetails interviewDetail={interviewDetail} />
           )}
-          {type === "phone" && <TelephonicInterviewDetails />}
+          {type === "Phone" && (
+            <TelephonicInterviewDetails interviewDetail={interviewDetail} />
+          )}
+          {type === "In-person" && (
+            <InpersonInterviewDetails interviewDetail={interviewDetail} />
+          )}
         </ModalBody>
       </Modal>
     </>

@@ -13,6 +13,7 @@ export function AsyncSelectFormGroup({
   showValidation,
   loadOptions,
   mandatory,
+  defaultValue,
 }) {
   const customStyles = {
     valueContainer: (provided, state) => ({
@@ -40,6 +41,7 @@ export function AsyncSelectFormGroup({
           loadOptions={loadOptions}
           isMulti={true}
           styles={customStyles}
+          defaultValue={defaultValue}
         />
         {showValidation === true && (
           <FormText color="danger">{validationMessage}</FormText>

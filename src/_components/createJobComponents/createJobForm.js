@@ -86,7 +86,7 @@ export default function CreateJob({
     setSetFormData(data);
   };
   useEffect(() => {
-    if (type === "previous_template") {
+    if (type === "previous_template" || type === "recommendation_template") {
       let data = {
         basicInformation: {
           companyId: "Adams - Runolfsdottir",
@@ -104,26 +104,14 @@ export default function CreateJob({
           jobLoactionOptions: jobLocationOptions,
         },
         experienceSchedule: {
-          jobType:
-            previousData.jobExperienceScheduleDtos === null
-              ? ""
-              : previousData.jobExperienceScheduleDtos[0].jobtypes,
+          jobType: previousData.jobExperienceScheduleDtos[0]?.jobtypes,
           workSchedule:
-            previousData.jobExperienceScheduleDtos === null
-              ? ""
-              : previousData.jobExperienceScheduleDtos[0].workschedules,
-          shift:
-            previousData.jobExperienceScheduleDtos === null
-              ? ""
-              : previousData.jobExperienceScheduleDtos[0].shifts,
+            previousData.jobExperienceScheduleDtos[0]?.workschedules,
+          shift: previousData.jobExperienceScheduleDtos[0]?.shifts,
           experienceLevel:
-            previousData.jobExperienceScheduleDtos === null
-              ? ""
-              : previousData.jobExperienceScheduleDtos[0].experiencelevelid,
+            previousData.jobExperienceScheduleDtos[0]?.experiencelevelid,
           hiringTimeline:
-            previousData.jobExperienceScheduleDtos === null
-              ? ""
-              : previousData.jobExperienceScheduleDtos[0].hiringtimelineid,
+            previousData.jobExperienceScheduleDtos[0]?.hiringtimelineid,
           shiftsOption: shiftsOption,
           workScheduleOptions: workScheduleOptions,
           jobTypeOption: jobTypeOption,
@@ -131,34 +119,28 @@ export default function CreateJob({
           hiringTimelineOption: hiringTimelineOption,
         },
         paymentBenifits: {
-          payPeriodType:
-            previousData.jobPaymentBenefitDtos === null
-              ? ""
-              : previousData.jobPaymentBenefitDtos[0].payperiodtypeid,
-          minimumAmount:
-            previousData.jobPaymentBenefitDtos === null
-              ? ""
-              : previousData.jobPaymentBenefitDtos[0].minimumamount,
-          maximumAmount:
-            previousData.jobPaymentBenefitDtos === null
-              ? ""
-              : previousData.jobPaymentBenefitDtos[0].maximumamount,
+          payPeriodType: previousData.jobPaymentBenefitDtos[0]?.payperiodtypeid,
+          minimumAmount: previousData.jobPaymentBenefitDtos[0]?.minimumamount,
+          maximumAmount: previousData.jobPaymentBenefitDtos[0]?.maximumamount,
           compensationPackage:
-            previousData.jobPaymentBenefitDtos === null
-              ? ""
-              : previousData.jobPaymentBenefitDtos[0].compensationpackage,
-          benefits:
-            previousData.jobPaymentBenefitDtos === null
-              ? ""
-              : previousData.jobPaymentBenefitDtos[0].benefits,
+            previousData.jobPaymentBenefitDtos[0]?.compensationpackage,
+          benefits: previousData.jobPaymentBenefitDtos[0]?.benefits,
           payPeriodTypeOption: payPeriodTypeOption,
         },
         keyQualification:
           previousData.jobKeyQualificationDtos === null
             ? {}
             : previousData.jobKeyQualificationDtos,
-        preScreen: {},
+        preScreen:
+          previousData.jobPrescreenApplicationDtos === null
+            ? {}
+            : previousData.jobPrescreenApplicationDtos,
       };
+      setBasicInformationData(data.basicInformation);
+      setExperienceScheduleData(data.experienceSchedule);
+      setPaymentBenifitsData(data.paymentBenifits);
+      setKeyQualificationData(data.keyQualification);
+      setPreScreenData(data.preScreen);
       JobDataForPreview(data);
     }
   }, []);
@@ -284,7 +266,7 @@ export default function CreateJob({
                   data={jobData.keyQualification}
                   postData={(e) => getKQPostData(e)}
                   prevStep={previousStep}
-                  previousData={previousData.jobPrescreenApplicationDtos ?? {}}
+                  previousData={previousData.jobKeyQualificationDtos ?? {}}
                 />
               </CardBody>
             </Collapse>

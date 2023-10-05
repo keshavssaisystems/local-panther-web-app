@@ -22,12 +22,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
-import { BsFillPlusCircleFill, BsDashCircleFill } from "react-icons/bs";
-
-import DatePicker from "react-datepicker";
-import language from "react-syntax-highlighter/dist/esm/languages/hljs/1c";
+import errorIcon from "../../assets/utils/images/error_icon.png";
+import successIcon from "../../assets/utils/images/success_icon.svg";
 
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
@@ -35,28 +31,37 @@ export function AdditionalInfoModal(props) {
   const [check, setCheck] = useState(props.check);
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [isSave, setSave] = useState(true);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
 
   const loadData = function () {
     let data;
-    if (check == "add") {
+
+    if (!props.selected) {
       data = [
         {
-          candidateAdditionalInformationId: 0,
+          candidateadditioninformationid: 0,
+          candidateid: 0,
           summary: "",
           language: "",
-          proficiencey: 0,
-          additionalInfo: "",
+          proficiencyid: null,
+          proficiency: "",
+          additionalinformation: "",
+          isactive: true,
         },
       ];
     } else {
       data = [
         {
-          candidateAdditionalInformationId:
-            props.selected.candidateAdditionalInformationId,
+          candidateadditioninformationid:
+            props.selected.candidateadditioninformationid,
           summary: props.selected.summary,
           language: props.selected.language,
+          proficiencyid: props.selected.proficiencyid,
           proficiency: props.selected.proficiency,
-          additionalInfo: props.selected.additionalInfo,
+          additionalinformation: props.selected.additionalinformation,
+          isactive: true,
         },
       ];
     }
@@ -72,23 +77,24 @@ export function AdditionalInfoModal(props) {
     useSelector((state) => state.ProficiencyList.user.data)
   );
   const closeModal = function () {
-    let data = [
-      {
-        id: 0,
-        summary: "",
-        language: "",
-        proficiency: "",
-        additionalInfo: "",
-      },
-    ];
-    setFormData(data);
-    window.location.reload();
+    // let data = [
+    //   {
+    //     id: 0,
+    //     summary: "",
+    //     language: "",
+    //     proficiency: "",
+    //     additionalInfo: "",
+    //   },
+    // ];
+    // setFormData(data);
+    // window.location.reload();
+    props.onCallAdditionalInfo();
   };
 
   const removeTabs = function (index) {
     let new_data = [...formDetails];
 
-    new_data.language.splice(index, 1);
+    new_data.splice(index, 1);
 
     setFormData(new_data);
   };
@@ -112,7 +118,6 @@ export function AdditionalInfoModal(props) {
     new_data.push(new_tab);
 
     setFormData(new_data);
-    console.log(formDetails);
   };
 
   const onHandleInputChange = function (check, data, index) {
@@ -123,6 +128,11 @@ export function AdditionalInfoModal(props) {
       new_data[index].proficiency = data;
     } else if (check == "summary") {
       new_data[index].summary = data;
+      if (data != "") {
+        new_data[index].error = false;
+      } else {
+        new_data[index].error = true;
+      }
     } else if (check == "additionalInfo") {
       new_data[index].additionalInfo = data;
     }
@@ -151,13 +161,15 @@ export function AdditionalInfoModal(props) {
 
     let filtered_data = formDetails.map((rest) => {
       return {
+        candidateadditioninformationid: rest.candidateadditioninformationid,
         candidateid: Number(userDetails.InternalUserId),
         summary: rest.summary,
         language: rest.language,
         proficiencyid: Number(rest.proficiency),
-        additionalinformation: rest.additionalInfo,
+        additionalinformation: rest.additionalInfo ? rest.additionalInfo : "",
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
+        isactive: true,
       };
     });
     let response;
@@ -166,12 +178,19 @@ export function AdditionalInfoModal(props) {
         additionalInfoDetailsSlice.addadditionalInfoThunk(filtered_data)
       );
     } else {
+      let id = filtered_data[0].candidateadditioninformationid;
       response = await dispatch(
         additionalInfoDetailsSlice.updateadditionalInfoThunk({
-          // id,
+          id,
           filtered_data,
         })
       );
+    }
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
     }
   }
   const selectDate = function () {};
@@ -184,33 +203,40 @@ export function AdditionalInfoModal(props) {
             {check == "add" ? (
               <Row>
                 <Col>
-                  {index < formDetails.length - 1 ? (
-                    <Label
-                      className="float-end"
-                      style={{
-                        cursor: "pointer",
-                        color: "#2f479b",
-                        borderBottom: "1px solid #2f479b",
-                        fontWeight: "500",
-                      }}
-                      onClick={() => removeTabs(index)}
-                    >
-                      Remove
-                    </Label>
-                  ) : (
-                    <Label
-                      className="float-end"
-                      onClick={() => addMoreTabs(index + 1)}
-                      style={{
-                        cursor: "pointer",
-                        color: "#2f479b",
-                        borderBottom: "1px solid #2f479b",
-                        fontWeight: "500",
-                      }}
-                    >
-                      +Add More
-                    </Label>
-                  )}
+                  <div className="float-end">
+                    {formDetails.length > 1 ? (
+                      <Label
+                        className="me-2"
+                        style={{
+                          cursor: "pointer",
+                          color: "#2f479b",
+                          borderBottom: "1px solid #2f479b",
+                          fontWeight: "500",
+                        }}
+                        onClick={() => removeTabs(index)}
+                      >
+                        Remove
+                      </Label>
+                    ) : (
+                      <></>
+                    )}
+                    {index == formDetails.length - 1 ? (
+                      <Label
+                        className="float-end"
+                        onClick={() => addMoreTabs(index + 1)}
+                        style={{
+                          cursor: "pointer",
+                          color: "#2f479b",
+                          borderBottom: "1px solid #2f479b",
+                          fontWeight: "500",
+                        }}
+                      >
+                        +Add More
+                      </Label>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </Col>
               </Row>
             ) : (
@@ -295,7 +321,7 @@ export function AdditionalInfoModal(props) {
                     type="textarea"
                     id="summary"
                     maxLength={500}
-                    value={formDetails?.summary}
+                    value={item.summary}
                     onInput={(evt) =>
                       onHandleInputChange("summary", evt.target.value, index)
                     }
@@ -311,7 +337,7 @@ export function AdditionalInfoModal(props) {
               <Col md={6}>
                 <FormGroup>
                   <Label for="state" className="input-label">
-                    Additional Information
+                    Additional information
                   </Label>
                   <Input
                     style={{ height: "100px" }}
@@ -319,7 +345,7 @@ export function AdditionalInfoModal(props) {
                     placeholder="Enter Additional Information"
                     name="state"
                     type="textarea"
-                    value={formDetails?.additionalInfo}
+                    value={item.additionalInfo}
                     onInput={(evt) =>
                       onHandleInputChange(
                         "additionalInfo",
@@ -357,6 +383,63 @@ export function AdditionalInfoModal(props) {
             )}
           </Form>
         ))}
+
+        <Modal className="modal-reject-align profile-view" isOpen={success}>
+          <Card>
+            <CardBody>
+              <div className="d-flex justify-content-center mb-3">
+                <img src={successIcon} alt="success-icon" />
+              </div>
+              <div className="mb-0 d-flex justify-content-center rejected-success-text">
+                {message}
+              </div>
+              <div className="mb-3 d-flex justify-content-center rejected-success-text">
+                {" "}
+              </div>
+              <div>
+                <Row>
+                  <Col className="d-flex justify-content-center">
+                    <Button
+                      className="me-2 accept-modal-btn"
+                      onClick={(evt) => closeModal()}
+                    >
+                      OK
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            </CardBody>
+          </Card>
+        </Modal>
+
+        <Modal className="modal-reject-align profile-view" isOpen={error}>
+          <Card>
+            <CardBody>
+              <div className="d-flex justify-content-center mb-3">
+                <img src={errorIcon} alt="success-icon" />
+              </div>
+              <div className="mb-0 d-flex justify-content-center rejected-success-text">
+                Something went wrong
+              </div>
+              <div className="mb-3 d-flex justify-content-center rejected-success-text">
+                {" "}
+                Please try again later
+              </div>
+              <div>
+                <Row>
+                  <Col className="d-flex justify-content-center">
+                    <Button
+                      className="me-2 accept-modal-btn"
+                      onClick={(evt) => closeModal()}
+                    >
+                      OK
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            </CardBody>
+          </Card>
+        </Modal>
       </div>
     </div>
   );

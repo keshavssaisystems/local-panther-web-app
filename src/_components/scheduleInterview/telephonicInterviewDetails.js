@@ -12,11 +12,13 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import moment from "moment-timezone";
 
 export function TelephonicInterviewDetails({ interviewDetail }) {
-  let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
+  let scheduled = moment(interviewDetail?.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
   let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
-  let scheduledDate = moment(interviewDetail.scheduledate).format("YYYY-MM-DD");
+  let scheduledDate = moment(interviewDetail?.scheduledate).format(
+    "YYYY-MM-DD"
+  );
   if (scheduledDate === currentDay) {
     scheduled = "Today";
   }
@@ -27,19 +29,19 @@ export function TelephonicInterviewDetails({ interviewDetail }) {
     scheduled = "Tommorow";
   }
   let startTime = moment(
-    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
       " " +
-      interviewDetail.starttime
+      interviewDetail?.starttime
   )
     .tz("America/New_York")
     .format("hh:mm a");
   let startDate =
-    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
     " " +
     startTime;
   let durationArr =
-    interviewDetail.duration !== undefined
-      ? interviewDetail.duration.split(" ")
+    interviewDetail?.duration !== undefined
+      ? interviewDetail?.duration.split(" ")
       : [];
   let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
   return (
@@ -49,7 +51,7 @@ export function TelephonicInterviewDetails({ interviewDetail }) {
           <div className="menu-header-content btn-pane-right">
             <Col lg="4">
               <h6 className="job-main-heading mb-0">
-                {interviewDetail.candidatename}
+                {interviewDetail?.candidatename}
               </h6>
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -68,11 +70,11 @@ export function TelephonicInterviewDetails({ interviewDetail }) {
       </div>
       <div className="p-custom">
         <p className="mb-0">
-          Phone no : {interviewDetail.textremaindernumbers}
+          Phone no : {interviewDetail?.textremaindernumbers}
         </p>
       </div>
       <div className="p-custom">
-        <p className="mb-0">Applied for {interviewDetail.jobtitle}</p>
+        <p className="mb-0">Applied for {interviewDetail?.jobtitle}</p>
       </div>
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
@@ -88,11 +90,11 @@ export function TelephonicInterviewDetails({ interviewDetail }) {
             </p>
           </div>
           <div className="p-custom">
-            <p className="mb-0">Mode : {interviewDetail.format}</p>
+            <p className="mb-0">Mode : {interviewDetail?.format}</p>
           </div>
           <div className="p-custom">
             <p className="mb-0">
-              Interviewer : {interviewDetail.intervieweremailids}
+              Interviewer : {interviewDetail?.intervieweremailids}
             </p>
           </div>
         </CardBody>

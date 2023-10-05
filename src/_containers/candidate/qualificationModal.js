@@ -7,45 +7,28 @@ import {
   Modal,
   Card,
   CardBody,
-  Collapse,
   InputGroup,
   Button,
   FormGroup,
   Form,
 } from "reactstrap";
-import { Link } from "react-router-dom";
 import AsyncSelect from "react-select/async";
 import { useDispatch } from "react-redux";
-import PageTitle from "../../_components/common/pagetitle";
-import { profileSkillsActions } from "_store";
-
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
-import axios from "axios";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { getLocationFilter } from "_store";
 
 export function QualificationModal(props) {
-  const config = {
-    headers: {
-      "content-type": "application/json",
-    },
-  };
   const dispatch = useDispatch();
   const [check, setCheck] = useState(props.check);
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-  const [isPersonalModal, setPersonalModal] = useState(false);
-  const [isSave, setSave] = useState(true);
+
   const [formDetails, setFormData] = useState([]);
 
   useEffect(() => {
@@ -70,7 +53,8 @@ export function QualificationModal(props) {
         enddate: null,
         isactive: true,
         currentUserId: user.userId,
-
+        fromDateValid: false,
+        fromDateReq: false,
         error: false,
       });
     } else {
@@ -87,25 +71,13 @@ export function QualificationModal(props) {
         enddate: new Date(props.selected.enddate),
         isactive: props.selected.isactive,
         currentUserId: user.userId,
+        fromDateValid: false,
+        fromDateReq: false,
         error: false,
       });
     }
     setFormData(data);
   };
-
-  // const closeModal = function () {
-  //   let data = [
-  //     {
-  //       id: 0,
-  //       jobTitle: "",
-  //       organization: "",
-  //       jobdescription: "",
-  //       error: false,
-  //     },
-  //   ];
-  //   setFormData(data);
-  //   props.onCallBack();
-  // };
 
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -118,6 +90,7 @@ export function QualificationModal(props) {
   const [citySelect, setCitySelect] = useState([]);
   const [stateSelect, setStateSelect] = useState([]);
   const [countrySelect, setCountrySelect] = useState([]);
+  const [cityReqError, setCityReqError] = useState(false);
   useEffect(() => {
     let country_response;
     let state_response;
@@ -134,7 +107,6 @@ export function QualificationModal(props) {
       };
     });
     setStateList(state_response);
-    console.log(stateList);
     setCountryList(country_response);
   }, [cityList]);
   const loadOptions = async function (inputValue) {
@@ -167,12 +139,9 @@ export function QualificationModal(props) {
 
   const addMoreTabs = function (index) {
     let new_data = [...formDetails];
-    console.log("before" + new_data);
     if (new_data[index - 1].jobTitle == "") {
       new_data[index - 1].error = true;
       setFormData(new_data);
-
-      console.log(formDetails);
       return;
     }
 
@@ -185,8 +154,8 @@ export function QualificationModal(props) {
       cityid: 0,
       stateid: 0,
       iscurrentlyworking: true,
-      startdate: "",
-      enddate: "",
+      startdate: null,
+      enddate: null,
       isactive: true,
       currentUserId: 13960,
 
@@ -195,7 +164,6 @@ export function QualificationModal(props) {
     new_data.push(newTab);
 
     setFormData(new_data);
-    console.log(formDetails);
   };
 
   const handleInputChange = function (check, index, data) {
@@ -209,15 +177,36 @@ export function QualificationModal(props) {
     } else if (check == "description") {
       new_data[index].jobdescription = data;
     } else if (check == "status") {
-      new_data[index].iscurrentlyworking = data == "on" ? true : false;
+      new_data[index].iscurrentlyworking = !new_data[index].iscurrentlyworking;
     } else if (check == "fromDate") {
-      new_data[index].startdate = data;
+      if (new_data[index].enddate) {
+        if (new Date(data) > new Date(new_data[index].enddate)) {
+          new_data[index].fromDateValid = true;
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].startdate = data;
+        }
+      } else {
+        new_data[index].fromDateValid = false;
+        new_data[index].startdate = data;
+      }
     } else if (check == "toDate") {
       new_data[index].enddate = data;
+
+      if (new_data[index].startdate) {
+        if (new Date(data) < new Date(new_data[index].startdate)) {
+          new_data[index].fromDateValid = true;
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].enddate = data;
+        }
+      } else {
+        new_data[index].fromDateValid = false;
+        new_data[index].enddate = data;
+      }
     }
 
     setFormData(new_data);
-    // onSubmit();
   };
 
   const onSelectCityDropdown = function (data, index) {
@@ -250,7 +239,16 @@ export function QualificationModal(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
-    window.location.reload();
+
+    props.OnCallQualification();
+  };
+
+  const checkCityValid = function (id) {
+    if (id == 0) {
+      setCityReqError(true);
+    } else {
+      setCityReqError(false);
+    }
   };
 
   async function onSubmit() {
@@ -270,7 +268,6 @@ export function QualificationModal(props) {
       }
 
       setFormData(new_data);
-      setSave(false);
       return;
     }
 
@@ -312,40 +309,47 @@ export function QualificationModal(props) {
   const selectDate = function () {};
 
   return (
-    <div>
+    <div className="profile-view">
       {formDetails.map((item, index) => (
         <div>
           <Form id={index}>
             {check == "add" ? (
               <Row>
                 <Col>
-                  {index < formDetails.length - 1 ? (
-                    <Label
-                      className="float-end"
-                      style={{
-                        cursor: "pointer",
-                        color: "#2f479b",
-                        borderBottom: "1px solid #2f479b",
-                        fontWeight: "500",
-                      }}
-                      onClick={() => removeTabs(index)}
-                    >
-                      Remove
-                    </Label>
-                  ) : (
-                    <Label
-                      className="float-end"
-                      onClick={() => addMoreTabs(index + 1)}
-                      style={{
-                        cursor: "pointer",
-                        color: "#2f479b",
-                        borderBottom: "1px solid #2f479b",
-                        fontWeight: "500",
-                      }}
-                    >
-                      +Add More
-                    </Label>
-                  )}
+                  <div className="float-end">
+                    {formDetails.length > 1 ? (
+                      <Label
+                        className="me-2"
+                        style={{
+                          cursor: "pointer",
+                          color: "#2f479b",
+                          borderBottom: "1px solid #2f479b",
+                          fontWeight: "500",
+                        }}
+                        onClick={() => removeTabs(index)}
+                      >
+                        Remove
+                      </Label>
+                    ) : (
+                      <></>
+                    )}
+                    {index == formDetails.length - 1 ? (
+                      <Label
+                        className="float-end"
+                        onClick={() => addMoreTabs(index + 1)}
+                        style={{
+                          cursor: "pointer",
+                          color: "#2f479b",
+                          borderBottom: "1px solid #2f479b",
+                          fontWeight: "500",
+                        }}
+                      >
+                        +Add More
+                      </Label>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </Col>
               </Row>
             ) : (
@@ -355,7 +359,7 @@ export function QualificationModal(props) {
               <Col md={4}>
                 <FormGroup>
                   <Label for="jobTitle" className="input-label">
-                    Job Title <span className="required-icon">*</span>
+                    Job title <span className="required-icon">*</span>
                   </Label>
                   <input
                     placeholder="Enter Job Title"
@@ -371,7 +375,7 @@ export function QualificationModal(props) {
                     }
                   />
                   <div className="invalid-feedback">
-                    {item.error ? "Job Title is Required" : ""}
+                    {item.error ? "Job title is required" : ""}
                   </div>
                 </FormGroup>
               </Col>
@@ -404,6 +408,7 @@ export function QualificationModal(props) {
                     isMulti={false}
                     value={stateSelect[index]}
                     onChange={(evt) => onSelectStateDropdown(evt, index)}
+                    onMenuOpen={() => checkCityValid(item.cityid)}
                   />
                 </FormGroup>
               </Col>
@@ -421,7 +426,30 @@ export function QualificationModal(props) {
                     isMulti={false}
                     value={countrySelect[index]}
                     onChange={(evt) => onSelectCountryDropdown(evt, index)}
+                    onMenuOpen={() => checkCityValid(item.cityid)}
                   />
+                </FormGroup>
+              </Col>
+              <Col md={4}>
+                <FormGroup>
+                  <Label for="company" className="input-label">
+                    Company
+                  </Label>
+                  <Input
+                    placeholder="Enter Company"
+                    name="company"
+                    type="text"
+                    id="company"
+                    value={item.organization}
+                    maxLength={50}
+                    className="field-input placeholder-text form-control"
+                    onInput={(evt) =>
+                      handleInputChange("company", index, evt.target.value)
+                    }
+                  />
+                  {/* <span className="dropdown-placeholder float-end">
+                    {item.organization ? item.organization.length : 0}/500
+                  </span> */}
                 </FormGroup>
               </Col>
             </Row>
@@ -435,6 +463,7 @@ export function QualificationModal(props) {
                       handleInputChange("status", index, evt.target.value)
                     }
                     type="checkbox"
+                    checked={item.iscurrentlyworking}
                   />{" "}
                   <Label check className="input-label">
                     Currently Working
@@ -447,7 +476,7 @@ export function QualificationModal(props) {
               <Col md={4}>
                 <FormGroup>
                   <Label for="fromDate" className="input-label">
-                    From Date
+                    From date
                   </Label>
                   <InputGroup>
                     <div className="input-group-text">
@@ -458,18 +487,24 @@ export function QualificationModal(props) {
                       id="fromDate"
                       placeholderText="DD/MM/YYYY"
                       className="form-control"
+                      showYearDropdown={true}
                       selected={item.startdate}
                       onChange={(evt) =>
                         handleInputChange("fromDate", index, evt)
                       }
                     />
                   </InputGroup>
+                  <div className="filter-info-text filter-error-msg">
+                    {item.fromDateValid
+                      ? "From Date should be less than To Date"
+                      : ""}
+                  </div>
                 </FormGroup>
               </Col>
               <Col md={4}>
                 <FormGroup>
                   <Label for="toDate" className="input-label">
-                    To Date
+                    To date
                   </Label>
                   <InputGroup>
                     <div className="input-group-text">
@@ -481,6 +516,7 @@ export function QualificationModal(props) {
                       className="form-control"
                       placeholderText="DD/MM/YYYY"
                       selected={item.enddate}
+                      showYearDropdown={true}
                       onChange={(evt) =>
                         handleInputChange("toDate", index, evt)
                       }
@@ -493,9 +529,10 @@ export function QualificationModal(props) {
               <Col>
                 <FormGroup>
                   <Label for="jobDescription" className="input-label">
-                    Job Description
+                    Job description
                   </Label>
                   <Input
+                    style={{ height: "100px" }}
                     placeholder="Enter Job Description"
                     name="jobDescription"
                     type="textarea"
@@ -508,35 +545,8 @@ export function QualificationModal(props) {
                     }
                   />
 
-                  {item.jobDescription ? (
-                    <span className="dropdown-placeholder float-end">
-                      {item.jobDescription.length}/500
-                    </span>
-                  ) : (
-                    <></>
-                  )}
-                </FormGroup>
-              </Col>
-
-              <Col>
-                <FormGroup>
-                  <Label for="company" className="input-label">
-                    Company
-                  </Label>
-                  <Input
-                    placeholder="Enter Company"
-                    name="company"
-                    type="textarea"
-                    id="company"
-                    value={item.organization}
-                    maxLength={500}
-                    className="field-input placeholder-text form-control"
-                    onInput={(evt) =>
-                      handleInputChange("company", index, evt.target.value)
-                    }
-                  />
                   <span className="dropdown-placeholder float-end">
-                    {item.organization ? item.organization.length : 0}/500
+                    {item.jobdescription ? item.jobdescription.length : 0}/500
                   </span>
                 </FormGroup>
               </Col>
@@ -578,7 +588,6 @@ export function QualificationModal(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              Thank you!
             </div>
             <div>
               <Row>
@@ -615,6 +624,35 @@ export function QualificationModal(props) {
                   <Button
                     className="me-2 accept-modal-btn"
                     onClick={(evt) => closeModal()}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={cityReqError}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Please select City to filter
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              State and Country
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setCityReqError(false)}
                   >
                     OK
                   </Button>

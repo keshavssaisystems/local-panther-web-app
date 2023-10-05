@@ -67,16 +67,17 @@ function createExtraActions() {
       async ({
         pageNumber,
         pageSize,
-        isCustomerLike,
-        isCustomerMaybe,
-        isCustomerAccepted,
-        isCustomerReject,
-        isCustomerScheduled,
-        isCandidateApply,
+        // isCustomerLike,
+        // isCustomerMaybe,
+        // isCustomerAccepted,
+        // isCustomerReject,
+        // isCustomerScheduled,
+        // isCandidateApply,
+        customerRecommendedJobStatusId,
         jobId,
       }) =>
         await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&isCustomerLike=${isCustomerLike}&isCustomerMaybe=${isCustomerMaybe}&isCustomerAccepted=${isCustomerAccepted}&isCustomerReject=${isCustomerReject}&isCustomerScheduled=${isCustomerScheduled}&isCandidateApply=${isCandidateApply}&jobId=${jobId}`
+          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&jobId=${jobId}&isActive=true`
         )
     );
   }
