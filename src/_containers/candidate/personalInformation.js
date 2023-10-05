@@ -231,7 +231,7 @@ export function PersonalInformation(props) {
     new_data.personalInfo.countryid = countrySelect[0]
       ? countrySelect[0]?.value
       : 0;
-    new_data.personalInfo.stateid = stateSelect[0].value;
+    new_data.personalInfo.stateid = stateSelect[0]?.value;
     new_data.personalInfo.genderid = genderSelect[0]
       ? genderSelect[0]?.value
       : 0;

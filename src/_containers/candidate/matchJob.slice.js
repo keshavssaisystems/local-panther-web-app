@@ -30,11 +30,11 @@ function createExtraActions() {
     return createAsyncThunk(
       `${name}/getmatchedJob`,
 
-      async ({
+      async (
         candidateId
-      }) =>
+      ) =>
         await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList`
+          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?candidateId=${candidateId}`
         )
     );
   }
