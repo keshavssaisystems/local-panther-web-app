@@ -50,6 +50,7 @@ export function ScheduleInterviewList({
       name: "Candidate",
       selector: (row) => row.candidatename,
       sortable: true,
+      width: "250px",
     },
     {
       name: "Skills",
@@ -57,6 +58,7 @@ export function ScheduleInterviewList({
       selector: (row) =>
         row.candidateskills === "" ? "-" : row.candidateskills,
       sortable: true,
+      width: "350px",
     },
     {
       name: "Scheduled time",
