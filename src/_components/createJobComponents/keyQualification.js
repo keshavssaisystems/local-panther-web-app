@@ -84,14 +84,28 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
     event.preventDefault();
     let mustHave = getStringData(event.target.elements.mustHave, true);
     let niceToHave = getStringData(event.target.elements.niceToHave, false);
-    if (mustHave === "") {
-      setMustHaveValidation(true);
-    } else {
-      setMustHaveValidation(false);
-      let data = mustHave.concat(niceToHave);
-      postData(data);
-      setSuccessMessage(true);
+    let data = null;
+    if (
+      event.target.elements.mustHave.value !== "" &&
+      event.target.elements.niceToHave.value !== ""
+    ) {
+      data = mustHave.concat(niceToHave);
     }
+    if (
+      event.target.elements.mustHave.value !== "" &&
+      event.target.elements.niceToHave.value === ""
+    ) {
+      data = mustHave;
+    }
+    if (
+      event.target.elements.mustHave.value === "" &&
+      event.target.elements.niceToHave.value !== ""
+    ) {
+      data = niceToHave;
+    }
+    console.log(data);
+    postData(data);
+    setSuccessMessage(true);
   };
   return (
     <>

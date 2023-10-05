@@ -3,16 +3,6 @@ import { Button } from "reactstrap";
 
 export default function PublishJobStep({ reqData, responseData, publishJob }) {
   useEffect(() => {
-    let data = [
-      {
-        jobkeyqualifications: 0,
-        jobid: 0,
-        skillid: "1",
-        skillname: "null",
-        isrequired: true,
-        isactive: true,
-      },
-    ];
     let main = {
       jobid: 0,
       companyid: 1,
@@ -44,7 +34,7 @@ export default function PublishJobStep({ reqData, responseData, publishJob }) {
       ],
       jobKeyQualificationDtos:
         reqData.keyQualification.length === undefined
-          ? data
+          ? null
           : reqData.keyQualification,
       jobPaymentBenefitDtos: [
         {
