@@ -73,13 +73,13 @@ const AdminDashboardDetails = () => {
     },
     {
       name: "Status",
-      selector: row => row.status,
+      selector: row => row.visits,
       sortable: true,
     },
 
     {
       name: "Action",
-      selector: row => row.visits,
+      selector: row => row.status,
       sortable: true,
     },
   ];
@@ -137,7 +137,7 @@ const AdminDashboardDetails = () => {
                     <div className="widget-chart-content">
                       <div className="widget-content-left fsize-1">
                         <div className="text-muted opacity-6">
-                          hiring Managers
+                          active Hirers
                         </div>
                       </div>
                       <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
@@ -183,7 +183,7 @@ const AdminDashboardDetails = () => {
                     <div className="widget-chart-content">
                       <div className="widget-content-left fsize-1">
                         <div className="text-muted opacity-6">
-                          open Jobs
+                          total Interviews
                         </div>
                       </div>
                       <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
@@ -261,12 +261,12 @@ const AdminDashboardDetails = () => {
                   </CardBody>
                 </Card>
               </Col>
-              <Col md="12" lg="6" xl="4">
+              <Col md="12" lg="5" xl="4">
                 <Card className="mb-3">
                   <CardHeader className="card-header-tab">
                     <div className="card-header-title font-size-lg text-capitalize fw-normal">
                       <i className="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> {" "} </i>
-                      Technical Support
+                      Alerts
                     </div>
                   </CardHeader>
                   <CardBody className="p-0">

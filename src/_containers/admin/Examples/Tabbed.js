@@ -6,21 +6,21 @@ import city3 from "assets/utils/images/dropdown-header/city3.jpg";
 import { Nav, Button, NavItem } from "reactstrap";
 
 // Examples
-import ChatExample from "_components/_layout/AppFooter/Components/TabsContent/ChatExample";
-import TimelineEx from "_components/_layout/AppFooter/Components/TabsContent/TimelineExample";
-import SysErrEx from "_components/_layout/AppFooter/Components/TabsContent/SystemExample";
+import ChatExample from "_containers/admin/Examples/TabsContent/ChatExample";
+import TimelineEx from "_containers/admin/Examples/TabsContent/TimelineExample";
+import SysErrEx from "_containers/admin/Examples/TabsContent/SystemExample";
 
 const tabsContent = [
   {
-    title: "Messages",
+    title: "Day",
     content: <ChatExample />,
   },
   {
-    title: "Events",
+    title: "Week",
     content: <TimelineEx />,
   },
   {
-    title: "System Errors",
+    title: "Not Responded",
     content: <SysErrEx />,
   },
 ];
@@ -44,10 +44,9 @@ export default class TabbedContent extends Component {
                 backgroundImage: "url(" + city3 + ")",
               }}/>
             <div className="menu-header-content text-dark">
-              <h5 className="menu-header-title">Notifications</h5>
+              <h5 className="menu-header-title text-danger fsize-2">21</h5>
               <h6 className="menu-header-subtitle">
-                You have <b className="text-danger">21 </b>
-                unread messages
+                <b className="text-bold">Missed today</b>
               </h6>
             </div>
           </div>
@@ -61,7 +60,7 @@ export default class TabbedContent extends Component {
               <div className="badge badge-dot badge-dot-lg bg-warning badge-pulse">
                 Badge
               </div>
-              View All Messages
+              View Details
             </Button>
           </NavItem>
         </Nav>

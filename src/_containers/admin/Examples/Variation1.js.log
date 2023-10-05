@@ -176,14 +176,14 @@ export default class SalesDashboard1 extends Component {
                             <i className="pe-7s-menu btn-icon-wrapper" />
                           </DropdownToggle>
                           <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                            <DropdownItem header>Change Range</DropdownItem>
+                            <DropdownItem header>Action</DropdownItem>
                             <DropdownItem>
                               <i className="dropdown-icon lnr-inbox"> </i>
-                              <span>Week</span>
+                              <span>action-1</span>
                             </DropdownItem>
                             <DropdownItem>
                               <i className="dropdown-icon lnr-file-empty"> </i>
-                              <span>Month</span>
+                              <span>action-2</span>
                             </DropdownItem>
                             <DropdownItem>
                               <i className="dropdown-icon lnr-book"> </i>
@@ -217,7 +217,7 @@ export default class SalesDashboard1 extends Component {
                     <CardHeader className="card-header-tab">
                       <div className="card-header-title font-size-lg text-capitalize fw-normal">
                         <i className="header-icon lnr-cloud-download icon-gradient bg-happy-itmeo"> {" "} </i>
-                        Technical Support
+                        Missed Interview Stats
                       </div>
                     </CardHeader>
                     <CardBody className="p-0">
