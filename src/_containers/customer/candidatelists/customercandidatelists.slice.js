@@ -76,9 +76,13 @@ function createExtraActions() {
         customerRecommendedJobStatusId,
         jobId,
       }) =>
-        await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&jobId=${jobId}&isActive=true`
-        )
+        jobId !== undefined
+          ? await fetchWrapper.get(
+              `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&jobId=${jobId}&isActive=true`
+            )
+          : await fetchWrapper.get(
+              `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&isActive=true`
+            )
     );
   }
 

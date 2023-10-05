@@ -140,6 +140,11 @@ export function ScheduleInterview() {
     );
     getCandidateList(selectedJobId);
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
         start: moment().format("YYYY-MM-DDTHH:mm:ss"),
