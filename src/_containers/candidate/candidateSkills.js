@@ -70,13 +70,12 @@ export function CandidateSkills(props) {
 
     setSkillsMultiple(data);
     setSelectedSkillData(selectedData);
-
     let selected_exp = [...selectedExp];
     selected_exp = get_response?.map(({ ...rest }) => {
       return {
         id: rest.yearsofexperience,
         name: experienceLevelOption.find((x) => x.id == rest.yearsofexperience)
-          .name,
+          ?.name,
       };
     });
     setSelectedExp(selected_exp);
@@ -138,6 +137,23 @@ export function CandidateSkills(props) {
     new_data.splice(index, 1);
 
     setSkills(new_data);
+
+    let selected_data = {
+      id: data[data.length - 1].value,
+      name: data[data.length - 1].label,
+      experience: "",
+    };
+    let new_array = [...selectedSkillData];
+    let i = selectedSkillData.findIndex(
+      (x) => x.id == data[data.length - 1]?.value
+    );
+    if (i > -1) {
+      new_array.splice(i, 1);
+    } else {
+      new_array.push(selected_data);
+    }
+
+    setSelectedSkillData(new_array);
   };
   const close = function () {
     setPersonalModal(false);
@@ -248,7 +264,7 @@ export function CandidateSkills(props) {
     );
 
     let new_array = [...selectedSkillData];
-    new_array[index].experience = data;
+    new_array[index].experience = selectedSkill;
 
     setSelectedSkillData(new_array);
   };

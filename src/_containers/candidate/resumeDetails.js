@@ -180,8 +180,8 @@ export function ResumeDetails(props) {
                 </Row>
                 <Row>
                   <Label className="card-p-text">
-                    Recommend to use build resume option and/or use provided
-                    resume template for upload resume
+                    The recommendation is to utilize the build resume option for
+                    improved job matching
                   </Label>
                 </Row>
 
@@ -192,6 +192,7 @@ export function ResumeDetails(props) {
                         <strong className="content-title">
                           <span className="me-2">{fileName}</span>{" "}
                           <a
+                            target="blank"
                             href={resumeDetails.resumepath}
                             download={fileName}
                             className="me-2"
@@ -216,8 +217,8 @@ export function ResumeDetails(props) {
                   <p>
                     <BsDownload />
                     <a
-                      href="/example.pdf"
-                      download="template.pdf"
+                      href="https://sadeveastusa001.blob.core.windows.net/cndev-appdata-001/Template/Resume_Template.docx"
+                      download="Resume_Template.docx"
                       className="card-p-text-black"
                       style={{ color: "#2F479B", marginLeft: "2px" }}
                     >
@@ -263,7 +264,7 @@ export function ResumeDetails(props) {
                           </label>
                         </Row>
                         <span className="file-info">
-                          Support formats:doc, docx, pdf,rtf, upto 2 MB
+                          Support formats:doc, docx, pdf,rtf, upto 5 MB
                         </span>
                       </div>
                     </Row>
@@ -322,27 +323,40 @@ export function ResumeDetails(props) {
                   className="mb-0 d-flex justify-content-center"
                   style={{ fontWeight: "500", fontSize: "15px" }}
                 >
-                  Please fill Profile, Resume, Qualifications,
+                  The system generates a standard resume
                 </div>
                 <div
                   className="mb-0 d-flex justify-content-center"
                   style={{ fontWeight: "500", fontSize: "15px" }}
                 >
-                  Education,Skills, Certifications and
-                </div>
-
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  licenses, Additional Information, Job
+                  format by incorporating all necessary
                 </div>
 
                 <div
                   className="mb-0 d-flex justify-content-center"
                   style={{ fontWeight: "500", fontSize: "15px" }}
                 >
-                  preferences to create your own template
+                  information from the candidate profile page,
+                </div>
+
+                <div
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
+                >
+                  including demographics, work experience, education
+                </div>
+
+                <div
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
+                >
+                  skills, certifications, licenses, languages
+                </div>
+                <div
+                  className="mb-0 d-flex justify-content-center"
+                  style={{ fontWeight: "500", fontSize: "15px" }}
+                >
+                  and summary
                 </div>
 
                 <Row>

@@ -60,12 +60,30 @@ import {
 import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
-  console.log(props);
   const dispatch = useDispatch();
+
+  const genderList_temp = useSelector((state) => state.gender.genderList);
+  const raceList_temp = useSelector((state) => state.ethnicity.ethnicityList);
+  const eligibilityList_temp = useSelector(
+    (state) => state.getProfile.dropdownLists.eligibilityDropDown
+  );
+
+  const personalInfo_temp = useSelector(
+    (state) => state.getProfile.profileData.personalInfo
+  );
+
+  useEffect(() => {
+    let data = {
+      personalInfo: personalInfo_temp,
+      genderList: genderList_temp,
+      raceList: raceList_temp,
+      eligibilityList: eligibilityList_temp,
+    };
+    setSelectedCandidate(data);
+  }, [personalInfo_temp]);
+
   const [selectedCandidate, setSelectedCandidate] = useState({
-    personalInfo: useSelector(
-      (state) => state.getProfile.profileData.personalInfo
-    ),
+    personalInfo: {},
     genderList: useSelector((state) => state.gender.genderList),
     raceList: useSelector((state) => state.ethnicity.ethnicityList),
     eligibilityList: useSelector(
@@ -198,26 +216,28 @@ export function PersonalInformation(props) {
     } else {
       errors.cityError = false;
     }
-    if (stateSelect.length == 0) {
-      errors.stateError = true;
-    } else {
-      errors.stateError = false;
-    }
-    if (errors.cityError || errors.stateError) {
+    // if (stateSelect.length == 0) {
+    //   errors.stateError = true;
+    // } else {
+    //   errors.stateError = false;
+    // }
+    if (errors.cityError) {
       setRequiredErros(errors);
       return;
     }
     let new_data = { ...selectedCandidate_temp };
 
-    new_data.personalInfo.cityid = citySelect[0].value;
+    new_data.personalInfo.cityid = citySelect[0]?.value;
     new_data.personalInfo.countryid = countrySelect[0]
-      ? countrySelect[0].value
+      ? countrySelect[0]?.value
       : 0;
-    new_data.personalInfo.stateid = stateSelect[0].value;
+    new_data.personalInfo.stateid = stateSelect[0]?.value;
     new_data.personalInfo.genderid = genderSelect[0]
-      ? genderSelect[0].value
+      ? genderSelect[0]?.value
       : 0;
-    new_data.personalInfo.ethnicityid = raceSelect[0] ? raceSelect[0].value : 0;
+    new_data.personalInfo.ethnicityid = raceSelect[0]
+      ? raceSelect[0]?.value
+      : 0;
 
     if (
       new_data.personalInfo.firstname == "" ||
@@ -263,7 +283,7 @@ export function PersonalInformation(props) {
   }
 
   const checkCityValid = function () {
-    if (citySelect[0].value == 0) {
+    if (citySelect[0]?.value == 0) {
       setCityReqError(true);
     } else {
       setCityReqError(false);
@@ -278,10 +298,25 @@ export function PersonalInformation(props) {
   };
 
   const close = function () {
+    let data = {
+      personalInfo: personalInfo_temp,
+      genderList: genderList_temp,
+      raceList: raceList_temp,
+      eligibilityList: eligibilityList_temp,
+    };
+    setSelectedCandidate(data);
     setContactModal(false);
     // props.onCallBack();
   };
   const closeModal = function () {
+    let data = {
+      personalInfo: personalInfo_temp,
+      genderList: genderList_temp,
+      raceList: raceList_temp,
+      eligibilityList: eligibilityList_temp,
+    };
+    setSelectedCandidate(data);
+    setContactModal(false);
     setSuccess(false);
     setError(false);
     // window.location.reload();
@@ -304,7 +339,6 @@ export function PersonalInformation(props) {
       };
     });
     setStateList(state_response);
-    console.log(stateList);
     setCountryList(country_response);
   }, [cityList]);
   const loadOptions = async function (inputValue) {
@@ -314,7 +348,7 @@ export function PersonalInformation(props) {
     return data.map(({ cityid: value, ...rest }) => {
       return {
         value,
-        label: `${rest.location}`,
+        label: `${rest.location + ", " + rest.statename}`,
       };
     });
   };
@@ -359,7 +393,7 @@ export function PersonalInformation(props) {
     <div>
       <Fragment>
         <Card className="mb-3 profile-view">
-          {selectedCandidate_temp.personalInfo.email ? (
+          {selectedCandidate.personalInfo.email ? (
             <Row className="g-0">
               <Col sm="12" md="12" xl="6" className=" mb-0">
                 <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
@@ -374,20 +408,19 @@ export function PersonalInformation(props) {
                   <div className="widget-chart-content">
                     <div>
                       <strong className="candidate-name mb-0">
-                        {selectedCandidate_temp.personalInfo.firstname +
+                        {selectedCandidate.personalInfo.firstname +
                           " " +
                           selectedCandidate_temp.personalInfo.lastname}
                       </strong>
                       <p className="widget-description text-focus content-text mt-0">
-                        {selectedCandidate_temp.personalInfo.position}
+                        {selectedCandidate.personalInfo.position}
                       </p>
                       <p className="candidate-label mt-0 mb-0">
-                        {selectedCandidate_temp.personalInfo.organization ==
+                        {selectedCandidate.personalInfo.organization ==
                           "Not working" ||
-                        selectedCandidate_temp.personalInfo.organization != ""
-                          ? "at " +
-                            selectedCandidate_temp.personalInfo.organization
-                          : selectedCandidate_temp.personalInfo.organization}
+                        selectedCandidate.personalInfo.organization != ""
+                          ? "at " + selectedCandidate.personalInfo.organization
+                          : selectedCandidate.personalInfo.organization}
                       </p>
                     </div>
                     <div>
@@ -396,7 +429,7 @@ export function PersonalInformation(props) {
                           <Label className="candidate-label mb-0">
                             Employement eligibility:{" "}
                             <strong className="content-text">
-                              {selectedCandidate_temp.personalInfo.eligibility}
+                              {selectedCandidate.personalInfo.eligibility}
                             </strong>
                           </Label>
                         </Col>
@@ -404,7 +437,7 @@ export function PersonalInformation(props) {
                           <Label className="candidate-label mt-0">
                             Ready to work immediately:{" "}
                             <strong className="content-text">
-                              {selectedCandidate_temp.personalInfo.readyToWork}{" "}
+                              {selectedCandidate.personalInfo.readyToWork}{" "}
                             </strong>
                           </Label>
                         </Col>
@@ -420,7 +453,7 @@ export function PersonalInformation(props) {
                     <BsTelephone className="personal-sec-icon me-2" />
                     <span className="content-text mt-3">
                       {maskPhoneNumber(
-                        selectedCandidate_temp.personalInfo.phonenumber
+                        selectedCandidate.personalInfo.phonenumber
                       )}
                     </span>
                   </Col>
@@ -429,25 +462,25 @@ export function PersonalInformation(props) {
                   <Col className="mb-2">
                     <BsEnvelope className="personal-sec-icon me-2" />
                     <span className="content-text">
-                      {selectedCandidate_temp.personalInfo.email}
+                      {selectedCandidate.personalInfo.email}
                     </span>
                   </Col>
                 </Row>
                 <Row>
                   <Col className="mb-2">
-                    {selectedCandidate_temp.personalInfo.city != "" ||
-                    selectedCandidate_temp.personalInfo.country != "" ? (
+                    {selectedCandidate.personalInfo.city != "" ||
+                    selectedCandidate.personalInfo.country != "" ? (
                       <div>
                         <BsPinMap className="personal-sec-icon me-2" />
                         <span className="content-text">
-                          {selectedCandidate_temp.personalInfo.city
-                            ? selectedCandidate_temp.personalInfo.city +
+                          {selectedCandidate.personalInfo.city
+                            ? selectedCandidate.personalInfo.city +
                               ", " +
-                              selectedCandidate_temp.personalInfo.state
+                              selectedCandidate.personalInfo.state
                             : ""}
 
-                          {selectedCandidate_temp.personalInfo.country
-                            ? ", " + selectedCandidate_temp.personalInfo.country
+                          {selectedCandidate.personalInfo.country
+                            ? ", " + selectedCandidate.personalInfo.country
                             : ""}
                         </span>
                       </div>
@@ -471,9 +504,7 @@ export function PersonalInformation(props) {
                         <div>
                           <BsBalloon className="personal-sec-icon me-2" />
                           <span className="content-text mt-3">
-                            {formatDate(
-                              selectedCandidate_temp.personalInfo.dob
-                            )}
+                            {formatDate(selectedCandidate.personalInfo.dob)}
                           </span>
                         </div>
                       ) : (
@@ -483,11 +514,11 @@ export function PersonalInformation(props) {
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      {selectedCandidate_temp.personalInfo.gender != "" ? (
+                      {selectedCandidate.personalInfo.gender != "" ? (
                         <div>
                           <BsGenderMale className="personal-sec-icon me-2" />
                           <span className="content-text">
-                            {selectedCandidate_temp.personalInfo.gender}
+                            {selectedCandidate.personalInfo.gender}
                           </span>
                         </div>
                       ) : (
@@ -497,11 +528,11 @@ export function PersonalInformation(props) {
                   </Row>
                   <Row>
                     <Col className="mb-2">
-                      {selectedCandidate_temp.personalInfo.ethnicity != "" ? (
+                      {selectedCandidate.personalInfo.ethnicity != "" ? (
                         <div>
                           <BsPeople className="personal-sec-icon me-2" />
                           <span className="content-text">
-                            {selectedCandidate_temp.personalInfo.ethnicity}
+                            {selectedCandidate.personalInfo.ethnicity}
                           </span>
                         </div>
                       ) : (
@@ -707,7 +738,7 @@ export function PersonalInformation(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="city" className="input-label">
-                        City <span className="required-icon">*</span>
+                        City, State <span className="required-icon">*</span>
                       </Label>
                       <AsyncSelect
                         name="skills"
@@ -725,11 +756,32 @@ export function PersonalInformation(props) {
                       />
 
                       <div className="error-class">
-                        {requiredErrors.cityError ? "City is required" : ""}
+                        {requiredErrors.cityError ? "Location is required" : ""}
                       </div>
                     </FormGroup>
                   </Col>
+
                   <Col md={4}>
+                    <FormGroup>
+                      <Label for="zipCode" className="input-label">
+                        Zip code
+                      </Label>
+                      <input
+                        type="text"
+                        name="zipCode"
+                        id="zipCode"
+                        maxLength={50}
+                        value={selectedCandidate.personalInfo.zipcode}
+                        onInput={(evt) =>
+                          onHandleInputChange("zip", evt.target.value)
+                        }
+                        placeholder="Enter Zip Code"
+                        className="field-input placeholder-text form-control input-text"
+                      />
+                    </FormGroup>
+                  </Col>
+
+                  {/* <Col md={4}>
                     <FormGroup>
                       <Label for="state" className="input-label">
                         State <span className="required-icon">*</span>
@@ -752,7 +804,7 @@ export function PersonalInformation(props) {
                         {requiredErrors.stateError ? "State is required" : ""}
                       </div>
                     </FormGroup>
-                  </Col>
+                  </Col> */}
                   <Col md={4}>
                     <FormGroup>
                       <Label for="country" className="input-label">
@@ -771,26 +823,6 @@ export function PersonalInformation(props) {
                   </Col>
                 </Row>
                 <Row>
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="zipCode" className="input-label">
-                        Zip code
-                      </Label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        id="zipCode"
-                        maxLength={50}
-                        value={selectedCandidate_temp.personalInfo.zipcode}
-                        onInput={(evt) =>
-                          onHandleInputChange("zip", evt.target.value)
-                        }
-                        placeholder="Enter Zip Code"
-                        className="field-input placeholder-text form-control input-text"
-                      />
-                    </FormGroup>
-                  </Col>
-
                   <Col md={4}>
                     <FormGroup>
                       <Label for="gender" className="input-label">
@@ -874,7 +906,7 @@ export function PersonalInformation(props) {
                   <Button
                     type="button"
                     className="close-btn"
-                    onClick={() => setContactModal(false)}
+                    onClick={() => closeModal(false)}
                   >
                     Close
                   </Button>

@@ -1,19 +1,17 @@
 import React from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import PageTitle from "../../_components/Common/pagetitle";
+import PageTitle from "_components/common/pagetitle";
 
 // DASHBOARDS
 import AdminDashboardDetails from "_containers/admin/AdminDashboardDetails";
 
-
 import titlelogo from "../../assets/utils/images/candidate.svg";
 import { userActions } from "_store";
-import { Alert } from "reactstrap";
 import CustomerDashboardDetails from "_containers/customer/CustomerDashboardDetails";
 import CandidateDashboardDetails from "_containers/candidate/CandidateDashboardDetails";
 
-export const AdminDashboard = () =>  {
+export const AdminDashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -26,9 +24,9 @@ export const AdminDashboard = () =>  {
       <AdminDashboardDetails />
     </div>
   );
-}
+};
 
-export const CustomerDashboard = () =>  {
+export const CustomerDashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -41,10 +39,9 @@ export const CustomerDashboard = () =>  {
       <CustomerDashboardDetails />
     </div>
   );
-}
+};
 
-
-export const CandidateDashboard = () =>  {
+export const CandidateDashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -57,4 +54,4 @@ export const CandidateDashboard = () =>  {
       <CandidateDashboardDetails />
     </div>
   );
-}
+};

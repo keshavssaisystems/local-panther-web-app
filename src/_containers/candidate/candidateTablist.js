@@ -10,7 +10,7 @@ import { CardPagination } from "_components/common/cardpagination";
 import { useSelector, useDispatch } from "react-redux";
 import { cardPageSize, listPageSize } from "_helpers/constants";
 import { candidateJobListTabActions } from "_store";
-
+import Loader from "react-loaders";
 import "./candidateTablist.scss";
 
 export const CandidateTablist = (props) => {
@@ -21,8 +21,8 @@ export const CandidateTablist = (props) => {
     const { id } = useParams();
     let JobList = useSelector((state) => state.jobList);
 
-    const candidateListdata = useSelector(
-        (state) => state.tabListReducer.candidatejobTabList
+    const { candidatejobTabList = {}, loading = false } = useSelector(
+        (state) => state.tabListReducer
     );
 
     const { matchedJob } = useSelector((state) => state.candidateMatchJob);
@@ -80,7 +80,7 @@ export const CandidateTablist = (props) => {
             case "accepted":
                 candidateRecommendedJobStatusId = 5;
                 break;
-            case "Interview":
+            case "interview":
                 candidateRecommendedJobStatusId = 4;
                 break;
             case "rejected":
@@ -129,13 +129,16 @@ export const CandidateTablist = (props) => {
                     md={8}
                     lg={8}
                     xl={8}
-                    className="mb-3 candidatelistcontainer-tab-text"
+                    className="mb-3 tab-selection-text"
                 >
-                    <ButtonGroup size="lg">
+                    <ButtonGroup size="lg" className="cust-btn-tabs">
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " + classnames({ active: activeTab === "matched" })
+                                "border-0 btn-transition  " +
+                                classnames({ active: activeTab === "matched" })
                             }
                             onClick={() => {
                                 toggle("matched");
@@ -144,9 +147,12 @@ export const CandidateTablist = (props) => {
                             Matched
                         </Button>
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " + classnames({ active: activeTab === "liked" })
+                                "border-0 btn-transition  " +
+                                classnames({ active: activeTab === "liked" })
                             }
                             onClick={() => {
                                 toggle("liked");
@@ -155,9 +161,12 @@ export const CandidateTablist = (props) => {
                             Liked
                         </Button>
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " + classnames({ active: activeTab === "maybe" })
+                                "border-0 btn-transition " +
+                                classnames({ active: activeTab === "maybe" })
                             }
                             onClick={() => {
                                 toggle("maybe");
@@ -166,9 +175,12 @@ export const CandidateTablist = (props) => {
                             Maybe
                         </Button>
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " + classnames({ active: activeTab === "applied" })
+                                "border-0 btn-transition  " +
+                                classnames({ active: activeTab === "applied" })
                             }
                             onClick={() => {
                                 toggle("applied");
@@ -177,22 +189,27 @@ export const CandidateTablist = (props) => {
                             Applied
                         </Button>
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " +
-                                classnames({ active: activeTab === "scheduled" })
+                                "border-0 btn-transition  " +
+                                classnames({ active: activeTab === "interview" })
                             }
                             onClick={() => {
-                                toggle("Interview");
+                                toggle("interview");
                             }}
                         >
                             Interview
                         </Button>
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " + classnames({ active: activeTab === "accepted" })
-                            }
+                                "border-0 btn-transition  " +
+                                classnames({ active: activeTab === "accepted" })
+                            }                                
                             onClick={() => {
                                 toggle("accepted");
                             }}
@@ -200,9 +217,12 @@ export const CandidateTablist = (props) => {
                             Accepted
                         </Button>
                         <Button
+                            disabled={loading}
+                            outline
                             color="primary"
                             className={
-                                "btn-shadow " + classnames({ active: activeTab === "rejected" })
+                                "border-0 btn-transition  " +
+                                classnames({ active: activeTab === "rejected" })
                             }
                             onClick={() => {
                                 toggle("rejected");
@@ -212,7 +232,11 @@ export const CandidateTablist = (props) => {
                         </Button>
                     </ButtonGroup>
                 </Col>
+
                 <Col xs={12} sm={12} md={4} lg={4} xl={12} className="mb-3">
+
+                    {loading && <Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
+
                     <TabContent activeTab={activeTab}>
                         <TabPane tabId="matched">
                             <Row>
@@ -236,7 +260,7 @@ export const CandidateTablist = (props) => {
                         <TabPane tabId="liked">
                             <p>
                                 <CandidateListView
-                                    data={candidateListdata.candidateRecommendedJobDtoList}
+                                    data={candidatejobTabList.candidateRecommendedJobDtoList}
                                     user="Candidate"
                                     type="liked"
                                 />
@@ -250,7 +274,7 @@ export const CandidateTablist = (props) => {
                         <TabPane tabId="maybe">
                             <p>
                                 <CandidateListView
-                                    data={candidateListdata.candidateRecommendedJobDtoList}
+                                    data={candidatejobTabList.candidateRecommendedJobDtoList}
                                     user="Candidate"
                                     type="maybe"
                                 />
@@ -264,7 +288,7 @@ export const CandidateTablist = (props) => {
                         <TabPane tabId="applied">
                             <p>
                                 <CandidateListView
-                                    data={candidateListdata.candidateRecommendedJobDtoList}
+                                    data={candidatejobTabList.candidateRecommendedJobDtoList}
                                     user="Candidate"
                                     type="applied"
                                 />
@@ -275,10 +299,10 @@ export const CandidateTablist = (props) => {
                                 ></CardPagination>
                             </p>
                         </TabPane>
-                        <TabPane tabId="Interview">
+                        <TabPane tabId="interview">
                             <p>
                                 <CandidateListView
-                                    data={candidateListdata.candidateRecommendedJobDtoList}
+                                    data={candidatejobTabList.candidateRecommendedJobDtoList}
                                     user="Candidate"
                                     type="Interview"
                                 />
@@ -292,7 +316,7 @@ export const CandidateTablist = (props) => {
                         <TabPane tabId="accepted">
                             <p>
                                 <CandidateListView
-                                    data={candidateListdata.candidateRecommendedJobDtoList}
+                                    data={candidatejobTabList.candidateRecommendedJobDtoList}
                                     user="Candidate"
                                     type="accepted"
                                 />
@@ -306,7 +330,7 @@ export const CandidateTablist = (props) => {
                         <TabPane tabId="rejected">
                             <p>
                                 <CandidateListView
-                                    data={candidateListdata.candidateRecommendedJobDtoList}
+                                    data={candidatejobTabList.candidateRecommendedJobDtoList}
                                     user="Candidate"
                                     type="rejected"
                                 />

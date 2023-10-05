@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Card, CardBody, Col, CardText } from "reactstrap";
 import { JobCard } from "./JobCard";
 import { CardPagination } from "../common/cardpagination";
 import { JobDetail } from "./JobDetail";
 
 export function JobListing({
-  jobData,
+  jobData = [],
   onPageChange,
   type,
   pageSize,
@@ -13,30 +13,34 @@ export function JobListing({
   page,
   setPage,
 }) {
+  const [ job = {}] = jobData;
   const [selectedClass, setSelectedClass] = useState(
-    jobData?.length > 0 ? jobData[0].jobid : "2"
+    job?.candidateid > 0 ? job?.candidateid : "2"
   );
   let selectedJobDetails = jobData?.length > 0 ? [jobData[0]] : [];
   let current = Number(totalRows) / pageSize;
   if (current * pageSize !== totalRows) {
     current++;
   }
+  
+  useEffect(() => {
+    setSelectedJobData([job])
+  }, jobData)
 
-  const [selectedJobData, setSelectedJobData] = useState(
-    jobData?.length > 0 ? [jobData[0]] : []
-  );
+  const [selectedJobData, setSelectedJobData] = useState([]);
   
   const handlePageChange = useCallback((page) => {
     setPage(page);
     onPageChange(page);
   }, []);
 
-  const getSelectedJob = (jobId) => {
+  const getSelectedJob = (candidateid) => {
     selectedJobDetails = jobData.filter((element) => {
-      return element.jobid === jobId;
+      return element.candidateid === candidateid;
     });
+    
     setSelectedJobData(selectedJobDetails);
-    setSelectedClass(jobId);
+    setSelectedClass(candidateid);
   };
   
   return (
@@ -62,10 +66,11 @@ export function JobListing({
               description={job.description}
               role={job.jobrole}
               jobId={job.jobid}
+              candidateid={job.candidateid}
               createdDate={job.jobcreatedatetime}
               type={type}
               selectedJob={selectedClass}
-              getSelectedJobId={(e) => getSelectedJob(e)}
+              getSelectedJobId={() => getSelectedJob(job.candidateid)}
               additionalData={job}
             />
           ))}

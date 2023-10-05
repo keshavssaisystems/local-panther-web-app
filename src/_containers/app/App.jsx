@@ -2,7 +2,11 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard, CustomerDashboard, CandidateDashboard } from "_containers/dashboard/Dashboard";
+import {
+  AdminDashboard,
+  CustomerDashboard,
+  CandidateDashboard,
+} from "_containers/dashboard/Dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
@@ -178,7 +182,10 @@ export function App() {
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
-          <Route path="/candidate-list" element={<CustomerCandidateLists />} />
+          <Route
+            path="/candidate-list"
+            element={<CustomerCandidateLists type={"matched"} />}
+          />
           <Route
             path="/report"
             element={
@@ -285,10 +292,18 @@ export function App() {
                 }
               /> */}
 
-              <Route path="/policy" element={<Policy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/security" element={<Security />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path="/policy" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Policy"} />
+              </PrivateRoute>} />
+              <Route path="/terms" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Terms"} />
+              </PrivateRoute>} />
+              <Route path="/security" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Security"} />
+              </PrivateRoute>} />
+              <Route path="/contact" element={<PrivateRoute>
+                <CandidateUnderConstruction title={"Contact"} />
+              </PrivateRoute>} />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route

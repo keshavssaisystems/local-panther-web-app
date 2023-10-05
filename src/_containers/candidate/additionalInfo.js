@@ -202,7 +202,7 @@ export function AdditionalInformation(props) {
                     <div>
                       {item.additionalinformation
                         ? item.additionalinformation
-                        : "-"}
+                        : ""}
                     </div>
                   </div>
                 ))}

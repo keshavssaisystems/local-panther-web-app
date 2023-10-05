@@ -353,24 +353,24 @@ export const CandidateListView = (props) => {
               title="apply"
               onClick={() => onApplyClick()}
               className="btn-icon"
-              color="light"
+              color="success" size="sm"
             >
-              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+              <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="liked" className=" btn-icon" color="light">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+              <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="light">
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            <Button title="maybe" className=" btn-icon" color="warning" size="sm">
+              <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="light">
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+            <Button title="reject" className="btn-icon" color="danger" size="sm">
+              <BsXCircle></BsXCircle>
             </Button>
           </Col>
         </Row>
@@ -379,18 +379,18 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
           <Col>
-            <Button title="liked" className=" btn-icon" color="light">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+              <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="light">
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            <Button title="maybe" className=" btn-icon" color="warning" size="sm">
+              <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="light">
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+            <Button title="reject" className="btn-icon" color="danger" size="sm">
+              <BsXCircle></BsXCircle>
             </Button>
           </Col>
         </Row>
@@ -403,24 +403,24 @@ export const CandidateListView = (props) => {
               title="apply"
               onClick={() => onApplyClick()}
               className="btn-icon"
-              color="light"
+              color="success" size="sm"
             >
-              <IoIosCheckmark fontSize={"24px"}></IoIosCheckmark>
+              <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="liked" className=" btn-icon" color="light">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+              <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="light">
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            <Button title="maybe" className=" btn-icon" color="warning" size="sm">
+              <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="light">
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+            <Button title="reject" className="btn-icon" color="danger" size="sm">
+              <BsXCircle></BsXCircle>
             </Button>
           </Col>
         </Row>
@@ -429,8 +429,8 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
           <Col>
-            <Button title="reject" className="btn-icon" color="light">
-              <IoIosClose fontSize={"24px"}></IoIosClose>
+            <Button title="reject" className="btn-icon" color="danger" size="sm">
+              <BsXCircle></BsXCircle>
             </Button>
           </Col>
         </Row>
@@ -439,13 +439,13 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
-            <Button title="liked" className=" btn-icon" color="light">
-              <IoIosThumbsUp fontSize={"24px"}></IoIosThumbsUp>
+            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+              <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className="btn-icon" color="light">
-              <IoIosHelp fontSize={"24px"}></IoIosHelp>
+            <Button title="maybe" className="btn-icon" color="warning" size="sm">
+              <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
         </Row>
@@ -484,33 +484,38 @@ export const CandidateListView = (props) => {
       id: "Candidate",
       selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
+      wrap: true,
+      width: 150
     },
-    // {
-    //   name: "Skills",
-    //   selector: (row) => row.primaryskills + "," + row.secondaryskills,
-    //   sortable: true,
-    // },
     {
       name: "Location",
       selector: (row) => row.locationaddress,
       sortable: true,
+      wrap: true,
+      width: 150
     },
 
     {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
+      wrap: true,
+      width: 150
     },
 
     {
       name: "Scheduled time",
       sortable: true,
       cell: (row) => <ScheduleInterviewModal candidateData={row} />,
+      wrap: true,
+      width: 150
     },
     {
       name: "Interview mode",
       selector: (row) => row.mode,
       sortable: true,
+      wrap: true,
+      width: 150
     },
     {
       name: "Interest",
@@ -534,24 +539,29 @@ export const CandidateListView = (props) => {
       id: "Candidate",
       selector: (row) => row.jobid,
       sortable: true,
+      maxWidth: "10px"
     },
     {
       name: "Title",
       selector: (row) => row.jobtitle,
       sortable: true,
+      maxWidth: "150px",
+      wrap: true
     },
     {
       name: "Description",
       selector: (row) => row.description,
       sortable: true,
+      wrap: true
     },
 
     {
       name: "Location",
       selector: (row) => row.locationaddress,
       sortable: true,
+      wrap: true,
+      maxWidth: "150px",
     },
-
     {
       name: "Interest",
       width: "170px",
@@ -624,8 +634,8 @@ export const CandidateListView = (props) => {
         }
         selectableRows
         persistTableHead
-        // pagination
       />
+
       <>
         {showAModal ? (
           <AcceptModal
