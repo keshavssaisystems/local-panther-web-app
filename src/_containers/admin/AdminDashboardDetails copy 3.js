@@ -46,7 +46,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TabbedContent from "./Examples/Tabbed";
 
 const AdminDashboardDetails = () => {
   const [visible, setVisible] = useState(true)

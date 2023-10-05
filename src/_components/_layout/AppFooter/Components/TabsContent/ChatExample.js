@@ -4,14 +4,14 @@ import { VerticalTimeline, VerticalTimelineElement, } from "react-vertical-timel
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-import avatar1 from "../../../../assets/utils/images/avatars/1.jpg";
-import avatar2 from "../../../../assets/utils/images/avatars/2.jpg";
-import avatar3 from "../../../../assets/utils/images/avatars/3.jpg";
-import avatar4 from "../../../../assets/utils/images/avatars/4.jpg";
-import avatar5 from "../../../../assets/utils/images/avatars/5.jpg";
-import avatar6 from "../../../../assets/utils/images/avatars/8.jpg";
-import avatar7 from "../../../../assets/utils/images/avatars/9.jpg";
-import avatar8 from "../../../../assets/utils/images/avatars/10.jpg";
+import avatar1 from "assets/utils/images/avatars/1.jpg";
+import avatar2 from "assets/utils/images/avatars/2.jpg";
+import avatar3 from "assets/utils/images/avatars/3.jpg";
+import avatar4 from "assets/utils/images/avatars/4.jpg";
+import avatar5 from "assets/utils/images/avatars/5.jpg";
+import avatar6 from "assets/utils/images/avatars/8.jpg";
+import avatar7 from "assets/utils/images/avatars/9.jpg";
+import avatar8 from "assets/utils/images/avatars/10.jpg";
 
 class TimelineEx extends Component {
   render() {
