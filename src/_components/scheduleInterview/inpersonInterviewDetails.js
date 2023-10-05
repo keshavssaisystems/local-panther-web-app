@@ -110,10 +110,10 @@ export function InpersonInterviewDetails({ interviewDetail }) {
           </Button>
         </CardFooter>
       </Card>
-      <div className="divider" />
+      {/* <div className="divider" />
       <div className="d-block text-center mb-1">
         <h6 className="fw-bold">Request sent on Sept 17, 2023</h6>
-      </div>
+      </div> */}
     </>
   );
 }
