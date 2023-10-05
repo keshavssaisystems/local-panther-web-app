@@ -97,10 +97,10 @@ export const CandidateCardView = (props) => {
 
   const returnSkills = () => {
     if (
-      props?.data?.jobKeyQualificationDtos &&
-      props?.data?.jobKeyQualificationDtos?.length > 0
+      props?.data?.candidateSkillDtos &&
+      props?.data?.candidateSkillDtos?.length > 0
     ) {
-      return props?.data?.jobKeyQualificationDtos
+      return props?.data?.candidateSkillDtos
         .map((element) => element.skillname)
         .join(", ");
     } else {
