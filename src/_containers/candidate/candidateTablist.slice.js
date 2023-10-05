@@ -18,7 +18,7 @@ export const candidateLikeThunk = createAsyncThunk(
   `${name}/candidateLikeThunk`,
   async (jobId) => {
     const LIKED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateLiked/${jobId}`;
-    return await fetchWrapper.put(LIKED_END_POINT, jobId);
+    return await fetchWrapper.put(LIKED_END_POINT);
   }
 );
 
@@ -27,7 +27,7 @@ export const candidateAcceptThunk = createAsyncThunk(
   `${name}/candidateAcceptThunk`,
   async (jobId) => {
     const ACCEPTED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateAccepted/${jobId}`;
-    return await fetchWrapper.put(ACCEPTED_END_POINT, jobId);
+    return await fetchWrapper.put(ACCEPTED_END_POINT);
   }
 );
 
@@ -36,7 +36,7 @@ export const candidateMayBeThunk = createAsyncThunk(
   `${name}/candidateMayBeThunk`,
   async (jobId) => {
     const MAY_BE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateMaybe/${jobId}`;
-    return await fetchWrapper.put(MAY_BE_END_POINT, jobId);
+    return await fetchWrapper.put(MAY_BE_END_POINT);
   }
 );
 

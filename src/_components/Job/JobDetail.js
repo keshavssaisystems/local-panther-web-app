@@ -30,12 +30,6 @@ export function JobDetail({ jobDetails, type }) {
   return (
     <>
       <Col md="8" className="job-detail-cont">
-        {loading === true && (
-          <Loader
-            type="line-scale-pulse-out-rapid"
-            className="d-flex justify-content-center"
-          />
-        )}
         {loading === false && (
           <Card className="card-shadow-primary profile-responsive card-border mb-3">
             <DetailsHeader
