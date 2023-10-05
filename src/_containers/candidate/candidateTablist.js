@@ -80,7 +80,7 @@ export const CandidateTablist = (props) => {
             case "accepted":
                 candidateRecommendedJobStatusId = 5;
                 break;
-            case "Interview":
+            case "interview":
                 candidateRecommendedJobStatusId = 4;
                 break;
             case "rejected":
@@ -129,89 +129,102 @@ export const CandidateTablist = (props) => {
                     md={8}
                     lg={8}
                     xl={8}
-                    className="mb-3 candidatelistcontainer-tab-text"
-                >
-                    <ButtonGroup size="lg">
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " + classnames({ active: activeTab === "matched" })
-                            }
-                            onClick={() => {
-                                toggle("matched");
-                            }}
-                        >
-                            Matched
-                        </Button>
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " + classnames({ active: activeTab === "liked" })
-                            }
-                            onClick={() => {
-                                toggle("liked");
-                            }}
-                        >
-                            Liked
-                        </Button>
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " + classnames({ active: activeTab === "maybe" })
-                            }
-                            onClick={() => {
-                                toggle("maybe");
-                            }}
-                        >
-                            Maybe
-                        </Button>
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " + classnames({ active: activeTab === "applied" })
-                            }
-                            onClick={() => {
-                                toggle("applied");
-                            }}
-                        >
-                            Applied
-                        </Button>
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " +
-                                classnames({ active: activeTab === "scheduled" })
-                            }
-                            onClick={() => {
-                                toggle("Interview");
-                            }}
-                        >
-                            Interview
-                        </Button>
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " + classnames({ active: activeTab === "accepted" })
-                            }
-                            onClick={() => {
-                                toggle("accepted");
-                            }}
-                        >
-                            Accepted
-                        </Button>
-                        <Button
-                            color="primary"
-                            className={
-                                "btn-shadow " + classnames({ active: activeTab === "rejected" })
-                            }
-                            onClick={() => {
-                                toggle("rejected");
-                            }}
-                        >
-                            Rejected
-                        </Button>
-                    </ButtonGroup>
+                    className="mb-3 tab-selection-text">
+                        <ButtonGroup size="lg" className="cust-btn-tabs">
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition  " +
+                                    classnames({ active: activeTab === "matched" })
+                                }
+                                onClick={() => {
+                                    toggle("matched");
+                                }}
+                            >
+                                Matched
+                            </Button>
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition  " +
+                                    classnames({ active: activeTab === "liked" })
+                                }
+                                onClick={() => {
+                                    toggle("liked");
+                                }}
+                            >
+                                Liked
+                            </Button>
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition " +
+                                    classnames({ active: activeTab === "maybe" })
+                                }
+                                onClick={() => {
+                                    toggle("maybe");
+                                }}
+                            >
+                                Maybe
+                            </Button>
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition  " +
+                                    classnames({ active: activeTab === "applied" })
+                                }
+                                onClick={() => {
+                                    toggle("applied");
+                                }}
+                            >
+                                Applied
+                            </Button>
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition  " +
+                                    classnames({ active: activeTab === "interview" })
+                                }
+                                onClick={() => {
+                                    toggle("interview");
+                                }}
+                            >
+                                Interview
+                            </Button>
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition  " +
+                                    classnames({ active: activeTab === "accepted" })
+                                }                                
+                                onClick={() => {
+                                    toggle("accepted");
+                                }}
+                            >
+                                Accepted
+                            </Button>
+                            <Button
+                                outline
+                                color="primary"
+                                className={
+                                    "border-0 btn-transition  " +
+                                    classnames({ active: activeTab === "rejected" })
+                                }
+                                onClick={() => {
+                                    toggle("rejected");
+                                }}
+                            >
+                                Rejected
+                            </Button>
+                        </ButtonGroup>
                 </Col>
+
                 <Col xs={12} sm={12} md={4} lg={4} xl={12} className="mb-3">
                     <TabContent activeTab={activeTab}>
                         <TabPane tabId="matched">
@@ -275,7 +288,7 @@ export const CandidateTablist = (props) => {
                                 ></CardPagination>
                             </p>
                         </TabPane>
-                        <TabPane tabId="Interview">
+                        <TabPane tabId="interview">
                             <p>
                                 <CandidateListView
                                     data={candidateListdata.candidateRecommendedJobDtoList}

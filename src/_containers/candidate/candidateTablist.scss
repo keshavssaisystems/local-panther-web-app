@@ -1,8 +1,20 @@
 .candidatelistcontainer {
-    .candidatelistcontainer-tab-text {
-      .btn-group .btn {
-        background: #2f479b !important;
-        color: white;
+    .cust-btn-tabs {
+      .active {
+        background-color: #2f479b;
+        color: #ffffff !important;
+      }
+  
+      .btn:hover {
+        background-color: #2f479b;
+        color: #ffffff !important;
+      }
+  
+      .btn {
+        color: #2f2e2e;
+        border-radius: 4px !important;
+        font-weight: 500;
+        font-size: 16px;
       }
     }
   }

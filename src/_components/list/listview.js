@@ -484,33 +484,38 @@ export const CandidateListView = (props) => {
       id: "Candidate",
       selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
+      wrap: true,
+      width: 150
     },
-    // {
-    //   name: "Skills",
-    //   selector: (row) => row.primaryskills + "," + row.secondaryskills,
-    //   sortable: true,
-    // },
     {
       name: "Location",
       selector: (row) => row.locationaddress,
       sortable: true,
+      wrap: true,
+      width: 150
     },
 
     {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
+      wrap: true,
+      width: 150
     },
 
     {
       name: "Scheduled time",
       sortable: true,
       cell: (row) => <ScheduleInterviewModal candidateData={row} />,
+      wrap: true,
+      width: 150
     },
     {
       name: "Interview mode",
       selector: (row) => row.mode,
       sortable: true,
+      wrap: true,
+      width: 150
     },
     {
       name: "Interest",
@@ -534,24 +539,29 @@ export const CandidateListView = (props) => {
       id: "Candidate",
       selector: (row) => row.jobid,
       sortable: true,
+      maxWidth: "10px"
     },
     {
       name: "Title",
       selector: (row) => row.jobtitle,
       sortable: true,
+      maxWidth: "150px",
+      wrap: true
     },
     {
       name: "Description",
       selector: (row) => row.description,
       sortable: true,
+      wrap: true
     },
 
     {
       name: "Location",
       selector: (row) => row.locationaddress,
       sortable: true,
+      wrap: true,
+      maxWidth: "150px",
     },
-
     {
       name: "Interest",
       width: "170px",
@@ -624,8 +634,8 @@ export const CandidateListView = (props) => {
         }
         selectableRows
         persistTableHead
-        // pagination
       />
+      
       <>
         {showAModal ? (
           <AcceptModal

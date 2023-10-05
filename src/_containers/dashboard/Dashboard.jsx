@@ -1,11 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import PageTitle from "_components/common/pagetitle";
-import React, { Fragment } from "react";
-import { Route } from "react-router-dom";
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
 
 // DASHBOARDS
 import AdminDashboardDetails from "_containers/admin/AdminDashboardDetails";
@@ -13,7 +9,6 @@ import AdminDashboardDetails from "_containers/admin/AdminDashboardDetails";
 
 import titlelogo from "../../assets/utils/images/candidate.svg";
 import { userActions } from "_store";
-import { Alert } from "reactstrap";
 import CustomerDashboardDetails from "_containers/customer/CustomerDashboardDetails";
 import CandidateDashboardDetails from "_containers/candidate/CandidateDashboardDetails";
 
