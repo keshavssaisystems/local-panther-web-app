@@ -2,8 +2,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { Home } from "_containers/home";
-import { Dashboard } from "dashboard";
+import { AdminDashboard, CustomerDashboard, CandidateDashboard } from "_containers/dashboard/Dashboard";
 import { JobList } from "_containers/customer/jobs/JobList";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
@@ -40,7 +39,7 @@ export function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <AdminDashboard />
               </PrivateRoute>
             }
           />
@@ -57,7 +56,7 @@ export function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <CustomerDashboard />
               </PrivateRoute>
             }
           />
@@ -123,7 +122,7 @@ export function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <CandidateDashboard />
               </PrivateRoute>
             }
           />
