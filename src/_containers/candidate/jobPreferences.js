@@ -178,9 +178,9 @@ export function JobPreferences(props) {
       filtered_data = get_response?.map((rest) => {
         return {
           candidatejobpreferenceid: rest.candidatejobpreferenceid,
-          desiredJobTitle: desiredJobType.find(
+          desiredJobTitle: desiredJobType?.find(
             (x) => x.id == rest.desiredjobtitleid
-          ).name,
+          )?.name,
           specificJobTitle: rest.candidateJobtitlesDtos
             .filter((item) => item.ischecked)
             .map((item) => item.desiredjobtitlename)
@@ -198,7 +198,15 @@ export function JobPreferences(props) {
             .filter((item) => item.ischecked)
             .map((item) => item.shifts)
             .join(", "),
-          pay: rest.minimumbasepay + ", " + rest.payperiodtype,
+          pay:
+            (rest.minimumbasepay && rest.payperiodtype) ||
+            (rest.minimumbasepay != "" && rest.payperiodtype != "")
+              ? rest.minimumbasepay + ", " + rest.payperiodtype
+              : rest.minimumbasepay
+              ? rest.minimumbasepay
+              : rest.payperiodtype
+              ? rest.payperiodtype
+              : "",
           relocate: rest.willingtorelocate ? "Yes" : "No",
           workType: "",
         };
@@ -277,6 +285,11 @@ export function JobPreferences(props) {
       setJobTypes(type_data);
 
       new_data[0].desiredworktypeids = type_data.join(",");
+      if (new_data[0].desiredworktypeids == "") {
+        new_data[0].error = true;
+      } else {
+        new_data[0].error = false;
+      }
     } else if (check == "schedules") {
       let schedule_data = [...workSchedules];
       schedule_data =
@@ -476,27 +489,41 @@ export function JobPreferences(props) {
                     <Col>
                       <Row>
                         <strong>Desired job titles</strong>
-                        <div>{item.desiredJobTitle}</div>
+                        <div>
+                          {item.desiredJobTitle != "" && item.desiredJobTitle
+                            ? item.desiredJobTitle
+                            : "-"}
+                        </div>
                       </Row>
                       <hr />
                       <Row>
                         <strong>Specific job title</strong>
-                        <div>{item.specificJobTitle}</div>
+                        <div>
+                          {item.specificJobTitle != ""
+                            ? item.specificJobTitle
+                            : "-"}
+                        </div>
                       </Row>
                       <hr />
                       <Row>
                         <strong>Desired job types</strong>
-                        <div>{item.desiredJobTypes}</div>
+                        <div>
+                          {item.desiredJobTypes != ""
+                            ? item.desiredJobTypes
+                            : "-"}
+                        </div>
                       </Row>
                       <hr />
                       <Row>
                         <strong>Work schedules</strong>
-                        <div>{item.workSchedules}</div>
+                        <div>
+                          {item.workSchedules != "" ? item.workSchedules : "-"}
+                        </div>
                       </Row>
                       <hr />
                       <Row>
                         <strong>Shifts</strong>
-                        <div>{item.shifts}</div>
+                        <div>{item.shifts != "" ? item.shifts : "-"}</div>
                       </Row>
                       <hr />
                     </Col>
@@ -505,18 +532,18 @@ export function JobPreferences(props) {
                       <Row>
                         <strong>Desired minimum pay</strong>
 
-                        <div>{item.pay}</div>
+                        <div>{item.pay != "" ? item.pay : "-"}</div>
                       </Row>
                       <hr />
                       <Row>
                         <strong>Willing to relocate</strong>
                         <div>{item.relocate}</div>
                       </Row>
-                      <hr />
-                      <Row>
+                      {/* <hr /> */}
+                      {/* <Row>
                         <strong>Desired work type</strong>
                         <div>{item.workType}</div>
-                      </Row>
+                      </Row> */}
                       <hr />
                     </Col>
                   </Row>
@@ -534,7 +561,7 @@ export function JobPreferences(props) {
       {isPersonalModal ? (
         <div>
           <Modal
-            className="personal-information"
+            className="personal-information profile-view"
             size="lg"
             isOpen={isPersonalModal}
           >
@@ -597,7 +624,7 @@ export function JobPreferences(props) {
                     <Col>
                       <FormGroup>
                         <Label className="fw-semi-bold">
-                          Job Type<span style={{ color: "red" }}> *</span>
+                          Job type<span style={{ color: "red" }}> *</span>
                         </Label>
                         {jobTypeOption.length > 0 &&
                           jobTypeOption.map((options) => (
@@ -614,6 +641,11 @@ export function JobPreferences(props) {
                                     evt.target.value
                                   )
                                 }
+                                style={{
+                                  borderColor: parentItem.error
+                                    ? "#ff0000"
+                                    : "",
+                                }}
                                 checked={checkIdExists(
                                   parentItem.desiredworktypeids,
                                   options.id
@@ -626,7 +658,7 @@ export function JobPreferences(props) {
                             </div>
                           ))}
                         <div className="filter-info-text filter-error-msg">
-                          {parentItem.error ? "Job type is mandatory" : ""}
+                          {parentItem.error ? "Job type is required" : ""}
                         </div>
                       </FormGroup>
                     </Col>
@@ -700,7 +732,7 @@ export function JobPreferences(props) {
                   </Row>
                   <hr />
 
-                  <h5>Desired Minimum Pay</h5>
+                  <h5>Desired minimum pay</h5>
                   <Row>
                     <Row>
                       <Col md={4}>
@@ -775,7 +807,7 @@ export function JobPreferences(props) {
                             checked={parentItem.anywhereonlynear == 1}
                           />{" "}
                           <Label check className="input-label">
-                            Any Where
+                            Any where
                           </Label>
                         </FormGroup>
                       </Col>
@@ -791,7 +823,7 @@ export function JobPreferences(props) {
                             checked={parentItem.anywhereonlynear == 2}
                           />{" "}
                           <Label check className="input-label">
-                            Only Near
+                            Only near
                           </Label>
                         </FormGroup>
                       </Col>

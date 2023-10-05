@@ -67,16 +67,14 @@ export function CandidateSkills(props) {
         experience: rest.yearsofexperience,
       };
     });
-
     setSkillsMultiple(data);
     setSelectedSkillData(selectedData);
-
     let selected_exp = [...selectedExp];
     selected_exp = get_response?.map(({ ...rest }) => {
       return {
         id: rest.yearsofexperience,
         name: experienceLevelOption.find((x) => x.id == rest.yearsofexperience)
-          .name,
+          ?.name,
       };
     });
     setSelectedExp(selected_exp);
