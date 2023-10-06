@@ -28,7 +28,7 @@ import { Popup } from "_components/common/Popup";
 export function ScheduleInterview() {
   const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedJobId, setSelectedJobId] = useState(27);
+  const [selectedJobId, setSelectedJobId] = useState(0);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
     getCandidateList(evt.target.value);
@@ -46,7 +46,6 @@ export function ScheduleInterview() {
     getCandidateList(selectedJobId);
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
-    dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
         start: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -54,6 +53,7 @@ export function ScheduleInterview() {
       })
     );
   }, []);
+
   const getUpcomingData = async function (filterdata) {
     await dispatch(
       scheduleInterviewActions.getUpcomingInterviewListThunk(filterdata)
@@ -64,9 +64,6 @@ export function ScheduleInterview() {
   );
 
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
-  const durationOptions = useSelector(
-    (state) => state.scheduleInterview.duration
-  );
 
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
@@ -90,13 +87,6 @@ export function ScheduleInterview() {
       )
         .tz("America/New_York")
         .format("YYYY-MM-DD HH:mm:ss");
-      let startTime = moment(
-        moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-          " " +
-          upcomingInterview.starttime
-      )
-        .tz("America/New_York")
-        .format("hh:mm a");
       let durationArr =
         upcomingInterview.duration !== undefined
           ? upcomingInterview.duration.split(" ")
@@ -104,9 +94,6 @@ export function ScheduleInterview() {
       let endDate = moment(startDate)
         .add(durationArr[0], "m")
         .format("YYYY-MM-DD HH:mm:ss");
-      let endTime = moment(startDate)
-        .add(durationArr[0], "m")
-        .format("hh:mm a");
       let interviewData = {
         id: upcomingInterview.scheduleinterviewid,
         data: upcomingInterview,
@@ -129,29 +116,6 @@ export function ScheduleInterview() {
       upData.push(interviewData);
     });
   }
-  const getFormData = (formData) => {
-    console.log(formData);
-    postScheduledInterview(formData);
-  };
-  const postScheduledInterview = async function (formData) {
-    setShowPopup(true);
-    await dispatch(
-      scheduleInterviewActions.postScheduleInterviewThunk(formData)
-    );
-    getCandidateList(selectedJobId);
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    getUpcomingData({
-      pageNo: 1,
-      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-    });
-    dispatch(
-      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
-      })
-    );
-  };
 
   const [toggleVar, setToggleVar] = useState("availabilty");
   const toggle = (tab) => {
@@ -280,6 +244,9 @@ export function ScheduleInterview() {
                       id="customerJobList"
                       name="customerJobList"
                     >
+                      <option key={0} value={0}>
+                        Select a job
+                      </option>
                       {jobList.map((data) => {
                         return (
                           <option value={data.jobid} key={data.jobid}>
@@ -371,11 +338,7 @@ export function ScheduleInterview() {
               <>
                 <Card>
                   <CardBody>
-                    <ScheduleInterviewList
-                      candidateList={candidateList}
-                      durationOptions={durationOptions}
-                      postData={(e) => getFormData(e)}
-                    />
+                    <ScheduleInterviewList candidateList={candidateList} />
                   </CardBody>
                 </Card>
                 {showPopup === true && (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   CardHeader,
   Col,
@@ -14,11 +14,15 @@ import {
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import { BsCheckLg, BsPersonVideo2 } from "react-icons/bs";
+import { BsCheckLg, BsPersonVideo2, BsXCircleFill } from "react-icons/bs";
+import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
-import { TakeNotesModal } from "./takeNotesModal";
+import { NotesCard } from "./notesCard";
+import { InviteToInterviewCard } from "./inviteToInterviewCard";
 
 export function VideoInterviewDetails({ interviewDetail }) {
+  const [showNotes, setShowNotes] = useState(false);
+  const [showInviteCard, setShowInviteCard] = useState(false);
   let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
@@ -65,10 +69,11 @@ export function VideoInterviewDetails({ interviewDetail }) {
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
-                outline
+                outline={!showInviteCard}
                 size="sm"
-                className="mb-2 mr-2 btn-transition btn btn-outline-primary"
+                className="mb-2 mr-2 btn-transition"
                 color="primary"
+                onClick={() => setShowInviteCard(!showInviteCard)}
               >
                 {" "}
                 Invite to interview{" "}
@@ -117,11 +122,21 @@ export function VideoInterviewDetails({ interviewDetail }) {
                   className="mb-2 btn-transition"
                   outline
                 >
-                  X
+                  x
                 </Button>
               </ButtonGroup>
 
-              <UncontrolledButtonDropdown>
+              <Button
+                outline
+                size="sm"
+                className="mb-2 ms-1 btn-transition"
+                color="danger"
+                title="Cancel"
+              >
+                <ImBin />
+              </Button>
+
+              {/* <UncontrolledButtonDropdown>
                 <DropdownToggle className="btn-icon btn-icon-only" color="link">
                   <FaEllipsisV />
                 </DropdownToggle>
@@ -135,7 +150,7 @@ export function VideoInterviewDetails({ interviewDetail }) {
                     <span>Delete</span>
                   </DropdownItem>
                 </DropdownMenu>
-              </UncontrolledButtonDropdown>
+              </UncontrolledButtonDropdown> */}
             </Col>
           </div>
         </div>
@@ -143,6 +158,11 @@ export function VideoInterviewDetails({ interviewDetail }) {
       <div className="p-custom">
         <p className="mb-0">Applied for {interviewDetail.jobtitle}</p>
       </div>
+      {showInviteCard === true && (
+        <div className="mt-2 mb-2">
+          <InviteToInterviewCard />
+        </div>
+      )}
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
@@ -198,7 +218,16 @@ export function VideoInterviewDetails({ interviewDetail }) {
           </div>
         </CardBody>
         <CardFooter className="d-block text-left">
-          <TakeNotesModal />
+          <Button
+            outline={!showNotes}
+            className="mb-2 mr-2 btn-transition"
+            color="primary"
+            size={"sm"}
+            onClick={() => setShowNotes(!showNotes)}
+          >
+            {" "}
+            Take notes{" "}
+          </Button>
           <Button
             outline
             className="mb-2 mr-2 btn-transition"
@@ -210,7 +239,11 @@ export function VideoInterviewDetails({ interviewDetail }) {
           </Button>
         </CardFooter>
       </Card>
-
+      {showNotes === true && (
+        <div className="mt-2 mb-2">
+          <NotesCard />
+        </div>
+      )}
       <div className="p-3">
         <h6 className="fw-bold">Summary</h6>
         <p className="mb-0">{interviewDetail.messagetocandidate}</p>

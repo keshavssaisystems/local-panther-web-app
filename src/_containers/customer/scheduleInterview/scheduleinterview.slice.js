@@ -17,7 +17,7 @@ export const getDurationThunk = createAsyncThunk(
 export const getScheduleInterviewThunk = createAsyncThunk(
   `${name}/getScheduleInterviewThunk`,
   async (selectedJobId) => {
-    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/GetAccpetedCandidateWithScheduledDetails/${selectedJobId}?pageSize=1000&pageNumber=1&isActive=true`;
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?jobId=${selectedJobId}&isActive=true&isPaginationRequired=false`;
     return await fetchWrapper.get(DROPDOWN_END_POINT);
   }
 );
