@@ -3,6 +3,11 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import DataTable from 'react-data-table-component';
 import { makeData } from "_containers/admin/Examples/utils.js";
+import Chart from "react-apexcharts";
+
+import IncomeReport from "_containers/admin/Examples/IncomeReport";
+import IncomeReport2 from "_containers/admin/Examples/IncomeReport2";
+
 
 import avatar1 from "assets/utils/images/avatars/1.jpg";
 import avatar2 from "assets/utils/images/avatars/2.jpg";
@@ -20,6 +25,8 @@ import {
   Nav,
   NavItem,
   NavLink,
+  TabContent,
+  TabPane,
   Popover,
   PopoverBody,
   Progress,
@@ -43,15 +50,107 @@ import {
   faQuestionCircle,
   faBusinessTime,
   faCog,
+  faCommentDots,
+  faBullhorn
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TabbedContent from "./Examples/Tabbed";
+import classnames from "classnames";
+import CountUp from "react-countup";
+
 
 const AdminDashboardDetails = () => {
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
+
+  const initial = {
+    popoverOpen1: false,
+
+    optionsMixedChart: {
+      chart: {
+        height: 350,
+        type: "line",
+        stacked: false,
+      },
+      stroke: {
+        width: [0, 2, 5],
+        curve: "smooth",
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: "50%",
+        },
+      },
+      fill: {
+        opacity: [0.85, 0.25, 1],
+        gradient: {
+          inverseColors: false,
+          shade: "light",
+          type: "vertical",
+          opacityFrom: 0.85,
+          opacityTo: 0.55,
+          stops: [0, 100, 100, 100],
+        },
+      },
+      labels: [
+        "01/01/2003",
+        "02/01/2003",
+        "03/01/2003",
+        "04/01/2003",
+        "05/01/2003",
+        "06/01/2003",
+        "07/01/2003",
+        "08/01/2003",
+        "09/01/2003",
+        "10/01/2003",
+        "11/01/2003",
+      ],
+      markers: {
+        size: 0,
+      },
+      xaxis: {
+        type: "datetime",
+      },
+      yaxis: {
+        title: {
+          text: "Points",
+        },
+        min: 0,
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: function (y) {
+            if (typeof y !== "undefined") {
+              return y.toFixed(0) + " points";
+            }
+            return y;
+          },
+        },
+      },
+    },
+    seriesMixedChart: [
+      {
+        name: "TEAM A",
+        type: "column",
+        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+      },
+      {
+        name: "TEAM B",
+        type: "bar",
+        data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+      },
+      {
+        name: "TEAM C",
+        type: "line",
+        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+      },
+    ],
+  };
+  const [initialState, setInitialState] = useState(initial)
 
   const columns = [
     {
@@ -201,9 +300,88 @@ const AdminDashboardDetails = () => {
                 </Card>
               </Col>
             </Row>
+            <Card className="mb-3">
+              <CardHeader className="tabs-lg-alternate">
+                <Nav justified>
+                  <NavItem>
+                    <NavLink href="#"
+                      className={classnames({
+                        active: activeTab === "1",
+                      })}
+                      onClick={() => {
+                        toggle("1");
+                      }}>
+                      <div className="widget-number">
+                        <CountUp start={0} end={15065} separator="," decimals={0}
+                          decimal="" delay={2} prefix="$" duration="10" />
+                      </div>
+                      <div className="tab-subheading">
+                        <span className="pe-2 opacity-6">
+                          <FontAwesomeIcon icon={faCommentDots} />
+                        </span>
+                        Totals
+                      </div>
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink href="#"
+                      className={classnames({
+                        active: activeTab === "2",
+                      })}
+                      onClick={() => {
+                        toggle("2");
+                      }}>
+                      <div className="widget-number">
+                        <span className="pe-2 text-success">
+                          <FontAwesomeIcon icon={faAngleUp} />
+                        </span>
+                        <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
+                          delay={2} prefix="" duration="10" />
+                      </div>
+                      <div className="tab-subheading">Products</div>
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink href="#"
+                      className={classnames({
+                        active: activeTab === "3",
+                      })}
+                      onClick={() => {
+                        toggle("3");
+                      }}>
+                      <div className="widget-number text-danger">
+                        <CountUp start={0} end={6784} separator=","
+                          decimals={1} decimal="." delay={2} prefix="$" duration="10" />
+                      </div>
+                      <div className="tab-subheading">
+                        <span className="pe-2 opacity-6">
+                          <FontAwesomeIcon icon={faBullhorn} />
+                        </span>
+                        Income
+                      </div>
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+              </CardHeader>
+              <TabContent activeTab={activeTab}>
+                <TabPane tabId="1">
+                  <CardBody>
+                    <IncomeReport />
+                  </CardBody>
+                </TabPane>
+                <TabPane tabId="2">
+                  <Chart options={initialState.optionsMixedChart} series={initialState.seriesMixedChart}
+                    type="line" width="100%" height="330px" />
+                </TabPane>
+                <TabPane tabId="3">
+                  <IncomeReport2 />
+                </TabPane>
+              </TabContent>
+            </Card>
+
             <CardHeader className="mbg-3 h-auto ps-0 pe-0 bg-transparent no-border">
               <div className="card-header-title fsize-2 text-capitalize fw-normal">
-                Stats Section
+                Interview Stats
               </div>
               <div className="btn-actions-pane-right text-capitalize actions-icon-btn">
                 <Button size="sm" color="link">
@@ -276,7 +454,7 @@ const AdminDashboardDetails = () => {
               </Col>
             </Row>
 
-            <Row>
+            {/* <Row>
               <Col sm="12" lg="4">
                 <Card className="mb-3">
                   <CardHeader className="card-header-tab">
@@ -456,11 +634,11 @@ const AdminDashboardDetails = () => {
                   </CardFooter>
                 </Card>
               </Col>
-            </Row>
+            </Row> */}
             <Card className="main-card mb-3">
               <CardHeader>
                 <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                  Company Agents Status
+                  Hiring Managers
                 </div>
                 <div className="btn-actions-pane-right">
                 </div>
@@ -470,10 +648,10 @@ const AdminDashboardDetails = () => {
                   <tr>
                     <th className="text-center">#</th>
                     <th className="text-center">Avatar</th>
-                    <th className="text-center">Name</th>
+                    <th className="text-center">Hirer</th>
                     <th className="text-center">Company</th>
-                    <th className="text-center">Status</th>
-                    <th className="text-center">Due Date</th>
+                    <th className="text-center">Recent Hire Status</th>
+                    <th className="text-center">Last Hire</th>
                     <th className="text-center">Target Achievement</th>
                     <th className="text-center">Actions</th>
                   </tr>
