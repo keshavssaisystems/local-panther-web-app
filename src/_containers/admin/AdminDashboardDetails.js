@@ -59,11 +59,18 @@ const AdminDashboardDetails = () => {
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
-  const [activeClients, setActiveClients] = useState(0)
-  const [activeHirers, setActiveHirers] = useState(0)
-  const [activeCandidates, setActiveCandidates] = useState(0)
-  const [interviewsCount, setInterviewsCount] = useState(0)
-  const [openJobs, setOpenJobs] = useState(0)
+  
+  const cardStatsInitial = {
+    activecompanycount: 0,
+    activecustomercount: 0,
+    activecandidatecount: 0,
+    openjobcount: 0,
+    todaysinterviewscheduledcount: 0,
+    upcominginterviewscheduledcount: 0,
+    pastinterviewscheduledcount: 0,
+    newcandidateregistrationcount: 0
+  }
+  const [cardStats, setCardStats] = useState(cardStatsInitial)
 
   const date = new Date();
   const [todaysDate, setTodaysDate] = useState(date.toLocaleDateString('fr-CA'))
@@ -190,14 +197,11 @@ const AdminDashboardDetails = () => {
     fetch(`https://panther-api-dev.azurewebsites.net/api/AdminDashboard/DasboardCount?date=${todaysDate}`)
     .then(data => data.json())
     .then(result => {
-      setActiveClients(result.data.activecustomercount)
-      setActiveHirers(result.data.activecustomercount)
-      setActiveCandidates(result.data.activecandidatecount)
-      setInterviewsCount(result.data.todaysinterviewscheduledcount)
-      setOpenJobs(result.data.openjobcount)
+      setCardStats({ ...result.data })
     }
       )
-  },[])
+  }, [])
+
   const onDismiss = () => {
     setVisible(value => !value);
   }
@@ -236,7 +240,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-success pe-2">
                               <FontAwesomeIcon icon={faAngleUp} />
                             </span>
-                            {activeClients}
+                            {cardStats.activecompanycount}
                           </div>
                         </div>
                       </div>
@@ -250,8 +254,7 @@ const AdminDashboardDetails = () => {
                     <div className="widget-chart-content">
                       <div className="widget-content-left fsize-1">
                         <div className="text-muted opacity-6">
-                          {/* active Hirers */}
-                          open Jobs
+                          active Hirers
                         </div>
                       </div>
                       <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
@@ -260,8 +263,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-danger pe-2">
                               <FontAwesomeIcon icon={faAngleDown} />
                             </span>
-                            {/* {activeHirers} */}
-                            {openJobs}
+                            {cardStats.activecustomercount}
                           </div>
                         </div>
                       </div>
@@ -284,7 +286,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-success pe-2">
                               <FontAwesomeIcon icon={faAngleUp} />
                             </span>
-                            {activeCandidates}
+                            {cardStats.activecandidatecount}
                           </div>
                         </div>
                       </div>
@@ -298,7 +300,7 @@ const AdminDashboardDetails = () => {
                     <div className="widget-chart-content">
                       <div className="widget-content-left fsize-1">
                         <div className="text-muted opacity-6">
-                          today's Interviews
+                          today's Candidates
                         </div>
                       </div>
                       <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
@@ -307,7 +309,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-success pe-2">
                               <FontAwesomeIcon icon={faAngleUp} />
                             </span>
-                            {interviewsCount}
+                            {cardStats.newcandidateregistrationcount}
                           </div>
                         </div>
                       </div>
