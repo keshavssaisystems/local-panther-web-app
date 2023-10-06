@@ -7,13 +7,12 @@ import {
   CustomerDashboard,
   CandidateDashboard,
 } from "_containers/dashboard/Dashboard";
-import { JobList } from "_containers/customer/jobs/JobList";
+
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
-import { CandidateList } from "_containers/candidate/recommendedcandidates/CandidateList";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
 import { AppSidebar } from "_components/_layout/AppSidebar";
@@ -23,7 +22,6 @@ import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
 import { CandidateTablist } from "_containers/candidate/candidateTablist";
-import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
@@ -32,7 +30,16 @@ import { Contact } from "_containers/Contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
+
+// Admin
+import { OnboardCustomer } from "_containers/admin/customer";
 import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConstruction";
+import { 
+  OpenJobs, 
+  NewCandidate, 
+  CandidateReport, 
+  IncompleteCandidateProfile, 
+  PartiallyFilledJobs } from "_containers/admin";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -114,6 +121,26 @@ export function App() {
           <Route
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
+          />
+          <Route
+            path="/report/open-jobs"
+            element={<OpenJobs />}
+          />
+          <Route
+            path="/report/incomplete-candidate-profile"
+            element={<IncompleteCandidateProfile />}
+          />
+          <Route
+            path="/report/new-candidate"
+            element={<NewCandidate />}
+          />
+          <Route
+            path="/report/candidate-report"
+            element={<CandidateReport />}
+          />
+          <Route
+            path="/report/partially-filled-jobs"
+            element={<PartiallyFilledJobs />}
           />
         </>
       );

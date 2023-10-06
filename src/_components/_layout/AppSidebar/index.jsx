@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Navigation } from "react-minimal-side-navigation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+
 
 import "./appsidebar.scss";
 import "react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css";
@@ -19,7 +22,26 @@ export const AppSidebar = () => {
 
   useEffect(() => {
     if (menuDtoList) {
-      let data = [];
+      const menuItems = menuDtoList?.map(({ 
+        path, 
+        menuname: title, 
+        subMenuList = [],
+        ...rest 
+      }) => 
+      ({ 
+        itemId: path, 
+        pathname: path, 
+        title, 
+        ...rest,
+        elemBefore: () => <img
+                    src={sideBarIcons[rest.menuicon]}
+                    alt="icons"/>,
+        ...(subMenuList?.length ? {subNav: subMenuList.map(({ submenuname: title, path }) => ({ title, itemId: path, elemBefore: () => <FontAwesomeIcon icon={faBars} /> }))} : {})
+      }))
+  
+      setMenuItems(menuItems);
+
+      /* let data = [];
       for (let {path, menuname: title, ...rest} of menuDtoList) {
         let obj = {
           pathname: path,
@@ -28,12 +50,12 @@ export const AppSidebar = () => {
           ...rest,
           elemBefore: () => <img
                     src={sideBarIcons[rest.menuicon]}
-                    alt="icons"
-                  />
+                    alt="icons"/>
+          
         };
         data.push(obj);
-      }
-      setMenuItems(data);
+      } */
+      // setMenuItems(data);
     }
   }, []);
 

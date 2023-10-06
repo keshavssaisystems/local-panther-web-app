@@ -25,8 +25,8 @@ export function SelectFormGroup({
             {" "}
             {defaultOption}{" "}
           </option>
-          {optionData.length > 0 &&
-            optionData.map((options) => (
+          {optionData?.length > 0 &&
+            optionData?.map((options) => (
               <option key={options.id} value={options.id}>
                 {" "}
                 {options.name}{" "}

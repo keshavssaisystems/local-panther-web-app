@@ -20,7 +20,7 @@ export function ScheduleInterviewList({
   durationOptions,
   postData,
 }) {
-  console.log(candidateList);
+
   const customStyles = {
     headRow: {
       style: {
