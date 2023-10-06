@@ -8,11 +8,11 @@ import Chart from "react-apexcharts";
 import IncomeReport from "_containers/admin/Examples/IncomeReport";
 import IncomeReport2 from "_containers/admin/Examples/IncomeReport2";
 
-
 import avatar1 from "assets/utils/images/avatars/1.jpg";
 import avatar2 from "assets/utils/images/avatars/2.jpg";
 import avatar3 from "assets/utils/images/avatars/3.jpg";
 import avatar4 from "assets/utils/images/avatars/4.jpg";
+import sideBarIcons from 'assets/utils/sidebarimages'
 
 import {
   Row,
@@ -39,31 +39,34 @@ import {
   CardFooter,
 } from "reactstrap";
 
-import Column from "./Examples/Column";
-import Bar2 from "./Examples/Bar";
-import Area from "./Examples/Area";
-import Mixed from "./Examples/Mixed";
-
 import {
   faAngleUp,
   faAngleDown,
   faQuestionCircle,
   faBusinessTime,
   faCog,
-  faCommentDots,
-  faBullhorn
+  faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TabbedContent from "./Examples/Tabbed";
 import classnames from "classnames";
 import CountUp from "react-countup";
+import { useEffect } from "react";
 
 
 const AdminDashboardDetails = () => {
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
+  const [activeClients, setActiveClients] = useState(0)
+  const [activeHirers, setActiveHirers] = useState(0)
+  const [activeCandidates, setActiveCandidates] = useState(0)
+  const [interviewsCount, setInterviewsCount] = useState(0)
+  const [openJobs, setOpenJobs] = useState(0)
+
+  const date = new Date();
+  const [todaysDate, setTodaysDate] = useState(date.toLocaleDateString('fr-CA'))
 
   const initial = {
     popoverOpen1: false,
@@ -183,6 +186,18 @@ const AdminDashboardDetails = () => {
     },
   ];
 
+  useEffect(()=>{
+    fetch(`https://panther-api-dev.azurewebsites.net/api/AdminDashboard/DasboardCount?date=${todaysDate}`)
+    .then(data => data.json())
+    .then(result => {
+      setActiveClients(result.data.activecustomercount)
+      setActiveHirers(result.data.activecustomercount)
+      setActiveCandidates(result.data.activecandidatecount)
+      setInterviewsCount(result.data.todaysinterviewscheduledcount)
+      setOpenJobs(result.data.openjobcount)
+    }
+      )
+  },[])
   const onDismiss = () => {
     setVisible(value => !value);
   }
@@ -193,19 +208,18 @@ const AdminDashboardDetails = () => {
     }
   }
 
-
   return (
     <Fragment>
       <TransitionGroup>
         <CSSTransition component="div" classNames="TabsAnimation" appear={true}
           timeout={1500} enter={false} exit={false}>
           <div>
-            <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
+            {/* <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
               <span className="pe-2">
                 <FontAwesomeIcon icon={faQuestionCircle} />
               </span>
               This dashboard is in making. Some features may not work!
-            </Alert>
+            </Alert> */}
             <Row>
               <Col xs="12" sm="9" md="6" lg="3">
                 <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
@@ -222,7 +236,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-success pe-2">
                               <FontAwesomeIcon icon={faAngleUp} />
                             </span>
-                            234
+                            {activeClients}
                           </div>
                         </div>
                       </div>
@@ -236,7 +250,8 @@ const AdminDashboardDetails = () => {
                     <div className="widget-chart-content">
                       <div className="widget-content-left fsize-1">
                         <div className="text-muted opacity-6">
-                          active Hirers
+                          {/* active Hirers */}
+                          open Jobs
                         </div>
                       </div>
                       <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
@@ -245,7 +260,8 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-danger pe-2">
                               <FontAwesomeIcon icon={faAngleDown} />
                             </span>
-                            221
+                            {/* {activeHirers} */}
+                            {openJobs}
                           </div>
                         </div>
                       </div>
@@ -268,7 +284,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-success pe-2">
                               <FontAwesomeIcon icon={faAngleUp} />
                             </span>
-                            1234
+                            {activeCandidates}
                           </div>
                         </div>
                       </div>
@@ -282,7 +298,7 @@ const AdminDashboardDetails = () => {
                     <div className="widget-chart-content">
                       <div className="widget-content-left fsize-1">
                         <div className="text-muted opacity-6">
-                          total Interviews
+                          today's Interviews
                         </div>
                       </div>
                       <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
@@ -291,7 +307,7 @@ const AdminDashboardDetails = () => {
                             <span className="opacity-10 text-success pe-2">
                               <FontAwesomeIcon icon={faAngleUp} />
                             </span>
-                            885
+                            {interviewsCount}
                           </div>
                         </div>
                       </div>
@@ -300,6 +316,13 @@ const AdminDashboardDetails = () => {
                 </Card>
               </Col>
             </Row>
+            <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
+              <span className="pe-2">
+                <FontAwesomeIcon icon={faQuestionCircle} />
+              </span>
+              The below section of dashboard is in making. Data is from JSON !
+            </Alert>
+
             <Card className="mb-3">
               <CardHeader className="tabs-lg-alternate">
                 <Nav justified>
@@ -313,13 +336,13 @@ const AdminDashboardDetails = () => {
                       }}>
                       <div className="widget-number">
                         <CountUp start={0} end={15065} separator="," decimals={0}
-                          decimal="" delay={2} prefix="$" duration="10" />
+                          decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading">
-                        <span className="pe-2 opacity-6">
-                          <FontAwesomeIcon icon={faCommentDots} />
+                        <span className="pe-2 opacity-6 ">
+                          <img src={sideBarIcons.candidates} alt="candidatesIcon" />
                         </span>
-                        Totals
+                        Candidates
                       </div>
                     </NavLink>
                   </NavItem>
@@ -338,7 +361,12 @@ const AdminDashboardDetails = () => {
                         <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">Products</div>
+                      <div className="tab-subheading">
+                        <span className="pe-2 opacity-6 ">
+                          <img src={sideBarIcons.jobs} alt="jobsIcon" />
+                        </span>
+                        Jobs
+                      </div>
                     </NavLink>
                   </NavItem>
                   <NavItem>
@@ -350,14 +378,14 @@ const AdminDashboardDetails = () => {
                         toggle("3");
                       }}>
                       <div className="widget-number text-danger">
-                        <CountUp start={0} end={6784} separator=","
-                          decimals={1} decimal="." delay={2} prefix="$" duration="10" />
+                        <CountUp start={0} end={67} separator=","
+                          decimals={1} decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading">
                         <span className="pe-2 opacity-6">
-                          <FontAwesomeIcon icon={faBullhorn} />
+                          <img src={sideBarIcons.interviews} alt="interviewsIcon" />
                         </span>
-                        Income
+                        Interviews
                       </div>
                     </NavLink>
                   </NavItem>
@@ -703,12 +731,22 @@ const AdminDashboardDetails = () => {
                     </td>
                     <td className="text-center">
                       <ButtonGroup size="sm">
-                        <Button className="btn-shadow" color="primary">
-                          Hire
-                        </Button>
-                        <Button className="btn-shadow" color="primary">
-                          Fire
-                        </Button>
+                        <div className="d-block w-100 text-center">
+                          <UncontrolledButtonDropdown direction="start">
+                            <DropdownToggle
+                              className="btn-icon btn-icon-only btn btn-link"
+                              color="link"
+                            >
+                              <FontAwesomeIcon icon={faEllipsisV} />
+                            </DropdownToggle>
+                            <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
+                              <DropdownItem>
+                                <i className="dropdown-icon lnr-layers"></i>
+                                <span>View activities</span>
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </UncontrolledButtonDropdown>
+                        </div>
                       </ButtonGroup>
                     </td>
                   </tr>
@@ -756,12 +794,22 @@ const AdminDashboardDetails = () => {
                     </td>
                     <td className="text-center">
                       <ButtonGroup size="sm">
-                        <Button className="btn-shadow" color="primary">
-                          Hire
-                        </Button>
-                        <Button className="btn-shadow" color="primary">
-                          Fire
-                        </Button>
+                        <div className="d-block w-100 text-center">
+                          <UncontrolledButtonDropdown direction="start">
+                            <DropdownToggle
+                              className="btn-icon btn-icon-only btn btn-link"
+                              color="link"
+                            >
+                              <FontAwesomeIcon icon={faEllipsisV} />
+                            </DropdownToggle>
+                            <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
+                              <DropdownItem>
+                                <i className="dropdown-icon lnr-layers"></i>
+                                <span>View activities</span>
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </UncontrolledButtonDropdown>
+                        </div>
                       </ButtonGroup>
                     </td>
                   </tr>
@@ -811,12 +859,22 @@ const AdminDashboardDetails = () => {
                     </td>
                     <td className="text-center">
                       <ButtonGroup size="sm">
-                        <Button className="btn-shadow" color="primary">
-                          Hire
-                        </Button>
-                        <Button className="btn-shadow" color="primary">
-                          Fire
-                        </Button>
+                        <div className="d-block w-100 text-center">
+                          <UncontrolledButtonDropdown direction="start">
+                            <DropdownToggle
+                              className="btn-icon btn-icon-only btn btn-link"
+                              color="link"
+                            >
+                              <FontAwesomeIcon icon={faEllipsisV} />
+                            </DropdownToggle>
+                            <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
+                              <DropdownItem>
+                                <i className="dropdown-icon lnr-layers"></i>
+                                <span>View activities</span>
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </UncontrolledButtonDropdown>
+                        </div>
                       </ButtonGroup>
                     </td>
                   </tr>
@@ -866,12 +924,22 @@ const AdminDashboardDetails = () => {
                     </td>
                     <td className="text-center">
                       <ButtonGroup size="sm">
-                        <Button className="btn-shadow" color="primary">
-                          Hire
-                        </Button>
-                        <Button className="btn-shadow" color="primary">
-                          Fire
-                        </Button>
+                        <div className="d-block w-100 text-center">
+                          <UncontrolledButtonDropdown direction="start">
+                            <DropdownToggle
+                              className="btn-icon btn-icon-only btn btn-link"
+                              color="link"
+                            >
+                              <FontAwesomeIcon icon={faEllipsisV} />
+                            </DropdownToggle>
+                            <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
+                              <DropdownItem>
+                                <i className="dropdown-icon lnr-layers"></i>
+                                <span>View activities</span>
+                              </DropdownItem>
+                            </DropdownMenu>
+                          </UncontrolledButtonDropdown>
+                        </div>
                       </ButtonGroup>
                     </td>
                   </tr>

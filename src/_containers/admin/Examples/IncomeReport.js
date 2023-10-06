@@ -31,7 +31,7 @@ export default class IncomeReport extends Component {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <CardTitle>Target Sales</CardTitle>
+        <CardTitle>Candidates Stats</CardTitle>
         <Row className="mt-3">
           <Col sm="12" md="4">
             <div className="widget-content p-0">
@@ -44,7 +44,7 @@ export default class IncomeReport extends Component {
                 <div className="widget-progress-wrapper mt-1">
                   <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="65"/>
                   <div className="progress-sub-label">
-                    <div className="sub-label-left font-size-md">Sales</div>
+                    <div className="sub-label-left font-size-md">Recommended Jobs</div>
                   </div>
                 </div>
               </div>
@@ -55,13 +55,13 @@ export default class IncomeReport extends Component {
               <div className="widget-content-outer">
                 <div className="widget-content-wrapper">
                   <div className="widget-content-left">
-                    <div className="widget-numbers text-dark">22%</div>
+                    <div className="widget-numbers text-dark">12%</div>
                   </div>
                 </div>
                 <div className="widget-progress-wrapper mt-1">
                   <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="22"/>
                   <div className="progress-sub-label">
-                    <div className="sub-label-left font-size-md">Profiles</div>
+                    <div className="sub-label-left font-size-md">Not Active</div>
                   </div>
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default class IncomeReport extends Component {
                 <div className="widget-progress-wrapper mt-1">
                   <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="83"/>
                   <div className="progress-sub-label">
-                    <div className="sub-label-left font-size-md">Tickets</div>
+                    <div className="sub-label-left font-size-md">New Registrations</div>
                   </div>
                 </div>
               </div>
