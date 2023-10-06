@@ -20,22 +20,14 @@ export const AppSidebar = () => {
   useEffect(() => {
     if (menuDtoList) {
       let data = [];
-      for (let variable of menuDtoList) {
+      for (let {path, menuname: title, ...rest} of menuDtoList) {
         let obj = {
-          itemId: variable.path,
-          title: variable.menuname,
-          userroleid: variable.userroleid,
-          rolename: variable.rolename,
-          menuicon: variable.menuicon,
-          modulename: variable.modulename,
-          pathname: variable.path,
-          isview: variable.isview,
-          isadd: variable.isadd,
-          isedit: variable.isedit,
-          isdelete: variable.isdelete,
-          subMenuList: variable.subMenuList,
+          pathname: path,
+          itemId: path,
+          title,
+          ...rest,
           elemBefore: () => <img
-                    src={sideBarIcons[variable.menuicon]}
+                    src={sideBarIcons[rest.menuicon]}
                     alt="icons"
                   />
         };
