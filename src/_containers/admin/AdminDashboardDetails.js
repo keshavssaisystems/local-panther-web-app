@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import DataTable from 'react-data-table-component';
@@ -52,7 +52,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TabbedContent from "./Examples/Tabbed";
 import classnames from "classnames";
 import CountUp from "react-countup";
-import { useEffect } from "react";
 
 
 const AdminDashboardDetails = () => {
@@ -60,20 +59,12 @@ const AdminDashboardDetails = () => {
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
   
-  const cardStatsInitial = {
-    activecompanycount: 0,
-    activecustomercount: 0,
-    activecandidatecount: 0,
-    openjobcount: 0,
-    todaysinterviewscheduledcount: 0,
-    upcominginterviewscheduledcount: 0,
-    pastinterviewscheduledcount: 0,
-    newcandidateregistrationcount: 0
-  }
-  const [cardStats, setCardStats] = useState(cardStatsInitial)
+  const dashboardCards = {activecompanycount:0, activecustomercount:0, activecandidatecount:0, newcandidateregistrationcount:0}
+  const [cardStats, setCardStats] = useState({ ...dashboardCards })
 
-  const date = new Date();
-  const [todaysDate, setTodaysDate] = useState(date.toLocaleDateString('fr-CA'))
+  const date = new Date().toLocaleDateString('fr-CA');
+  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
+  const [todaysDate, setTodaysDate] = useState(date)
 
   const initial = {
     popoverOpen1: false,
@@ -105,17 +96,17 @@ const AdminDashboardDetails = () => {
         },
       },
       labels: [
-        "01/01/2003",
-        "02/01/2003",
-        "03/01/2003",
-        "04/01/2003",
-        "05/01/2003",
-        "06/01/2003",
-        "07/01/2003",
-        "08/01/2003",
-        "09/01/2003",
-        "10/01/2003",
-        "11/01/2003",
+        "01/01/2023",
+        "02/01/2023",
+        "03/01/2023",
+        "04/01/2023",
+        "05/01/2023",
+        "06/01/2023",
+        "07/01/2023",
+        "08/01/2023",
+        "09/01/2023",
+        "10/01/2023",
+        "11/01/2023",
       ],
       markers: {
         size: 0,
@@ -135,6 +126,7 @@ const AdminDashboardDetails = () => {
         y: {
           formatter: function (y) {
             if (typeof y !== "undefined") {
+              console.log("NG check y",y)
               return y.toFixed(0) + " points";
             }
             return y;
@@ -212,6 +204,85 @@ const AdminDashboardDetails = () => {
     }
   }
 
+
+  const dashCardUI = [
+    {
+        id : 0,
+        cardFor: 'client',
+        color: 'border-primary',
+        count: 0,
+        arrowDirection: 'faAngleUp',
+        arrowColor: 'text-success',
+        title: 'active Clients',
+        apiVariable: 'activecompanycount'
+    },
+    {
+        id: 1,
+        cardFor: 'hiringManager',
+        color: 'border-danger',
+        count: 0,
+        arrowDirection: 'faAngleUp',
+        arrowColor: 'text-success',
+        title: 'active Hirers',
+        apiVariable: 'activecustomercount'
+    },
+    {
+        id: 2,
+        cardFor: 'candidate',
+        color: 'border-warning',
+        count: 0,
+        arrowDirection: 'faAngleDown',
+        arrowColor: 'text-danger',
+        title: 'active Candidates',
+        apiVariable: 'activecandidatecount'
+    },
+    {
+      id: 3,
+      cardFor: 'registration',
+        color: 'border-success',
+        count: 0,
+        arrowDirection: 'faAngleUp',
+        arrowColor: 'text-success',
+        title: 'new Registrations',
+        apiVariable: 'newcandidateregistrationcount'
+    }
+  ]
+
+  const cardsMapping = dashCardUI.map(ele => {
+    const borderColor = "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary " + ele.color
+    const arrowDirection = ele.arrowDirection === 'faAngleUp' ? 1 : 0
+    const arrowColor = "opacity-10 pe-2 " + ele.arrowColor
+
+   return (
+      <Col key={ele} xs="12" sm="9" md="6" lg="3">
+       <Card className={borderColor}>
+          <div className="widget-chat-wrapper-outer">
+            <div className="widget-chart-content">
+              <div className="widget-content-left fsize-1">
+                <div className="text-muted opacity-6">
+                  {ele.title}
+                </div>
+              </div>
+              <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                <div className="widget-chart-flex align-items-center">
+                  <div>
+                   <span className={arrowColor}>
+                     { arrowDirection ?
+                     <FontAwesomeIcon icon={faAngleUp} />
+                     : <FontAwesomeIcon icon={faAngleDown} /> }
+                    </span>
+                    {cardStats[`${ele.apiVariable}`]}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </Col>
+    )
+  })
+
+
   return (
     <Fragment>
       <TransitionGroup>
@@ -225,98 +296,7 @@ const AdminDashboardDetails = () => {
               This dashboard is in making. Some features may not work!
             </Alert> */}
             <Row>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          active Clients
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-success pe-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                            {cardStats.activecompanycount}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-danger">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          active Hirers
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-danger pe-2">
-                              <FontAwesomeIcon icon={faAngleDown} />
-                            </span>
-                            {cardStats.activecustomercount}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-warning">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          active Candidates
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-success pe-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                            {cardStats.activecandidatecount}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-success">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          today's Candidates
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-success pe-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                            {cardStats.newcandidateregistrationcount}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
+              {cardsMapping}
             </Row>
             <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
               <span className="pe-2">
@@ -356,18 +336,20 @@ const AdminDashboardDetails = () => {
                       onClick={() => {
                         toggle("2");
                       }}>
-                      <div className="widget-number">
+                      <div className="widget-number align-items-center">
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
                         <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">
+                      <div className="tab-subheading align-items-center">
                         <span className="pe-2 opacity-6 ">
                           <img src={sideBarIcons.jobs} alt="jobsIcon" />
                         </span>
-                        Jobs
+                        <span className="pe-2 ">
+                          Jobs
+                        </span>
                       </div>
                     </NavLink>
                   </NavItem>

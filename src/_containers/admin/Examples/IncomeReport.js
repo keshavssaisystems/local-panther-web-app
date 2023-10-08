@@ -1,21 +1,29 @@
+import moment from "moment";
 import React, { Component, Fragment } from "react";
 import { Row, Col, CardTitle, Progress } from "reactstrap";
 
-import { ResponsiveContainer, LineChart, Tooltip, Line } from "recharts";
+import {
+  ResponsiveContainer, LineChart, Tooltip, Line, XAxis,
+ } from "recharts";
+
+const timeInterval = 10;
+const date = new Date().toLocaleDateString('fr-CA');
+const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
+
 
 const data55 = [
-  { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
-  { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
-  { name: "Page C", uv: 2000, pv: 9800, amt: 2290 },
-  { name: "Page D", uv: 2780, pv: 3908, amt: 2000 },
-  { name: "Page E", uv: 1890, pv: 4800, amt: 2181 },
-  { name: "Page F", uv: 2390, pv: 3800, amt: 2500 },
-  { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
-  { name: "Page C", uv: 2000, pv: 6800, amt: 2290 },
-  { name: "Page D", uv: 4780, pv: 7908, amt: 2000 },
-  { name: "Page E", uv: 2890, pv: 9800, amt: 2181 },
-  { name: "Page F", uv: 1390, pv: 3800, amt: 1500 },
-  { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
+  { label: "01/01/2024", name: "Page A", uv: 4000, activecandidates: 2400, amt: 2400 },
+  { label: "02/01/2023", name: "Page B", uv: 3000, activecandidates: 1398, amt: 2210 },
+  { label: "03/01/2023", name: "Page C", uv: 2000, activecandidates: 9800, amt: 2290 },
+  { label: "04/01/2023", name: "Page D", uv: 2780, activecandidates: 3908, amt: 2000 },
+  { label: "05/01/2023", name: "Page E", uv: 1890, activecandidates: 4800, amt: 2181 },
+  { label: "06/01/2023", name: "Page F", uv: 2390, activecandidates: 3800, amt: 2500 },
+  { label: "07/01/2023", name: "Page G", uv: 3490, activecandidates: 4300, amt: 2100 },
+  { label: "08/01/2023", name: "Page C", uv: 2000, activecandidates: 6800, amt: 2290 },
+  { label: "09/01/2023", name: "Page D", uv: 4780, activecandidates: 7908, amt: 2000 },
+  { label: "10/01/2023", name: "Page E", uv: 2890, activecandidates: 9800, amt: 2181 },
+  { label: yesterday, name: "Page F", uv: 1390, activecandidates: 3800, amt: 1500 },
+  { label: date, name: "Page G", uv: 3490, activecandidates: 4300, amt: 2100 }
 ];
 
 export default class IncomeReport extends Component {
@@ -25,8 +33,9 @@ export default class IncomeReport extends Component {
         <div className="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={data55} margin={{ top: 0, right: 5, left: 5, bottom: 0 }}>
-              <Tooltip />
-              <Line type="monotone" dataKey="pv" stroke="#e83e8c" strokeOpacity={0.4} strokeWidth={2}/>
+              <XAxis dataKey="label" tick={false} />
+              <Tooltip labelFormatter={t => moment(t).format("ddd, DD MMM  YYYY")} />
+              <Line type="monotone" dataKey="activecandidates" stroke="#e83e8c" strokeOpacity={0.4} strokeWidth={2}/>
               <Line type="monotone" dataKey="uv" stroke="#e83e8c" strokeWidth={3}/>
             </LineChart>
           </ResponsiveContainer>
