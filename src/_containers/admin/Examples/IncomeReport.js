@@ -51,7 +51,7 @@ export default class IncomeReport extends Component {
   render() {
     return (
       <Fragment>
-        <div className="btn-actions-pane-right text-capitalize  actions-icon-btn">
+        <div className="btn-actions-pane-right text-capitalize  actions-icon-btn right-align">
           <UncontrolledButtonDropdown>
             <DropdownToggle className="btn-icon btn-icon-only" color="link">
               <i className="pe-7s-menu btn-icon-wrapper" />
