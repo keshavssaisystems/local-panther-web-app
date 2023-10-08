@@ -27,8 +27,6 @@ import {
   NavLink,
   TabContent,
   TabPane,
-  Popover,
-  PopoverBody,
   Progress,
   Card,
   CardBody,
