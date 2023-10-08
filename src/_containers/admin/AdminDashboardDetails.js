@@ -320,10 +320,8 @@ const AdminDashboardDetails = () => {
                         <CountUp start={0} end={15065} separator="," decimals={0}
                           decimal="" delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">
-                        <span className="pe-2 opacity-6 ">
-                          <img src={sideBarIcons.candidates} alt="candidatesIcon" />
-                        </span>
+                      <div className="tab-subheading fsize-1 fw-normal">
+                        <i className="header-icon lnr-users me-3 text-muted opacity-6"> {" "} </i>
                         Candidates
                       </div>
                     </NavLink>
@@ -336,20 +334,16 @@ const AdminDashboardDetails = () => {
                       onClick={() => {
                         toggle("2");
                       }}>
-                      <div className="widget-number align-items-center">
+                      <div className="widget-number ">
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
                         <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading align-items-center">
-                        <span className="pe-2 opacity-6 ">
-                          <img src={sideBarIcons.jobs} alt="jobsIcon" />
-                        </span>
-                        <span className="pe-2 ">
-                          Jobs
-                        </span>
+                      <div className="tab-subheading fsize-1 fw-normal">
+                        <i className="header-icon lnr-graduation-hat me-3 text-muted opacity-6"> {" "} </i>
+                        Jobs
                       </div>
                     </NavLink>
                   </NavItem>
@@ -365,10 +359,8 @@ const AdminDashboardDetails = () => {
                         <CountUp start={0} end={67} separator=","
                           decimals={1} decimal="" delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">
-                        <span className="pe-2 opacity-6">
-                          <img src={sideBarIcons.interviews} alt="interviewsIcon" />
-                        </span>
+                      <div className="tab-subheading fsize-1 fw-normal">
+                        <i className="header-icon lnr-calendar-full me-3 text-muted opacity-6"> {" "} </i>
                         Interviews
                       </div>
                     </NavLink>
