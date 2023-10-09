@@ -17,35 +17,45 @@ import { UpcomingCard } from "_components/scheduleInterview/upcomingCard";
 import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment-timezone";
+import moment from "moment";
+import momentTimezone from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
 } from "_store";
 import { Popup } from "_components/common/Popup";
+import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 
 export function ScheduleInterview() {
   const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState(1);
-  const [selectedJobId, setSelectedJobId] = useState(27);
+  const [selectedJobId, setSelectedJobId] = useState(0);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
-    getCandidateList(evt.target.value);
+    getCandidateList(
+      evt.target.value,
+      moment().format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
   };
   const dispatch = useDispatch();
-  const getCandidateList = async function (jobId) {
-    await dispatch(scheduleInterviewActions.getScheduleInterviewThunk(jobId));
+  const getCandidateList = async function (selectedJobId, startdate, enddate) {
+    await dispatch(
+      scheduleInterviewActions.getScheduleInterviewThunk({
+        selectedJobId,
+        startdate,
+        enddate,
+      })
+    );
   };
   useEffect(() => {
-    getUpcomingData({
-      pageNo: 1,
-      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-    });
-    getCandidateList(selectedJobId);
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+    getUpdatedScheduleList();
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
+  }, []);
+  const getUpdatedScheduleList = () => {
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
@@ -53,7 +63,17 @@ export function ScheduleInterview() {
         end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
       })
     );
-  }, []);
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
+  };
   const getUpcomingData = async function (filterdata) {
     await dispatch(
       scheduleInterviewActions.getUpcomingInterviewListThunk(filterdata)
@@ -67,7 +87,6 @@ export function ScheduleInterview() {
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
-
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
@@ -83,20 +102,13 @@ export function ScheduleInterview() {
     upcomingInterviewsWOPagination.length > 0
   ) {
     upcomingInterviewsWOPagination.forEach((upcomingInterview) => {
-      let startDate = moment(
+      let startDate = momentTimezone(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
           upcomingInterview.starttime
       )
         .tz("America/New_York")
         .format("YYYY-MM-DD HH:mm:ss");
-      let startTime = moment(
-        moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-          " " +
-          upcomingInterview.starttime
-      )
-        .tz("America/New_York")
-        .format("hh:mm a");
       let durationArr =
         upcomingInterview.duration !== undefined
           ? upcomingInterview.duration.split(" ")
@@ -104,9 +116,6 @@ export function ScheduleInterview() {
       let endDate = moment(startDate)
         .add(durationArr[0], "m")
         .format("YYYY-MM-DD HH:mm:ss");
-      let endTime = moment(startDate)
-        .add(durationArr[0], "m")
-        .format("hh:mm a");
       let interviewData = {
         id: upcomingInterview.scheduleinterviewid,
         data: upcomingInterview,
@@ -131,12 +140,16 @@ export function ScheduleInterview() {
   }
   const getFormData = (formData) => {
     console.log(formData);
-    postScheduledInterview(formData);
+    updateScheduledInterview(formData);
   };
-  const postScheduledInterview = async function (formData) {
+  const updateScheduledInterview = async function (formData) {
+    let scheduleinterviewid = formData.scheduleinterviewid;
     setShowPopup(true);
     await dispatch(
-      scheduleInterviewActions.postScheduleInterviewThunk(formData)
+      scheduleInterviewActions.updateScheduledInterviewThunk({
+        scheduleinterviewid,
+        formData,
+      })
     );
     getCandidateList(selectedJobId);
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
@@ -152,7 +165,6 @@ export function ScheduleInterview() {
       })
     );
   };
-
   const [toggleVar, setToggleVar] = useState("availabilty");
   const toggle = (tab) => {
     if (toggleVar !== tab) {
@@ -201,11 +213,105 @@ export function ScheduleInterview() {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
-    console.log(event);
     setPopupData(event.data);
     setOpenModal(true);
     setPopupType(event.format);
   }, []);
+
+  const postNotesData = (notesData) => {
+    updateNotesData(notesData);
+    getUpdatedScheduleList();
+  };
+  const updateNotesData = async function (notesdata) {
+    let scheduleinterviewid = notesdata.scheduleinterviewid;
+    await dispatch(
+      scheduleInterviewActions.updateInterviewNotesThunk({
+        scheduleinterviewid,
+        notesdata,
+      })
+    );
+  };
+
+  const postInviteData = (inviteData) => {
+    updateInterviewerData(inviteData);
+    getUpdatedScheduleList();
+  };
+
+  const updateInterviewerData = async function (invitedata) {
+    let scheduleinterviewid = invitedata.scheduleinterviewid;
+    await dispatch(
+      scheduleInterviewActions.updateInterviewerListThunk({
+        scheduleinterviewid,
+        invitedata,
+      })
+    );
+  };
+
+  const cancelScheduleData = (cancelData) => {
+    console.log(cancelData);
+    cancelInterview(cancelData);
+    getUpdatedScheduleList();
+  };
+
+  const cancelInterview = async function (cancelData) {
+    let scheduleinterviewid = cancelData.scheduledInterviewId;
+    let payload = {
+      currentUserId: cancelData.currentUserId,
+    };
+    await dispatch(
+      scheduleInterviewActions.cancelInterviewThunk({
+        scheduleinterviewid,
+        payload,
+      })
+    );
+    onCloseIdModal();
+  };
+  const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
+  const editScheduledInterview = (editStatus) => {
+    console.log(editStatus);
+    setShowEditScheduleModal(editStatus);
+  };
+
+  const allInterview = useSelector(
+    (state) => state.scheduleInterview.allInterview.scheduledInterviewList
+  );
+  let availData = [];
+  if (allInterview?.length > 0) {
+    allInterview.forEach((blockedData) => {
+      let dynamicStartDate = moment().weekday(Number(0)).format("YYYY-MM-DD");
+      let dynamicEndDate = moment().weekday(Number(6)).format("YYYY-MM-DD");
+      if (
+        dynamicStartDate <
+          moment(blockedData.scheduledate).format("YYYY-MM-DD") &&
+        dynamicEndDate > moment(blockedData.scheduledate).format("YYYY-MM-DD")
+      ) {
+        let startDate = momentTimezone(
+          moment(blockedData.scheduledate).format("MMM D, YYYY") +
+            " " +
+            blockedData.starttime
+        )
+          .tz("America/New_York")
+          .format("YYYY-MM-DD HH:mm:ss");
+        let durationArr =
+          blockedData.duration !== undefined
+            ? blockedData.duration.split(" ")
+            : [];
+        let endDate = moment(startDate)
+          .add(durationArr[0], "m")
+          .format("YYYY-MM-DD HH:mm:ss");
+        let interviewData = {
+          id: blockedData.scheduleinterviewid,
+          data: blockedData,
+          format: blockedData.format,
+          title: "Blocked",
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color: "#2F479B",
+        };
+        availData.push(interviewData);
+      }
+    });
+  }
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -280,6 +386,9 @@ export function ScheduleInterview() {
                       id="customerJobList"
                       name="customerJobList"
                     >
+                      <option key={0} value={0}>
+                        Select a job
+                      </option>
                       {jobList.map((data) => {
                         return (
                           <option value={data.jobid} key={data.jobid}>
@@ -305,17 +414,28 @@ export function ScheduleInterview() {
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
-                    events={upData}
+                    events={availData}
                     startAccessor="start"
                     endAccessor="end"
                     popup
+                    formats={{
+                      dayFormat: "dddd",
+                    }}
+                    toolbar={false}
+                    today={false}
+                    views={{ week: true }}
                     onSelectEvent={handleSelectEvent}
-                    eventPropGetter={(upData) => {
-                      const backgroundColor = upData.color
-                        ? upData.color
+                    eventPropGetter={(availData) => {
+                      const backgroundColor = availData.color
+                        ? availData.color
+                        : "blue";
+                      const borderColor = availData.color
+                        ? availData.color
                         : "blue";
                       const fontSize = "0.8rem";
-                      return { style: { backgroundColor, fontSize } };
+                      return {
+                        style: { backgroundColor, fontSize, borderColor },
+                      };
                     }}
                   />
                 </CardBody>
@@ -339,9 +459,12 @@ export function ScheduleInterview() {
                   <UpcomingDetail
                     interviewDetails={
                       selectedJobData[0] === undefined
-                        ? upcomingInterviews.scheduledInterviewList[0]
+                        ? upcomingInterviews?.scheduledInterviewList[0]
                         : selectedJobData[0]
                     }
+                    cancelScheduleData={(e) => cancelScheduleData(e)}
+                    postNotesData={(e) => postNotesData(e)}
+                    postInviteData={(e) => postInviteData(e)}
                   />
                 </Col>
               </Row>
@@ -373,15 +496,16 @@ export function ScheduleInterview() {
                   <CardBody>
                     <ScheduleInterviewList
                       candidateList={candidateList}
-                      durationOptions={durationOptions}
-                      postData={(e) => getFormData(e)}
+                      postNotesData={(e) => postNotesData(e)}
+                      postInviteData={(e) => postInviteData(e)}
+                      cancelScheduleData={(e) => cancelScheduleData(e)}
                     />
                   </CardBody>
                 </Card>
                 {showPopup === true && (
                   <Popup
                     type={"success"}
-                    message={"Interview scheduled"}
+                    message={"Interview schedule updated"}
                     action={true}
                   />
                 )}
@@ -394,6 +518,19 @@ export function ScheduleInterview() {
           type={popupType}
           onClose={() => onCloseIdModal()}
           interviewDetail={popupData}
+          postNotesData={(e) => postNotesData(e)}
+          postInviteData={(e) => postInviteData(e)}
+          cancelScheduleData={(e) => cancelScheduleData(e)}
+          editScheduledInterview={(e) => editScheduledInterview(e)}
+        />
+        <UpdateScheduleInterviewModal
+          interviewData={popupData}
+          durationOptions={durationOptions}
+          postData={(e) => {
+            getFormData(e);
+          }}
+          isOpen={showEditScheduleModal}
+          onClose={() => setShowEditScheduleModal(false)}
         />
       </Container>
     </>

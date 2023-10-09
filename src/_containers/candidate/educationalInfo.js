@@ -6,6 +6,7 @@ import { formatDate } from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import { EducationModal } from "./educationModal";
+import Loader from "react-loaders";
 
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 
@@ -24,7 +25,7 @@ export function CandidateEducation(props) {
   const educational_details = useSelector(
     (state) => state.getProfile.profileData.educationInfo
   );
-
+  const loader = useSelector((state) => state.getProfile.loader);
   const [educationalDetails, setDetails] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
@@ -86,6 +87,9 @@ export function CandidateEducation(props) {
   const closeModal = function () {
     setSuccess(false);
     setError(false);
+    setDeleteConfirm(false);
+    setPersonalModal(false);
+    setEditModal(false);
     props.onCallBack();
   };
 
@@ -118,6 +122,19 @@ export function CandidateEducation(props) {
     }
     return text;
   };
+  const getDate = function (data) {
+    let text = "";
+    if (data.startdate) {
+      text = formatDate(data.startdate);
+
+      if (data.enddate) {
+        text += " to " + formatDate(data.enddate);
+      }
+    } else if (data.enddate) {
+      text = formatDate(data.enddate);
+    }
+    return text;
+  };
 
   return (
     <div>
@@ -138,50 +155,57 @@ export function CandidateEducation(props) {
                 </Label>
               </Col>
             </Row>
-            <Row>
-              {educationalDetails.length > 0 ? (
-                educationalDetails.map((item) => (
-                  <div className="mb-2">
-                    <Col>
-                      <strong className="me-2 content-title">
-                        {getTitle(item)}
-                      </strong>
-                      <div className="float-end">
-                        <BsPencil
-                          className="icons"
-                          onClick={() => edit(item)}
-                        />{" "}
-                        <BsTrash3
-                          className="icons me-3"
-                          onClick={(evt) =>
-                            deleteModal(item.candidateeducationid)
-                          }
-                        />
-                      </div>
-                    </Col>
-                    <Label className="mb-0 mt-0 card-p-text-black">
-                      {getText(item)}
-                    </Label>
+            {!loader ? (
+              <Row>
+                {educationalDetails.length > 0 ? (
+                  educationalDetails.map((item) => (
+                    <div className="mb-2">
+                      <Col>
+                        <strong className="me-2 content-title">
+                          {getTitle(item)}
+                        </strong>
+                        <div className="float-end">
+                          <BsPencil
+                            className="icons"
+                            onClick={() => edit(item)}
+                          />{" "}
+                          <BsTrash3
+                            className="icons me-3"
+                            onClick={(evt) =>
+                              deleteModal(item.candidateeducationid)
+                            }
+                          />
+                        </div>
+                      </Col>
+                      <Label className="mb-0 mt-0 card-p-text-black">
+                        {getText(item)}
+                      </Label>
 
-                    {item.iscurrentlystudying ? (
-                      <p className="card-p-text-black">Curretly Studying </p>
-                    ) : (
-                      <div>
-                        <p className="card-p-text-black">
-                          {formatDate(item.startdate)}
+                      {item.iscurrentlystudying ? (
+                        <p className="card-p-text-black">Curretly Studying </p>
+                      ) : (
+                        <div>
+                          <p className="card-p-text-black">
+                            {/* {formatDate(item.startdate)}
                           {" to "}
-                          {formatDate(item.enddate)}
-                        </p>
-                      </div>
-                    )}
+                          {formatDate(item.enddate)} */}
+                            {getDate(item)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    No Data available
                   </div>
-                ))
-              ) : (
-                <div className="d-flex justify-content-center">
-                  No Data available
-                </div>
-              )}
-            </Row>
+                )}
+              </Row>
+            ) : (
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={true} type="ball-pulse" />
+              </div>
+            )}
           </div>
         </Card>
       </div>
@@ -334,7 +358,7 @@ export function CandidateEducation(props) {
                   </Button>
                   <Button
                     className="success-close-btn"
-                    onClick={(evt) => setDeleteConfirm(false)}
+                    onClick={(evt) => closeModal(false)}
                   >
                     NO
                   </Button>

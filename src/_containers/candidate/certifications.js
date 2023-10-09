@@ -10,13 +10,14 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { CertificationsModal } from "./certificationsModal";
 import "./profile.scss";
+import Loader from "react-loaders";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
 export function CertificationDetails(props) {
   const dispatch = useDispatch();
   const [editModal, setEditModal] = useState(false);
-
+  const loader = useSelector((state) => state.getProfile.loader);
   const [deleteId, setDeleteId] = useState(0);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const [selectedData, setSelectedData] = useState({});
@@ -71,6 +72,20 @@ export function CertificationDetails(props) {
     }
   };
 
+  const getDate = function (data) {
+    let text = "";
+    if (data.startdate) {
+      text = formatDate(data.startdate);
+
+      if (data.enddate) {
+        text += " to " + formatDate(data.enddate);
+      }
+    } else if (data.enddate) {
+      text = formatDate(data.enddate);
+    }
+    return text;
+  };
+
   return (
     <div>
       <div className="profile-view">
@@ -93,38 +108,39 @@ export function CertificationDetails(props) {
                   </Label>
                 </Col>
               </Row>
-              <Row>
-                {certificationDetails ? (
-                  <div>
-                    {certificationDetails.length > 0 ? (
-                      certificationDetails.map((item, index) => (
-                        <div>
-                          <strong className="me-2 content-title">
-                            {certificationDetails[index].certificationname}{" "}
-                          </strong>
-                          <div className="float-end">
-                            <BsPencil
-                              className="icons"
-                              onClick={() => edit(item)}
-                            />{" "}
-                            <BsTrash3
-                              className="icons me-3"
-                              onClick={() =>
-                                deleteModal(
-                                  certificationDetails[index]
-                                    .candidatecertificationid
-                                )
-                              }
-                            />
-                          </div>
-                          <p className="mb-0 card-p-text-black">
-                            Expired:{" "}
-                            {certificationDetails[index].isexpired
-                              ? "Yes"
-                              : "No"}
-                          </p>
-                          <p className="card-p-text-black">
-                            {certificationDetails[index].startdate
+              {!loader ? (
+                <Row>
+                  {certificationDetails ? (
+                    <div>
+                      {certificationDetails.length > 0 ? (
+                        certificationDetails.map((item, index) => (
+                          <div>
+                            <strong className="me-2 content-title">
+                              {certificationDetails[index].certificationname}{" "}
+                            </strong>
+                            <div className="float-end">
+                              <BsPencil
+                                className="icons"
+                                onClick={() => edit(item)}
+                              />{" "}
+                              <BsTrash3
+                                className="icons me-3"
+                                onClick={() =>
+                                  deleteModal(
+                                    certificationDetails[index]
+                                      .candidatecertificationid
+                                  )
+                                }
+                              />
+                            </div>
+                            <p className="mb-0 card-p-text-black">
+                              Expired:{" "}
+                              {certificationDetails[index].isexpired
+                                ? "Yes"
+                                : "No"}
+                            </p>
+                            <p className="card-p-text-black">
+                              {/* {certificationDetails[index].startdate
                               ? formatDate(
                                   certificationDetails[index].startdate
                                 )
@@ -132,22 +148,29 @@ export function CertificationDetails(props) {
                             {" to "}
                             {certificationDetails[index].enddate
                               ? formatDate(certificationDetails[index].enddate)
-                              : ""}
-                          </p>
+                              : ""} */}
+
+                              {getDate(certificationDetails[index])}
+                            </p>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="d-flex justify-content-center">
+                          No Data available
                         </div>
-                      ))
-                    ) : (
-                      <div className="d-flex justify-content-center">
-                        No Data available
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data available
-                  </div>
-                )}
-              </Row>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="d-flex justify-content-center">
+                      No Data available
+                    </div>
+                  )}
+                </Row>
+              ) : (
+                <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                  <Loader active={loader} type="ball-pulse" />
+                </div>
+              )}
             </PerfectScrollbar>
           </div>
         </Card>

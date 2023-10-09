@@ -29,16 +29,35 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import "./profile.scss";
 import { getLocationFilter } from "_store";
+import Loader from "react-loaders";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
   const [isPersonalModal, setPersonalModal] = useState(false);
   const selectDate = function () {};
+
+  const [jobTypes, setJobTypes] = useState([]);
+  const [workSchedules, setWorkSchedules] = useState([]);
+  const [shifts, setShiftsData] = useState([]);
+  const [jobTitleId, setJobTitleId] = useState([]);
+  const [selectedTitle, setSelectedTitle] = useState([]);
+  const [selectedPayType, setSelectedPayType] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState([]);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
+
+  const [preferenceDetails, setDetails] = useState([]);
+  const get_response = useSelector(
+    (state) => state.getProfile.profileData.jobPreferenceInfo
+  );
+
   const shiftsOption = useSelector((state) => state.shifts.shift);
   const workScheduleOptions = useSelector(
     (state) => state.workSchedule.workSchedule
   );
   const jobTypeOption = useSelector((state) => state.jobType.jobType);
+  const loader = useSelector((state) => state.getProfile.loader);
 
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
@@ -64,26 +83,10 @@ export function JobPreferences(props) {
     },
   ]);
 
-  const get_response = useSelector(
-    (state) => state.getProfile.profileData.jobPreferenceInfo
-  );
-
-  const [jobTypes, setJobTypes] = useState([]);
-  const [workSchedules, setWorkSchedules] = useState([]);
-  const [shifts, setShiftsData] = useState([]);
-  const [jobTitleId, setJobTitleId] = useState([]);
-  const [selectedTitle, setSelectedTitle] = useState([]);
-  const [selectedPayType, setSelectedPayType] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState([]);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
-  const [message, setMessage] = useState(false);
-
-  const [preferenceDetails, setDetails] = useState([]);
-
   useEffect(() => {
     let data = [];
     if (!get_response) {
+      setGetResponse([]);
       data.push({
         anywhereonlynear: 0,
         candidateDesiredWorkTypeDtos: [],
@@ -173,7 +176,6 @@ export function JobPreferences(props) {
       });
 
       setSelectedLocation(location);
-
       let filtered_data = [...getData];
       filtered_data = get_response?.map((rest) => {
         return {
@@ -351,6 +353,36 @@ export function JobPreferences(props) {
     setError(false);
     setPersonalModal(false);
     props.onCallBack();
+    let data = [];
+    data.push({
+      anywhereonlynear: 0,
+      candidateDesiredWorkTypeDtos: [],
+      candidateJobtitlesDtos: [],
+      candidateLocationsDtos: [],
+      candidateShiftsDtos: [],
+      candidateWorkSchedulesDtos: [],
+      candidateid: userDetails.InternalUserId,
+      candidatejobpreferenceid: 0,
+      desiredjobtitle: "",
+      desiredjobtitleid: 0,
+      desiredjobtypes: "",
+      desiredjobtypestext: null,
+      desiredworktypeids: "",
+      isactive: true,
+      jobtitlesids: null,
+      jobtitlestext: null,
+      locationids: "",
+      locationstext: null,
+      minimumbasepay: "",
+      payperiodtype: null,
+      payperiodtypeid: 0,
+      shifts: "",
+      shiftstext: null,
+      willingtorelocate: false,
+      workschedules: "",
+      workschedulestext: null,
+    });
+    setDetails(data);
   };
 
   function checkIdExists(idsString, idToCheck) {
@@ -482,76 +514,87 @@ export function JobPreferences(props) {
           </Row>
 
           <CardBody>
-            {getData?.length > 0 ? (
+            {!loader ? (
               <div>
-                {getData.map((item, index) => (
-                  <Row>
-                    <Col>
+                {getData?.length > 0 ? (
+                  <div>
+                    {getData.map((item, index) => (
                       <Row>
-                        <strong>Desired job titles</strong>
-                        <div>
-                          {item.desiredJobTitle != "" && item.desiredJobTitle
-                            ? item.desiredJobTitle
-                            : "-"}
-                        </div>
-                      </Row>
-                      <hr />
-                      <Row>
-                        <strong>Specific job title</strong>
-                        <div>
-                          {item.specificJobTitle != ""
-                            ? item.specificJobTitle
-                            : "-"}
-                        </div>
-                      </Row>
-                      <hr />
-                      <Row>
-                        <strong>Desired job types</strong>
-                        <div>
-                          {item.desiredJobTypes != ""
-                            ? item.desiredJobTypes
-                            : "-"}
-                        </div>
-                      </Row>
-                      <hr />
-                      <Row>
-                        <strong>Work schedules</strong>
-                        <div>
-                          {item.workSchedules != "" ? item.workSchedules : "-"}
-                        </div>
-                      </Row>
-                      <hr />
-                      <Row>
-                        <strong>Shifts</strong>
-                        <div>{item.shifts != "" ? item.shifts : "-"}</div>
-                      </Row>
-                      <hr />
-                    </Col>
+                        <Col>
+                          <Row>
+                            <strong>Desired job titles</strong>
+                            <div>
+                              {item.desiredJobTitle != "" &&
+                              item.desiredJobTitle
+                                ? item.desiredJobTitle
+                                : "-"}
+                            </div>
+                          </Row>
+                          <hr />
+                          <Row>
+                            <strong>Specific job title</strong>
+                            <div>
+                              {item.specificJobTitle != ""
+                                ? item.specificJobTitle
+                                : "-"}
+                            </div>
+                          </Row>
+                          <hr />
+                          <Row>
+                            <strong>Desired job types</strong>
+                            <div>
+                              {item.desiredJobTypes != ""
+                                ? item.desiredJobTypes
+                                : "-"}
+                            </div>
+                          </Row>
+                          <hr />
+                          <Row>
+                            <strong>Work schedules</strong>
+                            <div>
+                              {item.workSchedules != ""
+                                ? item.workSchedules
+                                : "-"}
+                            </div>
+                          </Row>
+                          <hr />
+                          <Row>
+                            <strong>Shifts</strong>
+                            <div>{item.shifts != "" ? item.shifts : "-"}</div>
+                          </Row>
+                          <hr />
+                        </Col>
 
-                    <Col>
-                      <Row>
-                        <strong>Desired minimum pay</strong>
+                        <Col>
+                          <Row>
+                            <strong>Desired minimum pay</strong>
 
-                        <div>{item.pay != "" ? item.pay : "-"}</div>
-                      </Row>
-                      <hr />
-                      <Row>
-                        <strong>Willing to relocate</strong>
-                        <div>{item.relocate}</div>
-                      </Row>
-                      {/* <hr /> */}
-                      {/* <Row>
+                            <div>{item.pay != "" ? item.pay : "-"}</div>
+                          </Row>
+                          <hr />
+                          <Row>
+                            <strong>Willing to relocate</strong>
+                            <div>{item.relocate}</div>
+                          </Row>
+                          {/* <hr /> */}
+                          {/* <Row>
                         <strong>Desired work type</strong>
                         <div>{item.workType}</div>
                       </Row> */}
-                      <hr />
-                    </Col>
-                  </Row>
-                ))}
+                          <hr />
+                        </Col>
+                      </Row>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    No Data available
+                  </div>
+                )}
               </div>
             ) : (
-              <div className="d-flex justify-content-center">
-                No Data available
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={loader} type="ball-pulse" />
               </div>
             )}
           </CardBody>
@@ -573,11 +616,13 @@ export function JobPreferences(props) {
             <ModalBody>
               {preferenceDetails?.map((parentItem, index) => (
                 <Form onSubmit={(e) => onSubmit(e)}>
-                  <h5>Desired job titles</h5>
-
+                  <Row>
+                    <div className="mb-1 fw-bold">Desired job titles</div>
+                    <hr />
+                  </Row>
                   <Row>
                     {desiredJobType.map((item, index) => (
-                      <Col md={4}>
+                      <Col>
                         <FormGroup check>
                           <Input
                             name="desiredJobType"
@@ -596,8 +641,10 @@ export function JobPreferences(props) {
                     ))}
                   </Row>
 
-                  <hr />
-                  <h5>Add job title</h5>
+                  <Row>
+                    <div className="mb-1 fw-bold">Add job title</div>
+                    <hr />
+                  </Row>
                   <Row>
                     <Col md={5}>
                       <FormGroup>
@@ -618,8 +665,10 @@ export function JobPreferences(props) {
                       </FormGroup>
                     </Col>
                   </Row>
-                  <hr />
-                  <h5>Desired job types</h5>
+                  <Row>
+                    <div className="mb-1 fw-bold">Desired job types</div>
+                    <hr />
+                  </Row>
                   <Row>
                     <Col>
                       <FormGroup>
@@ -728,54 +777,55 @@ export function JobPreferences(props) {
                           ))}
                       </FormGroup>
                     </Col>
-                    <Col></Col>
                   </Row>
-                  <hr />
-
-                  <h5>Desired minimum pay</h5>
                   <Row>
-                    <Row>
-                      <Col md={4}>
-                        <FormGroup>
-                          <Label for="zipCode" className="input-label">
-                            Pay type
-                          </Label>
-                          <AsyncSelect
-                            name="jobTitle"
-                            placeholder="Select"
-                            defaultOptions={payPeriodList}
-                            // className={mustHaveValidation ? "is-invalid" : ""}
-                            isMulti={false}
-                            value={selectedPayType}
-                            onChange={(evt) =>
-                              onHandleInputChange("payType", evt)
-                            }
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={4}>
-                        <FormGroup>
-                          <Label for="zipCode" className="input-label">
-                            Minimum base pay
-                          </Label>
-                          <input
-                            type="text"
-                            name="minPay"
-                            id="minPay"
-                            placeholder="Enter Base Pay"
-                            className="field-input placeholder-text form-control input-text"
-                            onInput={(evt) =>
-                              onHandleInputChange("basePay", evt.target.value)
-                            }
-                            value={parentItem.minimumbasepay}
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
+                    <div className="mb-1 fw-bold">Desired minimum pay</div>
+                    <hr />
                   </Row>
-                  <hr />
 
-                  <h5>Location</h5>
+                  <Row>
+                    <Col md={4}>
+                      <FormGroup>
+                        <Label for="zipCode" className="input-label">
+                          Pay type
+                        </Label>
+                        <AsyncSelect
+                          name="jobTitle"
+                          placeholder="Select"
+                          defaultOptions={payPeriodList}
+                          // className={mustHaveValidation ? "is-invalid" : ""}
+                          isMulti={false}
+                          value={selectedPayType}
+                          onChange={(evt) =>
+                            onHandleInputChange("payType", evt)
+                          }
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md={4}>
+                      <FormGroup>
+                        <Label for="zipCode" className="input-label">
+                          Minimum base pay
+                        </Label>
+                        <input
+                          type="text"
+                          name="minPay"
+                          id="minPay"
+                          placeholder="Enter Base Pay"
+                          className="field-input placeholder-text form-control input-text"
+                          onInput={(evt) =>
+                            onHandleInputChange("basePay", evt.target.value)
+                          }
+                          value={parentItem.minimumbasepay}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <div className="mb-1 fw-bold">Location</div>
+                    <hr />
+                  </Row>
                   <Row>
                     <Col>
                       <FormGroup check>
@@ -856,7 +906,7 @@ export function JobPreferences(props) {
                     <Button
                       type="button"
                       className="close-btn"
-                      onClick={() => setPersonalModal(false)}
+                      onClick={() => closeModal(false)}
                     >
                       Close
                     </Button>
@@ -884,7 +934,7 @@ export function JobPreferences(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Qualification!!
+              want to delete the Job Preferences!!
             </div>
             <div>
               <Row>

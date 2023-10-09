@@ -25,9 +25,17 @@ const customStyles = {
     },
 };
 
-export function Table({ columns, data, fixedHeader, fixedHeaderScrollHeight }) {
+export function Table({ 
+  columns, 
+  data, 
+  fixedHeader, 
+  fixedHeaderScrollHeight,
+  progressPending,
+  progressComponent }) {
     return (
         <DataTable
+            progressPending={progressPending}
+            progressComponent={progressComponent}
             customStyles={customStyles}
             columns={columns}
             data={data}

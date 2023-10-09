@@ -46,9 +46,15 @@ import { custJobListReducer } from "_containers/customer/newjobs/custjobs.slice"
 import { matchedJobReducer } from "_containers/candidate/matchJob.slice";
 import { jobTitleReducer } from "./dropDownJobTitle.slice";
 import { payPeriodReducer } from "./dropDownPayPeriod.slice";
+import { candidateListReducer } from "_containers/candidate/list/candidatelist.slice";
+
+import { jobPreferenceDataReducer } from "./jobPreference.slice";
+import { resumeTemplateReducer } from "./getResumeTemplate.slice";
+
 
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
+
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -99,6 +105,8 @@ export * from "_containers/candidate/matchJob.slice";
 export * from "./dropDownJobTitle.slice";
 export * from "./dropDownPayPeriod.slice";
 export * from "./jobPreference.slice";
+export * from "./getResumeTemplate.slice";
+export * from "_containers/candidate/list/candidatelist.slice";
 
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
@@ -153,8 +161,9 @@ export const store = configureStore({
     tabListReducer: candidateJobListTabReducer,
     getJobTitle: jobTitleReducer,
     getPayPeriod: payPeriodReducer,
-
+    getResumeTemplate: resumeTemplateReducer,
+    candidateListReducer: candidateListReducer,
     // admin reducer
-    adminReportReducer,
+    adminReportReducer
   },
 });
