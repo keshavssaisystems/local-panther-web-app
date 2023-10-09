@@ -24,13 +24,10 @@ import "./customercandidatelist.scss";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState(
-    props.type && id !== undefined ? props.type : "matched"
-  );
-
+  const [activeTab, setActiveTab] = useState(props.type || "matched");
   const [pageNo, setPageNo] = useState(1);
 
-  const [selectedJobId, setSelectedJobId] = useState(id ? id : "");
+  const [selectedJobId, setSelectedJobId] = useState(id || "");
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -65,12 +62,12 @@ export const CustomerCandidateLists = (props) => {
       window.location.pathname &&
       window.location.pathname.includes("candidate-list")
     ) {
-      onGetPageList(pageNo, props.type, "");
+      onGetPageList(pageNo, props.type || activeTab, "");
     }
   }, []);
 
   useEffect(() => {
-    onGetPageList(pageNo, props.type, id);
+    onGetPageList(pageNo, props.type || activeTab, id);
   }, [props.type, id]);
 
   const returnStatusId = (type) => {
@@ -109,7 +106,7 @@ export const CustomerCandidateLists = (props) => {
 
   const handlePageChange = (page) => {
     setPageNo(page);
-    onGetPageList(page, props.type, id);
+    onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
     if (id) {
@@ -135,7 +132,7 @@ export const CustomerCandidateLists = (props) => {
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
-        onGetPageList(pageNo, props.type, id);
+        onGetPageList(pageNo, props.type || activeTab, id);
       } else {
         showSweetAlert({
           title: res.payload.message || res.payload.status,
@@ -148,7 +145,7 @@ export const CustomerCandidateLists = (props) => {
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
-        onGetPageList(pageNo, props.type, id);
+        onGetPageList(pageNo, props.type || activeTab, id);
       } else {
         showSweetAlert({
           title: res.payload.message || res.payload.status,
@@ -174,7 +171,7 @@ export const CustomerCandidateLists = (props) => {
   };
 
   const onUpdateList = () => {
-    onGetPageList(pageNo, props.type, id);
+    onGetPageList(pageNo, props.type || activeTab, id);
   };
 
   return (
@@ -377,7 +374,7 @@ export const CustomerCandidateLists = (props) => {
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
-                          type={props.type}
+                          type={props.type || activeTab}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
@@ -423,7 +420,7 @@ export const CustomerCandidateLists = (props) => {
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
-                          type={props.type}
+                          type={props.type || activeTab}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
@@ -469,7 +466,7 @@ export const CustomerCandidateLists = (props) => {
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
-                          type={props.type}
+                          type={props.type || activeTab}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
@@ -515,7 +512,7 @@ export const CustomerCandidateLists = (props) => {
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
-                          type={props.type}
+                          type={props.type || activeTab}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
@@ -561,7 +558,7 @@ export const CustomerCandidateLists = (props) => {
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
-                          type={props.type}
+                          type={props.type || activeTab}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}
@@ -607,7 +604,7 @@ export const CustomerCandidateLists = (props) => {
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
-                          type={props.type}
+                          type={props.type || activeTab}
                           data={candidateList}
                           user="customer"
                           rejectDrpDwnList={rejectDrpDwnList}

@@ -34,12 +34,13 @@ import { CandidateUnderConstruction } from "_containers/candidate/common/candida
 // Admin
 import { OnboardCustomer } from "_containers/admin/customer";
 import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConstruction";
-import { 
-  OpenJobs, 
-  NewCandidate, 
-  CandidateReport, 
-  IncompleteCandidateProfile, 
-  PartiallyFilledJobs } from "_containers/admin";
+import {
+  OpenJobs,
+  NewCandidate,
+  CandidateReport,
+  IncompleteCandidateProfile,
+  PartiallyFilledJobs,
+} from "_containers/admin";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -122,18 +123,12 @@ export function App() {
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
           />
-          <Route
-            path="/report/open-jobs"
-            element={<OpenJobs />}
-          />
+          <Route path="/report/open-jobs" element={<OpenJobs />} />
           <Route
             path="/report/incomplete-candidate-profile"
             element={<IncompleteCandidateProfile />}
           />
-          <Route
-            path="/report/new-candidate"
-            element={<NewCandidate />}
-          />
+          <Route path="/report/new-candidate" element={<NewCandidate />} />
           <Route
             path="/report/candidate-report"
             element={<CandidateReport />}
@@ -209,10 +204,7 @@ export function App() {
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
-          <Route
-            path="/candidate-list"
-            element={<CustomerCandidateLists type={"matched"} />}
-          />
+          <Route path="/candidate-list" element={<CustomerCandidateLists />} />
           <Route
             path="/report"
             element={
@@ -282,7 +274,7 @@ export function App() {
         {authUser && <AppSidebar />}
         <div className={authUser ? `app-main__outer` : ""}>
           <div className="app-main__inner">
-            <Routes>
+            <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}
 
               {/* <Route
@@ -319,18 +311,38 @@ export function App() {
                 }
               /> */}
 
-              <Route path="/policy" element={<PrivateRoute>
-                <CandidateUnderConstruction title={"Policy"} />
-              </PrivateRoute>} />
-              <Route path="/terms" element={<PrivateRoute>
-                <CandidateUnderConstruction title={"Terms"} />
-              </PrivateRoute>} />
-              <Route path="/security" element={<PrivateRoute>
-                <CandidateUnderConstruction title={"Security"} />
-              </PrivateRoute>} />
-              <Route path="/contact" element={<PrivateRoute>
-                <CandidateUnderConstruction title={"Contact"} />
-              </PrivateRoute>} />
+              <Route
+                path="/policy"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Policy"} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/terms"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Terms"} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/security"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Security"} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Contact"} />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route
