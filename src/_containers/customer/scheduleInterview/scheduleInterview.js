@@ -406,18 +406,6 @@ export function ScheduleInterview() {
                   )}
                 </Col>
               )}
-              {/* {toggleVar === "availabilty" && (
-                <Col
-                  xs={12}
-                  sm={12}
-                  md={4}
-                  lg={4}
-                  xl={4}
-                  className="mb-3 right-align"
-                >
-                  <Button color="primary">Update availability</Button>
-                </Col>
-              )} */}
             </Row>
 
             {toggleVar === "availabilty" && (
