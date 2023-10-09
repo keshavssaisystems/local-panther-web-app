@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import "./scheduledInterview.scss";
 import { VideoInterviewDetails } from "./videoInterviewDetails";
-import { TelephonicInterviewDetails } from "./telephonicInterviewDetails";
-import { InpersonInterviewDetails } from "./inpersonInterviewDetails";
 
 export function InterviewDetailsModal({
   isOpen = false,
@@ -13,6 +11,7 @@ export function InterviewDetailsModal({
   postNotesData,
   postInviteData,
   cancelScheduleData,
+  editScheduledInterview,
 }) {
   const [modal, setModal] = useState(false);
 
@@ -33,20 +32,13 @@ export function InterviewDetailsModal({
       >
         <ModalHeader toggle={() => onClose()}>Interview details</ModalHeader>
         <ModalBody className="pt-4">
-          {type === "Video" && (
-            <VideoInterviewDetails
-              interviewId={interviewDetail.scheduleinterviewid}
-              postNotesData={(e) => postNotesData(e)}
-              postInviteData={(e) => postInviteData(e)}
-              cancelScheduleData={(e) => cancelScheduleData(e)}
-            />
-          )}
-          {type === "Phone" && (
-            <TelephonicInterviewDetails interviewDetail={interviewDetail} />
-          )}
-          {type === "In-person" && (
-            <InpersonInterviewDetails interviewDetail={interviewDetail} />
-          )}
+          <VideoInterviewDetails
+            interviewId={interviewDetail.scheduleinterviewid}
+            postNotesData={(e) => postNotesData(e)}
+            postInviteData={(e) => postInviteData(e)}
+            cancelScheduleData={(e) => cancelScheduleData(e)}
+            editScheduledInterview={(e) => editScheduledInterview(e)}
+          />
         </ModalBody>
       </Modal>
     </>

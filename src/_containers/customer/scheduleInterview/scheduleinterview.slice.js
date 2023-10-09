@@ -16,8 +16,8 @@ export const getDurationThunk = createAsyncThunk(
 // getScheduleInterviewThunk thunk
 export const getScheduleInterviewThunk = createAsyncThunk(
   `${name}/getScheduleInterviewThunk`,
-  async (selectedJobId) => {
-    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?jobId=${selectedJobId}&isActive=true&isPaginationRequired=false`;
+  async ({ selectedJobId, startdate, enddate }) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?jobId=${selectedJobId}&isActive=true&isPaginationRequired=false&startDate=${startdate}&endDate=${enddate}`;
     return await fetchWrapper.get(DROPDOWN_END_POINT);
   }
 );
@@ -76,6 +76,27 @@ export const cancelInterviewThunk = createAsyncThunk(
   }
 );
 
+// updateScheduledInterviewThunk thunk
+export const updateScheduledInterviewThunk = createAsyncThunk(
+  `${name}/updateScheduledInterviewThunk`,
+  async ({ scheduleinterviewid, formData }) => {
+    const UPDATE_SCHEDULED_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/cancelInterview/${scheduleinterviewid}`;
+    return await fetchWrapper.put(
+      UPDATE_SCHEDULED_INTERVIEWER_END_POINT,
+      formData
+    );
+  }
+);
+
+// getUpcomingInterviewListWOPaginationThunk thunk
+export const getAllInterviewThunk = createAsyncThunk(
+  `${name}/getAllInterviewThunk`,
+  async () => {
+    const UPCOMING_INTEVRIEW_END_POINT_V3 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&isPaginationRequired=false`;
+    return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V3);
+  }
+);
+
 // Create the slice
 const scheduleInterviewSlice = createSlice({
   name,
@@ -84,6 +105,7 @@ const scheduleInterviewSlice = createSlice({
     scheduleInterview: [],
     upcomingInterview: [],
     upcomingInterviewWOPagination: [],
+    allInterview: [],
     loading: false,
   },
   reducers: {},
@@ -175,6 +197,28 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [updateScheduledInterviewThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateScheduledInterviewThunk.fulfilled]: (state, action) => {
+      state.error = null;
+      state.loading = false;
+    },
+    [updateScheduledInterviewThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getAllInterviewThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getAllInterviewThunk.fulfilled]: (state, action) => {
+      state.allInterview = action.payload.data;
+      state.loading = false;
+    },
+    [getAllInterviewThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -189,6 +233,8 @@ export const scheduleInterviewActions = {
   updateInterviewNotesThunk,
   updateInterviewerListThunk,
   cancelInterviewThunk,
+  updateScheduledInterviewThunk,
+  getAllInterviewThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

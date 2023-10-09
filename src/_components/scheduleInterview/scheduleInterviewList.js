@@ -19,7 +19,6 @@ export function ScheduleInterviewList({
   postInviteData,
   cancelScheduleData,
 }) {
-  console.log(candidateList);
   const customStyles = {
     headRow: {
       style: {
@@ -61,18 +60,12 @@ export function ScheduleInterviewList({
     {
       name: "Scheduled time",
       sortable: true,
-      cell: (row) => (
-        <>
-          {row.scheduledate !== null &&
-            moment(
-              moment(row.scheduledate).format("YYYY-MM-DD") +
-                "T" +
-                row.starttime
-            )
-              .tz("America/New_York")
-              .format("MM/DD/YYYY h:mm a")}
-        </>
-      ),
+      selector: (row) =>
+        moment(
+          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
+        )
+          .tz("America/New_York")
+          .format("MM/DD/YYYY h:mm a"),
     },
     {
       name: "Duration",

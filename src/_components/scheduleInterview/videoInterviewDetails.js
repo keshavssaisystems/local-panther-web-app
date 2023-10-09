@@ -19,6 +19,8 @@ import {
   BsFillQuestionCircleFill,
   BsXCircleFill,
   BsPersonVideo2,
+  BsFillTelephoneFill,
+  BsPerson,
 } from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
@@ -32,24 +34,27 @@ export function VideoInterviewDetails({
   postNotesData,
   postInviteData,
   cancelScheduleData,
+  editScheduledInterview,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
-  const upcomingInterviews = useSelector(
-    (state) => state.scheduleInterview.upcomingInterviewWOPagination
+  const allInterview = useSelector(
+    (state) => state.scheduleInterview.allInterview
   );
-  let selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
+  let selectedJobDetails = allInterview.scheduledInterviewList.filter(
     (element) => {
       return element.scheduleinterviewid === interviewId;
     }
   );
   const interviewDetail = selectedJobDetails[0];
-  let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
+  let scheduled = moment(interviewDetail?.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
   let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
-  let scheduledDate = moment(interviewDetail.scheduledate).format("YYYY-MM-DD");
+  let scheduledDate = moment(interviewDetail?.scheduledate).format(
+    "YYYY-MM-DD"
+  );
   if (scheduledDate === currentDay) {
     scheduled = "Today";
   }
@@ -60,19 +65,19 @@ export function VideoInterviewDetails({
     scheduled = "Tommorow";
   }
   let startTime = moment(
-    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
       " " +
-      interviewDetail.starttime
+      interviewDetail?.starttime
   )
     .tz("America/New_York")
     .format("hh:mm a");
   let startDate =
-    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
     " " +
     startTime;
   let durationArr =
-    interviewDetail.duration !== undefined
-      ? interviewDetail.duration.split(" ")
+    interviewDetail?.duration !== undefined
+      ? interviewDetail?.duration.split(" ")
       : [];
   let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
   let userId = localStorage.getItem("userId");
@@ -172,12 +177,12 @@ export function VideoInterviewDetails({
         </div>
       </div>
       <div className="p-custom">
-        <p className="mb-0">Applied for {interviewDetail.jobtitle}</p>
+        <p className="mb-0">Applied for {interviewDetail?.jobtitle}</p>
       </div>
       {showInviteCard === true && (
         <div className="mt-2 mb-2">
           <InviteToInterviewCard
-            interviewId={interviewDetail.scheduleinterviewid}
+            interviewId={interviewDetail?.scheduleinterviewid}
             postInviteData={(e) => postInviteData(e)}
           />
         </div>
@@ -185,8 +190,16 @@ export function VideoInterviewDetails({
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
-            <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
-            {interviewDetail.format} Interview
+            {interviewDetail?.format === "Video" && (
+              <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
+            )}
+            {interviewDetail?.format === "Phone" && (
+              <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp" />
+            )}
+            {interviewDetail?.format === "In-person" && (
+              <BsPerson className="header-icon icon-gradient bg-amy-crisp" />
+            )}
+            {interviewDetail?.format} Interview
           </div>
         </CardHeader>
         <CardBody>
@@ -197,7 +210,7 @@ export function VideoInterviewDetails({
                   <FaEllipsisV />
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                  <DropdownItem>
+                  <DropdownItem onClick={(e) => editScheduledInterview(true)}>
                     <i className="dropdown-icon lnr-inbox"> </i>
                     <span>Edit</span>
                   </DropdownItem>
@@ -210,39 +223,54 @@ export function VideoInterviewDetails({
             </div>
             <div className="p-custom">
               <p className="mb-0">
-                {scheduled} : {startTime} to {endTime}
+                {scheduled} : {startTime} to {endTime} ({" "}
+                {interviewDetail.duration} )
               </p>
             </div>
-            {interviewDetail.isappvideocall === false && (
+            {interviewDetail?.format === "Phone" && (
+              <div className="p-custom">
+                <p className="mb-0">Phone no - </p>
+              </div>
+            )}
+            {interviewDetail?.format === "In-person" && (
               <div className="p-custom">
                 <p className="mb-0">
-                  Interview link :{" "}
-                  <a
-                    href={interviewDetail.videolink}
-                    target={"_blank"}
-                    rel="noreferrer"
-                  >
-                    Click here to join
-                  </a>
+                  Scheduled at {interviewDetail.interviewaddress}
                 </p>
               </div>
             )}
-            {interviewDetail.isappvideocall === true && (
-              <div className="p-custom">
-                <p className="mb-0">
-                  In-app link :{" "}
-                  <a href="/" onClick={(e) => e.preventDefault()}>
-                    Click here to join
-                  </a>
-                </p>
-              </div>
-            )}
+            {interviewDetail?.isappvideocall === false &&
+              interviewDetail?.format === "Video" && (
+                <div className="p-custom">
+                  <p className="mb-0">
+                    <a
+                      href={interviewDetail.videolink}
+                      target={"_blank"}
+                      rel="noreferrer"
+                    >
+                      Click here to join
+                    </a>{" "}
+                    the interview
+                  </p>
+                </div>
+              )}
+            {interviewDetail.isappvideocall === true &&
+              interviewDetail?.format === "Video" && (
+                <div className="p-custom">
+                  <p className="mb-0">
+                    <a href="/" onClick={(e) => e.preventDefault()}>
+                      Click here to join
+                    </a>{" "}
+                    the in-app interview
+                  </p>
+                </div>
+              )}
             <div className="p-custom">
               <p className="mb-0">
                 Interviewer :{" "}
-                {interviewDetail.intervieweremailids === ""
+                {interviewDetail?.intervieweremailids === ""
                   ? "No interviewer added"
-                  : interviewDetail.intervieweremailids}
+                  : interviewDetail?.intervieweremailids}
               </p>
             </div>
           </div>
@@ -272,8 +300,8 @@ export function VideoInterviewDetails({
       {showNotes === true && (
         <div className="mt-2 mb-2">
           <NotesCard
-            interviewNotes={interviewDetail.interviewnotes}
-            interviewId={interviewDetail.scheduleinterviewid}
+            interviewNotes={interviewDetail?.interviewnotes}
+            interviewId={interviewDetail?.scheduleinterviewid}
             postNotesData={(e) => postNotesData(e)}
           />
         </div>
@@ -281,9 +309,9 @@ export function VideoInterviewDetails({
       <div className="p-3">
         <h6 className="fw-bold">Summary</h6>
         <p className="mb-0">
-          {interviewDetail.messagetocandidate === ""
+          {interviewDetail?.messagetocandidate === ""
             ? "- "
-            : interviewDetail.messagetocandidate}
+            : interviewDetail?.messagetocandidate}
         </p>
       </div>
       <div className="p-3">

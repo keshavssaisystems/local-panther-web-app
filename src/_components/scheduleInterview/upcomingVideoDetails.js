@@ -19,6 +19,8 @@ import {
   BsFillCheckCircleFill,
   BsFillQuestionCircleFill,
   BsXCircleFill,
+  BsTelephone,
+  BsPerson,
 } from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
@@ -176,8 +178,8 @@ export function UpcomingVideoDetails({
           <p className="mb-0">{interviewDetails?.jobtitle}</p>
         </div>
         <div className="p-custom">
-          <h6 className="fw-bold mb-0 job-heading">Mobile</h6>
-          {interviewDetails?.textremaindernumbers}
+          <h6 className="fw-bold mb-0 job-heading">Email</h6>
+          <p className="mb-0">-</p>
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Skills</h6>
@@ -205,8 +207,16 @@ export function UpcomingVideoDetails({
         <Card className="mt-3">
           <CardHeader className="card-header-tab">
             <div className="card-header-title font-size-lg text-capitalize fw-normal">
-              <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
-              Interview
+              {interviewDetails?.format === "Video" && (
+                <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
+              )}
+              {interviewDetails?.format === "Phone" && (
+                <BsTelephone className="header-icon icon-gradient bg-amy-crisp" />
+              )}
+              {interviewDetails?.format === "In-person" && (
+                <BsPerson className="header-icon icon-gradient bg-amy-crisp" />
+              )}
+              {interviewDetails?.format} interview
             </div>
           </CardHeader>
           <CardBody>
@@ -233,36 +243,53 @@ export function UpcomingVideoDetails({
               </div>
               <div className="p-custom">
                 <p className="mb-0">
-                  {scheduled} at {startTime} to {endTime}
+                  {scheduled} at {startTime} to {endTime} ({" "}
+                  {interviewDetails?.duration} )
                 </p>
               </div>
-              {interviewDetails?.isappvideocall === false && (
+              {interviewDetails?.format === "Phone" && (
                 <div className="p-custom">
-                  <p className="mb-0">
-                    Interview link :{" "}
-                    <a
-                      href={interviewDetails.videolink}
-                      target={"_blank"}
-                      rel="noreferrer"
-                    >
-                      Click here to join
-                    </a>
-                  </p>
+                  <p className="mb-0">Phone no - </p>
                 </div>
               )}
-              {interviewDetails.isappvideocall === true && (
+              {interviewDetails?.format === "In-person" && (
                 <div className="p-custom">
-                  <p className="mb-0">
-                    In-app link :{" "}
-                    <a href="/" onClick={(e) => e.preventDefault()}>
-                      Click here to join
-                    </a>
-                  </p>
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      Interview Address - {interviewDetails.interviewaddress}
+                    </p>
+                  </div>
                 </div>
               )}
+              {interviewDetails?.isappvideocall === false &&
+                interviewDetails?.format === "Video" && (
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      <a
+                        href={interviewDetails.videolink}
+                        target={"_blank"}
+                        rel="noreferrer"
+                      >
+                        Click here to join
+                      </a>{" "}
+                      the interview
+                    </p>
+                  </div>
+                )}
+              {interviewDetails.isappvideocall === true &&
+                interviewDetails?.format === "Video" && (
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      <a href="/" onClick={(e) => e.preventDefault()}>
+                        Click here to join
+                      </a>{" "}
+                      the in-app interview
+                    </p>
+                  </div>
+                )}
               <div className="p-custom">
                 <p className="mb-0">
-                  Interviewer : {interviewDetails?.intervieweremailids}
+                  Interviewers - {interviewDetails?.intervieweremailids}
                 </p>
               </div>
             </div>
@@ -301,7 +328,7 @@ export function UpcomingVideoDetails({
         )}
         <div className="p-3">
           <h6 className="fw-bold">Summary</h6>
-          <p className="mb-0">{interviewDetails?.messagetocandidate}</p>
+          <p className="mb-0">-</p>
         </div>
         <div className="p-3">
           <h6 className="fw-bold">Application questions</h6>
@@ -309,10 +336,6 @@ export function UpcomingVideoDetails({
         </div>
         <div className="p-3">
           <h6 className="fw-bold">Pre-screen</h6>
-          <p className="mb-0">-</p>
-        </div>
-        <div className="p-3">
-          <h6 className="fw-bold">Skills test</h6>
           <p className="mb-0">-</p>
         </div>
         <div className="divider" />
