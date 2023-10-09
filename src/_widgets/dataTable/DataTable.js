@@ -12,6 +12,7 @@ const customStyles = {
         "&:not(:last-of-type)": {
           borderRightWidth: "0px",
         },
+        color: 'rgb(47 71 155)'
       },
     },
     cells: {
@@ -24,12 +25,14 @@ const customStyles = {
     },
 };
 
-export function Table({columns, data}) {
+export function Table({ columns, data, fixedHeader, fixedHeaderScrollHeight }) {
     return (
         <DataTable
             customStyles={customStyles}
             columns={columns}
             data={data}
+            fixedHeader={fixedHeader}
+            fixedHeaderScrollHeight={fixedHeaderScrollHeight}
         />
     );
 }
