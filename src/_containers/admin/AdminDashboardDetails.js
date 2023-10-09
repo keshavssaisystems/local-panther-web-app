@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import DataTable from 'react-data-table-component';
@@ -50,21 +50,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TabbedContent from "./Examples/Tabbed";
 import classnames from "classnames";
 import CountUp from "react-countup";
-import { useEffect } from "react";
 
 
 const AdminDashboardDetails = () => {
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
-  const [activeClients, setActiveClients] = useState(0)
+  
+  const dashboardCards = {activecompanycount:0, activecustomercount:0, activecandidatecount:0, newcandidateregistrationcount:0}
+  const [cardStats, setCardStats] = useState({ ...dashboardCards })
 
-  const [activeCandidates, setActiveCandidates] = useState(0)
-  const [interviewsCount, setInterviewsCount] = useState(0)
-  const [openJobs, setOpenJobs] = useState(0)
-
-  const date = new Date();
-  const [todaysDate, setTodaysDate] = useState(date.toLocaleDateString('fr-CA'))
+  const date = new Date().toLocaleDateString('fr-CA');
+  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
+  const [todaysDate, setTodaysDate] = useState(date)
 
   const initial = {
     popoverOpen1: false,
@@ -96,17 +94,17 @@ const AdminDashboardDetails = () => {
         },
       },
       labels: [
-        "01/01/2003",
-        "02/01/2003",
-        "03/01/2003",
-        "04/01/2003",
-        "05/01/2003",
-        "06/01/2003",
-        "07/01/2003",
-        "08/01/2003",
-        "09/01/2003",
-        "10/01/2003",
-        "11/01/2003",
+        "01/01/2023",
+        "02/01/2023",
+        "03/01/2023",
+        "04/01/2023",
+        "05/01/2023",
+        "06/01/2023",
+        "07/01/2023",
+        "08/01/2023",
+        "09/01/2023",
+        "10/01/2023",
+        "11/01/2023",
       ],
       markers: {
         size: 0,
@@ -126,6 +124,7 @@ const AdminDashboardDetails = () => {
         y: {
           formatter: function (y) {
             if (typeof y !== "undefined") {
+              console.log("NG check y",y)
               return y.toFixed(0) + " points";
             }
             return y;
@@ -188,14 +187,11 @@ const AdminDashboardDetails = () => {
     fetch(`https://panther-api-dev.azurewebsites.net/api/AdminDashboard/DasboardCount?date=${todaysDate}`)
     .then(data => data.json())
     .then(result => {
-      setActiveClients(result.data.activecustomercount)
-      // setActiveHirers(result.data.activecustomercount)
-      setActiveCandidates(result.data.activecandidatecount)
-      setInterviewsCount(result.data.todaysinterviewscheduledcount)
-      setOpenJobs(result.data.openjobcount)
+      setCardStats({ ...result.data })
     }
       )
-  },[])
+  }, [])
+
   const onDismiss = () => {
     setVisible(value => !value);
   }
@@ -205,6 +201,85 @@ const AdminDashboardDetails = () => {
       setActiveTab(tab)
     }
   }
+
+
+  const dashCardUI = [
+    {
+        id : 0,
+        cardFor: 'client',
+        color: 'border-primary',
+        count: 0,
+        arrowDirection: 'faAngleUp',
+        arrowColor: 'text-success',
+        title: 'active Clients',
+        apiVariable: 'activecompanycount'
+    },
+    {
+        id: 1,
+        cardFor: 'hiringManager',
+        color: 'border-danger',
+        count: 0,
+        arrowDirection: 'faAngleUp',
+        arrowColor: 'text-success',
+        title: 'active Hirers',
+        apiVariable: 'activecustomercount'
+    },
+    {
+        id: 2,
+        cardFor: 'candidate',
+        color: 'border-warning',
+        count: 0,
+        arrowDirection: 'faAngleDown',
+        arrowColor: 'text-danger',
+        title: 'active Candidates',
+        apiVariable: 'activecandidatecount'
+    },
+    {
+      id: 3,
+      cardFor: 'registration',
+        color: 'border-success',
+        count: 0,
+        arrowDirection: 'faAngleUp',
+        arrowColor: 'text-success',
+        title: 'new Registrations',
+        apiVariable: 'newcandidateregistrationcount'
+    }
+  ]
+
+  const cardsMapping = dashCardUI.map(ele => {
+    const borderColor = "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary " + ele.color
+    const arrowDirection = ele.arrowDirection === 'faAngleUp' ? 1 : 0
+    const arrowColor = "opacity-10 pe-2 " + ele.arrowColor
+
+   return (
+      <Col key={ele} xs="12" sm="9" md="6" lg="3">
+       <Card className={borderColor}>
+          <div className="widget-chat-wrapper-outer">
+            <div className="widget-chart-content">
+              <div className="widget-content-left fsize-1">
+                <div className="text-muted opacity-6">
+                  {ele.title}
+                </div>
+              </div>
+              <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                <div className="widget-chart-flex align-items-center">
+                  <div>
+                   <span className={arrowColor}>
+                     { arrowDirection ?
+                     <FontAwesomeIcon icon={faAngleUp} />
+                     : <FontAwesomeIcon icon={faAngleDown} /> }
+                    </span>
+                    {cardStats[`${ele.apiVariable}`]}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </Col>
+    )
+  })
+
 
   return (
     <Fragment>
@@ -219,100 +294,7 @@ const AdminDashboardDetails = () => {
               This dashboard is in making. Some features may not work!
             </Alert> */}
             <Row>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-primary">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          active Clients
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-success pe-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                            {activeClients}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-danger">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          {/* active Hirers */}
-                          open Jobs
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-danger pe-2">
-                              <FontAwesomeIcon icon={faAngleDown} />
-                            </span>
-                            {/* {activeHirers} */}
-                            {openJobs}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-warning">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          active Candidates
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-success pe-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                            {activeCandidates}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs="12" sm="9" md="6" lg="3">
-                <Card className="widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary border-success">
-                  <div className="widget-chat-wrapper-outer">
-                    <div className="widget-chart-content">
-                      <div className="widget-content-left fsize-1">
-                        <div className="text-muted opacity-6">
-                          today's Interviews
-                        </div>
-                      </div>
-                      <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                        <div className="widget-chart-flex align-items-center">
-                          <div>
-                            <span className="opacity-10 text-success pe-2">
-                              <FontAwesomeIcon icon={faAngleUp} />
-                            </span>
-                            {interviewsCount}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
+              {cardsMapping}
             </Row>
             <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
               <span className="pe-2">
@@ -336,10 +318,8 @@ const AdminDashboardDetails = () => {
                         <CountUp start={0} end={15065} separator="," decimals={0}
                           decimal="" delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">
-                        <span className="pe-2 opacity-6 ">
-                          <img src={sideBarIcons.candidates} alt="candidatesIcon" />
-                        </span>
+                      <div className="tab-subheading fsize-1 fw-normal">
+                        <i className="header-icon lnr-users me-3 text-muted opacity-6"> {" "} </i>
                         Candidates
                       </div>
                     </NavLink>
@@ -352,17 +332,15 @@ const AdminDashboardDetails = () => {
                       onClick={() => {
                         toggle("2");
                       }}>
-                      <div className="widget-number">
+                      <div className="widget-number ">
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
                         <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">
-                        <span className="pe-2 opacity-6 ">
-                          <img src={sideBarIcons.jobs} alt="jobsIcon" />
-                        </span>
+                      <div className="tab-subheading fsize-1 fw-normal">
+                        <i className="header-icon lnr-graduation-hat me-3 text-muted opacity-6"> {" "} </i>
                         Jobs
                       </div>
                     </NavLink>
@@ -379,10 +357,8 @@ const AdminDashboardDetails = () => {
                         <CountUp start={0} end={67} separator=","
                           decimals={1} decimal="" delay={2} prefix="" duration="10" />
                       </div>
-                      <div className="tab-subheading">
-                        <span className="pe-2 opacity-6">
-                          <img src={sideBarIcons.interviews} alt="interviewsIcon" />
-                        </span>
+                      <div className="tab-subheading fsize-1 fw-normal">
+                        <i className="header-icon lnr-calendar-full me-3 text-muted opacity-6"> {" "} </i>
                         Interviews
                       </div>
                     </NavLink>
