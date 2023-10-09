@@ -14,13 +14,13 @@ import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
 import { FiMapPin } from "react-icons/fi";
 import {
   BsBriefcase,
-  BsListStars,
   BsAward,
   BsHandThumbsUp,
   BsStar,
   BsQuestionCircle,
   BsXCircle,
   BsClock,
+  BsMortarboard,
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
@@ -33,9 +33,6 @@ export const CandidateCardView = (props) => {
   const [showRejSModal, setShowRejSModal] = useState(false);
   const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
   const dispatch = useDispatch();
-  const onAcceptClick = () => {
-    setShowAModal(true);
-  };
 
   const onRejectClick = () => {
     setShowReModal(true);
@@ -107,6 +104,33 @@ export const CandidateCardView = (props) => {
       return "";
     }
   };
+
+  const returnEducation = () => {
+    if (
+      props?.data?.candidateEducationDtos &&
+      props?.data?.candidateEducationDtos?.length > 0
+    ) {
+      return props?.data?.candidateEducationDtos
+        .map((element) => element.levelofeducation)
+        .join(", ");
+    } else {
+      return "";
+    }
+  };
+
+  const returnCert = () => {
+    if (
+      props?.data?.candidateCertificationDtos &&
+      props?.data?.candidateCertificationDtos?.length > 0
+    ) {
+      return props?.data?.candidateCertificationDtos
+        .map((element) => element.certificationname)
+        .join(", ");
+    } else {
+      return "";
+    }
+  };
+
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
@@ -115,9 +139,7 @@ export const CandidateCardView = (props) => {
             <Col className="col-12">
               <Row>
                 <Col className="col-10">
-                  <div className="card-title">
-                    {props?.data?.firstname + " " + props?.data?.lastname}
-                  </div>
+                  <div className="card-title">{props?.data?.jobtitle}</div>
                 </Col>
                 <Col className="col-2">
                   {/* <div className="card-title right-align">
@@ -127,9 +149,9 @@ export const CandidateCardView = (props) => {
               </Row>
             </Col>
 
-            <Col>
+            {/* <Col>
               <div className="card-details-op">{props?.data?.jobtitle}</div>
-            </Col>
+            </Col> */}
 
             {/* <Col className="col-12">
               <IoIosContact fontSize={"16px"}></IoIosContact>
@@ -150,7 +172,7 @@ export const CandidateCardView = (props) => {
                 <span className="pe-2">
                   <BsBriefcase size={"16px"} />
                 </span>
-                Work Experience:
+                <b>Work Experience: </b>
                 {props?.data?.jobExperienceScheduleDtos &&
                 props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
                   ? props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
@@ -170,9 +192,17 @@ export const CandidateCardView = (props) => {
             <Col className="col-12">
               <p className="card-details">
                 <span className="pe-2">
+                  <BsMortarboard size={"16px"} />
+                </span>
+                <b>Education: </b> {returnEducation()}
+              </p>
+            </Col>
+            <Col className="col-12">
+              <p className="card-details">
+                <span className="pe-2">
                   <BsStar size={"16px"} />
                 </span>
-                Skills: {returnSkills()}
+                <b>Skills: </b> {returnSkills()}
               </p>
             </Col>
             <Col className="col-12">
@@ -180,7 +210,7 @@ export const CandidateCardView = (props) => {
                 <span className="pe-2">
                   <BsAward size={"16px"} />
                 </span>
-                Credentails MCP
+                <b>Credentials: </b> {returnCert()}
               </p>
             </Col>
           </Row>

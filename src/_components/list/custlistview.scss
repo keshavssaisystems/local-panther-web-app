@@ -34,4 +34,10 @@
   // .list-btn-group .btn {
   //   border-color: #2f479b !important;
   // }
+
+  .btn-primary,
+  .btn-outline-primary .btn-primary:hover,
+  .btn-outline-primary:hover {
+    background-color: #2f479b !important;
+  }
 }

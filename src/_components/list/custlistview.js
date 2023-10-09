@@ -23,16 +23,12 @@ import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleIn
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
-import {
-  BsHandThumbsUp,
-  BsQuestionCircle,
-  BsCheckCircle,
-  BsXCircle,
-  BsClock,
-} from "react-icons/bs";
+import { BsClock } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
+import customerIcons from "assets/utils/images/customer";
 import "./custlistview.scss";
+import moment from "moment";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -52,9 +48,13 @@ export const CustCandidateListView = (props) => {
     );
 
     if (res.payload.statusCode === 204) {
-      setShowAModal(true);
+      props.showSweetAlert({ title: res.payload.message, type: "success" });
+      props.updateList();
     } else {
-      //No action needed
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
     }
   };
 
@@ -123,6 +123,16 @@ export const CustCandidateListView = (props) => {
       });
     }
   };
+
+  const returnSkills = (row) => {
+    if (row?.candidateSkillDtos && row?.candidateSkillDtos?.length > 0) {
+      return row?.candidateSkillDtos
+        .map((element) => element.skillname)
+        .join(", ");
+    } else {
+      return "";
+    }
+  };
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
@@ -134,10 +144,10 @@ export const CustCandidateListView = (props) => {
               size="sm"
               title="liked"
               className=" btn-icon"
-              color="secondary"
+              color="primary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
             >
-              <BsHandThumbsUp></BsHandThumbsUp>
+              <img src={customerIcons.list_liked} alt="list liked"></img>
             </Button>
           </Col>
           <Col>
@@ -150,7 +160,7 @@ export const CustCandidateListView = (props) => {
               color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
             >
-              <BsQuestionCircle></BsQuestionCircle>
+              <img src={customerIcons.list_maybe} alt="list maybe"></img>
             </Button>
           </Col>
           <Col>
@@ -162,7 +172,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="danger"
             >
-              <BsXCircle></BsXCircle>
+              <img src={customerIcons.list_reject} alt="list reject"></img>
             </Button>
           </Col>
           <Col>
@@ -191,7 +201,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="success"
             >
-              <BsCheckCircle></BsCheckCircle>
+              <img src={customerIcons.list_accept} alt="list accept"></img>
             </Button>
           </Col>
           <Col>
@@ -200,10 +210,10 @@ export const CustCandidateListView = (props) => {
               size="sm"
               title="liked"
               className=" btn-icon"
-              color="secondary"
+              color="primary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
             >
-              <BsHandThumbsUp></BsHandThumbsUp>
+              <img src={customerIcons.list_liked} alt="list liked"></img>
             </Button>
           </Col>
           <Col>
@@ -215,7 +225,7 @@ export const CustCandidateListView = (props) => {
               color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
             >
-              <BsQuestionCircle></BsQuestionCircle>
+              <img src={customerIcons.list_maybe} alt="list maybe"></img>
             </Button>
           </Col>
           <Col>
@@ -227,7 +237,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="danger"
             >
-              <BsXCircle></BsXCircle>
+              <img src={customerIcons.list_reject} alt="list reject"></img>
             </Button>
           </Col>
           <Col>
@@ -256,7 +266,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="success"
             >
-              <BsCheckCircle></BsCheckCircle>
+              <img src={customerIcons.list_accept} alt="list accept"></img>
             </Button>
           </Col>
           <Col>
@@ -268,7 +278,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="danger"
             >
-              <BsXCircle></BsXCircle>
+              <img src={customerIcons.list_reject} alt="list reject"></img>
             </Button>
           </Col>
         </Row>
@@ -283,9 +293,9 @@ export const CustCandidateListView = (props) => {
               title="reject"
               onClick={() => onRejectClick()}
               className="btn-icon"
-              color="success"
+              color="danger"
             >
-              <BsXCircle></BsXCircle>
+              <img src={customerIcons.list_reject} alt="list reject"></img>
             </Button>
           </Col>
           <Col>
@@ -314,7 +324,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="success"
             >
-              <BsCheckCircle></BsCheckCircle>
+              <img src={customerIcons.list_accept} alt="list accept"></img>
             </Button>
           </Col>
           <Col>
@@ -323,10 +333,10 @@ export const CustCandidateListView = (props) => {
               size="sm"
               title="liked"
               className=" btn-icon"
-              color="secondary"
+              color="primary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
             >
-              <BsHandThumbsUp></BsHandThumbsUp>
+              <img src={customerIcons.list_liked} alt="list liked"></img>
             </Button>
           </Col>
           <Col>
@@ -338,7 +348,7 @@ export const CustCandidateListView = (props) => {
               color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
             >
-              <BsQuestionCircle></BsQuestionCircle>
+              <img src={customerIcons.list_maybe} alt="list maybe"></img>
             </Button>
           </Col>
           <Col>
@@ -351,7 +361,7 @@ export const CustCandidateListView = (props) => {
               className="btn-icon"
               color="danger"
             >
-              <BsXCircle></BsXCircle>
+              <img src={customerIcons.list_reject} alt="list reject"></img>
             </Button>
           </Col>
           <Col>
@@ -386,11 +396,14 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Profile</span>
             </DropdownItem>
-
-            <DropdownItem onClick={() => onInterviewDetails(row)}>
-              <i className="dropdown-icon lnr-license"> </i>
-              <span>Interview details</span>
-            </DropdownItem>
+            {row.customerscheduleddatetime ? (
+              <DropdownItem onClick={() => onInterviewDetails(row)}>
+                <i className="dropdown-icon lnr-license"> </i>
+                <span>Interview details</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
@@ -405,41 +418,60 @@ export const CustCandidateListView = (props) => {
         <span className="table-cell">{row.firstname + " " + row.lastname}</span>
       ),
       sortable: true,
+      width: "150px",
     },
-    // {
-    //   name: "Skills",
-    //   selector: (row) => row.primaryskills + "," + row.secondaryskills,
-    //   sortable: true,
-    // },
+    {
+      name: <span className="table-title">Skills</span>,
+      selector: (row) => (
+        <span className="table-cell">{returnSkills(row)}</span>
+      ),
+      sortable: true,
+      width: "312px",
+    },
     {
       name: <span className="table-title">Location</span>,
       selector: (row) => (
         <span className="table-cell">{row.locationaddress}</span>
       ),
       sortable: true,
+      width: "170px",
     },
 
     {
-      name: <span className="table-title">Email</span>,
-      selector: (row) => <span className="table-cell">{row.email}</span>,
+      name: <span className="table-title">Experience</span>,
+      selector: (row) => (
+        <span className="table-cell">
+          <>
+            {row?.jobExperienceScheduleDtos &&
+            row?.jobExperienceScheduleDtos[0]?.experiencelevel
+              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+              : "-"}
+          </>
+        </span>
+      ),
       sortable: true,
+      width: "150px",
     },
 
     {
       name: <span className="table-title">Scheduled time</span>,
       sortable: true,
       cell: (row) => (
-        <span className="table-cell">{row.customerscheduleddatetime}</span>
+        <span className="table-cell">
+          {row.customerscheduleddatetime
+            ? moment(row.customerscheduleddatetime).format("YYYY-MM-DD")
+            : ""}
+        </span>
       ),
+      width: "170px",
     },
-    {
-      name: <span className="table-title">Interview mode</span>,
-      selector: (row) => <span className="table-cell">{row.mode}</span>,
-      sortable: true,
-    },
+    // {
+    //   name: <span className="table-title">Interview mode</span>,
+    //   selector: (row) => <span className="table-cell">{row.mode}</span>,
+    //   sortable: true,
+    // },
     {
       name: <span className="table-title">Interest</span>,
-      width: "220px",
       cell: (row) => (
         <div className="list-btn-group">
           {renderButtons(row.candidaterecommendedjobid, row)}
@@ -447,6 +479,7 @@ export const CustCandidateListView = (props) => {
       ),
       ignoreRowClick: true,
       button: true,
+      width: "200px",
     },
     {
       name: <span className="table-title">Action</span>,
@@ -454,107 +487,7 @@ export const CustCandidateListView = (props) => {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-    },
-  ]);
-
-  const columnsForCustomView = memoize((clickHandler) => [
-    {
-      name: "Job ID",
-      id: "Candidate",
-      selector: (row) => row.jobapplicationid,
-      sortable: true,
-    },
-    {
-      name: "Title",
-      selector: (row) => row.title,
-      sortable: true,
-    },
-    {
-      name: "Description",
-      selector: (row) => row.description,
-      sortable: true,
-    },
-
-    {
-      name: "Location",
-      selector: (row) => row.address,
-      sortable: true,
-    },
-
-    {
-      name: "Experience",
-      selector: (row) => row.experienceyears,
-      sortable: true,
-    },
-
-    {
-      name: "Interest",
-      width: "170px",
-      cell: () => (
-        <div>
-          <Row
-            xs={5}
-            sm={5}
-            md={5}
-            lg={5}
-            xl={5}
-            className="candidate-listview-tab"
-          >
-            <Col>
-              <Button title="accept" className="btn-icon" color="success">
-                <IoIosCheckmark fontSize={"20px"} className=""></IoIosCheckmark>
-              </Button>
-            </Col>
-            <Col>
-              <Button title="liked" className=" btn-icon" color="primary">
-                <IoIosHelp fontSize={"20px"}></IoIosHelp>
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                title="reject"
-                onClick={() => onRejectClick()}
-                className="btn-icon"
-                color="danger"
-              >
-                <IoIosClose fontSize={"20px"}></IoIosClose>
-              </Button>
-            </Col>
-
-            <Col>
-              <Button title="liked" className=" btn-icon" color="primary">
-                <IoIosThumbsUp fontSize={"20px"}></IoIosThumbsUp>
-              </Button>
-            </Col>
-          </Row>
-        </div>
-      ),
-      ignoreRowClick: true,
-      button: true,
-    },
-    {
-      name: "Action",
-      cell: () => (
-        <div className="d-block w-100 text-center">
-          <UncontrolledButtonDropdown direction="start">
-            <DropdownToggle
-              className="btn-icon btn-icon-only btn btn-link"
-              color="link"
-            >
-              <FontAwesomeIcon icon={faEllipsisV} />
-            </DropdownToggle>
-            <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-              <DropdownItem>
-                <i className="dropdown-icon lnr-layers"></i>
-                <span>View interview details</span>
-              </DropdownItem>
-            </DropdownMenu>
-          </UncontrolledButtonDropdown>
-        </div>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
+      width: "70px",
     },
   ]);
 
@@ -585,11 +518,7 @@ export const CustCandidateListView = (props) => {
       <DataTable
         onRowClicked={handleRowClick}
         data={props.data}
-        columns={
-          props.user === "customer"
-            ? columns(handleButtonClick)
-            : columnsForCustomView(handleButtonClick)
-        }
+        columns={columns(handleButtonClick)}
         selectableRows
         persistTableHead
         // pagination

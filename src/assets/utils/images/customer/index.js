@@ -9,6 +9,10 @@ const customerIcons = {
   onhold: require("./Onhold.svg").default,
   yellow_check: require("./yellow_check.svg").default,
   green_check: require("./green_check.svg").default,
+  list_accept: require("./list/accept.svg").default,
+  list_liked: require("./list/liked.svg").default,
+  list_reject: require("./list/reject.svg").default,
+  list_maybe: require("./list/maybe.svg").default,
 };
 
 export default customerIcons;

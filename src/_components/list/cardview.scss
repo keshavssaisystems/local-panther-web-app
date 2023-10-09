@@ -7,7 +7,7 @@
     letter-spacing: -0.01em;
     text-align: left;
     color: #2f479b;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
 
   .card-details {
@@ -25,15 +25,19 @@
     font-size: 13px;
     font-weight: 400;
     color: #afaba5;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
   p {
     margin-bottom: 4px;
   }
 
   .card-footer {
-    padding-left: 0px;
-    padding-right: 0px;
+    padding: 0px 0px 20px 0px;
+    border-top: unset;
+  }
+
+  .card-body {
+    padding: 20px 26px;
   }
 
   .card-btn-grp {
