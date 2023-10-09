@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
+
 import { 
   Input,
   Col, 
@@ -27,29 +29,87 @@ import { openJobsThunk } from "../_redux/report.slice";
 
 const columns = [
   {
-      name: 'Title',
-      selector: row => row.title,
+      name: 'Company',
+      selector: row => row.companyname,
       sortable: true,
+      wrap: true,
+  },
+  {
+      name: 'Title',
+      selector: row => row.jobtitle,
+      sortable: true,
+      wrap: true,
   },
   {
       name: 'Location',
-      selector: row => row.location,
+      selector: row => row.address,
       sortable: true,
+      wrap: true,
   },
   {
-      name: 'Experience',
-      selector: row => row.experience,
+      name: 'Experiance',
+      selector: row => row.experiencelevel,
       sortable: true,
+      wrap: true,
   },
   {
       name: 'Skills',
-      selector: row => row.skills,
-      sortable: true,
+      selector: row => row.musthaveskills,
+      wrap: true,
   },
   {
-      name: 'Job Type',
-      selector: row => row.type,
-      sortable: true,
+      name: 'Posted',
+      selector: row => row.jobposteddate,
+      format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
+      wrap: true,
+  },
+  {
+    name: 'Position',
+    selector: row => row.noofopenposition,
+    sortable: true,
+    width: "90px"
+  },
+  {
+    name: 'Hired',
+    selector: row => row.reject,
+    wrap: true,
+    width: "70px"
+  },
+  {
+      name: 'Matched',
+      selector: row => row.matched,
+      wrap: true,
+      width: "80px"
+  },
+  {
+      name: 'Liked',
+      selector: row => row.like,
+      wrap: true,
+      width: "70px"
+  },
+  {
+      name: 'Applied',
+      selector: row => row.applied,
+      wrap: true,
+      width: "80px"
+  },
+  {
+      name: 'Scheduled',
+      selector: row => row.scheduled,
+      wrap: true,
+      width: "80px"
+  },
+  {
+      name: 'Accepted',
+      selector: row => row.accept,
+      wrap: true,
+      width: "80px"
+  },
+  {
+      name: 'Rejected',
+      selector: row => row.reject,
+      wrap: true,
+      width: "80px"
   },
 ];
 
@@ -60,7 +120,7 @@ export function OpenJobs() {
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const { openJobs: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
+  const { openJobsList: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
   return (
     <>
       <PageTitle heading="Open Jobs" icon={titlelogo} />

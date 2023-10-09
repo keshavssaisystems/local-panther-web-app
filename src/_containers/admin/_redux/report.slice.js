@@ -7,14 +7,8 @@ export const openJobsThunk = createAsyncThunk(
   `${name}/openJobsThunk`,
   async (payload) => {
     // const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Login`;
-    // return await fetchWrapper.post(OPEN_JOBS_END_POINT, payload);
-    return [{
-      title: 'L1 Consultant',
-      location: 'New Town square',
-      experience: "vinit",
-      skills: 'Node, React',
-      type: 'Full-Time, Part-Time, Contract'
-    }];
+    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetOpenJobsList?pageNumber=1&pageSize=10`;
+    return await fetchWrapper.get(OPEN_JOBS_END_POINT);
   }
 );
 
@@ -53,9 +47,12 @@ const adminReportSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    [openJobsThunk.fulfilled]: (state, { payload }) => {
+    [openJobsThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { openJobsList = [], totalRows = 0 } = {}} = payload;
+      
       state.loading = false;
-      state.openJobs = payload;
+      state.openJobsList = openJobsList;
+      state.totalOpenJobs = totalRows;
     },
     [openJobsThunk.rejected]: (state, action) => {
       state.loading = false;

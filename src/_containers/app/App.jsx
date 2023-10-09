@@ -112,6 +112,10 @@ export function App() {
             }
           />
           <Route
+            path="/admin-customer"
+            element={<OnboardCustomer></OnboardCustomer>}
+          />
+          <Route
             path="/report"
             element={
               <PrivateRoute>
@@ -119,23 +123,33 @@ export function App() {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/admin-customer"
-            element={<OnboardCustomer></OnboardCustomer>}
-          />
           <Route path="/report/open-jobs" element={<OpenJobs />} />
+          <Route path="/report/new-candidates" element={<NewCandidate />} />
+          
+          <Route path="/report/partially-filled-job" element={<AdminUnderConstruction title={"Partially filled jobs"} />} />
           <Route
             path="/report/incomplete-candidate-profile"
-            element={<IncompleteCandidateProfile />}
+            element={<AdminUnderConstruction title={"Incomplete candidate profile"}/>}
           />
-          <Route path="/report/new-candidates" element={<NewCandidate />} />
+          <Route
+            path="/report/hiring-manager-report"
+            element={<AdminUnderConstruction title={"Hiring manager report"}/>}
+          />
           <Route
             path="/report/candidate-report"
-            element={<CandidateReport />}
+            element={<AdminUnderConstruction title={"Candidate Report"}/>}
           />
           <Route
-            path="/report/partially-filled-jobs"
-            element={<PartiallyFilledJobs />}
+            path="/report/jobs-without-matched-candidates"
+            element={<AdminUnderConstruction title={"Jobs without matched candidate"}/>}
+          />
+          <Route
+            path="/report/canddates-without-matched-jobs"
+            element={<AdminUnderConstruction title={"Candidate without matched jobs"}/>}
+          />
+          <Route
+            path="/report/non-published-jobs"
+            element={<AdminUnderConstruction title={"Non published jobs"}/>}
           />
         </>
       );
