@@ -6,13 +6,11 @@ import { makeData } from "_containers/admin/Examples/utils.js";
 import Chart from "react-apexcharts";
 
 import IncomeReport from "_containers/admin/Examples/IncomeReport";
-import IncomeReport2 from "_containers/admin/Examples/IncomeReport2";
 
 import avatar1 from "assets/utils/images/avatars/1.jpg";
 import avatar2 from "assets/utils/images/avatars/2.jpg";
 import avatar3 from "assets/utils/images/avatars/3.jpg";
 import avatar4 from "assets/utils/images/avatars/4.jpg";
-import sideBarIcons from 'assets/utils/sidebarimages'
 
 import {
   Row,
@@ -64,7 +62,6 @@ const AdminDashboardDetails = () => {
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
   const [todaysDate, setTodaysDate] = useState(today)
 
-
   const jobsData = [
     { id: 0, label: "01/01/2023", closedJobs: 144, openJobs: 240, closureTime: 30 },
     { id: 1, label: "02/01/2023", closedJobs: 55, openJobs: 139, closureTime: 25 },
@@ -81,9 +78,7 @@ const AdminDashboardDetails = () => {
   ];
 
   const initial = {
-    popoverOpen1: false,
-
-    optionsMixedChart: {
+    optionsJobsChart: {
       chart: {
         height: 350,
         type: "line",
@@ -183,7 +178,7 @@ const AdminDashboardDetails = () => {
         },
       },
     },
-    seriesMixedChart: [
+    seriesJobsChart: [
       {
         name: "Open Jobs",
         type: "column",
@@ -200,6 +195,104 @@ const AdminDashboardDetails = () => {
         data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39,12],
       },
     ],
+    optionsInterviewChart: {
+      chart: {
+        height: 350,
+        type: "line",
+        stacked: false,
+      },
+      stroke: {
+        width: [0, 2, 5],
+        curve: "smooth",
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: "50%",
+        },
+      },
+      fill: {
+        opacity: [0.85, 0.25, 1],
+        gradient: {
+          inverseColors: false,
+          shade: "light",
+          type: "vertical",
+          opacityFrom: 0.85,
+          opacityTo: 0.55,
+          stops: [0, 100, 100, 100],
+        },
+      },
+      labels: [
+        "11/01/2022",
+        "12/01/2022",
+        "01/01/2023",
+        "02/01/2023",
+        "03/01/2023",
+        "04/01/2023",
+        "05/01/2023",
+        "06/01/2023",
+        "07/01/2023",
+        "08/01/2023",
+        "09/01/2023",
+        "10/01/2023",
+      ],
+      markers: {
+        size: 0,
+      },
+      xaxis: {
+        type: "datetime",
+      },
+      yaxis: [
+        {
+          seriesName: 'Scheduled Interviews',
+          axisTicks: {
+            show: true
+          },
+          axisBorder: {
+            show: true,
+          },
+          title: {
+            text: "# of Interviews"
+          },
+          min: 0,
+        },
+        {
+          seriesName: 'Closed Interviews',
+          show: false
+        }, {
+          seriesName: 'Accepted Interviews',
+          show: false
+        }
+      ],
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+
+          formatter: function (value, { seriesIndex, series }) {
+              return value.toFixed(0) + " Interviews";
+          },
+
+        },
+      },
+    },
+    seriesInterviewChart: [
+      {
+        name: "Accepted Interviews",
+        type: "column",
+        data: [240, 139, 180, 390, 480, 380, 430, 680, 790, 580, 800, 300],
+      },
+      {
+        name: "Closed Interviews",
+        type: "column",
+        data: [144, 55, 141, 167, 122, 122, 143, 121, 141, 256, 127, 243],
+      },
+      {
+        name: "Scheduled Interviews",
+        type: "line",
+        data: [330, 225, 236, 430, 545, 435, 564, 752, 859, 636, 939, 412],
+      },
+    ],
+
   };
   const [initialState, setInitialState] = useState(initial)
 
@@ -353,7 +446,6 @@ const AdminDashboardDetails = () => {
               </span>
               The below section of dashboard is in making. Data is from JSON !
             </Alert>
-
             <Card className="mb-3">
               <CardHeader className="tabs-lg-alternate">
                 <Nav justified>
@@ -423,15 +515,183 @@ const AdminDashboardDetails = () => {
                   </CardBody>
                 </TabPane>
                 <TabPane tabId="2">
-                  <Chart options={initialState.optionsMixedChart} series={initialState.seriesMixedChart}
-                    type="line" width="100%" height="330px" />
+                  <CardHeader className="rm-border">
+                    <div className="btn-actions-pane-right text-capitalize  actions-icon-btn right-align">
+                      <UncontrolledButtonDropdown>
+                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                          <i className="lnr-calendar-full btn-icon-wrapper" />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
+                          <DropdownItem header>Select Range</DropdownItem>
+                          <DropdownItem divider />
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-inbox"> </i>
+                            <span>a Week</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-file-empty"> </i>
+                            <span>a Month</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>6 Months</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>a Year</span>
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledButtonDropdown>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <Chart options={initialState.optionsJobsChart} series={initialState.seriesJobsChart}
+                          type="line" width="100%" height="330px" />
+                  <Row className="mt-3">
+                    <Col sm="12" md="4">
+                      <div className="widget-content p-0">
+                        <div className="widget-content-outer">
+                          <div className="widget-content-wrapper">
+                            <div className="widget-content-left">
+                              <div className="widget-numbers text-dark">65%</div>
+                            </div>
+                          </div>
+                          <div className="widget-progress-wrapper mt-1">
+                            <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="65" />
+                            <div className="progress-sub-label">
+                              <div className="sub-label-left font-size-md">Interviews Scheduled</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col sm="12" md="4">
+                      <div className="widget-content p-0">
+                        <div className="widget-content-outer">
+                          <div className="widget-content-wrapper">
+                            <div className="widget-content-left">
+                              <div className="widget-numbers text-dark">83%</div>
+                            </div>
+                          </div>
+                          <div className="widget-progress-wrapper mt-1">
+                            <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="83" />
+                            <div className="progress-sub-label">
+                              <div className="sub-label-left font-size-md">Closed Jobs</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col sm="12" md="4">
+                      <div className="widget-content p-0">
+                        <div className="widget-content-outer">
+                          <div className="widget-content-wrapper">
+                            <div className="widget-content-left">
+                              <div className="widget-numbers text-dark">70%</div>
+                            </div>
+                          </div>
+                          <div className="widget-progress-wrapper mt-1">
+                            <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="70" />
+                            <div className="progress-sub-label">
+                              <div className="sub-label-left font-size-md">Avg. Time for Closure</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                  </CardBody>
                 </TabPane>
                 <TabPane tabId="3">
-                  <IncomeReport2 />
+                  <CardHeader className="rm-border">
+                    <div className="btn-actions-pane-right text-capitalize  actions-icon-btn right-align">
+                      <UncontrolledButtonDropdown>
+                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                          <i className="lnr-calendar-full btn-icon-wrapper" />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
+                          <DropdownItem header>Select Range</DropdownItem>
+                          <DropdownItem divider />
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-inbox"> </i>
+                            <span>a Week</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-file-empty"> </i>
+                            <span>a Month</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>6 Months</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>a Year</span>
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledButtonDropdown>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <Chart options={initialState.optionsInterviewChart} series={initialState.seriesInterviewChart}
+                      type="line" width="100%" height="330px" />
+                    <Row className="mt-3">
+                      <Col sm="12" md="4">
+                        <div className="widget-content p-0">
+                          <div className="widget-content-outer">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left">
+                                <div className="widget-numbers text-dark">15%</div>
+                              </div>
+                            </div>
+                            <div className="widget-progress-wrapper mt-1">
+                              <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="15" />
+                              <div className="progress-sub-label">
+                                <div className="sub-label-left font-size-md">Interviews Missed</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col sm="12" md="4">
+                        <div className="widget-content p-0">
+                          <div className="widget-content-outer">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left">
+                                <div className="widget-numbers text-dark">83%</div>
+                              </div>
+                            </div>
+                            <div className="widget-progress-wrapper mt-1">
+                              <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="83" />
+                              <div className="progress-sub-label">
+                                <div className="sub-label-left font-size-md">Acceptance Rate</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col sm="12" md="4">
+                        <div className="widget-content p-0">
+                          <div className="widget-content-outer">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left">
+                                <div className="widget-numbers text-dark">90%</div>
+                              </div>
+                            </div>
+                            <div className="widget-progress-wrapper mt-1">
+                              <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="90" />
+                              <div className="progress-sub-label">
+                                <div className="sub-label-left font-size-md">Avg. Time to Converge</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
                 </TabPane>
               </TabContent>
             </Card>
-
             <CardHeader className="mbg-3 h-auto ps-0 pe-0 bg-transparent no-border">
               <div className="card-header-title fsize-2 text-capitalize fw-normal">
                 Interview Stats

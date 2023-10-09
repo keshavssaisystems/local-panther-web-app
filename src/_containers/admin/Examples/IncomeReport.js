@@ -54,7 +54,7 @@ export default class IncomeReport extends Component {
         <div className="btn-actions-pane-right text-capitalize  actions-icon-btn right-align">
           <UncontrolledButtonDropdown>
             <DropdownToggle className="btn-icon btn-icon-only" color="link">
-              <i className="pe-7s-menu btn-icon-wrapper" />
+              <i className="lnr-calendar-full btn-icon-wrapper" />
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
               <DropdownItem header>Select Range</DropdownItem>
@@ -102,7 +102,7 @@ export default class IncomeReport extends Component {
                 <div className="widget-progress-wrapper mt-1">
                   <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="65"/>
                   <div className="progress-sub-label">
-                    <div className="sub-label-left font-size-md">Interviews Scheduled</div>
+                    <div className="sub-label-left font-size-md">Interviews Accepted</div>
                   </div>
                 </div>
               </div>
