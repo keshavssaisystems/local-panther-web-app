@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -8,24 +8,42 @@ import {
   Label,
   Input,
   Button,
+  FormText,
 } from "reactstrap";
 import "./scheduledInterview.scss";
 
-export function InviteToInterviewCard() {
+export function InviteToInterviewCard({ interviewId, postInviteData }) {
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const getFormData = (event) => {
+    event.preventDefault();
+    let data = {
+      scheduleinterviewid: interviewId,
+      intervieweremailids: event.target.elements.inviteEmails.value,
+    };
+    postInviteData(data);
+    setShowSuccessMessage(true);
+  };
   return (
     <>
       <Card>
         <CardBody>
-          <Form>
+          <Form onSubmit={(e) => getFormData(e)}>
             <Col md="12">
               <FormGroup>
-                <Label for="notes" className="fw-semi-bold">
+                <Label for="inviteEmails" className="fw-semi-bold">
                   Invite to interview
                 </Label>
+                {showSuccessMessage === true && (
+                  <p className="float-end">
+                    <FormText color="success">
+                      Interviewer list updated successfully!!!
+                    </FormText>
+                  </p>
+                )}
                 <Input
                   type="textarea"
-                  name="notes"
-                  id="notes"
+                  name="inviteEmails"
+                  id="inviteEmails"
                   placeholder="Invite hiring managers or other interviewers - enter emails seperated by comma"
                 />
               </FormGroup>

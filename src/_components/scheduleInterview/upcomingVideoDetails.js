@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   CardHeader,
   Col,
@@ -10,14 +10,42 @@ import {
   UncontrolledButtonDropdown,
   Card,
   CardBody,
+  ButtonGroup,
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import { BsLink45Deg, BsPersonVideo2 } from "react-icons/bs";
-import { TakeNotesModal } from "./takeNotesModal";
+import {
+  BsPersonVideo2,
+  BsFillCheckCircleFill,
+  BsFillQuestionCircleFill,
+  BsXCircleFill,
+} from "react-icons/bs";
+import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
+import { useSelector } from "react-redux";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { NotesCard } from "./notesCard";
+import { InviteToInterviewCard } from "./inviteToInterviewCard";
 
-export function UpcomingVideoDetails({ interviewDetails }) {
+export function UpcomingVideoDetails({
+  interviewId,
+  cancelScheduleData,
+  postInviteData,
+  postNotesData,
+}) {
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [showInviteCard, setShowInviteCard] = useState(false);
+  const upcomingInterviews = useSelector(
+    (state) => state.scheduleInterview.upcomingInterview
+  );
+  let selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
+    (element) => {
+      return element.scheduleinterviewid === interviewId;
+    }
+  );
+
+  const interviewDetails = selectedJobDetails[0];
   let scheduled = moment(interviewDetails?.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
@@ -50,6 +78,14 @@ export function UpcomingVideoDetails({ interviewDetails }) {
       ? interviewDetails?.duration.split(" ")
       : [];
   let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
+  let userId = localStorage.getItem("userId");
+  const cancelSchedule = () => {
+    let cancelData = {
+      currentUserId: userId,
+      scheduledInterviewId: interviewId,
+    };
+    cancelScheduleData(cancelData);
+  };
   return (
     <>
       <CardBody>
@@ -63,10 +99,11 @@ export function UpcomingVideoDetails({ interviewDetails }) {
               </Col>
               <Col style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
-                  outline
+                  outline={!showInviteCard}
                   size="sm"
-                  className="mb-2 mr-2 btn-transition btn btn-outline-primary"
+                  className="mb-2 mr-2 btn-transition"
                   color="primary"
+                  onClick={() => setShowInviteCard(!showInviteCard)}
                 >
                   {" "}
                   Invite to interview{" "}
@@ -89,25 +126,46 @@ export function UpcomingVideoDetails({ interviewDetails }) {
                   {" "}
                   Call{" "}
                 </Button>
-
-                <UncontrolledButtonDropdown>
-                  <DropdownToggle
-                    className="btn-icon btn-icon-only"
-                    color="link"
+                <ButtonGroup size={"sm"}>
+                  <Button
+                    name="format"
+                    color={"success"}
+                    size={"sm"}
+                    className="mb-2 btn-transition"
+                    outline
                   >
-                    <FaEllipsisV />
-                  </DropdownToggle>
-                  <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-inbox"> </i>
-                      <span>Reject</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-file-empty"> </i>
-                      <span>Delete</span>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledButtonDropdown>
+                    <BsFillCheckCircleFill className="mb-1" />
+                  </Button>
+                  <Button
+                    name="format"
+                    color={"primary"}
+                    size={"sm"}
+                    className="mb-2 btn-transition"
+                    outline
+                  >
+                    <BsFillQuestionCircleFill className="mb-1" />
+                  </Button>
+                  <Button
+                    name="format"
+                    color={"danger"}
+                    size={"sm"}
+                    className="mb-2 btn-transition"
+                    outline
+                  >
+                    <BsXCircleFill className="mb-1" />
+                  </Button>
+                </ButtonGroup>
+
+                <Button
+                  outline
+                  size="sm"
+                  className="mb-2 ms-1 btn-transition"
+                  color="danger"
+                  title="Cancel"
+                  onClick={(e) => setShowCancelPopup(true)}
+                >
+                  <ImBin className="mb-1" />
+                </Button>
               </Col>
             </div>
           </div>
@@ -136,6 +194,14 @@ export function UpcomingVideoDetails({ interviewDetails }) {
             ? "Rejected"
             : "Awaiting confirmation"}
         </div>
+        {showInviteCard === true && (
+          <div className="mt-2 mb-2">
+            <InviteToInterviewCard
+              interviewId={interviewDetails.scheduleinterviewid}
+              postInviteData={(e) => postInviteData(e)}
+            />
+          </div>
+        )}
         <Card className="mt-3">
           <CardHeader className="card-header-tab">
             <div className="card-header-title font-size-lg text-capitalize fw-normal">
@@ -158,7 +224,7 @@ export function UpcomingVideoDetails({ interviewDetails }) {
                       <i className="dropdown-icon lnr-inbox"> </i>
                       <span>Edit</span>
                     </DropdownItem>
-                    <DropdownItem>
+                    <DropdownItem onClick={(e) => setShowCancelPopup(true)}>
                       <i className="dropdown-icon lnr-file-empty"> </i>
                       <span>Cancel</span>
                     </DropdownItem>
@@ -170,18 +236,26 @@ export function UpcomingVideoDetails({ interviewDetails }) {
                   {scheduled} at {startTime} to {endTime}
                 </p>
               </div>
-              <div className="p-custom">
-                <p className="mb-0">Mode : {interviewDetails?.format}</p>
-              </div>
               {interviewDetails?.isappvideocall === false && (
                 <div className="p-custom">
                   <p className="mb-0">
                     Interview link :{" "}
                     <a
-                      href={interviewDetails?.videolink}
-                      onClick={(e) => e.preventDefault()}
+                      href={interviewDetails.videolink}
+                      target={"_blank"}
+                      rel="noreferrer"
                     >
-                      <BsLink45Deg /> Click here to join
+                      Click here to join
+                    </a>
+                  </p>
+                </div>
+              )}
+              {interviewDetails.isappvideocall === true && (
+                <div className="p-custom">
+                  <p className="mb-0">
+                    In-app link :{" "}
+                    <a href="/" onClick={(e) => e.preventDefault()}>
+                      Click here to join
                     </a>
                   </p>
                 </div>
@@ -194,7 +268,17 @@ export function UpcomingVideoDetails({ interviewDetails }) {
             </div>
           </CardBody>
           <CardFooter className="d-block text-left">
-            <TakeNotesModal />
+            <Button
+              outline={!showNotes}
+              className="mb-2 mr-2 btn-transition"
+              color="primary"
+              size={"sm"}
+              onClick={() => setShowNotes(!showNotes)}
+            >
+              {" "}
+              Take notes{" "}
+            </Button>
+
             <Button
               outline
               className="mb-2 mr-2 btn-transition"
@@ -206,7 +290,15 @@ export function UpcomingVideoDetails({ interviewDetails }) {
             </Button>
           </CardFooter>
         </Card>
-
+        {showNotes === true && (
+          <div className="mt-2 mb-2">
+            <NotesCard
+              interviewNotes={interviewDetails.interviewnotes}
+              interviewId={interviewDetails.scheduleinterviewid}
+              postNotesData={(e) => postNotesData(e)}
+            />
+          </div>
+        )}
         <div className="p-3">
           <h6 className="fw-bold">Summary</h6>
           <p className="mb-0">{interviewDetails?.messagetocandidate}</p>
@@ -231,6 +323,28 @@ export function UpcomingVideoDetails({ interviewDetails }) {
           </h6>
         </div>
       </CardBody>
+      {showCancelPopup && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, cancel it!"
+          confirmBtnBsStyle="danger"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => cancelSchedule(e)}
+          onCancel={() => setShowCancelPopup(false)}
+          focusCancelBtn
+        >
+          You want to cancel the interview with{" "}
+          {interviewDetails?.candidatename
+            ? interviewDetails?.candidatename
+            : interviewDetails?.firstname && interviewDetails?.lastname
+            ? interviewDetails?.firstname + " " + interviewDetails?.lastname
+            : ""}
+          !
+        </SweetAlert>
+      )}
     </>
   );
 }

@@ -5,7 +5,12 @@ import { UpcomingVideoDetails } from "./upcomingVideoDetails";
 import { UpcomingPhoneDetails } from "./upcomingPhoneDetails";
 import { UpcomingInpersonDetails } from "./upcomingInpersonDetails";
 
-export function UpcomingDetail({ interviewDetails }) {
+export function UpcomingDetail({
+  interviewDetails,
+  cancelScheduleData,
+  postNotesData,
+  postInviteData,
+}) {
   console.log(interviewDetails);
   let type =
     interviewDetails !== undefined
@@ -16,7 +21,12 @@ export function UpcomingDetail({ interviewDetails }) {
       {interviewDetails !== undefined && (
         <Card className="upcoming-interview">
           {type === "video" && (
-            <UpcomingVideoDetails interviewDetails={interviewDetails} />
+            <UpcomingVideoDetails
+              interviewId={interviewDetails.scheduleinterviewid}
+              cancelScheduleData={(e) => cancelScheduleData(e)}
+              postNotesData={(e) => postNotesData(e)}
+              postInviteData={(e) => postInviteData(e)}
+            />
           )}
           {type === "phone" && (
             <UpcomingPhoneDetails interviewDetails={interviewDetails} />

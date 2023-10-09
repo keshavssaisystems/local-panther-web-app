@@ -10,6 +10,9 @@ export function InterviewDetailsModal({
   type,
   onClose,
   interviewDetail,
+  postNotesData,
+  postInviteData,
+  cancelScheduleData,
 }) {
   const [modal, setModal] = useState(false);
 
@@ -31,7 +34,12 @@ export function InterviewDetailsModal({
         <ModalHeader toggle={() => onClose()}>Interview details</ModalHeader>
         <ModalBody className="pt-4">
           {type === "Video" && (
-            <VideoInterviewDetails interviewDetail={interviewDetail} />
+            <VideoInterviewDetails
+              interviewId={interviewDetail.scheduleinterviewid}
+              postNotesData={(e) => postNotesData(e)}
+              postInviteData={(e) => postInviteData(e)}
+              cancelScheduleData={(e) => cancelScheduleData(e)}
+            />
           )}
           {type === "Phone" && (
             <TelephonicInterviewDetails interviewDetail={interviewDetail} />

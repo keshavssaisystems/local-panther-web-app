@@ -13,7 +13,13 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { InterviewDetailsModal } from "./interviewDetailsModal";
 import moment from "moment-timezone";
 
-export function ScheduleInterviewList({ candidateList }) {
+export function ScheduleInterviewList({
+  candidateList,
+  postNotesData,
+  postInviteData,
+  cancelScheduleData,
+}) {
+  console.log(candidateList);
   const customStyles = {
     headRow: {
       style: {
@@ -150,6 +156,9 @@ export function ScheduleInterviewList({ candidateList }) {
         type={selectedJobDetails.format}
         onClose={() => onCloseIdModal()}
         interviewDetail={selectedJobDetails}
+        postNotesData={(e) => postNotesData(e)}
+        postInviteData={(e) => postInviteData(e)}
+        cancelScheduleData={(e) => cancelScheduleData(e)}
       />
     </>
   );

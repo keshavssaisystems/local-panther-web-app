@@ -14,15 +14,37 @@ import {
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import { BsCheckLg, BsPersonVideo2, BsXCircleFill } from "react-icons/bs";
+import {
+  BsFillCheckCircleFill,
+  BsFillQuestionCircleFill,
+  BsXCircleFill,
+  BsPersonVideo2,
+} from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
 import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
+import { useSelector } from "react-redux";
+import SweetAlert from "react-bootstrap-sweetalert";
 
-export function VideoInterviewDetails({ interviewDetail }) {
+export function VideoInterviewDetails({
+  interviewId,
+  postNotesData,
+  postInviteData,
+  cancelScheduleData,
+}) {
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
+  const upcomingInterviews = useSelector(
+    (state) => state.scheduleInterview.upcomingInterviewWOPagination
+  );
+  let selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
+    (element) => {
+      return element.scheduleinterviewid === interviewId;
+    }
+  );
+  const interviewDetail = selectedJobDetails[0];
   let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
@@ -53,6 +75,15 @@ export function VideoInterviewDetails({ interviewDetail }) {
       ? interviewDetail.duration.split(" ")
       : [];
   let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
+  let userId = localStorage.getItem("userId");
+  const cancelSchedule = () => {
+    let cancelData = {
+      currentUserId: userId,
+      scheduledInterviewId: interviewId,
+    };
+    cancelScheduleData(cancelData);
+  };
+
   return (
     <>
       <div className="dropdown-menu-header">
@@ -99,12 +130,12 @@ export function VideoInterviewDetails({ interviewDetail }) {
               <ButtonGroup size={"sm"}>
                 <Button
                   name="format"
-                  color={"primary"}
+                  color={"success"}
                   size={"sm"}
                   className="mb-2 btn-transition"
                   outline
                 >
-                  <BsCheckLg />
+                  <BsFillCheckCircleFill className="mb-1" />
                 </Button>
                 <Button
                   name="format"
@@ -113,16 +144,16 @@ export function VideoInterviewDetails({ interviewDetail }) {
                   className="mb-2 btn-transition"
                   outline
                 >
-                  ?
+                  <BsFillQuestionCircleFill className="mb-1" />
                 </Button>
                 <Button
                   name="format"
-                  color={"primary"}
+                  color={"danger"}
                   size={"sm"}
                   className="mb-2 btn-transition"
                   outline
                 >
-                  x
+                  <BsXCircleFill className="mb-1" />
                 </Button>
               </ButtonGroup>
 
@@ -132,25 +163,10 @@ export function VideoInterviewDetails({ interviewDetail }) {
                 className="mb-2 ms-1 btn-transition"
                 color="danger"
                 title="Cancel"
+                onClick={(e) => setShowCancelPopup(true)}
               >
-                <ImBin />
+                <ImBin className="mb-1" />
               </Button>
-
-              {/* <UncontrolledButtonDropdown>
-                <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                  <FaEllipsisV />
-                </DropdownToggle>
-                <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                  <DropdownItem>
-                    <i className="dropdown-icon lnr-inbox"> </i>
-                    <span>Reject</span>
-                  </DropdownItem>
-                  <DropdownItem>
-                    <i className="dropdown-icon lnr-file-empty"> </i>
-                    <span>Delete</span>
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledButtonDropdown> */}
             </Col>
           </div>
         </div>
@@ -160,14 +176,17 @@ export function VideoInterviewDetails({ interviewDetail }) {
       </div>
       {showInviteCard === true && (
         <div className="mt-2 mb-2">
-          <InviteToInterviewCard />
+          <InviteToInterviewCard
+            interviewId={interviewDetail.scheduleinterviewid}
+            postInviteData={(e) => postInviteData(e)}
+          />
         </div>
       )}
       <Card className="mt-3">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
             <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
-            Interview
+            {interviewDetail.format} Interview
           </div>
         </CardHeader>
         <CardBody>
@@ -182,7 +201,7 @@ export function VideoInterviewDetails({ interviewDetail }) {
                     <i className="dropdown-icon lnr-inbox"> </i>
                     <span>Edit</span>
                   </DropdownItem>
-                  <DropdownItem>
+                  <DropdownItem onClick={(e) => setShowCancelPopup(true)}>
                     <i className="dropdown-icon lnr-file-empty"> </i>
                     <span>Cancel</span>
                   </DropdownItem>
@@ -194,17 +213,25 @@ export function VideoInterviewDetails({ interviewDetail }) {
                 {scheduled} : {startTime} to {endTime}
               </p>
             </div>
-            <div className="p-custom">
-              <p className="mb-0">Mode : {interviewDetail.format}</p>
-            </div>
             {interviewDetail.isappvideocall === false && (
               <div className="p-custom">
                 <p className="mb-0">
                   Interview link :{" "}
                   <a
                     href={interviewDetail.videolink}
-                    onClick={(e) => e.preventDefault()}
+                    target={"_blank"}
+                    rel="noreferrer"
                   >
+                    Click here to join
+                  </a>
+                </p>
+              </div>
+            )}
+            {interviewDetail.isappvideocall === true && (
+              <div className="p-custom">
+                <p className="mb-0">
+                  In-app link :{" "}
+                  <a href="/" onClick={(e) => e.preventDefault()}>
                     Click here to join
                   </a>
                 </p>
@@ -212,7 +239,10 @@ export function VideoInterviewDetails({ interviewDetail }) {
             )}
             <div className="p-custom">
               <p className="mb-0">
-                Interviewer : {interviewDetail.intervieweremailids}
+                Interviewer :{" "}
+                {interviewDetail.intervieweremailids === ""
+                  ? "No interviewer added"
+                  : interviewDetail.intervieweremailids}
               </p>
             </div>
           </div>
@@ -241,12 +271,20 @@ export function VideoInterviewDetails({ interviewDetail }) {
       </Card>
       {showNotes === true && (
         <div className="mt-2 mb-2">
-          <NotesCard />
+          <NotesCard
+            interviewNotes={interviewDetail.interviewnotes}
+            interviewId={interviewDetail.scheduleinterviewid}
+            postNotesData={(e) => postNotesData(e)}
+          />
         </div>
       )}
       <div className="p-3">
         <h6 className="fw-bold">Summary</h6>
-        <p className="mb-0">{interviewDetail.messagetocandidate}</p>
+        <p className="mb-0">
+          {interviewDetail.messagetocandidate === ""
+            ? "- "
+            : interviewDetail.messagetocandidate}
+        </p>
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Application questions</h6>
@@ -256,14 +294,35 @@ export function VideoInterviewDetails({ interviewDetail }) {
         <h6 className="fw-bold">Pre-screen</h6>
         <p className="mb-0">-</p>
       </div>
-      <div className="p-3">
-        <h6 className="fw-bold">Skills test</h6>
-        <p className="mb-0">-</p>
-      </div>
-      {/* <div className="divider" />
+      <div className="divider" />
       <div className="d-block text-center mb-1">
-        <h6 className="fw-bold">Request sent on Sept 17, 2023</h6>
-      </div> */}
+        <h6 className="fw-bold">
+          Request sent on{" "}
+          {moment(interviewDetail?.createddate).format("MMM D, YYYY")}
+        </h6>
+      </div>
+      {showCancelPopup && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, cancel it!"
+          confirmBtnBsStyle="danger"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => cancelSchedule(e)}
+          onCancel={() => setShowCancelPopup(false)}
+          focusCancelBtn
+        >
+          You want to cancel the interview with{" "}
+          {interviewDetail?.candidatename
+            ? interviewDetail?.candidatename
+            : interviewDetail?.firstname && interviewDetail?.lastname
+            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+            : ""}
+          !
+        </SweetAlert>
+      )}
     </>
   );
 }

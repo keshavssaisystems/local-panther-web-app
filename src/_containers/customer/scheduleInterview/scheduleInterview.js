@@ -38,22 +38,25 @@ export function ScheduleInterview() {
     await dispatch(scheduleInterviewActions.getScheduleInterviewThunk(jobId));
   };
   useEffect(() => {
-    getUpcomingData({
-      pageNo: 1,
-      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-    });
-    getCandidateList(selectedJobId);
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
+    getUpdatedScheduleList();
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
+  }, []);
+  const getUpdatedScheduleList = () => {
+    console.log("data");
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
         start: moment().format("YYYY-MM-DDTHH:mm:ss"),
         end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
       })
     );
-  }, []);
-
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(selectedJobId);
+  };
   const getUpcomingData = async function (filterdata) {
     await dispatch(
       scheduleInterviewActions.getUpcomingInterviewListThunk(filterdata)
@@ -170,6 +173,56 @@ export function ScheduleInterview() {
     setOpenModal(true);
     setPopupType(event.format);
   }, []);
+
+  const postNotesData = (notesData) => {
+    updateNotesData(notesData);
+    getUpdatedScheduleList();
+  };
+  const updateNotesData = async function (notesdata) {
+    let scheduleinterviewid = notesdata.scheduleinterviewid;
+    await dispatch(
+      scheduleInterviewActions.updateInterviewNotesThunk({
+        scheduleinterviewid,
+        notesdata,
+      })
+    );
+  };
+
+  const postInviteData = (inviteData) => {
+    updateInterviewerData(inviteData);
+    getUpdatedScheduleList();
+  };
+
+  const updateInterviewerData = async function (invitedata) {
+    let scheduleinterviewid = invitedata.scheduleinterviewid;
+    await dispatch(
+      scheduleInterviewActions.updateInterviewerListThunk({
+        scheduleinterviewid,
+        invitedata,
+      })
+    );
+  };
+
+  const cancelScheduleData = (cancelData) => {
+    console.log(cancelData);
+    cancelInterview(cancelData);
+    getUpdatedScheduleList();
+  };
+
+  const cancelInterview = async function (cancelData) {
+    let scheduleinterviewid = cancelData.scheduledInterviewId;
+    let payload = {
+      currentUserId: cancelData.currentUserId,
+    };
+    await dispatch(
+      scheduleInterviewActions.cancelInterviewThunk({
+        scheduleinterviewid,
+        payload,
+      })
+    );
+    onCloseIdModal();
+  };
+
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -306,9 +359,12 @@ export function ScheduleInterview() {
                   <UpcomingDetail
                     interviewDetails={
                       selectedJobData[0] === undefined
-                        ? upcomingInterviews.scheduledInterviewList[0]
+                        ? upcomingInterviews?.scheduledInterviewList[0]
                         : selectedJobData[0]
                     }
+                    cancelScheduleData={(e) => cancelScheduleData(e)}
+                    postNotesData={(e) => postNotesData(e)}
+                    postInviteData={(e) => postInviteData(e)}
                   />
                 </Col>
               </Row>
@@ -338,7 +394,12 @@ export function ScheduleInterview() {
               <>
                 <Card>
                   <CardBody>
-                    <ScheduleInterviewList candidateList={candidateList} />
+                    <ScheduleInterviewList
+                      candidateList={candidateList}
+                      postNotesData={(e) => postNotesData(e)}
+                      postInviteData={(e) => postInviteData(e)}
+                      cancelScheduleData={(e) => cancelScheduleData(e)}
+                    />
                   </CardBody>
                 </Card>
                 {showPopup === true && (
@@ -357,6 +418,9 @@ export function ScheduleInterview() {
           type={popupType}
           onClose={() => onCloseIdModal()}
           interviewDetail={popupData}
+          postNotesData={(e) => postNotesData(e)}
+          postInviteData={(e) => postInviteData(e)}
+          cancelScheduleData={(e) => cancelScheduleData(e)}
         />
       </Container>
     </>
