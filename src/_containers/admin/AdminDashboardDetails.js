@@ -60,9 +60,25 @@ const AdminDashboardDetails = () => {
   const dashboardCards = {activecompanycount:0, activecustomercount:0, activecandidatecount:0, newcandidateregistrationcount:0}
   const [cardStats, setCardStats] = useState({ ...dashboardCards })
 
-  const date = new Date().toLocaleDateString('fr-CA');
+  const today = new Date().toLocaleDateString('fr-CA');
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
-  const [todaysDate, setTodaysDate] = useState(date)
+  const [todaysDate, setTodaysDate] = useState(today)
+
+
+  const jobsData = [
+    { id: 0, label: "01/01/2023", closedJobs: 144, openJobs: 240, closureTime: 30 },
+    { id: 1, label: "02/01/2023", closedJobs: 55, openJobs: 139, closureTime: 25 },
+    { id: 2, label: "03/01/2023", closedJobs: 141, openJobs: 980, closureTime: 36 },
+    { id: 3, label: "04/01/2023", closedJobs: 167, openJobs: 390, closureTime: 30 },
+    { id: 4, label: "05/01/2023", closedJobs: 122, openJobs: 480, closureTime: 45 },
+    { id: 5, label: "06/01/2023", closedJobs: 122, openJobs: 380, closureTime: 35 },
+    { id: 6, label: "07/01/2023", closedJobs: 143, openJobs: 430, closureTime: 64 },
+    { id: 7, label: "08/01/2023", closedJobs: 121, openJobs: 680, closureTime: 52 },
+    { id: 8, label: "09/01/2023", closedJobs: 141, openJobs: 790, closureTime: 59 },
+    { id: 9, label: "10/01/2023", closedJobs: 256, openJobs: 980, closureTime: 36 },
+    { id: 10, label: yesterday, closedJobs: 127, openJobs: 800, closureTime: 39 },
+    { id: 11, label: today, closedJobs: 243, openJobs: 300, closureTime: 12 }
+  ];
 
   const initial = {
     popoverOpen1: false,
@@ -94,6 +110,8 @@ const AdminDashboardDetails = () => {
         },
       },
       labels: [
+        "11/01/2022",
+        "12/01/2022",
         "01/01/2023",
         "02/01/2023",
         "03/01/2023",
@@ -104,7 +122,6 @@ const AdminDashboardDetails = () => {
         "08/01/2023",
         "09/01/2023",
         "10/01/2023",
-        "11/01/2023",
       ],
       markers: {
         size: 0,
@@ -112,41 +129,75 @@ const AdminDashboardDetails = () => {
       xaxis: {
         type: "datetime",
       },
-      yaxis: {
-        title: {
-          text: "Points",
+      yaxis: [
+        {
+          seriesName: 'Open Jobs',
+          axisTicks: {
+            show: true
+          },
+          axisBorder: {
+            show: true,
+          },
+          title: {
+            text: "# of Jobs"
+          },
+          min: 0,
         },
-        min: 0,
-      },
+        {
+          seriesName: 'Closed Jobs',
+          show: false
+        }, {
+          opposite: true,
+          seriesName: 'Closing Time',
+          axisTicks: {
+            show: true
+          },
+          axisBorder: {
+            show: true,
+          },
+          title: {
+            text: "# of Days"
+          },
+          min: 1,
+        }
+      ],
       tooltip: {
         shared: true,
         intersect: false,
         y: {
-          formatter: function (y) {
-            if (typeof y !== "undefined") {
-              console.log("NG check y",y)
-              return y.toFixed(0) + " points";
+
+          formatter: function (value, { seriesIndex, series }) {
+            console.log("NG seriesName", series)
+            if (seriesIndex === 2) {
+
+              return value.toFixed(0) + " Days";
+
+            } else {
+
+              return value.toFixed(0) + " Points";
+
             }
-            return y;
+
           },
+
         },
       },
     },
     seriesMixedChart: [
       {
-        name: "TEAM A",
+        name: "Open Jobs",
         type: "column",
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+        data: [240, 139, 980, 390, 480, 380, 430, 680, 790, 980, 800, 300],
       },
       {
-        name: "TEAM B",
-        type: "bar",
-        data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+        name: "Closed Jobs",
+        type: "column",
+        data: [144, 55, 141, 167, 122, 122, 143, 121, 141, 256, 127, 243],
       },
       {
-        name: "TEAM C",
+        name: "Closing Time",
         type: "line",
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39,12],
       },
     ],
   };

@@ -24,3 +24,4 @@ yarn-error.log*
 
 # ignore locks
 package-lock.json
+*.log

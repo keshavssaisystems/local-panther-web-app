@@ -61,19 +61,19 @@ export default class IncomeReport extends Component {
               <DropdownItem divider />
               <DropdownItem>
                 <i className="dropdown-icon lnr-inbox"> </i>
-                <span>1-Wk</span>
+                <span>a Week</span>
               </DropdownItem>
               <DropdownItem>
                 <i className="dropdown-icon lnr-file-empty"> </i>
-                <span>1-Mn</span>
+                <span>a Month</span>
               </DropdownItem>
               <DropdownItem>
                 <i className="dropdown-icon lnr-book"> </i>
-                <span>6-Mn</span>
+                <span>6 Months</span>
               </DropdownItem>
               <DropdownItem>
                 <i className="dropdown-icon lnr-book"> </i>
-                <span>1-Yr</span>
+                <span>a Year</span>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledButtonDropdown>
