@@ -27,8 +27,6 @@ import {
   NavLink,
   TabContent,
   TabPane,
-  Popover,
-  PopoverBody,
   Progress,
   Card,
   CardBody,
@@ -60,7 +58,7 @@ const AdminDashboardDetails = () => {
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
   const [activeClients, setActiveClients] = useState(0)
-  const [activeHirers, setActiveHirers] = useState(0)
+
   const [activeCandidates, setActiveCandidates] = useState(0)
   const [interviewsCount, setInterviewsCount] = useState(0)
   const [openJobs, setOpenJobs] = useState(0)
@@ -191,7 +189,7 @@ const AdminDashboardDetails = () => {
     .then(data => data.json())
     .then(result => {
       setActiveClients(result.data.activecustomercount)
-      setActiveHirers(result.data.activecustomercount)
+      // setActiveHirers(result.data.activecustomercount)
       setActiveCandidates(result.data.activecandidatecount)
       setInterviewsCount(result.data.todaysinterviewscheduledcount)
       setOpenJobs(result.data.openjobcount)

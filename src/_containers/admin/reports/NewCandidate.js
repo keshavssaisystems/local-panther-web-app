@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Col, Row, FormGroup, Label, InputGroup, Button } from "reactstrap";
 import { Table } from "_widgets";
 import { SelectFormGroup } from "_components/formComponents/SelectFormGroup";
@@ -8,6 +10,8 @@ import { faCalendarAlt, faFileExcel, faFilePdf, faSearch } from "@fortawesome/fr
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
+
+import { newCandidateThunk } from "../_redux/report.slice";
 
 const columns = [
   {
@@ -32,14 +36,16 @@ const columns = [
   },
 ];
 
-const data = [{
-  name: 'Ajay Chouhan',
-  location: 'New Town square',
-  email: "ajay@saisystems.tech",
-  skills: 'Node, React',
-}];
 
 export function NewCandidate() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(newCandidateThunk())
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const { newCandidate: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
 
   return (
     <>

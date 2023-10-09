@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Col, Row, FormGroup, Label, InputGroup, Button } from "reactstrap";
 import { Table } from "_widgets";
 import { SelectFormGroup } from "_components/formComponents/SelectFormGroup";
@@ -8,6 +10,7 @@ import { faCalendarAlt, faSearch, faFileExcel, faFilePdf } from "@fortawesome/fr
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
+import { openJobsThunk } from "../_redux/report.slice";
 
 const columns = [
   {
@@ -37,16 +40,14 @@ const columns = [
   },
 ];
 
-const data = [{
-  title: 'L1 Consultant',
-  location: 'New Town square',
-  experience: "vinit",
-  skills: 'Node, React',
-  type: 'Full-Time, Part-Time, Contract'
-}];
-
 export function OpenJobs() {
-  
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(openJobsThunk())
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const { openJobs: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
   return (
     <>
       <PageTitle heading="Open Jobs" icon={titlelogo} />

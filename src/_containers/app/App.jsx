@@ -128,7 +128,7 @@ export function App() {
             path="/report/incomplete-candidate-profile"
             element={<IncompleteCandidateProfile />}
           />
-          <Route path="/report/new-candidate" element={<NewCandidate />} />
+          <Route path="/report/new-candidates" element={<NewCandidate />} />
           <Route
             path="/report/candidate-report"
             element={<CandidateReport />}
