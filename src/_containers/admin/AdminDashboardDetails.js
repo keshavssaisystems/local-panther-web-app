@@ -174,7 +174,7 @@ const AdminDashboardDetails = () => {
 
             } else {
 
-              return value.toFixed(0) + " Points";
+              return value.toFixed(0) + " Jobs";
 
             }
 
