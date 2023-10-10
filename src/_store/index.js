@@ -46,6 +46,7 @@ import { custJobListReducer } from "_containers/customer/newjobs/custjobs.slice"
 import { matchedJobReducer } from "_containers/candidate/matchJob.slice";
 import { jobTitleReducer } from "./dropDownJobTitle.slice";
 import { payPeriodReducer } from "./dropDownPayPeriod.slice";
+import { candidateListReducer } from "_containers/candidate/list/candidatelist.slice";
 
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
@@ -99,6 +100,7 @@ export * from "_containers/candidate/matchJob.slice";
 export * from "./dropDownJobTitle.slice";
 export * from "./dropDownPayPeriod.slice";
 export * from "./jobPreference.slice";
+export * from "_containers/candidate/list/candidatelist.slice";
 
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
@@ -153,6 +155,7 @@ export const store = configureStore({
     tabListReducer: candidateJobListTabReducer,
     getJobTitle: jobTitleReducer,
     getPayPeriod: payPeriodReducer,
+    candidateListReducer: candidateListReducer,
 
     // admin reducer
     adminReportReducer,

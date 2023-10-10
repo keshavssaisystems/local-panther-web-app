@@ -21,7 +21,8 @@ import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
-import { CandidateTablist } from "_containers/candidate/candidateTablist";
+// import { CandidateTablist } from "_containers/candidate/candidateTablist";
+import { CandidateList } from "_containers/candidate/list/candidatelist";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
@@ -125,31 +126,44 @@ export function App() {
           />
           <Route path="/report/open-jobs" element={<OpenJobs />} />
           <Route path="/report/new-candidates" element={<NewCandidate />} />
-          
-          <Route path="/report/partially-filled-job" element={<AdminUnderConstruction title={"Partially filled jobs"} />} />
+
+          <Route
+            path="/report/partially-filled-job"
+            element={<AdminUnderConstruction title={"Partially filled jobs"} />}
+          />
           <Route
             path="/report/incomplete-candidate-profile"
-            element={<AdminUnderConstruction title={"Incomplete candidate profile"}/>}
+            element={
+              <AdminUnderConstruction title={"Incomplete candidate profile"} />
+            }
           />
           <Route
             path="/report/hiring-manager-report"
-            element={<AdminUnderConstruction title={"Hiring manager report"}/>}
+            element={<AdminUnderConstruction title={"Hiring manager report"} />}
           />
           <Route
             path="/report/candidate-report"
-            element={<AdminUnderConstruction title={"Candidate Report"}/>}
+            element={<AdminUnderConstruction title={"Candidate Report"} />}
           />
           <Route
             path="/report/jobs-without-matched-candidates"
-            element={<AdminUnderConstruction title={"Jobs without matched candidate"}/>}
+            element={
+              <AdminUnderConstruction
+                title={"Jobs without matched candidate"}
+              />
+            }
           />
           <Route
             path="/report/canddates-without-matched-jobs"
-            element={<AdminUnderConstruction title={"Candidate without matched jobs"}/>}
+            element={
+              <AdminUnderConstruction
+                title={"Candidate without matched jobs"}
+              />
+            }
           />
           <Route
             path="/report/non-published-jobs"
-            element={<AdminUnderConstruction title={"Non published jobs"}/>}
+            element={<AdminUnderConstruction title={"Non published jobs"} />}
           />
         </>
       );
@@ -244,7 +258,7 @@ export function App() {
             path="/job-list"
             element={
               <PrivateRoute>
-                <CandidateTablist />
+                <CandidateList />
               </PrivateRoute>
             }
           />

@@ -1,0 +1,36 @@
+.cand-list-cont {
+  .cust-btn-tabs {
+    .active {
+      background-color: #2f479b;
+      color: #ffffff !important;
+    }
+
+    .btn:hover {
+      background-color: #2f479b;
+      color: #ffffff !important;
+    }
+
+    .btn {
+      color: #2f2e2e;
+      border-radius: 4px !important;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    .card-btn-grp {
+      .btn {
+        color: #2f479b !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        font-family: capitana, sans-serif;
+        border-radius: 0px !important;
+        border: 1px solid;
+      }
+
+      .btn:hover {
+        background-color: #2f479b !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+}
