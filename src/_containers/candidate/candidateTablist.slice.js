@@ -6,9 +6,9 @@ const name = "candidateTabList";
 // get recommended job list thunk
 export const getRecommendedJobListThunk = createAsyncThunk(
   `${name}/getRecommendedJobListThunk`,
-  async ({ pageSize, pageNumber, candidateRecommendedJobStatusId }) => {
+  async ({ pageSize, pageNumber, candidateRecommendedJobStatusId, candidateId }) => {
     const jobStatusId = candidateRecommendedJobStatusId ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}` : ''
-    const RECOMMENDED_JOB_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}${jobStatusId}`;
+    const RECOMMENDED_JOB_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?candidateId=${candidateId}&pageSize=${pageSize}&pageNumber=${pageNumber}${jobStatusId}`;
     return await fetchWrapper.get(RECOMMENDED_JOB_END_POINT);
   }
 );
@@ -18,7 +18,7 @@ export const candidateLikeThunk = createAsyncThunk(
   `${name}/candidateLikeThunk`,
   async (jobId) => {
     const LIKED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateLiked/${jobId}`;
-    return await fetchWrapper.put(LIKED_END_POINT, jobId);
+    return await fetchWrapper.put(LIKED_END_POINT);
   }
 );
 
@@ -27,7 +27,7 @@ export const candidateAcceptThunk = createAsyncThunk(
   `${name}/candidateAcceptThunk`,
   async (jobId) => {
     const ACCEPTED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateAccepted/${jobId}`;
-    return await fetchWrapper.put(ACCEPTED_END_POINT, jobId);
+    return await fetchWrapper.put(ACCEPTED_END_POINT);
   }
 );
 
@@ -36,7 +36,7 @@ export const candidateMayBeThunk = createAsyncThunk(
   `${name}/candidateMayBeThunk`,
   async (jobId) => {
     const MAY_BE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateMaybe/${jobId}`;
-    return await fetchWrapper.put(MAY_BE_END_POINT, jobId);
+    return await fetchWrapper.put(MAY_BE_END_POINT);
   }
 );
 

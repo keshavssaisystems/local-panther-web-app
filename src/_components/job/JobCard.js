@@ -30,6 +30,7 @@ export function JobCard({
   location,
   createdDate,
   jobId,
+  candidateid,
   type,
   getSelectedJobId,
   selectedJob,
@@ -95,7 +96,8 @@ export function JobCard({
   return (
     <>
       <Card
-        className={selectedJob === jobId ? "mb-2 card-border-custom" : "mb-2"}
+        style={{cursor: "pointer"}}
+        className={selectedJob === candidateid ? "mb-2 card-border-custom" : "mb-2"}
         onClick={() => navigateToJobDetail()}
       >
         <CardBody>

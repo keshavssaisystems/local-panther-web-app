@@ -6,21 +6,19 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Button,
 } from "reactstrap";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { ScheduleInterviewModal } from "./scheduleInterviewModal";
 import { InterviewDetailsModal } from "./interviewDetailsModal";
 import moment from "moment-timezone";
 
 export function ScheduleInterviewList({
   candidateList,
-  durationOptions,
-  postData,
+  postNotesData,
+  postInviteData,
+  cancelScheduleData,
 }) {
-  console.log(candidateList);
   const customStyles = {
     headRow: {
       style: {
@@ -44,12 +42,12 @@ export function ScheduleInterviewList({
     },
   };
   const [openModal, setOpenModal] = useState(false);
-  const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const columns = (clickHandler) => [
     {
       name: "Candidate",
       selector: (row) => row.candidatename,
       sortable: true,
+      width: "200px",
     },
     {
       name: "Skills",
@@ -57,32 +55,17 @@ export function ScheduleInterviewList({
       selector: (row) =>
         row.candidateskills === "" ? "-" : row.candidateskills,
       sortable: true,
+      width: "270px",
     },
     {
       name: "Scheduled time",
       sortable: true,
-      cell: (row) => (
-        <>
-          {row.scheduledate === null && (
-            <Button
-              color="link"
-              className="pl-0"
-              onClick={(e) => openScheduleModalPopup(row)}
-            >
-              {" "}
-              Schedule{" "}
-            </Button>
-          )}
-          {row.scheduledate !== null &&
-            moment(
-              moment(row.scheduledate).format("YYYY-MM-DD") +
-                "T" +
-                row.starttime
-            )
-              .tz("America/New_York")
-              .format("MM/DD/YYYY h:mm a")}
-        </>
-      ),
+      selector: (row) =>
+        moment(
+          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
+        )
+          .tz("America/New_York")
+          .format("MM/DD/YYYY h:mm a"),
     },
     {
       name: "Duration",
@@ -146,14 +129,6 @@ export function ScheduleInterviewList({
   const onCloseIdModal = () => {
     setOpenModal(false);
   };
-  const onCloseScheduleModal = () => {
-    setOpenScheduleModal(false);
-  };
-  const [selectedJobData, setSelectedJobData] = useState({});
-  const openScheduleModalPopup = (event) => {
-    setOpenScheduleModal(true);
-    setSelectedJobData(event);
-  };
   return (
     <>
       <Row>
@@ -174,13 +149,9 @@ export function ScheduleInterviewList({
         type={selectedJobDetails.format}
         onClose={() => onCloseIdModal()}
         interviewDetail={selectedJobDetails}
-      />
-      <ScheduleInterviewModal
-        candidateData={selectedJobData}
-        durationOptions={durationOptions}
-        postData={(e) => postData(e)}
-        isOpen={openScheduleModal}
-        onClose={() => onCloseScheduleModal()}
+        postNotesData={(e) => postNotesData(e)}
+        postInviteData={(e) => postInviteData(e)}
+        cancelScheduleData={(e) => cancelScheduleData(e)}
       />
     </>
   );

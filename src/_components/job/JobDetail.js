@@ -5,7 +5,6 @@ import { HeadingAndDetailWithDiv } from "../jobDetailComponents/HeadingAndDetail
 import { HeadingAndDetailWithoutIcon } from "../jobDetailComponents/HeadingAndDetailWithoutIcon";
 import { ButtonWithCount } from "../jobDetailComponents/ButtonWithCount";
 import { DetailsHeader } from "../jobDetailComponents/DetailsHeader";
-import Loader from "react-loaders";
 
 export function JobDetail({ jobDetails, type }) {
   let loading = true;
@@ -30,12 +29,6 @@ export function JobDetail({ jobDetails, type }) {
   return (
     <>
       <Col md="8" className="job-detail-cont">
-        {loading === true && (
-          <Loader
-            type="line-scale-pulse-out-rapid"
-            className="d-flex justify-content-center"
-          />
-        )}
         {loading === false && (
           <Card className="card-shadow-primary profile-responsive card-border mb-3">
             <DetailsHeader

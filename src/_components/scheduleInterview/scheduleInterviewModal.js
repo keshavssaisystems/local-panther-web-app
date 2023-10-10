@@ -103,8 +103,9 @@ export function ScheduleInterviewModal({
       event.target.elements.scheduleStartTime.value !== "" &&
       event.target.elements.duration.value !== "" &&
       formatButton === 1 &&
-      event.target.elements.videoMode.value === "third-party-video" &&
-      event.target.elements.videoLink.value !== ""
+      ((event.target.elements.videoMode.value === "third-party-video" &&
+        event.target.elements.videoLink.value !== "") ||
+        event.target.elements.videoMode.value === "in-app-video")
     ) {
       getFormData(event);
     }
@@ -199,7 +200,9 @@ export function ScheduleInterviewModal({
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Candidate</h6>
                     <p className="mb-0 mt-1 mr-1">
-                      {candidateData.candidatename}
+                      {candidateData.candidatename === undefined
+                        ? candidateData.firstname + " " + candidateData.lastname
+                        : candidateData.candidatename}
                     </p>
                   </div>
                 </Col>

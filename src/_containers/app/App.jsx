@@ -2,14 +2,17 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard, CustomerDashboard, CandidateDashboard } from "_containers/dashboard/Dashboard";
-import { JobList } from "_containers/customer/jobs/JobList";
+import {
+  AdminDashboard,
+  CustomerDashboard,
+  CandidateDashboard,
+} from "_containers/dashboard/Dashboard";
+
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
-import { CandidateList } from "_containers/candidate/recommendedcandidates/CandidateList";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
 import { AppSidebar } from "_components/_layout/AppSidebar";
@@ -19,16 +22,26 @@ import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
 import { CandidateTablist } from "_containers/candidate/candidateTablist";
-import { OnboardCustomer } from "_containers/admin/customer";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
-import { Contact } from "_containers/Contact";
+import { Contact } from "_containers/contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
+
+// Admin
+import { OnboardCustomer } from "_containers/admin/customer";
 import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConstruction";
+import {
+  OpenJobs,
+  NewCandidate,
+  HiringManager,
+  CandidateReport,
+  IncompleteCandidateProfile,
+  PartiallyFilledJobs,
+} from "_containers/admin";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -100,17 +113,19 @@ export function App() {
             }
           />
           <Route
-            path="/report"
-            element={
-              <PrivateRoute>
-                <AdminUnderConstruction title={"Reports"} />
-              </PrivateRoute>
-            }
-          />
-          <Route
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
           />
+          <Route path="/report" element={<HiringManager title={"Hiring Manager Report"}/>} />
+          <Route path="/report/hiring-manager-report" element={<HiringManager title={"Hiring Manager Report"}/>} />
+          <Route path="/report/open-jobs" element={<OpenJobs />} />
+          <Route path="/report/new-candidates" element={<NewCandidate />} />
+          <Route path="/report/partially-filled-job" element={<AdminUnderConstruction title={"Partially filled jobs"} />} />
+          <Route path="/report/incomplete-candidate-profile" element={<AdminUnderConstruction title={"Incomplete candidate profile"}/>} />
+          <Route path="/report/candidate-report" element={<AdminUnderConstruction title={"Candidate Report"}/>} />
+          <Route path="/report/jobs-without-matched-candidates" element={<AdminUnderConstruction title={"Jobs without matched candidate"}/>} />
+          <Route path="/report/canddates-without-matched-jobs" element={<AdminUnderConstruction title={"Candidate without matched jobs"}/>} />
+          <Route path="/report/non-published-jobs" element={<AdminUnderConstruction title={"Non published jobs"}/>} />
         </>
       );
     } else if (userroleid === 2) {
@@ -179,14 +194,6 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
-          <Route
-            path="/report"
-            element={
-              <PrivateRoute>
-                <CustomerUnderConstruction title={"Reports"} />
-              </PrivateRoute>
-            }
-          />
         </>
       );
     } else {
@@ -248,7 +255,7 @@ export function App() {
         {authUser && <AppSidebar />}
         <div className={authUser ? `app-main__outer` : ""}>
           <div className="app-main__inner">
-            <Routes>
+            <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}
 
               {/* <Route
@@ -285,10 +292,38 @@ export function App() {
                 }
               /> */}
 
-              <Route path="/policy" element={<Policy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/security" element={<Security />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route
+                path="/policy"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Policy"} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/terms"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Terms"} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/security"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Security"} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <PrivateRoute>
+                    <CandidateUnderConstruction title={"Contact"} />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route
