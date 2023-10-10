@@ -1,23 +1,26 @@
 import React from "react";
 import "./jobDetails.scss";
 import { FiMapPin } from "react-icons/fi";
-import { Col, Row } from "reactstrap";
+import { Col, Row, Button } from "reactstrap";
 import { ApplyJobModal } from "../../_containers/candidate/ApplyJobModal";
 
 export function DetailsHeader({
   heading,
   subHeading,
   location,
-  ApplyButton,
-  jobId,
-  department,
+  // ApplyButton,
+  // jobId,
+  // department,
+  showApplyBtn,
+  applyBtnState,
+  onClickApply,
 }) {
   return (
     <>
       <div className="dropdown-menu-header">
         <div className="dropdown-menu-header-inner heading-background">
           <Row>
-            <Col>
+            <Col md={9} lg={9}>
               <div className="menu-header-content btn-pane-right text-start">
                 <div>
                   <h5 className="menu-header-title job-title-details">
@@ -30,7 +33,16 @@ export function DetailsHeader({
                 </div>
               </div>
             </Col>
-            {ApplyButton === true && (
+            {showApplyBtn ? (
+              <Col md={3} lg={3} className="right-align">
+                <Button onClick={() => onClickApply()} color="primary">
+                  Apply Now
+                </Button>
+              </Col>
+            ) : (
+              <></>
+            )}
+            {/* {ApplyButton === true && (
               <Col>
                 <ApplyJobModal
                   jobId={jobId}
@@ -40,7 +52,7 @@ export function DetailsHeader({
                   department={department}
                 />
               </Col>
-            )}
+            )} */}
           </Row>
         </div>
       </div>

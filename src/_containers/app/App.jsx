@@ -21,12 +21,13 @@ import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
-import { CandidateTablist } from "_containers/candidate/candidateTablist";
+// import { CandidateTablist } from "_containers/candidate/candidateTablist";
+import { CandidateList } from "_containers/candidate/list/candidatelist";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
-import { Contact } from "_containers/contact";
+import { Contact } from "_containers/Contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
@@ -116,16 +117,50 @@ export function App() {
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
           />
-          <Route path="/report" element={<HiringManager title={"Hiring Manager Report"}/>} />
-          <Route path="/report/hiring-manager-report" element={<HiringManager title={"Hiring Manager Report"}/>} />
+          <Route
+            path="/report"
+            element={<HiringManager title={"Hiring Manager Report"} />}
+          />
+          <Route
+            path="/report/hiring-manager-report"
+            element={<HiringManager title={"Hiring Manager Report"} />}
+          />
           <Route path="/report/open-jobs" element={<OpenJobs />} />
           <Route path="/report/new-candidates" element={<NewCandidate />} />
-          <Route path="/report/partially-filled-job" element={<AdminUnderConstruction title={"Partially filled jobs"} />} />
-          <Route path="/report/incomplete-candidate-profile" element={<AdminUnderConstruction title={"Incomplete candidate profile"}/>} />
-          <Route path="/report/candidate-report" element={<AdminUnderConstruction title={"Candidate Report"}/>} />
-          <Route path="/report/jobs-without-matched-candidates" element={<AdminUnderConstruction title={"Jobs without matched candidate"}/>} />
-          <Route path="/report/canddates-without-matched-jobs" element={<AdminUnderConstruction title={"Candidate without matched jobs"}/>} />
-          <Route path="/report/non-published-jobs" element={<AdminUnderConstruction title={"Non published jobs"}/>} />
+          <Route
+            path="/report/partially-filled-job"
+            element={<AdminUnderConstruction title={"Partially filled jobs"} />}
+          />
+          <Route
+            path="/report/incomplete-candidate-profile"
+            element={
+              <AdminUnderConstruction title={"Incomplete candidate profile"} />
+            }
+          />
+          <Route
+            path="/report/candidate-report"
+            element={<AdminUnderConstruction title={"Candidate Report"} />}
+          />
+          <Route
+            path="/report/jobs-without-matched-candidates"
+            element={
+              <AdminUnderConstruction
+                title={"Jobs without matched candidate"}
+              />
+            }
+          />
+          <Route
+            path="/report/canddates-without-matched-jobs"
+            element={
+              <AdminUnderConstruction
+                title={"Candidate without matched jobs"}
+              />
+            }
+          />
+          <Route
+            path="/report/non-published-jobs"
+            element={<AdminUnderConstruction title={"Non published jobs"} />}
+          />
         </>
       );
     } else if (userroleid === 2) {
@@ -211,7 +246,7 @@ export function App() {
             path="/job-list"
             element={
               <PrivateRoute>
-                <CandidateTablist />
+                <CandidateList />
               </PrivateRoute>
             }
           />
