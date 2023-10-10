@@ -13,10 +13,10 @@ import {
   Form,
 } from "reactstrap";
 import AsyncSelect from "react-select/async";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
+import Loader from "react-loaders";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
@@ -27,9 +27,31 @@ import { getLocationFilter } from "_store";
 
 export function QualificationModal(props) {
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.getProfile.loader);
   const [check, setCheck] = useState(props.check);
 
   const [formDetails, setFormData] = useState([]);
+  const [location, setLocation] = useState([]);
+
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [message, setMessage] = useState(false);
+
+  const [countryList, setCountryList] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [cityList, setCityList] = useState([]);
+  const [filterData, setFilterData] = useState([]);
+
+  const [citySelect, setCitySelect] = useState([]);
+  const [stateSelect, setStateSelect] = useState([]);
+  const [countrySelect, setCountrySelect] = useState([]);
+  const [cityReqError, setCityReqError] = useState(false);
+  const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      userSelect: "none",
+    }),
+  };
 
   useEffect(() => {
     loadData();
@@ -56,6 +78,24 @@ export function QualificationModal(props) {
         fromDateValid: false,
         fromDateReq: false,
         error: false,
+        city: [
+          {
+            value: 0,
+            label: "",
+          },
+        ],
+        state: [
+          {
+            value: 0,
+            label: "",
+          },
+        ],
+        country: [
+          {
+            value: 0,
+            label: "",
+          },
+        ],
       });
     } else {
       data.push({
@@ -67,58 +107,95 @@ export function QualificationModal(props) {
         cityid: props.selected.cityid,
         stateid: props.selected.stateid,
         iscurrentlyworking: props.selected.iscurrentlyworking,
-        startdate: new Date(props.selected.startdate),
-        enddate: new Date(props.selected.enddate),
+        startdate:
+          props.selected.startdate == "" || !props.selected.startdate
+            ? null
+            : new Date(props.selected.startdate),
+        enddate:
+          props.selected.enddate == "" || !props.selected.enddate
+            ? null
+            : new Date(props.selected.enddate),
         isactive: props.selected.isactive,
         currentUserId: user.userId,
         fromDateValid: false,
         fromDateReq: false,
         error: false,
+        city: {
+          value: props.selected.cityid,
+          label: props.selected.cityname,
+        },
+
+        state: {
+          value: props.selected.stateid,
+          label: props.selected.statename,
+        },
+
+        country: {
+          value: props.selected.countryid,
+          label: props.selected.countryname,
+        },
       });
+      if (props.selected.cityname != "") {
+        loadOptions(props.selected.cityname.slice(0, 3));
+      }
     }
     setFormData(data);
   };
 
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
-  const [message, setMessage] = useState(false);
-
-  const [countryList, setCountryList] = useState([]);
-  const [stateList, setStateList] = useState([]);
-  const [cityList, setCityList] = useState([]);
-
-  const [citySelect, setCitySelect] = useState([]);
-  const [stateSelect, setStateSelect] = useState([]);
-  const [countrySelect, setCountrySelect] = useState([]);
-  const [cityReqError, setCityReqError] = useState(false);
   useEffect(() => {
     let country_response;
     let state_response;
-    country_response = cityList.map(({ countryid: value, ...rest }) => {
+    country_response = filterData?.map(({ countryid: value, ...rest }) => {
       return {
         value,
         label: `${rest.countryname}`,
       };
     });
-    state_response = cityList.map(({ stateid: value, ...rest }) => {
+
+    state_response = filterData?.map(({ stateid: value, ...rest }) => {
       return {
         value,
         label: `${rest.statename}`,
       };
     });
     setStateList(state_response);
-    setCountryList(country_response);
+    let data = [];
+    if (country_response.length > 0) {
+      data = Array.from(new Set(country_response.map((item) => item.id))).map(
+        (id) => {
+          return country_response.find((item) => item.id === id);
+        }
+      );
+
+      // data.push(country_response[0]);
+      setCountryList(data);
+    } else {
+      setCountryList(data);
+    }
   }, [cityList]);
   const loadOptions = async function (inputValue) {
-    // if (inputValue.length > 2) {
-    const { data = [] } = await getLocationFilter(inputValue);
-    setCityList(data);
-    return data.map(({ cityid: value, ...rest }) => {
-      return {
-        value,
-        label: `${rest.location}`,
-      };
-    });
+    if (inputValue != "") {
+      const { data = [] } = await getLocationFilter(inputValue);
+
+      setFilterData(data);
+      let location_details = data.map(({ cityid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.location + ", " + rest.statename}`,
+        };
+      });
+      if (location_details.length > 0) {
+        let new_data = [...cityList];
+        let filtered_data = location_details.find(
+          (x) => x.value == props.selected.cityid
+        );
+        new_data.push(filtered_data);
+        setCityList(new_data);
+        setLocation(location_details);
+      }
+
+      return location_details;
+    }
   };
 
   const removeTabs = function (index) {
@@ -184,11 +261,11 @@ export function QualificationModal(props) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].startdate = data;
+          new_data[index].startdate = new Date(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].startdate = data;
+        new_data[index].startdate = new Date(data);
       }
     } else if (check == "toDate") {
       new_data[index].enddate = data;
@@ -198,11 +275,11 @@ export function QualificationModal(props) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].enddate = data;
+          new_data[index].enddate = new Date(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].enddate = data;
+        new_data[index].enddate = new Date(data);
       }
     }
 
@@ -213,8 +290,14 @@ export function QualificationModal(props) {
     let form_details = [...formDetails];
     let city_details = [...citySelect];
     city_details.push(data);
-    form_details[index].cityid = data.value;
 
+    form_details[index].cityid = data.value;
+    let obj = {
+      value: data.value,
+      label: data.label,
+    };
+
+    form_details[index].city = obj;
     setFormData(form_details);
     setCitySelect(city_details);
   };
@@ -224,6 +307,11 @@ export function QualificationModal(props) {
     country_details.push(data);
 
     form_details[index].countryid = data.value;
+    let obj = {
+      value: data.value,
+      label: data.label,
+    };
+    form_details[index].country = obj;
     setFormData(form_details);
     setCountrySelect(country_details);
   };
@@ -232,6 +320,11 @@ export function QualificationModal(props) {
     let form_details = [...formDetails];
 
     form_details[index].stateid = data.value;
+    let obj = {
+      value: data.value,
+      label: data.label,
+    };
+    form_details[index].state = obj;
     setFormData(form_details);
     new_data.push(data);
     setStateSelect(new_data);
@@ -383,37 +476,21 @@ export function QualificationModal(props) {
               <Col md={4}>
                 <FormGroup>
                   <Label for="city" className="input-label">
-                    City
+                    City, State
                   </Label>
                   <AsyncSelect
                     name="skills"
                     placeholder="Search to select"
                     loadOptions={loadOptions}
+                    styles={customStyles}
                     isMulti={false}
-                    value={citySelect[index]}
-                    // defaultOptions={citySelect}
+                    value={!item.city.value ? [] : item.city}
+                    defaultOptions={location}
                     onChange={(evt) => onSelectCityDropdown(evt, index)}
+                    className="location-dropdown"
                   />
                 </FormGroup>
               </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="state" className="input-label">
-                    State
-                  </Label>
-                  <AsyncSelect
-                    name="state"
-                    placeholder="Select"
-                    defaultOptions={stateList}
-                    isMulti={false}
-                    value={stateSelect[index]}
-                    onChange={(evt) => onSelectStateDropdown(evt, index)}
-                    onMenuOpen={() => checkCityValid(item.cityid)}
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
               <Col md={4}>
                 <FormGroup>
                   <Label for="country" className="input-label">
@@ -422,37 +499,37 @@ export function QualificationModal(props) {
                   <AsyncSelect
                     name="country"
                     placeholder="Select"
+                    styles={customStyles}
                     defaultOptions={countryList}
                     isMulti={false}
-                    value={countrySelect[index]}
+                    value={!item.country.value ? [] : item.country}
                     onChange={(evt) => onSelectCountryDropdown(evt, index)}
                     onMenuOpen={() => checkCityValid(item.cityid)}
                   />
                 </FormGroup>
               </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="company" className="input-label">
-                    Company
-                  </Label>
-                  <Input
-                    placeholder="Enter Company"
-                    name="company"
-                    type="text"
-                    id="company"
-                    value={item.organization}
-                    maxLength={50}
-                    className="field-input placeholder-text form-control"
-                    onInput={(evt) =>
-                      handleInputChange("company", index, evt.target.value)
-                    }
-                  />
-                  {/* <span className="dropdown-placeholder float-end">
-                    {item.organization ? item.organization.length : 0}/500
-                  </span> */}
-                </FormGroup>
-              </Col>
             </Row>
+
+            <Col md={4}>
+              <FormGroup>
+                <Label for="company" className="input-label">
+                  Company
+                </Label>
+                <Input
+                  placeholder="Enter Company"
+                  name="company"
+                  type="text"
+                  id="company"
+                  value={item.organization}
+                  maxLength={50}
+                  className="field-input placeholder-text form-control"
+                  onInput={(evt) =>
+                    handleInputChange("company", index, evt.target.value)
+                  }
+                />
+              </FormGroup>
+            </Col>
+
             <Row>
               <Col>
                 <FormGroup check>
@@ -487,12 +564,21 @@ export function QualificationModal(props) {
                       id="fromDate"
                       placeholderText="DD/MM/YYYY"
                       className="form-control"
-                      showYearPicker
                       selected={item.startdate}
                       onChange={(evt) =>
                         handleInputChange("fromDate", index, evt)
                       }
                     />
+                    {/* <Input
+                      type="month"
+                      id="monthInput"
+                      name="monthInput"
+                      placeholder="mm-yyyy"
+                      selected={item.startdate}
+                      onChange={(evt) =>
+                        handleInputChange("fromDate", index, evt.target.value)
+                      }
+                    ></Input> */}
                   </InputGroup>
                   <div className="filter-info-text filter-error-msg">
                     {item.fromDateValid
@@ -645,7 +731,7 @@ export function QualificationModal(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              State and Country
+              Country
             </div>
             <div>
               <Row>

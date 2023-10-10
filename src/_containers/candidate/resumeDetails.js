@@ -9,6 +9,7 @@ import axios from "axios";
 import "./profile.scss";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDropzone } from "react-dropzone";
+import Loader from "react-loaders";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 
 export function ResumeDetails(props) {
@@ -16,6 +17,9 @@ export function ResumeDetails(props) {
 
   const resumeDetails = useSelector(
     (state) => state.getProfile.profileData.resumeInfo
+  );
+  const resumeTemplate = useSelector(
+    (state) => state.getResumeTemplate.user.data
   );
   const [candidateDetails, setCandidateDetails] = useState(
     props.candidateDetails
@@ -27,6 +31,8 @@ export function ResumeDetails(props) {
   const [sizeError, setSizeError] = useState(false);
   const [isModal, setModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
+
+  const loading = useSelector((state) => state.getProfile.loader);
 
   useEffect(() => {
     getFileName();
@@ -74,7 +80,7 @@ export function ResumeDetails(props) {
         .then((result) => {
           if (result.data.statusCode == 204) {
             setSuccess(true);
-            setMessage(result.payload.message);
+            setMessage(result.data.message);
           } else {
             setError(true);
           }
@@ -169,129 +175,141 @@ export function ResumeDetails(props) {
         <Row>
           <Col sm="12" lg="12">
             <Card className="card-hover-shadow-2x mb-3">
-              <div
-                className="mt-3 scroll-area-md"
-                style={{ marginLeft: "10px" }}
-              >
-                <Row className="mb-2">
-                  <Col>
-                    <strong className="card-title-text">Resume</strong>
-                  </Col>
-                </Row>
-                <Row>
-                  <Label className="card-p-text">
-                    The recommendation is to utilize the build resume option for
-                    improved job matching
-                  </Label>
-                </Row>
-
-                {resumeDetails ? (
-                  <Row className="mb-1">
-                    {resumeDetails.resumepath ? (
-                      <div>
-                        <strong className="content-title">
-                          <span className="me-2">{fileName}</span>{" "}
-                          <a
-                            target="blank"
-                            href={resumeDetails.resumepath}
-                            download={fileName}
-                            className="me-2"
-                          >
-                            <BsDownload />
-                          </a>
-                          <BsTrash3 onClick={() => setDeleteConfirm(true)} />
-                        </strong>
-                        <div className="card-p-text">
-                          Uploaded on {formatDate(resumeDetails.uploadeddate)}
-                        </div>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
+              {!loading ? (
+                <div
+                  className="mt-3 scroll-area-md"
+                  style={{ marginLeft: "10px" }}
+                >
+                  <Row className="mb-2">
+                    <Col>
+                      <strong className="card-title-text">Resume</strong>
+                    </Col>
                   </Row>
-                ) : (
-                  <></>
-                )}
-
-                <Row className="mb-1 mt-3">
-                  <p>
-                    <BsDownload />
-                    <a
-                      href="https://sadeveastusa001.blob.core.windows.net/cndev-appdata-001/Template/Resume_Template.docx"
-                      download="Resume_Template.docx"
-                      className="card-p-text-black"
-                      style={{ color: "#2F479B", marginLeft: "2px" }}
-                    >
-                      Click here{" "}
-                    </a>
-                    <Label className="card-p-text-black">
-                      to download standard template
+                  <Row>
+                    <Label className="card-p-text">
+                      The recommendation is to utilize the build resume option
+                      for improved job matching
                     </Label>
-                  </p>
-                </Row>
-                <Row className="me-2 ml-5" style={{ marginLeft: "2px" }}>
-                  <Col className="div-box me-1">
-                    <Row className="mt-2">
-                      <p className="card-p-text-black">
-                        Upload your resume here
-                      </p>
-                    </Row>
-                    <Row>
-                      <div {...getRootProps()} className="dropzone">
-                        <input {...getInputProps()} />
-                        <Row>
-                          <label>
-                            <div
-                              className="dropZone"
-                              id="dragbox"
-                              onChange={handleChange}
+                  </Row>
+
+                  {resumeDetails ? (
+                    <Row className="mb-1">
+                      {resumeDetails.resumepath ? (
+                        <div>
+                          <strong className="content-title">
+                            <span className="me-2">{fileName}</span>{" "}
+                            <a
+                              target="blank"
+                              href={resumeDetails.resumepath}
+                              download={fileName}
+                              className="me-2"
                             >
-                              <Button
-                                style={{
-                                  width: "auto",
-                                  backgroundColor: "#2F2E2E",
-                                }}
-                                className="mb-2 mt-0 btn-icon btn-pill btn-text"
-                                color="primary"
-                              >
-                                <span className="me-2">
-                                  <BsUpload />
-                                </span>
-
-                                <span className="me-2">Upload</span>
-                              </Button>
-                            </div>
-                          </label>
-                        </Row>
-                        <span className="file-info">
-                          Support formats:doc, docx, pdf,rtf, upto 5 MB
-                        </span>
-                      </div>
+                              <BsDownload />
+                            </a>
+                            <BsTrash3 onClick={() => setDeleteConfirm(true)} />
+                          </strong>
+                          <div className="card-p-text">
+                            Uploaded on {formatDate(resumeDetails.uploadeddate)}
+                          </div>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </Row>
-                  </Col>
-                  <Col className="div-box">
-                    <Row className="mt-2">
-                      <p className="card-p-text-black">Build your own resume</p>
-                    </Row>
-                    <FormGroup>
-                      <Row style={{ marginLeft: "5px" }}>
-                        <Button
-                          style={{ width: "auto", backgroundColor: "#2F479B" }}
-                          className="mb-2 me-2 btn-icon btn-pill btn-text"
-                          color="primary"
-                          onClick={() => addEditResumeDetails()}
-                        >
-                          <span className="me-2">
-                            <BsUpload />
-                          </span>
+                  ) : (
+                    <></>
+                  )}
 
-                          <span className="me-2">Build</span>
-                        </Button>
+                  <Row className="mb-1 mt-3">
+                    <p>
+                      <BsDownload />
+                      <a
+                        href={resumeTemplate?.[0]?.name}
+                        download="Resume_Template.docx"
+                        className="card-p-text-black"
+                        style={{ color: "#2F479B", marginLeft: "2px" }}
+                      >
+                        Click here{" "}
+                      </a>
+                      <Label className="card-p-text-black">
+                        to download standard template
+                      </Label>
+                    </p>
+                  </Row>
+                  <Row className="me-2 ml-5" style={{ marginLeft: "2px" }}>
+                    <Col className="div-box me-1">
+                      <Row className="mt-2">
+                        <p className="card-p-text-black">
+                          Upload your resume here
+                        </p>
                       </Row>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </div>
+                      <Row>
+                        <div {...getRootProps()} className="dropzone">
+                          <input {...getInputProps()} />
+                          <Row>
+                            <label>
+                              <div
+                                className="dropZone"
+                                id="dragbox"
+                                onChange={handleChange}
+                              >
+                                <Button
+                                  style={{
+                                    width: "auto",
+                                    backgroundColor: "#2F2E2E",
+                                    borderColor: "#2F2E2E",
+                                  }}
+                                  className="mb-2 mt-0 btn-icon btn-pill btn-text"
+                                  color="primary"
+                                >
+                                  <span className="me-2">
+                                    <BsUpload />
+                                  </span>
+
+                                  <span className="me-2">Upload</span>
+                                </Button>
+                              </div>
+                            </label>
+                          </Row>
+                          <span className="file-info">
+                            Support formats:doc, docx, pdf,rtf, upto 5 MB
+                          </span>
+                        </div>
+                      </Row>
+                    </Col>
+                    <Col className="div-box">
+                      <Row className="mt-2">
+                        <p className="card-p-text-black">
+                          Build your own resume
+                        </p>
+                      </Row>
+                      <FormGroup>
+                        <Row style={{ marginLeft: "5px" }}>
+                          <Button
+                            style={{
+                              width: "auto",
+                              backgroundColor: "#2F479B",
+                            }}
+                            className="mb-2 me-2 btn-icon btn-pill btn-text"
+                            color="primary"
+                            onClick={() => addEditResumeDetails()}
+                          >
+                            <span className="me-2">
+                              <BsUpload />
+                            </span>
+
+                            <span className="me-2">Build</span>
+                          </Button>
+                        </Row>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                </div>
+              ) : (
+                <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                  <Loader active={loading} type="ball-pulse" />
+                </div>
+              )}
             </Card>
           </Col>
         </Row>
@@ -312,12 +330,6 @@ export function ResumeDetails(props) {
                 >
                   Build your own Resume!!
                 </div>
-                {/* <div
-                  className="mb-0 d-flex justify-content-center "
-                  style={{ fontWeight: "500", fontSize: "18px" }}
-                >
-                 
-                </div> */}
 
                 <div
                   className="mb-0 d-flex justify-content-center"

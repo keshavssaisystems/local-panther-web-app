@@ -11,6 +11,13 @@
   .filter-error-msg {
     color: #ff0000 !important;
   }
+  .location-dropdown {
+    z-index: 11;
+  }
+  .loader {
+    margin: 0 auto !important;
+    float: none;
+  }
   .profile-img {
     min-width: 100px !important;
     min-height: 130px !important;
@@ -293,11 +300,11 @@
   .card-title-text {
     font-family: Capitana;
     font-size: 16px;
-    font-weight: 400 !important;
+    font-weight: 600 !important;
     line-height: 16px;
     letter-spacing: -0.01em;
     text-align: left;
-    color: #2f479b;
+    color: #2e2f2f;
   }
   .input-label {
     font-family: Capitana;

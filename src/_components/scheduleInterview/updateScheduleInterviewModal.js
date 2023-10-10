@@ -17,16 +17,25 @@ import "./scheduledInterview.scss";
 import InputMask from "react-input-mask";
 import moment from "moment-timezone";
 
-export function ScheduleInterviewModal({
-  candidateData,
+export function UpdateScheduleInterviewModal({
+  interviewData,
   durationOptions,
   postData,
   isOpen = false,
   onClose,
 }) {
-  const [videoModeCheck, setVideoModeCheck] = useState(1);
+  // console.log(interviewData);
+  const [videoModeCheck, setVideoModeCheck] = useState(
+    interviewData.isappvideocall === true ? 0 : 1
+  );
   const [timeOption, setTimeOption] = useState([]);
-  const [formatButton, setFormatButton] = useState(1);
+  const [formatButton, setFormatButton] = useState(
+    interviewData.format === "In-person"
+      ? 3
+      : interviewData.format === "Phone"
+      ? 2
+      : 1
+  );
   const [modal, setModal] = useState(false);
   const [scheduleDateValidation, setScheduleDateValidation] = useState(false);
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
@@ -47,7 +56,6 @@ export function ScheduleInterviewModal({
   useEffect(() => {
     getTimeArray();
   }, []);
-
   const getTimeArray = () => {
     let timeOptions = [];
     let meridiemArray = ["AM", "PM"];
@@ -81,6 +89,8 @@ export function ScheduleInterviewModal({
   };
   const getFormValidation = (event) => {
     event.preventDefault();
+    console.log(event.target.elements.scheduleStartTime.value);
+    console.log(moment(interviewData.starttime).format("hh:mm A"));
     event.target.elements.scheduleDate.value === ""
       ? setScheduleDateValidation(true)
       : setScheduleDateValidation(false);
@@ -146,9 +156,9 @@ export function ScheduleInterviewModal({
       .tz("Etc/UTC")
       .format("HH:mm:ss");
     let data = {
-      scheduleinterviewid: 0,
-      jobid: candidateData.jobid,
-      candidateid: candidateData.candidateid,
+      scheduleinterviewid: interviewData.scheduleinterviewid,
+      jobid: interviewData.jobid,
+      candidateid: interviewData.candidateid,
       scheduledate: scheduleDateUTC,
       starttime: scheduleTimeUTC,
       durationid: Number(event.target.elements.duration.value),
@@ -177,8 +187,9 @@ export function ScheduleInterviewModal({
       isactive: true,
       currentUserId: 0,
     };
+    console.log(data);
     postData(data);
-    onClose();
+    // onClose();
   };
   return (
     <>
@@ -191,7 +202,10 @@ export function ScheduleInterviewModal({
         className="schedule-modal"
         onClosed={() => onClose()}
       >
-        <ModalHeader toggle={() => onClose()}>Schedule interview</ModalHeader>
+        <ModalHeader toggle={() => onClose()}>
+          {" "}
+          Update scheduled interview
+        </ModalHeader>
         <ModalBody className="pt-4">
           <Form onSubmit={(e) => getFormValidation(e)}>
             <Col md="12">
@@ -200,16 +214,16 @@ export function ScheduleInterviewModal({
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Candidate</h6>
                     <p className="mb-0 mt-1 mr-1">
-                      {candidateData.candidatename === undefined
-                        ? candidateData.firstname + " " + candidateData.lastname
-                        : candidateData.candidatename}
+                      {interviewData.candidatename === undefined
+                        ? interviewData.firstname + " " + interviewData.lastname
+                        : interviewData.candidatename}
                     </p>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Job title</h6>
-                    <p className="mb-0 mt-1 mr-1">{candidateData.jobtitle}</p>
+                    <p className="mb-0 mt-1 mr-1">{interviewData.jobtitle}</p>
                   </div>
                 </Col>
                 <Col></Col>
@@ -224,6 +238,9 @@ export function ScheduleInterviewModal({
                       id="scheduleDate"
                       placeholder="Enter date"
                       invalid={scheduleDateValidation}
+                      defaultValue={moment(interviewData.scheduledate).format(
+                        "YYYY-MM-DD"
+                      )}
                       onChange={() => setScheduleDateValidation(false)}
                     />
                     {scheduleDateValidation === true && (
@@ -248,7 +265,15 @@ export function ScheduleInterviewModal({
                       </option>
                       {timeOption.length > 0 &&
                         timeOption.map((options) => (
-                          <option key={options} value={options}>
+                          <option
+                            key={options}
+                            value={options}
+                            defaultValue={
+                              moment(interviewData.starttime).format(
+                                "hh:mm A"
+                              ) === options
+                            }
+                          >
                             {options}{" "}
                           </option>
                         ))}
@@ -278,7 +303,14 @@ export function ScheduleInterviewModal({
                       {durationOptions?.length > 0 &&
                         durationOptions.map((data) => {
                           return (
-                            <option value={data.id} key={data.id}>
+                            <option
+                              value={data.id}
+                              key={data.id}
+                              defaultValue={
+                                Number(interviewData.durationid) ===
+                                Number(data.id)
+                              }
+                            >
                               {data.name}
                             </option>
                           );
@@ -371,6 +403,7 @@ export function ScheduleInterviewModal({
                     id="videoLink"
                     placeholder="Enter video link"
                     invalid={videoLinkValidation}
+                    defaultValue={interviewData.videolink}
                     onChange={() => setVideoLinkValidation(false)}
                   />
                   {videoLinkValidation === true && (
@@ -389,6 +422,7 @@ export function ScheduleInterviewModal({
                     id="interviewAddress"
                     placeholder="Enter interview address"
                     invalid={interviewAddressValidation}
+                    defaultValue={interviewData.interviewaddress}
                     onChange={() => setInterviewAddressValidation(false)}
                   />
                   {interviewAddressValidation === true && (
@@ -406,6 +440,7 @@ export function ScheduleInterviewModal({
                   type="textarea"
                   name="message"
                   id="message"
+                  defaultValue={interviewData.messagetocandidate}
                   placeholder="Enter message to candidate"
                 />
               </FormGroup>
@@ -417,6 +452,7 @@ export function ScheduleInterviewModal({
                   type="textarea"
                   name="hmEmails"
                   id="hmEmails"
+                  defaultValue={interviewData.intervieweremailids}
                   placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
                 />
               </FormGroup>
@@ -431,6 +467,7 @@ export function ScheduleInterviewModal({
                       mask="(999)-999-9999"
                       maskChar={null}
                       name="phoneNo"
+                      defaultValue={interviewData.textremaindernumbers}
                       id="phoneNo"
                       placeholder="Eg: (987)-654-3210"
                     />
@@ -441,7 +478,7 @@ export function ScheduleInterviewModal({
             <div className="divider" />
             <div className="d-block text-center">
               <Button size="lg" color="primary" type="submit">
-                Send interview request
+                Update interview request
               </Button>
             </div>
           </Form>
