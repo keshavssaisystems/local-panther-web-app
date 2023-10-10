@@ -28,6 +28,9 @@ export const CandListView = (props) => {
     props.onCandidateActions(type, candidaterecommendedjobid);
   };
 
+  const showJdModal = (row) => {
+    props.showJdModal(row);
+  };
   const renderButtons = (row) => {
     if (props.type === "liked") {
       return (
@@ -270,7 +273,7 @@ export const CandListView = (props) => {
     }
   };
 
-  const renderMenu = (candidateid, row) => {
+  const renderMenu = (row) => {
     return (
       <div className="d-block w-100 text-center">
         <UncontrolledButtonDropdown className="menu-ellipses" direction="start">
@@ -281,18 +284,15 @@ export const CandListView = (props) => {
             <FontAwesomeIcon icon={faEllipsisV} />
           </DropdownToggle>
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-            <DropdownItem>
+            <DropdownItem onClick={() => showJdModal(row)}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>Job details</span>
             </DropdownItem>
-            {row.customerscheduleddatetime ? (
-              <DropdownItem>
-                <i className="dropdown-icon lnr-license"> </i>
-                <span>Interview details</span>
-              </DropdownItem>
-            ) : (
-              <></>
-            )}
+
+            <DropdownItem>
+              <i className="dropdown-icon lnr-license"> </i>
+              <span>Interview details</span>
+            </DropdownItem>
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
@@ -354,7 +354,7 @@ export const CandListView = (props) => {
     },
     {
       name: <span className="table-title">Action</span>,
-      cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+      cell: (row) => <>{renderMenu(row)}</>,
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,

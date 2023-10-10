@@ -10,10 +10,13 @@ import { CandCardView } from "./candcardview";
 import { CandJobDetail } from "./candjobcard";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { CandListView } from "./candlistview";
+import { JobDetailModal } from "_components/modal/jobdetailmodal";
 import "./candidatelist.scss";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState("matched");
+  const [showJDModal, setShowJDModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState([]);
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -194,6 +197,11 @@ export const CandidateList = (props) => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
+  };
+
+  const onShowJdModal = (row) => {
+    setSelectedRow(row);
+    setShowJDModal(true);
   };
 
   return (
@@ -385,6 +393,7 @@ export const CandidateList = (props) => {
                             candidaterecommendedjobid
                           )
                         }
+                        showJdModal={(e) => onShowJdModal(e)}
                       />
                       <CardPagination
                         totalPages={totalRecords / candLPSize}
@@ -421,6 +430,7 @@ export const CandidateList = (props) => {
                             candidaterecommendedjobid
                           )
                         }
+                        showJdModal={(e) => onShowJdModal(e)}
                       />
                       <CardPagination
                         totalPages={totalRecords / candLPSize}
@@ -457,6 +467,7 @@ export const CandidateList = (props) => {
                             candidaterecommendedjobid
                           )
                         }
+                        showJdModal={(e) => onShowJdModal(e)}
                       />
                       <CardPagination
                         totalPages={totalRecords / candLPSize}
@@ -493,6 +504,7 @@ export const CandidateList = (props) => {
                             candidaterecommendedjobid
                           )
                         }
+                        showJdModal={(e) => onShowJdModal(e)}
                       />
                       <CardPagination
                         totalPages={totalRecords / candLPSize}
@@ -529,6 +541,7 @@ export const CandidateList = (props) => {
                             candidaterecommendedjobid
                           )
                         }
+                        showJdModal={(e) => onShowJdModal(e)}
                       />
                       <CardPagination
                         totalPages={totalRecords / candLPSize}
@@ -565,6 +578,7 @@ export const CandidateList = (props) => {
                             candidaterecommendedjobid
                           )
                         }
+                        showJdModal={(e) => onShowJdModal(e)}
                       />
                       <CardPagination
                         totalPages={totalRecords / candLPSize}
@@ -597,6 +611,21 @@ export const CandidateList = (props) => {
             onConfirm={() => closeSweetAlert()}
           />
           {showAlert.description}
+        </>
+        <>
+          {showJDModal ? (
+            <>
+              <JobDetailModal
+                jobDetail={selectedRow}
+                isOpen={showJDModal}
+                onClose={() => {
+                  setShowJDModal(false);
+                }}
+              ></JobDetailModal>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       </Row>
     </>
