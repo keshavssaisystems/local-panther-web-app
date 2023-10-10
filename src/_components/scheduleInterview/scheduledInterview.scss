@@ -1,74 +1,100 @@
-.schedule-modal{
-    font-family: Capitana;
-    .btn-primary {
-        color: #fff;
-        background-color: #2F479B;
-        border-color: #2F479B;
-    }
-    .detail-padding{
-        padding-top : 0.5rem !important;
-        padding-bottom: 0.7rem !important;
-    }
-    .heading-custom{
-        font-weight: 500;
-        color : #2F2E2E;
-    }
-    .required-star{
-        color: red;
-    }
-    
+.schedule-modal {
+  font-family: Capitana;
+  .btn-primary {
+    color: #fff;
+    background-color: #2f479b;
+    border-color: #2f479b;
+  }
+  .detail-padding {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.7rem !important;
+  }
+  .heading-custom {
+    font-weight: 500;
+    color: #2f2e2e;
+  }
+  .required-star {
+    color: red;
+  }
 }
-.pl-0{
-    padding-left: 0px !important;
+.pl-0 {
+  padding-left: 0px !important;
 }
-.interview-details-modal{
-    font-family: Capitana;
-    // .btn-outline-primary {
-    //     color: #2F479B !important;
-    //     border-color: #2F479B !important;
-    // }
-    .dropdown-menu-header {
-        color: #fff;
-        margin-top: -0.65rem;
-        margin-bottom: 0; 
-        position: relative;
-        z-index: 6;
-    }
-    .interview-p-tag{
-        color: #2F479B !important;
-    }
-    .dropdown-menu-header .dropdown-menu-header-inner {
-        margin: -1px -1px 0;
-        padding: 0.5rem 0.5rem 0 0.5rem;
-        position: relative;
-    }
-    .p-custom{
-        padding: 0.5rem 1rem ;
-    }
+.interview-details-modal {
+  font-family: Capitana;
+  // .btn-outline-primary {
+  //     color: #2F479B !important;
+  //     border-color: #2F479B !important;
+  // }
+  .dropdown-menu-header {
+    color: #fff;
+    margin-top: -0.65rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 6;
+  }
+  .interview-p-tag {
+    color: #2f479b !important;
+  }
+  .dropdown-menu-header .dropdown-menu-header-inner {
+    margin: -1px -1px 0;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    position: relative;
+  }
+  .p-custom {
+    padding: 0.5rem 1rem;
+  }
 }
-.mr-2{
-    margin-right: 5px ;
+.mr-2 {
+  margin-right: 5px;
 }
-.upcoming-interview{
-    font-family: Capitana;
-    .dropdown-menu-header {
-        color: #fff;
-        margin-top: -0.65rem;
-        margin-bottom: 0; 
-        position: relative;
-        z-index: 6;
-    }
-    .interview-p-tag{
-        color: #2F479B !important;
-    }
-    .dropdown-menu-header .dropdown-menu-header-inner {
-        margin: -1px -1px 0;
-        padding: 0.5rem 0.5rem 0 0.5rem;
-        position: relative;
-    }
-    .p-custom{
-        padding: 0.5rem 1rem ;
-    }
+.upcoming-interview {
+  font-family: Capitana;
+  .dropdown-menu-header {
+    color: #fff;
+    margin-top: -0.65rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 6;
+  }
+  .interview-p-tag {
+    color: #2f479b !important;
+  }
+  .dropdown-menu-header .dropdown-menu-header-inner {
+    margin: -1px -1px 0;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    position: relative;
+  }
+  .p-custom {
+    padding: 0.5rem 1rem;
+  }
+}
+
+.upcomming-card {
+  .badge-custom {
+    text-transform: none;
+  }
+  .icon-settings {
+    margin-bottom: 4px !important;
+  }
+}
+.candidate-schedule {
+  .interview-details-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2e2f2f;
+  }
+
+  .link-icon {
+    height: 6px;
+  }
+  .copy-link-icon {
+    height: 13px;
+    cursor: pointer;
+  }
+  .success-message {
+    font-size: 12px;
+  }
 }
 
 .upcomming-card{
@@ -96,3 +122,4 @@
         color: #2F479B;
     }
 }
+

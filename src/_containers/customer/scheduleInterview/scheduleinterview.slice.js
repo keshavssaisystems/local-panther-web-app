@@ -96,6 +96,15 @@ export const getAllInterviewThunk = createAsyncThunk(
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V3);
   }
 );
+// getSchedulesByCandidateId thunk
+export const getSchedulesByCandidateId = createAsyncThunk(
+  `${name}/getSchedulesByCandidateId`,
+  async ({ candidateId, start, end }) => {
+    debugger;
+    const UPCOMING_INTEVRIEW_END_POINT_V2 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=10&pageNumber=1&candidateId=${candidateId}&startDate=${start}&endDate=${end}&isActive=true&isPaginationRequired=false`;
+    return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V2);
+  }
+);
 
 // Create the slice
 const scheduleInterviewSlice = createSlice({
@@ -106,6 +115,7 @@ const scheduleInterviewSlice = createSlice({
     upcomingInterview: [],
     upcomingInterviewWOPagination: [],
     allInterview: [],
+    candidateSchedules: [],
     loading: false,
   },
   reducers: {},
@@ -215,7 +225,15 @@ const scheduleInterviewSlice = createSlice({
       state.allInterview = action.payload.data;
       state.loading = false;
     },
-    [getAllInterviewThunk.rejected]: (state, action) => {
+    [getAllInterviewThunk.rejected]: (state, action) => {},
+    [getSchedulesByCandidateId.pending]: (state) => {
+      state.loading = true;
+    },
+    [getSchedulesByCandidateId.fulfilled]: (state, action) => {
+      state.candidateSchedules = action.payload.data;
+      state.loading = false;
+    },
+    [getSchedulesByCandidateId.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
     },
@@ -235,6 +253,7 @@ export const scheduleInterviewActions = {
   cancelInterviewThunk,
   updateScheduledInterviewThunk,
   getAllInterviewThunk,
+  getSchedulesByCandidateId,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

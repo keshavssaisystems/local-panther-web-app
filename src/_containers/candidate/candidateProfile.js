@@ -12,7 +12,7 @@ import {
   FormGroup,
   Container,
 } from "reactstrap";
-import Tabs from "react-responsive-tabs";
+import Loader from "react-loaders";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 import "./profile.scss";
@@ -27,6 +27,7 @@ import { CertificationDetails } from "./certifications";
 import { AdditionalInformation } from "./additionalInfo";
 import { JobPreferences } from "./jobPreferences";
 import {
+  getSkillsFilter,
   getJobTitleActions,
   educationActions,
   getProfileActions,
@@ -39,8 +40,8 @@ import {
   shiftActions,
   getpayPeriodActions,
   experienceLevelActions,
+  resumeTemplateActions,
 } from "_store";
-import { getLocationFilter } from "_store";
 
 export function CandidateProfile() {
   const dispatch = useDispatch();
@@ -99,17 +100,17 @@ export function CandidateProfile() {
   });
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  const [popularSkills, setPopularSkills] = useState([]);
 
   useEffect(() => {
     loadPage();
   }, []);
 
   const loadPage = async function () {
-    await getDropdownLists();
-
     await getPersonalDetails();
+    await getDropdownLists();
   };
-
+  let popular_skills = [];
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());
     await dispatch(ethnicityActions.getEthnicity());
@@ -122,6 +123,9 @@ export function CandidateProfile() {
     await dispatch(getJobTitleActions.getJobTitle());
     await dispatch(getpayPeriodActions.getpayPeriod());
     await dispatch(experienceLevelActions.getExperienceLevelThunk());
+    await dispatch(resumeTemplateActions.getResumeTemplate());
+    popular_skills = await getSkillsFilter("java");
+    setPopularSkills(popular_skills.data);
   };
 
   const getPersonalDetails = async function () {
@@ -201,7 +205,7 @@ export function CandidateProfile() {
   };
 
   return (
-    <div>
+    <div className="profile-view">
       <div className="profile-view">
         <PageTitle heading="Candidate Profile" icon={candidatelogo} />
       </div>
@@ -225,6 +229,7 @@ export function CandidateProfile() {
             <Col>
               <CandidateSkills
                 skillInfo={profileData.skillsInfo}
+                popularSkillData={popularSkills}
                 onCallBack={() => loadPage()}
               />
             </Col>
@@ -259,7 +264,9 @@ export function CandidateProfile() {
           </Row>
         </div>
       ) : (
-        <></>
+        <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+          <Loader active={true} type="ball-pulse" />
+        </div>
       )}
     </div>
   );

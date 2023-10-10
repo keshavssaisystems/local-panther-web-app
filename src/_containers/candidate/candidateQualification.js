@@ -11,6 +11,7 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { QualificationModal } from "./qualificationModal";
 import { useDispatch, useSelector } from "react-redux";
+import Loader from "react-loaders";
 
 export function CandidateQualification(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
@@ -18,6 +19,7 @@ export function CandidateQualification(props) {
     { id: 1, title: "Tab 1", content: <QualificationModal /> },
   ]);
 
+  const loading = useSelector((state) => state.getProfile.loader);
   const dispatch = useDispatch();
   const [editModal, setEditModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
@@ -55,6 +57,19 @@ export function CandidateQualification(props) {
     setSuccess(false);
     setError(false);
     props.onCallBack();
+  };
+  const getDate = function (data) {
+    let text = "";
+    if (data.startdate) {
+      text = formatDate(data.startdate);
+
+      if (data.enddate) {
+        text += " to " + formatDate(data.enddate);
+      }
+    } else if (data.enddate) {
+      text = formatDate(data.enddate);
+    }
+    return text;
   };
   const [newTabId, setNewTabId] = useState(2);
   const addMoreTabs = function () {
@@ -115,65 +130,76 @@ export function CandidateQualification(props) {
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
-            <PerfectScrollbar>
-              <Row className="mb-3">
-                <Col>
-                  <strong className="card-title-text">Qualifications</strong>
-                </Col>
+            {!loading ? (
+              <div>
+                <PerfectScrollbar>
+                  <Row className="mb-3">
+                    <Col>
+                      <strong className="card-title-text">
+                        Qualifications
+                      </strong>
+                    </Col>
 
-                <Col>
-                  <Label
-                    className="float-end me-3 link-text"
-                    onClick={(evt) => setPersonalModal(true)}
-                  >
-                    Add
-                  </Label>
-                </Col>
-              </Row>
-              <Row>
-                {qualificationDetails?.length > 0 ? (
-                  qualificationDetails.map((item) => (
-                    <div className="mb-2">
-                      <Col>
-                        <strong className="me-2 content-title">
-                          {item.jobtitle}{" "}
-                        </strong>
-                        <div className="float-end">
-                          <BsPencil
-                            className="icons"
-                            onClick={(evt) => edit(item)}
-                          />{" "}
-                          <BsTrash3
-                            className="icons me-3"
-                            onClick={() =>
-                              deleteData(item.candidatequalificationid)
-                            }
-                          />
+                    <Col>
+                      <Label
+                        className="float-end me-3 link-text"
+                        onClick={(evt) => setPersonalModal(true)}
+                      >
+                        Add
+                      </Label>
+                    </Col>
+                  </Row>
+                  <Row>
+                    {qualificationDetails?.length > 0 ? (
+                      qualificationDetails.map((item) => (
+                        <div className="mb-2">
+                          <Col>
+                            <strong className="me-2 content-title">
+                              {item.jobtitle}{" "}
+                            </strong>
+                            <div className="float-end">
+                              <BsPencil
+                                className="icons"
+                                onClick={(evt) => edit(item)}
+                              />{" "}
+                              <BsTrash3
+                                className="icons me-3"
+                                onClick={() =>
+                                  deleteData(item.candidatequalificationid)
+                                }
+                              />
+                            </div>
+                          </Col>
+
+                          <span className="mb-0 card-p-text-black">
+                            {getText(item)}
+                          </span>
+
+                          {item.startdate ? (
+                            <div className="card-p-text-black">
+                              {/* {formatDate(item.startdate)}
+                          {item.startdate && item.enddate ? +" to " : ""}
+                          {formatDate(item.enddate)} */}
+                              {getDate(item)}
+                            </div>
+                          ) : (
+                            <></>
+                          )}
                         </div>
-                      </Col>
-
-                      <span className="mb-0 card-p-text-black">
-                        {getText(item)}
-                      </span>
-
-                      {item.startdate ? (
-                        <div className="card-p-text-black">
-                          {formatDate(item.startdate)}
-                          {" to "}
-                          {formatDate(item.enddate)}
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data available
-                  </div>
-                )}
-              </Row>
-            </PerfectScrollbar>
+                      ))
+                    ) : (
+                      <div className="d-flex justify-content-center">
+                        No Data available
+                      </div>
+                    )}
+                  </Row>
+                </PerfectScrollbar>
+              </div>
+            ) : (
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={loading} type="ball-pulse" />
+              </div>
+            )}
           </div>
         </Card>
       </div>
@@ -231,8 +257,6 @@ export function CandidateQualification(props) {
                           {item.company}
                           {", "}
                           {item.cityname}
-                          {", "}
-                          {item.statename}
                           {", "}
                           {item.countryname}
                           {", "}
