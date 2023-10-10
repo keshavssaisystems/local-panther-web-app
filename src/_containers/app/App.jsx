@@ -44,6 +44,7 @@ import {
   PartiallyFilledJobs,
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
+import { Calendar } from "_containers/customer/common/calendar";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -230,6 +231,10 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
+          <Route
+            path="/calendar-poc"
+            element={<Calendar title={"Microsoft Calendar"} />}
+          />
         </>
       );
     } else {

@@ -289,7 +289,10 @@ export function UpcomingVideoDetails({
                 )}
               <div className="p-custom">
                 <p className="mb-0">
-                  Interviewers - {interviewDetails?.intervieweremailids}
+                  Interviewers -{" "}
+                  {interviewDetails?.intervieweremailids === ""
+                    ? "No interviewer added"
+                    : interviewDetails?.intervieweremailids}
                 </p>
               </div>
             </div>

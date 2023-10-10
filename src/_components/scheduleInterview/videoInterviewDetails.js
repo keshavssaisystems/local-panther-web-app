@@ -235,7 +235,7 @@ export function VideoInterviewDetails({
             </div>
             <div className="p-custom">
               <p className="mb-0">
-                {scheduled} : {startTime} to {endTime} ({" "}
+                {scheduled} at {startTime} to {endTime} ({" "}
                 {interviewDetail.duration} )
               </p>
             </div>
@@ -279,7 +279,7 @@ export function VideoInterviewDetails({
               )}
             <div className="p-custom">
               <p className="mb-0">
-                Interviewer :{" "}
+                Interviewer -{" "}
                 {interviewDetail?.intervieweremailids === ""
                   ? "No interviewer added"
                   : interviewDetail?.intervieweremailids}
