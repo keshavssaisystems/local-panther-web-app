@@ -43,7 +43,7 @@ import {
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
 } from "_containers/admin";
-import { CandidateSchedules } from "_containers/candidate/candidateSchedules";
+import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);

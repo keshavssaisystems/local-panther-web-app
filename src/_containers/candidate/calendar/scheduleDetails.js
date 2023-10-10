@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Card, CardBody } from "reactstrap";
-import "../customer/scheduleInterview/scheduleInterview.scss";
+import "../../customer/scheduleInterview/scheduleInterview.scss";
 import moment from "moment-timezone";
-import videoIcon from "../../assets/utils/images/camera-video-fill.svg";
-import personIcon from "../../assets/utils/images/person-fill.svg";
-import linkIcon from "../../assets/utils/images/link.png";
-import copyLinkIcon from "../../assets/utils/images/copy-link.png";
+import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
+import personIcon from "../../../assets/utils/images/person-fill.svg";
+import linkIcon from "../../../assets/utils/images/link.png";
+import copyLinkIcon from "../../../assets/utils/images/copy-link.png";
 
 export function ScheduleDetails({ interviewDetail }) {
   const [isCopied, setIsCopied] = useState(false);
@@ -87,7 +87,9 @@ export function ScheduleDetails({ interviewDetail }) {
               <p className="mb-0 interview-details-label">Interviewer :</p>
               <div>
                 <img className="me-3" src={personIcon} alt="video" />
-                <span style={{ verticalAlign: "middle" }}>Emily Johnson</span>
+                <span style={{ verticalAlign: "middle" }}>
+                  {interviewDetail.interviewername}
+                </span>
               </div>
             </div>
             {interviewDetail.videolink ? (

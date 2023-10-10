@@ -1,41 +1,27 @@
 import React, { useState, useEffect, useCallback } from "react";
-import PageTitle from "../../_components/common/pagetitle";
-import titlelogo from "../../assets/utils/images/candidate.svg";
+import PageTitle from "../../../_components/common/pagetitle";
+import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
   Row,
   Col,
   Card,
   Container,
-  ButtonGroup,
   ModalHeader,
   CardBody,
   Input,
   Modal,
 } from "reactstrap";
-import "../customer/scheduleInterview/scheduleInterview.scss";
+import "../../customer/scheduleInterview/scheduleInterview.scss";
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  customerCandidateListsActions,
-  scheduleInterviewActions,
-} from "_store";
+import { scheduleInterviewActions } from "_store";
 import { ScheduleDetails } from "./scheduleDetails";
-import { OverlayTrigger, Popover } from "react-bootstrap";
 
 export function CandidateSchedules() {
-  const [showPopup, setShowPopup] = useState(false);
-  const [page, setPage] = useState(1);
-  const [selectedJobId, setSelectedJobId] = useState(27);
-  const onSelectClick = (evt) => {
-    setSelectedJobId(evt.target.value);
-    getCandidateList(evt.target.value);
-  };
   const dispatch = useDispatch();
-  const getCandidateList = async function (jobId) {
-    await dispatch(scheduleInterviewActions.getScheduleInterviewThunk(jobId));
-  };
+
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   function formatDate(date) {
     const year = date.getFullYear();
@@ -69,16 +55,6 @@ export function CandidateSchedules() {
       start: formattedFirstDay,
       end: formattedLastDay,
     });
-    getCandidateList(selectedJobId);
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
-    dispatch(scheduleInterviewActions.getDurationThunk());
-    dispatch(
-      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
-      })
-    );
   }, []);
   const getUpcomingData = async function (filterdata) {
     debugger;
@@ -187,11 +163,22 @@ export function CandidateSchedules() {
       <div className="rbc-toolbar">
         <span className="rbc-btn-group">
           <div>
-            <span className="me-2" onClick={() => onNavigate("TODAY")}>
+            <span
+              style={{ cursor: "pointer" }}
+              className="me-2"
+              onClick={() => onNavigate("TODAY")}
+            >
               Today
             </span>
-            <BsArrowLeft className="me-2" onClick={() => onNavigate("PREV")} />
-            <BsArrowRight onClick={() => onNavigate("NEXT")} />
+            <BsArrowLeft
+              style={{ cursor: "pointer" }}
+              className="me-2"
+              onClick={() => onNavigate("PREV")}
+            />
+            <BsArrowRight
+              style={{ cursor: "pointer" }}
+              onClick={() => onNavigate("NEXT")}
+            />
           </div>
         </span>
 
