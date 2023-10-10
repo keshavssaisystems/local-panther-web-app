@@ -28,6 +28,7 @@ import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { MessageCard } from "./messageCard";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -35,9 +36,11 @@ export function VideoInterviewDetails({
   postInviteData,
   cancelScheduleData,
   editScheduledInterview,
+  postMessageData,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
@@ -119,6 +122,7 @@ export function VideoInterviewDetails({
                 size="sm"
                 className="mb-2 mr-2 btn-transition"
                 color="primary"
+                onClick={() => setShowMessage(!showMessage)}
               >
                 {" "}
                 Message{" "}
@@ -184,6 +188,14 @@ export function VideoInterviewDetails({
           <InviteToInterviewCard
             interviewId={interviewDetail?.scheduleinterviewid}
             postInviteData={(e) => postInviteData(e)}
+          />
+        </div>
+      )}
+      {showMessage === true && (
+        <div className="mt-2 mb-2">
+          <MessageCard
+            interviewId={interviewDetail?.scheduleinterviewid}
+            postMessageData={(e) => postMessageData(e)}
           />
         </div>
       )}

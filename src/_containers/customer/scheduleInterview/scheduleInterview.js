@@ -303,7 +303,7 @@ export function ScheduleInterview() {
           id: blockedData.scheduleinterviewid,
           data: blockedData,
           format: blockedData.format,
-          title: "Blocked",
+          title: "",
           start: new Date(startDate),
           end: new Date(endDate),
           color: "#2F479B",
@@ -312,6 +312,8 @@ export function ScheduleInterview() {
       }
     });
   }
+
+  const postMessageData = (formData) => {};
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -499,6 +501,7 @@ export function ScheduleInterview() {
                       postNotesData={(e) => postNotesData(e)}
                       postInviteData={(e) => postInviteData(e)}
                       cancelScheduleData={(e) => cancelScheduleData(e)}
+                      postMessageData={(e) => postMessageData(e)}
                     />
                   </CardBody>
                 </Card>
@@ -522,6 +525,7 @@ export function ScheduleInterview() {
           postInviteData={(e) => postInviteData(e)}
           cancelScheduleData={(e) => cancelScheduleData(e)}
           editScheduledInterview={(e) => editScheduledInterview(e)}
+          postMessageData={(e) => postMessageData(e)}
         />
         <UpdateScheduleInterviewModal
           interviewData={popupData}
