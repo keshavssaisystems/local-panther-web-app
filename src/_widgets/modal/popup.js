@@ -2,9 +2,9 @@
 import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Table } from "_widgets";
+import Loader from 'react-loaders';
 
-
-export function Popup({ isOpen, title, columns, data, setIsOpen }) {
+export function Popup({ isOpen, title, columns, data, setIsOpen, scheduledLoading }) {
 
   return (
     <div>
@@ -12,6 +12,8 @@ export function Popup({ isOpen, title, columns, data, setIsOpen }) {
       <ModalHeader toggle={() => setIsOpen(false)}>{title}</ModalHeader>
       <ModalBody>
         <Table 
+          progressPending={scheduledLoading}
+          progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
           columns={columns}
           data={data}
           fixedHeader

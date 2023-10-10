@@ -128,20 +128,19 @@ const adminReportSlice = createSlice({
     
     // scheduled interview list
     [scheduledInterviewListThunk.pending]: (state) => {
-      state.loading = true;
+      state.scheduledLoading = true;
       state.error = null;
     },
     [scheduledInterviewListThunk.fulfilled]: (state, { payload = {} }) => {
       const { data: { scheduledInterviewList = [], totalRows = 0 } = {}} = payload;
-      state.loading = false;
+      state.scheduledLoading = false;
       state.scheduledInterviewList = scheduledInterviewList;      
       state.totalScheduledInterview = totalRows;
     },
     [scheduledInterviewListThunk.rejected]: (state, action) => {
-      state.loading = false;
+      state.scheduledLoading = false;
       state.error = action.error;
     },
-
 
   },
 });

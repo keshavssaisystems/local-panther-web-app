@@ -31,7 +31,11 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 export function OpenJobs() {
   const dispatch = useDispatch()
-  const { openJobsList: data = [], scheduledInterviewList = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
+  const { 
+    openJobsList: data = [], 
+    scheduledInterviewList = [],
+    scheduledLoading = false, 
+    loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
   
   let [isOpen, setIsOpen] = useState(false);
   let [startDate, setStartDate] = useState();
@@ -52,7 +56,6 @@ export function OpenJobs() {
   }
   
   const handleDateChange = (name, value) => {
-
     setFilter({
       ...filter,
       [name]: moment(value).format('YYYY-MM-DD')
@@ -75,10 +78,10 @@ export function OpenJobs() {
     setIsOpen(true)
   }
 
-  const handleRowClicked = (e) => {
+  /* const handleRowClicked = (e) => {
     dispatch()
     setIsOpen(true)
-  }
+  } */
 
   const columns = [
     {
@@ -339,6 +342,7 @@ export function OpenJobs() {
         setIsOpen={setIsOpen}
         data={scheduledInterviewList}
         columns={scheduledListColumns}
+        scheduledLoading={scheduledLoading}
       />
     </>
   );
