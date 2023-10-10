@@ -118,6 +118,8 @@ export function OpenJobs() {
   const dispatch = useDispatch()
   const { openJobsList: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
   
+  let [startDate, setStartDate] = useState();
+  let [endDate, setEndDate] = useState();
   let [filter, setFilter] = useState({});
 
   useEffect(() => {
@@ -132,9 +134,24 @@ export function OpenJobs() {
       [name]: value
     })
   }
+  
+  const handleDateChange = (name, value) => {
+
+    setFilter({
+      ...filter,
+      [name]: moment(value).format('YYYY-MM-DD')
+    })
+  }
 
   const applyFilter = () => {
     dispatch(openJobsThunk(filter))
+  }
+  
+  const clearFilter = () => {
+    setFilter({})
+    setStartDate(null)
+    setEndDate(null)
+    dispatch(openJobsThunk())
   }
 
   return (
@@ -181,14 +198,15 @@ export function OpenJobs() {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        name="fromDate"
-                        id="fromDate"
+                        dateFormat={'yyyy-MM-dd'}
+                        name="startDate"
                         placeholderText="From"
                         className="form-control"
-                        // selected={item.startdate}
-                        // onChange={(evt) =>
-                        //   handleInputChange("fromDate", index, evt)
-                        // }
+                        selected={startDate}
+                        onChange={(date) => {
+                          handleDateChange("startDate", date)
+                          setStartDate(date)
+                        }}
                       />
                     </InputGroup>
                   </FormGroup>
@@ -200,38 +218,41 @@ export function OpenJobs() {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        name="fromDate"
-                        id="fromDate"
+                        dateFormat={'yyyy-MM-dd'}
+                        name="endDate"
                         placeholderText="To"
                         className="form-control"
-                        // selected={item.startdate}
-                        // onChange={(evt) =>
-                        //   handleInputChange("fromDate", index, evt)
-                        // }
+                        selected={endDate}
+                        onChange={(date) => {
+                          handleDateChange("endDate", date)
+                          setEndDate(date)
+                        }}
                       />
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <Button
+                <Col lg="1" md="2" sm="12" sx="12">
+                  <Button
                         style={{background: 'rgb(47 71 155)'}}
                         className="btn-square btn btn-primary"
                         type="button"
                         onClick={() => applyFilter()}
-                      >
-                      <FontAwesomeIcon icon={faSearch} />  Search
+                      >  Search
+                  </Button>
+                </Col>
+                <Col lg="2" md="2" sm="12" sx="12">
+                      <Button
+                        className="btn-square btn btn-primary"
+                        type="button"
+                        onClick={() => clearFilter()}
+                      > Clear Filter
                       </Button>
-                    </InputGroup>
-                  </FormGroup>
                 </Col>
               </Row>
 
-              {loading && <Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
-
-
               <Table 
+                progressPending={loading}
+                progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
                 columns={columns}
                 data={data}
                 fixedHeader
