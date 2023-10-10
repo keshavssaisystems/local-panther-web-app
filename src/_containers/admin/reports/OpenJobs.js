@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import Loader from "react-loaders";
 
 import { 
-  Input,
   Col, 
   Row, 
   FormGroup, 
@@ -17,15 +17,16 @@ import {
   DropdownMenu, 
   DropdownItem } from "reactstrap";
 
+import { SkillsFilter, LocationFilter } from "../filterComponent";
 import { Table } from "_widgets";
+import { openJobsThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faSearch, faFileExcel, faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
-import { openJobsThunk } from "../_redux/report.slice";
 
 const columns = [
   {
@@ -115,12 +116,27 @@ const columns = [
 
 export function OpenJobs() {
   const dispatch = useDispatch()
+  const { openJobsList: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
+  
+  let [filter, setFilter] = useState({});
+
   useEffect(() => {
     dispatch(openJobsThunk())
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const { openJobsList: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
+
+  const handleChange = (name, value) => {
+    setFilter({
+      ...filter,
+      [name]: value
+    })
+  }
+
+  const applyFilter = () => {
+    dispatch(openJobsThunk(filter))
+  }
+
   return (
     <>
       <PageTitle heading="Open Jobs" icon={titlelogo} />
@@ -151,16 +167,12 @@ export function OpenJobs() {
               </div>
             </CardHeader>
             <CardBody>
-              <Row>
+              <Row style={{zIndex: 9, position: 'relative'}}>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <Input name="skills" type="select">
-                    <option value="">Select skills</option>
-                  </Input>
+                  <SkillsFilter name={"skillId"} placeholder={"Select Skills"} onChange={handleChange}/>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <Input name="skills" type="select">
-                    <option value="">Select Location</option>
-                  </Input>
+                  <LocationFilter name={"cityId"} placeholder={"Select Location"} onChange={handleChange}/>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
@@ -171,7 +183,7 @@ export function OpenJobs() {
                       <DatePicker
                         name="fromDate"
                         id="fromDate"
-                        placeholderText="DD/MM/YYYY"
+                        placeholderText="From"
                         className="form-control"
                         // selected={item.startdate}
                         // onChange={(evt) =>
@@ -190,7 +202,7 @@ export function OpenJobs() {
                       <DatePicker
                         name="fromDate"
                         id="fromDate"
-                        placeholderText="DD/MM/YYYY"
+                        placeholderText="To"
                         className="form-control"
                         // selected={item.startdate}
                         // onChange={(evt) =>
@@ -207,7 +219,7 @@ export function OpenJobs() {
                         style={{background: 'rgb(47 71 155)'}}
                         className="btn-square btn btn-primary"
                         type="button"
-                        // onClick={() => onSubmit()}
+                        onClick={() => applyFilter()}
                       >
                       <FontAwesomeIcon icon={faSearch} />  Search
                       </Button>
@@ -216,11 +228,14 @@ export function OpenJobs() {
                 </Col>
               </Row>
 
+              {loading && <Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
+
+
               <Table 
                 columns={columns}
                 data={data}
                 fixedHeader
-                fixedHeaderScrollHeight="370px"
+                fixedHeaderScrollHeight="360px"
               />
             </CardBody>
           </Card>

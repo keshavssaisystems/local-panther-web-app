@@ -6,8 +6,14 @@ const name = 'adminReport';
 // Open Jobs thunk
 export const openJobsThunk = createAsyncThunk(
   `${name}/openJobsThunk`,
-  async (payload) => {
-    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetOpenJobsList?pageNumber=1&pageSize=10`;
+  async (payload = {}) => {
+    payload = {
+      ...payload,
+      pageNumber: 1,
+      pageSize: 10
+    }
+
+    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(OPEN_JOBS_END_POINT);
   }
 );
@@ -110,7 +116,8 @@ const adminReportSlice = createSlice({
 export const adminReportActions = {
   ...adminReportSlice.actions,
   openJobsThunk, // Export the async open jobs action
-  newCandidateThunk // Export the async new candidate action
+  newCandidateThunk, // Export the async new candidate action
+  hiringManagerThunk // Export the async hiring manager action
 };
 
 export const adminReportReducer = adminReportSlice.reducer;
