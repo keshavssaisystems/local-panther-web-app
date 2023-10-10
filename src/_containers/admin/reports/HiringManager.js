@@ -25,7 +25,7 @@ import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { newCandidateThunk } from "../_redux/report.slice";
+import { hiringManagerThunk } from "../_redux/report.slice";
 
 const columns = [
   {
@@ -51,19 +51,19 @@ const columns = [
 ];
 
 
-export function NewCandidate() {
+export function HiringManager({ title = 'Hiring Manager Report' }) {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(newCandidateThunk())
+    dispatch(hiringManagerThunk())
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { newCandidate: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
+  const { hiringManager: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
 
   return (
     <>
-      <PageTitle heading="New Candidate" icon={titlelogo} />
+      <PageTitle heading={title} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">

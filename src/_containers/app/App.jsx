@@ -37,6 +37,7 @@ import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConst
 import {
   OpenJobs,
   NewCandidate,
+  HiringManager,
   CandidateReport,
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
@@ -115,42 +116,16 @@ export function App() {
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
           />
-          <Route
-            path="/report"
-            element={
-              <PrivateRoute>
-                <AdminUnderConstruction title={"Reports"} />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/report" element={<HiringManager title={"Hiring Manager Report"}/>} />
+          <Route path="/report/hiring-manager-report" element={<HiringManager title={"Hiring Manager Report"}/>} />
           <Route path="/report/open-jobs" element={<OpenJobs />} />
           <Route path="/report/new-candidates" element={<NewCandidate />} />
-          
           <Route path="/report/partially-filled-job" element={<AdminUnderConstruction title={"Partially filled jobs"} />} />
-          <Route
-            path="/report/incomplete-candidate-profile"
-            element={<AdminUnderConstruction title={"Incomplete candidate profile"}/>}
-          />
-          <Route
-            path="/report/hiring-manager-report"
-            element={<AdminUnderConstruction title={"Hiring manager report"}/>}
-          />
-          <Route
-            path="/report/candidate-report"
-            element={<AdminUnderConstruction title={"Candidate Report"}/>}
-          />
-          <Route
-            path="/report/jobs-without-matched-candidates"
-            element={<AdminUnderConstruction title={"Jobs without matched candidate"}/>}
-          />
-          <Route
-            path="/report/canddates-without-matched-jobs"
-            element={<AdminUnderConstruction title={"Candidate without matched jobs"}/>}
-          />
-          <Route
-            path="/report/non-published-jobs"
-            element={<AdminUnderConstruction title={"Non published jobs"}/>}
-          />
+          <Route path="/report/incomplete-candidate-profile" element={<AdminUnderConstruction title={"Incomplete candidate profile"}/>} />
+          <Route path="/report/candidate-report" element={<AdminUnderConstruction title={"Candidate Report"}/>} />
+          <Route path="/report/jobs-without-matched-candidates" element={<AdminUnderConstruction title={"Jobs without matched candidate"}/>} />
+          <Route path="/report/canddates-without-matched-jobs" element={<AdminUnderConstruction title={"Candidate without matched jobs"}/>} />
+          <Route path="/report/non-published-jobs" element={<AdminUnderConstruction title={"Non published jobs"}/>} />
         </>
       );
     } else if (userroleid === 2) {
@@ -219,14 +194,6 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
-          <Route
-            path="/report"
-            element={
-              <PrivateRoute>
-                <CustomerUnderConstruction title={"Reports"} />
-              </PrivateRoute>
-            }
-          />
         </>
       );
     } else {
