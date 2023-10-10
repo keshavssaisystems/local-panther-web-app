@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 
 import { getSkillsFilter } from "_store";
+import Loader from "react-loaders";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -44,6 +45,7 @@ export function CandidateSkills(props) {
   );
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
+  const [loader, setLoader] = useState(true);
 
   const [selectedExp, setSelectedExp] = useState([]);
   useEffect(() => {
@@ -79,13 +81,18 @@ export function CandidateSkills(props) {
       };
     });
     setSelectedExp(selected_exp);
+    setLoader(false);
+    loadDefaultOptions(data);
   }, [get_response]);
 
   const closeModal = function () {
+    setLoader(true);
     setPersonalModal(false);
     setSuccess(false);
     setError(false);
     setMustHaveValidation(false);
+    setSelectedData([]);
+    setSkillsMultiple([]);
     props.onCallBack();
   };
   const [selectedData, setSelectedData] = useState({});
@@ -112,11 +119,12 @@ export function CandidateSkills(props) {
     setSelectedSkillData(data_new);
   };
 
-  useEffect(() => {
-    loadDefaultOptions();
-  }, []);
+  // useEffect(() => {
+  //   loadDefaultOptions();
+  // }, []);
   useEffect(() => {
     let slice_array = [...skills];
+
     let index = skills.findIndex((x) => x.value == selectedData.value);
 
     let data = slice_array.filter(function (obj) {
@@ -232,7 +240,7 @@ export function CandidateSkills(props) {
     }
   };
 
-  const loadDefaultOptions = async function () {
+  const loadDefaultOptions = async function (selectedData) {
     const { data = [] } = await getSkillsFilter("java");
     let filtered_data = data.map(({ skillid: value, ...rest }) => {
       return {
@@ -240,7 +248,12 @@ export function CandidateSkills(props) {
         label: `${rest.skillname}`,
       };
     });
-    setSkills(filtered_data);
+
+    const uniqueArray = filtered_data.filter((item1) => {
+      return !selectedData.find((item2) => item1.value === item2.value);
+    });
+
+    setSkills(uniqueArray);
   };
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -292,39 +305,45 @@ export function CandidateSkills(props) {
                     </Label>
                   </Col>
                 </Row>
-                <Row style={{ marginLeft: "2px" }}>
-                  {getResponse?.length > 0 ? (
-                    getResponse.map((item) => (
-                      <Button
-                        className="
+                {!loader ? (
+                  <Row style={{ marginLeft: "2px" }}>
+                    {getResponse?.length > 0 ? (
+                      getResponse.map((item) => (
+                        <Button
+                          className="
                        mb-2 me-2 skills-view btn-shadow btn-outline-2x"
-                        outline
-                        color="light"
-                      >
-                        <strong className="skills-view-text">
-                          {" "}
-                          {item.skillname + " "}
-                        </strong>
-                        <span className="skills-exp-text me-1">
-                          {item.yearsofexperience
-                            ? item.yearsofexperience + "years "
-                            : ""}
-                        </span>
-                        <span
-                          aria-hidden="true"
-                          style={{ fontSize: "15px", cursor: "pointer" }}
-                          onClick={(evt) => removeView(item)}
+                          outline
+                          color="light"
                         >
-                          x
-                        </span>
-                      </Button>
-                    ))
-                  ) : (
-                    <div className="d-flex justify-content-center">
-                      No Data available
-                    </div>
-                  )}
-                </Row>
+                          <strong className="skills-view-text">
+                            {" "}
+                            {item.skillname + " "}
+                          </strong>
+                          <span className="skills-exp-text me-1">
+                            {item.yearsofexperience
+                              ? item.yearsofexperience + "years "
+                              : ""}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            style={{ fontSize: "15px", cursor: "pointer" }}
+                            onClick={(evt) => removeView(item)}
+                          >
+                            x
+                          </span>
+                        </Button>
+                      ))
+                    ) : (
+                      <div className="d-flex justify-content-center">
+                        No Data available
+                      </div>
+                    )}
+                  </Row>
+                ) : (
+                  <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                    <Loader active={true} type="ball-pulse" />
+                  </div>
+                )}
               </div>
             </Card>
           </Col>
@@ -381,7 +400,7 @@ export function CandidateSkills(props) {
                             <FormGroup>
                               <Label
                                 for={"skillsInput"}
-                                className="fw-semi-bold"
+                                className="input-label"
                               >
                                 Selected Skill
                               </Label>
@@ -400,7 +419,7 @@ export function CandidateSkills(props) {
                               <FormGroup>
                                 <Label
                                   for={"experienceLevel"}
-                                  className="fw-semi-bold"
+                                  className="input-label"
                                 >
                                   Experience level
                                 </Label>
@@ -469,7 +488,7 @@ export function CandidateSkills(props) {
                   <Button
                     type="button"
                     className="close-btn"
-                    onClick={() => setPersonalModal(false)}
+                    onClick={() => closeModal(false)}
                   >
                     Close
                   </Button>

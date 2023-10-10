@@ -21,6 +21,7 @@ import {
   InputGroup,
   Form,
 } from "reactstrap";
+import Loader from "react-loaders";
 import AsyncSelect from "react-select/async";
 import { formatDate } from "_helpers/helper";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
@@ -61,6 +62,7 @@ import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.getProfile.loader);
 
   const genderList_temp = useSelector((state) => state.gender.genderList);
   const raceList_temp = useSelector((state) => state.ethnicity.ethnicityList);
@@ -115,6 +117,10 @@ export function PersonalInformation(props) {
     loadSelectedData();
   }, []);
   const loadSelectedData = function () {
+    if (props.profileInfo.personalInfo.city != "") {
+      loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
+    }
+
     if (props.dropDownData.selectedCountry.value != 0) {
       let countryData = [...countrySelect];
       countryData.push(props.dropDownData.selectedCountry);
@@ -164,6 +170,8 @@ export function PersonalInformation(props) {
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
+  const [locationData, setLocation] = useState([]);
+
   const onSelectCityDropdown = function (data) {
     let error_data = { ...requiredErrors };
     let new_data = [];
@@ -185,6 +193,10 @@ export function PersonalInformation(props) {
     setStateSelect(new_data);
     error_data.stateError = false;
     setRequiredErros(error_data);
+  };
+  const renderDate = function (data) {
+    const date = new Date(data);
+    return date.toLocaleDateString("en-CA");
   };
   const onSelectRaceDropdown = function (data) {
     let new_data = [];
@@ -209,18 +221,13 @@ export function PersonalInformation(props) {
 
   async function onSubmit(e) {
     e.preventDefault();
-
     let errors = { ...requiredErrors };
     if (citySelect.length == 0) {
       errors.cityError = true;
     } else {
       errors.cityError = false;
     }
-    // if (stateSelect.length == 0) {
-    //   errors.stateError = true;
-    // } else {
-    //   errors.stateError = false;
-    // }
+
     if (errors.cityError) {
       setRequiredErros(errors);
       return;
@@ -264,7 +271,7 @@ export function PersonalInformation(props) {
         isreadytoworkimmediately:
           new_data.personalInfo.isreadytoworkimmediately,
         isactive: true,
-        dob: new_data.dob,
+        dob: dob,
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
       };
@@ -339,18 +346,33 @@ export function PersonalInformation(props) {
       };
     });
     setStateList(state_response);
-    setCountryList(country_response);
+    let data = [];
+    if (country_response.length > 0) {
+      data = Array.from(new Set(country_response.map((item) => item.id))).map(
+        (id) => {
+          return country_response.find((item) => item.id === id);
+        }
+      );
+
+      // data.push(country_response[0]);
+      setCountryList(data);
+    } else {
+      setCountryList(data);
+    }
   }, [cityList]);
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
     const { data = [] } = await getLocationFilter(inputValue);
     setCityList(data);
-    return data.map(({ cityid: value, ...rest }) => {
+
+    let filter_data = data.map(({ cityid: value, ...rest }) => {
       return {
         value,
         label: `${rest.location + ", " + rest.statename}`,
       };
     });
+
+    setLocation(filter_data);
   };
   const onHandleInputChange = function (check, data) {
     let new_data = { ...selectedCandidate_temp };
@@ -393,180 +415,192 @@ export function PersonalInformation(props) {
     <div>
       <Fragment>
         <Card className="mb-3 profile-view">
-          {selectedCandidate.personalInfo.email ? (
-            <Row className="g-0">
-              <Col sm="12" md="12" xl="6" className=" mb-0">
-                <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
-                  <div className="icon-wrapper rounded-circle profile-img">
-                    <img
-                      width={100}
-                      className="rounded-circle"
-                      src={profileImg}
-                      alt=""
-                    />
-                  </div>
-                  <div className="widget-chart-content">
-                    <div>
-                      <strong className="candidate-name mb-0">
-                        {selectedCandidate.personalInfo.firstname +
-                          " " +
-                          selectedCandidate_temp.personalInfo.lastname}
-                      </strong>
-                      <p className="widget-description text-focus content-text mt-0">
-                        {selectedCandidate.personalInfo.position}
-                      </p>
-                      <p className="candidate-label mt-0 mb-0">
-                        {selectedCandidate.personalInfo.organization ==
-                          "Not working" ||
-                        selectedCandidate.personalInfo.organization != ""
-                          ? "at " + selectedCandidate.personalInfo.organization
-                          : selectedCandidate.personalInfo.organization}
-                      </p>
+          {!loading ? (
+            <div>
+              {selectedCandidate.personalInfo.email ? (
+                <Row className="g-0">
+                  <Col sm="12" md="12" xl="6" className=" mb-0">
+                    <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
+                      <div className="icon-wrapper rounded-circle profile-img">
+                        <img
+                          width={100}
+                          className="rounded-circle"
+                          src={profileImg}
+                          alt=""
+                        />
+                      </div>
+                      <div className="widget-chart-content">
+                        <div>
+                          <strong className="candidate-name mb-0">
+                            {selectedCandidate.personalInfo.firstname +
+                              " " +
+                              selectedCandidate_temp.personalInfo.lastname}
+                          </strong>
+                          <p className="widget-description text-focus content-text mt-0">
+                            {selectedCandidate.personalInfo.position}
+                          </p>
+                          <p className="candidate-label mt-0 mb-0">
+                            {selectedCandidate.personalInfo.organization ==
+                              "Not working" ||
+                            selectedCandidate.personalInfo.organization != ""
+                              ? "at " +
+                                selectedCandidate.personalInfo.organization
+                              : selectedCandidate.personalInfo.organization}
+                          </p>
+                        </div>
+                        <div>
+                          <Row>
+                            <Col className="col-12 mb-0">
+                              <Label className="candidate-label mb-0">
+                                Employement eligibility:{" "}
+                                <strong className="content-text">
+                                  {selectedCandidate.personalInfo.eligibility}
+                                </strong>
+                              </Label>
+                            </Col>
+                            <Col>
+                              <Label className="candidate-label mt-0">
+                                Ready to work immediately:{" "}
+                                <strong className="content-text">
+                                  {selectedCandidate.personalInfo.readyToWork}{" "}
+                                </strong>
+                              </Label>
+                            </Col>
+                          </Row>
+                        </div>
+                      </div>
                     </div>
-                    <div>
+                  </Col>
+
+                  <Col sm="12" md="12" xl="3" className="">
+                    <Row className="mt-4">
+                      <Col className="mb-2 mt-2">
+                        <BsTelephone className="personal-sec-icon me-2" />
+                        <span className="content-text mt-3">
+                          {maskPhoneNumber(
+                            selectedCandidate.personalInfo.phonenumber
+                          )}
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col className="mb-2">
+                        <BsEnvelope className="personal-sec-icon me-2" />
+                        <span className="content-text">
+                          {selectedCandidate.personalInfo.email}
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col className="mb-2">
+                        {selectedCandidate.personalInfo.city != "" ||
+                        selectedCandidate.personalInfo.country != "" ? (
+                          <div>
+                            <BsPinMap className="personal-sec-icon me-2" />
+                            <span className="content-text">
+                              {selectedCandidate.personalInfo.city
+                                ? selectedCandidate.personalInfo.city +
+                                  ", " +
+                                  selectedCandidate.personalInfo.state
+                                : ""}
+
+                              {selectedCandidate.personalInfo.country
+                                ? ", " + selectedCandidate.personalInfo.country
+                                : ""}
+                            </span>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col sm="12" md="12" xl="3" className="mt-3">
+                    <div className="me-3 float-end">
+                      <BsPencil
+                        className="edit-icon"
+                        onClick={(evt) => setContactModal(true)}
+                      />
+                    </div>
+                    <Row className="mt-3">
                       <Row>
-                        <Col className="col-12 mb-0">
-                          <Label className="candidate-label mb-0">
-                            Employement eligibility:{" "}
-                            <strong className="content-text">
-                              {selectedCandidate.personalInfo.eligibility}
-                            </strong>
-                          </Label>
-                        </Col>
-                        <Col>
-                          <Label className="candidate-label mt-0">
-                            Ready to work immediately:{" "}
-                            <strong className="content-text">
-                              {selectedCandidate.personalInfo.readyToWork}{" "}
-                            </strong>
-                          </Label>
+                        <Col className="mb-2">
+                          {selectedCandidate.personalInfo.dob != "" ? (
+                            <div>
+                              <BsBalloon className="personal-sec-icon me-2" />
+                              <span className="content-text mt-3">
+                                {formatDate(selectedCandidate.personalInfo.dob)}
+                              </span>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
                         </Col>
                       </Row>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-
-              <Col sm="12" md="12" xl="3" className="">
-                <Row className="mt-4">
-                  <Col className="mb-2 mt-2">
-                    <BsTelephone className="personal-sec-icon me-2" />
-                    <span className="content-text mt-3">
-                      {maskPhoneNumber(
-                        selectedCandidate.personalInfo.phonenumber
-                      )}
-                    </span>
+                      <Row>
+                        <Col className="mb-2">
+                          {selectedCandidate.personalInfo.gender != "" ? (
+                            <div>
+                              <BsGenderMale className="personal-sec-icon me-2" />
+                              <span className="content-text">
+                                {selectedCandidate.personalInfo.gender}
+                              </span>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="mb-2">
+                          {selectedCandidate.personalInfo.ethnicity != "" ? (
+                            <div>
+                              <BsPeople className="personal-sec-icon me-2" />
+                              <span className="content-text">
+                                {selectedCandidate.personalInfo.ethnicity}
+                              </span>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </Col>
+                      </Row>
+                    </Row>
                   </Col>
                 </Row>
-                <Row>
-                  <Col className="mb-2">
-                    <BsEnvelope className="personal-sec-icon me-2" />
-                    <span className="content-text">
-                      {selectedCandidate.personalInfo.email}
-                    </span>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="mb-2">
-                    {selectedCandidate.personalInfo.city != "" ||
-                    selectedCandidate.personalInfo.country != "" ? (
-                      <div>
-                        <BsPinMap className="personal-sec-icon me-2" />
-                        <span className="content-text">
-                          {selectedCandidate.personalInfo.city
-                            ? selectedCandidate.personalInfo.city +
-                              ", " +
-                              selectedCandidate.personalInfo.state
-                            : ""}
-
-                          {selectedCandidate.personalInfo.country
-                            ? ", " + selectedCandidate.personalInfo.country
-                            : ""}
-                        </span>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  </Col>
-                </Row>
-              </Col>
-              <Col sm="12" md="12" xl="3" className="mt-3">
-                <div className="me-3 float-end">
-                  <BsPencil
-                    className="edit-icon"
-                    onClick={(evt) => setContactModal(true)}
-                  />
-                </div>
-                <Row className="mt-3">
-                  <Row>
-                    <Col className="mb-2">
-                      {selectedCandidate.personalInfo.dob != "" ? (
-                        <div>
-                          <BsBalloon className="personal-sec-icon me-2" />
-                          <span className="content-text mt-3">
-                            {formatDate(selectedCandidate.personalInfo.dob)}
-                          </span>
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="mb-2">
-                      {selectedCandidate.personalInfo.gender != "" ? (
-                        <div>
-                          <BsGenderMale className="personal-sec-icon me-2" />
-                          <span className="content-text">
-                            {selectedCandidate.personalInfo.gender}
-                          </span>
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="mb-2">
-                      {selectedCandidate.personalInfo.ethnicity != "" ? (
-                        <div>
-                          <BsPeople className="personal-sec-icon me-2" />
-                          <span className="content-text">
-                            {selectedCandidate.personalInfo.ethnicity}
-                          </span>
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </Col>
-                  </Row>
-                </Row>
-              </Col>
-            </Row>
+              ) : (
+                <></>
+              )}
+            </div>
           ) : (
-            <></>
+            <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+              <Loader active={loading} type="ball-pulse" />
+            </div>
           )}
         </Card>
       </Fragment>
 
       {isContactModal ? (
-        <div>
+        <div className="profile-view">
           <Modal
             className="personal-information"
             size="lg"
             isOpen={isContactModal}
           >
             <ModalHeader toggle={() => close()} charCode="Y">
-              <strong className="card-title-text">
-                Add/Edit personal information
-              </strong>
+              <strong className="card-title-text">Contact information</strong>
             </ModalHeader>
             <ModalBody>
               <Form onSubmit={(evt) => onSubmit(evt)}>
                 <Row>
-                  <Col md={4}>
+                  <div className="mb-1 fw-bold">Contact</div>
+                  <hr />
+                </Row>
+
+                <Row>
+                  <Col>
                     <FormGroup>
-                      <Label for="firstname" className="input-label">
+                      <Label for="firstname" className="fw-semi-bold">
                         First name <span className="required-icon">*</span>
                       </Label>
                       <input
@@ -592,9 +626,9 @@ export function PersonalInformation(props) {
                       </div>
                     </FormGroup>
                   </Col>
-                  <Col md={4}>
+                  <Col>
                     <FormGroup>
-                      <Label for="password" className="input-label">
+                      <Label for="password" className="fw-semi-bold">
                         Last name <span className="required-icon">*</span>
                       </Label>
                       <input
@@ -621,9 +655,11 @@ export function PersonalInformation(props) {
                       </div>
                     </FormGroup>
                   </Col>
-                  <Col md={4}>
+                </Row>
+                <Row>
+                  <Col>
                     <FormGroup>
-                      <Label for="phonenumber" className="input-label">
+                      <Label for="phonenumber" className="fw-semi-bold">
                         Phone<span className="required-icon">*</span>
                       </Label>
                       <input
@@ -631,6 +667,7 @@ export function PersonalInformation(props) {
                         name="phonenumber"
                         type="text"
                         id="phonenumber"
+                        mask="(999)-999-9999"
                         value={selectedCandidate.personalInfo.phonenumber}
                         onInput={(evt) =>
                           onHandleInputChange("phonenumber", evt.target.value)
@@ -656,11 +693,9 @@ export function PersonalInformation(props) {
                       </div>
                     </FormGroup>
                   </Col>
-                </Row>
-                <Row>
-                  <Col md={4}>
+                  <Col>
                     <FormGroup>
-                      <Label for="email" className="input-label">
+                      <Label for="email" className="fw-semi-bold">
                         Email <span className="required-icon">*</span>
                       </Label>
                       <input
@@ -692,32 +727,64 @@ export function PersonalInformation(props) {
                       </div>
                     </FormGroup>
                   </Col>
-                  <Col md={4}>
+                </Row>
+
+                <Row>
+                  <div className="mb-1 fw-bold">Location</div>
+                  <hr />
+                </Row>
+
+                <Row>
+                  <Col>
                     <FormGroup>
-                      <Label for="gender" className="input-label">
-                        Birth year
+                      <Label for="city" className="fw-semi-bold">
+                        City, State <span className="required-icon">*</span>
                       </Label>
-                      <InputGroup>
-                        <div className="input-group-text">
-                          <FontAwesomeIcon icon={faCalendarAlt} />
-                        </div>
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="DD/MM/YYYY"
-                          selected={
-                            selectedCandidate.personalInfo.dob
-                              ? new Date(selectedCandidate.personalInfo.dob)
-                              : null
-                          }
-                          showYearDropdown={true}
-                          onChange={(evt) => selectDate(evt)}
-                        />
-                      </InputGroup>
+
+                      <AsyncSelect
+                        name="skills"
+                        placeholder="Search to select"
+                        placeholderText="search"
+                        location-dropdown
+                        loadOptions={loadOptions}
+                        isMulti={false}
+                        value={citySelect}
+                        defaultOptions={locationData}
+                        onChange={(evt) => onSelectCityDropdown(evt)}
+                        styles={{
+                          borderColor: requiredErrors.stateError
+                            ? "#d92550"
+                            : "",
+                        }}
+                      />
+
+                      <div className="error-class">
+                        {requiredErrors.cityError ? "Location is required" : ""}
+                      </div>
                     </FormGroup>
                   </Col>
-                  <Col md={4}>
+                  <Col>
                     <FormGroup>
-                      <Label for="address" className="input-label">
+                      <Label for="country" className="fw-semi-bold">
+                        Country
+                      </Label>
+                      <AsyncSelect
+                        name="country"
+                        placeholder="Select"
+                        defaultOptions={countryList}
+                        readOnly
+                        isMulti={false}
+                        value={countrySelect}
+                        onChange={(evt) => onSelectCountryDropdown(evt)}
+                        onMenuOpen={() => checkCityValid()}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <FormGroup>
+                      <Label for="address" className="fw-semi-bold">
                         Address
                       </Label>
                       <input
@@ -733,37 +800,9 @@ export function PersonalInformation(props) {
                       />
                     </FormGroup>
                   </Col>
-                </Row>
-                <Row>
-                  <Col md={4}>
+                  <Col>
                     <FormGroup>
-                      <Label for="city" className="input-label">
-                        City, State <span className="required-icon">*</span>
-                      </Label>
-                      <AsyncSelect
-                        name="skills"
-                        placeholder="Search to select"
-                        placeholderText="search"
-                        loadOptions={loadOptions}
-                        isMulti={false}
-                        value={citySelect}
-                        onChange={(evt) => onSelectCityDropdown(evt)}
-                        styles={{
-                          borderColor: requiredErrors.stateError
-                            ? "#d92550"
-                            : "",
-                        }}
-                      />
-
-                      <div className="error-class">
-                        {requiredErrors.cityError ? "Location is required" : ""}
-                      </div>
-                    </FormGroup>
-                  </Col>
-
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="zipCode" className="input-label">
+                      <Label for="zipCode" className="fw-semi-bold">
                         Zip code
                       </Label>
                       <input
@@ -780,52 +819,59 @@ export function PersonalInformation(props) {
                       />
                     </FormGroup>
                   </Col>
+                </Row>
 
-                  {/* <Col md={4}>
+                <Row>
+                  <div className="mb-1 fw-bold">Demographic</div>
+                  <hr />
+                </Row>
+
+                <Row>
+                  <Col>
                     <FormGroup>
-                      <Label for="state" className="input-label">
-                        State <span className="required-icon">*</span>
+                      <Label for="gender" className="fw-semi-bold">
+                        Birth year
                       </Label>
-                      <AsyncSelect
-                        name="state"
-                        placeholder="Select"
-                        defaultOptions={stateList}
-                        isMulti={false}
-                        value={stateSelect}
-                        onSelect={(evt) => onSelectStateDropdown(evt)}
-                        styles={{
-                          borderColor: requiredErrors.stateError
-                            ? "#d92550"
-                            : "",
-                        }}
-                        onMenuOpen={() => checkCityValid()}
-                      />
-                      <div className="error-class">
-                        {requiredErrors.stateError ? "State is required" : ""}
-                      </div>
-                    </FormGroup>
-                  </Col> */}
-                  <Col md={4}>
-                    <FormGroup>
-                      <Label for="country" className="input-label">
-                        Country
-                      </Label>
-                      <AsyncSelect
-                        name="country"
-                        placeholder="Select"
-                        defaultOptions={countryList}
-                        isMulti={false}
-                        value={countrySelect}
-                        onChange={(evt) => onSelectCountryDropdown(evt)}
-                        onMenuOpen={() => checkCityValid()}
-                      />
+                      {/* <Input
+                        type="date"
+                        name="scheduleDate"
+                        id="scheduleDate"
+                        placeholder="mm-dd-yyyy"
+                        defaultValue={
+                          selectedCandidate.personalInfo.dob
+                            ? new Date(selectedCandidate.personalInfo.dob)
+                            : null
+                        }
+                        selected={
+                          selectedCandidate.personalInfo.dob
+                            ? new Date(selectedCandidate.personalInfo.dob)
+                            : null
+                        }
+                        onChange={(evt) => selectDate(evt.target.value)}
+                      /> */}
+
+                      <InputGroup>
+                        <div className="input-group-text">
+                          <FontAwesomeIcon icon={faCalendarAlt} />
+                        </div>
+                        <DatePicker
+                          className="form-control"
+                          placeholderText="MM/DD/YYYY"
+                          selected={
+                            selectedCandidate.personalInfo.dob
+                              ? new Date(selectedCandidate.personalInfo.dob)
+                              : null
+                          }
+                          showYearDropdown={true}
+                          onChange={(evt) => selectDate(evt)}
+                        />
+                      </InputGroup>
                     </FormGroup>
                   </Col>
-                </Row>
-                <Row>
-                  <Col md={4}>
+
+                  <Col>
                     <FormGroup>
-                      <Label for="gender" className="input-label">
+                      <Label for="gender" className="fw-semi-bold">
                         Gender
                       </Label>
 
@@ -839,9 +885,11 @@ export function PersonalInformation(props) {
                       />
                     </FormGroup>
                   </Col>
-                  <Col md={4}>
+                </Row>
+                <Row>
+                  <Col md={6}>
                     <FormGroup>
-                      <Label for="race" className="input-label">
+                      <Label for="race" className="fw-semi-bold">
                         Race/Etnicity
                       </Label>
                       <AsyncSelect
@@ -855,9 +903,15 @@ export function PersonalInformation(props) {
                     </FormGroup>
                   </Col>
                 </Row>
+
                 <Row>
-                  <Col>
-                    {selectedCandidate_temp?.eligibilityList?.map((item) => (
+                  <div className="mb-1 fw-bold">Employement eligibility</div>
+                  <hr />
+                </Row>
+
+                <Row>
+                  {selectedCandidate_temp?.eligibilityList?.map((item) => (
+                    <Col>
                       <FormGroup check>
                         <Input
                           name="eligibility"
@@ -871,12 +925,12 @@ export function PersonalInformation(props) {
                             onHandleInputChange("authorization", item.id)
                           }
                         />
-                        <Label check className="input-label">
+                        <Label check className="fw-semi-bold">
                           {item.name}
                         </Label>
                       </FormGroup>
-                    ))}
-                  </Col>
+                    </Col>
+                  ))}
                 </Row>
                 <Row>
                   <Col>
@@ -892,7 +946,7 @@ export function PersonalInformation(props) {
                           onHandleInputChange("work", evt.target.value)
                         }
                       />{" "}
-                      <Label className="input-label">
+                      <Label className="fw-semi-bold">
                         Ready to work immediately{" "}
                       </Label>
                     </FormGroup>
@@ -987,7 +1041,7 @@ export function PersonalInformation(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              State and Country
+              Country
             </div>
             <div>
               <Row>

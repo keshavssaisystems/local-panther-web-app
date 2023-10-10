@@ -71,6 +71,7 @@ const initialState = {
   },
 
   error: null,
+  loader: false,
 };
 
 // Define the async action
@@ -95,10 +96,11 @@ const getProfileSlice = createSlice({
     builder
       .addCase(getCandidate.pending, (state) => {
         state.error = null;
+        state.loader = true;
       })
       .addCase(getCandidate.fulfilled, (state, action) => {
         // state.user.data = action.payload; // Update the state properly
-
+        state.loader = false;
         let filter_data = action.payload;
         let organization = filter_data.candidateQualificationsDtos.filter(
           (x) => x.iscurrentlyworking == true
@@ -185,6 +187,7 @@ const getProfileSlice = createSlice({
         state.user.data = dropdown_selected;
       })
       .addCase(getCandidate.rejected, (state, action) => {
+        state.loader = false;
         state.error = action.error;
       });
   },
