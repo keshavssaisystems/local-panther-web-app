@@ -26,8 +26,8 @@ export function SkillsFilter({
       name={name}
       placeholder={placeholder}
       loadOptions={loadOptions}
-      isMulti={isMulti}
       onChange={(e) => onChange(name, e.value)}
+      isMulti={isMulti}
     />
   );
 }

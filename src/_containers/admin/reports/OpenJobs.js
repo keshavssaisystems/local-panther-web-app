@@ -17,13 +17,13 @@ import {
   DropdownMenu, 
   DropdownItem } from "reactstrap";
 
-import { SkillsFilter, LocationFilter } from "../filterComponent";
+import { CompanyFilter, SkillsFilter, LocationFilter } from "../filterComponent";
 import { Table } from "_widgets";
 import { openJobsThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -186,6 +186,9 @@ export function OpenJobs() {
             <CardBody>
               <Row style={{zIndex: 9, position: 'relative'}}>
                 <Col lg="2" md="2" sm="12" sx="12">
+                  <CompanyFilter name={"companyId"} placeholder={"Select Company"} onChange={handleChange}/>
+                </Col>
+                <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter name={"skillId"} placeholder={"Select Skills"} onChange={handleChange}/>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
@@ -233,20 +236,20 @@ export function OpenJobs() {
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                        style={{background: 'rgb(47 71 155)'}}
-                        className="btn-square btn btn-primary"
-                        type="button"
-                        onClick={() => applyFilter()}
-                      >  Search
+                    style={{background: 'rgb(47 71 155)'}}
+                    className="btn-square btn btn-primary"
+                    type="button"
+                    onClick={() => applyFilter()}
+                  >  Search
                   </Button>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
-                      <Button
-                        className="btn-square btn btn-primary"
-                        type="button"
-                        onClick={() => clearFilter()}
-                      > Clear Filter
-                      </Button>
+                <Col lg="1" md="2" sm="12" sx="12">
+                  <Button
+                      className="btn-square btn btn-primary"
+                      type="button"
+                      onClick={() => clearFilter()}
+                    > Clear
+                  </Button>
                 </Col>
               </Row>
 
@@ -256,7 +259,7 @@ export function OpenJobs() {
                 columns={columns}
                 data={data}
                 fixedHeader
-                fixedHeaderScrollHeight="360px"
+                fixedHeaderScrollHeight="400px"
               />
             </CardBody>
           </Card>
