@@ -272,7 +272,7 @@ export function CertificationsModal(props) {
           <Col md={4}>
             <div>
               <FormGroup>
-                <Label for={"experienceLevel"} className="fw-semi-bold">
+                <Label for={"experienceLevel"} className="input-label">
                   Certification type
                 </Label>
 
@@ -342,7 +342,7 @@ export function CertificationsModal(props) {
             </FormGroup>
           </Col>
         </Row>
-        <Row className="mt-2">
+        <Row className="mt-2 input-label">
           <Label>Time period</Label>
 
           <Col md={4}>
@@ -355,7 +355,7 @@ export function CertificationsModal(props) {
                   name="fromdate"
                   id="fromdata"
                   className="form-control"
-                  placeholderText="DD/MM/YYYY"
+                  placeholderText="MM/DD/YYYY"
                   onSelect={(evt) => onHandleInputChange("fromdate", evt)}
                   selected={formDetails.startdate}
                   showYearDropdown={true}
@@ -378,7 +378,7 @@ export function CertificationsModal(props) {
                   name="todate"
                   id="todate"
                   className="form-control"
-                  placeholderText="DD/MM/YYYY"
+                  placeholderText="MM/DD/YYYY"
                   selected={formDetails.enddate}
                   showYearDropdown={true}
                   onSelect={(evt) => onHandleInputChange("todate", evt)}

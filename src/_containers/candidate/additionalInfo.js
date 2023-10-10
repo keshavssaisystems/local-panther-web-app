@@ -27,6 +27,7 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDispatch } from "react-redux";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import Loader from "react-loaders";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -39,6 +40,7 @@ export function AdditionalInformation(props) {
   const dispatch = useDispatch();
   const [isPersonalModal, setPersonalModal] = useState(false);
   const selectDate = function () {};
+  const loader = useSelector((state) => state.getProfile.loader);
   const [commentLength, setCommentLength] = useState(0);
   const [summary, setSummaryLength] = useState("");
   const [info, setInfoLength] = useState("");
@@ -173,74 +175,85 @@ export function AdditionalInformation(props) {
                 </Label>
               </Col>
             </Row>
-
-            {getResponse.length > 0 ? (
-              <Row>
-                {getResponse.map((item) => (
-                  <div>
-                    <Row>
-                      <Col>
-                        <strong className="content-title mb-1">Summary</strong>
-                      </Col>
-
-                      <Col style={{ marginTop: "10px" }}>
-                        <div className="float-end">
-                          <BsPencil
-                            className="icons"
-                            onClick={(evt) => edit("edit", item)}
-                          />{" "}
-                          <BsTrash3
-                            className="me-3 icons"
-                            onClick={() =>
-                              deleteModal(item.candidateadditioninformationid)
-                            }
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                    <p className="me-2 card-p-text">{item.summary} </p>
-                    <div>
-                      {item.additionalinformation
-                        ? item.additionalinformation
-                        : ""}
-                    </div>
-                  </div>
-                ))}
-                <Row>
+            {!loader ? (
+              <div>
+                {getResponse.length > 0 ? (
                   <Row>
-                    <strong className="content-title">Languages</strong>
-                    <Table
-                      responsive
-                      borderless
-                      className="align-middle mb-0 candidate-table"
-                    >
-                      <thead>
-                        <tr className="candidate-table-header">
-                          <th>Language</th>
-                          <th>Proficiency</th>
-                          <th></th>
-                          <th></th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody className="card-p-text-black">
-                        {getResponse.language.map((column, ind) => (
-                          <tr>
-                            <td>{column.name}</td>
-                            <td>{column.proficiency}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
+                    {getResponse.map((item) => (
+                      <div>
+                        <Row>
+                          <Col>
+                            <strong className="content-title mb-1">
+                              Summary
+                            </strong>
+                          </Col>
+
+                          <Col style={{ marginTop: "10px" }}>
+                            <div className="float-end">
+                              <BsPencil
+                                className="icons"
+                                onClick={(evt) => edit("edit", item)}
+                              />{" "}
+                              <BsTrash3
+                                className="me-3 icons"
+                                onClick={() =>
+                                  deleteModal(
+                                    item.candidateadditioninformationid
+                                  )
+                                }
+                              />
+                            </div>
+                          </Col>
+                        </Row>
+                        <p className="me-2 card-p-text">{item.summary} </p>
+                        <div>
+                          {item.additionalinformation
+                            ? item.additionalinformation
+                            : ""}
+                        </div>
+                      </div>
+                    ))}
+                    <Row>
+                      <Row>
+                        <strong className="content-title">Languages</strong>
+                        <Table
+                          responsive
+                          borderless
+                          className="align-middle mb-0 candidate-table"
+                        >
+                          <thead>
+                            <tr className="candidate-table-header">
+                              <th>Language</th>
+                              <th>Proficiency</th>
+                              <th></th>
+                              <th></th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody className="card-p-text-black">
+                            {getResponse.language.map((column, ind) => (
+                              <tr>
+                                <td>{column.name}</td>
+                                <td>{column.proficiency}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Table>
+                      </Row>
+                    </Row>
                   </Row>
-                </Row>
-              </Row>
+                ) : (
+                  <div className="d-flex justify-content-center">
+                    No Data Available
+                  </div>
+                )}
+              </div>
             ) : (
-              <div className="d-flex justify-content-center">
-                No Data Available
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={loader} type="ball-pulse" />
               </div>
             )}
           </div>

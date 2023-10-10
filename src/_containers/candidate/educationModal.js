@@ -41,6 +41,7 @@ export function EducationModal(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState([]);
 
   const [educationList, setEducationList] = useState(
     useSelector((state) => state.educationLevelReducer.educationList)
@@ -115,37 +116,56 @@ export function EducationModal(props) {
           label: props.selected.countryname,
         },
         iscurrentlystudying: props.selected.iscurrentlystudying,
-        startdate: props.selected.startdate
-          ? new Date(props.selected.startdate)
-          : new Date(),
-        enddate: props.selected.enddate
-          ? new Date(props.selected.enddate)
-          : new Date(),
+        startdate:
+          props.selected.startdate != "" && props.selected.startdate
+            ? new Date(props.selected.startdate)
+            : null,
+        enddate:
+          props.selected.enddate != "" && props.selected.enddate
+            ? new Date(props.selected.enddate)
+            : null,
         isactive: props.selected.isactive,
         currentUserId: null,
         fromDateValid: false,
         fromDateReq: false,
       });
+      loadOptions(props.selected.cityname.slice(0, 3));
     }
     setFormData(data);
   };
   useEffect(() => {
-    let country_response;
-    let state_response;
-    country_response = cityList.map(({ countryid: value, ...rest }) => {
-      return {
-        value,
-        label: `${rest.countryname}`,
-      };
-    });
-    state_response = cityList.map(({ stateid: value, ...rest }) => {
-      return {
-        value,
-        label: `${rest.statename}`,
-      };
-    });
-    setStateList(state_response);
-    setCountryList(country_response);
+    if (cityList?.length > 0) {
+      let country_response;
+      let state_response;
+      country_response = cityList.map(({ countryid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.countryname}`,
+        };
+      });
+      state_response = cityList.map(({ stateid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.statename}`,
+        };
+      });
+
+      let data = [];
+      if (country_response.length > 0) {
+        data = Array.from(new Set(country_response.map((item) => item.id))).map(
+          (id) => {
+            return country_response.find((item) => item.id === id);
+          }
+        );
+
+        // data.push(country_response[0]);
+        setCountryList(data);
+      } else {
+        setCountryList(data);
+      }
+
+      setStateList(state_response);
+    }
   }, [cityList]);
 
   const closeModal = function () {
@@ -161,14 +181,19 @@ export function EducationModal(props) {
 
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
-    const { data = [] } = await getLocationFilter(inputValue);
-    setCityList(data);
-    return data.map(({ cityid: value, ...rest }) => {
-      return {
-        value,
-        label: `${rest.location}`,
-      };
-    });
+    if (inputValue != "") {
+      const { data = [] } = await getLocationFilter(inputValue);
+      setCityList(data);
+
+      let location_data = data.map(({ cityid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.location + ", " + rest.statename}`,
+        };
+      });
+      setSelectedLocation(location_data);
+      return location_data;
+    }
   };
 
   const addMoreTabs = function (index) {
@@ -210,8 +235,8 @@ export function EducationModal(props) {
         },
       ],
       iscurrentlystudying: true,
-      startdate: new Date(),
-      enddate: new Date(),
+      startdate: null,
+      enddate: null,
       isactive: false,
       currentUserId: null,
     };
@@ -248,7 +273,8 @@ export function EducationModal(props) {
 
       new_data[index].country = dropdown;
     } else if (check == "currentlyStudying") {
-      new_data[index].iscurrentlystudying = data;
+      new_data[index].iscurrentlystudying =
+        !new_data[index].iscurrentlystudying;
     } else if (check == "fromdate") {
       if (new_data[index].enddate) {
         if (new Date(data) > new Date(new_data[index].enddate)) {
@@ -389,11 +415,11 @@ export function EducationModal(props) {
                 </Label>
 
                 <AsyncSelect
-                  placeholder="Select Level of Education"
+                  placeholder="Select..."
                   name="levelofeducation"
                   defaultOptions={educationList}
                   isMulti={false}
-                  value={item.education}
+                  value={item.education.value == 0 ? [] : item.education}
                   onChange={(evt) =>
                     onHandleInputChange("levelofeducation", evt, index, index)
                   }
@@ -447,30 +473,17 @@ export function EducationModal(props) {
             <Col md={4}>
               <FormGroup>
                 <Label for="city" className="input-label">
-                  City
+                  City, State
                 </Label>
                 <AsyncSelect
                   name="skills"
                   placeholder="Search to select"
                   loadOptions={loadOptions}
                   isMulti={false}
-                  value={item.city}
+                  className="location-dropdown"
+                  value={!item.city.value ? [] : item.city}
+                  defaultOptions={selectedLocation}
                   onChange={(evt) => onHandleInputChange("city", evt, index)}
-                />
-              </FormGroup>
-            </Col>
-            <Col md={4}>
-              <FormGroup>
-                <Label for="state" className="input-label">
-                  State
-                </Label>
-                <AsyncSelect
-                  name="state"
-                  placeholder="Select"
-                  defaultOptions={stateList}
-                  isMulti={false}
-                  value={item.state}
-                  onChange={(evt) => onHandleInputChange("state", evt, index)}
                 />
               </FormGroup>
             </Col>
@@ -485,7 +498,7 @@ export function EducationModal(props) {
                   placeholder="Select"
                   defaultOptions={countryList}
                   isMulti={false}
-                  value={item.country}
+                  value={!item.country.value ? [] : item.country}
                   onChange={(evt) => onHandleInputChange("country", evt, index)}
                 />
               </FormGroup>

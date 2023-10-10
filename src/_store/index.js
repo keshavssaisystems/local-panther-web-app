@@ -47,6 +47,7 @@ import { matchedJobReducer } from "_containers/candidate/matchJob.slice";
 import { jobTitleReducer } from "./dropDownJobTitle.slice";
 import { payPeriodReducer } from "./dropDownPayPeriod.slice";
 import { jobPreferenceDataReducer } from "./jobPreference.slice";
+import { resumeTemplateReducer } from "./getResumeTemplate.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -97,6 +98,7 @@ export * from "_containers/candidate/matchJob.slice";
 export * from "./dropDownJobTitle.slice";
 export * from "./dropDownPayPeriod.slice";
 export * from "./jobPreference.slice";
+export * from "./getResumeTemplate.slice";
 
 export const store = configureStore({
   reducer: {
@@ -148,5 +150,6 @@ export const store = configureStore({
     tabListReducer: candidateJobListTabReducer,
     getJobTitle: jobTitleReducer,
     getPayPeriod: payPeriodReducer,
+    getResumeTemplate: resumeTemplateReducer,
   },
 });
