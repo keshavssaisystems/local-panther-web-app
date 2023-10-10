@@ -178,9 +178,9 @@ export function CustJobDetail({ jobDetails, type }) {
               heading={jobDetail.jobtitle}
               subHeading={jobDetail.companyname}
               location={jobDetail.locationaddress}
-              ApplyButton={type !== "Open"}
-              jobId={jobDetail.jobid}
-              department={jobDetail.departmentid ?? 1}
+              // ApplyButton={type !== "Open"}
+              // jobId={jobDetail.jobid}
+              // department={jobDetail.departmentid ?? 1}
             />
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
