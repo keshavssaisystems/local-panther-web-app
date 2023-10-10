@@ -29,14 +29,13 @@ export const openJobsThunk = createAsyncThunk(
 export const newCandidateThunk = createAsyncThunk(
   `${name}/newCandidateThunk`,
   async (payload) => {
-    // const NEW_CANDIDATE_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
-    // return await fetchWrapper.post(NEW_CANDIDATE_END_POINT, payload);
-    return [{
-      name: 'Ajay Chouhan',
-      location: 'New Town square',
-      email: "ajay@saisystems.tech",
-      skills: 'Node, React',
-    }]
+    payload = {
+      ...payload,
+      pageNumber: 1,
+      pageSize: 10
+    }
+    const NEW_CANDIDATE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetNewCandidatesList?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(NEW_CANDIDATE_END_POINT);
   }
 );
 
@@ -93,8 +92,11 @@ const adminReportSlice = createSlice({
       state.error = null;
     },
     [newCandidateThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { newCandidatesList = [], totalRows = 0 } = {}} = payload;
+
       state.loading = false;
-      state.newCandidate = payload;
+      state.newCandidate = newCandidatesList;      
+      state.totalNewCandidate = totalRows;
     },
     [newCandidateThunk.rejected]: (state, action) => {
       state.loading = false;
