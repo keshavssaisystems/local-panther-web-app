@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
-import Loader from "react-loaders";
-
 import { 
+  Input,
   Col, 
   Row, 
   FormGroup, 
@@ -17,98 +15,55 @@ import {
   DropdownMenu, 
   DropdownItem } from "reactstrap";
   
-import { SkillsFilter, LocationFilter } from "../filterComponent";
 import { Table } from "_widgets";
 
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { newCandidateThunk } from "../_redux/report.slice";
+import { hiringManagerThunk } from "../_redux/report.slice";
 
 const columns = [
   {
       name: 'Name',
-      selector: row => row.candidatename,
+      selector: row => row.name,
       sortable: true,
-      wrap: true,
   },
   {
       name: 'Location',
       selector: row => row.location,
       sortable: true,
-      wrap: true,
   },
   {
-      name: 'Experience',
-      selector: row => row.experience,
+      name: 'Email',
+      selector: row => row.email,
       sortable: true,
-      wrap: true,
   },
   {
       name: 'Skills',
       selector: row => row.skills,
       sortable: true,
-      wrap: true,
-  },
-  {
-      name: 'Created',
-      selector: row => row.createddate,
-      sortable: true,
-      wrap: true,
-      format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
   },
 ];
 
 
-export function NewCandidate() {
+export function HiringManager({ title = 'Hiring Manager Report' }) {
   const dispatch = useDispatch();
-
-  const { newCandidate: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
-
-  let [startDate, setStartDate] = useState();
-  let [endDate, setEndDate] = useState();
-  let [filter, setFilter] = useState({});
-
   useEffect(() => {
-    dispatch(newCandidateThunk())
+    dispatch(hiringManagerThunk())
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChange = (name, value) => {
-    setFilter({
-      ...filter,
-      [name]: value
-    })
-  }
-  
-  const handleDateChange = (name, value) => {
-
-    setFilter({
-      ...filter,
-      [name]: moment(value).format('YYYY-MM-DD')
-    })
-  }
-
-  const applyFilter = () => {
-    dispatch(newCandidateThunk(filter))
-  }
-  
-  const clearFilter = () => {
-    setFilter({})
-    setStartDate(null)
-    setEndDate(null)
-    dispatch(newCandidateThunk())
-  }
+  const { hiringManager: data = [] } = useSelector((state) => state?.adminReportReducer ?? {});
 
   return (
     <>
-      <PageTitle heading="New Candidate" icon={titlelogo} />
+      <PageTitle heading={title} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
@@ -136,12 +91,16 @@ export function NewCandidate() {
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{zIndex: 9, position: 'relative'}}>
+              <Row>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <SkillsFilter name={"skillId"} placeholder={"Select Skills"} onChange={handleChange}/>
+                  <Input name="skills" type="select">
+                    <option value="">Select skills</option>
+                  </Input>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <LocationFilter name={"cityId"} placeholder={"Select Location"} onChange={handleChange}/>
+                  <Input name="skills" type="select">
+                    <option value="">Select Location</option>
+                  </Input>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
@@ -150,15 +109,14 @@ export function NewCandidate() {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
-                        name="startDate"
-                        placeholderText="From"
+                        name="fromDate"
+                        id="fromDate"
+                        placeholderText="DD/MM/YYYY"
                         className="form-control"
-                        selected={startDate}
-                        onChange={(date) => {
-                          handleDateChange("startDate", date)
-                          setStartDate(date)
-                        }}
+                        // selected={item.startdate}
+                        // onChange={(evt) =>
+                        //   handleInputChange("fromDate", index, evt)
+                        // }
                       />
                     </InputGroup>
                   </FormGroup>
@@ -170,45 +128,39 @@ export function NewCandidate() {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
-                        name="endDate"
-                        placeholderText="To"
+                        name="fromDate"
+                        id="fromDate"
+                        placeholderText="DD/MM/YYYY"
                         className="form-control"
-                        selected={endDate}
-                        onChange={(date) => {
-                          handleDateChange("endDate", date)
-                          setEndDate(date)
-                        }}
+                        // selected={item.startdate}
+                        // onChange={(evt) =>
+                        //   handleInputChange("fromDate", index, evt)
+                        // }
                       />
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
-                  <Button
-                    style={{background: 'rgb(47 71 155)'}}
-                    className="btn-square btn btn-primary"
-                    type="button"
-                    onClick={() => applyFilter()}
-                  >  Search
-                  </Button>
-                </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
-                  <Button
-                      className="btn-square btn btn-primary"
-                      type="button"
-                      onClick={() => clearFilter()}
-                    > Clear
-                  </Button>
+                <Col lg="2" md="2" sm="12" sx="12">
+                  <FormGroup>
+                    <InputGroup>
+                      <Button
+                        style={{background: 'rgb(47 71 155)'}}
+                        className="btn-square btn btn-primary"
+                        type="button"
+                        // onClick={() => onSubmit()}
+                      >
+                      <FontAwesomeIcon icon={faSearch} />  Search
+                      </Button>
+                    </InputGroup>
+                  </FormGroup>
                 </Col>
               </Row>
 
-              <Table                 
-                progressPending={loading}
-                progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
+              <Table 
                 columns={columns}
                 data={data}
                 fixedHeader
-                fixedHeaderScrollHeight="400px"
+                fixedHeaderScrollHeight="370px"
               />
             </CardBody>
           </Card>

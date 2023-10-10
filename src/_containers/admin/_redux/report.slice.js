@@ -2,22 +2,49 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "_helpers";
 // create slice name
 const name = 'adminReport';
-// login thunk
+
+export const getCompanyDropDown = async (searchText) => {
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+  return await fetchWrapper.get(
+    `${baseUrl}/Company/GetCompanyDetailsList?isActive=true&searchText=${searchText}`
+  );
+};
+
+// Open Jobs thunk
 export const openJobsThunk = createAsyncThunk(
   `${name}/openJobsThunk`,
-  async (payload) => {
-    // const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Login`;
-    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetOpenJobsList?pageNumber=1&pageSize=10`;
+  async (payload = {}) => {
+    payload = {
+      ...payload,
+      pageNumber: 1,
+      pageSize: 10
+    }
+
+    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(OPEN_JOBS_END_POINT);
   }
 );
 
-// registration thunk
+// New candidate thunk
 export const newCandidateThunk = createAsyncThunk(
   `${name}/newCandidateThunk`,
   async (payload) => {
-    // const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
-    // return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
+    payload = {
+      ...payload,
+      pageNumber: 1,
+      pageSize: 10
+    }
+    const NEW_CANDIDATE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetNewCandidatesList?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(NEW_CANDIDATE_END_POINT);
+  }
+);
+
+// Hiring manager thunk
+export const hiringManagerThunk = createAsyncThunk(
+  `${name}/hiringManagerThunk`,
+  async (payload) => {
+    // const HIRING_MANAGER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
+    // return await fetchWrapper.post(HIRING_MANAGER_END_POINT, payload);
     return [{
       name: 'Ajay Chouhan',
       location: 'New Town square',
@@ -59,16 +86,33 @@ const adminReportSlice = createSlice({
       state.error = action.error;
     },
 
-    // new candidate
+    // New Candidate
     [newCandidateThunk.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
     [newCandidateThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { newCandidatesList = [], totalRows = 0 } = {}} = payload;
+
       state.loading = false;
-      state.newCandidate = payload;
+      state.newCandidate = newCandidatesList;      
+      state.totalNewCandidate = totalRows;
     },
     [newCandidateThunk.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    
+    // Hiring Manager
+    [hiringManagerThunk.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [hiringManagerThunk.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+      state.hiringManager = payload;
+    },
+    [hiringManagerThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
@@ -81,7 +125,8 @@ const adminReportSlice = createSlice({
 export const adminReportActions = {
   ...adminReportSlice.actions,
   openJobsThunk, // Export the async open jobs action
-  newCandidateThunk // Export the async new candidate action
+  newCandidateThunk, // Export the async new candidate action
+  hiringManagerThunk // Export the async hiring manager action
 };
 
 export const adminReportReducer = adminReportSlice.reducer;

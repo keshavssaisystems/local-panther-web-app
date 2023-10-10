@@ -38,6 +38,7 @@ import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConst
 import {
   OpenJobs,
   NewCandidate,
+  HiringManager,
   CandidateReport,
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
@@ -118,15 +119,14 @@ export function App() {
           />
           <Route
             path="/report"
-            element={
-              <PrivateRoute>
-                <AdminUnderConstruction title={"Reports"} />
-              </PrivateRoute>
-            }
+            element={<HiringManager title={"Hiring Manager Report"} />}
+          />
+          <Route
+            path="/report/hiring-manager-report"
+            element={<HiringManager title={"Hiring Manager Report"} />}
           />
           <Route path="/report/open-jobs" element={<OpenJobs />} />
           <Route path="/report/new-candidates" element={<NewCandidate />} />
-
           <Route
             path="/report/partially-filled-job"
             element={<AdminUnderConstruction title={"Partially filled jobs"} />}
@@ -136,10 +136,6 @@ export function App() {
             element={
               <AdminUnderConstruction title={"Incomplete candidate profile"} />
             }
-          />
-          <Route
-            path="/report/hiring-manager-report"
-            element={<AdminUnderConstruction title={"Hiring manager report"} />}
           />
           <Route
             path="/report/candidate-report"
@@ -233,14 +229,6 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
-          <Route
-            path="/report"
-            element={
-              <PrivateRoute>
-                <CustomerUnderConstruction title={"Reports"} />
-              </PrivateRoute>
-            }
-          />
         </>
       );
     } else {

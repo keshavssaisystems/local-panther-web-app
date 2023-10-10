@@ -40,23 +40,8 @@ export const AppSidebar = () => {
       }))
   
       setMenuItems(menuItems);
-
-      /* let data = [];
-      for (let {path, menuname: title, ...rest} of menuDtoList) {
-        let obj = {
-          pathname: path,
-          itemId: path,
-          title,
-          ...rest,
-          elemBefore: () => <img
-                    src={sideBarIcons[rest.menuicon]}
-                    alt="icons"/>
-          
-        };
-        data.push(obj);
-      } */
-      // setMenuItems(data);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

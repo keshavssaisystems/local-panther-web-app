@@ -36,6 +36,7 @@ export function UpcomingCard({
       {upcomingList?.length > 0 &&
         upcomingList?.map((interview) => (
           <Card
+            key={interview.scheduleinterviewid}
             className={
               selectedInterview === interview.scheduleinterviewid
                 ? "mb-2 card-border-custom upcomming-card"
