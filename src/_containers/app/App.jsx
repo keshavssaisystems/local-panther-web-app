@@ -7,7 +7,7 @@ import {
   CustomerDashboard,
   CandidateDashboard,
 } from "_containers/dashboard/Dashboard";
-
+import { JobList } from "_containers/customer/jobs/JobList";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
@@ -43,6 +43,7 @@ import {
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
 } from "_containers/admin";
+import { CandidateSchedules } from "_containers/candidate/candidateSchedules";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -274,7 +275,7 @@ export function App() {
             path="/calendar"
             element={
               <PrivateRoute>
-                <CandidateUnderConstruction title={"Calendar"} />
+                <CandidateSchedules title={"Calendar"} />
               </PrivateRoute>
             }
           />
