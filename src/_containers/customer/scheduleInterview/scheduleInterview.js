@@ -26,8 +26,16 @@ import {
 } from "_store";
 import { Popup } from "_components/common/Popup";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
+import { msdummy } from "./msdummy";
+import { Providers } from "@microsoft/mgt-element";
+import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
+import { Login } from "@microsoft/mgt-react";
 
 export function ScheduleInterview() {
+  Providers.globalProvider = new Msal2Provider({
+    clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
+    scopes: ["Calendars.Read"],
+  });
   const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);
@@ -59,8 +67,8 @@ export function ScheduleInterview() {
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
+        start: moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+        end: moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss"),
       })
     );
     getUpcomingData({
@@ -70,8 +78,8 @@ export function ScheduleInterview() {
     });
     getCandidateList(
       selectedJobId,
-      moment().format("YYYY-MM-DDTHH:mm:ss"),
-      moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss")
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
   const getUpcomingData = async function (filterdata) {
@@ -151,7 +159,11 @@ export function ScheduleInterview() {
         formData,
       })
     );
-    getCandidateList(selectedJobId);
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     getUpcomingData({
       pageNo: 1,
@@ -160,8 +172,8 @@ export function ScheduleInterview() {
     });
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss"),
+        start: moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+        end: moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss"),
       })
     );
   };
@@ -275,7 +287,39 @@ export function ScheduleInterview() {
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
+  let syncData = msdummy.value;
+  let overallData = [];
   let availData = [];
+  let msBlockData = [];
+  if (syncData?.length > 0) {
+    syncData.forEach((syncDataElement) => {
+      let dynamicStartDate = moment().weekday(Number(0)).format("YYYY-MM-DD");
+      let dynamicEndDate = moment().weekday(Number(6)).format("YYYY-MM-DD");
+      if (
+        dynamicStartDate <
+          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD") &&
+        dynamicEndDate >
+          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD")
+      ) {
+        let startDate = momentTimezone(syncDataElement.start.dateTime)
+          .tz("Etc/UTC")
+          .format("YYYY-MM-DD HH:mm:ss");
+        let endDate = momentTimezone(syncDataElement.end.dateTime)
+          .tz("Etc/UTC")
+          .format("YYYY-MM-DD HH:mm:ss");
+        let interviewData = {
+          id: syncDataElement.id,
+          data: syncDataElement.location,
+          format: "Video",
+          title: "",
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color: "#2F479B",
+        };
+        msBlockData.push(interviewData);
+      }
+    });
+  }
   if (allInterview?.length > 0) {
     allInterview.forEach((blockedData) => {
       let dynamicStartDate = moment().weekday(Number(0)).format("YYYY-MM-DD");
@@ -312,6 +356,8 @@ export function ScheduleInterview() {
       }
     });
   }
+  overallData = availData.concat(msBlockData);
+  console.log(overallData);
 
   const postMessageData = (formData) => {};
   return (
@@ -408,6 +454,18 @@ export function ScheduleInterview() {
                   )}
                 </Col>
               )}
+              {toggleVar === "availabilty" && (
+                <Col
+                  xs={12}
+                  sm={12}
+                  md={4}
+                  lg={4}
+                  xl={4}
+                  className="mb-3 right-align"
+                >
+                  <Login>Sync with Microsoft</Login>
+                </Col>
+              )}
             </Row>
 
             {toggleVar === "availabilty" && (
@@ -416,7 +474,7 @@ export function ScheduleInterview() {
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
-                    events={availData}
+                    events={overallData}
                     startAccessor="start"
                     endAccessor="end"
                     popup
@@ -426,13 +484,13 @@ export function ScheduleInterview() {
                     toolbar={false}
                     today={false}
                     views={{ week: true }}
-                    onSelectEvent={handleSelectEvent}
-                    eventPropGetter={(availData) => {
-                      const backgroundColor = availData.color
-                        ? availData.color
+                    // onSelectEvent={handleSelectEvent}
+                    eventPropGetter={(overallData) => {
+                      const backgroundColor = overallData.color
+                        ? overallData.color
                         : "blue";
-                      const borderColor = availData.color
-                        ? availData.color
+                      const borderColor = overallData.color
+                        ? overallData.color
                         : "blue";
                       const fontSize = "0.8rem";
                       return {

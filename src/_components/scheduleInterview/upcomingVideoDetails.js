@@ -179,7 +179,7 @@ export function UpcomingVideoDetails({
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Email</h6>
-          <p className="mb-0">-</p>
+          <p className="mb-0">{interviewDetails?.candidateemail}</p>
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Skills</h6>
@@ -331,7 +331,12 @@ export function UpcomingVideoDetails({
         )}
         <div className="p-3">
           <h6 className="fw-bold">Summary</h6>
-          <p className="mb-0">-</p>
+          <ul className="mb-0">
+            {interviewDetails?.candidateSummaryDtos?.length > 0 &&
+              interviewDetails?.candidateSummaryDtos?.map((summaryDetails) => (
+                <li>{summaryDetails.summary}</li>
+              ))}
+          </ul>
         </div>
         <div className="p-3">
           <h6 className="fw-bold">Application questions</h6>

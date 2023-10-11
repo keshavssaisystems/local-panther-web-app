@@ -9,15 +9,7 @@ import { Login } from "@microsoft/mgt-react";
 
 export function Calendar({ title }) {
   Providers.globalProvider = new Msal2Provider({
-    clientId: "11ea805b-fe5f-4085-b06b-f032023dc069",
-    scopes: [
-      "calendars.read",
-      "user.read",
-      "openid",
-      "profile",
-      "people.read",
-      "user.readbasic.all",
-    ],
+    clientId: "01cb8e5a-fe72-418c-accc-3e1ec332768c",
   });
   return (
     <>

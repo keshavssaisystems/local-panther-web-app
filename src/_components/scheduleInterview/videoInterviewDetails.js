@@ -91,7 +91,9 @@ export function VideoInterviewDetails({
     };
     cancelScheduleData(cancelData);
   };
-
+  let USNumber = interviewDetail.candidatephonenumber.match(
+    /(\d{3})(\d{3})(\d{4})/
+  );
   return (
     <>
       <div className="dropdown-menu-header">
@@ -241,7 +243,10 @@ export function VideoInterviewDetails({
             </div>
             {interviewDetail?.format === "Phone" && (
               <div className="p-custom">
-                <p className="mb-0">Phone no - </p>
+                <p className="mb-0">
+                  Phone no -{" "}
+                  {"(" + USNumber[1] + ")-" + USNumber[2] + "-" + USNumber[3]}
+                </p>
               </div>
             )}
             {interviewDetail?.format === "In-person" && (
@@ -320,11 +325,12 @@ export function VideoInterviewDetails({
       )}
       <div className="p-3">
         <h6 className="fw-bold">Summary</h6>
-        <p className="mb-0">
-          {interviewDetail?.messagetocandidate === ""
-            ? "- "
-            : interviewDetail?.messagetocandidate}
-        </p>
+        <ul className="mb-0">
+          {interviewDetail?.candidateSummaryDtos?.length > 0 &&
+            interviewDetail?.candidateSummaryDtos?.map((summaryDetails) => (
+              <li>{summaryDetails.summary}</li>
+            ))}
+        </ul>
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Application questions</h6>
