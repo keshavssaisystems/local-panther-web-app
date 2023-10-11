@@ -3,7 +3,7 @@ import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 
 import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { profileActions } from "_store";
-import { formatDate } from "_helpers/helper";
+import { formatDate, formatDateQualification } from "_helpers/helper";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
@@ -64,10 +64,10 @@ export function CandidateQualification(props) {
       text = formatDate(data.startdate);
 
       if (data.enddate) {
-        text += " to " + formatDate(data.enddate);
+        text += " to " + formatDateQualification(data.enddate);
       }
     } else if (data.enddate) {
-      text = formatDate(data.enddate);
+      text = formatDateQualification(data.enddate);
     }
     return text;
   };
@@ -125,6 +125,50 @@ export function CandidateQualification(props) {
     return text;
   };
 
+  const checkEndDate = function (date) {
+    if (new Date(date) == new Date()) {
+      return "Present";
+    } else {
+      formatDate(date);
+    }
+  };
+
+  function calculateExperience(fromDate, toDate) {
+    const fromDateObj = new Date(fromDate);
+    const toDateObj = toDate ? new Date(toDate) : new Date();
+
+    const yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
+    const monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
+    const dayDifference = toDateObj.getDate() - fromDateObj.getDate();
+
+    if (dayDifference < 0) {
+      monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
+      dayDifference += new Date(
+        toDateObj.getFullYear(),
+        toDateObj.getMonth(),
+        0
+      ).getDate();
+    }
+
+    const yearsText =
+      yearDifference > 0
+        ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
+        : "";
+    const monthsText =
+      monthDifference > 0
+        ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
+        : "";
+
+    let experienceText;
+    if (monthsText != "") {
+      experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
+    } else {
+      experienceText = [yearsText, monthsText].filter(Boolean).join("");
+    }
+
+    return experienceText;
+  }
+
   return (
     <div>
       <div className="profile-view">
@@ -177,10 +221,12 @@ export function CandidateQualification(props) {
 
                           {item.startdate ? (
                             <div className="card-p-text-black">
-                              {/* {formatDate(item.startdate)}
-                          {item.startdate && item.enddate ? +" to " : ""}
-                          {formatDate(item.enddate)} */}
-                              {getDate(item)}
+                              {getDate(item)} {" ("}
+                              {calculateExperience(
+                                item.startdate,
+                                item.enddate
+                              )}
+                              {")"}
                             </div>
                           ) : (
                             <></>
@@ -263,18 +309,16 @@ export function CandidateQualification(props) {
                           {item.zipCode}
                           {"  "}
                         </p>
-                        {item.startdate != null ? (
-                          <p className="card-p-text-black">
-                            {formatDate(item.startdate)}
-                            {" to "}
-                            {formatDate(item.enddate)}
-                            {" ("}
-                            {item.experience}
-                            {")"}
-                          </p>
-                        ) : (
-                          <></>
-                        )}
+
+                        <p className="card-p-text-black">
+                          {formatDate(item.startdate)}
+                          {" to "}
+                          {checkEndDate(item.enddate)}
+                          {" ("}
+                          {item.experience}
+                          {")"}
+                        </p>
+
                         {/* <p className="card-p-text">{item.jobDescription}</p> */}
                       </div>
                     ))}

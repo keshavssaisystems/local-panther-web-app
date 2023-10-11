@@ -387,7 +387,7 @@ export function CandidateSkills(props) {
                         }}
                       />
                       {mustHaveValidation === true && (
-                        <FormText color="danger">Skills is Required</FormText>
+                        <FormText color="danger">Skills is required</FormText>
                       )}
                     </FormGroup>
                   </Col>

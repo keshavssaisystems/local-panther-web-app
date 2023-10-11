@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { educationDetailsSlice } from "_store";
 import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
-import { formatDate } from "_helpers/helper";
+import { formatDate, formatDateQualification } from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import { EducationModal } from "./educationModal";
@@ -128,10 +128,10 @@ export function CandidateEducation(props) {
       text = formatDate(data.startdate);
 
       if (data.enddate) {
-        text += " to " + formatDate(data.enddate);
+        text += " to " + formatDateQualification(data.enddate);
       }
     } else if (data.enddate) {
-      text = formatDate(data.enddate);
+      text = formatDateQualification(data.enddate);
     }
     return text;
   };
@@ -177,20 +177,21 @@ export function CandidateEducation(props) {
                           />
                         </div>
                       </Col>
-                      <Label className="mb-0 mt-0 card-p-text-black">
-                        {getText(item)}
-                      </Label>
-
+                      {item.cityname != "" ||
+                      item.statename != "" ||
+                      item.countryname != "" ||
+                      item.school != "" ? (
+                        <Label className="mb-0 mt-0 card-p-text-black">
+                          {getText(item)}
+                        </Label>
+                      ) : (
+                        ""
+                      )}
                       {item.iscurrentlystudying ? (
                         <p className="card-p-text-black">Curretly Studying </p>
                       ) : (
                         <div>
-                          <p className="card-p-text-black">
-                            {/* {formatDate(item.startdate)}
-                          {" to "}
-                          {formatDate(item.enddate)} */}
-                            {getDate(item)}
-                          </p>
+                          <p className="card-p-text-black">{getDate(item)}</p>
                         </div>
                       )}
                     </div>

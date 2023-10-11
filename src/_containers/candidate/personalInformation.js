@@ -41,12 +41,9 @@ import profileImg from "../../assets/utils/images/avatars/1.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
-import Tabs from "react-responsive-tabs";
+import InputMask from "react-input-mask";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
@@ -180,6 +177,14 @@ export function PersonalInformation(props) {
     setCitySelect(new_data);
     error_data.cityError = false;
     setRequiredErros(error_data);
+    let state_response = [...stateSelect];
+    debugger;
+    let obj = {
+      value: cityList.find((x) => x.cityid == data.value)?.stateid,
+      label: cityList.find((x) => x.cityid == data.value)?.statename,
+    };
+    state_response.push(obj);
+    setStateList(state_response);
   };
   const onSelectCountryDropdown = function (data) {
     let new_data = [];
@@ -607,7 +612,7 @@ export function PersonalInformation(props) {
                         type="text"
                         name="firstname"
                         id="firstname"
-                        placeholder="Enter First Name"
+                        placeholder="Enter first name"
                         maxLength={50}
                         value={selectedCandidate.personalInfo.firstname}
                         onInput={(evt) =>
@@ -621,7 +626,7 @@ export function PersonalInformation(props) {
                       />
                       <div className="invalid-feedback">
                         {selectedCandidate.personalInfo.firstname == ""
-                          ? "firstname is required"
+                          ? "Firstname is required"
                           : ""}
                       </div>
                     </FormGroup>
@@ -632,7 +637,7 @@ export function PersonalInformation(props) {
                         Last name <span className="required-icon">*</span>
                       </Label>
                       <input
-                        placeholder="Enter Last Name"
+                        placeholder="Enter last name"
                         name="lastname"
                         type="lastname"
                         id="lastname"
@@ -650,7 +655,7 @@ export function PersonalInformation(props) {
 
                       <div className="invalid-feedback">
                         {selectedCandidate.personalInfo.lastname == ""
-                          ? "lastname is required"
+                          ? "Lastname is required"
                           : ""}
                       </div>
                     </FormGroup>
@@ -662,8 +667,8 @@ export function PersonalInformation(props) {
                       <Label for="phonenumber" className="fw-semi-bold">
                         Phone<span className="required-icon">*</span>
                       </Label>
-                      <input
-                        placeholder="Enter Phone Number"
+                      <InputMask
+                        placeholder="Eg: (987)-654-3210"
                         name="phonenumber"
                         type="text"
                         id="phonenumber"
@@ -682,7 +687,7 @@ export function PersonalInformation(props) {
                       />
                       <div className="invalid-feedback">
                         {selectedCandidate.personalInfo.phonenumber == ""
-                          ? "phone number is required"
+                          ? "Phone number is required"
                           : ""}
                       </div>
                       <div className="invalid-feedback">
@@ -745,7 +750,7 @@ export function PersonalInformation(props) {
                         name="skills"
                         placeholder="Search to select"
                         placeholderText="search"
-                        location-dropdown
+                        className="location-dropdown"
                         loadOptions={loadOptions}
                         isMulti={false}
                         value={citySelect}
@@ -795,7 +800,7 @@ export function PersonalInformation(props) {
                           onHandleInputChange("address", evt.target.value)
                         }
                         maxLength={50}
-                        placeholder="Enter Address"
+                        placeholder="Enter address"
                         className="field-input placeholder-text form-control input-text"
                       />
                     </FormGroup>
@@ -814,7 +819,7 @@ export function PersonalInformation(props) {
                         onInput={(evt) =>
                           onHandleInputChange("zip", evt.target.value)
                         }
-                        placeholder="Enter Zip Code"
+                        placeholder="Enter zip zode"
                         className="field-input placeholder-text form-control input-text"
                       />
                     </FormGroup>

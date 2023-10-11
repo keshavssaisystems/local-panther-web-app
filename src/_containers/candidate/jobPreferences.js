@@ -811,7 +811,7 @@ export function JobPreferences(props) {
                           type="text"
                           name="minPay"
                           id="minPay"
-                          placeholder="Enter Base Pay"
+                          placeholder="Enter base pay"
                           className="field-input placeholder-text form-control input-text"
                           onInput={(evt) =>
                             onHandleInputChange("basePay", evt.target.value)
