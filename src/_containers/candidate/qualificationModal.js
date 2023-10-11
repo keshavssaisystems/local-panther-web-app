@@ -70,7 +70,7 @@ export function QualificationModal(props) {
         countryid: 0,
         cityid: 0,
         stateid: 0,
-        iscurrentlyworking: true,
+        iscurrentlyworking: false,
         startdate: null,
         enddate: null,
         isactive: true,
@@ -232,7 +232,7 @@ export function QualificationModal(props) {
       countryid: 0,
       cityid: 0,
       stateid: 0,
-      iscurrentlyworking: true,
+      iscurrentlyworking: false,
       startdate: null,
       enddate: null,
       isactive: true,
@@ -256,7 +256,6 @@ export function QualificationModal(props) {
     } else if (check == "description") {
       new_data[index].jobdescription = data;
     } else if (check == "status") {
-      debugger;
       new_data[index].iscurrentlyworking = !new_data[index].iscurrentlyworking;
       if (new_data[index].iscurrentlyworking) {
         new_data[index].enddate = new Date();
@@ -363,7 +362,6 @@ export function QualificationModal(props) {
 
   async function onSubmit() {
     let new_data = [...formDetails];
-    debugger;
 
     let valid = true;
     for (let i = 0; i < formDetails.length; i++) {
@@ -419,41 +417,6 @@ export function QualificationModal(props) {
     } else {
       setError(true);
     }
-  }
-  function calculateExperience(fromDate, toDate) {
-    const fromDateObj = new Date(fromDate);
-    const toDateObj = toDate ? new Date(toDate) : new Date();
-
-    const yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
-    const monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
-    const dayDifference = toDateObj.getDate() - fromDateObj.getDate();
-
-    if (dayDifference < 0) {
-      monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
-      dayDifference += new Date(
-        toDateObj.getFullYear(),
-        toDateObj.getMonth(),
-        0
-      ).getDate();
-    }
-
-    const yearsText =
-      yearDifference > 0
-        ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
-        : "";
-    const monthsText =
-      monthDifference > 0
-        ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
-        : "";
-
-    let experienceText;
-    if (monthsText != "") {
-      experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
-    } else {
-      experienceText = [yearsText, monthsText].filter(Boolean).join("");
-    }
-
-    return experienceText;
   }
 
   return (

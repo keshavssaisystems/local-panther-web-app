@@ -47,7 +47,7 @@ export function CertificationsModal(props) {
         candidatecertificationid: 0,
         candidateid: 0,
         certificationtypeid: 0,
-        isexpired: true,
+        isexpired: false,
         startdate: "",
         enddate: "",
         description: "",
@@ -126,6 +126,20 @@ export function CertificationsModal(props) {
       }
     } else if (check == "expired") {
       new_data.isexpired = !new_data.isexpired;
+
+      if (new_data.isexpired) {
+        if (new_data.startdate) {
+          if (new Date(data) < new Date(new_data.startdate)) {
+            new_data.fromDateValid = true;
+          } else {
+            new_data.fromDateValid = false;
+            new_data.enddate = new Date();
+          }
+        } else {
+          new_data.fromDateValid = false;
+          new_data.enddate = new Date();
+        }
+      }
     } else if (check == "description") {
       new_data.description = data;
     } else if (check == "fromdate") {
@@ -363,7 +377,7 @@ export function CertificationsModal(props) {
               </InputGroup>
               <div className="filter-info-text filter-error-msg">
                 {formDetails.fromDateValid
-                  ? "From Date should be less than To Date"
+                  ? "From date should be less than to date"
                   : ""}
               </div>
             </FormGroup>
@@ -380,6 +394,7 @@ export function CertificationsModal(props) {
                   className="form-control"
                   placeholderText="MM/DD/YYYY"
                   selected={formDetails.enddate}
+                  disabled={formDetails.isexpired}
                   showYearDropdown={true}
                   onSelect={(evt) => onHandleInputChange("todate", evt)}
                 />

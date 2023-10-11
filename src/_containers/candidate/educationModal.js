@@ -80,7 +80,7 @@ export function EducationModal(props) {
             label: "",
           },
         ],
-        iscurrentlystudying: true,
+        iscurrentlystudying: false,
         startdate: "",
         enddate: "",
         isactive: false,
@@ -234,7 +234,7 @@ export function EducationModal(props) {
           label: "",
         },
       ],
-      iscurrentlystudying: true,
+      iscurrentlystudying: false,
       startdate: null,
       enddate: null,
       isactive: false,
@@ -275,6 +275,20 @@ export function EducationModal(props) {
     } else if (check == "currentlyStudying") {
       new_data[index].iscurrentlystudying =
         !new_data[index].iscurrentlystudying;
+
+      if (new_data[index].iscurrentlystudying) {
+        if (new_data[index].startdate) {
+          if (new Date(data) < new Date(new_data[index].startdate)) {
+            new_data[index].fromDateValid = true;
+          } else {
+            new_data[index].fromDateValid = false;
+            new_data[index].enddate = new Date();
+          }
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].enddate = new Date();
+        }
+      }
     } else if (check == "fromdate") {
       if (new_data[index].enddate) {
         if (new Date(data) > new Date(new_data[index].enddate)) {
@@ -327,10 +341,14 @@ export function EducationModal(props) {
         cityid: rest.city.value,
         stateid: rest.state.value,
         iscurrentlystudying: rest.iscurrentlystudying,
-        startdate: rest.startdate
-          ? new Date(rest.startdate).toISOString()
-          : null,
-        enddate: rest.startdate ? new Date(rest.enddate).toISOString() : null,
+        startdate:
+          rest.startdate && rest.startdate != ""
+            ? new Date(rest.startdate).toISOString()
+            : null,
+        enddate:
+          rest.enddate && rest.enddate != ""
+            ? new Date(rest.enddate).toISOString()
+            : null,
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
@@ -420,6 +438,7 @@ export function EducationModal(props) {
                   defaultOptions={educationList}
                   isMulti={false}
                   value={item.education.value == 0 ? [] : item.education}
+                  className="location-dropdown-education"
                   onChange={(evt) =>
                     onHandleInputChange("levelofeducation", evt, index, index)
                   }
@@ -570,6 +589,7 @@ export function EducationModal(props) {
                     className="form-control"
                     placeholderText="MM/DD/YYYY"
                     showYearDropdown={true}
+                    disabled={item.iscurrentlystudying}
                     selected={item.enddate}
                     onChange={(evt) =>
                       onHandleInputChange("todate", evt, index)

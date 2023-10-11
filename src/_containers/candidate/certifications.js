@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { certificateDetailsSlice } from "_store";
 import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
-import { formatDate } from "_helpers/helper";
+import { formatDate, formatDateQualification } from "_helpers/helper";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -78,10 +78,10 @@ export function CertificationDetails(props) {
       text = formatDate(data.startdate);
 
       if (data.enddate) {
-        text += " to " + formatDate(data.enddate);
+        text += " to " + formatDateQualification(data.enddate);
       }
     } else if (data.enddate) {
-      text = formatDate(data.enddate);
+      text = formatDateQualification(data.enddate);
     }
     return text;
   };

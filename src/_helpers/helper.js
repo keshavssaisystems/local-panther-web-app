@@ -77,3 +77,47 @@ export const formatDate = function (dateString) {
 
   return formattedDate;
 };
+export const formatDateQualification = function (dateString) {
+  // Parse the input date string
+
+  if (!dateString) {
+    return;
+  }
+
+  const date = new Date(dateString);
+
+  // Define month names as an array
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Get the month, day, and year components
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  const today_month = monthNames[new Date().getMonth()];
+  const today_day = new Date().getDate();
+  const today_year = new Date().getFullYear();
+  let today = `${today_month} ${today_day}, ${today_year}`;
+
+  // Create the formatted date string
+  const formattedDate = `${month} ${day}, ${year}`;
+
+  if (today == formattedDate) {
+    return "Present";
+  } else {
+    return formattedDate;
+  }
+};
