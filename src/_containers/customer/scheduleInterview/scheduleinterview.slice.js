@@ -100,7 +100,6 @@ export const getAllInterviewThunk = createAsyncThunk(
 export const getSchedulesByCandidateId = createAsyncThunk(
   `${name}/getSchedulesByCandidateId`,
   async ({ candidateId, start, end }) => {
-    debugger;
     const UPCOMING_INTEVRIEW_END_POINT_V2 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=10&pageNumber=1&candidateId=${candidateId}&startDate=${start}&endDate=${end}&isActive=true&isPaginationRequired=false`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V2);
   }

@@ -10,10 +10,16 @@ import { CandCardView } from "./candcardview";
 import { CandJobDetail } from "./candjobcard";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { CandListView } from "./candlistview";
+import { JobDetailModal } from "_components/modal/jobdetailmodal";
+import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import "./candidatelist.scss";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState("matched");
+  const [showJDModal, setShowJDModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState([]);
+  const [showIDModal, setShowIDModal] = useState(false);
+  const [selectedIDData, setSelectedIDData] = useState([]);
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -35,6 +41,9 @@ export const CandidateList = (props) => {
     (state) => state.candidateListReducer.jobDetail
   );
   const loading = useSelector((state) => state.candidateListReducer.loading);
+  const jdLoading = useSelector(
+    (state) => state.candidateListReducer.jdLoading
+  );
   const handlePageChange = (page) => {
     setPageNo(page);
     toggle(activeTab, page);
@@ -196,6 +205,27 @@ export const CandidateList = (props) => {
     SetShowAlert(data);
   };
 
+  const onShowModal = (row, type) => {
+    if (type === "jd") {
+      setSelectedRow(row);
+      setShowJDModal(true);
+    } else if (type === "id") {
+      //with dummy data
+      let obj = {
+        scheduledate: "2023-10-09T00:00:00",
+        starttime: "20:00:00",
+        duration: "45 min",
+
+        jobtitle: "Sr iOS and React Native developer",
+        format: "In-person",
+        interviewername: "",
+        videolink: "",
+      };
+      setSelectedIDData(obj);
+      setShowIDModal(true);
+    }
+  };
+
   return (
     <>
       <Row className="cand-list-cont">
@@ -305,29 +335,121 @@ export const CandidateList = (props) => {
         <Col xs={12} sm={12} md={4} lg={4} xl={12} className="mb-3">
           <TabContent activeTab={activeTab}>
             <TabPane tabId="matched">
-              <Row>
-                <p className="mb-1 row-count">{totalRecords} jobs</p>
-                <Col md="4" lg="4">
-                  {candidateJobList?.length > 0 ? (
-                    candidateJobList.map((data) => {
-                      return (
-                        <CandCardView
-                          key={data.jobid}
-                          name={data.jobtitle}
-                          customer={data.companyname}
-                          minExperience={data.minexperience}
-                          maxExperience={data.maxexperience}
-                          location={data.cityname + ", " + data.statename}
-                          description={data.description}
-                          role={data.jobrole}
-                          jobId={data.jobid}
-                          createdDate={data.jobcreatedatetime}
-                          type={"Open"}
-                          selectedJob={
-                            jobDetail?.length > 0 ? jobDetail[0].jobid : ""
-                          }
-                          getSelectedJobId={(e) => getSelectedJob(e)}
-                          additionalData={data}
+              {loading ? (
+                <>
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                </>
+              ) : (
+                <>
+                  <Row>
+                    <p className="mb-1 row-count">
+                      {totalRecords > 0 ? `${totalRecords} jobs` : ""}{" "}
+                    </p>
+                    <Col md="4" lg="4">
+                      {candidateJobList?.length > 0 ? (
+                        candidateJobList.map((data) => {
+                          return (
+                            <CandCardView
+                              key={data.jobid}
+                              name={data.jobtitle}
+                              customer={data.companyname}
+                              minExperience={data.minexperience}
+                              maxExperience={data.maxexperience}
+                              location={data.cityname + ", " + data.statename}
+                              description={data.description}
+                              role={data.jobrole}
+                              jobId={data.jobid}
+                              createdDate={data.jobcreatedatetime}
+                              type={"Open"}
+                              selectedJob={
+                                jobDetail?.length > 0 ? jobDetail[0].jobid : ""
+                              }
+                              getSelectedJobId={(e) => getSelectedJob(e)}
+                              additionalData={data}
+                              onCandidateActions={(
+                                type,
+                                candidaterecommendedjobid
+                              ) =>
+                                onCandidateCardActions(
+                                  type,
+                                  candidaterecommendedjobid
+                                )
+                              }
+                            />
+                          );
+                        })
+                      ) : (
+                        <></>
+                      )}
+                      {totalRecords > candCPSize ? (
+                        <CardPagination
+                          totalPages={totalRecords / candCPSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      ) : (
+                        <></>
+                      )}
+                    </Col>
+                    <Col md="8" lg="8">
+                      {!jdLoading ? (
+                        <>
+                          {jobDetail?.length > 0 &&
+                          candidateJobList?.length > 0 ? (
+                            <>
+                              <CandJobDetail
+                                jobDetails={jobDetail}
+                                type={"Open"}
+                                onApplyClick={(candidaterecommendedjobid) =>
+                                  onApplyClickBtn(candidaterecommendedjobid)
+                                }
+                              ></CandJobDetail>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <Loader
+                            type="line-scale-pulse-out-rapid"
+                            className="d-flex justify-content-center"
+                          />
+                        </>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row>
+                    {candidateJobList.length === 0 && !loading ? (
+                      <Row style={{ textAlign: "center" }}>
+                        <Col>No Records found!</Col>
+                      </Row>
+                    ) : (
+                      ""
+                    )}
+                  </Row>
+                </>
+              )}
+            </TabPane>
+            <TabPane tabId="liked">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
                           onCandidateActions={(
                             type,
                             candidaterecommendedjobid
@@ -337,253 +459,291 @@ export const CandidateList = (props) => {
                               candidaterecommendedjobid
                             )
                           }
+                          showModal={(e, type) => onShowModal(e, type)}
                         />
-                      );
-                    })
-                  ) : (
-                    <></>
-                  )}
-                </Col>
-                <Col md="8" lg="8">
-                  {" "}
-                  <>
-                    {jobDetail?.length > 0 && candidateJobList?.length > 0 ? (
-                      <>
-                        <CandJobDetail
-                          jobDetails={jobDetail}
-                          type={"Open"}
-                          onApplyClick={(candidaterecommendedjobid) =>
-                            onApplyClickBtn(candidaterecommendedjobid)
-                          }
-                        ></CandJobDetail>
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
-                      <></>
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
                     )}
                   </>
-                </Col>
-                <Col md="4" lg="4">
-                  <CardPagination
-                    totalPages={totalRecords / candCPSize}
-                    pageIndex={pageNo}
-                    onCallBack={(evt) => handlePageChange(evt)}
-                  ></CardPagination>
-                </Col>
-              </Row>
-            </TabPane>
-            <TabPane tabId="liked">
-              <p>
-                <>
-                  {candidateJobList?.length > 0 ? (
-                    <>
-                      <CandListView
-                        type={activeTab}
-                        data={candidateJobList}
-                        onCandidateActions={(type, candidaterecommendedjobid) =>
-                          onCandidateCardActions(
-                            type,
-                            candidaterecommendedjobid
-                          )
-                        }
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / candLPSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <>
-                      {candidateJobList.length === 0 && !loading ? (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  )}
-                </>
+                )}
               </p>
             </TabPane>
             <TabPane tabId="maybe">
               <p>
-                {" "}
-                <>
-                  {candidateJobList?.length > 0 ? (
-                    <>
-                      <CandListView
-                        type={activeTab}
-                        data={candidateJobList}
-                        onCandidateActions={(type, candidaterecommendedjobid) =>
-                          onCandidateCardActions(
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
+                          onCandidateActions={(
                             type,
                             candidaterecommendedjobid
-                          )
-                        }
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / candLPSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <>
-                      {candidateJobList.length === 0 && !loading ? (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  )}
-                </>
+                          ) =>
+                            onCandidateCardActions(
+                              type,
+                              candidaterecommendedjobid
+                            )
+                          }
+                          showModal={(e, type) => onShowModal(e, type)}
+                        />
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
               </p>
             </TabPane>
             <TabPane tabId="applied">
               <p>
-                {" "}
-                <>
-                  {candidateJobList?.length > 0 ? (
-                    <>
-                      <CandListView
-                        type={activeTab}
-                        data={candidateJobList}
-                        onCandidateActions={(type, candidaterecommendedjobid) =>
-                          onCandidateCardActions(
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
+                          onCandidateActions={(
                             type,
                             candidaterecommendedjobid
-                          )
-                        }
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / candLPSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <>
-                      {candidateJobList.length === 0 && !loading ? (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  )}
-                </>
+                          ) =>
+                            onCandidateCardActions(
+                              type,
+                              candidaterecommendedjobid
+                            )
+                          }
+                          showModal={(e, type) => onShowModal(e, type)}
+                        />
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
               </p>
             </TabPane>
             <TabPane tabId="interview">
               <p>
-                {" "}
-                <>
-                  {candidateJobList?.length > 0 ? (
-                    <>
-                      <CandListView
-                        type={activeTab}
-                        data={candidateJobList}
-                        onCandidateActions={(type, candidaterecommendedjobid) =>
-                          onCandidateCardActions(
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
+                          onCandidateActions={(
                             type,
                             candidaterecommendedjobid
-                          )
-                        }
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / candLPSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <>
-                      {candidateJobList.length === 0 && !loading ? (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  )}
-                </>
+                          ) =>
+                            onCandidateCardActions(
+                              type,
+                              candidaterecommendedjobid
+                            )
+                          }
+                          showModal={(e, type) => onShowModal(e, type)}
+                        />
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
               </p>
             </TabPane>
             <TabPane tabId="accepted">
               <p>
-                {" "}
-                <>
-                  {candidateJobList?.length > 0 ? (
-                    <>
-                      <CandListView
-                        type={activeTab}
-                        data={candidateJobList}
-                        onCandidateActions={(type, candidaterecommendedjobid) =>
-                          onCandidateCardActions(
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
+                          onCandidateActions={(
                             type,
                             candidaterecommendedjobid
-                          )
-                        }
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / candLPSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <>
-                      {candidateJobList.length === 0 && !loading ? (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  )}
-                </>
+                          ) =>
+                            onCandidateCardActions(
+                              type,
+                              candidaterecommendedjobid
+                            )
+                          }
+                          showModal={(e, type) => onShowModal(e, type)}
+                        />
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
               </p>
             </TabPane>
             <TabPane tabId="rejected">
               <p>
-                {" "}
-                <>
-                  {candidateJobList?.length > 0 ? (
-                    <>
-                      <CandListView
-                        type={activeTab}
-                        data={candidateJobList}
-                        onCandidateActions={(type, candidaterecommendedjobid) =>
-                          onCandidateCardActions(
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
+                          onCandidateActions={(
                             type,
                             candidaterecommendedjobid
-                          )
-                        }
-                      />
-                      <CardPagination
-                        totalPages={totalRecords / candLPSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
-                    </>
-                  ) : (
-                    <>
-                      {candidateJobList.length === 0 && !loading ? (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  )}
-                </>
+                          ) =>
+                            onCandidateCardActions(
+                              type,
+                              candidaterecommendedjobid
+                            )
+                          }
+                          showModal={(e, type) => onShowModal(e, type)}
+                        />
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>No Records found!</Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
               </p>
             </TabPane>
           </TabContent>
@@ -597,6 +757,36 @@ export const CandidateList = (props) => {
             onConfirm={() => closeSweetAlert()}
           />
           {showAlert.description}
+        </>
+        <>
+          {showJDModal ? (
+            <>
+              <JobDetailModal
+                jobDetail={selectedRow}
+                isOpen={showJDModal}
+                onClose={() => {
+                  setShowJDModal(false);
+                }}
+              ></JobDetailModal>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {showIDModal ? (
+            <>
+              <InterViewDetailModal
+                data={selectedIDData}
+                isOpen={showIDModal}
+                onClose={() => {
+                  setShowIDModal(false);
+                }}
+              ></InterViewDetailModal>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       </Row>
     </>

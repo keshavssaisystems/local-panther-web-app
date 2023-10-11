@@ -8,7 +8,7 @@ import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 
-export function CandJobDetail({ jobDetails, type, onApplyClick }) {
+export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
   let jobDetail = {};
   let skillArray = [];
   let skillsData = "-";
@@ -176,7 +176,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick }) {
             // ApplyButton={type !== "Open"}
             // jobId={jobDetail.jobid}
             // department={jobDetail.departmentid ?? 1}
-            showApplyBtn={true}
+            showApplyBtn={!isModal}
             applyBtnState={true}
             onClickApply={() => onClickApplyBtn()}
           />

@@ -205,6 +205,8 @@ function createExtraReducers() {
       builder
         .addCase(pending, (state) => {
           state.loading = true;
+          state.candidateList = [];
+          state.totalRecords = 0;
         })
         .addCase(fulfilled, (state, action) => {
           state.loading = false;

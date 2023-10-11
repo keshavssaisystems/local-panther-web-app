@@ -12,22 +12,17 @@ import {
   Col,
   Button,
 } from "reactstrap";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-} from "react-icons/io";
 
-import { BsCheck, BsClock } from "react-icons/bs";
 import customerIcons from "assets/utils/images/customer";
-import moment from "moment";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid) => {
     props.onCandidateActions(type, candidaterecommendedjobid);
   };
 
+  const onShowModal = (row, type) => {
+    props.showModal(row, type);
+  };
   const renderButtons = (row) => {
     if (props.type === "liked") {
       return (
@@ -270,7 +265,7 @@ export const CandListView = (props) => {
     }
   };
 
-  const renderMenu = (candidateid, row) => {
+  const renderMenu = (row) => {
     return (
       <div className="d-block w-100 text-center">
         <UncontrolledButtonDropdown className="menu-ellipses" direction="start">
@@ -281,12 +276,13 @@ export const CandListView = (props) => {
             <FontAwesomeIcon icon={faEllipsisV} />
           </DropdownToggle>
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-            <DropdownItem>
+            <DropdownItem onClick={() => onShowModal(row, "jd")}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>Job details</span>
             </DropdownItem>
+
             {row.customerscheduleddatetime ? (
-              <DropdownItem>
+              <DropdownItem onClick={() => onShowModal(row, "id")}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
               </DropdownItem>
@@ -354,7 +350,7 @@ export const CandListView = (props) => {
     },
     {
       name: <span className="table-title">Action</span>,
-      cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+      cell: (row) => <>{renderMenu(row)}</>,
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
