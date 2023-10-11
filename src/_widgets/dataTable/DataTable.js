@@ -31,7 +31,8 @@ export function Table({
   fixedHeader, 
   fixedHeaderScrollHeight,
   progressPending,
-  progressComponent }) {
+  progressComponent,
+  onRowClicked }) {
     return (
         <DataTable
             progressPending={progressPending}
@@ -40,6 +41,7 @@ export function Table({
             columns={columns}
             data={data}
             fixedHeader={fixedHeader}
+            onRowClicked={onRowClicked}
             fixedHeaderScrollHeight={fixedHeaderScrollHeight}
         />
     );

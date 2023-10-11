@@ -7,7 +7,7 @@ import {
   CustomerDashboard,
   CandidateDashboard,
 } from "_containers/dashboard/Dashboard";
-import { JobList } from "_containers/customer/jobs/JobList";
+
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
@@ -27,7 +27,7 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
-import { Contact } from "_containers/Contact";
+import { Contact } from "_containers/contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";

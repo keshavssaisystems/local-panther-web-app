@@ -54,6 +54,15 @@ export const hiringManagerThunk = createAsyncThunk(
   }
 );
 
+// scheduled interview list thunk
+export const scheduledInterviewListThunk = createAsyncThunk(
+  `${name}/scheduledInterviewListThunk`,
+  async (jobid) => {
+    const SCHEDULED_INTERVIEW_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?jobId=${jobid}`;
+    return await fetchWrapper.get(SCHEDULED_INTERVIEW_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -116,7 +125,22 @@ const adminReportSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
-
+    
+    // scheduled interview list
+    [scheduledInterviewListThunk.pending]: (state) => {
+      state.scheduledLoading = true;
+      state.error = null;
+    },
+    [scheduledInterviewListThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { scheduledInterviewList = [], totalRows = 0 } = {}} = payload;
+      state.scheduledLoading = false;
+      state.scheduledInterviewList = scheduledInterviewList;      
+      state.totalScheduledInterview = totalRows;
+    },
+    [scheduledInterviewListThunk.rejected]: (state, action) => {
+      state.scheduledLoading = false;
+      state.error = action.error;
+    },
 
   },
 });

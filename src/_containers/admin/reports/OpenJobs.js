@@ -18,8 +18,8 @@ import {
   DropdownItem } from "reactstrap";
 
 import { CompanyFilter, SkillsFilter, LocationFilter } from "../filterComponent";
-import { Table } from "_widgets";
-import { openJobsThunk } from "../_redux/report.slice";
+import { Table, Popup } from "_widgets";
+import { openJobsThunk, scheduledInterviewListThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,96 +28,16 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-const columns = [
-  {
-      name: 'Company',
-      selector: row => row.companyname,
-      sortable: true,
-      wrap: true,
-  },
-  {
-      name: 'Title',
-      selector: row => row.jobtitle,
-      sortable: true,
-      wrap: true,
-  },
-  {
-      name: 'Location',
-      selector: row => row.address,
-      sortable: true,
-      wrap: true,
-  },
-  {
-      name: 'Experiance',
-      selector: row => row.experiencelevel,
-      sortable: true,
-      wrap: true,
-  },
-  {
-      name: 'Skills',
-      selector: row => row.musthaveskills,
-      wrap: true,
-  },
-  {
-      name: 'Posted',
-      selector: row => row.jobposteddate,
-      format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
-      wrap: true,
-  },
-  {
-    name: 'Position',
-    selector: row => row.noofopenposition,
-    sortable: true,
-    width: "90px"
-  },
-  {
-    name: 'Hired',
-    selector: row => row.reject,
-    wrap: true,
-    width: "70px"
-  },
-  {
-      name: 'Matched',
-      selector: row => row.matched,
-      wrap: true,
-      width: "80px"
-  },
-  {
-      name: 'Liked',
-      selector: row => row.like,
-      wrap: true,
-      width: "70px"
-  },
-  {
-      name: 'Applied',
-      selector: row => row.applied,
-      wrap: true,
-      width: "80px"
-  },
-  {
-      name: 'Scheduled',
-      selector: row => row.scheduled,
-      wrap: true,
-      width: "80px"
-  },
-  {
-      name: 'Accepted',
-      selector: row => row.accept,
-      wrap: true,
-      width: "80px"
-  },
-  {
-      name: 'Rejected',
-      selector: row => row.reject,
-      wrap: true,
-      width: "80px"
-  },
-];
 
 export function OpenJobs() {
   const dispatch = useDispatch()
-  const { openJobsList: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
+  const { 
+    openJobsList: data = [], 
+    scheduledInterviewList = [],
+    scheduledLoading = false, 
+    loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
   
+  let [isOpen, setIsOpen] = useState(false);
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
   let [filter, setFilter] = useState({});
@@ -136,7 +56,6 @@ export function OpenJobs() {
   }
   
   const handleDateChange = (name, value) => {
-
     setFilter({
       ...filter,
       [name]: moment(value).format('YYYY-MM-DD')
@@ -153,6 +72,155 @@ export function OpenJobs() {
     setEndDate(null)
     dispatch(openJobsThunk())
   }
+
+  const handleSheduleClick = (jobid) => {
+    dispatch(scheduledInterviewListThunk(jobid))
+    setIsOpen(true)
+  }
+
+  /* const handleRowClicked = (e) => {
+    dispatch()
+    setIsOpen(true)
+  } */
+
+  const columns = [
+    {
+        name: 'Company',
+        selector: row => row.companyname,
+        sortable: true,
+        wrap: true,
+    },
+    {
+        name: 'Title',
+        selector: row => row.jobtitle,
+        sortable: true,
+        wrap: true,
+    },
+    {
+        name: 'Location',
+        selector: row => row.address,
+        sortable: true,
+        wrap: true,
+    },
+    {
+        name: 'Experiance',
+        selector: row => row.experiencelevel,
+        sortable: true,
+        wrap: true,
+    },
+    {
+        name: 'Skills',
+        selector: row => row.musthaveskills,
+        wrap: true,
+    },
+    {
+        name: 'Posted',
+        selector: row => row.jobposteddate,
+        format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
+        wrap: true,
+    },
+    {
+      name: 'Position',
+      selector: row => row.noofopenposition,
+      sortable: true,
+      width: "90px"
+    },
+    {
+      name: 'Hired',
+      selector: row => row.reject,
+      wrap: true,
+      width: "70px"
+    },
+    {
+        name: 'Matched',
+        selector: row => row.matched,
+        wrap: true,
+        width: "80px"
+    },
+    {
+        name: 'Liked',
+        selector: row => row.like,
+        wrap: true,
+        width: "70px"
+    },
+    {
+        name: 'Applied',
+        selector: row => row.applied,
+        wrap: true,
+        width: "80px"
+    },
+    {
+        name: 'Scheduled',
+        selector: row => row.scheduled,
+        cell:(row)=><button style={{border: '0px', width: '100%', height: '100%' }} onClick={() => handleSheduleClick(row.jobid)} id={row.jobid}>{row.scheduled}</button>,
+        wrap: true,
+        width: "80px"
+    },
+    {
+        name: 'Accepted',
+        selector: row => row.accept,
+        wrap: true,
+        width: "80px"
+    },
+    {
+        name: 'Rejected',
+        selector: row => row.reject,
+        wrap: true,
+        width: "80px"
+    },
+  ];
+  const scheduledListColumns = [
+    {
+        name: 'Candidate',
+        selector: row => row.candidatename,
+        sortable: true,
+        wrap: true,
+        width: '150px'
+    },
+    {
+        name: 'Skills',
+        selector: row => row.candidateskills,
+        sortable: true,
+        wrap: true,
+    },
+    {
+        name: 'Duration',
+        selector: row => row.duration,
+        sortable: true,
+        wrap: true,
+        width: '100px'
+    },
+    {
+        name: 'Format',
+        selector: row => row.format,
+        sortable: true,
+        wrap: true,
+        width: '100px'
+    },
+    {
+        name: 'Title',
+        selector: row => row.jobtitle,
+        wrap: true,
+    },
+    {
+        name: 'Note',
+        selector: row => row.interviewnotes,
+        wrap: true,
+    },
+    {
+        name: 'Scheduled Date',
+        selector: row => row.scheduledate,
+        format: (row) => moment(row.scheduledate).format('YYYY-MM-DD HH:mm'),
+        wrap: true,
+    },
+    {
+      name: 'Interviewer Email',
+      selector: row => row.intervieweremailids,
+      sortable: true,
+      wrap: true
+    },
+  ];
+
 
   return (
     <>
@@ -258,6 +326,7 @@ export function OpenJobs() {
                 progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
                 columns={columns}
                 data={data}
+                // onRowClicked={handleRowClicked}
                 fixedHeader
                 fixedHeaderScrollHeight="400px"
               />
@@ -265,6 +334,16 @@ export function OpenJobs() {
           </Card>
         </Col>
       </Row>
+
+      <Popup 
+        isOpen={isOpen}
+        size={"lg"}
+        title={"Scheduled List"}
+        setIsOpen={setIsOpen}
+        data={scheduledInterviewList}
+        columns={scheduledListColumns}
+        scheduledLoading={scheduledLoading}
+      />
     </>
   );
 }
