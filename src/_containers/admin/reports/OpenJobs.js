@@ -29,7 +29,7 @@ import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 
-export function OpenJobs() {
+export function OpenJobs({ title }) {
   const dispatch = useDispatch()
   const { 
     openJobsList: data = [], 
@@ -224,7 +224,7 @@ export function OpenJobs() {
 
   return (
     <>
-      <PageTitle heading="Open Jobs" icon={titlelogo} />
+      <PageTitle heading={title} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">

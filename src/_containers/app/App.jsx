@@ -126,41 +126,41 @@ export function App() {
             path="/report/hiring-manager-report"
             element={<HiringManager title={"Hiring Manager Report"} />}
           />
-          <Route path="/report/open-jobs" element={<OpenJobs />} />
-          <Route path="/report/new-candidates" element={<NewCandidate />} />
+          <Route path="/report/open-jobs" element={<OpenJobs title={"Open Jobs"}/>} />
+          <Route path="/report/new-candidates" element={<NewCandidate title={"New Candidate"}/>} />
           <Route
             path="/report/partially-filled-job"
-            element={<AdminUnderConstruction title={"Partially filled jobs"} />}
+            element={<OpenJobs title={"Partially Filled Jobs"} />}
           />
           <Route
             path="/report/incomplete-candidate-profile"
             element={
-              <AdminUnderConstruction title={"Incomplete candidate profile"} />
+              <OpenJobs title={"Incomplete Candidate Profile"} />
             }
           />
           <Route
             path="/report/candidate-report"
-            element={<AdminUnderConstruction title={"Candidate Report"} />}
+            element={<OpenJobs title={"Candidate Report"} />}
           />
           <Route
             path="/report/jobs-without-matched-candidates"
             element={
-              <AdminUnderConstruction
-                title={"Jobs without matched candidate"}
+              <OpenJobs
+                title={"Jobs Without Matched Candidate"}
               />
             }
           />
           <Route
             path="/report/canddates-without-matched-jobs"
             element={
-              <AdminUnderConstruction
-                title={"Candidate without matched jobs"}
+              <OpenJobs
+                title={"Candidate Without Matched Jobs"}
               />
             }
           />
           <Route
             path="/report/non-published-jobs"
-            element={<AdminUnderConstruction title={"Non published jobs"} />}
+            element={<OpenJobs title={"Non Published Jobs"} />}
           />
         </>
       );

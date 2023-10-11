@@ -65,7 +65,7 @@ const columns = [
 ];
 
 
-export function NewCandidate() {
+export function NewCandidate({ title }) {
   const dispatch = useDispatch();
 
   const { newCandidate: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
@@ -108,7 +108,7 @@ export function NewCandidate() {
 
   return (
     <>
-      <PageTitle heading="New Candidate" icon={titlelogo} />
+      <PageTitle heading={title} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
