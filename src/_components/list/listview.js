@@ -353,23 +353,39 @@ export const CandidateListView = (props) => {
               title="apply"
               onClick={() => onApplyClick()}
               className="btn-icon"
-              color="success" size="sm"
+              color="success"
+              size="sm"
             >
               <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+            <Button
+              title="liked"
+              className=" btn-icon"
+              color="secondary"
+              size="sm"
+            >
               <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="warning" size="sm">
+            <Button
+              title="maybe"
+              className=" btn-icon"
+              color="warning"
+              size="sm"
+            >
               <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger" size="sm">
+            <Button
+              title="reject"
+              className="btn-icon"
+              color="danger"
+              size="sm"
+            >
               <BsXCircle></BsXCircle>
             </Button>
           </Col>
@@ -379,17 +395,32 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
           <Col>
-            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+            <Button
+              title="liked"
+              className=" btn-icon"
+              color="secondary"
+              size="sm"
+            >
               <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="warning" size="sm">
+            <Button
+              title="maybe"
+              className=" btn-icon"
+              color="warning"
+              size="sm"
+            >
               <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger" size="sm">
+            <Button
+              title="reject"
+              className="btn-icon"
+              color="danger"
+              size="sm"
+            >
               <BsXCircle></BsXCircle>
             </Button>
           </Col>
@@ -403,23 +434,39 @@ export const CandidateListView = (props) => {
               title="apply"
               onClick={() => onApplyClick()}
               className="btn-icon"
-              color="success" size="sm"
+              color="success"
+              size="sm"
             >
               <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+            <Button
+              title="liked"
+              className=" btn-icon"
+              color="secondary"
+              size="sm"
+            >
               <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className=" btn-icon" color="warning" size="sm">
+            <Button
+              title="maybe"
+              className=" btn-icon"
+              color="warning"
+              size="sm"
+            >
               <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger" size="sm">
+            <Button
+              title="reject"
+              className="btn-icon"
+              color="danger"
+              size="sm"
+            >
               <BsXCircle></BsXCircle>
             </Button>
           </Col>
@@ -429,7 +476,12 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
           <Col>
-            <Button title="reject" className="btn-icon" color="danger" size="sm">
+            <Button
+              title="reject"
+              className="btn-icon"
+              color="danger"
+              size="sm"
+            >
               <BsXCircle></BsXCircle>
             </Button>
           </Col>
@@ -439,12 +491,22 @@ export const CandidateListView = (props) => {
       return (
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
-            <Button title="liked" className=" btn-icon" color="secondary" size="sm">
+            <Button
+              title="liked"
+              className=" btn-icon"
+              color="secondary"
+              size="sm"
+            >
               <BsHandThumbsUp></BsHandThumbsUp>
             </Button>
           </Col>
           <Col>
-            <Button title="maybe" className="btn-icon" color="warning" size="sm">
+            <Button
+              title="maybe"
+              className="btn-icon"
+              color="warning"
+              size="sm"
+            >
               <BsQuestionCircle></BsQuestionCircle>
             </Button>
           </Col>
@@ -485,14 +547,14 @@ export const CandidateListView = (props) => {
       selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
       wrap: true,
-      width: 150
+      width: 150,
     },
     {
       name: "Location",
       selector: (row) => row.locationaddress,
       sortable: true,
       wrap: true,
-      width: 150
+      width: 150,
     },
 
     {
@@ -500,7 +562,7 @@ export const CandidateListView = (props) => {
       selector: (row) => row.email,
       sortable: true,
       wrap: true,
-      width: 150
+      width: 150,
     },
 
     {
@@ -508,14 +570,14 @@ export const CandidateListView = (props) => {
       sortable: true,
       cell: (row) => <ScheduleInterviewModal candidateData={row} />,
       wrap: true,
-      width: 150
+      width: 150,
     },
     {
       name: "Interview mode",
       selector: (row) => row.mode,
       sortable: true,
       wrap: true,
-      width: 150
+      width: 150,
     },
     {
       name: "Interest",
@@ -539,20 +601,20 @@ export const CandidateListView = (props) => {
       id: "Candidate",
       selector: (row) => row.jobid,
       sortable: true,
-      maxWidth: "10px"
+      maxWidth: "10px",
     },
     {
       name: "Title",
       selector: (row) => row.jobtitle,
       sortable: true,
       maxWidth: "150px",
-      wrap: true
+      wrap: true,
     },
     {
       name: "Description",
       selector: (row) => row.description,
       sortable: true,
-      wrap: true
+      wrap: true,
     },
 
     {

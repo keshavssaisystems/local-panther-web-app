@@ -323,7 +323,10 @@ export const CustomerCandidateLists = (props) => {
                       <Row xs={1} sm={1} md={2} lg={3} xl={3}>
                         {candidateList.map((data, ind) => {
                           return (
-                            <Col key={data.jobapplicationid}>
+                            <Col
+                              key={data.jobapplicationid}
+                              className="card-col"
+                            >
                               <CandidateCardView
                                 data={data}
                                 rejectDrpDwnList={rejectDrpDwnList}
@@ -340,11 +343,15 @@ export const CustomerCandidateLists = (props) => {
                           );
                         })}
                       </Row>
-                      <CardPagination
-                        totalPages={totalRecords / cardPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
+                      {totalRecords > cardPageSize ? (
+                        <CardPagination
+                          totalPages={totalRecords / cardPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      ) : (
+                        <></>
+                      )}
                     </>
                   ) : (
                     <>
@@ -385,11 +392,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -431,11 +442,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -477,11 +492,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -523,11 +542,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -569,11 +592,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -615,11 +642,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>

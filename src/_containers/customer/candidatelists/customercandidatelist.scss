@@ -17,4 +17,9 @@
       font-size: 16px;
     }
   }
+  .card-col {
+    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+  }
 }

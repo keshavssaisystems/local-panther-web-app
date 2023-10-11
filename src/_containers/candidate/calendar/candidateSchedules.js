@@ -57,7 +57,6 @@ export function CandidateSchedules() {
     });
   }, []);
   const getUpcomingData = async function (filterdata) {
-    debugger;
     await dispatch(
       scheduleInterviewActions.getSchedulesByCandidateId(filterdata)
     );
@@ -120,7 +119,6 @@ export function CandidateSchedules() {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
-    debugger;
     console.log(event);
     setPopupData(event.data);
     setOpenModal(true);
@@ -130,7 +128,6 @@ export function CandidateSchedules() {
   const [view, setView] = useState(Views.MONTH);
 
   const handleNavigate = function (data) {
-    debugger;
     let firstDayOfMonth;
 
     let lastDayOfMonth;
