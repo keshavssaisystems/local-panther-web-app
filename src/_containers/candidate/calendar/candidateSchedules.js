@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
-import titlelogo from "../../../assets/utils/images/candidate.svg";
+import calendarLogo from "../../../assets/utils/images/calendar.svg";
 import {
   Row,
   Col,
@@ -18,6 +18,7 @@ import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import { scheduleInterviewActions } from "_store";
 import { ScheduleDetails } from "./scheduleDetails";
+import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 
 export function CandidateSchedules() {
   const dispatch = useDispatch();
@@ -103,10 +104,10 @@ export function CandidateSchedules() {
         color:
           upcomingInterview.isaccepted === true &&
           upcomingInterview.isrejected === false
-            ? "#75dd75"
+            ? "#14BD66"
             : upcomingInterview.isrejected === true
-            ? "#ea6b6b"
-            : "#f7b924",
+            ? "#FF406D"
+            : "#F7B924",
       };
       upData.push(interviewData);
     });
@@ -200,7 +201,7 @@ export function CandidateSchedules() {
 
   return (
     <>
-      <PageTitle heading="Calendar" icon={titlelogo} />
+      <PageTitle heading="Calendar" icon={calendarLogo} />
       <Container fluid className="card-schedule-interview">
         <Row>
           <Col md="12">
@@ -234,16 +235,21 @@ export function CandidateSchedules() {
           </Col>
         </Row>
 
-        <Modal className="modal-reject-align profile-view" isOpen={openModal}>
-          <ModalHeader toggle={() => onCloseIdModal()} charCode="Y">
-            <strong className="card-title-text">Interview Details</strong>
-          </ModalHeader>
-          <ScheduleDetails
-            type={popupType}
-            onClose={() => onCloseIdModal()}
-            interviewDetail={popupData}
-          />
-        </Modal>
+        <>
+          {openModal ? (
+            <>
+              <InterViewDetailModal
+                data={popupData}
+                onClose={() => {
+                  onCloseIdModal();
+                }}
+                isOpen={openModal}
+              ></InterViewDetailModal>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
       </Container>
     </>
   );
