@@ -6,6 +6,7 @@ import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
 import personIcon from "../../../assets/utils/images/person-fill.svg";
 import linkIcon from "../../../assets/utils/images/link.png";
 import copyLinkIcon from "../../../assets/utils/images/copy-link.png";
+import { BsPersonVideo2, BsFillTelephoneFill, BsPinMap } from "react-icons/bs";
 
 export function ScheduleDetails({ interviewDetail }) {
   const [isCopied, setIsCopied] = useState(false);
@@ -57,6 +58,37 @@ export function ScheduleDetails({ interviewDetail }) {
       return inputString.slice(0, 15) + "...";
     }
   }
+  const getText = function (data) {
+    let text = "";
+    if (data.companyname != "") {
+      text = data.companyname;
+      if (data.cityname != "") {
+        text += ", " + data.cityname;
+      }
+      if (data.statename != "") {
+        text += ", " + data.statename;
+      }
+      if (data.countryname != "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.cityname != "") {
+      text = data.cityname;
+      if (data.statename != "") {
+        text += ", " + data.statename;
+      }
+      if (data.countryname != "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.statename != "") {
+      text = data.statename;
+      if (data.countryname != "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.countryname != "") {
+      text = data.countryname;
+    }
+    return text;
+  };
 
   return (
     <>
@@ -64,9 +96,27 @@ export function ScheduleDetails({ interviewDetail }) {
         <CardBody>
           <div className="m-1 p-1 candidate-schedule">
             <div className="mb-3">
-              <h5 className="interview-details-label">
+              <span className="interview-details-title">
                 {interviewDetail.jobtitle}
-              </h5>
+              </span>
+
+              <span className="interview-details-label">
+                {interviewDetail.companyname != "" ||
+                interviewDetail.cityname != "" ||
+                interviewDetail.statename != "" ||
+                interviewDetail.countryname != "" ? (
+                  <div className="mt-1" style={{ fontSize: "12px" }}>
+                    {/* <BsPinMap className="personal-sec-icon me-2" /> */}
+                    <i className="pe-7s-map-marker location-icon"> </i>
+                    <span className="location-text">
+                      {getText(interviewDetail)}
+                    </span>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </span>
+
               <div className="">
                 <p className="mb-0 mt-2">
                   {startDate} to {endTime}
@@ -75,55 +125,100 @@ export function ScheduleDetails({ interviewDetail }) {
             </div>
 
             <div className="p-custom mb-3">
-              <p className="mb-0 interview-details-label">Mode : </p>
+              <p className="mb-0 interview-details-label">Mode </p>
               <div>
-                <img className="me-3" src={videoIcon} alt="video" />
+                {interviewDetail?.format === "Video" && (
+                  // <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
+                  <img className="me-2" src={videoIcon} alt="video" />
+                )}
+                {interviewDetail?.format === "Phone" && (
+                  <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp me-2" />
+                )}
+                {interviewDetail?.format === "In-person" && (
+                  <img className="me-2" src={personIcon} alt="video" />
+                )}
                 <span style={{ verticalAlign: "middle" }}>
-                  {interviewDetail.format}
+                  {interviewDetail?.format} Interview
                 </span>
               </div>
             </div>
             <div className="p-custom mb-3">
-              <p className="mb-0 interview-details-label">Interviewer :</p>
+              <p className="mb-0 interview-details-label">Interviewer </p>
               <div>
-                <img className="me-3" src={personIcon} alt="video" />
+                <img className="me-2" src={personIcon} alt="personIcon" />
                 <span style={{ verticalAlign: "middle" }}>
-                  {interviewDetail.interviewername}
+                  {interviewDetail.interviewername == ""
+                    ? "No interviewer added"
+                    : interviewDetail.interviewername}
                 </span>
               </div>
             </div>
-            {interviewDetail.videolink ? (
+            {interviewDetail?.format === "Phone" && (
               <div className="p-custom">
-                <p className="mb-0 interview-details-label">Link : </p>
-                <div>
-                  <img
-                    className="me-3 link-icon"
-                    src={linkIcon}
-                    alt="link-icon"
-                  />
-                  <a
-                    className="me-2"
-                    href={interviewDetail.videolink}
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    {addEllipsisAfter20Chars(interviewDetail.videolink)}
-                  </a>
-                  <span>
-                    <img
-                      onClick={() => handleCopyClick(interviewDetail.videolink)}
-                      src={copyLinkIcon}
-                      className="copy-link-icon me-2"
-                      alt="copy-link"
-                    />
-                    {isCopied && (
-                      <span className="success-message">Link copied!</span>
-                    )}
-                  </span>
-                </div>
+                <p className="mb-0 interview-details-label">Phone no </p>
+                <span>{interviewDetail.textremaindernumbers}</span>
               </div>
-            ) : (
-              <></>
             )}
+            {interviewDetail?.format === "In-person" && (
+              <div className="p-custom">
+                <p className="mb-0 interview-details-label">Scheduled at</p>
+                <span>{interviewDetail.interviewaddress}</span>
+              </div>
+            )}
+
+            {interviewDetail.isappvideocall === true &&
+              interviewDetail?.format === "Video" && (
+                <div className="p-custom">
+                  <p className="mb-0">
+                    <a href="/" onClick={(e) => e.preventDefault()}>
+                      Click here to join
+                    </a>{" "}
+                    the in-app interview
+                  </p>
+                </div>
+              )}
+
+            {interviewDetail?.isappvideocall === false &&
+              interviewDetail?.format === "Video" && (
+                <div>
+                  {interviewDetail.videolink ? (
+                    <div className="p-custom">
+                      <p className="mb-0 interview-details-label">Link : </p>
+                      <div>
+                        <img
+                          className="me-3 link-icon"
+                          src={linkIcon}
+                          alt="link-icon"
+                        />
+                        <a
+                          className="me-2"
+                          href={interviewDetail.videolink}
+                          onClick={(e) => e.preventDefault()}
+                        >
+                          {addEllipsisAfter20Chars(interviewDetail.videolink)}
+                        </a>
+                        <span>
+                          <img
+                            onClick={() =>
+                              handleCopyClick(interviewDetail.videolink)
+                            }
+                            src={copyLinkIcon}
+                            className="copy-link-icon me-2"
+                            alt="copy-link"
+                          />
+                          {isCopied && (
+                            <span className="success-message">
+                              Link copied!
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              )}
           </div>
         </CardBody>
       </Card>
