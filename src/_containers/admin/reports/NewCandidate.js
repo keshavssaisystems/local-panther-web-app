@@ -60,7 +60,7 @@ const columns = [
       selector: row => row.createddate,
       sortable: true,
       wrap: true,
-      format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
+      format: (row) => moment(row.jobposteddate).format('MM-DD-YYYY'),
   },
 ];
 

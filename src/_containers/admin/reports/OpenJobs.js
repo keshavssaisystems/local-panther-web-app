@@ -116,7 +116,7 @@ export function OpenJobs() {
     {
         name: 'Posted',
         selector: row => row.jobposteddate,
-        format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
+        format: (row) => moment(row.jobposteddate).format('MM-DD-YYYY'),
         wrap: true,
     },
     {
@@ -210,7 +210,7 @@ export function OpenJobs() {
     {
         name: 'Scheduled Date',
         selector: row => row.scheduledate,
-        format: (row) => moment(row.scheduledate).format('YYYY-MM-DD HH:mm'),
+        format: (row) => moment(row.scheduledate).format('MM-DD-YYYY'),
         wrap: true,
     },
     {
