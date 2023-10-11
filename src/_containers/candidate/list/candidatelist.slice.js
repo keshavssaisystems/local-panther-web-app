@@ -86,6 +86,7 @@ const candidateList = createSlice({
     totalRecords: 0,
     loading: false,
     jobDetail: [],
+    jdLoading: false,
   },
   reducers: {},
 
@@ -94,6 +95,7 @@ const candidateList = createSlice({
     [getRecommendedJobList.pending]: (state) => {
       state.loading = true;
       state.candidateJobList = [];
+      state.totalRecords = 0;
     },
     [getRecommendedJobList.fulfilled]: (state, { payload = {} }) => {
       state.loading = false;
@@ -137,7 +139,7 @@ const candidateList = createSlice({
 
     // candidate accept state
     [candidateAccept.pending]: (state) => {
-      state.loading = true;
+      state.loading = false;
       state.error = null;
     },
     [candidateAccept.fulfilled]: (state, { payload = {} }) => {
@@ -150,17 +152,17 @@ const candidateList = createSlice({
 
     // job detail
     [getJobDetails.pending]: (state) => {
-      state.loading = true;
+      state.jdLoading = true;
       state.jobDetail = [];
     },
     [getJobDetails.fulfilled]: (state, { payload = {} }) => {
-      state.loading = false;
+      state.jdLoading = false;
       let data = [];
       data.push(payload.data);
       state.jobDetail = data;
     },
     [getJobDetails.rejected]: (state, action) => {
-      state.loading = false;
+      state.jdLoading = false;
     },
 
     // candidate apply state

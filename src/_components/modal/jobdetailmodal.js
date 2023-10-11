@@ -20,7 +20,7 @@ export const JobDetailModal = (props) => {
       fade={true}
     >
       <ModalHeader toggle={() => props.onClose()}>Job details</ModalHeader>
-      <ModalBody>
+      <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
         <CandJobDetail
           jobDetails={[props.jobDetail]}
           isModal={true}

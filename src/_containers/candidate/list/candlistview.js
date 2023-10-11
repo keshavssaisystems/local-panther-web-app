@@ -12,24 +12,16 @@ import {
   Col,
   Button,
 } from "reactstrap";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-} from "react-icons/io";
 
-import { BsCheck, BsClock } from "react-icons/bs";
 import customerIcons from "assets/utils/images/customer";
-import moment from "moment";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid) => {
     props.onCandidateActions(type, candidaterecommendedjobid);
   };
 
-  const showJdModal = (row) => {
-    props.showJdModal(row);
+  const onShowModal = (row, type) => {
+    props.showModal(row, type);
   };
   const renderButtons = (row) => {
     if (props.type === "liked") {
@@ -284,15 +276,19 @@ export const CandListView = (props) => {
             <FontAwesomeIcon icon={faEllipsisV} />
           </DropdownToggle>
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-            <DropdownItem onClick={() => showJdModal(row)}>
+            <DropdownItem onClick={() => onShowModal(row, "jd")}>
               <i className="dropdown-icon lnr-layers"></i>
               <span>Job details</span>
             </DropdownItem>
 
-            <DropdownItem>
-              <i className="dropdown-icon lnr-license"> </i>
-              <span>Interview details</span>
-            </DropdownItem>
+            {row.customerscheduleddatetime ? (
+              <DropdownItem onClick={() => onShowModal(row, "id")}>
+                <i className="dropdown-icon lnr-license"> </i>
+                <span>Interview details</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>

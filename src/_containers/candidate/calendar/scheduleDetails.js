@@ -23,7 +23,7 @@ export function ScheduleDetails({ interviewDetail }) {
   if (scheduledDate === tomorrowDate) {
     scheduled = "Tommorow";
   }
-  debugger;
+
   let startTime = moment(
     moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
       " " +
