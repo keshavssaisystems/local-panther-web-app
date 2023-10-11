@@ -263,6 +263,12 @@ export function EducationModal(props) {
       dropdown.value = data.value;
       dropdown.label = data.label;
       new_data[index].city = dropdown;
+
+      let obj_new = {
+        value: cityList.find((x) => x.cityid == data.value)?.stateid,
+        label: cityList.find((x) => x.cityid == data.value)?.statename,
+      };
+      new_data[index].state = obj_new;
     } else if (check == "state") {
       dropdown.value = data.value;
       dropdown.label = data.label;

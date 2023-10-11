@@ -385,7 +385,11 @@ export function AdditionalInfoModal(props) {
           </Form>
         ))}
 
-        <Modal className="modal-reject-align profile-view" isOpen={success}>
+        <Modal
+          centered
+          className="modal-reject-align profile-view"
+          isOpen={success}
+        >
           <Card>
             <CardBody>
               <div className="d-flex justify-content-center mb-3">
@@ -413,7 +417,11 @@ export function AdditionalInfoModal(props) {
           </Card>
         </Modal>
 
-        <Modal className="modal-reject-align profile-view" isOpen={error}>
+        <Modal
+          centered
+          className=" modal-reject-align profile-view"
+          isOpen={error}
+        >
           <Card>
             <CardBody>
               <div className="d-flex justify-content-center mb-3">

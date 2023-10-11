@@ -134,12 +134,12 @@ export function CandidateQualification(props) {
   };
 
   function calculateExperience(fromDate, toDate) {
-    const fromDateObj = new Date(fromDate);
-    const toDateObj = toDate ? new Date(toDate) : new Date();
+    let fromDateObj = new Date(fromDate);
+    let toDateObj = toDate ? new Date(toDate) : new Date();
 
-    const yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
-    const monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
-    const dayDifference = toDateObj.getDate() - fromDateObj.getDate();
+    let yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
+    let monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
+    let dayDifference = toDateObj.getDate() - fromDateObj.getDate();
 
     if (dayDifference < 0) {
       monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
@@ -150,20 +150,28 @@ export function CandidateQualification(props) {
       ).getDate();
     }
 
-    const yearsText =
+    let yearsText =
       yearDifference > 0
         ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
         : "";
-    const monthsText =
+    let monthsText =
       monthDifference > 0
         ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
         : "";
 
+    let daysText =
+      dayDifference > 0
+        ? `${dayDifference} ${dayDifference === 1 ? "day" : "days"}`
+        : "";
+
     let experienceText;
-    if (monthsText != "") {
+    if (monthsText != "" && yearsText != "") {
       experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
-    } else {
+    } else if (yearsText != "" || monthsText != "") {
       experienceText = [yearsText, monthsText].filter(Boolean).join("");
+    }
+    if (monthsText == "" && yearsText == "") {
+      experienceText = daysText;
     }
 
     return experienceText;
@@ -391,7 +399,7 @@ export function CandidateQualification(props) {
         </Card>
       </Modal>
 
-      <Modal className="modal-reject-align profile-view" isOpen={error}>
+      <Modal className="modal-reject-align profile-view" isOpen={success}>
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
