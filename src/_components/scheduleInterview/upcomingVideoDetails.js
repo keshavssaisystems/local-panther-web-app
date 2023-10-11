@@ -119,15 +119,6 @@ export function UpcomingVideoDetails({
                   {" "}
                   Message{" "}
                 </Button>
-                <Button
-                  outline
-                  size="sm"
-                  className="mb-2 mr-2 btn-transition"
-                  color="primary"
-                >
-                  {" "}
-                  Call{" "}
-                </Button>
                 <ButtonGroup size={"sm"}>
                   <Button
                     name="format"
@@ -337,6 +328,9 @@ export function UpcomingVideoDetails({
                 <li>{summaryDetails.summary}</li>
               ))}
           </ul>
+          {interviewDetails?.candidateSummaryDtos?.length === undefined && (
+            <p className="mb-0">-</p>
+          )}
         </div>
         <div className="p-3">
           <h6 className="fw-bold">Application questions</h6>

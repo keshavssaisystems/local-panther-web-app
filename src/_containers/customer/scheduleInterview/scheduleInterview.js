@@ -360,6 +360,38 @@ export function ScheduleInterview() {
   console.log(overallData);
 
   const postMessageData = (formData) => {};
+  const rejectScheduleData = (scheduledInterviewId) => {
+    rejectInterview(scheduledInterviewId);
+    getUpdatedScheduleList();
+  };
+
+  const rejectInterview = async function (scheduledInterviewId) {
+    let scheduleinterviewid = scheduledInterviewId;
+    let payload = {
+      rejectionreason: "",
+    };
+    await dispatch(
+      scheduleInterviewActions.rejectInterviewThunk({
+        scheduleinterviewid,
+        payload,
+      })
+    );
+    onCloseIdModal();
+  };
+  const acceptScheduleData = (scheduledInterviewId) => {
+    acceptInterview(scheduledInterviewId);
+    getUpdatedScheduleList();
+  };
+
+  const acceptInterview = async function (scheduledInterviewId) {
+    let scheduleinterviewid = scheduledInterviewId;
+    await dispatch(
+      scheduleInterviewActions.acceptInterviewThunk({
+        scheduleinterviewid,
+      })
+    );
+    onCloseIdModal();
+  };
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -454,7 +486,7 @@ export function ScheduleInterview() {
                   )}
                 </Col>
               )}
-              {toggleVar === "availabilty" && (
+              {/* {toggleVar === "availabilty" && (
                 <Col
                   xs={12}
                   sm={12}
@@ -465,7 +497,7 @@ export function ScheduleInterview() {
                 >
                   <Login>Sync with Microsoft</Login>
                 </Col>
-              )}
+              )} */}
             </Row>
 
             {toggleVar === "availabilty" && (
@@ -560,6 +592,8 @@ export function ScheduleInterview() {
                       postInviteData={(e) => postInviteData(e)}
                       cancelScheduleData={(e) => cancelScheduleData(e)}
                       postMessageData={(e) => postMessageData(e)}
+                      acceptInterview={(e) => acceptScheduleData(e)}
+                      rejectInterview={(e) => rejectScheduleData(e)}
                     />
                   </CardBody>
                 </Card>
@@ -584,6 +618,8 @@ export function ScheduleInterview() {
           cancelScheduleData={(e) => cancelScheduleData(e)}
           editScheduledInterview={(e) => editScheduledInterview(e)}
           postMessageData={(e) => postMessageData(e)}
+          acceptInterview={(e) => acceptScheduleData(e)}
+          rejectInterview={(e) => rejectScheduleData(e)}
         />
         <UpdateScheduleInterviewModal
           interviewData={popupData}

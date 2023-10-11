@@ -13,6 +13,8 @@ export function InterviewDetailsModal({
   cancelScheduleData,
   editScheduledInterview,
   postMessageData,
+  acceptInterview,
+  rejectInterview,
 }) {
   const [modal, setModal] = useState(false);
 
@@ -40,6 +42,8 @@ export function InterviewDetailsModal({
             cancelScheduleData={(e) => cancelScheduleData(e)}
             editScheduledInterview={(e) => editScheduledInterview(e)}
             postMessageData={(e) => postMessageData(e)}
+            acceptInterview={(e) => acceptInterview(e)}
+            rejectInterview={(e) => rejectInterview(e)}
           />
         </ModalBody>
       </Modal>
