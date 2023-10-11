@@ -84,6 +84,15 @@
     font-weight: 600;
     color: #2e2f2f;
   }
+  .location-icon {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .interview-details-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2e2f2f;
+  }
 
   .link-icon {
     height: 6px;
@@ -97,29 +106,32 @@
   }
 }
 
-.upcomming-card{
-    .badge-custom{
-        text-transform: none;
-    }
-    .icon-settings{
-        margin-bottom: 4px !important;
-    }
+.upcomming-card {
+  .badge-custom {
+    text-transform: none;
+  }
+  .icon-settings {
+    margin-bottom: 4px !important;
+  }
 }
 
 .update-availability {
-    .react-datepicker__aria-live{
-        display: none;
-    }
-    .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected {
-        background-color: #2F479B !important;;
-        color: #fff;
-        font-weight: bold;
-    }
-    .icon-color-red{
-        color: red;
-    }
-    .icon-color-blue{
-        color: #2F479B;
-    }
+  .react-datepicker__aria-live {
+    display: none;
+  }
+  .react-datepicker__time-container
+    .react-datepicker__time
+    .react-datepicker__time-box
+    ul.react-datepicker__time-list
+    li.react-datepicker__time-list-item--selected {
+    background-color: #2f479b !important;
+    color: #fff;
+    font-weight: bold;
+  }
+  .icon-color-red {
+    color: red;
+  }
+  .icon-color-blue {
+    color: #2f479b;
+  }
 }
-

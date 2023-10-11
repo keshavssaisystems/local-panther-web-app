@@ -103,9 +103,9 @@ export function CandidateSchedules() {
         color:
           upcomingInterview.isaccepted === true &&
           upcomingInterview.isrejected === false
-            ? "green"
+            ? "#75dd75"
             : upcomingInterview.isrejected === true
-            ? "red"
+            ? "#ea6b6b"
             : "#f7b924",
       };
       upData.push(interviewData);
@@ -119,7 +119,6 @@ export function CandidateSchedules() {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
-    console.log(event);
     setPopupData(event.data);
     setOpenModal(true);
     setPopupType(event.format);
@@ -223,9 +222,9 @@ export function CandidateSchedules() {
                   }}
                   onSelectEvent={(evt) => handleSelectEvent(evt)}
                   onRangeChange={handleNavigate}
-                  components={{
-                    toolbar: CustomToolbar, // Use the custom toolbar component
-                  }}
+                  // components={{
+                  //   toolbar: CustomToolbar, // Use the custom toolbar component
+                  // }}
                   defaultView={Views.MONTH} // Set the default view
                   view={view} // Specify the view
                   onView={setView} // Handle view changes
