@@ -79,7 +79,13 @@
   }
 }
 .candidate-schedule {
+  .location-text {
+    font-family: Capitana;
+    vertical-align: text-top;
+    font-size: 12px;
+  }
   .interview-details-label {
+    font-family: Capitana;
     font-size: 14px;
     font-weight: 600;
     color: #2e2f2f;
@@ -89,6 +95,7 @@
     font-weight: 600;
   }
   .interview-details-title {
+    font-family: Capitana;
     font-size: 16px;
     font-weight: 600;
     color: #2e2f2f;

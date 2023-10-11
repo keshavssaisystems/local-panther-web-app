@@ -108,7 +108,7 @@ export function ScheduleDetails({ interviewDetail }) {
                   <div className="mt-1" style={{ fontSize: "12px" }}>
                     {/* <BsPinMap className="personal-sec-icon me-2" /> */}
                     <i className="pe-7s-map-marker location-icon"> </i>
-                    <span style={{ verticalAlign: "text-top" }}>
+                    <span className="location-text">
                       {getText(interviewDetail)}
                     </span>
                   </div>
@@ -161,9 +161,7 @@ export function ScheduleDetails({ interviewDetail }) {
             )}
             {interviewDetail?.format === "In-person" && (
               <div className="p-custom">
-                <p className="mb-0 interview-details-label">
-                  Mode Scheduled at
-                </p>
+                <p className="mb-0 interview-details-label">Scheduled at</p>
                 <span>{interviewDetail.interviewaddress}</span>
               </div>
             )}
