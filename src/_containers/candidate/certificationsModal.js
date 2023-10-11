@@ -307,7 +307,7 @@ export function CertificationsModal(props) {
                 <span className="required-icon"> *</span>
               </Label>
               <input
-                placeholder="Enter Certification/license"
+                placeholder="Enter certification/license"
                 maxLength={50}
                 name="name"
                 type="text"

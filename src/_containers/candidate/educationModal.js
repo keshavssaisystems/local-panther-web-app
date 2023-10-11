@@ -436,7 +436,7 @@ export function EducationModal(props) {
                   Field of study
                 </Label>
                 <input
-                  placeholder="Enter Field of Study"
+                  placeholder="Enter field of study"
                   name="studyField"
                   type="text"
                   id="studyField"
@@ -455,7 +455,7 @@ export function EducationModal(props) {
                   School
                 </Label>
                 <input
-                  placeholder="Enter School"
+                  placeholder="Enter school"
                   name="school"
                   type="text"
                   id="school"

@@ -250,7 +250,7 @@ export function AdditionalInfoModal(props) {
                     Language
                   </Label>
                   <input
-                    placeholder="Enter Language"
+                    placeholder="Enter language"
                     name="language"
                     type="text"
                     id="language"
@@ -281,7 +281,7 @@ export function AdditionalInfoModal(props) {
                         index
                       )
                     }
-                    placeholderText="Select Proficiency"
+                    placeholderText="Select proficiency"
                   >
                     {proficiencyList.map((col) => (
                       <option key={col.id} value={col.id}>
@@ -317,7 +317,7 @@ export function AdditionalInfoModal(props) {
                   </Label>
                   <Input
                     style={{ height: "100px" }}
-                    placeholder="Enter Summary"
+                    placeholder="Enter summary"
                     name="summary"
                     type="textarea"
                     id="summary"
@@ -343,7 +343,7 @@ export function AdditionalInfoModal(props) {
                   <Input
                     style={{ height: "100px" }}
                     maxLength={500}
-                    placeholder="Enter Additional Information"
+                    placeholder="Enter additional information"
                     name="state"
                     type="textarea"
                     value={item.additionalInfo}

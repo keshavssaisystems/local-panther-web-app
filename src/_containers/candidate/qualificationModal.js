@@ -77,6 +77,7 @@ export function QualificationModal(props) {
         currentUserId: user.userId,
         fromDateValid: false,
         fromDateReq: false,
+        toDateReq: false,
         error: false,
         city: [
           {
@@ -119,6 +120,7 @@ export function QualificationModal(props) {
         currentUserId: user.userId,
         fromDateValid: false,
         fromDateReq: false,
+        toDateReq: false,
         error: false,
         city: {
           value: props.selected.cityid,
@@ -254,7 +256,22 @@ export function QualificationModal(props) {
     } else if (check == "description") {
       new_data[index].jobdescription = data;
     } else if (check == "status") {
+      debugger;
       new_data[index].iscurrentlyworking = !new_data[index].iscurrentlyworking;
+      if (new_data[index].iscurrentlyworking) {
+        new_data[index].enddate = new Date();
+        if (new_data[index].startdate) {
+          if (new Date(data) < new Date(new_data[index].startdate)) {
+            new_data[index].fromDateValid = true;
+          } else {
+            new_data[index].fromDateValid = false;
+            new_data[index].enddate = new Date();
+          }
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].enddate = new Date();
+        }
+      }
     } else if (check == "fromDate") {
       if (new_data[index].enddate) {
         if (new Date(data) > new Date(new_data[index].enddate)) {
@@ -346,21 +363,25 @@ export function QualificationModal(props) {
 
   async function onSubmit() {
     let new_data = [...formDetails];
+    debugger;
 
-    const keyToCheck = "jobTitle";
-
-    const emptyKeyIndexes = formDetails
-      .map((item, index) => (item[keyToCheck] == "" ? index : null))
-      .filter((index) => index !== null);
-
-    if (emptyKeyIndexes.length > 0) {
-      let new_data = [...formDetails];
-
-      for (let i = 0; i < emptyKeyIndexes.length; i++) {
-        new_data[emptyKeyIndexes[i]].error = true;
+    let valid = true;
+    for (let i = 0; i < formDetails.length; i++) {
+      if (formDetails[i].jobTitle == "") {
+        new_data[i].error = true;
+        valid = false;
       }
-
+      if (formDetails[i].startdate == null) {
+        new_data[i].fromDateReq = true;
+        valid = false;
+      }
+      if (formDetails[i].enddate == null) {
+        new_data[i].toDateReq = true;
+        valid = false;
+      }
       setFormData(new_data);
+    }
+    if (!valid) {
       return;
     }
 
@@ -399,7 +420,41 @@ export function QualificationModal(props) {
       setError(true);
     }
   }
-  const selectDate = function () {};
+  function calculateExperience(fromDate, toDate) {
+    const fromDateObj = new Date(fromDate);
+    const toDateObj = toDate ? new Date(toDate) : new Date();
+
+    const yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
+    const monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
+    const dayDifference = toDateObj.getDate() - fromDateObj.getDate();
+
+    if (dayDifference < 0) {
+      monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
+      dayDifference += new Date(
+        toDateObj.getFullYear(),
+        toDateObj.getMonth(),
+        0
+      ).getDate();
+    }
+
+    const yearsText =
+      yearDifference > 0
+        ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
+        : "";
+    const monthsText =
+      monthDifference > 0
+        ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
+        : "";
+
+    let experienceText;
+    if (monthsText != "") {
+      experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
+    } else {
+      experienceText = [yearsText, monthsText].filter(Boolean).join("");
+    }
+
+    return experienceText;
+  }
 
   return (
     <div className="profile-view">
@@ -455,7 +510,7 @@ export function QualificationModal(props) {
                     Job title <span className="required-icon">*</span>
                   </Label>
                   <input
-                    placeholder="Enter Job Title"
+                    placeholder="Enter job title"
                     name="jobTitle"
                     type="text"
                     id="jobTitle"
@@ -516,7 +571,7 @@ export function QualificationModal(props) {
                   Company
                 </Label>
                 <Input
-                  placeholder="Enter Company"
+                  placeholder="Enter company"
                   name="company"
                   type="text"
                   id="company"
@@ -553,7 +608,7 @@ export function QualificationModal(props) {
               <Col md={4}>
                 <FormGroup>
                   <Label for="fromDate" className="input-label">
-                    From date
+                    From date <span className="required-icon">*</span>
                   </Label>
                   <InputGroup>
                     <div className="input-group-text">
@@ -562,27 +617,23 @@ export function QualificationModal(props) {
                     <DatePicker
                       name="fromDate"
                       id="fromDate"
-                      placeholderText="DD/MM/YYYY"
-                      className="form-control"
+                      placeholderText="MM/DD/YYYY"
+                      className={`field-input placeholder-text form-control ${
+                        item.fromDateReq ? "is-invalid" : ""
+                      }`}
                       selected={item.startdate}
+                      showYearDropdown={true}
                       onChange={(evt) =>
                         handleInputChange("fromDate", index, evt)
                       }
                     />
-                    {/* <Input
-                      type="month"
-                      id="monthInput"
-                      name="monthInput"
-                      placeholder="mm-yyyy"
-                      selected={item.startdate}
-                      onChange={(evt) =>
-                        handleInputChange("fromDate", index, evt.target.value)
-                      }
-                    ></Input> */}
                   </InputGroup>
                   <div className="filter-info-text filter-error-msg">
+                    {item.fromDateReq ? "From date is required" : ""}
+                  </div>
+                  <div className="filter-info-text filter-error-msg">
                     {item.fromDateValid
-                      ? "From Date should be less than To Date"
+                      ? "From date should be less than to date"
                       : ""}
                   </div>
                 </FormGroup>
@@ -590,17 +641,22 @@ export function QualificationModal(props) {
               <Col md={4}>
                 <FormGroup>
                   <Label for="toDate" className="input-label">
-                    To date
+                    To date <span className="required-icon">*</span>
                   </Label>
-                  <InputGroup>
+                  <InputGroup
+                    style={{ borderColor: item.toDateReq ? "#d92550" : "" }}
+                  >
                     <div className="input-group-text">
                       <FontAwesomeIcon icon={faCalendarAlt} />
                     </div>
                     <DatePicker
                       name="toDate"
                       id="toDate"
-                      className="form-control"
-                      placeholderText="DD/MM/YYYY"
+                      className={`field-input placeholder-text form-control ${
+                        item.toDateReq ? "is-invalid" : ""
+                      }`}
+                      disabled={item.iscurrentlyworking}
+                      placeholderText="MM/DD/YYYY"
                       selected={item.enddate}
                       showYearDropdown={true}
                       onChange={(evt) =>
@@ -608,6 +664,9 @@ export function QualificationModal(props) {
                       }
                     />
                   </InputGroup>
+                  <div className="filter-info-text filter-error-msg">
+                    {item.toDateReq ? "To date is required" : ""}
+                  </div>
                 </FormGroup>
               </Col>
             </Row>
@@ -619,7 +678,7 @@ export function QualificationModal(props) {
                   </Label>
                   <Input
                     style={{ height: "100px" }}
-                    placeholder="Enter Job Description"
+                    placeholder="Enter job description"
                     name="jobDescription"
                     type="textarea"
                     id="jobDescription"
