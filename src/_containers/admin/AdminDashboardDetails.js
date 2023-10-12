@@ -1,10 +1,11 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-
+import { getScores } from '_containers/admin/_redux/adminDashboard.slice'
+import { useDispatch, useSelector } from "react-redux";
 import DataTable from 'react-data-table-component';
 import { makeData } from "_containers/admin/Examples/utils.js";
 import Chart from "react-apexcharts";
-
+import './adminDashboardDetails.scss'
 import IncomeReport from "_containers/admin/Examples/IncomeReport";
 
 import avatar1 from "assets/utils/images/avatars/1.jpg";
@@ -51,16 +52,17 @@ import CountUp from "react-countup";
 
 
 const AdminDashboardDetails = () => {
+  const dispatch = useDispatch()
+  const {
+    cardStats,
+    loading = false } = useSelector((state) => state?.adminDashboard ?? {});
+
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
   
-  const dashboardCards = {activecompanycount:0, activecustomercount:0, activecandidatecount:0, newcandidateregistrationcount:0}
-  const [cardStats, setCardStats] = useState({ ...dashboardCards })
-
   const today = new Date().toLocaleDateString('fr-CA');
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
-  const [todaysDate, setTodaysDate] = useState(today)
 
   const jobsData = [
     { id: 0, label: "01/01/2023", closedJobs: 144, openJobs: 240, closureTime: 30 },
@@ -78,6 +80,8 @@ const AdminDashboardDetails = () => {
   ];
 
   const initial = {
+    timeIntervalDefault: 'week',
+    timeInterval: 'month',
     optionsJobsChart: {
       chart: {
         height: 350,
@@ -328,12 +332,7 @@ const AdminDashboardDetails = () => {
   ];
 
   useEffect(()=>{
-    fetch(`https://panther-api-dev.azurewebsites.net/api/AdminDashboard/DasboardCount?date=${todaysDate}`)
-    .then(data => data.json())
-    .then(result => {
-      setCardStats({ ...result.data })
-    }
-      )
+    dispatch(getScores(today))
   }, [])
 
   const onDismiss = () => {
@@ -345,7 +344,6 @@ const AdminDashboardDetails = () => {
       setActiveTab(tab)
     }
   }
-
 
   const dashCardUI = [
     {
@@ -390,6 +388,7 @@ const AdminDashboardDetails = () => {
     }
   ]
 
+  console.log("NG cardstats total", cardStats.totalCandidates)
   const cardsMapping = dashCardUI.map(ele => {
     const borderColor = "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary " + ele.color
     const arrowDirection = ele.arrowDirection === 'faAngleUp' ? 1 : 0
@@ -424,11 +423,10 @@ const AdminDashboardDetails = () => {
     )
   })
 
-
   return (
     <Fragment>
       <TransitionGroup>
-        <CSSTransition component="div" classNames="TabsAnimation" appear={true}
+        <CSSTransition component="div" classNames="admin-dashboard-details TabsAnimation " appear={true}
           timeout={1500} enter={false} exit={false}>
           <div>
             {/* <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
@@ -458,7 +456,7 @@ const AdminDashboardDetails = () => {
                         toggle("1");
                       }}>
                       <div className="widget-number">
-                        <CountUp start={0} end={15065} separator="," decimals={0}
+                        <CountUp start={0} end={cardStats.totalCandidates} separator="," decimals={0}
                           decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -479,7 +477,7 @@ const AdminDashboardDetails = () => {
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
-                        <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
+                        <CountUp start={0} end={453} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -498,7 +496,7 @@ const AdminDashboardDetails = () => {
                       }}>
                       <div className="widget-number text-danger">
                         <CountUp start={0} end={67} separator=","
-                          decimals={1} decimal="" delay={2} prefix="" duration="10" />
+                          decimals={0} decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
                         <i className="header-icon lnr-calendar-full me-3 text-muted opacity-6"> {" "} </i>
@@ -766,188 +764,6 @@ const AdminDashboardDetails = () => {
                 </Card>
               </Col>
             </Row>
-
-            {/* <Row>
-              <Col sm="12" lg="4">
-                <Card className="mb-3">
-                  <CardHeader className="card-header-tab">
-                    <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                      Total Sales
-                    </div>
-                    <div className="btn-actions-pane-right text-capitalize actions-icon-btn">
-                      <UncontrolledButtonDropdown>
-                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                          <i className="lnr-cog btn-icon-wrapper" />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                          <DropdownItem header>Header</DropdownItem>
-                          <DropdownItem>
-                            <i className="dropdown-icon lnr-inbox"> </i>
-                            <span>Menus</span>
-                          </DropdownItem>
-                          <DropdownItem>
-                            <i className="dropdown-icon lnr-file-empty"> </i>
-                            <span>Settings</span>
-                          </DropdownItem>
-                          <DropdownItem>
-                            <i className="dropdown-icon lnr-book"> </i>
-                            <span>Actions</span>
-                          </DropdownItem>
-                          <DropdownItem divider />
-                          <div className="p-1 text-end">
-                            <Button className="me-2 btn-shadow btn-sm" color="link">
-                              View Details
-                            </Button>
-                            <Button className="me-2 btn-shadow btn-sm" color="primary">
-                              Action
-                            </Button>
-                          </div>
-                        </DropdownMenu>
-                      </UncontrolledButtonDropdown>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <Bar2 />
-                  </CardBody>
-                  <CardFooter className="p-0 d-block">
-                    <div className="grid-menu grid-menu-2col">
-                      <Row className="g-0">
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-car text-primary opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Admin
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-bullhorn text-danger opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Blog
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-bug text-success opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Register
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-heart text-warning opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Directory
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Col>
-              <Col sm="12" lg="4">
-                <Card className="mb-3">
-                  <CardHeader className="card-header-tab">
-                    <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                      Daily Sales
-                    </div>
-                    <div className="btn-actions-pane-right text-capitalize">
-                      <Button size="sm" outline className="btn-wide btn-outline-2x" color="focus">
-                        View All
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <Column />
-                  </CardBody>
-                  <CardFooter className="p-0 d-block">
-                    <div className="grid-menu grid-menu-2col">
-                      <Row className="g-0">
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-apartment text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Overview
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-database text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Support
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-printer text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Activities
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-store text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Marketing
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Col>
-              <Col sm="12" lg="4">
-                <Card className="mb-3">
-                  <CardHeader className="card-header-tab">
-                    <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                      Total Expenses
-                    </div>
-                    <div className="btn-actions-pane-right text-capitalize">
-                      <Button size="sm" outline className="btn-wide btn-outline-2x" color="primary">
-                        View All
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <Area />
-                  </CardBody>
-                  <CardFooter className="p-0 d-block">
-                    <div className="grid-menu grid-menu-2col">
-                      <Row className="g-0">
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="success">
-                            <i className="lnr-lighter text-success opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Accounts
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="warning">
-                            <i className="lnr-construction text-warning opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Contacts
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="info">
-                            <i className="lnr-bus text-info opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Products
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="alternate">
-                            <i className="lnr-gift text-alternate opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Services
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Col>
-            </Row> */}
             <Card className="main-card mb-3">
               <CardHeader>
                 <div className="card-header-title font-size-lg text-capitalize fw-normal">

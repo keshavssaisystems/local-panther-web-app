@@ -54,6 +54,7 @@ import { resumeTemplateReducer } from "./getResumeTemplate.slice";
 
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
+import { adminDashboardReducer } from "_containers/admin/_redux/adminDashboard.slice";
 
 
 export * from "./candidateProfile.slice";
@@ -142,7 +143,6 @@ export const store = configureStore({
     preScreenQuestion: preScreenQuestionReducer,
     previousJobList: previousJobListReducer,
     previousJobDetail: previousJobDetailReducer,
-
     scheduleInterview: scheduleInterviewReducer,
     publishJob: publishJobReducer,
     profileReducer: profileReducer,
@@ -164,6 +164,7 @@ export const store = configureStore({
     getResumeTemplate: resumeTemplateReducer,
     candidateListReducer: candidateListReducer,
     // admin reducer
-    adminReportReducer
+    adminReportReducer,
+    adminDashboard: adminDashboardReducer
   },
 });
