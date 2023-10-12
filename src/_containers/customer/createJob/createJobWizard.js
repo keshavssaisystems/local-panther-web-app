@@ -19,12 +19,20 @@ export function CreateJobWizard() {
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
   const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
+  const customerDetails = useSelector(
+    (state) => state.createJob.customerDetails
+  );
   useEffect(() => {
     getOptions();
     getCompanyDetails();
+    getRecommendedJobData({
+      pageNo: page,
+      searchText: searchData,
+    });
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
+      companyId: localStorage.getItem("companyid"),
     });
   }, []);
   const getOptionsData = (event) => {
@@ -46,6 +54,9 @@ export function CreateJobWizard() {
   const getJobDetail = async function (jobId) {
     await dispatch(createjobActions.getPreviousJobDetailThunk(jobId));
   };
+  const getRecommendedJobData = async function (searchArr) {
+    await dispatch(createjobActions.getRecommendedListThunk(searchArr));
+  };
   const getPreviousJobData = async function (searchArr) {
     await dispatch(createjobActions.getPreviousJobListThunk(searchArr));
   };
@@ -61,9 +72,14 @@ export function CreateJobWizard() {
   };
   const getSearchValue = (data) => {
     setSearchData(data);
-    getPreviousJobData({
+    getRecommendedJobData({
       pageNo: 1,
       searchText: data,
+    });
+    getPreviousJobData({
+      pageNo: page,
+      searchText: searchData,
+      companyId: localStorage.getItem("companyid"),
     });
   };
   const dispatch = useDispatch();
@@ -72,17 +88,15 @@ export function CreateJobWizard() {
   };
   const getOptions = async function () {
     await dispatch(dropdownActions.getJobLocationTypeThunk());
-    await dispatch(dropdownActions.getJobTypeThunk());
-    await dispatch(dropdownActions.getWorkScheduleThunk());
-    await dispatch(dropdownActions.getShiftThunk());
-    await dispatch(dropdownActions.getExperienceLevelThunk());
+    await dispatch(dropdownActions.getJobTypeThunk2());
+    await dispatch(dropdownActions.getWorkScheduleThunk2());
+    await dispatch(dropdownActions.getShiftThunk2());
+    await dispatch(dropdownActions.getExperienceLevelThunk2());
     await dispatch(dropdownActions.getHiringTimelineThunk());
     await dispatch(dropdownActions.getPayPeriodTypeThunk());
     await dispatch(dropdownActions.getPreScreenQuestionThunk());
   };
-  const customerDetails = useSelector(
-    (state) => state.createJob.customerDetails
-  );
+
   const jobLocationOptions = useSelector(
     (state) => state.dropdown.jobLocationType
   );
@@ -104,6 +118,9 @@ export function CreateJobWizard() {
     (state) => state.dropdown.preScreenQuestion
   );
   const jobList = useSelector((state) => state.createJob.previousJobList);
+  const recommendedJobList = useSelector(
+    (state) => state.createJob.recommendedList
+  );
   const jobDetail = useSelector((state) => state.createJob.previousJobDetail);
   const newJobDetails = useSelector((state) => state.createJob.createjob);
   const publishNewJob = async function () {
@@ -131,6 +148,7 @@ export function CreateJobWizard() {
           jobList={jobList}
           postSearch={(e) => getSearchValue(e)}
           readyForNextStep={(e) => setButtonDisable(e)}
+          recommendedJobList={recommendedJobList}
         />
       ),
     },
