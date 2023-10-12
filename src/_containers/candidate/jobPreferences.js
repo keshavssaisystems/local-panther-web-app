@@ -49,28 +49,28 @@ export function JobPreferences(props) {
 
   const [preferenceDetails, setDetails] = useState([]);
   const get_response = useSelector(
-    (state) => state.getProfile.profileData.jobPreferenceInfo
+    (state) => state.getProfile?.profileData?.jobPreferenceInfo
   );
 
-  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const shiftsOption = useSelector((state) => state.dropdown?.shift);
   const workScheduleOptions = useSelector(
-    (state) => state.workSchedule.workSchedule
+    (state) => state.workSchedule?.workSchedule
   );
-  const jobTypeOption = useSelector((state) => state.jobType.jobType);
-  const loader = useSelector((state) => state.getProfile.loader);
+  const jobTypeOption = useSelector((state) => state.jobType?.jobType);
+  const loader = useSelector((state) => state.getProfile?.loader);
 
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
-  let jobTitleList = useSelector((state) => state.getJobTitle.user.data);
-  let payPeriodList = useSelector((state) => state.getPayPeriod.user.data);
+  let jobTitleList = useSelector((state) => state.getJobTitle?.user?.data);
+  let payPeriodList = useSelector((state) => state.getPayPeriod?.user?.data);
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const experienceLevelOption = useSelector(
-    (state) => state.experienceLevel.experienceLevel
+    (state) => state.dropdown?.experienceLevel
   );
   const [formDetails, setFormData] = useState({});
 
-  const location = useSelector((state) => state.jobType.jobType);
+  const location = useSelector((state) => state.dropdown?.jobType);
 
   const [desiredJobType, setDesiredJobType] = useState([
     {
@@ -116,107 +116,110 @@ export function JobPreferences(props) {
         workschedulestext: null,
       });
     } else {
-      data.push({
-        anywhereonlynear: get_response[0].anywhereonlynear,
-        candidateDesiredWorkTypeDtos:
-          get_response[0].candidateDesiredWorkTypeDtos,
-        candidateJobtitlesDtos: get_response[0].candidateJobtitlesDtos,
-        candidateLocationsDtos: get_response[0].candidateLocationsDtos,
-        candidateShiftsDtos: get_response[0].candidateShiftsDtos,
-        candidateWorkSchedulesDtos: get_response[0].candidateWorkSchedulesDtos,
-        candidateid: userDetails.InternalUserId,
-        candidatejobpreferenceid: get_response[0].candidatejobpreferenceid,
-        desiredjobtitle: get_response[0].desiredjobtitle,
-        desiredjobtitleid: get_response[0].desiredjobtitleid,
-        desiredjobtypes: get_response[0].desiredjobtypes,
-        desiredjobtypestext: get_response[0].desiredjobtypestext,
-        desiredworktypeids: get_response[0].desiredworktypeids,
-        isactive: get_response[0].isactive,
-        jobtitlesids: get_response[0].jobtitlesids,
-        jobtitlestext: get_response[0].jobtitlestext,
-        locationids: get_response[0].locationids,
-        locationstext: get_response[0].locationstext,
-        minimumbasepay: get_response[0].minimumbasepay,
-        payperiodtype: get_response[0].payperiodtype,
-        payperiodtypeid: get_response[0].payperiodtypeid,
-        shifts: get_response[0].shifts,
-        shiftstext: get_response[0].shiftstext,
-        willingtorelocate: get_response[0].willingtorelocate,
-        workschedules: get_response[0].workschedules,
-        workschedulestext: get_response[0].workschedulestext,
-      });
+      if (get_response.length > 0) {
+        data.push({
+          anywhereonlynear: get_response[0].anywhereonlynear,
+          candidateDesiredWorkTypeDtos:
+            get_response[0].candidateDesiredWorkTypeDtos,
+          candidateJobtitlesDtos: get_response[0].candidateJobtitlesDtos,
+          candidateLocationsDtos: get_response[0].candidateLocationsDtos,
+          candidateShiftsDtos: get_response[0].candidateShiftsDtos,
+          candidateWorkSchedulesDtos:
+            get_response[0].candidateWorkSchedulesDtos,
+          candidateid: userDetails.InternalUserId,
+          candidatejobpreferenceid: get_response[0].candidatejobpreferenceid,
+          desiredjobtitle: get_response[0].desiredjobtitle,
+          desiredjobtitleid: get_response[0].desiredjobtitleid,
+          desiredjobtypes: get_response[0].desiredjobtypes,
+          desiredjobtypestext: get_response[0].desiredjobtypestext,
+          desiredworktypeids: get_response[0].desiredworktypeids,
+          isactive: get_response[0].isactive,
+          jobtitlesids: get_response[0].jobtitlesids,
+          jobtitlestext: get_response[0].jobtitlestext,
+          locationids: get_response[0].locationids,
+          locationstext: get_response[0].locationstext,
+          minimumbasepay: get_response[0].minimumbasepay,
+          payperiodtype: get_response[0].payperiodtype,
+          payperiodtypeid: get_response[0].payperiodtypeid,
+          shifts: get_response[0].shifts,
+          shiftstext: get_response[0].shiftstext,
+          willingtorelocate: get_response[0].willingtorelocate,
+          workschedules: get_response[0].workschedules,
+          workschedulestext: get_response[0].workschedulestext,
+        });
 
-      let new_data = data[0].candidateJobtitlesDtos.filter(
-        (x) => x.ischecked == true
-      );
-
-      const commonData = jobTitleList.filter((item1) => {
-        return new_data.some(
-          (item2) => item1.value === item2.desiredjobtitleid
+        let new_data = data[0].candidateJobtitlesDtos?.filter(
+          (x) => x.ischecked == true
         );
-      });
 
-      let select = [...selectedTitle];
-      select = commonData;
-      setSelectedTitle(select);
+        const commonData = jobTitleList.filter((item1) => {
+          return new_data.some(
+            (item2) => item1.value === item2.desiredjobtitleid
+          );
+        });
 
-      let payType = payPeriodList.find(
-        (x) => x.value == data[0].payperiodtypeid
-      );
+        let select = [...selectedTitle];
+        select = commonData;
+        setSelectedTitle(select);
 
-      let select1 = [...selectedPayType];
-      select1.push(payType);
-      setSelectedPayType(select1);
+        let payType = payPeriodList.find(
+          (x) => x.value == data[0].payperiodtypeid
+        );
 
-      let location = data[0].candidateLocationsDtos.map((rest) => {
-        return {
-          value: rest.locationid,
-          label: rest.location,
-        };
-      });
+        let select1 = [...selectedPayType];
+        select1.push(payType);
+        setSelectedPayType(select1);
 
-      setSelectedLocation(location);
-      let filtered_data = [...getData];
-      filtered_data = get_response?.map((rest) => {
-        return {
-          candidatejobpreferenceid: rest.candidatejobpreferenceid,
-          desiredJobTitle: desiredJobType?.find(
-            (x) => x.id == rest.desiredjobtitleid
-          )?.name,
-          specificJobTitle: rest.candidateJobtitlesDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.desiredjobtitlename)
-            .join(", "),
-          desiredJobTypes: rest.candidateDesiredWorkTypeDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.desiredworktypename)
-            .join(", "),
-          workSchedules: rest.candidateWorkSchedulesDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.workschedules)
-            .join(", "),
+        let location = data[0].candidateLocationsDtos.map((rest) => {
+          return {
+            value: rest.locationid,
+            label: rest.location,
+          };
+        });
 
-          shifts: rest.candidateShiftsDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.shifts)
-            .join(", "),
-          pay:
-            (rest.minimumbasepay && rest.payperiodtype) ||
-            (rest.minimumbasepay != "" && rest.payperiodtype != "")
-              ? rest.minimumbasepay + ", " + rest.payperiodtype
-              : rest.minimumbasepay
-              ? rest.minimumbasepay
-              : rest.payperiodtype
-              ? rest.payperiodtype
-              : "",
-          relocate: rest.willingtorelocate ? true : false,
-          workType: "",
-        };
-      });
+        setSelectedLocation(location);
+        let filtered_data = [...getData];
+        filtered_data = get_response?.map((rest) => {
+          return {
+            candidatejobpreferenceid: rest.candidatejobpreferenceid,
+            desiredJobTitle: desiredJobType?.find(
+              (x) => x.id == rest.desiredjobtitleid
+            )?.name,
+            specificJobTitle: rest.candidateJobtitlesDtos
+              .filter((item) => item.ischecked)
+              .map((item) => item.desiredjobtitlename)
+              .join(", "),
+            desiredJobTypes: rest.candidateDesiredWorkTypeDtos
+              .filter((item) => item.ischecked)
+              .map((item) => item.desiredworktypename)
+              .join(", "),
+            workSchedules: rest.candidateWorkSchedulesDtos
+              .filter((item) => item.ischecked)
+              .map((item) => item.workschedules)
+              .join(", "),
 
-      setGetResponse(filtered_data);
+            shifts: rest.candidateShiftsDtos
+              .filter((item) => item.ischecked)
+              .map((item) => item.shifts)
+              .join(", "),
+            pay:
+              (rest.minimumbasepay && rest.payperiodtype) ||
+              (rest.minimumbasepay != "" && rest.payperiodtype != "")
+                ? rest.minimumbasepay + ", " + rest.payperiodtype
+                : rest.minimumbasepay
+                ? rest.minimumbasepay
+                : rest.payperiodtype
+                ? rest.payperiodtype
+                : "",
+            relocate: rest.willingtorelocate ? true : false,
+            workType: "",
+          };
+        });
+
+        setGetResponse(filtered_data);
+      }
+      setDetails(data);
     }
-    setDetails(data);
   }, [get_response]);
 
   useEffect(() => {
@@ -704,8 +707,8 @@ export function JobPreferences(props) {
                         <Label className="fw-semi-bold">
                           Job type<span style={{ color: "red" }}> *</span>
                         </Label>
-                        {jobTypeOption.length > 0 &&
-                          jobTypeOption.map((options) => (
+                        {jobTypeOption?.length > 0 &&
+                          jobTypeOption?.map((options) => (
                             <div className="form-group-custom">
                               <Input
                                 key={options.id}
