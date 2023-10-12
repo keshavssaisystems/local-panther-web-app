@@ -445,3 +445,16 @@
     color: #2f479b;
   }
 }
+.react-date-picker-profile {
+  .react-datepicker__month-container {
+    float: left;
+    width: 193px !important;
+  }
+  .react-datepicker__month {
+    margin: 0.5rem;
+    text-align: center;
+    font-size: 15px;
+    font-family: "capitana";
+    cursor: pointer;
+  }
+}
