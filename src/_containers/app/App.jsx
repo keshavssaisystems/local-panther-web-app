@@ -27,7 +27,7 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
-import { Contact } from "_containers/contact";
+import { Contact } from "_containers/Contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";

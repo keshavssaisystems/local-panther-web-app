@@ -20,6 +20,7 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
+import { getScheduleInterviewThunk } from "../scheduleInterview/scheduleinterview.slice";
 // import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
@@ -99,9 +100,19 @@ export const CustomerCandidateLists = (props) => {
       // isCustomerScheduled: type === "scheduled",
       // isCandidateApply: type === "applied,
       customerRecommendedJobStatusId: returnStatusId(type),
-      jobId: id,
+      jobId: id || "",
     };
+    // if (type === "scheduled") {
+    //   dispatch(
+    //     customerCandidateListsActions.getScheduleListData({
+    //       jobId: id,
+    //       pageNumber: pageNo,
+    //       pageSize: type === "matched" ? cardPageSize : listPageSize,
+    //     })
+    //   );
+    // } else {
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
+    // }
   };
 
   const handlePageChange = (page) => {
@@ -187,7 +198,6 @@ export const CustomerCandidateLists = (props) => {
         >
           <ButtonGroup size="md" className="cust-btn-tabs">
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -200,7 +210,6 @@ export const CustomerCandidateLists = (props) => {
               Matched
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -213,7 +222,6 @@ export const CustomerCandidateLists = (props) => {
               Liked
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition " +
@@ -226,7 +234,6 @@ export const CustomerCandidateLists = (props) => {
               Maybe
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -239,7 +246,6 @@ export const CustomerCandidateLists = (props) => {
               Applied
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -252,7 +258,6 @@ export const CustomerCandidateLists = (props) => {
               Scheduled
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -265,7 +270,6 @@ export const CustomerCandidateLists = (props) => {
               Accepted
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +

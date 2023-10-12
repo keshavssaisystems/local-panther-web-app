@@ -149,7 +149,7 @@ export function JobPreferences(props) {
       let new_data = data[0].candidateJobtitlesDtos.filter(
         (x) => x.ischecked == true
       );
-      debugger;
+
       const commonData = jobTitleList.filter((item1) => {
         return new_data.some(
           (item2) => item1.value === item2.desiredjobtitleid
@@ -220,17 +220,21 @@ export function JobPreferences(props) {
   }, [get_response]);
 
   useEffect(() => {
-    let new_data = get_response?.[0]?.candidateJobtitlesDtos.filter(
-      (x) => x.ischecked == true
-    );
-    debugger;
-    const commonData = jobTitleList.filter((item1) => {
-      return new_data.some((item2) => item1.value === item2.desiredjobtitleid);
-    });
+    if (get_response?.length > 0) {
+      let new_data = get_response[0]?.candidateJobtitlesDtos.filter(
+        (x) => x.ischecked == true
+      );
 
-    let select = [...selectedTitle];
-    select = commonData;
-    setSelectedTitle(select);
+      const commonData = jobTitleList.filter((item1) => {
+        return new_data.some(
+          (item2) => item1.value === item2.desiredjobtitleid
+        );
+      });
+
+      let select = [...selectedTitle];
+      select = commonData;
+      setSelectedTitle(select);
+    }
   }, [jobTitleList]);
 
   const [getData, setGetResponse] = useState([]);
