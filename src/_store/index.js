@@ -38,7 +38,10 @@ import { candidateListReducer } from "_containers/candidate/list/candidatelist.s
 import { resumeTemplateReducer } from "./getResumeTemplate.slice";
 import { dropdownReducer } from "_containers/customer/createJob/dropdown.slice";
 import { studyFieldReducer } from "./dropDownStudyField.slice";
-
+import { jobTypeReducer } from "../_containers/customer/createJob/jobtype.slice";
+import { workScheduleReducer } from "../_containers/customer/createJob/workschedule.slice";
+import { shiftReducer } from "../_containers/customer/createJob/shifts.slice";
+import { experienceLevelReducer } from "../_containers/customer/createJob/experiencelevel.slice";
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
 
@@ -83,6 +86,10 @@ export * from "./getResumeTemplate.slice";
 export * from "_containers/candidate/list/candidatelist.slice";
 export * from "_containers/customer/createJob/dropdown.slice";
 export * from "./dropDownStudyField.slice";
+export * from "../_containers/customer/createJob/jobtype.slice";
+export * from "../_containers/customer/createJob/workschedule.slice";
+export * from "../_containers/customer/createJob/shifts.slice";
+export * from "../_containers/customer/createJob/experiencelevel.slice";
 
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
@@ -128,6 +135,10 @@ export const store = configureStore({
     candidateListReducer: candidateListReducer,
     dropdown: dropdownReducer,
     getStudyField: studyFieldReducer,
+    jobType: jobTypeReducer,
+    workSchedule: workScheduleReducer,
+    shifts: shiftReducer,
+    experienceLevel: experienceLevelReducer,
     // admin reducer
     adminReportReducer,
   },

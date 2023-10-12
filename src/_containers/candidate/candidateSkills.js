@@ -35,13 +35,13 @@ export function CandidateSkills(props) {
   const [mustHaveValidation, setMustHaveValidation] = useState(false);
   const [skillsMultiple, setSkillsMultiple] = useState([]);
 
-  const shiftsOption = useSelector((state) => state.dropdown.shift);
+  const shiftsOption = useSelector((state) => state.shifts.shift);
   const workScheduleOptions = useSelector(
-    (state) => state.dropdown.workSchedule
+    (state) => state.workSchedule.workSchedule
   );
-  const jobTypeOption = useSelector((state) => state.dropdown.jobType);
+  const jobTypeOption = useSelector((state) => state.jobType.jobType);
   const experienceLevelOption = useSelector(
-    (state) => state.dropdown.experienceLevel
+    (state) => state.experienceLevel.experienceLevel
   );
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);

@@ -88,10 +88,10 @@ export function CreateJobWizard() {
   };
   const getOptions = async function () {
     await dispatch(dropdownActions.getJobLocationTypeThunk());
-    await dispatch(dropdownActions.getJobTypeThunk());
-    await dispatch(dropdownActions.getWorkScheduleThunk());
-    await dispatch(dropdownActions.getShiftThunk());
-    await dispatch(dropdownActions.getExperienceLevelThunk());
+    await dispatch(dropdownActions.getJobTypeThunk2());
+    await dispatch(dropdownActions.getWorkScheduleThunk2());
+    await dispatch(dropdownActions.getShiftThunk2());
+    await dispatch(dropdownActions.getExperienceLevelThunk2());
     await dispatch(dropdownActions.getHiringTimelineThunk());
     await dispatch(dropdownActions.getPayPeriodTypeThunk());
     await dispatch(dropdownActions.getPreScreenQuestionThunk());

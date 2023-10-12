@@ -5,8 +5,8 @@ import { fetchWrapper } from "_helpers";
 const name = "dropdown";
 
 // getJobTypeThunk thunk
-export const getJobTypeThunk = createAsyncThunk(
-  `${name}/getJobTypeThunk`,
+export const getJobTypeThunk2 = createAsyncThunk(
+  `${name}/getJobTypeThunk2`,
   async (payload) => {
     const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=JobType`;
     return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
@@ -14,8 +14,8 @@ export const getJobTypeThunk = createAsyncThunk(
 );
 
 // getExperienceLevelThunk thunk
-export const getExperienceLevelThunk = createAsyncThunk(
-  `${name}/getExperienceLevelThunk`,
+export const getExperienceLevelThunk2 = createAsyncThunk(
+  `${name}/getExperienceLevelThunk2`,
   async (payload) => {
     const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=experienceLevel`;
     return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
@@ -59,8 +59,8 @@ export const getPreScreenQuestionThunk = createAsyncThunk(
 );
 
 // getShiftThunk thunk
-export const getShiftThunk = createAsyncThunk(
-  `${name}/getShiftThunk`,
+export const getShiftThunk2 = createAsyncThunk(
+  `${name}/getShiftThunk2`,
   async (payload) => {
     const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=shifts`;
     return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
@@ -68,8 +68,8 @@ export const getShiftThunk = createAsyncThunk(
 );
 
 // getWorkScheduleThunk thunk
-export const getWorkScheduleThunk = createAsyncThunk(
-  `${name}/getWorkScheduleThunk`,
+export const getWorkScheduleThunk2 = createAsyncThunk(
+  `${name}/getWorkScheduleThunk2`,
   async (payload) => {
     const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=workSchedules`;
     return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
@@ -93,25 +93,25 @@ const dropdownSlice = createSlice({
   reducers: {},
 
   extraReducers: {
-    [getJobTypeThunk.pending]: (state) => {
+    [getJobTypeThunk2.pending]: (state) => {
       state.loading = true;
     },
-    [getJobTypeThunk.fulfilled]: (state, action) => {
+    [getJobTypeThunk2.fulfilled]: (state, action) => {
       state.jobType = action.payload.data;
       state.loading = false;
     },
-    [getJobTypeThunk.rejected]: (state, action) => {
+    [getJobTypeThunk2.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
     },
-    [getExperienceLevelThunk.pending]: (state) => {
+    [getExperienceLevelThunk2.pending]: (state) => {
       state.loading = true;
     },
-    [getExperienceLevelThunk.fulfilled]: (state, action) => {
+    [getExperienceLevelThunk2.fulfilled]: (state, action) => {
       state.experienceLevel = action.payload.data;
       state.loading = false;
     },
-    [getExperienceLevelThunk.rejected]: (state, action) => {
+    [getExperienceLevelThunk2.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
     },
@@ -159,25 +159,25 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
-    [getShiftThunk.pending]: (state) => {
+    [getShiftThunk2.pending]: (state) => {
       state.loading = true;
     },
-    [getShiftThunk.fulfilled]: (state, action) => {
+    [getShiftThunk2.fulfilled]: (state, action) => {
       state.shift = action.payload.data;
       state.loading = false;
     },
-    [getShiftThunk.rejected]: (state, action) => {
+    [getShiftThunk2.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
     },
-    [getWorkScheduleThunk.pending]: (state) => {
+    [getWorkScheduleThunk2.pending]: (state) => {
       state.loading = true;
     },
-    [getWorkScheduleThunk.fulfilled]: (state, action) => {
+    [getWorkScheduleThunk2.fulfilled]: (state, action) => {
       state.workSchedule = action.payload.data;
       state.loading = false;
     },
-    [getWorkScheduleThunk.rejected]: (state, action) => {
+    [getWorkScheduleThunk2.rejected]: (state, action) => {
       state.error = action.error;
       state.loading = true;
     },
@@ -187,14 +187,14 @@ const dropdownSlice = createSlice({
 // Export the actions and reducer
 export const dropdownActions = {
   ...dropdownSlice.actions,
-  getJobTypeThunk,
-  getExperienceLevelThunk,
+  getJobTypeThunk2,
+  getExperienceLevelThunk2,
   getHiringTimelineThunk,
   getJobLocationTypeThunk,
   getPayPeriodTypeThunk,
   getPreScreenQuestionThunk,
-  getShiftThunk,
-  getWorkScheduleThunk,
+  getShiftThunk2,
+  getWorkScheduleThunk2,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;
