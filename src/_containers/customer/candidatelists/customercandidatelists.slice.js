@@ -39,6 +39,7 @@ function createExtraActions() {
     putAcceptedCandidate: putAcceptedCandidate(),
     getDurationOptions: getDurationOptions(),
     postScheduleInterview: postScheduleInterview(),
+    getScheduleListData: getScheduleListData(),
   };
 
   function getDrpDwnJobLists() {
@@ -75,14 +76,21 @@ function createExtraActions() {
         // isCandidateApply,
         customerRecommendedJobStatusId,
         jobId,
-      }) =>
-        jobId !== undefined
-          ? await fetchWrapper.get(
-              `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&jobId=${jobId}&isActive=true`
-            )
-          : await fetchWrapper.get(
-              `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&isActive=true`
-            )
+      }) => {
+        const recommendedStatus =
+          customerRecommendedJobStatusId === 4
+            ? `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
+            : `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+        if (jobId !== undefined) {
+          return await fetchWrapper.get(
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
+          );
+        } else {
+          return await fetchWrapper.get(
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true`
+          );
+        }
+      }
     );
   }
 
@@ -154,6 +162,17 @@ function createExtraActions() {
         await fetchWrapper.post(`${newUrl}/ScheduledInterview`, payload)
     );
   }
+
+  function getScheduleListData() {
+    return createAsyncThunk(
+      `${name}/getScheduleListData`,
+
+      async ({ jobId, pageNumber, pageSize }) =>
+        await fetchWrapper.get(
+          `${newUrl}/ScheduledInterview?jobId=${jobId}&isActive=true&pageNumber=${pageNumber}&pageSize=${pageSize}`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -167,6 +186,7 @@ function createExtraReducers() {
     putAcceptedCandidate();
     getDurationOptions();
     postScheduleInterview();
+    getScheduleListData();
 
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
@@ -308,6 +328,29 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           //No action
+        });
+    }
+
+    function getScheduleListData() {
+      let { pending, fulfilled, rejected } = extraActions.getScheduleListData;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+          state.candidateList = [];
+          state.totalRecords = 0;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.loading = false;
+          state.candidateList = action?.payload?.data?.scheduledInterviewList
+            ? action?.payload?.data?.scheduledInterviewList
+            : [];
+
+          state.totalRecords = action?.payload?.data?.totalRows
+            ? action?.payload?.data?.totalRows
+            : 0;
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
         });
     }
   };

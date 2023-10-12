@@ -239,7 +239,6 @@ export const CandidateList = (props) => {
         >
           <ButtonGroup size="lg" className="cust-btn-tabs">
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -252,7 +251,6 @@ export const CandidateList = (props) => {
               Matched
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -265,7 +263,6 @@ export const CandidateList = (props) => {
               Liked
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition " +
@@ -278,7 +275,6 @@ export const CandidateList = (props) => {
               Maybe
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -291,7 +287,6 @@ export const CandidateList = (props) => {
               Applied
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -304,7 +299,6 @@ export const CandidateList = (props) => {
               Interview
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -317,7 +311,6 @@ export const CandidateList = (props) => {
               Accepted
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +

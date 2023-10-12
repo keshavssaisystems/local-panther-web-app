@@ -12,9 +12,12 @@ export const getRecommendedJobList = createAsyncThunk(
     candidateRecommendedJobStatusId,
     candidateId,
   }) => {
-    const jobStatusId = candidateRecommendedJobStatusId
-      ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-      : "";
+    const jobStatusId =
+      candidateRecommendedJobStatusId === 4
+        ? `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
+        : candidateRecommendedJobStatusId
+        ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
+        : "";
     const RECOMMENDED_JOB_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?candidateId=${candidateId}&pageSize=${pageSize}&pageNumber=${pageNumber}${jobStatusId}`;
     return await fetchWrapper.get(RECOMMENDED_JOB_END_POINT);
   }
