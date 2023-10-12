@@ -41,6 +41,7 @@ import { studyFieldReducer } from "./dropDownStudyField.slice";
 
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
+import { adminDashboardReducer } from "_containers/admin/_redux/adminDashboard.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -86,6 +87,7 @@ export * from "./dropDownStudyField.slice";
 
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
+export * from "_containers/admin/_redux/adminDashboard.slice";
 
 export const store = configureStore({
   reducer: {
@@ -130,5 +132,7 @@ export const store = configureStore({
     getStudyField: studyFieldReducer,
     // admin reducer
     adminReportReducer,
+    adminDashboard: adminDashboardReducer
+
   },
 });
