@@ -18,6 +18,9 @@ export function ScheduleInterviewList({
   postNotesData,
   postInviteData,
   cancelScheduleData,
+  postMessageData,
+  acceptInterview,
+  rejectInterview,
 }) {
   const customStyles = {
     headRow: {
@@ -152,6 +155,9 @@ export function ScheduleInterviewList({
         postNotesData={(e) => postNotesData(e)}
         postInviteData={(e) => postInviteData(e)}
         cancelScheduleData={(e) => cancelScheduleData(e)}
+        postMessageData={(e) => postMessageData(e)}
+        acceptInterview={(e) => acceptInterview(e)}
+        rejectInterview={(e) => rejectInterview(e)}
       />
     </>
   );

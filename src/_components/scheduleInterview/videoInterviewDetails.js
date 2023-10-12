@@ -28,6 +28,7 @@ import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { MessageCard } from "./messageCard";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -35,9 +36,15 @@ export function VideoInterviewDetails({
   postInviteData,
   cancelScheduleData,
   editScheduledInterview,
+  postMessageData,
+  acceptInterview,
+  rejectInterview,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
+  const [showAcceptPopup, setShowAcceptPopup] = useState(false);
+  const [showRejectPopup, setShowRejectPopup] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
@@ -88,7 +95,15 @@ export function VideoInterviewDetails({
     };
     cancelScheduleData(cancelData);
   };
-
+  let USNumber = interviewDetail.candidatephonenumber.match(
+    /(\d{3})(\d{3})(\d{4})/
+  );
+  const acceptSchedule = () => {
+    acceptInterview(interviewId);
+  };
+  const rejectSchedule = () => {
+    rejectInterview(interviewId);
+  };
   return (
     <>
       <div className="dropdown-menu-header">
@@ -119,18 +134,10 @@ export function VideoInterviewDetails({
                 size="sm"
                 className="mb-2 mr-2 btn-transition"
                 color="primary"
+                onClick={() => setShowMessage(!showMessage)}
               >
                 {" "}
                 Message{" "}
-              </Button>
-              <Button
-                outline
-                size="sm"
-                className="mb-2 mr-2 btn-transition"
-                color="primary"
-              >
-                {" "}
-                Call{" "}
               </Button>
               <ButtonGroup size={"sm"}>
                 <Button
@@ -139,6 +146,7 @@ export function VideoInterviewDetails({
                   size={"sm"}
                   className="mb-2 btn-transition"
                   outline
+                  onClick={(e) => setShowAcceptPopup(true)}
                 >
                   <BsFillCheckCircleFill className="mb-1" />
                 </Button>
@@ -157,6 +165,7 @@ export function VideoInterviewDetails({
                   size={"sm"}
                   className="mb-2 btn-transition"
                   outline
+                  onClick={(e) => setShowRejectPopup(true)}
                 >
                   <BsXCircleFill className="mb-1" />
                 </Button>
@@ -184,6 +193,14 @@ export function VideoInterviewDetails({
           <InviteToInterviewCard
             interviewId={interviewDetail?.scheduleinterviewid}
             postInviteData={(e) => postInviteData(e)}
+          />
+        </div>
+      )}
+      {showMessage === true && (
+        <div className="mt-2 mb-2">
+          <MessageCard
+            interviewId={interviewDetail?.scheduleinterviewid}
+            postMessageData={(e) => postMessageData(e)}
           />
         </div>
       )}
@@ -223,13 +240,16 @@ export function VideoInterviewDetails({
             </div>
             <div className="p-custom">
               <p className="mb-0">
-                {scheduled} : {startTime} to {endTime} ({" "}
+                {scheduled} at {startTime} to {endTime} ({" "}
                 {interviewDetail.duration} )
               </p>
             </div>
             {interviewDetail?.format === "Phone" && (
               <div className="p-custom">
-                <p className="mb-0">Phone no - </p>
+                <p className="mb-0">
+                  Phone no -{" "}
+                  {"(" + USNumber[1] + ")-" + USNumber[2] + "-" + USNumber[3]}
+                </p>
               </div>
             )}
             {interviewDetail?.format === "In-person" && (
@@ -267,7 +287,7 @@ export function VideoInterviewDetails({
               )}
             <div className="p-custom">
               <p className="mb-0">
-                Interviewer :{" "}
+                Interviewer -{" "}
                 {interviewDetail?.intervieweremailids === ""
                   ? "No interviewer added"
                   : interviewDetail?.intervieweremailids}
@@ -308,11 +328,12 @@ export function VideoInterviewDetails({
       )}
       <div className="p-3">
         <h6 className="fw-bold">Summary</h6>
-        <p className="mb-0">
-          {interviewDetail?.messagetocandidate === ""
-            ? "- "
-            : interviewDetail?.messagetocandidate}
-        </p>
+        <ul className="mb-0">
+          {interviewDetail?.candidateSummaryDtos?.length > 0 &&
+            interviewDetail?.candidateSummaryDtos?.map((summaryDetails) => (
+              <li>{summaryDetails.summary}</li>
+            ))}
+        </ul>
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Application questions</h6>
@@ -343,6 +364,50 @@ export function VideoInterviewDetails({
           focusCancelBtn
         >
           You want to cancel the interview with{" "}
+          {interviewDetail?.candidatename
+            ? interviewDetail?.candidatename
+            : interviewDetail?.firstname && interviewDetail?.lastname
+            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+            : ""}
+          !
+        </SweetAlert>
+      )}
+      {showAcceptPopup && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, accept interview!"
+          confirmBtnBsStyle="success"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => acceptSchedule(e)}
+          onCancel={() => setShowAcceptPopup(false)}
+          focusCancelBtn
+        >
+          You want to Accept the interview with{" "}
+          {interviewDetail?.candidatename
+            ? interviewDetail?.candidatename
+            : interviewDetail?.firstname && interviewDetail?.lastname
+            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+            : ""}
+          !
+        </SweetAlert>
+      )}
+      {showRejectPopup && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, reject interview!"
+          confirmBtnBsStyle="danger"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => rejectSchedule(e)}
+          onCancel={() => setShowRejectPopup(false)}
+          focusCancelBtn
+        >
+          You want to reject the interview with{" "}
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
