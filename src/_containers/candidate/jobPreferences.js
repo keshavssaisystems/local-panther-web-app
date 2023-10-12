@@ -209,7 +209,7 @@ export function JobPreferences(props) {
               : rest.payperiodtype
               ? rest.payperiodtype
               : "",
-          relocate: rest.willingtorelocate ? "Yes" : "No",
+          relocate: rest.willingtorelocate ? true : false,
           workType: "",
         };
       });
@@ -218,6 +218,24 @@ export function JobPreferences(props) {
     }
     setDetails(data);
   }, [get_response]);
+
+  useEffect(() => {
+    if (get_response?.length > 0) {
+      let new_data = get_response[0]?.candidateJobtitlesDtos.filter(
+        (x) => x.ischecked == true
+      );
+
+      const commonData = jobTitleList.filter((item1) => {
+        return new_data.some(
+          (item2) => item1.value === item2.desiredjobtitleid
+        );
+      });
+
+      let select = [...selectedTitle];
+      select = commonData;
+      setSelectedTitle(select);
+    }
+  }, [jobTitleList]);
 
   const [getData, setGetResponse] = useState([]);
 
@@ -333,7 +351,7 @@ export function JobPreferences(props) {
     } else if (check == "basePay") {
       new_data[0].minimumbasepay = data;
     } else if (check == "relocate") {
-      new_data[0].willingtorelocate = data == "on" ? "Yes" : "No";
+      new_data[0].willingtorelocate = data == "on" ? true : false;
     } else if (check == "anyWhere") {
       new_data[0].anywhereonlynear = 1;
     } else if (check == "near") {
@@ -353,6 +371,17 @@ export function JobPreferences(props) {
     setError(false);
     setPersonalModal(false);
     props.onCallBack();
+    let select = [...selectedTitle];
+    select = [];
+    setSelectedTitle(select);
+    let new_array = [...selectedLocation];
+    new_array = [];
+    setSelectedLocation(new_array);
+
+    let payType = [...selectedPayType];
+    payType = [];
+    setSelectedPayType(payType);
+
     let data = [];
     data.push({
       anywhereonlynear: 0,
@@ -574,7 +603,7 @@ export function JobPreferences(props) {
                           <hr />
                           <Row>
                             <strong>Willing to relocate</strong>
-                            <div>{item.relocate}</div>
+                            <div>{item.relocate ? "Yes" : "No"}</div>
                           </Row>
                           {/* <hr /> */}
                           {/* <Row>
@@ -594,7 +623,7 @@ export function JobPreferences(props) {
               </div>
             ) : (
               <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={loader} type="ball-pulse" />
+                <Loader active={loader} type="line-scale-pulse-out-rapid" />
               </div>
             )}
           </CardBody>
@@ -1004,7 +1033,7 @@ export function JobPreferences(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

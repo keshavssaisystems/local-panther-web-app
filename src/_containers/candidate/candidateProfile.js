@@ -41,6 +41,7 @@ import {
   getpayPeriodActions,
   experienceLevelActions,
   resumeTemplateActions,
+  studyFieldActions,
 } from "_store";
 
 export function CandidateProfile() {
@@ -126,6 +127,7 @@ export function CandidateProfile() {
     await dispatch(resumeTemplateActions.getResumeTemplate());
     popular_skills = await getSkillsFilter("java");
     setPopularSkills(popular_skills.data);
+    await dispatch(studyFieldActions.getStudyField());
   };
 
   const getPersonalDetails = async function () {
@@ -183,7 +185,7 @@ export function CandidateProfile() {
 
     dropdown_selected.selectedCity = {
       value: filter_data.cityid,
-      label: filter_data.cityname,
+      label: `${filter_data.cityname + ", " + filter_data.statename}`,
     };
     dropdown_selected.selectedState = {
       value: filter_data.stateid,
@@ -265,7 +267,7 @@ export function CandidateProfile() {
         </div>
       ) : (
         <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-          <Loader active={true} type="ball-pulse" />
+          <Loader active={true} type="line-scale-pulse-out-rapid" />
         </div>
       )}
     </div>

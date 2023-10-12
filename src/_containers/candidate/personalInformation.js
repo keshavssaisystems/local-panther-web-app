@@ -1,40 +1,30 @@
 import React, { useState, useEffect, Fragment } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-} from "reactstrap";
+import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
 import {
   Row,
   Col,
   Modal,
   Card,
   CardBody,
-  Collapse,
-  CardHeader,
   Button,
   FormGroup,
-  FormFeedback,
   InputGroup,
   Form,
 } from "reactstrap";
 import Loader from "react-loaders";
 import AsyncSelect from "react-select/async";
-import { formatDate } from "_helpers/helper";
+import { formatDate, extractDatePart } from "_helpers/helper";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import {
   BsPencil,
   BsTelephone,
   BsPinMap,
-  BsGenderFemale,
   BsGenderMale,
   BsPeople,
   BsEnvelope,
   BsBalloon,
 } from "react-icons/bs";
+import moment from "moment-timezone";
 
 import profileImg from "../../assets/utils/images/avatars/1.jpg";
 
@@ -48,21 +38,15 @@ import "./profile.scss";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import {
-  profileActions,
-  getProfileActions,
-  cityActions,
-  genderActions,
-  ethnicityActions,
-} from "_store";
+import { profileActions } from "_store";
 import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.getProfile.loader);
 
-  const genderList_temp = useSelector((state) => state.gender.genderList);
-  const raceList_temp = useSelector((state) => state.ethnicity.ethnicityList);
+  const genderList = useSelector((state) => state.gender.genderList);
+  const raceList = useSelector((state) => state.ethnicity.ethnicityList);
   const eligibilityList_temp = useSelector(
     (state) => state.getProfile.dropdownLists.eligibilityDropDown
   );
@@ -74,8 +58,6 @@ export function PersonalInformation(props) {
   useEffect(() => {
     let data = {
       personalInfo: personalInfo_temp,
-      genderList: genderList_temp,
-      raceList: raceList_temp,
       eligibilityList: eligibilityList_temp,
     };
     setSelectedCandidate(data);
@@ -88,15 +70,10 @@ export function PersonalInformation(props) {
     eligibilityList: useSelector(
       (state) => state.getProfile.dropdownLists.eligibilityDropDown
     ),
+    selectedDropDown: useSelector((state) => state.getProfile.dropdownLists),
   });
-  const [selectedCandidate_temp, setSelectedCandidateTemp] = useState({
-    personalInfo: props.profileInfo.personalInfo,
-    genderList: useSelector((state) => state.gender.genderList),
-    raceList: useSelector((state) => state.ethnicity.ethnicityList),
-    eligibilityList: useSelector(
-      (state) => state.getProfile.dropdownLists.eligibilityDropDown
-    ),
-  });
+
+  const [getResponse, setGetResponse] = useState({});
 
   const [requiredErrors, setRequiredErros] = useState({
     emailError: false,
@@ -111,45 +88,93 @@ export function PersonalInformation(props) {
   const [raceSelect, setRaceSelect] = useState("");
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
-    loadSelectedData();
-  }, []);
-  const loadSelectedData = function () {
+    let data = {
+      firstname: selectedCandidate.personalInfo.firstname,
+      lastname: selectedCandidate.personalInfo.lastname,
+      email: selectedCandidate.personalInfo.email,
+      phonenumber: selectedCandidate.personalInfo.phonenumber,
+      zipcode: selectedCandidate.personalInfo.zipcode,
+      employmenteligiblity: selectedCandidate.personalInfo.employmenteligiblity,
+      dob: selectedCandidate.personalInfo.dob
+        ? extractDatePart(selectedCandidate.personalInfo.dob)
+        : null,
+      isreadytoworkimmediately:
+        selectedCandidate.personalInfo.isreadytoworkimmediately,
+      address: selectedCandidate.personalInfo.address,
+      city: [
+        {
+          value: selectedCandidate.personalInfo.cityid,
+          label: selectedCandidate.personalInfo.cityname,
+        },
+      ],
+      state: [
+        {
+          value: selectedCandidate.personalInfo.stateid,
+          label: selectedCandidate.personalInfo.statename,
+        },
+      ],
+      country: [
+        {
+          value: selectedCandidate.personalInfo.countryid,
+          label: selectedCandidate.personalInfo.countryname,
+        },
+      ],
+
+      gender: [
+        {
+          value: selectedCandidate.personalInfo.genderid,
+          label: selectedCandidate.personalInfo.gender,
+        },
+      ],
+      ethinicity: [
+        {
+          value: selectedCandidate.personalInfo.ethnicityid,
+          label: selectedCandidate.personalInfo.ethnicity,
+        },
+      ],
+      isactive: true,
+      userid: 0,
+      currentUserId: 0,
+    };
+
+    setGetResponse(data);
     if (props.profileInfo.personalInfo.city != "") {
       loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
     }
 
-    if (props.dropDownData.selectedCountry.value != 0) {
+    if (selectedCandidate.selectedDropDown?.selectedCountry[0]?.value != 0) {
       let countryData = [...countrySelect];
-      countryData.push(props.dropDownData.selectedCountry);
+      countryData.push(selectedCandidate.selectedDropDown?.selectedCountry[0]);
 
       setCountrySelect(countryData);
     }
 
-    if (props.dropDownData.selectedState.value != 0) {
+    if (selectedCandidate.selectedDropDown?.selectedState[0]?.value != 0) {
       let stateData = [...stateSelect];
-      stateData.push(props.dropDownData.selectedState);
+      stateData.push(selectedCandidate.selectedDropDown?.selectedState[0]);
       setStateSelect(stateData);
     }
 
-    if (props.dropDownData.selectedCity.value != 0) {
+    if (selectedCandidate.selectedDropDown?.selectedCity[0]?.value != 0) {
       let cityData = [...citySelect];
-      cityData.push(props.dropDownData.selectedCity);
+      cityData.push(selectedCandidate.selectedDropDown?.selectedCity[0]);
       setCitySelect(cityData);
     }
-    if (props.dropDownData.selectedGender.value != 0) {
+    if (selectedCandidate.selectedDropDown?.selectedGender[0]?.value != 0) {
       let genderData = [...genderSelect];
-      genderData.push(props.dropDownData.selectedGender);
+      genderData.push(selectedCandidate.selectedDropDown?.selectedGender[0]);
       setGenderSelect(genderData);
     }
 
-    if (props.dropDownData.selectedEthnicity.value != 0) {
+    if (selectedCandidate.selectedDropDown?.selectedEthnicity[0].value != 0) {
       let ethnicityData = [...raceSelect];
-      ethnicityData.push(props.dropDownData.selectedEthnicity);
+      ethnicityData.push(
+        selectedCandidate.selectedDropDown?.selectedEthnicity[0]
+      );
       setRaceSelect(ethnicityData);
     }
-  };
+  }, [selectedCandidate]);
 
-  const [menuIsOpen, setMenuIsOpen] = useState(false);
   const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
@@ -177,41 +202,73 @@ export function PersonalInformation(props) {
     setCitySelect(new_data);
     error_data.cityError = false;
     setRequiredErros(error_data);
-    let state_response = [...stateSelect];
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: data.value,
+        label: data.label,
+      },
+    ];
 
-    let obj = {
-      value: cityList.find((x) => x.cityid == data.value)?.stateid,
-      label: cityList.find((x) => x.cityid == data.value)?.statename,
-    };
-    state_response.push(obj);
-    setStateList(state_response);
+    get_data.city = new_array;
+
+    let obj = [
+      {
+        value: cityList.find((x) => x.cityid == data.value)?.stateid,
+        label: cityList.find((x) => x.cityid == data.value)?.statename,
+      },
+    ];
+
+    get_data.state = obj;
+    setGetResponse(get_data);
   };
   const onSelectCountryDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
     setCountrySelect(new_data);
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: data.value,
+        label: data.label,
+      },
+    ];
+
+    get_data.country = new_array;
+    setGetResponse(get_data);
   };
-  const onSelectStateDropdown = function (data) {
-    let error_data = { ...requiredErrors };
-    let new_data = [];
-    new_data.push(data);
-    setStateSelect(new_data);
-    error_data.stateError = false;
-    setRequiredErros(error_data);
-  };
-  const renderDate = function (data) {
-    const date = new Date(data);
-    return date.toLocaleDateString("en-CA");
-  };
+
   const onSelectRaceDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
     setRaceSelect(new_data);
+
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: data.value,
+        label: data.label,
+      },
+    ];
+
+    get_data.ethinicity = new_array;
+    setGetResponse(get_data);
   };
   const onSelectGenderDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
     setGenderSelect(new_data);
+
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: data.value,
+        label: data.label,
+      },
+    ];
+
+    get_data.gender = new_array;
+    setGetResponse(get_data);
   };
 
   function maskPhoneNumber(phoneNumber) {
@@ -226,8 +283,9 @@ export function PersonalInformation(props) {
 
   async function onSubmit(e) {
     e.preventDefault();
+    let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
-    if (citySelect.length == 0) {
+    if (new_data.city[0]?.value == 0) {
       errors.cityError = true;
     } else {
       errors.cityError = false;
@@ -237,46 +295,33 @@ export function PersonalInformation(props) {
       setRequiredErros(errors);
       return;
     }
-    let new_data = { ...selectedCandidate_temp };
-
-    new_data.personalInfo.cityid = citySelect[0]?.value;
-    new_data.personalInfo.countryid = countrySelect[0]
-      ? countrySelect[0]?.value
-      : 0;
-    new_data.personalInfo.stateid = stateSelect[0]?.value;
-    new_data.personalInfo.genderid = genderSelect[0]
-      ? genderSelect[0]?.value
-      : 0;
-    new_data.personalInfo.ethnicityid = raceSelect[0]
-      ? raceSelect[0]?.value
-      : 0;
 
     if (
-      new_data.personalInfo.firstname == "" ||
-      new_data.personalInfo.lastname == "" ||
-      new_data.personalInfo.phonenumber == "" ||
-      new_data.personalInfo.email == "" ||
-      new_data.personalInfo.cityid == 0
+      new_data.firstname == "" ||
+      new_data.lastname == "" ||
+      new_data.phonenumber == "" ||
+      new_data.email == "" ||
+      new_data.cityid == 0
     ) {
       return;
     } else {
       let post_data = {
         candidateid: userDetails.InternalUserId,
-        email: new_data.personalInfo.email,
-        phonenumber: new_data.personalInfo.phonenumber,
-        firstname: new_data.personalInfo.firstname,
-        lastname: new_data.personalInfo.lastname,
-        genderid: new_data.personalInfo.genderid,
-        cityid: new_data.personalInfo.cityid,
-        stateid: new_data.personalInfo.stateid,
-        countryid: new_data.personalInfo.countryid,
-        zipcode: new_data.personalInfo.zipcode,
-        ethnicityid: new_data.personalInfo.ethnicityid,
-        employmenteligiblity: new_data.personalInfo.employmenteligiblity,
-        isreadytoworkimmediately:
-          new_data.personalInfo.isreadytoworkimmediately,
+        email: new_data.email,
+        phonenumber: new_data.phonenumber,
+        firstname: new_data.firstname,
+        lastname: new_data.lastname,
+        genderid: new_data.gender[0]?.value,
+        cityid: new_data.city[0]?.value,
+        stateid: new_data.state[0]?.value,
+        countryid: new_data.country[0]?.value,
+        zipcode: new_data.zipcode,
+        ethnicityid: new_data.ethinicity[0]?.value,
+        employmenteligiblity: new_data.employmenteligiblity,
+        isreadytoworkimmediately: new_data.isreadytoworkimmediately,
         isactive: true,
-        dob: dob,
+        dob: new_data.dob,
+        address: new_data.address,
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
       };
@@ -303,35 +348,50 @@ export function PersonalInformation(props) {
   };
 
   const selectDate = function (data) {
-    let temp_data = { ...selectedCandidate_temp };
-    temp_data.personalInfo.dob = new Date(data);
-    setSelectedCandidate(temp_data);
-    setDOB(new Date(data));
+    let temp_data = { ...getResponse };
+    temp_data.dob = extractDatePart(data);
+    setGetResponse(temp_data);
+    setDOB(extractDatePart(data));
   };
 
   const close = function () {
     let data = {
       personalInfo: personalInfo_temp,
-      genderList: genderList_temp,
-      raceList: raceList_temp,
       eligibilityList: eligibilityList_temp,
     };
     setSelectedCandidate(data);
+    let errors = { ...requiredErrors };
+
+    let obj = {
+      emailError: false,
+      phoneError: false,
+      cityError: false,
+      stateError: false,
+    };
+    errors = obj;
+    setRequiredErros(errors);
     setContactModal(false);
     // props.onCallBack();
   };
   const closeModal = function () {
     let data = {
       personalInfo: personalInfo_temp,
-      genderList: genderList_temp,
-      raceList: raceList_temp,
       eligibilityList: eligibilityList_temp,
     };
+    let errors = { ...requiredErrors };
+
+    let obj = {
+      emailError: false,
+      phoneError: false,
+      cityError: false,
+      stateError: false,
+    };
+    errors = obj;
+    setRequiredErros(errors);
     setSelectedCandidate(data);
     setContactModal(false);
     setSuccess(false);
     setError(false);
-    // window.location.reload();
     props.onCallBack();
   };
 
@@ -358,8 +418,6 @@ export function PersonalInformation(props) {
           return country_response.find((item) => item.id === id);
         }
       );
-
-      // data.push(country_response[0]);
       setCountryList(data);
     } else {
       setCountryList(data);
@@ -378,42 +436,69 @@ export function PersonalInformation(props) {
     });
 
     setLocation(filter_data);
+    return filter_data;
   };
   const onHandleInputChange = function (check, data) {
-    let new_data = { ...selectedCandidate_temp };
+    let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
 
     if (check == "firstname") {
-      new_data.personalInfo.firstname = data;
+      new_data.firstname = data;
     } else if (check == "lastname") {
-      new_data.personalInfo.lastname = data;
+      new_data.lastname = data;
     } else if (check == "address") {
-      new_data.personalInfo.address = data;
+      new_data.address = data;
     } else if (check == "email") {
-      new_data.personalInfo.email = data;
+      new_data.email = data;
 
-      if (!new_data.personalInfo.email.match(emailRegex)) {
+      if (!new_data.email.match(emailRegex)) {
         errors.emailError = true;
       } else {
         errors.emailError = false;
       }
     } else if (check == "phonenumber") {
-      new_data.personalInfo.phonenumber = data;
-      if (!new_data.personalInfo.phonenumber.match(phoneRegExp)) {
+      new_data.phonenumber = data;
+      if (!new_data.phonenumber.match(phoneRegExp)) {
         errors.phoneError = true;
       } else {
         errors.phoneError = false;
       }
     } else if (check == "zip") {
-      new_data.personalInfo.zipcode = data;
+      new_data.zipcode = data;
     } else if (check == "authorization") {
-      new_data.personalInfo.employmenteligiblity = data;
+      new_data.employmenteligiblity = data;
     } else if (check == "work") {
-      new_data.personalInfo.isreadytoworkimmediately =
-        !new_data.personalInfo.isreadytoworkimmediately;
-    }
+      new_data.isreadytoworkimmediately = !new_data.isreadytoworkimmediately;
+    } else if (check == "city") {
+      let new_array = [
+        {
+          value: data.value,
+          label: data.label,
+        },
+      ];
 
-    setSelectedCandidate(new_data);
+      new_data.city = new_array;
+
+      let obj = [
+        {
+          value: cityList.find((x) => x.cityid == data.value)?.stateid,
+          label: cityList.find((x) => x.cityid == data.value)?.statename,
+        },
+      ];
+
+      new_data.state = obj;
+    } else if (check == "country") {
+      let new_array = [
+        {
+          value: data.value,
+          label: data.label,
+        },
+      ];
+
+      new_data.country = new_array;
+    }
+    setRequiredErros(errors);
+    setGetResponse(new_data);
   };
 
   return (
@@ -439,18 +524,18 @@ export function PersonalInformation(props) {
                           <strong className="candidate-name mb-0">
                             {selectedCandidate.personalInfo.firstname +
                               " " +
-                              selectedCandidate_temp.personalInfo.lastname}
+                              selectedCandidate.personalInfo.lastname}
                           </strong>
                           <p className="widget-description text-focus content-text mt-0">
                             {selectedCandidate.personalInfo.position}
                           </p>
                           <p className="candidate-label mt-0 mb-0">
-                            {selectedCandidate.personalInfo.organization ==
-                              "Not working" ||
+                            {selectedCandidate.personalInfo.organization !=
+                              "Not working" &&
                             selectedCandidate.personalInfo.organization != ""
                               ? "at " +
                                 selectedCandidate.personalInfo.organization
-                              : selectedCandidate.personalInfo.organization}
+                              : ""}
                           </p>
                         </div>
                         <div>
@@ -579,7 +664,7 @@ export function PersonalInformation(props) {
             </div>
           ) : (
             <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-              <Loader active={loading} type="ball-pulse" />
+              <Loader active={loading} type="line-scale-pulse-out-rapid" />
             </div>
           )}
         </Card>
@@ -596,381 +681,355 @@ export function PersonalInformation(props) {
               <strong className="card-title-text">Contact information</strong>
             </ModalHeader>
             <ModalBody>
-              <Form onSubmit={(evt) => onSubmit(evt)}>
-                <Row>
-                  <div className="mb-1 fw-bold">Contact</div>
-                  <hr />
-                </Row>
+              {getResponse ? (
+                <Form onSubmit={(evt) => onSubmit(evt)}>
+                  <Row>
+                    <div className="mb-1 fw-bold">Contact</div>
+                    <hr />
+                  </Row>
 
-                <Row>
-                  <Col>
-                    <FormGroup>
-                      <Label for="firstname" className="fw-semi-bold">
-                        First name <span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        type="text"
-                        name="firstname"
-                        id="firstname"
-                        placeholder="Enter first name"
-                        maxLength={50}
-                        value={selectedCandidate.personalInfo.firstname}
-                        onInput={(evt) =>
-                          onHandleInputChange("firstname", evt.target.value)
-                        }
-                        className={`field-input placeholder-text form-control ${
-                          selectedCandidate.personalInfo.firstname == ""
-                            ? "is-invalid error-text"
-                            : ""
-                        }`}
-                      />
-                      <div className="invalid-feedback">
-                        {selectedCandidate.personalInfo.firstname == ""
-                          ? "Firstname is required"
-                          : ""}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Label for="password" className="fw-semi-bold">
-                        Last name <span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        placeholder="Enter last name"
-                        name="lastname"
-                        type="lastname"
-                        id="lastname"
-                        maxLength={50}
-                        value={selectedCandidate.personalInfo.lastname}
-                        onInput={(evt) =>
-                          onHandleInputChange("lastname", evt.target.value)
-                        }
-                        className={`field-input placeholder-text form-control ${
-                          selectedCandidate.personalInfo.lastname == ""
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                      />
-
-                      <div className="invalid-feedback">
-                        {selectedCandidate.personalInfo.lastname == ""
-                          ? "Lastname is required"
-                          : ""}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <FormGroup>
-                      <Label for="phonenumber" className="fw-semi-bold">
-                        Phone<span className="required-icon">*</span>
-                      </Label>
-                      <InputMask
-                        placeholder="Eg: (987)-654-3210"
-                        name="phonenumber"
-                        type="text"
-                        id="phonenumber"
-                        mask="(999)-999-9999"
-                        value={selectedCandidate.personalInfo.phonenumber}
-                        onInput={(evt) =>
-                          onHandleInputChange("phonenumber", evt.target.value)
-                        }
-                        maxLength={20}
-                        className={`field-input placeholder-text form-control ${
-                          selectedCandidate.personalInfo.phonenumber == "" ||
-                          selectedCandidate.phoneError
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                      />
-                      <div className="invalid-feedback">
-                        {selectedCandidate.personalInfo.phonenumber == ""
-                          ? "Phone number is required"
-                          : ""}
-                      </div>
-                      <div className="invalid-feedback">
-                        {selectedCandidate.personalInfo.phonenumber != "" &&
-                        selectedCandidate.phoneError
-                          ? "Phone number is not valid"
-                          : ""}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Label for="email" className="fw-semi-bold">
-                        Email <span className="required-icon">*</span>
-                      </Label>
-                      <input
-                        type="text"
-                        name="email"
-                        id="email"
-                        placeholder="Enter Email"
-                        value={selectedCandidate.personalInfo.email}
-                        onInput={(evt) =>
-                          onHandleInputChange("email", evt.target.value)
-                        }
-                        className={`field-input placeholder-text form-control ${
-                          selectedCandidate.personalInfo.email == "" ||
-                          requiredErrors.emailError
-                            ? "is-invalid"
-                            : ""
-                        }`}
-                      />
-                      <div className="invalid-feedback">
-                        {selectedCandidate.personalInfo.email == ""
-                          ? "Email is required"
-                          : ""}
-                      </div>
-                      <div className="invalid-feedback">
-                        {selectedCandidate.personalInfo.email != "" &&
-                        requiredErrors.emailError
-                          ? "Email is not valid"
-                          : ""}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <div className="mb-1 fw-bold">Location</div>
-                  <hr />
-                </Row>
-
-                <Row>
-                  <Col>
-                    <FormGroup>
-                      <Label for="city" className="fw-semi-bold">
-                        City, State <span className="required-icon">*</span>
-                      </Label>
-
-                      <AsyncSelect
-                        name="skills"
-                        placeholder="Search to select"
-                        placeholderText="search"
-                        className="location-dropdown"
-                        loadOptions={loadOptions}
-                        isMulti={false}
-                        value={citySelect}
-                        defaultOptions={locationData}
-                        onChange={(evt) => onSelectCityDropdown(evt)}
-                        styles={{
-                          borderColor: requiredErrors.stateError
-                            ? "#d92550"
-                            : "",
-                        }}
-                      />
-
-                      <div className="error-class">
-                        {requiredErrors.cityError ? "Location is required" : ""}
-                      </div>
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Label for="country" className="fw-semi-bold">
-                        Country
-                      </Label>
-                      <AsyncSelect
-                        name="country"
-                        placeholder="Select"
-                        defaultOptions={countryList}
-                        readOnly
-                        isMulti={false}
-                        value={countrySelect}
-                        onChange={(evt) => onSelectCountryDropdown(evt)}
-                        onMenuOpen={() => checkCityValid()}
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <FormGroup>
-                      <Label for="address" className="fw-semi-bold">
-                        Address
-                      </Label>
-                      <input
-                        type="text"
-                        name="address"
-                        id="address"
-                        onInput={(evt) =>
-                          onHandleInputChange("address", evt.target.value)
-                        }
-                        maxLength={50}
-                        placeholder="Enter address"
-                        className="field-input placeholder-text form-control input-text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col>
-                    <FormGroup>
-                      <Label for="zipCode" className="fw-semi-bold">
-                        Zip code
-                      </Label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        id="zipCode"
-                        maxLength={50}
-                        value={selectedCandidate.personalInfo.zipcode}
-                        onInput={(evt) =>
-                          onHandleInputChange("zip", evt.target.value)
-                        }
-                        placeholder="Enter zip zode"
-                        className="field-input placeholder-text form-control input-text"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <div className="mb-1 fw-bold">Demographic</div>
-                  <hr />
-                </Row>
-
-                <Row>
-                  <Col>
-                    <FormGroup>
-                      <Label for="gender" className="fw-semi-bold">
-                        Birth year
-                      </Label>
-                      {/* <Input
-                        type="date"
-                        name="scheduleDate"
-                        id="scheduleDate"
-                        placeholder="mm-dd-yyyy"
-                        defaultValue={
-                          selectedCandidate.personalInfo.dob
-                            ? new Date(selectedCandidate.personalInfo.dob)
-                            : null
-                        }
-                        selected={
-                          selectedCandidate.personalInfo.dob
-                            ? new Date(selectedCandidate.personalInfo.dob)
-                            : null
-                        }
-                        onChange={(evt) => selectDate(evt.target.value)}
-                      /> */}
-
-                      <InputGroup>
-                        <div className="input-group-text">
-                          <FontAwesomeIcon icon={faCalendarAlt} />
-                        </div>
-                        <DatePicker
-                          className="form-control"
-                          placeholderText="MM/DD/YYYY"
-                          selected={
-                            selectedCandidate.personalInfo.dob
-                              ? new Date(selectedCandidate.personalInfo.dob)
-                              : null
+                  <Row>
+                    <Col>
+                      <FormGroup>
+                        <Label for="firstname" className="fw-semi-bold">
+                          First name <span className="required-icon">*</span>
+                        </Label>
+                        <input
+                          type="text"
+                          name="firstname"
+                          id="firstname"
+                          placeholder="Enter first name"
+                          maxLength={50}
+                          value={getResponse.firstname}
+                          onInput={(evt) =>
+                            onHandleInputChange("firstname", evt.target.value)
                           }
-                          showYearDropdown={true}
-                          onChange={(evt) => selectDate(evt)}
+                          className={`field-input placeholder-text form-control ${
+                            getResponse.firstname == ""
+                              ? "is-invalid error-text"
+                              : ""
+                          }`}
                         />
-                      </InputGroup>
-                    </FormGroup>
-                  </Col>
+                        <div className="invalid-feedback">
+                          {getResponse.firstname == ""
+                            ? "Firstname is required"
+                            : ""}
+                        </div>
+                      </FormGroup>
+                    </Col>
+                    <Col>
+                      <FormGroup>
+                        <Label for="password" className="fw-semi-bold">
+                          Last name <span className="required-icon">*</span>
+                        </Label>
+                        <input
+                          placeholder="Enter last name"
+                          name="lastname"
+                          type="lastname"
+                          id="lastname"
+                          maxLength={50}
+                          value={getResponse.lastname}
+                          onInput={(evt) =>
+                            onHandleInputChange("lastname", evt.target.value)
+                          }
+                          className={`field-input placeholder-text form-control ${
+                            getResponse.lastname == "" ? "is-invalid" : ""
+                          }`}
+                        />
 
-                  <Col>
-                    <FormGroup>
-                      <Label for="gender" className="fw-semi-bold">
-                        Gender
-                      </Label>
+                        <div className="invalid-feedback">
+                          {getResponse.lastname == ""
+                            ? "Lastname is required"
+                            : ""}
+                        </div>
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <FormGroup>
+                        <Label for="phonenumber" className="fw-semi-bold">
+                          Phone<span className="required-icon"> *</span>
+                        </Label>
+                        <InputMask
+                          placeholder="Eg: (987)-654-3210"
+                          name="phonenumber"
+                          type="text"
+                          id="phonenumber"
+                          mask="(999)-999-9999"
+                          value={getResponse.phonenumber}
+                          onInput={(evt) =>
+                            onHandleInputChange("phonenumber", evt.target.value)
+                          }
+                          className={`field-input placeholder-text form-control ${
+                            getResponse.phonenumber == "" ||
+                            getResponse.phoneError
+                              ? "is-invalid"
+                              : ""
+                          }`}
+                        />
+                        <div className="invalid-feedback">
+                          {getResponse.phonenumber == ""
+                            ? "Phone number is required"
+                            : ""}
+                        </div>
+                        <div className="invalid-feedback">
+                          {getResponse.phonenumber != "" &&
+                          getResponse.phoneError
+                            ? "Phone number is not valid"
+                            : ""}
+                        </div>
+                      </FormGroup>
+                    </Col>
+                    <Col>
+                      <FormGroup>
+                        <Label for="email" className="fw-semi-bold">
+                          Email <span className="required-icon">*</span>
+                        </Label>
+                        <input
+                          type="text"
+                          name="email"
+                          id="email"
+                          placeholder="Enter Email"
+                          value={getResponse.email}
+                          onInput={(evt) =>
+                            onHandleInputChange("email", evt.target.value)
+                          }
+                          className={`field-input placeholder-text form-control ${
+                            getResponse.email == "" || requiredErrors.emailError
+                              ? "is-invalid"
+                              : ""
+                          }`}
+                        />
+                        <div className="invalid-feedback">
+                          {getResponse.email == "" ? "Email is required" : ""}
+                        </div>
+                        <div className="invalid-feedback">
+                          {getResponse.email != "" && requiredErrors.emailError
+                            ? "Email is not valid"
+                            : ""}
+                        </div>
+                      </FormGroup>
+                    </Col>
+                  </Row>
 
-                      <AsyncSelect
-                        name="gender"
-                        placeholder="Select"
-                        defaultOptions={selectedCandidate_temp.genderList}
-                        isMulti={false}
-                        value={genderSelect}
-                        onChange={(evt) => onSelectGenderDropdown(evt)}
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md={6}>
-                    <FormGroup>
-                      <Label for="race" className="fw-semi-bold">
-                        Race/Etnicity
-                      </Label>
-                      <AsyncSelect
-                        name="race"
-                        placeholder="Select"
-                        defaultOptions={selectedCandidate_temp.raceList}
-                        isMulti={false}
-                        value={raceSelect}
-                        onChange={(evt) => onSelectRaceDropdown(evt)}
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
+                  <Row>
+                    <div className="mb-1 fw-bold">Location</div>
+                    <hr />
+                  </Row>
 
-                <Row>
-                  <div className="mb-1 fw-bold">Employement eligibility</div>
-                  <hr />
-                </Row>
+                  <Row>
+                    <Col>
+                      <FormGroup>
+                        <Label for="city" className="fw-semi-bold">
+                          City, State <span className="required-icon">*</span>
+                        </Label>
+                        <AsyncSelect
+                          name="skills"
+                          placeholder="Search to select"
+                          placeholderText="search"
+                          loadOptions={loadOptions}
+                          isMulti={false}
+                          value={citySelect}
+                          defaultOptions={locationData}
+                          onChange={(evt) => onSelectCityDropdown(evt)}
+                          className={`location-dropdown ${
+                            requiredErrors.cityError == ""
+                              ? "is-invalid error-text"
+                              : ""
+                          }`}
+                        />
+                        <div className="error-class">
+                          {requiredErrors.cityError
+                            ? "City,State is required"
+                            : ""}
+                        </div>
+                      </FormGroup>
+                    </Col>
+                    <Col>
+                      <FormGroup>
+                        <Label for="country" className="fw-semi-bold">
+                          Country
+                        </Label>
+                        <AsyncSelect
+                          name="country"
+                          placeholder="Select"
+                          defaultOptions={countryList}
+                          readOnly
+                          isMulti={false}
+                          value={countrySelect}
+                          onChange={(evt) => onSelectCountryDropdown(evt)}
+                          onMenuOpen={() => checkCityValid()}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <FormGroup>
+                        <Label for="address" className="fw-semi-bold">
+                          Address
+                        </Label>
+                        <input
+                          type="text"
+                          name="address"
+                          id="address"
+                          onInput={(evt) =>
+                            onHandleInputChange("address", evt.target.value)
+                          }
+                          value={getResponse.address}
+                          maxLength={50}
+                          placeholder="Enter address"
+                          className="field-input placeholder-text form-control input-text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col>
+                      <FormGroup>
+                        <Label for="zipCode" className="fw-semi-bold">
+                          Zip code
+                        </Label>
+                        <input
+                          type="text"
+                          name="zipCode"
+                          id="zipCode"
+                          maxLength={50}
+                          value={getResponse.zipcode}
+                          onInput={(evt) =>
+                            onHandleInputChange("zip", evt.target.value)
+                          }
+                          placeholder="Enter zip zode"
+                          className="field-input placeholder-text form-control input-text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
 
-                <Row>
-                  {selectedCandidate_temp?.eligibilityList?.map((item) => (
+                  <Row>
+                    <div className="mb-1 fw-bold">Demographic</div>
+                    <hr />
+                  </Row>
+
+                  <Row>
+                    <Col>
+                      <FormGroup>
+                        <Label for="gender" className="fw-semi-bold">
+                          Birth year
+                        </Label>
+
+                        <InputGroup>
+                          <div className="input-group-text">
+                            <FontAwesomeIcon icon={faCalendarAlt} />
+                          </div>
+                          <DatePicker
+                            autoComplete="off"
+                            className="form-control"
+                            placeholderText="MM/DD/YYYY"
+                            selected={
+                              getResponse.dob ? new Date(getResponse.dob) : null
+                            }
+                            showYearDropdown={true}
+                            onChange={(evt) => selectDate(evt)}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+
+                    <Col>
+                      <FormGroup>
+                        <Label for="gender" className="fw-semi-bold">
+                          Gender
+                        </Label>
+
+                        <AsyncSelect
+                          name="gender"
+                          placeholder="Select"
+                          defaultOptions={genderList}
+                          isMulti={false}
+                          value={genderSelect}
+                          onChange={(evt) => onSelectGenderDropdown(evt)}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="race" className="fw-semi-bold">
+                          Race/Etnicity
+                        </Label>
+                        <AsyncSelect
+                          name="race"
+                          placeholder="Select"
+                          defaultOptions={raceList}
+                          isMulti={false}
+                          value={raceSelect}
+                          onChange={(evt) => onSelectRaceDropdown(evt)}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <div className="mb-1 fw-bold">Employement eligibility</div>
+                    <hr />
+                  </Row>
+
+                  <Row>
+                    {selectedCandidate?.eligibilityList?.map((item) => (
+                      <Col>
+                        <FormGroup check>
+                          <Input
+                            name="eligibility"
+                            type="radio"
+                            checked={
+                              item.id == getResponse.employmenteligiblity
+                            }
+                            onClick={(evt) =>
+                              onHandleInputChange("authorization", item.id)
+                            }
+                          />
+                          <Label check className="fw-semi-bold">
+                            {item.name}
+                          </Label>
+                        </FormGroup>
+                      </Col>
+                    ))}
+                  </Row>
+                  <Row>
                     <Col>
                       <FormGroup check>
                         <Input
-                          name="eligibility"
-                          type="radio"
-                          checked={
-                            item.id ==
-                            selectedCandidate_temp.personalInfo
-                              .employmenteligiblity
+                          name="immediateJoin"
+                          type="checkbox"
+                          checked={getResponse.isreadytoworkimmediately}
+                          onChange={(evt) =>
+                            onHandleInputChange("work", evt.target.value)
                           }
-                          onClick={(evt) =>
-                            onHandleInputChange("authorization", item.id)
-                          }
-                        />
-                        <Label check className="fw-semi-bold">
-                          {item.name}
+                        />{" "}
+                        <Label className="fw-semi-bold">
+                          Ready to work immediately{" "}
                         </Label>
                       </FormGroup>
                     </Col>
-                  ))}
-                </Row>
-                <Row>
-                  <Col>
-                    <FormGroup check>
-                      <Input
-                        name="immediateJoin"
-                        type="checkbox"
-                        checked={
-                          selectedCandidate_temp.personalInfo
-                            .isreadytoworkimmediately
-                        }
-                        onChange={(evt) =>
-                          onHandleInputChange("work", evt.target.value)
-                        }
-                      />{" "}
-                      <Label className="fw-semi-bold">
-                        Ready to work immediately{" "}
-                      </Label>
-                    </FormGroup>
-                  </Col>
-                </Row>
+                  </Row>
 
-                <div className="float-end">
-                  <Button className="me-2 save-btn" type="submit">
-                    Save
-                  </Button>
-                  <Button
-                    type="button"
-                    className="close-btn"
-                    onClick={() => closeModal(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </Form>
+                  <div className="float-end">
+                    <Button className="me-2 save-btn" type="submit">
+                      Save
+                    </Button>
+                    <Button
+                      type="button"
+                      className="close-btn"
+                      onClick={() => closeModal(false)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </Form>
+              ) : (
+                <></>
+              )}
             </ModalBody>
           </Modal>
         </div>
@@ -1024,7 +1083,7 @@ export function PersonalInformation(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

@@ -341,7 +341,7 @@ export function CandidateSkills(props) {
                   </Row>
                 ) : (
                   <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                    <Loader active={true} type="ball-pulse" />
+                    <Loader active={true} type="line-scale-pulse-out-rapid" />
                   </div>
                 )}
               </div>
@@ -547,7 +547,7 @@ export function CandidateSkills(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

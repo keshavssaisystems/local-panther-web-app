@@ -119,7 +119,7 @@ const getProfileSlice = createSlice({
           state: filter_data.statename,
           city: filter_data.cityname,
           country: filter_data.countryname,
-          dob: filter_data.dob ? new Date(filter_data.dob) : "",
+          dob: filter_data.dob ? filter_data.dob : null,
           gender: filter_data.gendername,
           race: filter_data.ethnicityname,
 
@@ -134,6 +134,7 @@ const getProfileSlice = createSlice({
           ethnicityid: filter_data.ethnicityid,
           ethnicity: filter_data.ethnicity,
           employmenteligiblity: filter_data.employmenteligiblity,
+          address: filter_data.address,
           isreadytoworkimmediately: filter_data.isreadytoworkimmediately,
           isactive: true,
           userid: 0,
@@ -156,7 +157,7 @@ const getProfileSlice = createSlice({
         dropdown_selected.selectedCity = [
           {
             value: filter_data.cityid,
-            label: filter_data.cityname,
+            label: `${filter_data.cityname + ", " + filter_data.statename}`,
           },
         ];
         dropdown_selected.selectedState = [
@@ -184,7 +185,7 @@ const getProfileSlice = createSlice({
           },
         ];
 
-        state.user.data = dropdown_selected;
+        state.dropdownLists = dropdown_selected;
       })
       .addCase(getCandidate.rejected, (state, action) => {
         state.loader = false;

@@ -251,7 +251,7 @@ export function CandidateQualification(props) {
               </div>
             ) : (
               <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={loading} type="ball-pulse" />
+                <Loader active={loading} type="line-scale-pulse-out-rapid" />
               </div>
             )}
           </div>
@@ -399,7 +399,7 @@ export function CandidateQualification(props) {
         </Card>
       </Modal>
 
-      <Modal className="modal-reject-align profile-view" isOpen={success}>
+      <Modal className="modal-reject-align profile-view" isOpen={error}>
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
@@ -417,7 +417,7 @@ export function CandidateQualification(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

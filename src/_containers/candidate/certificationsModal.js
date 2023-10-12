@@ -13,6 +13,7 @@ import {
   Form,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { formatDate, extractDatePart } from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
@@ -64,8 +65,12 @@ export function CertificationsModal(props) {
         candidateid: props.selected.candidateid,
         certificationtypeid: props.selected.certificationtypeid,
         isexpired: props.selected.isexpired,
-        startdate: new Date(props.selected.startdate),
-        enddate: new Date(props.selected.enddate),
+        startdate: props.selected.startdate
+          ? extractDatePart(props.selected.startdate)
+          : null,
+        enddate: props.selected.enddate
+          ? extractDatePart(props.selected.enddate)
+          : null,
         description: props.selected.description,
         isactive: props.selected.isactive,
         currentUserId: 0,
@@ -133,52 +138,58 @@ export function CertificationsModal(props) {
             new_data.fromDateValid = true;
           } else {
             new_data.fromDateValid = false;
-            new_data.enddate = new Date();
+            new_data.enddate = extractDatePart(new Date());
           }
         } else {
           new_data.fromDateValid = false;
-          new_data.enddate = new Date();
+          new_data.enddate = extractDatePart(new Date());
         }
       }
     } else if (check == "description") {
       new_data.description = data;
     } else if (check == "fromdate") {
+      new_data.startdate = extractDatePart(data);
       if (new_data.enddate) {
         if (new Date(data) > new Date(new_data.enddate)) {
           new_data.fromDateValid = true;
         } else {
           new_data.fromDateValid = false;
-          new_data.startdate = data;
+          new_data.startdate = extractDatePart(data);
         }
       } else {
         new_data.fromDateValid = false;
-        new_data.startdate = data;
+        new_data.startdate = extractDatePart(data);
       }
     } else if (check == "todate") {
-      new_data.enddate = data;
+      new_data.enddate = extractDatePart(data);
 
       if (new_data.startdate) {
         if (new Date(data) < new Date(new_data.startdate)) {
           new_data.fromDateValid = true;
         } else {
           new_data.fromDateValid = false;
-          new_data.enddate = data;
+          new_data.enddate = extractDatePart(data);
         }
       } else {
         new_data.fromDateValid = false;
-        new_data.enddate = data;
+        new_data.enddate = extractDatePart(data);
       }
     }
     setFormData(new_data);
   };
 
   async function onSubmit() {
+    let valid = true;
+    let new_data = { ...formDetails };
     if (!formDetails.certificationname || formDetails.certificationname == "") {
-      let new_data = { ...formDetails };
-
       new_data.error = true;
-
-      setFormData(new_data);
+      valid = false;
+    }
+    setFormData(new_data);
+    if (formDetails.fromDateValid) {
+      valid = false;
+    }
+    if (!valid) {
       return;
     }
 
@@ -190,10 +201,8 @@ export function CertificationsModal(props) {
       candidatecertificationid: formDetails.candidatecertificationid,
       certificationtypeid: formDetails.certificationtypeid,
       isexpired: formDetails.isexpired,
-      startdate: formDetails.startdate
-        ? formDetails.startdate.toISOString()
-        : null,
-      enddate: formDetails.startdate ? formDetails.enddate.toISOString() : null,
+      startdate: formDetails.startdate ? formDetails.startdate : null,
+      enddate: formDetails.startdate ? formDetails.enddate : null,
       description: formDetails.description,
       isactive: formDetails.isactive,
       currentUserId: parseInt(userDetails.UserId),
@@ -223,7 +232,7 @@ export function CertificationsModal(props) {
     }
   }
   return (
-    <div className="profile-view">
+    <div className="profile-view react-date-picker-profile">
       {/* {formDetails.map((item, index) => ( */}
       <Form>
         {/* {check == "add" ? (
@@ -369,10 +378,17 @@ export function CertificationsModal(props) {
                   name="fromdate"
                   id="fromdata"
                   className="form-control"
-                  placeholderText="MM/DD/YYYY"
+                  dateFormat="MM/yyyy"
+                  autoComplete="off"
+                  placeholderText="MM/YYYY"
                   onSelect={(evt) => onHandleInputChange("fromdate", evt)}
-                  selected={formDetails.startdate}
-                  showYearDropdown={true}
+                  selected={
+                    formDetails.startdate
+                      ? new Date(formDetails.startdate)
+                      : formDetails.startdate
+                  }
+                  showMonthYearPicker
+                  scrollableYearDropdown
                 />
               </InputGroup>
               <div className="filter-info-text filter-error-msg">
@@ -392,10 +408,16 @@ export function CertificationsModal(props) {
                   name="todate"
                   id="todate"
                   className="form-control"
-                  placeholderText="MM/DD/YYYY"
-                  selected={formDetails.enddate}
+                  placeholderText="MM/YYYY"
+                  dateFormat="MM/yyyy"
+                  autoComplete="off"
+                  selected={
+                    formDetails.enddate
+                      ? new Date(formDetails.enddate)
+                      : formDetails.enddate
+                  }
                   disabled={formDetails.isexpired}
-                  showYearDropdown={true}
+                  showMonthYearPicker
                   onSelect={(evt) => onHandleInputChange("todate", evt)}
                 />
               </InputGroup>
@@ -467,7 +489,7 @@ export function CertificationsModal(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>
