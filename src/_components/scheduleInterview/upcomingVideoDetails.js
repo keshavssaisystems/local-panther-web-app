@@ -119,15 +119,6 @@ export function UpcomingVideoDetails({
                   {" "}
                   Message{" "}
                 </Button>
-                <Button
-                  outline
-                  size="sm"
-                  className="mb-2 mr-2 btn-transition"
-                  color="primary"
-                >
-                  {" "}
-                  Call{" "}
-                </Button>
                 <ButtonGroup size={"sm"}>
                   <Button
                     name="format"
@@ -179,7 +170,7 @@ export function UpcomingVideoDetails({
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Email</h6>
-          <p className="mb-0">-</p>
+          <p className="mb-0">{interviewDetails?.candidateemail}</p>
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Skills</h6>
@@ -289,7 +280,10 @@ export function UpcomingVideoDetails({
                 )}
               <div className="p-custom">
                 <p className="mb-0">
-                  Interviewers - {interviewDetails?.intervieweremailids}
+                  Interviewers -{" "}
+                  {interviewDetails?.intervieweremailids === ""
+                    ? "No interviewer added"
+                    : interviewDetails?.intervieweremailids}
                 </p>
               </div>
             </div>
@@ -328,7 +322,15 @@ export function UpcomingVideoDetails({
         )}
         <div className="p-3">
           <h6 className="fw-bold">Summary</h6>
-          <p className="mb-0">-</p>
+          <ul className="mb-0">
+            {interviewDetails?.candidateSummaryDtos?.length > 0 &&
+              interviewDetails?.candidateSummaryDtos?.map((summaryDetails) => (
+                <li>{summaryDetails.summary}</li>
+              ))}
+          </ul>
+          {interviewDetails?.candidateSummaryDtos?.length === undefined && (
+            <p className="mb-0">-</p>
+          )}
         </div>
         <div className="p-3">
           <h6 className="fw-bold">Application questions</h6>

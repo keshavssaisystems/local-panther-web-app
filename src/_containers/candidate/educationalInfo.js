@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { educationDetailsSlice } from "_store";
 import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
-import { formatDate } from "_helpers/helper";
+import {
+  formatDate,
+  endDateValidation,
+  formatMonthYear,
+} from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import { EducationModal } from "./educationModal";
@@ -125,13 +129,13 @@ export function CandidateEducation(props) {
   const getDate = function (data) {
     let text = "";
     if (data.startdate) {
-      text = formatDate(data.startdate);
+      text = formatMonthYear(data.startdate);
 
       if (data.enddate) {
-        text += " to " + formatDate(data.enddate);
+        text += " to " + endDateValidation(data.enddate);
       }
     } else if (data.enddate) {
-      text = formatDate(data.enddate);
+      text = endDateValidation(data.enddate);
     }
     return text;
   };
@@ -177,20 +181,21 @@ export function CandidateEducation(props) {
                           />
                         </div>
                       </Col>
-                      <Label className="mb-0 mt-0 card-p-text-black">
-                        {getText(item)}
-                      </Label>
-
+                      {item.cityname != "" ||
+                      item.statename != "" ||
+                      item.countryname != "" ||
+                      item.school != "" ? (
+                        <Label className="mb-0 mt-0 card-p-text-black">
+                          {getText(item)}
+                        </Label>
+                      ) : (
+                        ""
+                      )}
                       {item.iscurrentlystudying ? (
                         <p className="card-p-text-black">Curretly Studying </p>
                       ) : (
                         <div>
-                          <p className="card-p-text-black">
-                            {/* {formatDate(item.startdate)}
-                          {" to "}
-                          {formatDate(item.enddate)} */}
-                            {getDate(item)}
-                          </p>
+                          <p className="card-p-text-black">{getDate(item)}</p>
                         </div>
                       )}
                     </div>
@@ -203,7 +208,7 @@ export function CandidateEducation(props) {
               </Row>
             ) : (
               <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={true} type="ball-pulse" />
+                <Loader active={true} type="line-scale-pulse-out-rapid" />
               </div>
             )}
           </div>
@@ -297,9 +302,9 @@ export function CandidateEducation(props) {
                           ) : (
                             <div>
                               <p className="card-p-text-black">
-                                {formatDate(item.startdate)}
+                                {formatMonthYear(item.startdate)}
                                 {" to "}
-                                {formatDate(item.enddate)}
+                                {formatMonthYear(item.enddate)}
                               </p>
                             </div>
                           )}
@@ -414,7 +419,7 @@ export function CandidateEducation(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

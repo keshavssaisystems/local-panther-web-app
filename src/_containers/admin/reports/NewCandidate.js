@@ -60,12 +60,12 @@ const columns = [
       selector: row => row.createddate,
       sortable: true,
       wrap: true,
-      format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
+      format: (row) => moment(row.jobposteddate).format('MM/DD/YYYY'),
   },
 ];
 
 
-export function NewCandidate() {
+export function NewCandidate({ title }) {
   const dispatch = useDispatch();
 
   const { newCandidate: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
@@ -108,7 +108,7 @@ export function NewCandidate() {
 
   return (
     <>
-      <PageTitle heading="New Candidate" icon={titlelogo} />
+      <PageTitle heading={title} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">

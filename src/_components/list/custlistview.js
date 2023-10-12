@@ -29,6 +29,7 @@ import { customerCandidateListsActions } from "../../_containers/customer/candid
 import customerIcons from "assets/utils/images/customer";
 import "./custlistview.scss";
 import moment from "moment";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -38,6 +39,7 @@ export const CustCandidateListView = (props) => {
   const [currCRJId, setCurrCRJId] = useState("");
   const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState("");
+  const [showJDModal, setShowJDModal] = useState(false);
   const dispatch = useDispatch();
 
   const onAcceptClick = async (candidaterecommendedjobid) => {
@@ -58,9 +60,9 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const showProfile = (candId) => {
-    // need updated path
-    // navigate(`/candidate-profile/${candId}`);
+  const showJobDetail = (row) => {
+    setSelectedRowData(row);
+    setShowJDModal(true);
   };
 
   const onInterviewDetails = (row) => {
@@ -392,9 +394,9 @@ export const CustCandidateListView = (props) => {
             <FontAwesomeIcon icon={faEllipsisV} />
           </DropdownToggle>
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
-            <DropdownItem onClick={() => showProfile(candidateid)}>
+            <DropdownItem onClick={() => showJobDetail(row)}>
               <i className="dropdown-icon lnr-layers"></i>
-              <span>Profile</span>
+              <span>Job details</span>
             </DropdownItem>
             {row.customerscheduleddatetime ? (
               <DropdownItem onClick={() => onInterviewDetails(row)}>
@@ -581,6 +583,19 @@ export const CustCandidateListView = (props) => {
             }}
             isOpen={showSchdIntModal}
             onClose={() => setShowSchdIntSModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+
+      <>
+        {" "}
+        {showJDModal ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={[selectedRowData]}
+            onClose={() => setShowJDModal(false)}
           />
         ) : (
           <></>

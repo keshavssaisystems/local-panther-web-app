@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { formatDate, extractDatePart } from "_helpers/helper";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -33,6 +34,8 @@ export function EducationModal(props) {
   useEffect(() => {
     loadData();
   }, []);
+
+  const studyFieldList = useSelector((state) => state.getStudyField.user.data);
 
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
@@ -80,7 +83,7 @@ export function EducationModal(props) {
             label: "",
           },
         ],
-        iscurrentlystudying: true,
+        iscurrentlystudying: false,
         startdate: "",
         enddate: "",
         isactive: false,
@@ -118,11 +121,11 @@ export function EducationModal(props) {
         iscurrentlystudying: props.selected.iscurrentlystudying,
         startdate:
           props.selected.startdate != "" && props.selected.startdate
-            ? new Date(props.selected.startdate)
+            ? extractDatePart(props.selected.startdate)
             : null,
         enddate:
           props.selected.enddate != "" && props.selected.enddate
-            ? new Date(props.selected.enddate)
+            ? extractDatePart(props.selected.enddate)
             : null,
         isactive: props.selected.isactive,
         currentUserId: null,
@@ -234,7 +237,7 @@ export function EducationModal(props) {
           label: "",
         },
       ],
-      iscurrentlystudying: true,
+      iscurrentlystudying: false,
       startdate: null,
       enddate: null,
       isactive: false,
@@ -263,6 +266,12 @@ export function EducationModal(props) {
       dropdown.value = data.value;
       dropdown.label = data.label;
       new_data[index].city = dropdown;
+
+      let obj_new = {
+        value: cityList.find((x) => x.cityid == data.value)?.stateid,
+        label: cityList.find((x) => x.cityid == data.value)?.statename,
+      };
+      new_data[index].state = obj_new;
     } else if (check == "state") {
       dropdown.value = data.value;
       dropdown.label = data.label;
@@ -275,17 +284,31 @@ export function EducationModal(props) {
     } else if (check == "currentlyStudying") {
       new_data[index].iscurrentlystudying =
         !new_data[index].iscurrentlystudying;
+
+      if (new_data[index].iscurrentlystudying) {
+        if (new_data[index].startdate) {
+          if (new Date(data) < new Date(new_data[index].startdate)) {
+            new_data[index].fromDateValid = true;
+          } else {
+            new_data[index].fromDateValid = false;
+            new_data[index].enddate = extractDatePart(new Date());
+          }
+        } else {
+          new_data[index].fromDateValid = false;
+          new_data[index].enddate = extractDatePart(new Date());
+        }
+      }
     } else if (check == "fromdate") {
       if (new_data[index].enddate) {
         if (new Date(data) > new Date(new_data[index].enddate)) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].startdate = data;
+          new_data[index].startdate = extractDatePart(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].startdate = data;
+        new_data[index].startdate = extractDatePart(data);
       }
     } else if (check == "todate") {
       new_data[index].enddate = data;
@@ -295,11 +318,11 @@ export function EducationModal(props) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].enddate = data;
+          new_data[index].enddate = extractDatePart(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].enddate = data;
+        new_data[index].enddate = extractDatePart(data);
       }
     }
     setFormData(new_data);
@@ -327,10 +350,9 @@ export function EducationModal(props) {
         cityid: rest.city.value,
         stateid: rest.state.value,
         iscurrentlystudying: rest.iscurrentlystudying,
-        startdate: rest.startdate
-          ? new Date(rest.startdate).toISOString()
-          : null,
-        enddate: rest.startdate ? new Date(rest.enddate).toISOString() : null,
+        startdate:
+          rest.startdate && rest.startdate != "" ? rest.startdate : null,
+        enddate: rest.enddate && rest.enddate != "" ? rest.enddate : null,
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
@@ -361,7 +383,7 @@ export function EducationModal(props) {
   }
 
   return (
-    <div className="profile-view">
+    <div className="profile-view react-date-picker-profile">
       {formDetails.map((item, index) => (
         <Form>
           {check == "add" ? (
@@ -420,12 +442,13 @@ export function EducationModal(props) {
                   defaultOptions={educationList}
                   isMulti={false}
                   value={item.education.value == 0 ? [] : item.education}
+                  className="location-dropdown-education"
                   onChange={(evt) =>
                     onHandleInputChange("levelofeducation", evt, index, index)
                   }
                 />
 
-                <div style={{ color: "#ff0000", fontSize: "12px" }}>
+                <div className="filter-info-text filter-error-msg">
                   {item.error ? "Level of education is required" : ""}
                 </div>
               </FormGroup>
@@ -436,7 +459,7 @@ export function EducationModal(props) {
                   Field of study
                 </Label>
                 <input
-                  placeholder="Enter Field of Study"
+                  placeholder="Enter field of study"
                   name="studyField"
                   type="text"
                   id="studyField"
@@ -455,7 +478,7 @@ export function EducationModal(props) {
                   School
                 </Label>
                 <input
-                  placeholder="Enter School"
+                  placeholder="Enter school"
                   name="school"
                   type="text"
                   id="school"
@@ -538,10 +561,14 @@ export function EducationModal(props) {
                   </div>
                   <DatePicker
                     name="fromDate"
+                    autoComplete="off"
                     id="fromDate"
-                    placeholderText="MM/DD/YYYY"
-                    showYearDropdown={true}
-                    selected={item.startdate}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    scrollableYearDropdown
+                    selected={
+                      item.startdate ? new Date(item.startdate) : item.startdate
+                    }
                     className="form-control"
                     onChange={(evt) =>
                       onHandleInputChange("fromdate", evt, index)
@@ -568,9 +595,14 @@ export function EducationModal(props) {
                     name="toDate"
                     id="toDate"
                     className="form-control"
-                    placeholderText="MM/DD/YYYY"
-                    showYearDropdown={true}
-                    selected={item.enddate}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    scrollableYearDropdown
+                    autoComplete="off"
+                    disabled={item.iscurrentlystudying}
+                    selected={
+                      item.enddate ? new Date(item.enddate) : item.enddate
+                    }
                     onChange={(evt) =>
                       onHandleInputChange("todate", evt, index)
                     }
@@ -650,7 +682,7 @@ export function EducationModal(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

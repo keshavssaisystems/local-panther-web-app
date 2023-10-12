@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
-import titlelogo from "../../../assets/utils/images/candidate.svg";
+import calendarLogo from "../../../assets/utils/images/calendar.svg";
 import {
   Row,
   Col,
@@ -18,6 +18,7 @@ import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import { scheduleInterviewActions } from "_store";
 import { ScheduleDetails } from "./scheduleDetails";
+import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 
 export function CandidateSchedules() {
   const dispatch = useDispatch();
@@ -57,7 +58,6 @@ export function CandidateSchedules() {
     });
   }, []);
   const getUpcomingData = async function (filterdata) {
-    debugger;
     await dispatch(
       scheduleInterviewActions.getSchedulesByCandidateId(filterdata)
     );
@@ -104,10 +104,10 @@ export function CandidateSchedules() {
         color:
           upcomingInterview.isaccepted === true &&
           upcomingInterview.isrejected === false
-            ? "green"
+            ? "#14BD66"
             : upcomingInterview.isrejected === true
-            ? "red"
-            : "#f7b924",
+            ? "#FF406D"
+            : "#F7B924",
       };
       upData.push(interviewData);
     });
@@ -120,8 +120,6 @@ export function CandidateSchedules() {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
-    debugger;
-    console.log(event);
     setPopupData(event.data);
     setOpenModal(true);
     setPopupType(event.format);
@@ -130,7 +128,6 @@ export function CandidateSchedules() {
   const [view, setView] = useState(Views.MONTH);
 
   const handleNavigate = function (data) {
-    debugger;
     let firstDayOfMonth;
 
     let lastDayOfMonth;
@@ -204,7 +201,7 @@ export function CandidateSchedules() {
 
   return (
     <>
-      <PageTitle heading="Calendar" icon={titlelogo} />
+      <PageTitle heading="Calendar" icon={calendarLogo} />
       <Container fluid className="card-schedule-interview">
         <Row>
           <Col md="12">
@@ -226,9 +223,9 @@ export function CandidateSchedules() {
                   }}
                   onSelectEvent={(evt) => handleSelectEvent(evt)}
                   onRangeChange={handleNavigate}
-                  components={{
-                    toolbar: CustomToolbar, // Use the custom toolbar component
-                  }}
+                  // components={{
+                  //   toolbar: CustomToolbar, // Use the custom toolbar component
+                  // }}
                   defaultView={Views.MONTH} // Set the default view
                   view={view} // Specify the view
                   onView={setView} // Handle view changes
@@ -238,16 +235,21 @@ export function CandidateSchedules() {
           </Col>
         </Row>
 
-        <Modal className="modal-reject-align profile-view" isOpen={openModal}>
-          <ModalHeader toggle={() => onCloseIdModal()} charCode="Y">
-            <strong className="card-title-text">Interview Details</strong>
-          </ModalHeader>
-          <ScheduleDetails
-            type={popupType}
-            onClose={() => onCloseIdModal()}
-            interviewDetail={popupData}
-          />
-        </Modal>
+        <>
+          {openModal ? (
+            <>
+              <InterViewDetailModal
+                data={popupData}
+                onClose={() => {
+                  onCloseIdModal();
+                }}
+                isOpen={openModal}
+              ></InterViewDetailModal>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
       </Container>
     </>
   );

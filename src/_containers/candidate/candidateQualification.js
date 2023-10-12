@@ -3,7 +3,7 @@ import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 
 import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { profileActions } from "_store";
-import { formatDate } from "_helpers/helper";
+import { formatDate, formatDateQualification } from "_helpers/helper";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
@@ -64,10 +64,10 @@ export function CandidateQualification(props) {
       text = formatDate(data.startdate);
 
       if (data.enddate) {
-        text += " to " + formatDate(data.enddate);
+        text += " to " + formatDateQualification(data.enddate);
       }
     } else if (data.enddate) {
-      text = formatDate(data.enddate);
+      text = formatDateQualification(data.enddate);
     }
     return text;
   };
@@ -125,6 +125,58 @@ export function CandidateQualification(props) {
     return text;
   };
 
+  const checkEndDate = function (date) {
+    if (new Date(date) == new Date()) {
+      return "Present";
+    } else {
+      formatDate(date);
+    }
+  };
+
+  function calculateExperience(fromDate, toDate) {
+    let fromDateObj = new Date(fromDate);
+    let toDateObj = toDate ? new Date(toDate) : new Date();
+
+    let yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
+    let monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
+    let dayDifference = toDateObj.getDate() - fromDateObj.getDate();
+
+    if (dayDifference < 0) {
+      monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
+      dayDifference += new Date(
+        toDateObj.getFullYear(),
+        toDateObj.getMonth(),
+        0
+      ).getDate();
+    }
+
+    let yearsText =
+      yearDifference > 0
+        ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
+        : "";
+    let monthsText =
+      monthDifference > 0
+        ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
+        : "";
+
+    let daysText =
+      dayDifference > 0
+        ? `${dayDifference} ${dayDifference === 1 ? "day" : "days"}`
+        : "";
+
+    let experienceText;
+    if (monthsText != "" && yearsText != "") {
+      experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
+    } else if (yearsText != "" || monthsText != "") {
+      experienceText = [yearsText, monthsText].filter(Boolean).join("");
+    }
+    if (monthsText == "" && yearsText == "") {
+      experienceText = daysText;
+    }
+
+    return experienceText;
+  }
+
   return (
     <div>
       <div className="profile-view">
@@ -177,10 +229,12 @@ export function CandidateQualification(props) {
 
                           {item.startdate ? (
                             <div className="card-p-text-black">
-                              {/* {formatDate(item.startdate)}
-                          {item.startdate && item.enddate ? +" to " : ""}
-                          {formatDate(item.enddate)} */}
-                              {getDate(item)}
+                              {getDate(item)} {" ("}
+                              {calculateExperience(
+                                item.startdate,
+                                item.enddate
+                              )}
+                              {")"}
                             </div>
                           ) : (
                             <></>
@@ -197,7 +251,7 @@ export function CandidateQualification(props) {
               </div>
             ) : (
               <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={loading} type="ball-pulse" />
+                <Loader active={loading} type="line-scale-pulse-out-rapid" />
               </div>
             )}
           </div>
@@ -263,18 +317,16 @@ export function CandidateQualification(props) {
                           {item.zipCode}
                           {"  "}
                         </p>
-                        {item.startdate != null ? (
-                          <p className="card-p-text-black">
-                            {formatDate(item.startdate)}
-                            {" to "}
-                            {formatDate(item.enddate)}
-                            {" ("}
-                            {item.experience}
-                            {")"}
-                          </p>
-                        ) : (
-                          <></>
-                        )}
+
+                        <p className="card-p-text-black">
+                          {formatDate(item.startdate)}
+                          {" to "}
+                          {checkEndDate(item.enddate)}
+                          {" ("}
+                          {item.experience}
+                          {")"}
+                        </p>
+
                         {/* <p className="card-p-text">{item.jobDescription}</p> */}
                       </div>
                     ))}
@@ -365,7 +417,7 @@ export function CandidateQualification(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

@@ -27,7 +27,7 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
-import { Contact } from "_containers/contact";
+import { Contact } from "_containers/Contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
@@ -44,6 +44,7 @@ import {
   PartiallyFilledJobs,
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
+import { Calendar } from "_containers/customer/common/calendar";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -126,41 +127,41 @@ export function App() {
             path="/report/hiring-manager-report"
             element={<HiringManager title={"Hiring Manager Report"} />}
           />
-          <Route path="/report/open-jobs" element={<OpenJobs />} />
-          <Route path="/report/new-candidates" element={<NewCandidate />} />
+          <Route path="/report/open-jobs" element={<OpenJobs title={"Open Jobs"}/>} />
+          <Route path="/report/new-candidates" element={<NewCandidate title={"New Candidate"}/>} />
           <Route
             path="/report/partially-filled-job"
-            element={<AdminUnderConstruction title={"Partially filled jobs"} />}
+            element={<OpenJobs title={"Partially Filled Jobs"} />}
           />
           <Route
             path="/report/incomplete-candidate-profile"
             element={
-              <AdminUnderConstruction title={"Incomplete candidate profile"} />
+              <OpenJobs title={"Incomplete Candidate Profile"} />
             }
           />
           <Route
             path="/report/candidate-report"
-            element={<AdminUnderConstruction title={"Candidate Report"} />}
+            element={<OpenJobs title={"Candidate Report"} />}
           />
           <Route
             path="/report/jobs-without-matched-candidates"
             element={
-              <AdminUnderConstruction
-                title={"Jobs without matched candidate"}
+              <OpenJobs
+                title={"Jobs Without Matched Candidate"}
               />
             }
           />
           <Route
             path="/report/canddates-without-matched-jobs"
             element={
-              <AdminUnderConstruction
-                title={"Candidate without matched jobs"}
+              <OpenJobs
+                title={"Candidate Without Matched Jobs"}
               />
             }
           />
           <Route
             path="/report/non-published-jobs"
-            element={<AdminUnderConstruction title={"Non published jobs"} />}
+            element={<OpenJobs title={"Non Published Jobs"} />}
           />
         </>
       );
@@ -230,6 +231,10 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
+          <Route
+            path="/calendar-poc"
+            element={<Calendar title={"Microsoft Calendar"} />}
+          />
         </>
       );
     } else {

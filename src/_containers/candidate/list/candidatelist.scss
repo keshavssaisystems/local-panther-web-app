@@ -1,20 +1,21 @@
 .cand-list-cont {
   .cust-btn-tabs {
     .active {
-      background-color: #2f479b;
+      background-color: #61d097 !important;
       color: #ffffff !important;
     }
 
-    .btn:hover {
-      background-color: #2f479b;
+    .btn-primary:hover {
+      // background-color: #2f479b;
       color: #ffffff !important;
     }
 
-    .btn {
-      color: #2f2e2e;
-      border-radius: 4px !important;
+    .btn-primary {
+      color: #ffffff;
       font-weight: 500;
       font-size: 16px;
+      background-color: #2f479b;
+      font-family: capitana, sans-serif;
     }
 
     .card-btn-grp {

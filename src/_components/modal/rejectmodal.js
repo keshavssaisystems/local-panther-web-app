@@ -113,6 +113,7 @@ export const RejectModal = (props) => {
               <Col className="d-flex justify-content-center ">
                 <Button
                   className="me-2 reject-modal-btn"
+                  color="primary"
                   onClick={(evt) => onSubmitReject()}
                 >
                   Submit

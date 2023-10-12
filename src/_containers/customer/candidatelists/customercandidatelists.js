@@ -20,6 +20,7 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
+import { getScheduleInterviewThunk } from "../scheduleInterview/scheduleinterview.slice";
 // import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
@@ -99,9 +100,19 @@ export const CustomerCandidateLists = (props) => {
       // isCustomerScheduled: type === "scheduled",
       // isCandidateApply: type === "applied,
       customerRecommendedJobStatusId: returnStatusId(type),
-      jobId: id,
+      jobId: id || "",
     };
+    // if (type === "scheduled") {
+    //   dispatch(
+    //     customerCandidateListsActions.getScheduleListData({
+    //       jobId: id,
+    //       pageNumber: pageNo,
+    //       pageSize: type === "matched" ? cardPageSize : listPageSize,
+    //     })
+    //   );
+    // } else {
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
+    // }
   };
 
   const handlePageChange = (page) => {
@@ -187,7 +198,6 @@ export const CustomerCandidateLists = (props) => {
         >
           <ButtonGroup size="md" className="cust-btn-tabs">
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -200,7 +210,6 @@ export const CustomerCandidateLists = (props) => {
               Matched
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -213,7 +222,6 @@ export const CustomerCandidateLists = (props) => {
               Liked
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition " +
@@ -226,7 +234,6 @@ export const CustomerCandidateLists = (props) => {
               Maybe
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -239,7 +246,6 @@ export const CustomerCandidateLists = (props) => {
               Applied
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -252,7 +258,6 @@ export const CustomerCandidateLists = (props) => {
               Scheduled
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -265,7 +270,6 @@ export const CustomerCandidateLists = (props) => {
               Accepted
             </Button>
             <Button
-              outline
               color="primary"
               className={
                 "border-0 btn-transition  " +
@@ -323,7 +327,10 @@ export const CustomerCandidateLists = (props) => {
                       <Row xs={1} sm={1} md={2} lg={3} xl={3}>
                         {candidateList.map((data, ind) => {
                           return (
-                            <Col key={data.jobapplicationid}>
+                            <Col
+                              key={data.jobapplicationid}
+                              className="card-col"
+                            >
                               <CandidateCardView
                                 data={data}
                                 rejectDrpDwnList={rejectDrpDwnList}
@@ -340,11 +347,15 @@ export const CustomerCandidateLists = (props) => {
                           );
                         })}
                       </Row>
-                      <CardPagination
-                        totalPages={totalRecords / cardPageSize}
-                        pageIndex={pageNo}
-                        onCallBack={(evt) => handlePageChange(evt)}
-                      ></CardPagination>
+                      {totalRecords > cardPageSize ? (
+                        <CardPagination
+                          totalPages={totalRecords / cardPageSize}
+                          pageIndex={pageNo}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      ) : (
+                        <></>
+                      )}
                     </>
                   ) : (
                     <>
@@ -385,11 +396,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -431,11 +446,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -477,11 +496,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -523,11 +546,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -569,11 +596,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>
@@ -615,11 +646,15 @@ export const CustomerCandidateLists = (props) => {
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
                         />
-                        <CardPagination
-                          totalPages={totalRecords / listPageSize}
-                          pageIndex={pageNo}
-                          onCallBack={(evt) => handlePageChange(evt)}
-                        ></CardPagination>
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
                       </>
                     ) : (
                       <>

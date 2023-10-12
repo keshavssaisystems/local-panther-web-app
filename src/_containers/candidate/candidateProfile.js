@@ -41,6 +41,8 @@ import {
   getpayPeriodActions,
   experienceLevelActions,
   resumeTemplateActions,
+  dropdownActions,
+  studyFieldActions,
 } from "_store";
 
 export function CandidateProfile() {
@@ -117,15 +119,16 @@ export function CandidateProfile() {
     await dispatch(certificationTypeActions.certificationType());
     await dispatch(ProficiencyActions.Proficiency());
     let reponse = await dispatch(educationActions.getEducation());
-    await dispatch(workScheduleActions.getWorkScheduleThunk());
-    await dispatch(jobTypeActions.getJobTypeThunk());
-    await dispatch(shiftActions.getShiftThunk());
+    await dispatch(dropdownActions.getWorkScheduleThunk());
+    await dispatch(dropdownActions.getJobTypeThunk());
+    await dispatch(dropdownActions.getShiftThunk());
     await dispatch(getJobTitleActions.getJobTitle());
     await dispatch(getpayPeriodActions.getpayPeriod());
-    await dispatch(experienceLevelActions.getExperienceLevelThunk());
+    await dispatch(dropdownActions.getExperienceLevelThunk());
     await dispatch(resumeTemplateActions.getResumeTemplate());
     popular_skills = await getSkillsFilter("java");
     setPopularSkills(popular_skills.data);
+    await dispatch(studyFieldActions.getStudyField());
   };
 
   const getPersonalDetails = async function () {
@@ -183,7 +186,7 @@ export function CandidateProfile() {
 
     dropdown_selected.selectedCity = {
       value: filter_data.cityid,
-      label: filter_data.cityname,
+      label: `${filter_data.cityname + ", " + filter_data.statename}`,
     };
     dropdown_selected.selectedState = {
       value: filter_data.stateid,
@@ -265,7 +268,7 @@ export function CandidateProfile() {
         </div>
       ) : (
         <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-          <Loader active={true} type="ball-pulse" />
+          <Loader active={true} type="line-scale-pulse-out-rapid" />
         </div>
       )}
     </div>

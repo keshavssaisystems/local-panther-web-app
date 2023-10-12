@@ -111,6 +111,7 @@ export * from "_containers/candidate/list/candidatelist.slice";
 
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
+export * from "_containers/admin/_redux/adminDashboard.slice";
 
 export const store = configureStore({
   reducer: {

@@ -9,10 +9,16 @@
     color: #2e2f2f;
   }
   .filter-error-msg {
-    color: #ff0000 !important;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #d92550;
   }
   .location-dropdown {
     z-index: 11;
+  }
+  .location-dropdown-education {
+    z-index: 999;
   }
   .loader {
     margin: 0 auto !important;
@@ -288,9 +294,27 @@
     width: 60px !important;
     height: 30px;
   }
+
+  .modal-dialog-align {
+    position: absolute;
+    top: 25%;
+    left: 0%;
+    bottom: 25%;
+    transform: translate(-50%, -50%);
+  }
+  .modal-dialog-reject-align {
+    position: absolute;
+    top: 20%;
+    left: 0%;
+    bottom: 25%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .personal-information {
+  .location-dropdown {
+    z-index: 11;
+  }
   .error-class {
     width: 100%;
     margin-top: 0.25rem;
@@ -419,5 +443,18 @@
     letter-spacing: -0.01em;
     text-align: left;
     color: #2f479b;
+  }
+}
+.react-date-picker-profile {
+  .react-datepicker__month-container {
+    float: left;
+    width: 193px !important;
+  }
+  .react-datepicker__month {
+    margin: 0.5rem;
+    text-align: center;
+    font-size: 15px;
+    font-family: "capitana";
+    cursor: pointer;
   }
 }

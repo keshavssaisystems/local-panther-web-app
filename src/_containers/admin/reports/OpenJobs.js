@@ -29,7 +29,7 @@ import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 
-export function OpenJobs() {
+export function OpenJobs({ title }) {
   const dispatch = useDispatch()
   const { 
     openJobsList: data = [], 
@@ -116,7 +116,7 @@ export function OpenJobs() {
     {
         name: 'Posted',
         selector: row => row.jobposteddate,
-        format: (row) => moment(row.jobposteddate).format('YYYY-MM-DD HH:mm'),
+        format: (row) => moment(row.jobposteddate).format('MM/DD/YYYY'),
         wrap: true,
     },
     {
@@ -210,7 +210,7 @@ export function OpenJobs() {
     {
         name: 'Scheduled Date',
         selector: row => row.scheduledate,
-        format: (row) => moment(row.scheduledate).format('YYYY-MM-DD HH:mm'),
+        format: (row) => moment(row.scheduledate).format('MM/DD/YYYY'),
         wrap: true,
     },
     {
@@ -224,7 +224,7 @@ export function OpenJobs() {
 
   return (
     <>
-      <PageTitle heading="Open Jobs" icon={titlelogo} />
+      <PageTitle heading={title} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">

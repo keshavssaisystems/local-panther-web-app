@@ -91,6 +91,7 @@ export default function JobPreview({ previewData, editdata }) {
       }
     });
   }
+
   return (
     <>
       <Row className="mt-4">
@@ -408,17 +409,26 @@ export default function JobPreview({ previewData, editdata }) {
           </p>
           <div className="information-section">
             <Row>
-              {previewData.preScreen?.length > 0 &&
-                previewData.preScreen?.map((options) => (
-                  <Col md={4}>
-                    <div className="detail-padding">
-                      <h6 className="mb-0 job-heading-custom">
-                        {options.prescreenquestion}
-                      </h6>
-                      {/* <p className="mb-0 mt-1 mr-1">-</p> */}
-                    </div>
-                  </Col>
-                ))}
+              <Col md={8}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">
+                    Pre-screen questions
+                  </h6>
+                  <ul>
+                    {previewData.preScreen?.length > 0 &&
+                      previewData.preScreen?.map((options) => (
+                        <li className="mb-0 mt-2 mr-1">
+                          <b>
+                            {options.iscustomquestion === true
+                              ? "Custom question :"
+                              : ""}
+                          </b>{" "}
+                          {options.prescreenquestion}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              </Col>
             </Row>
           </div>
         </Col>

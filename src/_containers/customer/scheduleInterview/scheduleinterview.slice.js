@@ -100,9 +100,26 @@ export const getAllInterviewThunk = createAsyncThunk(
 export const getSchedulesByCandidateId = createAsyncThunk(
   `${name}/getSchedulesByCandidateId`,
   async ({ candidateId, start, end }) => {
-    debugger;
     const UPCOMING_INTEVRIEW_END_POINT_V2 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=10&pageNumber=1&candidateId=${candidateId}&startDate=${start}&endDate=${end}&isActive=true&isPaginationRequired=false`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V2);
+  }
+);
+
+// acceptInterviewThunk thunk
+export const acceptInterviewThunk = createAsyncThunk(
+  `${name}/acceptInterviewThunk`,
+  async ({ scheduleinterviewid }) => {
+    const ACCEPT_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/candidateAcceptInterview/${scheduleinterviewid}`;
+    return await fetchWrapper.put(ACCEPT_INTERVIEWER_END_POINT);
+  }
+);
+
+// rejectInterviewThunk thunk
+export const rejectInterviewThunk = createAsyncThunk(
+  `${name}/rejectInterviewThunk`,
+  async ({ scheduleinterviewid, payload }) => {
+    const REJECT_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/candidateRejectInterview/${scheduleinterviewid}`;
+    return await fetchWrapper.put(REJECT_INTERVIEWER_END_POINT, payload);
   }
 );
 
@@ -237,6 +254,28 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [acceptInterviewThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [acceptInterviewThunk.fulfilled]: (state, action) => {
+      state.error = null;
+      state.loading = false;
+    },
+    [acceptInterviewThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [rejectInterviewThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [rejectInterviewThunk.fulfilled]: (state, action) => {
+      state.error = null;
+      state.loading = false;
+    },
+    [rejectInterviewThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -254,6 +293,8 @@ export const scheduleInterviewActions = {
   updateScheduledInterviewThunk,
   getAllInterviewThunk,
   getSchedulesByCandidateId,
+  acceptInterviewThunk,
+  rejectInterviewThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

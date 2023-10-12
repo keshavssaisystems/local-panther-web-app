@@ -35,13 +35,13 @@ export function CandidateSkills(props) {
   const [mustHaveValidation, setMustHaveValidation] = useState(false);
   const [skillsMultiple, setSkillsMultiple] = useState([]);
 
-  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const shiftsOption = useSelector((state) => state.dropdown.shift);
   const workScheduleOptions = useSelector(
-    (state) => state.workSchedule.workSchedule
+    (state) => state.dropdown.workSchedule
   );
-  const jobTypeOption = useSelector((state) => state.jobType.jobType);
+  const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   const experienceLevelOption = useSelector(
-    (state) => state.experienceLevel.experienceLevel
+    (state) => state.dropdown.experienceLevel
   );
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
@@ -341,7 +341,7 @@ export function CandidateSkills(props) {
                   </Row>
                 ) : (
                   <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                    <Loader active={true} type="ball-pulse" />
+                    <Loader active={true} type="line-scale-pulse-out-rapid" />
                   </div>
                 )}
               </div>
@@ -387,7 +387,7 @@ export function CandidateSkills(props) {
                         }}
                       />
                       {mustHaveValidation === true && (
-                        <FormText color="danger">Skills is Required</FormText>
+                        <FormText color="danger">Skills is required</FormText>
                       )}
                     </FormGroup>
                   </Col>
@@ -547,7 +547,7 @@ export function CandidateSkills(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>
