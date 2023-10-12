@@ -125,6 +125,7 @@ export function BasicInformation({
   const [descriptionValidation, setDescriptionValidation] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
+    console.log(descriptionData);
     event.target.elements.companyName.value === ""
       ? setcompanyValidation(true)
       : setcompanyValidation(false);
@@ -134,7 +135,8 @@ export function BasicInformation({
     event.target.elements.openPositions.value === ""
       ? setOpenPositionValidation(true)
       : setOpenPositionValidation(false);
-    event.target.elements.city.value === ""
+    event.target.elements.city.value ===
+    "undefined, undefined, undefined, undefined"
       ? setCityValidation(true)
       : setCityValidation(false);
     if (
@@ -196,6 +198,7 @@ export function BasicInformation({
     }
   };
   const getLocationDetails = (event) => {
+    setCityValidation(false);
     let locationSplit = event.value.split(", ");
     setStateOnChange(true);
     setStateData({
@@ -242,6 +245,7 @@ export function BasicInformation({
                 }
                 maxLength={50}
                 invalid={jobTitleValidation === true ? true : false}
+                onChange={(e) => setJobTitleValidation(false)}
               />
               {jobTitleValidation === true && (
                 <FormText color="danger">Please enter job title</FormText>
@@ -265,6 +269,7 @@ export function BasicInformation({
                 }
                 min={0}
                 invalid={openPositionValidation === true ? true : false}
+                onChange={(e) => setOpenPositionValidation(false)}
               />
               {openPositionValidation === true && (
                 <FormText color="danger">
@@ -279,7 +284,7 @@ export function BasicInformation({
                 Job location
               </Label>
               <Input id={"jobLocation"} name={"jobLocation"} type={"select"}>
-                <option key={0} value={""}>
+                <option key={0} value={0}>
                   Select job location
                 </option>
                 {jobLocationOptions.length > 0 &&
@@ -353,6 +358,7 @@ export function BasicInformation({
                 isMulti={false}
                 styles={customStyles}
                 onChange={(e) => getLocationDetails(e)}
+                className={cityValidation === true ? "async-border-red" : ""}
               />
               {cityValidation === true && (
                 <FormText color="danger">Please select city</FormText>
@@ -412,7 +418,10 @@ export function BasicInformation({
                     ? preValue.description
                     : previousValue.description
                 }
-                onChange={(e) => setDescriptionData(e.editor.getData())}
+                onChange={(e) => {
+                  setDescriptionData(e.editor.getData());
+                  setDescriptionValidation(false);
+                }}
                 className={
                   descriptionValidation === true ? "ckeditor-invalid" : ""
                 }
