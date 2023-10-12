@@ -4,7 +4,6 @@ import { fetchWrapper } from "_helpers";
 // create slice name
 const name = 'adminDashboard';
 const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
-console.log("NG baseUrl", baseUrl)
 const timeIntervalDefault = 'month';
 const todaysDate = new Date().toLocaleDateString('fr-CA');
 const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
@@ -100,7 +99,7 @@ const adminDashboardSlice = createSlice({
       state.cardStats = data;
       state.totalInterviewScheduled = data.todaysinterviewscheduledcount + data.upcominginterviewscheduledcount + data.pastinterviewscheduledcount
       // below are dummy data, api not available
-      state.cardStats.totalCandidates = 150;
+      state.cardStats.totalCandidates = 120;
 
     },
     [getScores.rejected]: (state, action) => {
@@ -113,7 +112,6 @@ const adminDashboardSlice = createSlice({
       state.error = null;
     },
     [getCandidates.fulfilled]: (state, { payload = {} }) => {
-      console.log("NG reducer payload",payload)
       const { data } = payload;
       state.loading = false;
       state.candidatesData = candidatesDataDummy;    // dummy data, api not available
