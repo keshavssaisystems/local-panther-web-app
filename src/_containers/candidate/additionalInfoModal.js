@@ -119,7 +119,7 @@ export function AdditionalInfoModal(props) {
     if (check == "language") {
       new_data[index].language = data;
     } else if (check == "proficiency") {
-      new_data[index].proficiency = data;
+      new_data[index].proficiencyid = data;
     } else if (check == "summary") {
       new_data[index].summary = data;
       if (data != "") {
@@ -161,7 +161,7 @@ export function AdditionalInfoModal(props) {
         candidateid: Number(userDetails.InternalUserId),
         summary: rest.summary,
         language: rest.language,
-        proficiencyid: Number(rest.proficiency),
+        proficiencyid: Number(rest.proficiencyid),
         additionalinformation: rest.additionalinformation
           ? rest.additionalinformation
           : "",
@@ -267,7 +267,12 @@ export function AdditionalInfoModal(props) {
                     Proficiency
                   </Label>
                   <Input
-                    className="reason-dropdown-input dropdown-placeholder"
+                    className="placeholder-text"
+                    style={{
+                      height: "35px",
+                      color: "#afaba5",
+                      fontSize: "14px",
+                    }}
                     type="select"
                     id="proficiency"
                     name="proficiency"
@@ -280,6 +285,13 @@ export function AdditionalInfoModal(props) {
                     }
                     placeholderText="Select proficiency"
                   >
+                    <option
+                      className="placeholder-text"
+                      style={{ color: "#afaba5 !important", fontSize: "14px" }}
+                      key={0}
+                    >
+                      Select proficiency
+                    </option>
                     {proficiencyList.map((col) => (
                       <option
                         selected={col.id == item.proficiencyid}

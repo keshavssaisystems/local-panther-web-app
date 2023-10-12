@@ -139,16 +139,6 @@ export function CandidateQualification(props) {
 
     let yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
     let monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
-    let dayDifference = toDateObj.getDate() - fromDateObj.getDate();
-
-    if (dayDifference < 0) {
-      monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
-      dayDifference += new Date(
-        toDateObj.getFullYear(),
-        toDateObj.getMonth(),
-        0
-      ).getDate();
-    }
 
     let yearsText =
       yearDifference > 0
@@ -159,11 +149,6 @@ export function CandidateQualification(props) {
         ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
         : "";
 
-    let daysText =
-      dayDifference > 0
-        ? `${dayDifference} ${dayDifference === 1 ? "day" : "days"}`
-        : "";
-
     let experienceText;
     if (monthsText != "" && yearsText != "") {
       experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
@@ -171,7 +156,11 @@ export function CandidateQualification(props) {
       experienceText = [yearsText, monthsText].filter(Boolean).join("");
     }
     if (monthsText == "" && yearsText == "") {
-      experienceText = daysText;
+      experienceText = "";
+    }
+    debugger;
+    if (experienceText != "") {
+      experienceText = `(${experienceText})`;
     }
 
     return experienceText;
@@ -229,12 +218,11 @@ export function CandidateQualification(props) {
 
                           {item.startdate ? (
                             <div className="card-p-text-black">
-                              {getDate(item)} {" ("}
+                              {getDate(item)}
                               {calculateExperience(
                                 item.startdate,
                                 item.enddate
                               )}
-                              {")"}
                             </div>
                           ) : (
                             <></>

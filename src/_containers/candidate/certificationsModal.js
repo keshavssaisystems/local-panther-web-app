@@ -376,7 +376,7 @@ export function CertificationsModal(props) {
                 </div>
                 <DatePicker
                   name="fromdate"
-                  id="fromdata"
+                  id="fromdate"
                   className="form-control"
                   dateFormat="MM/yyyy"
                   autoComplete="off"

@@ -35,7 +35,9 @@ export function EducationModal(props) {
     loadData();
   }, []);
 
-  const studyFieldList = useSelector((state) => state.getStudyField.user.data);
+  const studyFieldList = useSelector(
+    (state) => state.getStudyField.studyFieldList
+  );
 
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
@@ -63,7 +65,10 @@ export function EducationModal(props) {
 
         candidateid: 0,
 
-        fieldofstudy: "",
+        fieldofstudy: {
+          value: 0,
+          label: "",
+        },
         school: "",
         city: [
           {
@@ -102,7 +107,10 @@ export function EducationModal(props) {
 
         candidateid: 0,
 
-        fieldofstudy: props.selected.fieldofstudy,
+        fieldofstudy: {
+          value: props.selected.fieldofstudyid,
+          label: props.selected.fieldofstudy,
+        },
         school: props.selected.school,
         city: {
           value: props.selected.cityid,
@@ -217,7 +225,10 @@ export function EducationModal(props) {
 
       candidateid: 0,
 
-      fieldofstudy: "",
+      fieldofstudy: {
+        value: 0,
+        label: "",
+      },
       school: "",
       city: [
         {
@@ -244,6 +255,7 @@ export function EducationModal(props) {
       currentUserId: null,
     };
     new_data.push(newTab);
+
     setFormData(new_data);
   };
 
@@ -259,7 +271,9 @@ export function EducationModal(props) {
 
       new_data[index].education = dropdown;
     } else if (check == "studyField") {
-      new_data[index].fieldofstudy = data;
+      dropdown.value = data.value;
+      dropdown.label = data.label;
+      new_data[index].fieldofstudy = dropdown;
     } else if (check == "school") {
       new_data[index].school = data;
     } else if (check == "city") {
@@ -344,7 +358,7 @@ export function EducationModal(props) {
         candidateeducationid: rest.candidateeducationid,
         candidateid: Number(userDetails.InternalUserId),
         levelofeducation: rest.education.label,
-        fieldofstudy: rest.fieldofstudy,
+        fieldofstudy: rest.fieldofstudy?.label,
         school: rest.school,
         countryid: rest.country.value,
         cityid: rest.city.value,
@@ -454,7 +468,7 @@ export function EducationModal(props) {
               </FormGroup>
             </Col>
             <Col md={4}>
-              <FormGroup>
+              {/* <FormGroup>
                 <Label for="studyField" className="input-label">
                   Field of study
                 </Label>
@@ -470,7 +484,27 @@ export function EducationModal(props) {
                   }
                   className="field-input placeholder-text form-control"
                 />
-              </FormGroup>
+              </FormGroup> */}
+              <div>
+                <FormGroup>
+                  <Label for={"studyField"} className="input-label">
+                    Field of study
+                  </Label>
+                  <AsyncSelect
+                    placeholder="Select..."
+                    name="studyField"
+                    defaultOptions={studyFieldList}
+                    isMulti={false}
+                    value={
+                      item.fieldofstudy?.value == 0 ? [] : item.fieldofstudy
+                    }
+                    className="location-dropdown-education"
+                    onChange={(evt) =>
+                      onHandleInputChange("studyField", evt, index, index)
+                    }
+                  />
+                </FormGroup>
+              </div>
             </Col>
             <Col md={4}>
               <FormGroup>
@@ -564,6 +598,7 @@ export function EducationModal(props) {
                     autoComplete="off"
                     id="fromDate"
                     dateFormat="MM/yyyy"
+                    placeholderText="MM/YYYY"
                     showMonthYearPicker
                     scrollableYearDropdown
                     selected={
@@ -596,6 +631,7 @@ export function EducationModal(props) {
                     id="toDate"
                     className="form-control"
                     dateFormat="MM/yyyy"
+                    placeholderText="MM/YYYY"
                     showMonthYearPicker
                     scrollableYearDropdown
                     autoComplete="off"

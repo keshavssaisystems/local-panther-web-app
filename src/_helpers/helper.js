@@ -110,10 +110,10 @@ export const formatDateQualification = function (dateString) {
   const today_month = monthNames[new Date().getMonth()];
   const today_day = new Date().getDate();
   const today_year = new Date().getFullYear();
-  let today = `${today_month} ${today_day}, ${today_year}`;
+  let today = `${today_month} ${today_year}`;
 
   // Create the formatted date string
-  const formattedDate = `${month} ${day}, ${year}`;
+  const formattedDate = `${month} ${year}`;
 
   if (today == formattedDate) {
     return "Present";

@@ -593,7 +593,10 @@ export function QualificationModal(props) {
                     <DatePicker
                       name="fromDate"
                       id="fromDate"
-                      placeholderText="MM/DD/YYYY"
+                      dateFormat="MM/yyyy"
+                      placeholderText="MM/YYYY"
+                      showMonthYearPicker
+                      scrollableYearDropdown
                       autoComplete="off"
                       className={`field-input placeholder-text form-control ${
                         item.fromDateReq ? "is-invalid" : ""
@@ -638,7 +641,10 @@ export function QualificationModal(props) {
                         item.toDateReq ? "is-invalid" : ""
                       }`}
                       disabled={item.iscurrentlyworking}
-                      placeholderText="MM/DD/YYYY"
+                      dateFormat="MM/yyyy"
+                      placeholderText="MM/YYYY"
+                      showMonthYearPicker
+                      scrollableYearDropdown
                       selected={
                         item.enddate ? new Date(item.enddate) : item.enddate
                       }
