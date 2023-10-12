@@ -39,6 +39,7 @@ function createExtraActions() {
     putAcceptedCandidate: putAcceptedCandidate(),
     getDurationOptions: getDurationOptions(),
     postScheduleInterview: postScheduleInterview(),
+    getScheduleListData: getScheduleListData(),
   };
 
   function getDrpDwnJobLists() {
@@ -154,6 +155,17 @@ function createExtraActions() {
         await fetchWrapper.post(`${newUrl}/ScheduledInterview`, payload)
     );
   }
+
+  function getScheduleListData() {
+    return createAsyncThunk(
+      `${name}/getScheduleListData`,
+
+      async ({ jobId, pageNumber, pageSize }) =>
+        await fetchWrapper.get(
+          `${newUrl}/ScheduledInterview?jobId=${jobId}&isActive=true&pageNumber=${pageNumber}&pageSize=${pageSize}`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -167,6 +179,7 @@ function createExtraReducers() {
     putAcceptedCandidate();
     getDurationOptions();
     postScheduleInterview();
+    getScheduleListData();
 
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
@@ -308,6 +321,31 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           //No action
+        });
+    }
+
+    function getScheduleListData() {
+      let { pending, fulfilled, rejected } = extraActions.getScheduleListData;
+      builder
+        .addCase(pending, (state) => {
+          debugger;
+          state.loading = true;
+          state.candidateList = [];
+          state.totalRecords = 0;
+        })
+        .addCase(fulfilled, (state, action) => {
+          debugger;
+          state.loading = false;
+          state.candidateList = action?.payload?.data?.scheduledInterviewList
+            ? action?.payload?.data?.scheduledInterviewList
+            : [];
+
+          state.totalRecords = action?.payload?.data?.totalRows
+            ? action?.payload?.data?.totalRows
+            : 0;
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
         });
     }
   };
