@@ -178,7 +178,7 @@ export function PersonalInformation(props) {
     error_data.cityError = false;
     setRequiredErros(error_data);
     let state_response = [...stateSelect];
-    debugger;
+
     let obj = {
       value: cityList.find((x) => x.cityid == data.value)?.stateid,
       label: cityList.find((x) => x.cityid == data.value)?.statename,

@@ -76,14 +76,21 @@ function createExtraActions() {
         // isCandidateApply,
         customerRecommendedJobStatusId,
         jobId,
-      }) =>
-        jobId !== undefined
-          ? await fetchWrapper.get(
-              `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&jobId=${jobId}&isActive=true`
-            )
-          : await fetchWrapper.get(
-              `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&isActive=true`
-            )
+      }) => {
+        const recommendedStatus =
+          customerRecommendedJobStatusId === 4
+            ? `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
+            : `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+        if (jobId !== undefined) {
+          return await fetchWrapper.get(
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
+          );
+        } else {
+          return await fetchWrapper.get(
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true`
+          );
+        }
+      }
     );
   }
 
@@ -328,13 +335,11 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.getScheduleListData;
       builder
         .addCase(pending, (state) => {
-          debugger;
           state.loading = true;
           state.candidateList = [];
           state.totalRecords = 0;
         })
         .addCase(fulfilled, (state, action) => {
-          debugger;
           state.loading = false;
           state.candidateList = action?.payload?.data?.scheduledInterviewList
             ? action?.payload?.data?.scheduledInterviewList
