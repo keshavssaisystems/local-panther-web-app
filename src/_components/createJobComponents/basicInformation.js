@@ -125,7 +125,6 @@ export function BasicInformation({
   const [descriptionValidation, setDescriptionValidation] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
-    console.log(descriptionData);
     event.target.elements.companyName.value === ""
       ? setcompanyValidation(true)
       : setcompanyValidation(false);
