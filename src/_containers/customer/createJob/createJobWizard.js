@@ -32,7 +32,7 @@ export function CreateJobWizard() {
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
-      companyId: customerDetails.companyid ?? 0,
+      companyId: localStorage.getItem("companyid"),
     });
   }, []);
   const getOptionsData = (event) => {
@@ -79,7 +79,7 @@ export function CreateJobWizard() {
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
-      companyId: customerDetails.companyid,
+      companyId: localStorage.getItem("companyid"),
     });
   };
   const dispatch = useDispatch();
@@ -118,6 +118,9 @@ export function CreateJobWizard() {
     (state) => state.dropdown.preScreenQuestion
   );
   const jobList = useSelector((state) => state.createJob.previousJobList);
+  const recommendedJobList = useSelector(
+    (state) => state.createJob.recommendedList
+  );
   const jobDetail = useSelector((state) => state.createJob.previousJobDetail);
   const newJobDetails = useSelector((state) => state.createJob.createjob);
   const publishNewJob = async function () {
@@ -145,6 +148,7 @@ export function CreateJobWizard() {
           jobList={jobList}
           postSearch={(e) => getSearchValue(e)}
           readyForNextStep={(e) => setButtonDisable(e)}
+          recommendedJobList={recommendedJobList}
         />
       ),
     },

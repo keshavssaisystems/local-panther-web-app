@@ -5,7 +5,13 @@ import "./createJob.scss";
 import moment from "moment/moment";
 import { JobShortDetailModal } from "./jobShortDetailModal";
 
-export default function SearchPreviousJob({ getJobId, jobList, postSearch }) {
+export default function SearchPreviousJob({
+  getJobId,
+  jobList,
+  postSearch,
+  recommendedJobList,
+  jobType,
+}) {
   let current = Number(jobList.totalRows) / 5;
   if (current * 5 !== jobList.totalRows) {
     current++;
@@ -77,7 +83,31 @@ export default function SearchPreviousJob({ getJobId, jobList, postSearch }) {
             </thead>
             <tbody>
               {jobList?.jobList?.length > 0 &&
+                jobType === "previous_template" &&
                 jobList?.jobList?.map((job) => (
+                  <tr key={job.jobid}>
+                    <td align="center">
+                      <Input
+                        type="radio"
+                        name="jobs"
+                        id={"jobRows_" + job.jobid}
+                        value={job.jobid}
+                        onClick={(e) => getJobIdOnClick(e)}
+                      />
+                    </td>
+                    <td>{job.jobtitle}</td>
+                    <td>
+                      {moment(job.jobcreatedatetime).format("MMM D, YYYY")}
+                    </td>
+                    <td>{job.cityname + ", " + job.statename}</td>
+                    <td>
+                      <JobShortDetailModal data={job} />
+                    </td>
+                  </tr>
+                ))}
+              {recommendedJobList?.jobList?.length > 0 &&
+                jobType === "recommendation_template" &&
+                recommendedJobList?.jobList?.map((job) => (
                   <tr key={job.jobid}>
                     <td align="center">
                       <Input

@@ -8,6 +8,7 @@ export default function SelectJobType({
   jobList,
   postSearch,
   readyForNextStep,
+  recommendedJobList,
 }) {
   const [jobType, setJobType] = useState("new_template");
   const [showJobTable, setShowJobTable] = useState(false);
@@ -106,6 +107,8 @@ export default function SelectJobType({
             getJobId={(e) => getOldJobId(e)}
             jobList={jobList}
             postSearch={(e) => postSearch(e)}
+            recommendedJobList={recommendedJobList}
+            jobType={jobType}
           />
         )}
       </div>
