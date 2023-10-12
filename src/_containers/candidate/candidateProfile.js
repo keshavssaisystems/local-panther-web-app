@@ -41,6 +41,7 @@ import {
   getpayPeriodActions,
   experienceLevelActions,
   resumeTemplateActions,
+  dropdownActions,
 } from "_store";
 
 export function CandidateProfile() {
@@ -117,12 +118,12 @@ export function CandidateProfile() {
     await dispatch(certificationTypeActions.certificationType());
     await dispatch(ProficiencyActions.Proficiency());
     let reponse = await dispatch(educationActions.getEducation());
-    await dispatch(workScheduleActions.getWorkScheduleThunk());
-    await dispatch(jobTypeActions.getJobTypeThunk());
-    await dispatch(shiftActions.getShiftThunk());
+    await dispatch(dropdownActions.getWorkScheduleThunk());
+    await dispatch(dropdownActions.getJobTypeThunk());
+    await dispatch(dropdownActions.getShiftThunk());
     await dispatch(getJobTitleActions.getJobTitle());
     await dispatch(getpayPeriodActions.getpayPeriod());
-    await dispatch(experienceLevelActions.getExperienceLevelThunk());
+    await dispatch(dropdownActions.getExperienceLevelThunk());
     await dispatch(resumeTemplateActions.getResumeTemplate());
     popular_skills = await getSkillsFilter("java");
     setPopularSkills(popular_skills.data);

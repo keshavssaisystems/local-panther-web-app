@@ -52,7 +52,7 @@ export function JobPreferences(props) {
     (state) => state.getProfile.profileData.jobPreferenceInfo
   );
 
-  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const shiftsOption = useSelector((state) => state.dropdown.shift);
   const workScheduleOptions = useSelector(
     (state) => state.workSchedule.workSchedule
   );
@@ -66,11 +66,11 @@ export function JobPreferences(props) {
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const experienceLevelOption = useSelector(
-    (state) => state.experienceLevel.experienceLevel
+    (state) => state.dropdown.experienceLevel
   );
   const [formDetails, setFormData] = useState({});
 
-  const location = useSelector((state) => state.jobType.jobType);
+  const location = useSelector((state) => state.dropdown.jobType);
 
   const [desiredJobType, setDesiredJobType] = useState([
     {

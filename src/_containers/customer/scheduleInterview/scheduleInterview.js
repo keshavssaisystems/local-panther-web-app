@@ -27,15 +27,15 @@ import {
 import { Popup } from "_components/common/Popup";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { msdummy } from "./msdummy";
-import { Providers } from "@microsoft/mgt-element";
-import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
-import { Login } from "@microsoft/mgt-react";
+// import { Providers } from "@microsoft/mgt-element";
+// import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
+// import { Login } from "@microsoft/mgt-react";
 
 export function ScheduleInterview() {
-  Providers.globalProvider = new Msal2Provider({
-    clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
-    scopes: ["Calendars.Read"],
-  });
+  // Providers.globalProvider = new Msal2Provider({
+  //   clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
+  //   scopes: ["Calendars.Read"],
+  // });
   const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);

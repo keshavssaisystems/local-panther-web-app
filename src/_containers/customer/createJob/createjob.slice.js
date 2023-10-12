@@ -13,11 +13,51 @@ export const getCreatejobThunk = createAsyncThunk(
   }
 );
 
+// getPreviousJobDetailThunk thunk
+export const getPreviousJobDetailThunk = createAsyncThunk(
+  `${name}/getPreviousJobDetailThunk`,
+  async (jobId) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/GetJobDetails/${jobId}`;
+    return await fetchWrapper.get(PRESCREEN_END_POINT);
+  }
+);
+
+// getPreviousJobListThunk thunk
+export const getPreviousJobListThunk = createAsyncThunk(
+  `${name}/getPreviousJobListThunk`,
+  async ({ pageNo, searchText }) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}`;
+    return await fetchWrapper.get(PRESCREEN_END_POINT);
+  }
+);
+
+// getPublishJobThunk thunk
+export const getPublishJobThunk = createAsyncThunk(
+  `${name}/getPublishJobThunk`,
+  async ({ jobId, payload }) => {
+    const PUBLISH_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/PublishJob/${jobId}`;
+    return await fetchWrapper.put(PUBLISH_JOB_END_POINT, payload);
+  }
+);
+
+// getCustomerDetailsThunk thunk
+export const getCustomerDetailsThunk = createAsyncThunk(
+  `${name}/getCustomerDetailsThunk`,
+  async (customerid) => {
+    const CUSTOMER_DETAILS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Customer/GetCustomerById/${customerid}`;
+    return await fetchWrapper.get(CUSTOMER_DETAILS_END_POINT);
+  }
+);
+
 // Create the slice
 const createjobSlice = createSlice({
   name,
   initialState: {
     createjob: [],
+    previousJobDetail: [],
+    previousJobList: [],
+    publishJob: [],
+    customerDetails: [],
     loading: false,
   },
   reducers: {},
@@ -34,6 +74,50 @@ const createjobSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getPreviousJobDetailThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getPreviousJobDetailThunk.fulfilled]: (state, action) => {
+      state.previousJobDetail = action.payload.data;
+      state.loading = false;
+    },
+    [getPreviousJobDetailThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getPreviousJobListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getPreviousJobListThunk.fulfilled]: (state, action) => {
+      state.previousJobList = action.payload.data;
+      state.loading = false;
+    },
+    [getPreviousJobListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getPublishJobThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getPublishJobThunk.fulfilled]: (state, action) => {
+      state.publishJob = action;
+      state.loading = false;
+    },
+    [getPublishJobThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getCustomerDetailsThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCustomerDetailsThunk.fulfilled]: (state, action) => {
+      state.customerDetails = action.payload.data;
+      state.loading = false;
+    },
+    [getCustomerDetailsThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -41,6 +125,10 @@ const createjobSlice = createSlice({
 export const createjobActions = {
   ...createjobSlice.actions,
   getCreatejobThunk,
+  getPreviousJobDetailThunk,
+  getPreviousJobListThunk,
+  getPublishJobThunk,
+  getCustomerDetailsThunk,
 };
 
 export const createjobReducer = createjobSlice.reducer;
