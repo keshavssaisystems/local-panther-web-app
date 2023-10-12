@@ -110,25 +110,58 @@ export function CandCardView({
                   </Col>
                 </Row>
                 <p className="job-details">
-                  <FiMapPin /> {location}
+                  <Row>
+                    <Col md="1" lg="1">
+                      <FiMapPin />
+                    </Col>
+                    <Col md="11" lg="11">
+                      {location}
+                    </Col>
+                  </Row>
                 </p>
                 <p className="job-details">
-                  <BsBriefcase /> Work Experience:{" "}
-                  {additionalData?.jobExperienceScheduleDtos &&
-                  additionalData?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? additionalData?.jobExperienceScheduleDtos[0]
-                        ?.experiencelevel
-                    : "-"}
+                  <Row>
+                    <Col md="1" lg="1">
+                      <BsBriefcase />
+                    </Col>
+                    <Col md="11" lg="11">
+                      <b>Work Experience</b>
+                      <p>
+                        {additionalData?.jobExperienceScheduleDtos &&
+                        additionalData?.jobExperienceScheduleDtos[0]
+                          ?.experiencelevel
+                          ? additionalData?.jobExperienceScheduleDtos[0]
+                              ?.experiencelevel
+                          : "-"}
+                      </p>
+                    </Col>
+                  </Row>
                 </p>
                 <p className="job-details">
-                  <BsListStars /> Skills:{" "}
-                  {additionalData?.jobKeyQualificationDtos &&
-                  additionalData?.jobKeyQualificationDtos?.length > 0
-                    ? skillsData
-                    : "-"}
+                  <Row>
+                    <Col md="1" lg="1">
+                      <BsListStars />
+                    </Col>
+                    <Col md="11" lg="11">
+                      <b>Skills</b>
+                      <p>
+                        {additionalData?.jobKeyQualificationDtos &&
+                        additionalData?.jobKeyQualificationDtos?.length > 0
+                          ? skillsData
+                          : "-"}
+                      </p>
+                    </Col>
+                  </Row>
                 </p>
                 <p className="job-details">
-                  <BsCashStack /> Pay: {returnPayment()}
+                  <Row>
+                    <Col md="1" lg="1">
+                      <BsCashStack />{" "}
+                    </Col>
+                    <Col md="11" lg="11">
+                      <b>Pay</b> <p>{returnPayment()}</p>
+                    </Col>
+                  </Row>
                 </p>
 
                 {type === "Recommended" && (
