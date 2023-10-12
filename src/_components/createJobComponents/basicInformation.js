@@ -142,7 +142,8 @@ export function BasicInformation({
       event.target.elements.companyName.value !== "" &&
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.openPositions.value !== "" &&
-      event.target.elements.city.value !== ""
+      event.target.elements.city.value !==
+        "undefined, undefined, undefined, undefined"
     ) {
       saveData(event);
     }
