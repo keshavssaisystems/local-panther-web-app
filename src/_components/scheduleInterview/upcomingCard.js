@@ -98,7 +98,10 @@ export function UpcomingCard({
                   </p>
                   <p className="job-details">
                     <BsPersonBoundingBox className="icon-settings" />{" "}
-                    Interviewer: {interview.intervieweremailids}
+                    Interviewer -{" "}
+                    {interview.intervieweremailids === ""
+                      ? "No interviewer"
+                      : interview.intervieweremailids}
                   </p>
                 </Col>
               </Row>
