@@ -121,3 +121,94 @@ export const formatDateQualification = function (dateString) {
     return formattedDate;
   }
 };
+export const extractDatePart = function (inputDate) {
+  const dateObj = new Date(inputDate);
+
+  // Extract the year, month, and day components
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+  const day = String(dateObj.getDate()).padStart(2, "0");
+
+  // Format as "yyyy-mm-dd"
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return formattedDate;
+};
+
+export const formatMonthYear = function (dateString) {
+  // Parse the input date string
+
+  if (!dateString) {
+    return;
+  }
+
+  const date = new Date(dateString);
+
+  // Define month names as an array
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Get the month, day, and year components
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+
+  // Create the formatted date string
+  const formattedDate = `${month} ${year}`;
+
+  return formattedDate;
+};
+
+export const endDateValidation = function (dateString) {
+  // Parse the input date string
+
+  if (!dateString) {
+    return;
+  }
+
+  const date = new Date(dateString);
+
+  // Define month names as an array
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // Get the month, day, and year components
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+
+  const today_month = monthNames[new Date().getMonth()];
+  const today_year = new Date().getFullYear();
+  let today = `${today_month} ${today_year}`;
+
+  // Create the formatted date string
+  const formattedDate = `${month} ${year}`;
+
+  if (today == formattedDate) {
+    return "Present";
+  } else {
+    return formattedDate;
+  }
+};

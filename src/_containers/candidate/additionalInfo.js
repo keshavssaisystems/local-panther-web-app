@@ -78,11 +78,28 @@ export function AdditionalInformation(props) {
       language.push(lan_data);
       data.push(obj);
     });
+
     data.language = language;
     let filter_data = [...getResponse];
     filter_data = data;
     setGetResponse(filter_data);
   }, [additional_details]);
+
+  const convertText = function (htmlContent) {
+    let data;
+    const lines = htmlContent.split("<p>").map((line, index) => {
+      if (index === 0) {
+        data = "";
+      } else {
+        data += `<li>${line.replace("</p>", "")}</li>`;
+      }
+    });
+    if (data != "") {
+      return data;
+    } else {
+      return data;
+    }
+  };
 
   const edit = function (check, data) {
     let new_data;
@@ -205,11 +222,34 @@ export function AdditionalInformation(props) {
                             </div>
                           </Col>
                         </Row>
-                        <p className="me-2 card-p-text">{item.summary} </p>
                         <div>
-                          {item.additionalinformation
-                            ? item.additionalinformation
-                            : ""}
+                          <ul
+                            dangerouslySetInnerHTML={{
+                              __html: convertText(item.summary),
+                            }}
+                          />
+                        </div>
+                        <div>
+                          {item.additionalInfo ? (
+                            <div>
+                              <Row>
+                                <Col>
+                                  <strong className="content-title mb-1">
+                                    Additional Information
+                                  </strong>
+                                </Col>
+                              </Row>
+                              <div>
+                                <ul
+                                  dangerouslySetInnerHTML={{
+                                    __html: convertText(item.additionalInfo),
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            ""
+                          )}
                         </div>
                       </div>
                     ))}
@@ -253,7 +293,7 @@ export function AdditionalInformation(props) {
               </div>
             ) : (
               <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={loader} type="ball-pulse" />
+                <Loader active={loader} type="line-scale-pulse-out-rapid" />
               </div>
             )}
           </div>

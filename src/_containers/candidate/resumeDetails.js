@@ -307,7 +307,7 @@ export function ResumeDetails(props) {
                 </div>
               ) : (
                 <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                  <Loader active={loading} type="ball-pulse" />
+                  <Loader active={loading} type="line-scale-pulse-out-rapid" />
                 </div>
               )}
             </Card>
@@ -472,7 +472,7 @@ export function ResumeDetails(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

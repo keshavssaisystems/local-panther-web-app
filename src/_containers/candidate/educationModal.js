@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { formatDate, extractDatePart } from "_helpers/helper";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -33,6 +34,8 @@ export function EducationModal(props) {
   useEffect(() => {
     loadData();
   }, []);
+
+  const studyFieldList = useSelector((state) => state.getStudyField.user.data);
 
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
@@ -118,11 +121,11 @@ export function EducationModal(props) {
         iscurrentlystudying: props.selected.iscurrentlystudying,
         startdate:
           props.selected.startdate != "" && props.selected.startdate
-            ? new Date(props.selected.startdate)
+            ? extractDatePart(props.selected.startdate)
             : null,
         enddate:
           props.selected.enddate != "" && props.selected.enddate
-            ? new Date(props.selected.enddate)
+            ? extractDatePart(props.selected.enddate)
             : null,
         isactive: props.selected.isactive,
         currentUserId: null,
@@ -288,11 +291,11 @@ export function EducationModal(props) {
             new_data[index].fromDateValid = true;
           } else {
             new_data[index].fromDateValid = false;
-            new_data[index].enddate = new Date();
+            new_data[index].enddate = extractDatePart(new Date());
           }
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].enddate = new Date();
+          new_data[index].enddate = extractDatePart(new Date());
         }
       }
     } else if (check == "fromdate") {
@@ -301,11 +304,11 @@ export function EducationModal(props) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].startdate = data;
+          new_data[index].startdate = extractDatePart(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].startdate = data;
+        new_data[index].startdate = extractDatePart(data);
       }
     } else if (check == "todate") {
       new_data[index].enddate = data;
@@ -315,11 +318,11 @@ export function EducationModal(props) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].enddate = data;
+          new_data[index].enddate = extractDatePart(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].enddate = data;
+        new_data[index].enddate = extractDatePart(data);
       }
     }
     setFormData(new_data);
@@ -348,13 +351,8 @@ export function EducationModal(props) {
         stateid: rest.state.value,
         iscurrentlystudying: rest.iscurrentlystudying,
         startdate:
-          rest.startdate && rest.startdate != ""
-            ? new Date(rest.startdate).toISOString()
-            : null,
-        enddate:
-          rest.enddate && rest.enddate != ""
-            ? new Date(rest.enddate).toISOString()
-            : null,
+          rest.startdate && rest.startdate != "" ? rest.startdate : null,
+        enddate: rest.enddate && rest.enddate != "" ? rest.enddate : null,
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
@@ -385,7 +383,7 @@ export function EducationModal(props) {
   }
 
   return (
-    <div className="profile-view">
+    <div className="profile-view react-date-picker-profile">
       {formDetails.map((item, index) => (
         <Form>
           {check == "add" ? (
@@ -450,7 +448,7 @@ export function EducationModal(props) {
                   }
                 />
 
-                <div style={{ color: "#ff0000", fontSize: "12px" }}>
+                <div className="filter-info-text filter-error-msg">
                   {item.error ? "Level of education is required" : ""}
                 </div>
               </FormGroup>
@@ -563,10 +561,14 @@ export function EducationModal(props) {
                   </div>
                   <DatePicker
                     name="fromDate"
+                    autoComplete="off"
                     id="fromDate"
-                    placeholderText="MM/DD/YYYY"
-                    showYearDropdown={true}
-                    selected={item.startdate}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    scrollableYearDropdown
+                    selected={
+                      item.startdate ? new Date(item.startdate) : item.startdate
+                    }
                     className="form-control"
                     onChange={(evt) =>
                       onHandleInputChange("fromdate", evt, index)
@@ -593,10 +595,14 @@ export function EducationModal(props) {
                     name="toDate"
                     id="toDate"
                     className="form-control"
-                    placeholderText="MM/DD/YYYY"
-                    showYearDropdown={true}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    scrollableYearDropdown
+                    autoComplete="off"
                     disabled={item.iscurrentlystudying}
-                    selected={item.enddate}
+                    selected={
+                      item.enddate ? new Date(item.enddate) : item.enddate
+                    }
                     onChange={(evt) =>
                       onHandleInputChange("todate", evt, index)
                     }
@@ -676,7 +682,7 @@ export function EducationModal(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>
