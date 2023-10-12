@@ -25,6 +25,14 @@ export const getPreviousJobDetailThunk = createAsyncThunk(
 // getPreviousJobListThunk thunk
 export const getPreviousJobListThunk = createAsyncThunk(
   `${name}/getPreviousJobListThunk`,
+  async ({ pageNo, searchText, companyId }) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}&companyId=${companyId}`;
+    return await fetchWrapper.get(PRESCREEN_END_POINT);
+  }
+);
+
+export const getRecommendedListThunk = createAsyncThunk(
+  `${name}/getRecommendedListThunk`,
   async ({ pageNo, searchText }) => {
     const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}`;
     return await fetchWrapper.get(PRESCREEN_END_POINT);
@@ -58,6 +66,7 @@ const createjobSlice = createSlice({
     previousJobList: [],
     publishJob: [],
     customerDetails: [],
+    recommendedList: [],
     loading: false,
   },
   reducers: {},
@@ -118,6 +127,17 @@ const createjobSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getRecommendedListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getRecommendedListThunk.fulfilled]: (state, action) => {
+      state.recommendedList = action.payload.data;
+      state.loading = false;
+    },
+    [getRecommendedListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -129,6 +149,7 @@ export const createjobActions = {
   getPreviousJobListThunk,
   getPublishJobThunk,
   getCustomerDetailsThunk,
+  getRecommendedListThunk,
 };
 
 export const createjobReducer = createjobSlice.reducer;

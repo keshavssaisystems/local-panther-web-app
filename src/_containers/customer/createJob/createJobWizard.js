@@ -19,12 +19,20 @@ export function CreateJobWizard() {
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
   const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
+  const customerDetails = useSelector(
+    (state) => state.createJob.customerDetails
+  );
   useEffect(() => {
     getOptions();
     getCompanyDetails();
+    getRecommendedJobData({
+      pageNo: page,
+      searchText: searchData,
+    });
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
+      companyId: customerDetails.companyid ?? 0,
     });
   }, []);
   const getOptionsData = (event) => {
@@ -46,6 +54,9 @@ export function CreateJobWizard() {
   const getJobDetail = async function (jobId) {
     await dispatch(createjobActions.getPreviousJobDetailThunk(jobId));
   };
+  const getRecommendedJobData = async function (searchArr) {
+    await dispatch(createjobActions.getRecommendedListThunk(searchArr));
+  };
   const getPreviousJobData = async function (searchArr) {
     await dispatch(createjobActions.getPreviousJobListThunk(searchArr));
   };
@@ -61,9 +72,14 @@ export function CreateJobWizard() {
   };
   const getSearchValue = (data) => {
     setSearchData(data);
-    getPreviousJobData({
+    getRecommendedJobData({
       pageNo: 1,
       searchText: data,
+    });
+    getPreviousJobData({
+      pageNo: page,
+      searchText: searchData,
+      companyId: customerDetails.companyid,
     });
   };
   const dispatch = useDispatch();
@@ -80,9 +96,7 @@ export function CreateJobWizard() {
     await dispatch(dropdownActions.getPayPeriodTypeThunk());
     await dispatch(dropdownActions.getPreScreenQuestionThunk());
   };
-  const customerDetails = useSelector(
-    (state) => state.createJob.customerDetails
-  );
+
   const jobLocationOptions = useSelector(
     (state) => state.dropdown.jobLocationType
   );
