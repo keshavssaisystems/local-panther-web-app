@@ -118,7 +118,8 @@ export function PaymentAndBenefits({
               <Input
                 id={"minimumAmount"}
                 name={"minimumAmount"}
-                type={"text"}
+                type={"number"}
+                min={0}
                 defaultValue={
                   prevStep === 3
                     ? preValue.minimumAmount
@@ -136,7 +137,8 @@ export function PaymentAndBenefits({
               <Input
                 id={"maximumAmount"}
                 name={"maximumAmount"}
-                type={"text"}
+                type={"number"}
+                min={0}
                 defaultValue={
                   prevStep === 3
                     ? preValue.maximumAmount

@@ -1,18 +1,17 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-
+import { getScores } from '_containers/admin/_redux/adminDashboard.slice'
+import { useDispatch, useSelector } from "react-redux";
 import DataTable from 'react-data-table-component';
 import { makeData } from "_containers/admin/Examples/utils.js";
 import Chart from "react-apexcharts";
-
+import './adminDashboardDetails.scss'
 import IncomeReport from "_containers/admin/Examples/IncomeReport";
-import IncomeReport2 from "_containers/admin/Examples/IncomeReport2";
 
 import avatar1 from "assets/utils/images/avatars/1.jpg";
 import avatar2 from "assets/utils/images/avatars/2.jpg";
 import avatar3 from "assets/utils/images/avatars/3.jpg";
 import avatar4 from "assets/utils/images/avatars/4.jpg";
-import sideBarIcons from 'assets/utils/sidebarimages'
 
 import {
   Row,
@@ -53,21 +52,37 @@ import CountUp from "react-countup";
 
 
 const AdminDashboardDetails = () => {
+  const dispatch = useDispatch()
+  const {
+    cardStats,
+    loading = false } = useSelector((state) => state?.adminDashboard ?? {});
+
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
   const [data, setData] = useState(makeData)
   
-  const dashboardCards = {activecompanycount:0, activecustomercount:0, activecandidatecount:0, newcandidateregistrationcount:0}
-  const [cardStats, setCardStats] = useState({ ...dashboardCards })
-
-  const date = new Date().toLocaleDateString('fr-CA');
+  const today = new Date().toLocaleDateString('fr-CA');
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toLocaleDateString('fr-CA')
-  const [todaysDate, setTodaysDate] = useState(date)
+
+  const jobsData = [
+    { id: 0, label: "01/01/2023", closedJobs: 144, openJobs: 240, closureTime: 30 },
+    { id: 1, label: "02/01/2023", closedJobs: 55, openJobs: 139, closureTime: 25 },
+    { id: 2, label: "03/01/2023", closedJobs: 141, openJobs: 980, closureTime: 36 },
+    { id: 3, label: "04/01/2023", closedJobs: 167, openJobs: 390, closureTime: 30 },
+    { id: 4, label: "05/01/2023", closedJobs: 122, openJobs: 480, closureTime: 45 },
+    { id: 5, label: "06/01/2023", closedJobs: 122, openJobs: 380, closureTime: 35 },
+    { id: 6, label: "07/01/2023", closedJobs: 143, openJobs: 430, closureTime: 64 },
+    { id: 7, label: "08/01/2023", closedJobs: 121, openJobs: 680, closureTime: 52 },
+    { id: 8, label: "09/01/2023", closedJobs: 141, openJobs: 790, closureTime: 59 },
+    { id: 9, label: "10/01/2023", closedJobs: 256, openJobs: 980, closureTime: 36 },
+    { id: 10, label: yesterday, closedJobs: 127, openJobs: 800, closureTime: 39 },
+    { id: 11, label: today, closedJobs: 243, openJobs: 300, closureTime: 12 }
+  ];
 
   const initial = {
-    popoverOpen1: false,
-
-    optionsMixedChart: {
+    timeIntervalDefault: 'week',
+    timeInterval: 'month',
+    optionsJobsChart: {
       chart: {
         height: 350,
         type: "line",
@@ -94,6 +109,8 @@ const AdminDashboardDetails = () => {
         },
       },
       labels: [
+        "11/01/2022",
+        "12/01/2022",
         "01/01/2023",
         "02/01/2023",
         "03/01/2023",
@@ -104,7 +121,6 @@ const AdminDashboardDetails = () => {
         "08/01/2023",
         "09/01/2023",
         "10/01/2023",
-        "11/01/2023",
       ],
       markers: {
         size: 0,
@@ -112,43 +128,175 @@ const AdminDashboardDetails = () => {
       xaxis: {
         type: "datetime",
       },
-      yaxis: {
-        title: {
-          text: "Points",
+      yaxis: [
+        {
+          seriesName: 'Open Jobs',
+          axisTicks: {
+            show: true
+          },
+          axisBorder: {
+            show: true,
+          },
+          title: {
+            text: "# of Jobs"
+          },
+          min: 0,
         },
-        min: 0,
-      },
+        {
+          seriesName: 'Closed Jobs',
+          show: false
+        }, {
+          opposite: true,
+          seriesName: 'Closing Time',
+          axisTicks: {
+            show: true
+          },
+          axisBorder: {
+            show: true,
+          },
+          title: {
+            text: "# of Days"
+          },
+          min: 1,
+        }
+      ],
       tooltip: {
         shared: true,
         intersect: false,
         y: {
-          formatter: function (y) {
-            if (typeof y !== "undefined") {
-              console.log("NG check y",y)
-              return y.toFixed(0) + " points";
+
+          formatter: function (value, { seriesIndex, series }) {
+            console.log("NG seriesName", series)
+            if (seriesIndex === 2) {
+
+              return value.toFixed(0) + " Days";
+
+            } else {
+
+              return value.toFixed(0) + " Jobs";
+
             }
-            return y;
+
           },
+
         },
       },
     },
-    seriesMixedChart: [
+    seriesJobsChart: [
       {
-        name: "TEAM A",
+        name: "Open Jobs",
         type: "column",
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+        data: [240, 139, 980, 390, 480, 380, 430, 680, 790, 980, 800, 300],
       },
       {
-        name: "TEAM B",
-        type: "bar",
-        data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+        name: "Closed Jobs",
+        type: "column",
+        data: [144, 55, 141, 167, 122, 122, 143, 121, 141, 256, 127, 243],
       },
       {
-        name: "TEAM C",
+        name: "Closing Time",
         type: "line",
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39,12],
       },
     ],
+    optionsInterviewChart: {
+      chart: {
+        height: 350,
+        type: "line",
+        stacked: false,
+      },
+      stroke: {
+        width: [0, 2, 5],
+        curve: "smooth",
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: "50%",
+        },
+      },
+      fill: {
+        opacity: [0.85, 0.25, 1],
+        gradient: {
+          inverseColors: false,
+          shade: "light",
+          type: "vertical",
+          opacityFrom: 0.85,
+          opacityTo: 0.55,
+          stops: [0, 100, 100, 100],
+        },
+      },
+      labels: [
+        "11/01/2022",
+        "12/01/2022",
+        "01/01/2023",
+        "02/01/2023",
+        "03/01/2023",
+        "04/01/2023",
+        "05/01/2023",
+        "06/01/2023",
+        "07/01/2023",
+        "08/01/2023",
+        "09/01/2023",
+        "10/01/2023",
+      ],
+      markers: {
+        size: 0,
+      },
+      xaxis: {
+        type: "datetime",
+      },
+      yaxis: [
+        {
+          seriesName: 'Scheduled Interviews',
+          axisTicks: {
+            show: true
+          },
+          axisBorder: {
+            show: true,
+          },
+          title: {
+            text: "# of Interviews"
+          },
+          min: 0,
+        },
+        {
+          seriesName: 'Closed Interviews',
+          show: false
+        }, {
+          seriesName: 'Accepted Interviews',
+          show: false
+        }
+      ],
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+
+          formatter: function (value, { seriesIndex, series }) {
+              return value.toFixed(0) + " Interviews";
+          },
+
+        },
+      },
+    },
+    seriesInterviewChart: [
+      {
+        name: "Accepted Interviews",
+        type: "column",
+        data: [240, 139, 180, 390, 480, 380, 430, 680, 790, 580, 800, 300],
+      },
+      {
+        name: "Closed Interviews",
+        type: "column",
+        data: [144, 55, 141, 167, 122, 122, 143, 121, 141, 256, 127, 243],
+      },
+      {
+        name: "Scheduled Interviews",
+        type: "line",
+        data: [330, 225, 236, 430, 545, 435, 564, 752, 859, 636, 939, 412],
+      },
+    ],
+
   };
   const [initialState, setInitialState] = useState(initial)
 
@@ -184,12 +332,7 @@ const AdminDashboardDetails = () => {
   ];
 
   useEffect(()=>{
-    fetch(`https://panther-api-dev.azurewebsites.net/api/AdminDashboard/DasboardCount?date=${todaysDate}`)
-    .then(data => data.json())
-    .then(result => {
-      setCardStats({ ...result.data })
-    }
-      )
+    dispatch(getScores(today))
   }, [])
 
   const onDismiss = () => {
@@ -201,7 +344,6 @@ const AdminDashboardDetails = () => {
       setActiveTab(tab)
     }
   }
-
 
   const dashCardUI = [
     {
@@ -246,6 +388,7 @@ const AdminDashboardDetails = () => {
     }
   ]
 
+  console.log("NG cardstats total", cardStats.totalCandidates)
   const cardsMapping = dashCardUI.map(ele => {
     const borderColor = "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary " + ele.color
     const arrowDirection = ele.arrowDirection === 'faAngleUp' ? 1 : 0
@@ -280,11 +423,10 @@ const AdminDashboardDetails = () => {
     )
   })
 
-
   return (
     <Fragment>
       <TransitionGroup>
-        <CSSTransition component="div" classNames="TabsAnimation" appear={true}
+        <CSSTransition component="div" classNames="admin-dashboard-details TabsAnimation " appear={true}
           timeout={1500} enter={false} exit={false}>
           <div>
             {/* <Alert className="mbg-3" color="info" isOpen={visible} toggle={onDismiss}>
@@ -302,7 +444,6 @@ const AdminDashboardDetails = () => {
               </span>
               The below section of dashboard is in making. Data is from JSON !
             </Alert>
-
             <Card className="mb-3">
               <CardHeader className="tabs-lg-alternate">
                 <Nav justified>
@@ -315,7 +456,7 @@ const AdminDashboardDetails = () => {
                         toggle("1");
                       }}>
                       <div className="widget-number">
-                        <CountUp start={0} end={15065} separator="," decimals={0}
+                        <CountUp start={0} end={cardStats.totalCandidates} separator="," decimals={0}
                           decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -336,7 +477,7 @@ const AdminDashboardDetails = () => {
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
-                        <CountUp start={0} end={4531} separator="" decimals={0} decimal=""
+                        <CountUp start={0} end={453} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -355,7 +496,7 @@ const AdminDashboardDetails = () => {
                       }}>
                       <div className="widget-number text-danger">
                         <CountUp start={0} end={67} separator=","
-                          decimals={1} decimal="" delay={2} prefix="" duration="10" />
+                          decimals={0} decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
                         <i className="header-icon lnr-calendar-full me-3 text-muted opacity-6"> {" "} </i>
@@ -372,15 +513,183 @@ const AdminDashboardDetails = () => {
                   </CardBody>
                 </TabPane>
                 <TabPane tabId="2">
-                  <Chart options={initialState.optionsMixedChart} series={initialState.seriesMixedChart}
-                    type="line" width="100%" height="330px" />
+                  <CardHeader className="rm-border">
+                    <div className="btn-actions-pane-right text-capitalize  actions-icon-btn right-align">
+                      <UncontrolledButtonDropdown>
+                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                          <i className="lnr-calendar-full btn-icon-wrapper" />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
+                          <DropdownItem header>Select Range</DropdownItem>
+                          <DropdownItem divider />
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-inbox"> </i>
+                            <span>a Week</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-file-empty"> </i>
+                            <span>a Month</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>6 Months</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>a Year</span>
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledButtonDropdown>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <Chart options={initialState.optionsJobsChart} series={initialState.seriesJobsChart}
+                          type="line" width="100%" height="330px" />
+                  <Row className="mt-3">
+                    <Col sm="12" md="4">
+                      <div className="widget-content p-0">
+                        <div className="widget-content-outer">
+                          <div className="widget-content-wrapper">
+                            <div className="widget-content-left">
+                              <div className="widget-numbers text-dark">65%</div>
+                            </div>
+                          </div>
+                          <div className="widget-progress-wrapper mt-1">
+                            <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="65" />
+                            <div className="progress-sub-label">
+                              <div className="sub-label-left font-size-md">Interviews Scheduled</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col sm="12" md="4">
+                      <div className="widget-content p-0">
+                        <div className="widget-content-outer">
+                          <div className="widget-content-wrapper">
+                            <div className="widget-content-left">
+                              <div className="widget-numbers text-dark">83%</div>
+                            </div>
+                          </div>
+                          <div className="widget-progress-wrapper mt-1">
+                            <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="83" />
+                            <div className="progress-sub-label">
+                              <div className="sub-label-left font-size-md">Closed Jobs</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col sm="12" md="4">
+                      <div className="widget-content p-0">
+                        <div className="widget-content-outer">
+                          <div className="widget-content-wrapper">
+                            <div className="widget-content-left">
+                              <div className="widget-numbers text-dark">70%</div>
+                            </div>
+                          </div>
+                          <div className="widget-progress-wrapper mt-1">
+                            <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="70" />
+                            <div className="progress-sub-label">
+                              <div className="sub-label-left font-size-md">Avg. Time for Closure</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                  </CardBody>
                 </TabPane>
                 <TabPane tabId="3">
-                  <IncomeReport2 />
+                  <CardHeader className="rm-border">
+                    <div className="btn-actions-pane-right text-capitalize  actions-icon-btn right-align">
+                      <UncontrolledButtonDropdown>
+                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                          <i className="lnr-calendar-full btn-icon-wrapper" />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
+                          <DropdownItem header>Select Range</DropdownItem>
+                          <DropdownItem divider />
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-inbox"> </i>
+                            <span>a Week</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-file-empty"> </i>
+                            <span>a Month</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>6 Months</span>
+                          </DropdownItem>
+                          <DropdownItem>
+                            <i className="dropdown-icon lnr-book"> </i>
+                            <span>a Year</span>
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledButtonDropdown>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <Chart options={initialState.optionsInterviewChart} series={initialState.seriesInterviewChart}
+                      type="line" width="100%" height="330px" />
+                    <Row className="mt-3">
+                      <Col sm="12" md="4">
+                        <div className="widget-content p-0">
+                          <div className="widget-content-outer">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left">
+                                <div className="widget-numbers text-dark">15%</div>
+                              </div>
+                            </div>
+                            <div className="widget-progress-wrapper mt-1">
+                              <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="15" />
+                              <div className="progress-sub-label">
+                                <div className="sub-label-left font-size-md">Interviews Missed</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col sm="12" md="4">
+                        <div className="widget-content p-0">
+                          <div className="widget-content-outer">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left">
+                                <div className="widget-numbers text-dark">83%</div>
+                              </div>
+                            </div>
+                            <div className="widget-progress-wrapper mt-1">
+                              <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="83" />
+                              <div className="progress-sub-label">
+                                <div className="sub-label-left font-size-md">Acceptance Rate</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                      <Col sm="12" md="4">
+                        <div className="widget-content p-0">
+                          <div className="widget-content-outer">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left">
+                                <div className="widget-numbers text-dark">90%</div>
+                              </div>
+                            </div>
+                            <div className="widget-progress-wrapper mt-1">
+                              <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="90" />
+                              <div className="progress-sub-label">
+                                <div className="sub-label-left font-size-md">Avg. Time to Converge</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
                 </TabPane>
               </TabContent>
             </Card>
-
             <CardHeader className="mbg-3 h-auto ps-0 pe-0 bg-transparent no-border">
               <div className="card-header-title fsize-2 text-capitalize fw-normal">
                 Interview Stats
@@ -455,188 +764,6 @@ const AdminDashboardDetails = () => {
                 </Card>
               </Col>
             </Row>
-
-            {/* <Row>
-              <Col sm="12" lg="4">
-                <Card className="mb-3">
-                  <CardHeader className="card-header-tab">
-                    <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                      Total Sales
-                    </div>
-                    <div className="btn-actions-pane-right text-capitalize actions-icon-btn">
-                      <UncontrolledButtonDropdown>
-                        <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                          <i className="lnr-cog btn-icon-wrapper" />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                          <DropdownItem header>Header</DropdownItem>
-                          <DropdownItem>
-                            <i className="dropdown-icon lnr-inbox"> </i>
-                            <span>Menus</span>
-                          </DropdownItem>
-                          <DropdownItem>
-                            <i className="dropdown-icon lnr-file-empty"> </i>
-                            <span>Settings</span>
-                          </DropdownItem>
-                          <DropdownItem>
-                            <i className="dropdown-icon lnr-book"> </i>
-                            <span>Actions</span>
-                          </DropdownItem>
-                          <DropdownItem divider />
-                          <div className="p-1 text-end">
-                            <Button className="me-2 btn-shadow btn-sm" color="link">
-                              View Details
-                            </Button>
-                            <Button className="me-2 btn-shadow btn-sm" color="primary">
-                              Action
-                            </Button>
-                          </div>
-                        </DropdownMenu>
-                      </UncontrolledButtonDropdown>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <Bar2 />
-                  </CardBody>
-                  <CardFooter className="p-0 d-block">
-                    <div className="grid-menu grid-menu-2col">
-                      <Row className="g-0">
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-car text-primary opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Admin
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-bullhorn text-danger opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Blog
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-bug text-success opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Register
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-heart text-warning opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Directory
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Col>
-              <Col sm="12" lg="4">
-                <Card className="mb-3">
-                  <CardHeader className="card-header-tab">
-                    <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                      Daily Sales
-                    </div>
-                    <div className="btn-actions-pane-right text-capitalize">
-                      <Button size="sm" outline className="btn-wide btn-outline-2x" color="focus">
-                        View All
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <Column />
-                  </CardBody>
-                  <CardFooter className="p-0 d-block">
-                    <div className="grid-menu grid-menu-2col">
-                      <Row className="g-0">
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-apartment text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Overview
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-database text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Support
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-printer text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Activities
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="dark">
-                            <i className="lnr-store text-dark opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Marketing
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Col>
-              <Col sm="12" lg="4">
-                <Card className="mb-3">
-                  <CardHeader className="card-header-tab">
-                    <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                      Total Expenses
-                    </div>
-                    <div className="btn-actions-pane-right text-capitalize">
-                      <Button size="sm" outline className="btn-wide btn-outline-2x" color="primary">
-                        View All
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardBody>
-                    <Area />
-                  </CardBody>
-                  <CardFooter className="p-0 d-block">
-                    <div className="grid-menu grid-menu-2col">
-                      <Row className="g-0">
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="success">
-                            <i className="lnr-lighter text-success opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Accounts
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="warning">
-                            <i className="lnr-construction text-warning opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Contacts
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="info">
-                            <i className="lnr-bus text-info opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Products
-                          </Button>
-                        </Col>
-                        <Col sm="6" className="p-2">
-                          <Button className="btn-icon-vertical btn-transition-text btn-transition btn-transition-alt pt-2 pb-2"
-                            outline color="alternate">
-                            <i className="lnr-gift text-alternate opacity-7 btn-icon-wrapper mb-2"> {" "} </i>
-                            Services
-                          </Button>
-                        </Col>
-                      </Row>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Col>
-            </Row> */}
             <Card className="main-card mb-3">
               <CardHeader>
                 <div className="card-header-title font-size-lg text-capitalize fw-normal">

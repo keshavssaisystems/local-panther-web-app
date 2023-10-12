@@ -13,7 +13,6 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  // <React.StrictMode>
   <Provider store={store}>
     <BrowserRouter>
       <div
@@ -25,5 +24,4 @@ root.render(
       </div>
     </BrowserRouter>
   </Provider>
-  // </React.StrictMode>
 );

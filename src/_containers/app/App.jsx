@@ -27,7 +27,7 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
-import { Contact } from "_containers/Contact";
+import { Contact } from "_containers/contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
@@ -298,41 +298,6 @@ export function App() {
           <div className="app-main__inner">
             <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}
-
-              {/* <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              /> */}
-
-              {/* <Route
-                path="/candidate-list/:jobId"
-                element={
-                  <PrivateRoute>
-                    <CandidateList type="candidate" />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/rejected-candidate/:jobId"
-                element={
-                  <PrivateRoute>
-                    <CandidateList type="rejected" />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/accepted-candidate/:jobId"
-                element={
-                  <PrivateRoute>
-                    <CandidateList type="accepted" />
-                  </PrivateRoute>
-                }
-              /> */}
-
               <Route
                 path="/policy"
                 element={

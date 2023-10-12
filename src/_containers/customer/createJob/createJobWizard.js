@@ -7,20 +7,7 @@ import CreateJob from "../../../_components/createJobComponents/createJobForm";
 import JobPreview from "../../../_components/createJobComponents/jobPreview";
 import PublishJobStep from "../../../_components/createJobComponents/publishJobStep";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  createjobActions,
-  jobLocationTypeActions,
-  jobTypeActions,
-  workScheduleActions,
-  shiftActions,
-  experienceLevelActions,
-  hiringTimelineActions,
-  payPeriodTypeActions,
-  preScreenQuestionActions,
-  previousJobListActions,
-  previousJobDetailActions,
-  publishJobActions,
-} from "_store";
+import { createjobActions, dropdownActions } from "_store";
 import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 
 export function CreateJobWizard() {
@@ -32,11 +19,20 @@ export function CreateJobWizard() {
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
   const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
+  const customerDetails = useSelector(
+    (state) => state.createJob.customerDetails
+  );
   useEffect(() => {
     getOptions();
+    getCompanyDetails();
+    getRecommendedJobData({
+      pageNo: page,
+      searchText: searchData,
+    });
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
+      companyId: localStorage.getItem("companyid"),
     });
   }, []);
   const getOptionsData = (event) => {
@@ -48,11 +44,21 @@ export function CreateJobWizard() {
     }
     setJobType(event.type);
   };
+  const getCompanyDetails = async function () {
+    await dispatch(
+      createjobActions.getCustomerDetailsThunk(
+        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+      )
+    );
+  };
   const getJobDetail = async function (jobId) {
-    await dispatch(previousJobDetailActions.getPreviousJobDetailThunk(jobId));
+    await dispatch(createjobActions.getPreviousJobDetailThunk(jobId));
+  };
+  const getRecommendedJobData = async function (searchArr) {
+    await dispatch(createjobActions.getRecommendedListThunk(searchArr));
   };
   const getPreviousJobData = async function (searchArr) {
-    await dispatch(previousJobListActions.getPreviousJobListThunk(searchArr));
+    await dispatch(createjobActions.getPreviousJobListThunk(searchArr));
   };
   const getDataForPreview = (event) => {
     setJobPreviewData(event);
@@ -66,9 +72,14 @@ export function CreateJobWizard() {
   };
   const getSearchValue = (data) => {
     setSearchData(data);
-    getPreviousJobData({
+    getRecommendedJobData({
       pageNo: 1,
       searchText: data,
+    });
+    getPreviousJobData({
+      pageNo: page,
+      searchText: searchData,
+      companyId: localStorage.getItem("companyid"),
     });
   };
   const dispatch = useDispatch();
@@ -76,46 +87,48 @@ export function CreateJobWizard() {
     await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
   const getOptions = async function () {
-    await dispatch(jobLocationTypeActions.getJobLocationTypeThunk());
-    await dispatch(jobTypeActions.getJobTypeThunk());
-    await dispatch(workScheduleActions.getWorkScheduleThunk());
-    await dispatch(shiftActions.getShiftThunk());
-    await dispatch(experienceLevelActions.getExperienceLevelThunk());
-    await dispatch(hiringTimelineActions.getHiringTimelineThunk());
-    await dispatch(payPeriodTypeActions.getPayPeriodTypeThunk());
-    await dispatch(preScreenQuestionActions.getPreScreenQuestionThunk());
+    await dispatch(dropdownActions.getJobLocationTypeThunk());
+    await dispatch(dropdownActions.getJobTypeThunk2());
+    await dispatch(dropdownActions.getWorkScheduleThunk2());
+    await dispatch(dropdownActions.getShiftThunk2());
+    await dispatch(dropdownActions.getExperienceLevelThunk2());
+    await dispatch(dropdownActions.getHiringTimelineThunk());
+    await dispatch(dropdownActions.getPayPeriodTypeThunk());
+    await dispatch(dropdownActions.getPreScreenQuestionThunk());
   };
+
   const jobLocationOptions = useSelector(
-    (state) => state.jobLocationType.jobLocationType
+    (state) => state.dropdown.jobLocationType
   );
-  const shiftsOption = useSelector((state) => state.shifts.shift);
+  const shiftsOption = useSelector((state) => state.dropdown.shift);
   const workScheduleOptions = useSelector(
-    (state) => state.workSchedule.workSchedule
+    (state) => state.dropdown.workSchedule
   );
-  const jobTypeOption = useSelector((state) => state.jobType.jobType);
+  const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   const experienceLevelOption = useSelector(
-    (state) => state.experienceLevel.experienceLevel
+    (state) => state.dropdown.experienceLevel
   );
   const hiringTimelineOption = useSelector(
-    (state) => state.hiringTimeline.hiringTimeline
+    (state) => state.dropdown.hiringTimeline
   );
   const payPeriodTypeOption = useSelector(
-    (state) => state.payPeriodType.payPeriodType
+    (state) => state.dropdown.payPeriodType
   );
   const preScreenQuestionsOption = useSelector(
-    (state) => state.preScreenQuestion.preScreenQuestion
+    (state) => state.dropdown.preScreenQuestion
   );
-  const jobList = useSelector((state) => state.previousJobList.previousJobList);
-  const jobDetail = useSelector(
-    (state) => state.previousJobDetail.previousJobDetail
+  const jobList = useSelector((state) => state.createJob.previousJobList);
+  const recommendedJobList = useSelector(
+    (state) => state.createJob.recommendedList
   );
+  const jobDetail = useSelector((state) => state.createJob.previousJobDetail);
   const newJobDetails = useSelector((state) => state.createJob.createjob);
   const publishNewJob = async function () {
     let jobId = newJobDetails.jobid;
     let payload = {
       currentUserId: 81,
     };
-    await dispatch(publishJobActions.getPublishJobThunk({ jobId, payload }));
+    await dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
     setShowPopupWithNextStep(!showPopupWithNextStep);
   };
   const [BIStatus, setBIStatus] = useState(false);
@@ -135,6 +148,7 @@ export function CreateJobWizard() {
           jobList={jobList}
           postSearch={(e) => getSearchValue(e)}
           readyForNextStep={(e) => setButtonDisable(e)}
+          recommendedJobList={recommendedJobList}
         />
       ),
     },
@@ -157,6 +171,7 @@ export function CreateJobWizard() {
           JobDataForPreview={(e) => getDataForPreview(e)}
           bIFormSubmitted={(e) => getBIStatus(e)}
           esFormSubmitted={(e) => getESStatus(e)}
+          customerDetails={customerDetails}
         />
       ),
     },
@@ -170,6 +185,7 @@ export function CreateJobWizard() {
       name: "Create job",
       component: (
         <PublishJobStep
+          companyId={customerDetails.companyid}
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
           publishJob={(e) => publishNewJob(e)}
