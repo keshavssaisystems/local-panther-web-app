@@ -25,6 +25,7 @@ import {
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
+import { Progress } from "react-sweet-progress";
 import "./cardview.scss";
 
 export const CandidateCardView = (props) => {
@@ -138,79 +139,96 @@ export const CandidateCardView = (props) => {
           <Row>
             <Col className="col-12">
               <Row>
-                <Col className="col-10">
+                <Col className="col-9">
                   <div className="card-title">{props?.data?.jobtitle}</div>
+                  <p className="card-details-op">
+                    <span>
+                      <FiMapPin size={"16px"} />
+                    </span>{" "}
+                    {props?.data?.locationaddress}
+                  </p>
                 </Col>
-                <Col className="col-2">
-                  {/* <div className="card-title right-align">
-                    {props?.data?.avgscore}
-                  </div> */}
+                <Col className="col-3">
+                  <div className="card-title right-align">
+                    {props?.data?.avgscore ? (
+                      <Progress
+                        className="mb-3"
+                        percent={props?.data?.avgscore * 10}
+                        type="circle"
+                        width={60}
+                        strokeWidth={6}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </Col>
               </Row>
             </Col>
 
-            {/* <Col>
-              <div className="card-details-op">{props?.data?.jobtitle}</div>
-            </Col> */}
-
-            {/* <Col className="col-12">
-              <IoIosContact fontSize={"16px"}></IoIosContact>
-              <b>Name:</b>
-              {props?.data?.firstname + "  " + props?.data?.lastname}
-            </Col> */}
             <Col className="col-12">
               <p className="card-details">
-                <span className="pe-2">
-                  <FiMapPin size={"16px"} />
-                </span>
-                {props?.data?.locationaddress}
+                <Row>
+                  <Col md="1" lg="1">
+                    <span className="pe-2">
+                      <BsBriefcase size={"16px"} />
+                    </span>
+                  </Col>
+                  <Col md="11" lg="11">
+                    <b>Work Experience</b>
+                    <p>
+                      {props?.data?.jobExperienceScheduleDtos &&
+                      props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
+                        ? props?.data?.jobExperienceScheduleDtos[0]
+                            ?.experiencelevel
+                        : "-"}
+                    </p>
+                  </Col>
+                </Row>
               </p>
             </Col>
 
             <Col className="col-12">
               <p className="card-details">
-                <span className="pe-2">
-                  <BsBriefcase size={"16px"} />
-                </span>
-                <b>Work Experience: </b>
-                {props?.data?.jobExperienceScheduleDtos &&
-                props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
-                {/* Work Experience: {props?.data?.minexperience}-{" "}
-                {props?.data?.maxexperience} Years */}
-              </p>
-            </Col>
-            {/* <Col className="col-12">
-              <p className="card-details">
-                <span className="pe-2">
-                  <BsListStars size={"16px"} />
-                </span>
-                Education: {props?.data?.jobSkillDtos}
-              </p>
-            </Col> */}
-            <Col className="col-12">
-              <p className="card-details">
-                <span className="pe-2">
-                  <BsMortarboard size={"16px"} />
-                </span>
-                <b>Education: </b> {returnEducation()}
+                <Row>
+                  <Col md="1" lg="1">
+                    <span className="pe-2">
+                      <BsMortarboard size={"16px"} />
+                    </span>
+                  </Col>
+                  <Col md="11" lg="11">
+                    <b>Education </b> <p>{returnEducation()}</p>
+                  </Col>
+                </Row>
               </p>
             </Col>
             <Col className="col-12">
               <p className="card-details">
-                <span className="pe-2">
-                  <BsStar size={"16px"} />
-                </span>
-                <b>Skills: </b> {returnSkills()}
+                <Row>
+                  <Col md="1" lg="1">
+                    <span className="pe-2">
+                      <BsStar size={"16px"} />
+                    </span>
+                  </Col>
+                  <Col md="11" lg="11">
+                    <b>Skills </b>
+                    <p> {returnSkills()}</p>
+                  </Col>
+                </Row>
               </p>
             </Col>
             <Col className="col-12">
               <p className="card-details">
-                <span className="pe-2">
-                  <BsAward size={"16px"} />
-                </span>
-                <b>Credentials: </b> {returnCert()}
+                <Row>
+                  <Col md="1" lg="1">
+                    <span className="pe-2">
+                      <BsAward size={"16px"} />
+                    </span>
+                  </Col>
+                  <Col md="11" lg="11">
+                    <b>Certfications/Licences </b> <p>{returnCert()}</p>
+                  </Col>
+                </Row>
               </p>
             </Col>
           </Row>
