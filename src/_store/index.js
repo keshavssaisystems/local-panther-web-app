@@ -37,6 +37,7 @@ import { payPeriodReducer } from "./dropDownPayPeriod.slice";
 import { candidateListReducer } from "_containers/candidate/list/candidatelist.slice";
 import { resumeTemplateReducer } from "./getResumeTemplate.slice";
 import { dropdownReducer } from "_containers/customer/createJob/dropdown.slice";
+import { studyFieldReducer } from "./dropDownStudyField.slice";
 
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
@@ -81,6 +82,7 @@ export * from "./jobPreference.slice";
 export * from "./getResumeTemplate.slice";
 export * from "_containers/candidate/list/candidatelist.slice";
 export * from "_containers/customer/createJob/dropdown.slice";
+export * from "./dropDownStudyField.slice";
 
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
@@ -125,6 +127,7 @@ export const store = configureStore({
     getResumeTemplate: resumeTemplateReducer,
     candidateListReducer: candidateListReducer,
     dropdown: dropdownReducer,
+    getStudyField: studyFieldReducer,
     // admin reducer
     adminReportReducer,
   },

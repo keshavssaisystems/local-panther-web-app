@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loaders";
+import { formatDate, extractDatePart } from "_helpers/helper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
@@ -79,31 +80,26 @@ export function QualificationModal(props) {
         fromDateReq: false,
         toDateReq: false,
         error: false,
-        city: [
-          {
-            value: 0,
-            label: "",
-          },
-        ],
-        state: [
-          {
-            value: 0,
-            label: "",
-          },
-        ],
-        country: [
-          {
-            value: 0,
-            label: "",
-          },
-        ],
+        city: {
+          value: 0,
+          label: "",
+        },
+
+        state: {
+          value: 0,
+          label: "",
+        },
+        country: {
+          value: 0,
+          label: "",
+        },
       });
     } else {
       data.push({
         id: props.selected.candidatequalificationid,
         jobTitle: props.selected.jobtitle,
         organization: props.selected.company,
-        jobDescription: props.selected.jobdescription,
+        jobdescription: props.selected.jobdescription,
         countryid: props.selected.countryid,
         cityid: props.selected.cityid,
         stateid: props.selected.stateid,
@@ -111,11 +107,11 @@ export function QualificationModal(props) {
         startdate:
           props.selected.startdate == "" || !props.selected.startdate
             ? null
-            : new Date(props.selected.startdate),
+            : extractDatePart(props.selected.startdate),
         enddate:
           props.selected.enddate == "" || !props.selected.enddate
             ? null
-            : new Date(props.selected.enddate),
+            : extractDatePart(props.selected.enddate),
         isactive: props.selected.isactive,
         currentUserId: user.userId,
         fromDateValid: false,
@@ -220,6 +216,19 @@ export function QualificationModal(props) {
     let new_data = [...formDetails];
     if (new_data[index - 1].jobTitle == "") {
       new_data[index - 1].error = true;
+    }
+    if (new_data[index - 1].startdate == null) {
+      new_data[index - 1].fromDateReq = true;
+    }
+    if (new_data[index - 1].enddate == null) {
+      new_data[index - 1].toDateReq = true;
+    }
+
+    if (
+      new_data[index - 1].jobTitle == "" ||
+      new_data[index - 1].startdate == null ||
+      new_data[index - 1].enddate == null
+    ) {
       setFormData(new_data);
       return;
     }
@@ -258,44 +267,46 @@ export function QualificationModal(props) {
     } else if (check == "status") {
       new_data[index].iscurrentlyworking = !new_data[index].iscurrentlyworking;
       if (new_data[index].iscurrentlyworking) {
-        new_data[index].enddate = new Date();
+        new_data[index].toDateReq = false;
+        new_data[index].enddate = extractDatePart(new Date());
         if (new_data[index].startdate) {
-          if (new Date(data) < new Date(new_data[index].startdate)) {
+          if (new Date(data) <= new Date(new_data[index].startdate)) {
             new_data[index].fromDateValid = true;
           } else {
             new_data[index].fromDateValid = false;
-            new_data[index].enddate = new Date();
+            new_data[index].enddate = extractDatePart(new Date());
           }
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].enddate = new Date();
+          new_data[index].enddate = extractDatePart(new Date());
         }
       }
     } else if (check == "fromDate") {
+      new_data[index].fromDateReq = false;
       if (new_data[index].enddate) {
-        if (new Date(data) > new Date(new_data[index].enddate)) {
+        if (new Date(data) >= new Date(new_data[index].enddate)) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].startdate = new Date(data);
+          new_data[index].startdate = extractDatePart(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].startdate = new Date(data);
+        new_data[index].startdate = extractDatePart(data);
       }
     } else if (check == "toDate") {
       new_data[index].enddate = data;
-
+      new_data[index].toDateReq = false;
       if (new_data[index].startdate) {
-        if (new Date(data) < new Date(new_data[index].startdate)) {
+        if (new Date(data) <= new Date(new_data[index].startdate)) {
           new_data[index].fromDateValid = true;
         } else {
           new_data[index].fromDateValid = false;
-          new_data[index].enddate = new Date(data);
+          new_data[index].enddate = extractDatePart(data);
         }
       } else {
         new_data[index].fromDateValid = false;
-        new_data[index].enddate = new Date(data);
+        new_data[index].enddate = extractDatePart(data);
       }
     }
 
@@ -362,7 +373,6 @@ export function QualificationModal(props) {
 
   async function onSubmit() {
     let new_data = [...formDetails];
-
     let valid = true;
     for (let i = 0; i < formDetails.length; i++) {
       if (formDetails[i].jobTitle == "") {
@@ -375,6 +385,9 @@ export function QualificationModal(props) {
       }
       if (formDetails[i].enddate == null) {
         new_data[i].toDateReq = true;
+        valid = false;
+      }
+      if (new_data[i].fromDateValid) {
         valid = false;
       }
       setFormData(new_data);
@@ -502,7 +515,7 @@ export function QualificationModal(props) {
                     loadOptions={loadOptions}
                     styles={customStyles}
                     isMulti={false}
-                    value={!item.city.value ? [] : item.city}
+                    value={!item.city?.value ? [] : item.city}
                     defaultOptions={location}
                     onChange={(evt) => onSelectCityDropdown(evt, index)}
                     className="location-dropdown"
@@ -520,7 +533,7 @@ export function QualificationModal(props) {
                     styles={customStyles}
                     defaultOptions={countryList}
                     isMulti={false}
-                    value={!item.country.value ? [] : item.country}
+                    value={!item.country?.value ? [] : item.country}
                     onChange={(evt) => onSelectCountryDropdown(evt, index)}
                     onMenuOpen={() => checkCityValid(item.cityid)}
                   />
@@ -581,10 +594,15 @@ export function QualificationModal(props) {
                       name="fromDate"
                       id="fromDate"
                       placeholderText="MM/DD/YYYY"
+                      autoComplete="off"
                       className={`field-input placeholder-text form-control ${
                         item.fromDateReq ? "is-invalid" : ""
                       }`}
-                      selected={item.startdate}
+                      selected={
+                        item.startdate
+                          ? new Date(item.startdate)
+                          : item.startdate
+                      }
                       showYearDropdown={true}
                       onChange={(evt) =>
                         handleInputChange("fromDate", index, evt)
@@ -595,7 +613,7 @@ export function QualificationModal(props) {
                     {item.fromDateReq ? "From date is required" : ""}
                   </div>
                   <div className="filter-info-text filter-error-msg">
-                    {item.fromDateValid
+                    {item.fromDateValid && !item.fromDateReq
                       ? "From date should be less than to date"
                       : ""}
                   </div>
@@ -615,12 +633,15 @@ export function QualificationModal(props) {
                     <DatePicker
                       name="toDate"
                       id="toDate"
+                      autoComplete="off"
                       className={`field-input placeholder-text form-control ${
                         item.toDateReq ? "is-invalid" : ""
                       }`}
                       disabled={item.iscurrentlyworking}
                       placeholderText="MM/DD/YYYY"
-                      selected={item.enddate}
+                      selected={
+                        item.enddate ? new Date(item.enddate) : item.enddate
+                      }
                       showYearDropdown={true}
                       onChange={(evt) =>
                         handleInputChange("toDate", index, evt)
@@ -645,7 +666,7 @@ export function QualificationModal(props) {
                     name="jobDescription"
                     type="textarea"
                     id="jobDescription"
-                    value={item.jobDescription}
+                    value={item.jobdescription}
                     maxLength={500}
                     className="field-input placeholder-text form-control"
                     onInput={(evt) =>
@@ -731,7 +752,7 @@ export function QualificationModal(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => setError(false)}
                   >
                     OK
                   </Button>

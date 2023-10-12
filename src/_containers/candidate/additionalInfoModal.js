@@ -7,33 +7,27 @@ import {
   Modal,
   Card,
   CardBody,
-  Collapse,
-  InputGroup,
   Button,
   FormGroup,
   Form,
 } from "reactstrap";
-import { Link } from "react-router-dom";
-import Tabs from "react-responsive-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import PageTitle from "../../_components/common/pagetitle";
 
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
+import { CKEditor } from "ckeditor4-react";
 
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
 
   const [check, setCheck] = useState(props.check);
-  const [isPersonalModal, setPersonalModal] = useState(false);
   const [isSave, setSave] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [additionalInfo, setadditionalInfo] = useState("");
 
   const loadData = function () {
     let data;
@@ -134,13 +128,15 @@ export function AdditionalInfoModal(props) {
         new_data[index].error = true;
       }
     } else if (check == "additionalInfo") {
-      new_data[index].additionalInfo = data;
+      new_data[index].additionalinformation = data;
     }
     setFormData(new_data);
   };
 
   async function onSubmit() {
     const keyToCheck = "summary";
+
+    let data = summary;
 
     const emptyKeyIndexes = formDetails
       .map((item, index) => (item[keyToCheck] == "" ? index : null))
@@ -166,7 +162,9 @@ export function AdditionalInfoModal(props) {
         summary: rest.summary,
         language: rest.language,
         proficiencyid: Number(rest.proficiency),
-        additionalinformation: rest.additionalInfo ? rest.additionalInfo : "",
+        additionalinformation: rest.additionalinformation
+          ? rest.additionalinformation
+          : "",
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
         isactive: true,
@@ -273,7 +271,6 @@ export function AdditionalInfoModal(props) {
                     type="select"
                     id="proficiency"
                     name="proficiency"
-                    value={item.proficiency}
                     onChange={(evt) =>
                       onHandleInputChange(
                         "proficiency",
@@ -284,7 +281,11 @@ export function AdditionalInfoModal(props) {
                     placeholderText="Select proficiency"
                   >
                     {proficiencyList.map((col) => (
-                      <option key={col.id} value={col.id}>
+                      <option
+                        selected={col.id == item.proficiencyid}
+                        key={col.id}
+                        value={col.id}
+                      >
                         {col.name}
                       </option>
                     ))}
@@ -310,8 +311,8 @@ export function AdditionalInfoModal(props) {
             </Row>
 
             <Row className="mb-2">
-              <Col md={6}>
-                <FormGroup>
+              <Col>
+                {/* <FormGroup>
                   <Label for="summary" className="input-label">
                     Summary <span className="required-icon">*</span>
                   </Label>
@@ -330,12 +331,28 @@ export function AdditionalInfoModal(props) {
                       item.error ? "is-invalid" : ""
                     }`}
                   />
+                </FormGroup> */}
+
+                <FormGroup>
+                  <Label for="description" className="fw-semi-bold">
+                    Summary<span style={{ color: "red" }}>* </span>
+                  </Label>
+                  <CKEditor
+                    name="description"
+                    id="description"
+                    maxLength={2000}
+                    initData={item.summary}
+                    onChange={(e) =>
+                      onHandleInputChange("summary", e.editor.getData(), index)
+                    }
+                  />
                 </FormGroup>
+
                 <div className="error-class">
                   {item.error ? "Summary is required" : ""}
                 </div>
               </Col>
-              <Col md={6}>
+              {/* <Col md={6}>
                 <FormGroup>
                   <Label for="state" className="input-label">
                     Additional information
@@ -346,7 +363,7 @@ export function AdditionalInfoModal(props) {
                     placeholder="Enter additional information"
                     name="state"
                     type="textarea"
-                    value={item.additionalInfo}
+                    value={item.additionalinformation}
                     onInput={(evt) =>
                       onHandleInputChange(
                         "additionalInfo",
@@ -358,7 +375,28 @@ export function AdditionalInfoModal(props) {
                     className="field-input placeholder-text form-control"
                   />
                 </FormGroup>
-              </Col>
+              </Col> */}
+            </Row>
+
+            <Row>
+              <FormGroup>
+                <Label for="additionalInfo" className="fw-semi-bold">
+                  Additional Information
+                </Label>
+                <CKEditor
+                  name="additionalInfo"
+                  id="additionalInfo"
+                  maxLength={500}
+                  initData={item.additionalinformation}
+                  onChange={(e) =>
+                    onHandleInputChange(
+                      "additionalInfo",
+                      e.editor.getData(),
+                      index
+                    )
+                  }
+                />
+              </FormGroup>
             </Row>
 
             {index < formDetails.length - 1 ? <hr /> : <></>}
@@ -385,11 +423,7 @@ export function AdditionalInfoModal(props) {
           </Form>
         ))}
 
-        <Modal
-          centered
-          className="modal-reject-align profile-view"
-          isOpen={success}
-        >
+        <Modal className="modal-reject-align profile-view" isOpen={success}>
           <Card>
             <CardBody>
               <div className="d-flex justify-content-center mb-3">
@@ -439,7 +473,7 @@ export function AdditionalInfoModal(props) {
                   <Col className="d-flex justify-content-center">
                     <Button
                       className="me-2 accept-modal-btn"
-                      onClick={(evt) => closeModal()}
+                      onClick={(evt) => setError(false)}
                     >
                       OK
                     </Button>
