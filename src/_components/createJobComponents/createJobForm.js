@@ -22,6 +22,7 @@ export default function CreateJob({
   previousData,
   bIFormSubmitted,
   esFormSubmitted,
+  customerDetails,
 }) {
   const [basicInformationData, setBasicInformationData] = useState(
     previousStep === 3 ? jobData.basicInformation : {}
@@ -176,6 +177,7 @@ export default function CreateJob({
                   prevStep={previousStep}
                   previousData={previousData}
                   bIFormSubmitted={bIFormSubmitted}
+                  customerDetails={customerDetails}
                 />
               </CardBody>
             </Collapse>

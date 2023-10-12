@@ -13,25 +13,13 @@ import { stateReducer } from "./dropdownstate.slice";
 import { cityReducer } from "./dropdowncity.slice";
 import { genderReducer } from "./dropdownGender.slice";
 import { noticePeriodReducer } from "../_components/dropdownComponents/noticePeriod.slice";
-import { applyForJobReducer } from "../_containers/candidate/applyForJob.slice";
 import { jobDetailReducer } from "./jobDetail.slice";
 import { recommendedjobListReducer } from "../_containers/candidate/recommendejobList.slice";
 import { departmentReducer } from "../_components/dropdownComponents/department.slice.js";
 import { empmodeReducer } from "./dropdownempmode.slice";
 import { customerCandidateListsReducer } from "_containers/customer/candidatelists/customercandidatelists.slice";
-import { jobLocationTypeReducer } from "../_containers/customer/createJob/joblocationtype.slice";
-import { jobTypeReducer } from "../_containers/customer/createJob/jobtype.slice";
-import { workScheduleReducer } from "../_containers/customer/createJob/workschedule.slice";
-import { shiftReducer } from "../_containers/customer/createJob/shifts.slice";
-import { experienceLevelReducer } from "../_containers/customer/createJob/experiencelevel.slice";
-import { hiringTimelineReducer } from "../_containers/customer/createJob/hiringtimeline.slice";
-import { payPeriodTypeReducer } from "../_containers/customer/createJob/payperiodtype.slice";
-import { preScreenQuestionReducer } from "../_containers/customer/createJob/prescreenquestions.slice";
-import { previousJobListReducer } from "../_containers/customer/createJob/previousjoblist.slice";
-import { previousJobDetailReducer } from "../_containers/customer/createJob/previousjobdetail.slice";
 import { candidateJobListTabReducer } from "_containers/candidate/candidateTablist.slice";
 import { scheduleInterviewReducer } from "_containers/customer/scheduleInterview/scheduleinterview.slice";
-import { publishJobReducer } from "_containers/customer/createJob/publishjob.slice";
 import { ethnicityReducer } from "./dropdownRaceEtnicity.slice";
 import { getProfileReducer } from "./getProfile.slice";
 import { profileSkillsReducer } from "./profileSkills.slice";
@@ -47,9 +35,8 @@ import { matchedJobReducer } from "_containers/candidate/matchJob.slice";
 import { jobTitleReducer } from "./dropDownJobTitle.slice";
 import { payPeriodReducer } from "./dropDownPayPeriod.slice";
 import { candidateListReducer } from "_containers/candidate/list/candidatelist.slice";
-
-import { jobPreferenceDataReducer } from "./jobPreference.slice";
 import { resumeTemplateReducer } from "./getResumeTemplate.slice";
+import { dropdownReducer } from "_containers/customer/createJob/dropdown.slice";
 import { studyFieldReducer } from "./dropDownStudyField.slice";
 
 // admin slice
@@ -68,25 +55,13 @@ export * from "../_components/dropdownComponents/remoteStatus.slice";
 export * from "./dropdownstate.slice";
 export * from "./dropdowncity.slice";
 export * from "../_components/dropdownComponents/noticePeriod.slice";
-export * from "../_containers/candidate/applyForJob.slice";
 export * from "./jobDetail.slice";
 export * from "../_containers/candidate/recommendejobList.slice";
 export * from "../_components/dropdownComponents/department.slice";
 export * from "./dropdownempmode.slice";
 export * from "../_containers/customer/candidatelists/customercandidatelists.slice";
-export * from "../_containers/customer/createJob/joblocationtype.slice";
-export * from "../_containers/customer/createJob/jobtype.slice";
-export * from "../_containers/customer/createJob/workschedule.slice";
-export * from "../_containers/customer/createJob/shifts.slice";
-export * from "../_containers/customer/createJob/experiencelevel.slice";
-export * from "../_containers/customer/createJob/hiringtimeline.slice";
-export * from "../_containers/customer/createJob/payperiodtype.slice";
-export * from "../_containers/customer/createJob/prescreenquestions.slice";
-export * from "../_containers/customer/createJob/previousjoblist.slice";
-export * from "../_containers/customer/createJob/previousjobdetail.slice";
 export * from "../_containers/candidate/candidateTablist.slice";
 export * from "_containers/customer/scheduleInterview/scheduleinterview.slice";
-export * from "_containers/customer/createJob/publishjob.slice";
 export * from "./candidateProfile.slice";
 export * from "./dropdownGender.slice";
 export * from "./dropdownRaceEtnicity.slice";
@@ -106,6 +81,7 @@ export * from "./dropDownPayPeriod.slice";
 export * from "./jobPreference.slice";
 export * from "./getResumeTemplate.slice";
 export * from "_containers/candidate/list/candidatelist.slice";
+export * from "_containers/customer/createJob/dropdown.slice";
 export * from "./dropDownStudyField.slice";
 
 // export all admin slice fn
@@ -126,25 +102,12 @@ export const store = configureStore({
     city: cityReducer,
     gender: genderReducer,
     noticePeriod: noticePeriodReducer,
-    applyForJob: applyForJobReducer,
     jobDetail: jobDetailReducer,
     recommendedjobList: recommendedjobListReducer,
     department: departmentReducer,
     empmode: empmodeReducer,
     customerCandidateList: customerCandidateListsReducer,
-    jobLocationType: jobLocationTypeReducer,
-    jobType: jobTypeReducer,
-    workSchedule: workScheduleReducer,
-    shifts: shiftReducer,
-    experienceLevel: experienceLevelReducer,
-    hiringTimeline: hiringTimelineReducer,
-    payPeriodType: payPeriodTypeReducer,
-    preScreenQuestion: preScreenQuestionReducer,
-    previousJobList: previousJobListReducer,
-    previousJobDetail: previousJobDetailReducer,
-
     scheduleInterview: scheduleInterviewReducer,
-    publishJob: publishJobReducer,
     profileReducer: profileReducer,
     ethnicity: ethnicityReducer,
     getProfile: getProfileReducer,
@@ -163,6 +126,7 @@ export const store = configureStore({
     getPayPeriod: payPeriodReducer,
     getResumeTemplate: resumeTemplateReducer,
     candidateListReducer: candidateListReducer,
+    dropdown: dropdownReducer,
     getStudyField: studyFieldReducer,
     // admin reducer
     adminReportReducer,

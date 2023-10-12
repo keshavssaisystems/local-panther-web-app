@@ -1,11 +1,16 @@
 import React, { useEffect } from "react";
 import { Button } from "reactstrap";
 
-export default function PublishJobStep({ reqData, responseData, publishJob }) {
+export default function PublishJobStep({
+  companyId,
+  reqData,
+  responseData,
+  publishJob,
+}) {
   useEffect(() => {
     let main = {
       jobid: 0,
-      companyid: 1,
+      companyid: companyId,
       jobtitle: reqData.basicInformation.jobTitle,
       description: reqData.basicInformation.description,
       companydetails: reqData.basicInformation.companyDetail,

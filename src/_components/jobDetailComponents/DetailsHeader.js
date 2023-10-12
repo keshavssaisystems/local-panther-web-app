@@ -2,7 +2,6 @@ import React from "react";
 import "./jobDetails.scss";
 import { FiMapPin } from "react-icons/fi";
 import { Col, Row, Button } from "reactstrap";
-import { ApplyJobModal } from "../../_containers/candidate/ApplyJobModal";
 
 export function DetailsHeader({
   heading,
@@ -42,17 +41,6 @@ export function DetailsHeader({
             ) : (
               <></>
             )}
-            {/* {ApplyButton === true && (
-              <Col>
-                <ApplyJobModal
-                  jobId={jobId}
-                  heading={heading}
-                  subHeading={subHeading}
-                  location={location}
-                  department={department}
-                />
-              </Col>
-            )} */}
           </Row>
         </div>
       </div>

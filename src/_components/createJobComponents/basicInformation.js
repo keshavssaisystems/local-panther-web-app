@@ -12,6 +12,7 @@ import {
 import { CKEditor } from "ckeditor4-react";
 import "./createJob.scss";
 import AsyncSelect from "react-select/async";
+import InputMask from "react-input-mask";
 import { getLocation } from "_store";
 
 export function BasicInformation({
@@ -21,6 +22,7 @@ export function BasicInformation({
   prevStep,
   previousData,
   bIFormSubmitted,
+  customerDetails,
 }) {
   const [successMessage, setSuccessMessage] = useState(false);
   const [stateData, setStateData] = useState({});
@@ -183,7 +185,7 @@ export function BasicInformation({
     bIFormSubmitted(true);
   };
   const loadOptions = async (inputValue) => {
-    if (inputValue.length > 2) {
+    if (inputValue.length > 0) {
       const { data = [] } = await getLocation(inputValue);
       return data.map(({ cityid: value, ...rest }) => {
         return {
@@ -217,7 +219,7 @@ export function BasicInformation({
                 id={"companyName"}
                 name={"companyName"}
                 type={"text"}
-                value={"Adams - Runolfsdottir"}
+                value={customerDetails.companyname}
                 disabled
               />
               {companyValidation === true && (
@@ -381,15 +383,16 @@ export function BasicInformation({
               <Label for="zipCode" className="fw-semi-bold">
                 Zip code
               </Label>
-              <Input
+              <InputMask
+                className="form-control"
                 id={"zipCode"}
                 name={"zipCode"}
-                type={"text"}
+                mask={"99999"}
+                maskChar={null}
                 defaultValue={
                   prevStep === 3 ? preValue.zipcode : previousValue.zipcode
                 }
                 placeholder="Enter zip code"
-                maxLength={5}
               />
             </FormGroup>
           </Col>
