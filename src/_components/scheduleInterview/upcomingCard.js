@@ -86,7 +86,7 @@ export function UpcomingCard({
                       moment(interview.scheduledate).format("MMM D, YYYY") +
                         " " +
                         interview.starttime
-                    ).format("MMM D, YYYY,  hh:mm a")}
+                    ).format("MM/DD/YYYY,  hh:mm a")}
                   </p>
                   <p className="job-details">
                     <BsListStars className="icon-settings" /> Mode-{" "}
@@ -94,7 +94,7 @@ export function UpcomingCard({
                   </p>
                   <p className="job-details">
                     <BsClock className="icon-settings" /> Request sent on{" "}
-                    {moment(interview.createddate).format("MMM D, YYYY")}
+                    {moment(interview.createddate).format("MM/DD/YYYY")}
                   </p>
                   <p className="job-details">
                     <BsPersonBoundingBox className="icon-settings" />{" "}

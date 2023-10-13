@@ -24,9 +24,9 @@ import {
   customerCandidateListsActions,
   scheduleInterviewActions,
 } from "_store";
-import { Popup } from "_components/common/Popup";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
-import { msdummy } from "./msdummy";
+// import { msdummy } from "./msdummy";
+import SweetAlert from "react-bootstrap-sweetalert";
 // import { Providers } from "@microsoft/mgt-element";
 // import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 // import { Login } from "@microsoft/mgt-react";
@@ -36,9 +36,9 @@ export function ScheduleInterview() {
   //   clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
   //   scopes: ["Calendars.Read"],
   // });
-  const [showPopup, setShowPopup] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);
+  const [updateSuccessPopup, setUpdateSuccess] = useState(false);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
     getCandidateList(
@@ -147,18 +147,17 @@ export function ScheduleInterview() {
     });
   }
   const getFormData = (formData) => {
-    console.log(formData);
     updateScheduledInterview(formData);
   };
   const updateScheduledInterview = async function (formData) {
     let scheduleinterviewid = formData.scheduleinterviewid;
-    setShowPopup(true);
     await dispatch(
       scheduleInterviewActions.updateScheduledInterviewThunk({
         scheduleinterviewid,
         formData,
       })
     );
+    setUpdateSuccess(true);
     getCandidateList(
       selectedJobId,
       moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
@@ -260,7 +259,6 @@ export function ScheduleInterview() {
   };
 
   const cancelScheduleData = (cancelData) => {
-    console.log(cancelData);
     cancelInterview(cancelData);
     getUpdatedScheduleList();
   };
@@ -280,14 +278,14 @@ export function ScheduleInterview() {
   };
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const editScheduledInterview = (editStatus) => {
-    console.log(editStatus);
+    setOpenModal(false);
     setShowEditScheduleModal(editStatus);
   };
 
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
-  let syncData = msdummy.value;
+  let syncData = [];
   let overallData = [];
   let availData = [];
   let msBlockData = [];
@@ -357,7 +355,6 @@ export function ScheduleInterview() {
     });
   }
   overallData = availData.concat(msBlockData);
-  console.log(overallData);
 
   const postMessageData = (formData) => {};
   const rejectScheduleData = (scheduledInterviewId) => {
@@ -413,7 +410,6 @@ export function ScheduleInterview() {
                     className={"btn-shadow "}
                     onClick={() => {
                       toggle("availabilty");
-                      setShowPopup(false);
                     }}
                   >
                     Availabilty
@@ -423,7 +419,6 @@ export function ScheduleInterview() {
                     className={"btn-shadow"}
                     onClick={() => {
                       toggle("upcoming");
-                      setShowPopup(false);
                     }}
                   >
                     Upcoming
@@ -433,7 +428,6 @@ export function ScheduleInterview() {
                     className={"btn-shadow "}
                     onClick={() => {
                       toggle("calendar");
-                      setShowPopup(false);
                     }}
                   >
                     Calendar
@@ -557,6 +551,9 @@ export function ScheduleInterview() {
                     cancelScheduleData={(e) => cancelScheduleData(e)}
                     postNotesData={(e) => postNotesData(e)}
                     postInviteData={(e) => postInviteData(e)}
+                    acceptInterview={(e) => acceptScheduleData(e)}
+                    rejectInterview={(e) => rejectScheduleData(e)}
+                    getUpdatedFormData={(e) => getFormData(e)}
                   />
                 </Col>
               </Row>
@@ -594,16 +591,10 @@ export function ScheduleInterview() {
                       postMessageData={(e) => postMessageData(e)}
                       acceptInterview={(e) => acceptScheduleData(e)}
                       rejectInterview={(e) => rejectScheduleData(e)}
+                      getUpdatedFormData={(e) => getFormData(e)}
                     />
                   </CardBody>
                 </Card>
-                {showPopup === true && (
-                  <Popup
-                    type={"success"}
-                    message={"Interview schedule updated"}
-                    action={true}
-                  />
-                )}
               </>
             )}
           </Col>
@@ -631,6 +622,13 @@ export function ScheduleInterview() {
           onClose={() => setShowEditScheduleModal(false)}
         />
       </Container>
+      {updateSuccessPopup === true && (
+        <SweetAlert
+          success
+          title="Interview updated successfully!!!"
+          onConfirm={(e) => setUpdateSuccess(false)}
+        ></SweetAlert>
+      )}
     </>
   );
 }
