@@ -239,6 +239,14 @@ export function App() {
             element={<Calendar title={"Microsoft Calendar"} />}
           />
           <Route
+            path="/report"
+            element={
+              <PrivateRoute>
+                <CustomerReportJobList />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/report/customer-jobs"
             element={
               <PrivateRoute>
