@@ -46,6 +46,9 @@ import { experienceLevelReducer } from "../_containers/customer/createJob/experi
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
 import { adminDashboardReducer } from "_containers/admin/_redux/adminDashboard.slice";
 
+//Customer slice
+import { customerReportReducer } from "_containers/customer/reports/customerreport.slice";
+
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
 export * from "./users.slice";
@@ -96,6 +99,8 @@ export * from "../_containers/customer/createJob/experiencelevel.slice";
 export * from "_containers/admin/_redux/report.slice";
 export * from "_containers/admin/_redux/adminDashboard.slice";
 
+// export all customer slice fn
+export * from "_containers/customer/reports/customerreport.slice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -143,7 +148,9 @@ export const store = configureStore({
     experienceLevel: experienceLevelReducer,
     // admin reducer
     adminReportReducer,
-    adminDashboard: adminDashboardReducer
+    adminDashboard: adminDashboardReducer,
 
+    // customer reducer
+    customerReportReducer: customerReportReducer,
   },
 });

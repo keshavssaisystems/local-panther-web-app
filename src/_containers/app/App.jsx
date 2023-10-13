@@ -45,6 +45,12 @@ import {
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
 import { Calendar } from "_containers/customer/common/calendar";
+import { CustomerReportJobList } from "_containers/customer/reports/customerjobs";
+import { CustomerReportScheduledInterviews } from "_containers/customer/reports/customerscheduleinterviews";
+import { CustomerReportInterviewedCandidates } from "_containers/customer/reports/customerinterviewdcandidates";
+import { CustomerReportJobAging } from "_containers/customer/reports/customerjobaging";
+import { CustomerReportMatchedCandidate } from "_containers/customer/reports/customermatchedjoblist";
+import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -127,17 +133,21 @@ export function App() {
             path="/report/hiring-manager-report"
             element={<HiringManager title={"Hiring Manager Report"} />}
           />
-          <Route path="/report/open-jobs" element={<OpenJobs title={"Open Jobs"}/>} />
-          <Route path="/report/new-candidates" element={<NewCandidate title={"New Candidate"}/>} />
+          <Route
+            path="/report/open-jobs"
+            element={<OpenJobs title={"Open Jobs"} />}
+          />
+          <Route
+            path="/report/new-candidates"
+            element={<NewCandidate title={"New Candidate"} />}
+          />
           <Route
             path="/report/partially-filled-job"
             element={<OpenJobs title={"Partially Filled Jobs"} />}
           />
           <Route
             path="/report/incomplete-candidate-profile"
-            element={
-              <OpenJobs title={"Incomplete Candidate Profile"} />
-            }
+            element={<OpenJobs title={"Incomplete Candidate Profile"} />}
           />
           <Route
             path="/report/candidate-report"
@@ -145,19 +155,11 @@ export function App() {
           />
           <Route
             path="/report/jobs-without-matched-candidates"
-            element={
-              <OpenJobs
-                title={"Jobs Without Matched Candidate"}
-              />
-            }
+            element={<OpenJobs title={"Jobs Without Matched Candidate"} />}
           />
           <Route
             path="/report/canddates-without-matched-jobs"
-            element={
-              <OpenJobs
-                title={"Candidate Without Matched Jobs"}
-              />
-            }
+            element={<OpenJobs title={"Candidate Without Matched Jobs"} />}
           />
           <Route
             path="/report/non-published-jobs"
@@ -200,6 +202,7 @@ export function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/customer-candidate-matched/:id"
             element={<CustomerCandidateLists type={"matched"} />}
@@ -234,6 +237,54 @@ export function App() {
           <Route
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}
+          />
+          <Route
+            path="/report/customer-jobs"
+            element={
+              <PrivateRoute>
+                <CustomerReportJobList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report/customer-scheduled-interviews"
+            element={
+              <PrivateRoute>
+                <CustomerReportScheduledInterviews />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report/customer-interviewed-candidates"
+            element={
+              <PrivateRoute>
+                <CustomerReportInterviewedCandidates />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report/customer-job-aging"
+            element={
+              <PrivateRoute>
+                <CustomerReportJobAging />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report/customer-matched-candidate-list-by-job"
+            element={
+              <PrivateRoute>
+                <CustomerReportMatchedCandidate />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/report/customer-candidate-list-by-status"
+            element={
+              <PrivateRoute>
+                <CustomerReportCandidateStatus />
+              </PrivateRoute>
+            }
           />
         </>
       );
