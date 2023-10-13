@@ -17,7 +17,6 @@ import { FaEllipsisV } from "react-icons/fa";
 import {
   BsPersonVideo2,
   BsFillCheckCircleFill,
-  BsFillQuestionCircleFill,
   BsXCircleFill,
   BsTelephone,
   BsPerson,
@@ -28,14 +27,21 @@ import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
+import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
 
 export function UpcomingVideoDetails({
   interviewId,
   cancelScheduleData,
   postInviteData,
   postNotesData,
+  acceptInterview,
+  rejectInterview,
+  getUpdatedFormData,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
+  const [showAcceptPopup, setShowAcceptPopup] = useState(false);
+  const [showRejectPopup, setShowRejectPopup] = useState(false);
+  const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const upcomingInterviews = useSelector(
@@ -46,9 +52,11 @@ export function UpcomingVideoDetails({
       return element.scheduleinterviewid === interviewId;
     }
   );
-
+  const durationOptions = useSelector(
+    (state) => state.scheduleInterview.duration
+  );
   const interviewDetails = selectedJobDetails[0];
-  let scheduled = moment(interviewDetails?.scheduledate).format("MMM D, YYYY");
+  let scheduled = moment(interviewDetails?.scheduledate).format("MM/DD/YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
   let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
@@ -88,6 +96,27 @@ export function UpcomingVideoDetails({
     };
     cancelScheduleData(cancelData);
   };
+  const acceptSchedule = () => {
+    acceptInterview(interviewId);
+  };
+  const rejectSchedule = () => {
+    rejectInterview(interviewId);
+  };
+  let customQuestion = [];
+  let preQuestions = [];
+  if (
+    interviewDetails.jobCandidatePrescreenApplicantDtos !== null &&
+    interviewDetails.jobCandidatePrescreenApplicantDtos.length > 0
+  ) {
+    interviewDetails.jobCandidatePrescreenApplicantDtos.forEach((element) => {
+      if (element.iscustomquestion === false) {
+        preQuestions.push(element);
+      }
+      if (element.iscustomquestion === true) {
+        customQuestion.push(element);
+      }
+    });
+  }
   return (
     <>
       <CardBody>
@@ -129,7 +158,7 @@ export function UpcomingVideoDetails({
                   >
                     <BsFillCheckCircleFill className="mb-1" />
                   </Button>
-                  <Button
+                  {/* <Button
                     name="format"
                     color={"primary"}
                     size={"sm"}
@@ -137,7 +166,7 @@ export function UpcomingVideoDetails({
                     outline
                   >
                     <BsFillQuestionCircleFill className="mb-1" />
-                  </Button>
+                  </Button> */}
                   <Button
                     name="format"
                     color={"danger"}
@@ -221,7 +250,9 @@ export function UpcomingVideoDetails({
                     <FaEllipsisV />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem>
+                    <DropdownItem
+                      onClick={(e) => setShowEditScheduleModal(true)}
+                    >
                       <i className="dropdown-icon lnr-inbox"> </i>
                       <span>Edit</span>
                     </DropdownItem>
@@ -329,22 +360,46 @@ export function UpcomingVideoDetails({
               ))}
           </ul>
           {interviewDetails?.candidateSummaryDtos?.length === undefined && (
-            <p className="mb-0">-</p>
+            <p className="mb-0 ">
+              <i> - No summary added</i>
+            </p>
           )}
         </div>
-        <div className="p-3">
+        <div className="p-3 pb-0">
           <h6 className="fw-bold">Application questions</h6>
-          <p className="mb-0">-</p>
+          {preQuestions.length > 0 &&
+            preQuestions?.map((preQue) => (
+              <>
+                <p className="mb-1"> {preQue.prescreenquestion}</p>
+                <p className="ms-2 mb-1"> - {preQue.answer}</p>
+              </>
+            ))}
+          {preQuestions.length === 0 && (
+            <p className="mb-0 ">
+              <i> - No application question added</i>
+            </p>
+          )}
         </div>
-        <div className="p-3">
+        <div className="p-3 ">
           <h6 className="fw-bold">Pre-screen</h6>
-          <p className="mb-0">-</p>
+          {customQuestion.length > 0 &&
+            customQuestion?.map((preQue) => (
+              <>
+                <p className="mb-1">{preQue.prescreenquestion}</p>
+                <p className="ms-2 mb-1"> - {preQue.answer}</p>
+              </>
+            ))}
+          {customQuestion.length === 0 && (
+            <p className="mb-0 ">
+              <i> - No pre-screen custom question added</i>
+            </p>
+          )}
         </div>
         <div className="divider" />
         <div className="d-block text-center mb-1">
           <h6 className="fw-bold">
             Request sent on{" "}
-            {moment(interviewDetails?.createddate).format("MMM D, YYYY")}
+            {moment(interviewDetails?.createddate).format("MM/DD/YYYY")}
           </h6>
         </div>
       </CardBody>
@@ -370,6 +425,59 @@ export function UpcomingVideoDetails({
           !
         </SweetAlert>
       )}
+      {showAcceptPopup && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, accept interview!"
+          confirmBtnBsStyle="success"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => acceptSchedule(e)}
+          onCancel={() => setShowAcceptPopup(false)}
+          focusCancelBtn
+        >
+          You want to Accept the interview with{" "}
+          {interviewDetails?.candidatename
+            ? interviewDetails?.candidatename
+            : interviewDetails?.firstname && interviewDetails?.lastname
+            ? interviewDetails?.firstname + " " + interviewDetails?.lastname
+            : ""}
+          !
+        </SweetAlert>
+      )}
+      {showRejectPopup && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, reject interview!"
+          confirmBtnBsStyle="danger"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => rejectSchedule(e)}
+          onCancel={() => setShowRejectPopup(false)}
+          focusCancelBtn
+        >
+          You want to reject the interview with{" "}
+          {interviewDetails?.candidatename
+            ? interviewDetails?.candidatename
+            : interviewDetails?.firstname && interviewDetails?.lastname
+            ? interviewDetails?.firstname + " " + interviewDetails?.lastname
+            : ""}
+          !
+        </SweetAlert>
+      )}
+      <UpdateScheduleInterviewModal
+        interviewData={interviewDetails}
+        durationOptions={durationOptions}
+        postData={(e) => {
+          getUpdatedFormData(e);
+        }}
+        isOpen={showEditScheduleModal}
+        onClose={() => setShowEditScheduleModal(false)}
+      />
     </>
   );
 }

@@ -12,6 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { InterviewDetailsModal } from "./interviewDetailsModal";
 import moment from "moment-timezone";
+import { useSelector } from "react-redux";
+import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
 
 export function ScheduleInterviewList({
   candidateList,
@@ -21,7 +23,12 @@ export function ScheduleInterviewList({
   postMessageData,
   acceptInterview,
   rejectInterview,
+  getUpdatedFormData,
 }) {
+  const durationOptions = useSelector(
+    (state) => state.scheduleInterview.duration
+  );
+  const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const customStyles = {
     headRow: {
       style: {
@@ -158,6 +165,19 @@ export function ScheduleInterviewList({
         postMessageData={(e) => postMessageData(e)}
         acceptInterview={(e) => acceptInterview(e)}
         rejectInterview={(e) => rejectInterview(e)}
+        editScheduledInterview={(e) => {
+          setShowEditScheduleModal(true);
+          onCloseIdModal();
+        }}
+      />
+      <UpdateScheduleInterviewModal
+        interviewData={selectedJobDetails}
+        durationOptions={durationOptions}
+        postData={(e) => {
+          getUpdatedFormData(e);
+        }}
+        isOpen={showEditScheduleModal}
+        onClose={() => setShowEditScheduleModal(false)}
       />
     </>
   );
