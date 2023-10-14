@@ -14,15 +14,9 @@ import { fetchWrapper } from "_helpers";
 const name = 'adminListing';
 const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
 
-const companyURLParams= {
-  searchText : '',
-  companyId : 0,
-  cityId : 0,
-  stateId : 0,
-  countryId : 0,
+const urlParams= {
   isActive : true,
-  pageSize : 10,
-  pageNumber : 1
+  pageSize : 1000
 };
 
 export const getCompanies = createAsyncThunk(
@@ -33,6 +27,16 @@ export const getCompanies = createAsyncThunk(
   }
 );
 
+//https://panther-api-dev.azurewebsites.net/api/Customer/Get?isActive=true&pageSize=500
+export const getCustomers = createAsyncThunk( 
+  `${name}/getCustomers`,
+  async (payload = {}) => {
+    const GET_CUSTOMERS_STATS = `${baseUrl}/Customer/Get?${new URLSearchParams(payload)}`;
+    console.log("NG thunk call GET_CUSTOMERS_STATS", GET_CUSTOMERS_STATS)
+    return await fetchWrapper.get(GET_CUSTOMERS_STATS);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -40,7 +44,7 @@ const adminListingSlice = createSlice({
     // initialize state from local storage to enable user to stay logged in
     loading: false,
     error: null,
-    companiesData: companyURLParams,
+    data: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -57,9 +61,23 @@ const adminListingSlice = createSlice({
     [getCompanies.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.companiesData = data?.companyDetailsList;    // dummy data, api not available
+      state.data = data?.companyDetailsList;    // dummy data, api not available
     },
     [getCompanies.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [getCustomers.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getCustomers.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      console.log("NG in fulfilled payload", payload)
+      state.loading = false;
+      state.data = data.customerDetailsList;    // dummy data, api not available
+    },
+    [getCustomers.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
@@ -70,7 +88,8 @@ const adminListingSlice = createSlice({
 // Export the actions and reducer
 export const adminListingActions = {
   ...adminListingSlice.actions,
-  getCompanies // Export the async get companies action
+  getCompanies,
+  getCustomers // Export the async get companies action
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

@@ -4,35 +4,47 @@ export const customers = {
   listingTitle: "Customer Listings",
   columns : [
   {
-    name: "Name",
-    id: "name",
-    selector: row => row.name,
+    name: "First name",
+    id: "firstname",
+    selector: row => row.firstname,
+    sortable: true,
+  },
+  {
+      name: "Last name",
+    id: "lastname",
+    selector: row => row.lastname,
     sortable: true,
   },
   {
     name: "Company",
-    id: "company",
-    selector: row => row.company,
-    sortable: true,
-  },
-  {
-    name: "Address",
-    selector: row => row.address,
+    id: "companyname",
+    selector: row => row.companyname,
     sortable: true,
   },
   {
     name: "City",
-    selector: row => row.city,
+    id: "cityname",
+    selector: row => row.cityname,
     sortable: true,
   },
   {
     name: "State",
-    selector: row => row.state,
+    selector: row => row.statename,
+    sortable: true,
+  },
+  {
+    name: "Country",
+    selector: row => row.countryname,
+    sortable: true,
+  },
+  {
+    name: "Zipcode",
+    selector: row => row.zipcode,
     sortable: true,
   },
   {
     name: "Phone",
-    selector: row => row.phone,
+    selector: row => row.phonenumber,
     sortable: true,
   },
   {
@@ -40,16 +52,6 @@ export const customers = {
     selector: row => row.email,
     sortable: true,
   },
-  {
-    name: "Status",
-    selector: row => row.statuses,
-    sortable: true,
-  },
-  {
-    name: "Registration",
-    selector: row => row.date,
-    sortable: true,
-  }
 ],
 searchFilter: [
       {

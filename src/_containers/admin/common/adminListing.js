@@ -6,14 +6,14 @@ import { Row, Col, Card, CardBody, CardHeader, Button, FormGroup, InputGroup, In
 import "_containers/admin/common/adminListing.scss"
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { getCompanies } from '_containers/admin/_redux/adminListing.slice'
+import { getCompanies, getCustomers } from '_containers/admin/_redux/adminListing.slice'
 import { useEffect } from "react";
 
 
 export const AdminListing = ({entity}) => {
   const dispatch = useDispatch()
   const {
-    companiesData,
+    data,
     loading = false } = useSelector((state) => state?.adminListing ?? {});
 
   let title, icon, listingTitle, columns = [], searchFilter = [], buttonsList = [];
@@ -63,14 +63,17 @@ export const AdminListing = ({entity}) => {
       break;
   }
 
-  const companyURLParams = {
+  const urlParams = {
     isActive: true,
     pageSize: 500,
   };
 
   useEffect(() => {
+    // dispatch(getCustomers(urlParams));
     if (entity === "company") {
-      dispatch(getCompanies(companyURLParams))
+      dispatch(getCompanies(urlParams))
+    } else if (entity === "customers") {
+      dispatch(getCustomers(urlParams))
     }
   }, [])
 
@@ -127,7 +130,7 @@ export const AdminListing = ({entity}) => {
                 {cardFilters}
                 {cardButtons}
               </Row>
-              <DataTable data={companiesData}
+              <DataTable data={data}
                 columns={columns}
                 pagination
                 fixedHeader
