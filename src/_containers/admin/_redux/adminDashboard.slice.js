@@ -20,22 +20,23 @@ const cardStats= {
       
     };
 
-const candidatesDataInitial = [
-  { id: 0, label: "01/01/2024", noRecommendedJobs: 1, activeCandidates: 2, recommededJobs: 24 },
-  { id: 1, label: "02/01/2023", noRecommendedJobs: 1, activeCandidates: 1, recommededJobs: 22 },
-  { id: 2, label: "03/01/2023", noRecommendedJobs: 1, activeCandidates: 9, recommededJobs: 22 },
-  { id: 3, label: "04/01/2023", noRecommendedJobs: 1, activeCandidates: 3, recommededJobs: 20 },
-  { id: 4, label: "05/01/2023", noRecommendedJobs: 1, activeCandidates: 4, recommededJobs: 21 },
-  { id: 5, label: "06/01/2023", noRecommendedJobs: 1, activeCandidates: 3, recommededJobs: 25 },
-  { id: 6, label: "07/01/2023", noRecommendedJobs: 0, activeCandidates: 4, recommededJobs: 21 },
-  { id: 7, label: "08/01/2023", noRecommendedJobs: 1, activeCandidates: 6, recommededJobs: 22 },
-  { id: 8, label: "09/01/2023", noRecommendedJobs: 1, activeCandidates: 7, recommededJobs: 20 },
-  { id: 9, label: "10/01/2023", noRecommendedJobs: 1, activeCandidates: 9, recommededJobs: 21 },
-  { id: 10, label: yesterday, noRecommendedJobs: 0, activeCandidates: 8, recommededJobs: 15 },
-  { id: 11, label: todaysDate, noRecommendedJobs: 0, activeCandidates: 3, recommededJobs: 21 }
+const candidatesDataDummy = [
+  { id: 0, label: "01/01/2024", noRecommendedJobs: 4, activeCandidates: 240, recommededJobs: 2400 },
+  { id: 1, label: "02/01/2023", noRecommendedJobs: 0, activeCandidates: 139, recommededJobs: 2210 },
+  { id: 2, label: "03/01/2023", noRecommendedJobs: 2, activeCandidates: 980, recommededJobs: 2290 },
+  { id: 3, label: "04/01/2023", noRecommendedJobs: 2, activeCandidates: 390, recommededJobs: 2000 },
+  { id: 4, label: "05/01/2023", noRecommendedJobs: 1, activeCandidates: 480, recommededJobs: 2181 },
+  { id: 5, label: "06/01/2023", noRecommendedJobs: 3, activeCandidates: 380, recommededJobs: 2500 },
+  { id: 6, label: "07/01/2023", noRecommendedJobs: 0, activeCandidates: 430, recommededJobs: 2100 },
+  { id: 7, label: "08/01/2023", noRecommendedJobs: 2, activeCandidates: 680, recommededJobs: 2290 },
+  { id: 8, label: "09/01/2023", noRecommendedJobs: 4, activeCandidates: 790, recommededJobs: 2000 },
+  { id: 9, label: "10/01/2023", noRecommendedJobs: 2, activeCandidates: 980, recommededJobs: 2181 },
+  { id: 10, label: yesterday, noRecommendedJobs: 0, activeCandidates: 800, recommededJobs: 1500 },
+  { id: 11, label: todaysDate, noRecommendedJobs: 0, activeCandidates: 300, recommededJobs: 2100 }
 ];
 
-const candidatesDataDummy = [
+
+const interviewDataDummy = [
   { id: 0, label: "01/01/2024", noRecommendedJobs: 4, activeCandidates: 240, recommededJobs: 2400, interviewScheduled: 50 },
   { id: 1, label: "02/01/2023", noRecommendedJobs: 0, activeCandidates: 139, recommededJobs: 2210, interviewScheduled: 39 },
   { id: 2, label: "03/01/2023", noRecommendedJobs: 2, activeCandidates: 980, recommededJobs: 2290, interviewScheduled: 77 },
@@ -77,7 +78,7 @@ const adminDashboardSlice = createSlice({
     cardStats,
     todaysDate,
     timeInterval: timeIntervalDefault,
-    candidatesData: candidatesDataInitial,
+    candidatesData: candidatesDataDummy,
     totalInterviewScheduled: 0
 
   },

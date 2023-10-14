@@ -81,29 +81,29 @@ export const company = {
   columns : [
   {
     name: "Company",
-    id: "name",
-    selector: row => row.name,
+      id: "companyname",
+    selector: row => row.companyname,
     sortable: true,
   },
   {
     name: "City",
-    id: "city",
-    selector: row => row.city,
+    id: "cityname",
+    selector: row => row.cityname,
     sortable: true,
   },
   {
     name: "State",
-    selector: row => row.state,
+    selector: row => row.statename,
     sortable: true,
   },
   {
     name: "Zip",
-    selector: row => row.email,
+    selector: row => row.contactemail,
     sortable: true,
   },
   {
     name: "Industry",
-    selector: row => row.phone,
+    selector: row => row.contactphonenumber,
     sortable: true,
   },
 ],
