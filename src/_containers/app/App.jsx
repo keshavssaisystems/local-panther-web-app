@@ -51,8 +51,7 @@ import { CustomerReportInterviewedCandidates } from "_containers/customer/report
 import { CustomerReportJobAging } from "_containers/customer/reports/customerjobaging";
 import { CustomerReportMatchedCandidate } from "_containers/customer/reports/customermatchedjoblist";
 import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
-import AdminCompanyList from "_containers/admin/AdminCompanyList";
-import AdminCustomersList from "_containers/admin/AdminCustomersList";
+import { AdminListing } from "_containers/admin/common/adminListing";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -79,7 +78,7 @@ export function App() {
             path="/customers"
             element={
               <PrivateRoute>
-                <AdminCustomersList />
+                <AdminListing entity="customers" />
               </PrivateRoute>
             }
           />
@@ -87,7 +86,7 @@ export function App() {
             path="/company"
             element={
               <PrivateRoute>
-                <AdminCompanyList />
+                <AdminListing entity="company" />
               </PrivateRoute>
             }
           />
@@ -103,7 +102,7 @@ export function App() {
             path="/users"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Users"} />
+                <AdminListing entity="users" />
               </PrivateRoute>
             }
           />
@@ -111,7 +110,7 @@ export function App() {
             path="/roles"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Roles"} />
+                <AdminListing entity="roles" />
               </PrivateRoute>
             }
           />
@@ -119,7 +118,7 @@ export function App() {
             path="/menu-mapping"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Menu mapping"} />
+                <AdminListing entity="menuMapping" />
               </PrivateRoute>
             }
           />
