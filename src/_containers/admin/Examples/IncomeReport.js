@@ -18,7 +18,6 @@ const IncomeReport = () => {
   const { cardStats, totalInterviewScheduled } = useSelector((state) => state?.adminDashboard ?? {});
 
   const selectTimeInterval = (timeInterval) => {
-    console.log("NG %s dispatched", timeInterval)
     // dispatch(showScores(timeInterval))
   }
 

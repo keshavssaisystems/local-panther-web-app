@@ -44,7 +44,8 @@ export const customers = {
   },
   {
     name: "Phone",
-    selector: row => row.phonenumber,
+    selector: row => (row.contactphonenumber
+),
     sortable: true,
   },
   {
@@ -53,6 +54,7 @@ export const customers = {
     sortable: true,
   },
 ],
+
 searchFilter: [
       {
         name: "Company",
@@ -104,7 +106,7 @@ export const company = {
     sortable: true,
   },
   {
-    name: "Industry",
+    name: "Phone",
     selector: row => row.contactphonenumber,
     sortable: true,
   },

@@ -89,7 +89,11 @@ const adminListingSlice = createSlice({
     [getCompanies.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data?.companyDetailsList;    // dummy data, api not available
+      const newData = data?.companyDetailsList.map((item) => {
+        const newContact = item?.contactphonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
+        return ({ ...item, contactphonenumber: newContact ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3] : null })
+    })
+      state.data = newData;
     },
     [getCompanies.rejected]: (state, action) => {
       state.loading = false;
@@ -102,7 +106,7 @@ const adminListingSlice = createSlice({
     [getCustomers.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data?.customerDetailsList;    // dummy data, api not available
+      state.data = data?.customerDetailsList;
     },
     [getCustomers.rejected]: (state, action) => {
       state.loading = false;
@@ -140,7 +144,6 @@ const adminListingSlice = createSlice({
     },
     [getMenuMappings.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
-      console.log("NG getMenuMappings payload", payload)
       state.loading = false;
       state.data = data;
     },

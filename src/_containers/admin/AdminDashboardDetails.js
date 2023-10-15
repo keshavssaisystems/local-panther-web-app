@@ -388,7 +388,6 @@ const AdminDashboardDetails = () => {
     }
   ]
 
-  console.log("NG cardstats total", cardStats.totalCandidates)
   const cardsMapping = dashCardUI.map(ele => {
     const borderColor = "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-primary " + ele.color
     const arrowDirection = ele.arrowDirection === 'faAngleUp' ? 1 : 0
