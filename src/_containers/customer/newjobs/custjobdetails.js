@@ -1,12 +1,14 @@
 import React from "react";
-import { Card, Col, Row } from "reactstrap";
+import { Card, Col, Row, Button } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import { ButtonWithCount } from "../../../_components/jobDetailComponents/ButtonWithCount";
-import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsHeader";
+// import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsHeader";
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
+import { FiMapPin, FiEdit } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export function CustJobDetail({ jobDetails, type }) {
   let loading = true;
@@ -91,7 +93,7 @@ export function CustJobDetail({ jobDetails, type }) {
         .map((item) => item.shifts)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -104,7 +106,7 @@ export function CustJobDetail({ jobDetails, type }) {
         .map((item) => item.workschedules)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -163,6 +165,7 @@ export function CustJobDetail({ jobDetails, type }) {
     }
   };
 
+  const navigate = useNavigate();
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -174,14 +177,40 @@ export function CustJobDetail({ jobDetails, type }) {
         )}
         {loading === false && (
           <Card className="card-shadow-primary profile-responsive card-border mb-3">
-            <DetailsHeader
-              heading={jobDetail.jobtitle}
-              subHeading={jobDetail.companyname}
-              location={jobDetail.locationaddress}
-              // ApplyButton={type !== "Open"}
-              // jobId={jobDetail.jobid}
-              // department={jobDetail.departmentid ?? 1}
-            />
+            <div className="dropdown-menu-header">
+              <div className="dropdown-menu-header-inner heading-background">
+                <Row>
+                  <Col md={8} lg={8}>
+                    <div className="menu-header-content btn-pane-right text-start">
+                      <div>
+                        <h5 className="menu-header-title job-title-details">
+                          {jobDetail.jobtitle}
+                        </h5>
+                        <p className="mb-0 mt-0">{jobDetail.companyname}</p>
+                        <p className="mb-0 mt-0">
+                          <FiMapPin className="muted-icon" /> {returnAddress()}
+                        </p>
+                      </div>
+                    </div>
+                  </Col>
+                  {jobDetail.isdraft ? (
+                    <Col md={4} lg={4} className="right-align">
+                      <Button
+                        color="primary"
+                        className={"me-3 mt-3"}
+                        onClick={(e) =>
+                          navigate(`/customer-edit-job/${jobDetail.jobid}`)
+                        }
+                      >
+                        <FiEdit className="mb-1" /> Edit job
+                      </Button>
+                    </Col>
+                  ) : (
+                    <></>
+                  )}
+                </Row>
+              </div>
+            </div>
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
             </div>

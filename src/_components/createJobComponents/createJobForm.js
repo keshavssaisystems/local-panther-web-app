@@ -90,7 +90,7 @@ export default function CreateJob({
     if (type === "previous_template" || type === "recommendation_template") {
       let data = {
         basicInformation: {
-          companyId: "Adams - Runolfsdottir",
+          companyId: "",
           jobTitle: previousData.jobtitle,
           noOfPostions: previousData.noofopenposition,
           jobLocation: previousData.joblocationid,
@@ -105,14 +105,26 @@ export default function CreateJob({
           jobLoactionOptions: jobLocationOptions,
         },
         experienceSchedule: {
-          jobType: previousData.jobExperienceScheduleDtos[0]?.jobtypes,
+          jobType:
+            previousData?.jobExperienceScheduleDtos === undefined
+              ? ""
+              : previousData?.jobExperienceScheduleDtos[0]?.jobtypes,
           workSchedule:
-            previousData.jobExperienceScheduleDtos[0]?.workschedules,
-          shift: previousData.jobExperienceScheduleDtos[0]?.shifts,
+            previousData?.jobExperienceScheduleDtos === undefined
+              ? ""
+              : previousData?.jobExperienceScheduleDtos[0]?.workschedules,
+          shift:
+            previousData?.jobExperienceScheduleDtos === undefined
+              ? ""
+              : previousData?.jobExperienceScheduleDtos[0]?.shifts,
           experienceLevel:
-            previousData.jobExperienceScheduleDtos[0]?.experiencelevelid,
+            previousData?.jobExperienceScheduleDtos === undefined
+              ? ""
+              : previousData?.jobExperienceScheduleDtos[0]?.experiencelevelid,
           hiringTimeline:
-            previousData.jobExperienceScheduleDtos[0]?.hiringtimelineid,
+            previousData?.jobExperienceScheduleDtos === undefined
+              ? ""
+              : previousData?.jobExperienceScheduleDtos[0]?.hiringtimelineid,
           shiftsOption: shiftsOption,
           workScheduleOptions: workScheduleOptions,
           jobTypeOption: jobTypeOption,
@@ -120,22 +132,36 @@ export default function CreateJob({
           hiringTimelineOption: hiringTimelineOption,
         },
         paymentBenifits: {
-          payPeriodType: previousData.jobPaymentBenefitDtos[0]?.payperiodtypeid,
-          minimumAmount: previousData.jobPaymentBenefitDtos[0]?.minimumamount,
-          maximumAmount: previousData.jobPaymentBenefitDtos[0]?.maximumamount,
+          payPeriodType:
+            previousData?.jobPaymentBenefitDtos === undefined
+              ? ""
+              : previousData?.jobPaymentBenefitDtos[0]?.payperiodtypeid,
+          minimumAmount:
+            previousData?.jobPaymentBenefitDtos === undefined
+              ? ""
+              : previousData?.jobPaymentBenefitDtos[0]?.minimumamount,
+          maximumAmount:
+            previousData?.jobPaymentBenefitDtos === undefined
+              ? ""
+              : previousData?.jobPaymentBenefitDtos[0]?.maximumamount,
           compensationPackage:
-            previousData.jobPaymentBenefitDtos[0]?.compensationpackage,
-          benefits: previousData.jobPaymentBenefitDtos[0]?.benefits,
+            previousData?.jobPaymentBenefitDtos === undefined
+              ? ""
+              : previousData?.jobPaymentBenefitDtos[0]?.compensationpackage,
+          benefits:
+            previousData?.jobPaymentBenefitDtos === undefined
+              ? ""
+              : previousData?.jobPaymentBenefitDtos[0]?.benefits,
           payPeriodTypeOption: payPeriodTypeOption,
         },
         keyQualification:
-          previousData.jobKeyQualificationDtos === null
+          previousData?.jobKeyQualificationDtos === null
             ? {}
-            : previousData.jobKeyQualificationDtos,
+            : previousData?.jobKeyQualificationDtos,
         preScreen:
-          previousData.jobPrescreenApplicationDtos === null
+          previousData?.jobPrescreenApplicationDtos === null
             ? {}
-            : previousData.jobPrescreenApplicationDtos,
+            : previousData?.jobPrescreenApplicationDtos,
       };
       setBasicInformationData(data.basicInformation);
       setExperienceScheduleData(data.experienceSchedule);

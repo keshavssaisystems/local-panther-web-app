@@ -190,7 +190,7 @@ export function App() {
             path="/create-job"
             element={
               <PrivateRoute>
-                <CreateJobWizard />
+                <CreateJobWizard type={"add"} />
               </PrivateRoute>
             }
           />
@@ -293,6 +293,10 @@ export function App() {
                 <CustomerReportCandidateStatus />
               </PrivateRoute>
             }
+          />
+          <Route
+            path="/customer-edit-job/:id"
+            element={<CreateJobWizard type={"edit"} />}
           />
         </>
       );

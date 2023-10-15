@@ -57,6 +57,24 @@ export const getCustomerDetailsThunk = createAsyncThunk(
   }
 );
 
+// getUpdatejobThunk thunk
+export const getUpdatejobThunk = createAsyncThunk(
+  `${name}/getUpdatejobThunk`,
+  async ({ jobData, jobId }) => {
+    const UPDATE_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/${jobId}`;
+    return await fetchWrapper.put(UPDATE_JOB_END_POINT, jobData);
+  }
+);
+
+// getJobDetailForUpdateThunk thunk
+export const getJobDetailForUpdateThunk = createAsyncThunk(
+  `${name}/getJobDetailForUpdateThunk`,
+  async (jobId) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/GetJobDetails/${jobId}`;
+    return await fetchWrapper.get(PRESCREEN_END_POINT);
+  }
+);
+
 // Create the slice
 const createjobSlice = createSlice({
   name,
@@ -67,6 +85,8 @@ const createjobSlice = createSlice({
     publishJob: [],
     customerDetails: [],
     recommendedList: [],
+    jobForUpdate: [],
+    updateJob: [],
     loading: false,
   },
   reducers: {},
@@ -139,6 +159,28 @@ const createjobSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getUpdatejobThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getUpdatejobThunk.fulfilled]: (state, action) => {
+      state.updateJob = action.payload.data;
+      state.loading = false;
+    },
+    [getUpdatejobThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getJobDetailForUpdateThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getJobDetailForUpdateThunk.fulfilled]: (state, action) => {
+      state.jobForUpdate = action.payload.data;
+      state.loading = false;
+    },
+    [getJobDetailForUpdateThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -151,6 +193,8 @@ export const createjobActions = {
   getPublishJobThunk,
   getCustomerDetailsThunk,
   getRecommendedListThunk,
+  getUpdatejobThunk,
+  getJobDetailForUpdateThunk,
 };
 
 export const createjobReducer = createjobSlice.reducer;
