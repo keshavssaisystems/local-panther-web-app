@@ -27,15 +27,16 @@ import {
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 // import { msdummy } from "./msdummy";
 import SweetAlert from "react-bootstrap-sweetalert";
-// import { Providers } from "@microsoft/mgt-element";
-// import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
-// import { Login } from "@microsoft/mgt-react";
+import { Providers } from "@microsoft/mgt-element";
+import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
+import { Login } from "@microsoft/mgt-react";
+
+Providers.globalProvider = new Msal2Provider({
+  clientId: "2b06b934-7cf6-443c-9ff6-dd449fe80ca1",
+  scopes: ["Calendars.Read"],
+});
 
 export function ScheduleInterview() {
-  // Providers.globalProvider = new Msal2Provider({
-  //   clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
-  //   scopes: ["Calendars.Read"],
-  // });
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);
   const [updateSuccessPopup, setUpdateSuccess] = useState(false);
@@ -480,7 +481,7 @@ export function ScheduleInterview() {
                   )}
                 </Col>
               )}
-              {/* {toggleVar === "availabilty" && (
+              {toggleVar === "availabilty" && (
                 <Col
                   xs={12}
                   sm={12}
@@ -491,7 +492,7 @@ export function ScheduleInterview() {
                 >
                   <Login>Sync with Microsoft</Login>
                 </Col>
-              )} */}
+              )}
             </Row>
 
             {toggleVar === "availabilty" && (
