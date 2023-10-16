@@ -299,7 +299,10 @@ export function CreateJobWizard({ type }) {
   };
   return (
     <>
-      <PageTitle heading="Create New Job" icon={titlelogo} />
+      <PageTitle
+        heading={type === "edit" ? "Edit job" : "Create new job"}
+        icon={titlelogo}
+      />
       <Row>
         <Col>
           <Card className="main-card mb-3">
