@@ -23,19 +23,22 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
+  graphActions,
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 // import { msdummy } from "./msdummy";
 import SweetAlert from "react-bootstrap-sweetalert";
-// import { Providers } from "@microsoft/mgt-element";
-// import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
-// import { Login } from "@microsoft/mgt-react";
+import { Providers } from "@microsoft/mgt-element";
+import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
+import { Login } from "@microsoft/mgt-react";
+
+Providers.globalProvider = new Msal2Provider({
+  clientId: "2b06b934-7cf6-443c-9ff6-dd449fe80ca1",
+  scopes: ["Calendars.Read"],
+});
 
 export function ScheduleInterview() {
-  // Providers.globalProvider = new Msal2Provider({
-  //   clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
-  //   scopes: ["Calendars.Read"],
-  // });
+  const [msLogin, setMsLogin] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);
   const [updateSuccessPopup, setUpdateSuccess] = useState(false);
@@ -57,10 +60,25 @@ export function ScheduleInterview() {
       })
     );
   };
+
   useEffect(() => {
+    if (msLogin === true) {
+      getGraphData();
+    }
     getUpdatedScheduleList();
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
   }, []);
+  const getGraphData = async function () {
+    let startDate =
+      moment().weekday(Number(0)).format("YYYY-MM-DD") + "T00:00:00Z";
+    let endDate =
+      moment().weekday(Number(6)).format("YYYY-MM-DD") + "T00:00:00Z";
+    await dispatch(graphActions.getgraphThunk({ startDate, endDate }));
+  };
+  const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
+  useEffect(() => {
+    getGraphData();
+  }, [msLogin]);
   const getUpdatedScheduleList = () => {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
@@ -285,7 +303,7 @@ export function ScheduleInterview() {
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
-  let syncData = [];
+  let syncData = microsoftCalenderData;
   let overallData = [];
   let availData = [];
   let msBlockData = [];
@@ -480,7 +498,7 @@ export function ScheduleInterview() {
                   )}
                 </Col>
               )}
-              {/* {toggleVar === "availabilty" && (
+              {toggleVar === "availabilty" && (
                 <Col
                   xs={12}
                   sm={12}
@@ -489,9 +507,11 @@ export function ScheduleInterview() {
                   xl={4}
                   className="mb-3 right-align"
                 >
-                  <Login>Sync with Microsoft</Login>
+                  <div>
+                    <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                  </div>
                 </Col>
-              )} */}
+              )}
             </Row>
 
             {toggleVar === "availabilty" && (
