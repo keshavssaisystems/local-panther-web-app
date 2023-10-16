@@ -1,0 +1,62 @@
+[
+    {
+      "name": "Quemby Richardson",
+      "email": "nibh@protonmail.edu",
+      "country": "Indonesia",
+      "numberrange": 6,
+      "skills": "ligula. Aenean euismod mauris eu elit. Nulla facilisi. Sed neque.",
+      "postalZip": "362555",
+      "phone": "(689) 184-8529",
+      "list": 9,
+      "address": "Ap #956-6547 A, Ave",
+      "status": "Rejected on 01 Oct 2023"
+    },
+    {
+      "name": "Keiko Dennis",
+      "email": "ullamcorper.magna@icloud.net",
+      "country": "Germany",
+      "numberrange": 7,
+      "skills": "arcu. Vestibulum ante ipsum primis in faucibus orci luctus et",
+      "postalZip": "8814",
+      "phone": "(668) 514-4117",
+      "list": 11,
+      "address": "6217 Tempor St.",
+      "status": "Acceped on 07 Oct 2023"
+    },
+    {
+      "name": "Flavia Pitts",
+      "email": "penatibus.et.magnis@outlook.edu",
+      "country": "New Zealand",
+      "numberrange": "0",
+      "skills": "Class aptent taciti sociosqu ad litora torquent per conubia nostra,",
+      "postalZip": "11-548",
+      "phone": "1-596-531-4484",
+      "list": 1,
+      "address": "463-7283 Adipiscing St.",
+      "status": "Scheduled for 12 Oct 2023"
+    },
+    {
+        "name": "Phelan Benton",
+        "email": "curabitur@protonmail.edu",
+        "country": "Germany",
+        "numberrange": 4,
+        "skills": "fermentum risus, at fringilla purus mauris a nunc. In at",
+        "postalZip": "28359",
+        "phone": "(603) 333-6358",
+        "list": 9,
+        "address": "Ap #363-6548 Amet St.",
+        "status": "Matched 90% on 21 Aug 2023"
+    },
+    {
+      "name": "Cassady Jenkins",
+      "email": "ipsum.nunc.id@aol.com",
+      "country": "Philippines",
+      "numberrange": 5,
+      "skills": "ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis. Nulla",
+      "postalZip": "5281-5851",
+      "phone": "(259) 365-6270",
+      "list": 5,
+      "address": "139-8556 Ac Rd.",
+      "status": "Liked on 25 Aug 2023"
+    }
+]
