@@ -23,6 +23,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
+  graphActions,
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 // import { msdummy } from "./msdummy";
@@ -37,6 +38,7 @@ Providers.globalProvider = new Msal2Provider({
 });
 
 export function ScheduleInterview() {
+  const [msLogin, setMsLogin] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);
   const [updateSuccessPopup, setUpdateSuccess] = useState(false);
@@ -58,10 +60,25 @@ export function ScheduleInterview() {
       })
     );
   };
+
   useEffect(() => {
+    if (msLogin === true) {
+      getGraphData();
+    }
     getUpdatedScheduleList();
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
   }, []);
+  const getGraphData = async function () {
+    let startDate =
+      moment().weekday(Number(0)).format("YYYY-MM-DD") + "T00:00:00Z";
+    let endDate =
+      moment().weekday(Number(6)).format("YYYY-MM-DD") + "T00:00:00Z";
+    await dispatch(graphActions.getgraphThunk({ startDate, endDate }));
+  };
+  const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
+  useEffect(() => {
+    getGraphData();
+  }, [msLogin]);
   const getUpdatedScheduleList = () => {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
@@ -286,7 +303,7 @@ export function ScheduleInterview() {
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
-  let syncData = [];
+  let syncData = microsoftCalenderData;
   let overallData = [];
   let availData = [];
   let msBlockData = [];
@@ -490,7 +507,9 @@ export function ScheduleInterview() {
                   xl={4}
                   className="mb-3 right-align"
                 >
-                  <Login>Sync with Microsoft</Login>
+                  <div>
+                    <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                  </div>
                 </Col>
               )}
             </Row>
