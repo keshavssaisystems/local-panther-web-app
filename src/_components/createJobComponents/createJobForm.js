@@ -88,6 +88,7 @@ export default function CreateJob({
   };
   useEffect(() => {
     if (type === "previous_template" || type === "recommendation_template") {
+      console.log(previousData);
       let data = {
         basicInformation: {
           companyId: "",
@@ -106,23 +107,23 @@ export default function CreateJob({
         },
         experienceSchedule: {
           jobType:
-            previousData?.jobExperienceScheduleDtos === undefined
+            previousData?.jobExperienceScheduleDtos === null
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.jobtypes,
           workSchedule:
-            previousData?.jobExperienceScheduleDtos === undefined
+            previousData?.jobExperienceScheduleDtos === null
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.workschedules,
           shift:
-            previousData?.jobExperienceScheduleDtos === undefined
+            previousData?.jobExperienceScheduleDtos === null
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.shifts,
           experienceLevel:
-            previousData?.jobExperienceScheduleDtos === undefined
+            previousData?.jobExperienceScheduleDtos === null
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.experiencelevelid,
           hiringTimeline:
-            previousData?.jobExperienceScheduleDtos === undefined
+            previousData?.jobExperienceScheduleDtos === null
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.hiringtimelineid,
           shiftsOption: shiftsOption,
@@ -133,23 +134,23 @@ export default function CreateJob({
         },
         paymentBenifits: {
           payPeriodType:
-            previousData?.jobPaymentBenefitDtos === undefined
+            previousData?.jobPaymentBenefitDtos === null
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.payperiodtypeid,
           minimumAmount:
-            previousData?.jobPaymentBenefitDtos === undefined
+            previousData?.jobPaymentBenefitDtos === null
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.minimumamount,
           maximumAmount:
-            previousData?.jobPaymentBenefitDtos === undefined
+            previousData?.jobPaymentBenefitDtos === null
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.maximumamount,
           compensationPackage:
-            previousData?.jobPaymentBenefitDtos === undefined
+            previousData?.jobPaymentBenefitDtos === null
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.compensationpackage,
           benefits:
-            previousData?.jobPaymentBenefitDtos === undefined
+            previousData?.jobPaymentBenefitDtos === null
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.benefits,
           payPeriodTypeOption: payPeriodTypeOption,

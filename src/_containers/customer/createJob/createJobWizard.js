@@ -45,6 +45,11 @@ export function CreateJobWizard({ type }) {
       companyId: localStorage.getItem("companyid"),
     });
   }, []);
+  const jobListData = useSelector((state) => state.custJobListReducer.jobList);
+  let selectedJobDetailsForEdit = jobListData.filter((jobs) => {
+    return jobs.jobid === Number(id);
+  });
+  console.log(selectedJobDetailsForEdit);
   const jobDetailForEdit = useSelector((state) => state.createJob.jobForUpdate);
   const getOptionsData = (event) => {
     if (
@@ -98,6 +103,7 @@ export function CreateJobWizard({ type }) {
     await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
   const updateJob = async function (formElement) {
+    console.log("update");
     await dispatch(
       createjobActions.getUpdatejobThunk({ jobData: formElement, jobId: id })
     );
@@ -183,7 +189,9 @@ export function CreateJobWizard({ type }) {
           type={type === "edit" ? "previous_template" : jobType}
           previousStep={previousStep}
           jobData={jobData}
-          previousData={type === "edit" ? jobDetailForEdit : jobDetail}
+          previousData={
+            type === "edit" ? selectedJobDetailsForEdit[0] : jobDetail
+          }
           JobDataForPreview={(e) => getDataForPreview(e)}
           bIFormSubmitted={(e) => getBIStatus(e)}
           esFormSubmitted={(e) => getESStatus(e)}
@@ -205,6 +213,8 @@ export function CreateJobWizard({ type }) {
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
           publishJob={(e) => publishNewJob(e)}
+          jobId={type === "edit" ? selectedJobDetailsForEdit[0].jobid : 0}
+          type={type}
         />
       ),
     },
