@@ -196,7 +196,7 @@ export function CustJobDetail({ jobDetails, type, publishJob }) {
                   </Col>
                   {jobDetail.isdraft ? (
                     <Col md={4} lg={4} className="right-align">
-                      <Button
+                      {/* <Button
                         color="primary"
                         className={"me-1 mt-3"}
                         onClick={(e) =>
@@ -204,7 +204,7 @@ export function CustJobDetail({ jobDetails, type, publishJob }) {
                         }
                       >
                         <FiEdit className="mb-1" /> Edit job
-                      </Button>
+                      </Button> */}
                       <Button
                         color="primary"
                         className={"me-3 mt-3"}
