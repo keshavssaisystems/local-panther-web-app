@@ -8,6 +8,9 @@ export function UpcomingDetail({
   cancelScheduleData,
   postNotesData,
   postInviteData,
+  acceptInterview,
+  rejectInterview,
+  getUpdatedFormData,
 }) {
   return (
     <>
@@ -18,6 +21,9 @@ export function UpcomingDetail({
             cancelScheduleData={(e) => cancelScheduleData(e)}
             postNotesData={(e) => postNotesData(e)}
             postInviteData={(e) => postInviteData(e)}
+            acceptInterview={(e) => acceptInterview(e)}
+            rejectInterview={(e) => rejectInterview(e)}
+            getUpdatedFormData={(e) => getUpdatedFormData(e)}
           />
         </Card>
       )}

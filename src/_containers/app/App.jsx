@@ -51,6 +51,8 @@ import { CustomerReportInterviewedCandidates } from "_containers/customer/report
 import { CustomerReportJobAging } from "_containers/customer/reports/customerjobaging";
 import { CustomerReportMatchedCandidate } from "_containers/customer/reports/customermatchedjoblist";
 import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
+import AdminCompanyList from "_containers/admin/AdminCompanyList";
+import AdminCustomersList from "_containers/admin/AdminCustomersList";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -77,15 +79,15 @@ export function App() {
             path="/customers"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Customers"} />
+                <AdminCustomersList />
               </PrivateRoute>
             }
           />
           <Route
-            path="/candidate-list"
+            path="/company"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Candidates"} />
+                <AdminCompanyList />
               </PrivateRoute>
             }
           />

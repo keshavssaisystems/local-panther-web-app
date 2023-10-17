@@ -16,7 +16,6 @@ import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
 import {
   BsFillCheckCircleFill,
-  BsFillQuestionCircleFill,
   BsXCircleFill,
   BsPersonVideo2,
   BsFillTelephoneFill,
@@ -55,7 +54,7 @@ export function VideoInterviewDetails({
     }
   );
   const interviewDetail = selectedJobDetails[0];
-  let scheduled = moment(interviewDetail?.scheduledate).format("MMM D, YYYY");
+  let scheduled = moment(interviewDetail?.scheduledate).format("MM/DD/YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
   let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
@@ -104,6 +103,21 @@ export function VideoInterviewDetails({
   const rejectSchedule = () => {
     rejectInterview(interviewId);
   };
+  let customQuestion = [];
+  let preQuestions = [];
+  if (
+    interviewDetail.jobCandidatePrescreenApplicantDtos !== null &&
+    interviewDetail.jobCandidatePrescreenApplicantDtos.length > 0
+  ) {
+    interviewDetail.jobCandidatePrescreenApplicantDtos.forEach((element) => {
+      if (element.iscustomquestion === false) {
+        preQuestions.push(element);
+      }
+      if (element.iscustomquestion === true) {
+        customQuestion.push(element);
+      }
+    });
+  }
   return (
     <>
       <div className="dropdown-menu-header">
@@ -150,7 +164,7 @@ export function VideoInterviewDetails({
                 >
                   <BsFillCheckCircleFill className="mb-1" />
                 </Button>
-                <Button
+                {/* <Button
                   name="format"
                   color={"primary"}
                   size={"sm"}
@@ -158,7 +172,7 @@ export function VideoInterviewDetails({
                   outline
                 >
                   <BsFillQuestionCircleFill className="mb-1" />
-                </Button>
+                </Button> */}
                 <Button
                   name="format"
                   color={"danger"}
@@ -334,20 +348,47 @@ export function VideoInterviewDetails({
               <li>{summaryDetails.summary}</li>
             ))}
         </ul>
+        {interviewDetail?.candidateSummaryDtos?.length === undefined && (
+          <p className="mb-0 ">
+            <i> - No summary added</i>
+          </p>
+        )}
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Application questions</h6>
-        <p className="mb-0">-</p>
+        {preQuestions.length > 0 &&
+          preQuestions?.map((preQue) => (
+            <>
+              <p className="mb-1"> {preQue.prescreenquestion}</p>
+              <p className="ms-2 mb-1"> - {preQue.answer}</p>
+            </>
+          ))}
+        {preQuestions.length === 0 && (
+          <p className="mb-0 ">
+            <i> - No application question added</i>
+          </p>
+        )}
       </div>
       <div className="p-3">
         <h6 className="fw-bold">Pre-screen</h6>
-        <p className="mb-0">-</p>
+        {customQuestion.length > 0 &&
+          customQuestion?.map((preQue) => (
+            <>
+              <p className="mb-1">{preQue.prescreenquestion}</p>
+              <p className="ms-2 mb-1"> - {preQue.answer}</p>
+            </>
+          ))}
+        {customQuestion.length === 0 && (
+          <p className="mb-0 ">
+            <i> - No pre-screen custom question added</i>
+          </p>
+        )}
       </div>
       <div className="divider" />
       <div className="d-block text-center mb-1">
         <h6 className="fw-bold">
           Request sent on{" "}
-          {moment(interviewDetail?.createddate).format("MMM D, YYYY")}
+          {moment(interviewDetail?.createddate).format("MM/DD/YYYY")}
         </h6>
       </div>
       {showCancelPopup && (

@@ -24,7 +24,6 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  // console.log(interviewData);
   const [videoModeCheck, setVideoModeCheck] = useState(
     interviewData.isappvideocall === true ? 0 : 1
   );
@@ -89,8 +88,6 @@ export function UpdateScheduleInterviewModal({
   };
   const getFormValidation = (event) => {
     event.preventDefault();
-    console.log(event.target.elements.scheduleStartTime.value);
-    console.log(moment(interviewData.starttime).format("hh:mm A"));
     event.target.elements.scheduleDate.value === ""
       ? setScheduleDateValidation(true)
       : setScheduleDateValidation(false);
@@ -187,9 +184,8 @@ export function UpdateScheduleInterviewModal({
       isactive: true,
       currentUserId: 0,
     };
-    console.log(data);
     postData(data);
-    // onClose();
+    onClose();
   };
   return (
     <>
@@ -268,11 +264,9 @@ export function UpdateScheduleInterviewModal({
                           <option
                             key={options}
                             value={options}
-                            defaultValue={
-                              moment(interviewData.starttime).format(
-                                "hh:mm A"
-                              ) === options
-                            }
+                            selected={moment(interviewData.starttime).format(
+                              "hh:mm A"
+                            )}
                           >
                             {options}{" "}
                           </option>
@@ -306,10 +300,7 @@ export function UpdateScheduleInterviewModal({
                             <option
                               value={data.id}
                               key={data.id}
-                              defaultValue={
-                                Number(interviewData.durationid) ===
-                                Number(data.id)
-                              }
+                              selected={Number(interviewData.durationid)}
                             >
                               {data.name}
                             </option>

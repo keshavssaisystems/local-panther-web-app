@@ -80,7 +80,7 @@ export const cancelInterviewThunk = createAsyncThunk(
 export const updateScheduledInterviewThunk = createAsyncThunk(
   `${name}/updateScheduledInterviewThunk`,
   async ({ scheduleinterviewid, formData }) => {
-    const UPDATE_SCHEDULED_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/cancelInterview/${scheduleinterviewid}`;
+    const UPDATE_SCHEDULED_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/${scheduleinterviewid}`;
     return await fetchWrapper.put(
       UPDATE_SCHEDULED_INTERVIEWER_END_POINT,
       formData
@@ -123,6 +123,15 @@ export const rejectInterviewThunk = createAsyncThunk(
   }
 );
 
+// getPreScreenQuestionsThunk thunk
+export const getPreScreenQuestionsThunk = createAsyncThunk(
+  `${name}/getPreScreenQuestionsThunk`,
+  async (jobId) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/JobPrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}`;
+    return await fetchWrapper.get(PRESCREEN_END_POINT);
+  }
+);
+
 // Create the slice
 const scheduleInterviewSlice = createSlice({
   name,
@@ -133,6 +142,7 @@ const scheduleInterviewSlice = createSlice({
     upcomingInterviewWOPagination: [],
     allInterview: [],
     candidateSchedules: [],
+    prescreenQuestions: [],
     loading: false,
   },
   reducers: {},
@@ -276,6 +286,17 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getPreScreenQuestionsThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getPreScreenQuestionsThunk.fulfilled]: (state, action) => {
+      state.prescreenQuestions = action.payload.data;
+      state.loading = false;
+    },
+    [getPreScreenQuestionsThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -295,6 +316,7 @@ export const scheduleInterviewActions = {
   getSchedulesByCandidateId,
   acceptInterviewThunk,
   rejectInterviewThunk,
+  getPreScreenQuestionsThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;
