@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
+import InputMask from "react-input-mask";
 
 import Slider from "react-slick";
 import "./registration.scss";
@@ -55,8 +56,7 @@ export function Registration() {
       .max(30, "First name must be at most 30 characters"),
     email: Yup.string().required("Email is required"),
     phoneNumber: Yup.string()
-      .required("Phone number is required")
-      .matches(phoneRegExp, 'Phone number is not valid'),
+      .required("Phone number is required"),
     password: Yup.string()
       .required("Password is required")
       .min(4, "Password must be at least 4 characters")
@@ -149,13 +149,15 @@ export function Registration() {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="phoneNumber" className="input-label">Phone number</Label>
-                        <input
-                          type="text"
+                        <InputMask
+                          mask="(999)-999-9999"
+                          maskChar={null}
                           name="phoneNumber"
                           id="phoneNumber"
-                          placeholder="Enter phone number"
+                          placeholder="Eg: (987)-654-3210"
                           {...register("phoneNumber")}
                           className={`form-control placeholder-name ${errors.phoneNumber ? "is-invalid" : ""}`}
+
                         />
                         <FormFeedback>{errors.phoneNumber?.message}</FormFeedback>
                       </FormGroup>
