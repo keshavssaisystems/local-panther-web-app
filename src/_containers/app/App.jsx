@@ -51,6 +51,8 @@ import { CustomerReportInterviewedCandidates } from "_containers/customer/report
 import { CustomerReportJobAging } from "_containers/customer/reports/customerjobaging";
 import { CustomerReportMatchedCandidate } from "_containers/customer/reports/customermatchedjoblist";
 import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
+import { CustomerVideoScreen } from "../../firebase/customerVideo";
+import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
 
 export function App() {
@@ -239,14 +241,7 @@ export function App() {
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}
           />
-          <Route
-            path="/report"
-            element={
-              <PrivateRoute>
-                <CustomerReportJobList />
-              </PrivateRoute>
-            }
-          />
+
           <Route
             path="/report/customer-jobs/:id"
             element={
@@ -299,6 +294,14 @@ export function App() {
             path="/customer-edit-job/:id"
             element={<CreateJobWizard type={"edit"} />}
           />
+          <Route
+            path="/cust-video"
+            element={
+              <PrivateRoute>
+                <CustomerVideoScreen />
+              </PrivateRoute>
+            }
+          />
         </>
       );
     } else {
@@ -345,6 +348,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CandidateSchedules title={"Calendar"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/cand-video"
+            element={
+              <PrivateRoute>
+                <CandVideoScreen />
               </PrivateRoute>
             }
           />

@@ -14,9 +14,7 @@ export const getCustReportJobList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_JOB_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    const GET_CUST_REPORT_JOB_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=null,@enddate=null`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_LIST_END_POINT);
   }
 );
