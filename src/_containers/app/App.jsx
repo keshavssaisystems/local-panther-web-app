@@ -247,7 +247,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/customer-jobs"
+            path="/report/customer-jobs/:id"
             element={
               <PrivateRoute>
                 <CustomerReportJobList />
@@ -255,7 +255,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/customer-scheduled-interviews"
+            path="/report/customer-scheduled-interviews/:id"
             element={
               <PrivateRoute>
                 <CustomerReportScheduledInterviews />

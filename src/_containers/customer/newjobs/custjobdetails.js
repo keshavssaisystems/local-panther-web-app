@@ -182,6 +182,80 @@ export function CustJobDetail({ jobDetails, type }) {
               // jobId={jobDetail.jobid}
               // department={jobDetail.departmentid ?? 1}
             />
+            {type === "Open" && (
+              <div className="p-3 mt-2 align-left">
+                <ButtonWithCount
+                  buttonName={"Applied"}
+                  color={"primary"}
+                  count={
+                    jobDetail.totalAppliedCandidates === null
+                      ? 0
+                      : jobDetail.totalAppliedCandidates
+                  }
+                  action={`/customer-candidate-applied/${jobDetails[0]?.jobid}`}
+                />
+                <ButtonWithCount
+                  buttonName={"Matched"}
+                  color={"primary"}
+                  count={
+                    jobDetail.totalRecommendedCandidates === null
+                      ? 0
+                      : jobDetail.totalRecommendedCandidates
+                  }
+                  action={`/customer-candidate-matched/${jobDetails[0]?.jobid}`}
+                />
+                <ButtonWithCount
+                  buttonName={"Liked"}
+                  color={"primary"}
+                  count={
+                    jobDetail.totalLikedCandidates === null
+                      ? 0
+                      : jobDetail.totalLikedCandidates
+                  }
+                  action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
+                />
+                {/* <ButtonWithCount
+                  buttonName={"Maybe"}
+                  color={"primary"}
+                  count={
+                    jobDetail.totalLikedCandidates === null
+                      ? 0
+                      : jobDetail.totalLikedCandidates
+                  }
+                  action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
+                /> */}
+                {/* <ButtonWithCount
+                  buttonName={"Scheduled"}
+                  color={"primary"}
+                  count={
+                    jobDetail.totalLikedCandidates === null
+                      ? 0
+                      : jobDetail.totalLikedCandidates
+                  }
+                  action={`/customer-candidate-scheduled/${jobDetails[0]?.jobid}`}
+                /> */}
+                <ButtonWithCount
+                  buttonName={"Accepted"}
+                  color={"success"}
+                  count={
+                    jobDetail.totalAcceptedCandidates === null
+                      ? 0
+                      : jobDetail.totalAcceptedCandidates
+                  }
+                  action={`/customer-candidate-accepted/${jobDetails[0]?.jobid}`}
+                />
+                <ButtonWithCount
+                  buttonName={"Rejected"}
+                  color={"danger"}
+                  count={
+                    jobDetail.totalRejectedCandidates === null
+                      ? 0
+                      : jobDetail.totalRejectedCandidates
+                  }
+                  action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
+                />
+              </div>
+            )}
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
             </div>
@@ -279,80 +353,6 @@ export function CustJobDetail({ jobDetails, type }) {
               }
               type={"list"}
             />
-            {type === "Open" && (
-              <div className="p-3 mt-3 align-left custom-footer-section">
-                <ButtonWithCount
-                  buttonName={"Applied"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalAppliedCandidates === null
-                      ? 0
-                      : jobDetail.totalAppliedCandidates
-                  }
-                  action={`/customer-candidate-applied/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Recommended"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalRecommendedCandidates === null
-                      ? 0
-                      : jobDetail.totalRecommendedCandidates
-                  }
-                  action={`/customer-candidate-matched/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Liked"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalLikedCandidates === null
-                      ? 0
-                      : jobDetail.totalLikedCandidates
-                  }
-                  action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
-                />
-                {/* <ButtonWithCount
-                  buttonName={"Maybe"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalLikedCandidates === null
-                      ? 0
-                      : jobDetail.totalLikedCandidates
-                  }
-                  action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
-                /> */}
-                {/* <ButtonWithCount
-                  buttonName={"Scheduled"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalLikedCandidates === null
-                      ? 0
-                      : jobDetail.totalLikedCandidates
-                  }
-                  action={`/customer-candidate-scheduled/${jobDetails[0]?.jobid}`}
-                /> */}
-                <ButtonWithCount
-                  buttonName={"Accepted"}
-                  color={"success"}
-                  count={
-                    jobDetail.totalAcceptedCandidates === null
-                      ? 0
-                      : jobDetail.totalAcceptedCandidates
-                  }
-                  action={`/customer-candidate-accepted/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Rejected"}
-                  color={"danger"}
-                  count={
-                    jobDetail.totalRejectedCandidates === null
-                      ? 0
-                      : jobDetail.totalRejectedCandidates
-                  }
-                  action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
-                />
-              </div>
-            )}
           </Card>
         )}
       </Col>
