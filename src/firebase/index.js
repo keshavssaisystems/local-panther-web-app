@@ -97,7 +97,7 @@ export const servers = {
 
 //   // Listen for remote answer
 //   callDoc.onSnapshot((snapshot) => {
-//     const data = snapshot.data();
+//     const data = snapshot.data();addIceCandidate
 //     if (!pc.currentRemoteDescription && data?.answer) {
 //       const answerDescription = new RTCSessionDescription(data.answer);
 //       pc.setRemoteDescription(answerDescription);

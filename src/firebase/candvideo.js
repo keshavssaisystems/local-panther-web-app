@@ -4,9 +4,6 @@ import "firebase/firestore";
 import { firebaseConfig, servers } from "../firebase/index";
 
 export const CandVideoScreen = () => {
-  const [inputVal, setInputVal] = useState("");
-  const [answerBtnDisable, setAnswerBtnDisable] = useState(true);
-  const [webCamBtnDisable, setWebCamBtnDisable] = useState(false);
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
@@ -36,17 +33,19 @@ export const CandVideoScreen = () => {
     };
 
     const webcamVideo = document.getElementById("webcamVideo");
-
     const remoteVideo = document.getElementById("remoteVideo");
+    const webcamButton = document.getElementById("webcamButton");
+    const answerButton = document.getElementById("answerButton");
+
     webcamVideo.srcObject = localStream;
     remoteVideo.srcObject = remoteStream;
-
-    setAnswerBtnDisable(false);
-    setWebCamBtnDisable(true);
+    answerButton.disabled = false;
+    webcamButton.disabled = true;
   };
 
   const onAnswerClick = async () => {
-    const callId = inputVal;
+    const callInput = document.getElementById("callInput");
+    const callId = callInput.value;
     const callDoc = firestore.collection("calls").doc(callId);
     const answerCandidates = callDoc.collection("answerCandidates");
     const offerCandidates = callDoc.collection("offerCandidates");
@@ -95,24 +94,12 @@ export const CandVideoScreen = () => {
         </span>
       </div>
 
-      <button
-        id="webcamButton"
-        disabled={webCamBtnDisable}
-        onClick={() => onWebCamClick()}
-      >
+      <button id="webcamButton" onClick={() => onWebCamClick()}>
         Start webcam
       </button>
 
-      <input
-        id="callInput"
-        onChange={(e) => setInputVal(e.target.value)}
-        value={inputVal}
-      />
-      <button
-        id="answerButton"
-        disabled={answerBtnDisable}
-        onClick={() => onAnswerClick()}
-      >
+      <input id="callInput" />
+      <button id="answerButton" disabled onClick={() => onAnswerClick()}>
         Answer
       </button>
     </div>

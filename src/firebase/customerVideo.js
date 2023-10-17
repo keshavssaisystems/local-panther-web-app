@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { firebaseConfig, servers } from "../firebase/index";
 
-export const CustomerVideoScreen = () => {
-  const [inputVal, setInputVal] = useState("");
-  const [callBtnDisable, setCallBtnDisable] = useState(true);
-  const [webCamBtnDisable, setWebCamBtnDisable] = useState(false);
+export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
@@ -36,14 +33,16 @@ export const CustomerVideoScreen = () => {
     };
 
     const webcamVideo = document.getElementById("webcamVideo");
-
     const remoteVideo = document.getElementById("remoteVideo");
+    const webcamButton = document.getElementById("webcamButton");
+    const callButton = document.getElementById("callButton");
+
     webcamVideo.srcObject = localStream;
     remoteVideo.srcObject = remoteStream;
 
-    setCallBtnDisable(false);
+    callButton.disabled = false;
     // answerButton.disabled = false;
-    setWebCamBtnDisable(true);
+    webcamButton.disabled = true;
   };
 
   // 2. Create an offer
@@ -52,9 +51,8 @@ export const CustomerVideoScreen = () => {
     const callDoc = firestore.collection("calls").doc();
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
-
-    // callInput.value = callDoc.id;
-    setInputVal(callDoc.id);
+    const callInput = document.getElementById("callInput");
+    callInput.value = callDoc.id;
 
     // Get candidates for caller, save to db
     pc.onicecandidate = (event) => {
@@ -90,8 +88,6 @@ export const CustomerVideoScreen = () => {
         }
       });
     });
-
-    // hangupButton.disabled = false;
   };
 
   return (
@@ -108,21 +104,13 @@ export const CustomerVideoScreen = () => {
         </span>
       </div>
 
-      <button
-        id="webcamButton"
-        disabled={webCamBtnDisable}
-        onClick={() => onWebCamClick()}
-      >
+      <button id="webcamButton" onClick={() => onWebCamClick()}>
         Start webcam
       </button>
-      <button
-        id="callButton"
-        disabled={callBtnDisable}
-        onClick={() => onCreateCall()}
-      >
+      <button id="callButton" disabled onClick={() => onCreateCall()}>
         Create Call (offer)
       </button>
-      <input id="callInput" value={inputVal} />
+      <input id="callInput" />
     </div>
   );
-};
+});
