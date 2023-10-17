@@ -50,7 +50,7 @@ export function DonutChart() {
                 Candidate's
               </div>
               <span className="text-muted mt-1 ms-4">
-                Accepted, scheduled & Rejected
+                Accepted, scheduled & rejected
               </span>
             </Col>
           </Row>
