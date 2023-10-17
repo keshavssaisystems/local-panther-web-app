@@ -88,7 +88,6 @@ export default function CreateJob({
   };
   useEffect(() => {
     if (type === "previous_template" || type === "recommendation_template") {
-      console.log(previousData);
       let data = {
         basicInformation: {
           companyId: "",
@@ -164,7 +163,6 @@ export default function CreateJob({
             ? {}
             : previousData?.jobPrescreenApplicationDtos,
       };
-      console.log(data);
       setBasicInformationData(data.basicInformation);
       setExperienceScheduleData(data.experienceSchedule);
       setPaymentBenifitsData(data.paymentBenifits);

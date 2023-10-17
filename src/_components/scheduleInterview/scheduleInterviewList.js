@@ -145,7 +145,6 @@ export function ScheduleInterviewList({
             onRowClicked={handleRowClick}
             columns={columns(handleButtonClick)}
             data={candidateList}
-            selectableRows
             persistTableHead
             customStyles={customStyles}
             pagination

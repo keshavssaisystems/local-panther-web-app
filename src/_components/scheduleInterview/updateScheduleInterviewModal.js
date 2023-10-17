@@ -24,17 +24,16 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  const [videoModeCheck, setVideoModeCheck] = useState(
-    interviewData.isappvideocall === true ? 0 : 1
-  );
-  const [timeOption, setTimeOption] = useState([]);
-  const [formatButton, setFormatButton] = useState(
+  let formatedData =
     interviewData.format === "In-person"
       ? 3
       : interviewData.format === "Phone"
       ? 2
-      : 1
+      : 1;
+  const [videoModeCheck, setVideoModeCheck] = useState(
+    interviewData.isappvideocall === true ? 0 : 1
   );
+  const [timeOption, setTimeOption] = useState([]);
   const [modal, setModal] = useState(false);
   const [scheduleDateValidation, setScheduleDateValidation] = useState(false);
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
@@ -42,7 +41,7 @@ export function UpdateScheduleInterviewModal({
   const [videoLinkValidation, setVideoLinkValidation] = useState(false);
   const [interviewAddressValidation, setInterviewAddressValidation] =
     useState(false);
-
+  const [formatButton, setFormatButton] = useState(formatedData);
   const toggle = () => {
     setModal(!modal);
   };
