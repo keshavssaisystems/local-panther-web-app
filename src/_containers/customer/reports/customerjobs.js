@@ -31,57 +31,57 @@ import { data } from "./data";
 const columns = [
   {
     name: "Job Code",
-    selector: (row) => row.jobcode,
+    selector: (row) => row.jobid,
     sortable: true,
   },
   {
     name: "Title",
-    selector: (row) => row.title,
+    selector: (row) => row.jobtitle,
     sortable: true,
   },
   {
     name: "Status",
-    selector: (row) => row.status,
+    selector: (row) => row.jobstatus,
     sortable: true,
   },
   {
     name: "No. of Positions",
-    selector: (row) => row.noofpositions,
+    selector: (row) => row.noofopenposition,
     sortable: true,
   },
   {
     name: "Posted date",
-    selector: (row) => row.posteddate,
+    selector: (row) => row.createddate,
     sortable: true,
   },
   {
     name: "No. of Matched",
-    selector: (row) => row.noofmatched,
+    selector: (row) => row.matchedcandidates,
     sortable: true,
   },
   {
     name: "No. of Liked",
-    selector: (row) => row.noofliked,
+    selector: (row) => row.likedcandidates,
     sortable: true,
   },
   {
     name: "No. of Maybe",
-    selector: (row) => row.noofmaybe,
+    selector: (row) => row.maybecandidates,
     sortable: true,
   },
   {
     name: "No. of Accepted",
-    selector: (row) => row.noofaccepted,
+    selector: (row) => row.acceptedcandidates,
     sortable: true,
   },
   {
     name: "No. of Rejected",
-    selector: (row) => row.noofrejected,
+    selector: (row) => row.rejectedcandidates,
     sortable: true,
   },
   {
     name: "No. of Interviews Scheduled",
-    selector: (row) => row.noofinterviewsscheduled,
+    selector: (row) => row.scheduledinterviews,
     sortable: true,
   },
 ];
@@ -186,7 +186,7 @@ export function CustomerReportJobList() {
                 </Col>
               </Row>
 
-              <Table columns={columns} data={data} fixedHeader />
+              <Table columns={columns} data={jobList} fixedHeader />
             </CardBody>
           </Card>
         </Col>

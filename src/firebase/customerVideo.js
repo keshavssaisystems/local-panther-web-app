@@ -47,10 +47,12 @@ export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
 
   // 2. Create an offer
   const onCreateCall = async () => {
+    debugger;
     // Reference Firestore collections for signaling
     const callDoc = firestore.collection("calls").doc();
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
+    debugger;
     const callInput = document.getElementById("callInput");
     callInput.value = callDoc.id;
 
@@ -107,7 +109,7 @@ export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
       <button id="webcamButton" onClick={() => onWebCamClick()}>
         Start webcam
       </button>
-      <button id="callButton" disabled onClick={() => onCreateCall()}>
+      <button id="callButton" onClick={() => onCreateCall()}>
         Create Call (offer)
       </button>
       <input id="callInput" />

@@ -99,7 +99,7 @@ export const CandVideoScreen = () => {
       </button>
 
       <input id="callInput" />
-      <button id="answerButton" disabled onClick={() => onAnswerClick()}>
+      <button id="answerButton" onClick={() => onAnswerClick()}>
         Answer
       </button>
     </div>
