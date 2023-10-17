@@ -33,34 +33,35 @@ export default function CustomerDashboard() {
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
+  console.log(dashboardCounts);
   let cardOptions = [
     {
-      title: "Matched jobs",
+      title: "Open jobs",
       count: dashboardCounts.openjobcount,
       className: "success",
       icon: "lnr-graduation-hat",
     },
     {
       title: "Upcoming interviews",
-      count: dashboardCounts.upcominginterviewscheduledcount,
+      count: dashboardCounts.upcominginterviewcount,
       className: "alternate",
       icon: "lnr-calendar-full",
     },
     {
       title: "Pending interviews",
-      count: dashboardCounts.upcominginterviewscheduledcount,
+      count: dashboardCounts.pendinginterviewschedulescount,
       className: "warning",
       icon: "lnr-calendar-full",
     },
     {
       title: "New candidate liked",
-      count: 20,
+      count: dashboardCounts.newcandidatelikedcount,
       className: "primary",
       icon: "lnr-thumbs-up",
     },
     {
       title: "Matched candidates",
-      count: 20,
+      count: dashboardCounts.matchedcandidatereviewpendingcount,
       className: "danger",
       icon: "lnr-user",
     },

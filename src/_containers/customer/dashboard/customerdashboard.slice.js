@@ -8,7 +8,8 @@ const name = "customerDashboard";
 export const getCustomerDashboardThunk = createAsyncThunk(
   `${name}/getCustomerDashboardThunk`,
   async () => {
-    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateDashboard/DasboardCount?date=2023-10-17T00%3A00%3A00`;
+    let UserID = localStorage.getItem("userId");
+    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CustomerDashboard/DasboardCount?userId=${UserID}`;
     return await fetchWrapper.get(DASHBOARD_END_POINT);
   }
 );
