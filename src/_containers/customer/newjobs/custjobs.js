@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { custJobListActions } from "_store";
+import { custJobListActions, createjobActions } from "_store";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { custListPageSize } from "_helpers/constants";
@@ -18,7 +18,13 @@ export const CustJobList = () => {
   const [searchText, setSearchText] = useState("");
 
   const dispatch = useDispatch();
-
+  const getCompanyDetails = async function () {
+    await dispatch(
+      createjobActions.getCustomerDetailsThunk(
+        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+      )
+    );
+  };
   const getJobList = async function (filterObj) {
     await dispatch(custJobListActions.getJobList(filterObj));
   };
@@ -28,7 +34,13 @@ export const CustJobList = () => {
   const loading = useSelector((state) => state.custJobListReducer.loading);
   const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
 
+  let current = Number(totalRows) / custListPageSize;
+  if (current * custListPageSize !== totalRows) {
+    current++;
+  }
+
   useEffect(() => {
+    getCompanyDetails();
     onPageChange(page);
   }, []);
 
@@ -45,7 +57,7 @@ export const CustJobList = () => {
       searchText:
         selectedOpt === "Search" || selectedOpt === "State" ? searchText : "",
       jobId: "",
-      companyId: "",
+      companyId: localStorage.getItem("companyid"),
       cityId: selectedOpt === "City" ? searchText : "",
       skillId: selectedOpt === "Skill" ? searchText : "",
     };
@@ -64,6 +76,15 @@ export const CustJobList = () => {
 
   const getSelectedJob = (e) => {
     dispatch(custJobListActions.getJobDetails({ jobId: e }));
+  };
+
+  const publishNewJob = function (event) {
+    let jobId = event;
+    let payload = {
+      currentUserId: localStorage.getItem("userId"),
+    };
+    dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
+    // onPageChange(page);
   };
   return (
     <>
@@ -122,6 +143,7 @@ export const CustJobList = () => {
                         <CustJobDetail
                           jobDetails={jobDetail}
                           type={"Open"}
+                          publishJob={(e) => publishNewJob(e)}
                         ></CustJobDetail>
                       </>
                     ) : (
@@ -154,7 +176,7 @@ export const CustJobList = () => {
             {jobList?.length > 0 ? (
               <>
                 <CardPagination
-                  totalPages={totalRows / custListPageSize}
+                  totalPages={current}
                   pageIndex={page}
                   onCallBack={(evt) => handlePageChange(evt)}
                 ></CardPagination>

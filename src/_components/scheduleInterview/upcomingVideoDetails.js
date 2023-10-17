@@ -148,7 +148,7 @@ export function UpcomingVideoDetails({
                   {" "}
                   Message{" "}
                 </Button>
-                <ButtonGroup size={"sm"}>
+                {/* <ButtonGroup size={"sm"}>
                   <Button
                     name="format"
                     color={"success"}
@@ -157,8 +157,8 @@ export function UpcomingVideoDetails({
                     outline
                   >
                     <BsFillCheckCircleFill className="mb-1" />
-                  </Button>
-                  {/* <Button
+                  </Button> */}
+                {/* <Button
                     name="format"
                     color={"primary"}
                     size={"sm"}
@@ -167,7 +167,7 @@ export function UpcomingVideoDetails({
                   >
                     <BsFillQuestionCircleFill className="mb-1" />
                   </Button> */}
-                  <Button
+                {/* <Button
                     name="format"
                     color={"danger"}
                     size={"sm"}
@@ -176,7 +176,7 @@ export function UpcomingVideoDetails({
                   >
                     <BsXCircleFill className="mb-1" />
                   </Button>
-                </ButtonGroup>
+                </ButtonGroup> */}
 
                 <Button
                   outline
@@ -276,11 +276,9 @@ export function UpcomingVideoDetails({
               )}
               {interviewDetails?.format === "In-person" && (
                 <div className="p-custom">
-                  <div className="p-custom">
-                    <p className="mb-0">
-                      Interview Address - {interviewDetails.interviewaddress}
-                    </p>
-                  </div>
+                  <p className="mb-0">
+                    Interview Address - {interviewDetails.interviewaddress}
+                  </p>
                 </div>
               )}
               {interviewDetails?.isappvideocall === false &&

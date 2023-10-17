@@ -1,15 +1,19 @@
 import React, { useEffect } from "react";
 import { Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 export default function PublishJobStep({
   companyId,
   reqData,
   responseData,
   publishJob,
+  jobId,
+  type,
 }) {
+  const navigate = useNavigate();
   useEffect(() => {
     let main = {
-      jobid: 0,
+      jobId: jobId,
       companyid: companyId,
       jobtitle: reqData.basicInformation.jobTitle,
       description: reqData.basicInformation.description,
@@ -28,7 +32,7 @@ export default function PublishJobStep({
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,
-          jobid: 0,
+          jobid: jobId,
           jobtypes: reqData.experienceSchedule.jobType,
           experiencelevel: Number(reqData.experienceSchedule.experienceLevel),
           workschedules: reqData.experienceSchedule.workSchedule,
@@ -44,7 +48,7 @@ export default function PublishJobStep({
       jobPaymentBenefitDtos: [
         {
           jobpaymentsbenifitsid: 0,
-          jobid: 0,
+          jobid: jobId,
           payperiodtypeid: Number(reqData.paymentBenifits.payPeriodType),
           minimumamount: reqData.paymentBenifits.minimumAmount,
           maximumamount: reqData.paymentBenifits.maximumAmount,
@@ -75,28 +79,42 @@ export default function PublishJobStep({
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
             Your job with <b>{reqData.basicInformation.jobTitle}</b> has
-            successfully created & saved as draft!
+            successfully {type === "edit" ? "updated" : "created"} & saved as
+            draft!
           </div>
           <div className="mt-3 mb-3" />
-          <div className="text-center">
-            <Button
-              color="primary"
-              size="lg"
-              className="btn-shadow btn-wide"
-              onClick={(e) => createNewJob(e)}
-            >
-              Create new job
-            </Button>{" "}
-            {"   "}
-            <Button
-              color="success"
-              size="lg"
-              className="btn-shadow btn-wide"
-              onClick={(e) => publishJob(true)}
-            >
-              Publish job
-            </Button>
-          </div>
+          {type === "add" ? (
+            <div className="text-center">
+              <Button
+                color="primary"
+                size="lg"
+                className="btn-shadow btn-wide"
+                onClick={(e) => createNewJob(e)}
+              >
+                Create new job
+              </Button>{" "}
+              {"   "}
+              <Button
+                color="success"
+                size="lg"
+                className="btn-shadow btn-wide"
+                onClick={(e) => publishJob(true)}
+              >
+                Publish job
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <Button
+                color="primary"
+                size="lg"
+                className="btn-shadow btn-wide"
+                onClick={(e) => navigate(`/job-list`)}
+              >
+                Back to job list
+              </Button>{" "}
+            </div>
+          )}
         </div>
       </div>
     </>

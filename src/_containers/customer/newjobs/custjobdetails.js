@@ -1,14 +1,17 @@
-import React from "react";
-import { Card, Col, Row } from "reactstrap";
+import React, { useState } from "react";
+import { Card, Col, Row, Button } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import { ButtonWithCount } from "../../../_components/jobDetailComponents/ButtonWithCount";
-import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsHeader";
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
+import { FiMapPin, FiEdit, FiCheckSquare } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import SweetAlert from "react-bootstrap-sweetalert";
 
-export function CustJobDetail({ jobDetails, type }) {
+export function CustJobDetail({ jobDetails, type, publishJob }) {
+  const [publishSuccess, setPublishSuccess] = useState(false);
   let loading = true;
   let jobDetail = {};
   let skillArray = [];
@@ -91,7 +94,7 @@ export function CustJobDetail({ jobDetails, type }) {
         .map((item) => item.shifts)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -104,7 +107,7 @@ export function CustJobDetail({ jobDetails, type }) {
         .map((item) => item.workschedules)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -163,6 +166,7 @@ export function CustJobDetail({ jobDetails, type }) {
     }
   };
 
+  const navigate = useNavigate();
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -174,15 +178,51 @@ export function CustJobDetail({ jobDetails, type }) {
         )}
         {loading === false && (
           <Card className="card-shadow-primary profile-responsive card-border mb-3">
-            <DetailsHeader
-              heading={jobDetail.jobtitle}
-              subHeading={jobDetail.companyname}
-              location={jobDetail.locationaddress}
-              // ApplyButton={type !== "Open"}
-              // jobId={jobDetail.jobid}
-              // department={jobDetail.departmentid ?? 1}
-            />
-            {type === "Open" && (
+            <div className="dropdown-menu-header">
+              <div className="dropdown-menu-header-inner heading-background">
+                <Row>
+                  <Col md={8} lg={8}>
+                    <div className="menu-header-content btn-pane-right text-start">
+                      <div>
+                        <h5 className="menu-header-title job-title-details">
+                          {jobDetail.jobtitle}
+                        </h5>
+                        <p className="mb-0 mt-0">{jobDetail.companyname}</p>
+                        <p className="mb-0 mt-0">
+                          <FiMapPin className="muted-icon" /> {returnAddress()}
+                        </p>
+                      </div>
+                    </div>
+                  </Col>
+                  {jobDetail.isdraft ? (
+                    <Col md={4} lg={4} className="right-align">
+                      {/* <Button
+                        color="primary"
+                        className={"me-1 mt-3"}
+                        onClick={(e) =>
+                          navigate(`/customer-edit-job/${jobDetail.jobid}`)
+                        }
+                      >
+                        <FiEdit className="mb-1" /> Edit job
+                      </Button> */}
+                      <Button
+                        color="primary"
+                        className={"me-3 mt-3"}
+                        onClick={(e) => {
+                          setPublishSuccess(true);
+                          publishJob(jobDetail.jobid);
+                        }}
+                      >
+                        <FiCheckSquare className="mb-1" /> Publish job
+                      </Button>
+                    </Col>
+                  ) : (
+                    <></>
+                  )}
+                </Row>
+              </div>
+            </div>
+            {type === "Open" && jobDetail.isdraft === false && (
               <div className="p-3 mt-2 align-left">
                 <ButtonWithCount
                   buttonName={"Applied"}
@@ -356,6 +396,13 @@ export function CustJobDetail({ jobDetails, type }) {
           </Card>
         )}
       </Col>
+      {publishSuccess === true && (
+        <SweetAlert
+          success
+          title="Job published successfully!!!"
+          onConfirm={(e) => setPublishSuccess(false)}
+        ></SweetAlert>
+      )}
     </>
   );
 }

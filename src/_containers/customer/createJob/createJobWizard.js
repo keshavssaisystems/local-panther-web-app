@@ -9,8 +9,11 @@ import PublishJobStep from "../../../_components/createJobComponents/publishJobS
 import { useDispatch, useSelector } from "react-redux";
 import { createjobActions, dropdownActions } from "_store";
 import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
+import { useParams } from "react-router-dom";
 
-export function CreateJobWizard() {
+export function CreateJobWizard({ type }) {
+  const dispatch = useDispatch();
+  const { id } = useParams();
   const [page, setPage] = useState(1);
   const [searchData, setSearchData] = useState("");
   const [buttonDisable, setButtonDisable] = useState(false);
@@ -19,12 +22,19 @@ export function CreateJobWizard() {
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
   const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
+  const getJobDetailForEdit = async function () {
+    await dispatch(createjobActions.getJobDetailForUpdateThunk(id));
+  };
+
   const customerDetails = useSelector(
     (state) => state.createJob.customerDetails
   );
   useEffect(() => {
     getOptions();
     getCompanyDetails();
+    if (type === "edit") {
+      getJobDetailForEdit();
+    }
     getRecommendedJobData({
       pageNo: page,
       searchText: searchData,
@@ -35,6 +45,10 @@ export function CreateJobWizard() {
       companyId: localStorage.getItem("companyid"),
     });
   }, []);
+  const jobListData = useSelector((state) => state.custJobListReducer.jobList);
+  let selectedJobDetailsForEdit = jobListData.filter((jobs) => {
+    return jobs.jobid === Number(id);
+  });
   const getOptionsData = (event) => {
     if (
       event.type === "previous_template" ||
@@ -68,7 +82,7 @@ export function CreateJobWizard() {
     setPreviousStep(3);
   };
   const requiredData = (data) => {
-    createJob(data);
+    type === "add" ? createJob(data) : updateJob(data);
   };
   const getSearchValue = (data) => {
     setSearchData(data);
@@ -82,12 +96,18 @@ export function CreateJobWizard() {
       companyId: localStorage.getItem("companyid"),
     });
   };
-  const dispatch = useDispatch();
+
   const createJob = async function (formElement) {
     await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
+  const updateJob = async function (formElement) {
+    console.log("update");
+    await dispatch(
+      createjobActions.getUpdatejobThunk({ jobData: formElement, jobId: id })
+    );
+  };
   const getOptions = async function () {
-    await dispatch(dropdownActions.getJobLocationTypeThunk());
+    await dispatch(dropdownActions?.getJobLocationTypeThunk());
     await dispatch(dropdownActions.getJobTypeThunk2());
     await dispatch(dropdownActions.getWorkScheduleThunk2());
     await dispatch(dropdownActions.getShiftThunk2());
@@ -164,10 +184,12 @@ export function CreateJobWizard() {
           jobLocationOptions={jobLocationOptions}
           payPeriodTypeOption={payPeriodTypeOption}
           preScreenQuestionsOption={preScreenQuestionsOption}
-          type={jobType}
+          type={type === "edit" ? "previous_template" : jobType}
           previousStep={previousStep}
           jobData={jobData}
-          previousData={jobDetail}
+          previousData={
+            type === "edit" ? selectedJobDetailsForEdit[0] : jobDetail
+          }
           JobDataForPreview={(e) => getDataForPreview(e)}
           bIFormSubmitted={(e) => getBIStatus(e)}
           esFormSubmitted={(e) => getESStatus(e)}
@@ -189,6 +211,8 @@ export function CreateJobWizard() {
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
           publishJob={(e) => publishNewJob(e)}
+          jobId={type === "edit" ? selectedJobDetailsForEdit[0].jobid : 0}
+          type={type}
         />
       ),
     },
@@ -232,9 +256,9 @@ export function CreateJobWizard() {
   };
   const [previousBtn, setPreviousButton] = useState(false);
   const [nextBtn, setNextButton] = useState(true);
-  const [compState, setCompState] = useState(0);
+  const [compState, setCompState] = useState(type === "add" ? 0 : 1);
   const [navigationState, setNavigationState] = useState(
-    getNavStates(0, steps.length)
+    getNavStates(type === "add" ? 0 : 1, steps.length)
   );
   const setNavState = (next) => {
     setNavigationState(getNavStates(next, steps.length));
@@ -273,7 +297,10 @@ export function CreateJobWizard() {
   };
   return (
     <>
-      <PageTitle heading="Create New Job" icon={titlelogo} />
+      <PageTitle
+        heading={type === "edit" ? "Edit job" : "Create new job"}
+        icon={titlelogo}
+      />
       <Row>
         <Col>
           <Card className="main-card mb-3">
