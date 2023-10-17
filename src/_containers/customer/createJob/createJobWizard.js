@@ -49,8 +49,6 @@ export function CreateJobWizard({ type }) {
   let selectedJobDetailsForEdit = jobListData.filter((jobs) => {
     return jobs.jobid === Number(id);
   });
-  console.log(selectedJobDetailsForEdit);
-  const jobDetailForEdit = useSelector((state) => state.createJob.jobForUpdate);
   const getOptionsData = (event) => {
     if (
       event.type === "previous_template" ||

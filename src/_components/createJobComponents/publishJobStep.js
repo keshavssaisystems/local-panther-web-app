@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Button } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 export default function PublishJobStep({
   companyId,
@@ -9,6 +10,7 @@ export default function PublishJobStep({
   jobId,
   type,
 }) {
+  const navigate = useNavigate();
   useEffect(() => {
     let main = {
       jobId: jobId,
@@ -81,25 +83,38 @@ export default function PublishJobStep({
             draft!
           </div>
           <div className="mt-3 mb-3" />
-          <div className="text-center">
-            <Button
-              color="primary"
-              size="lg"
-              className="btn-shadow btn-wide"
-              onClick={(e) => createNewJob(e)}
-            >
-              Create new job
-            </Button>{" "}
-            {"   "}
-            <Button
-              color="success"
-              size="lg"
-              className="btn-shadow btn-wide"
-              onClick={(e) => publishJob(true)}
-            >
-              Publish job
-            </Button>
-          </div>
+          {type === "add" ? (
+            <div className="text-center">
+              <Button
+                color="primary"
+                size="lg"
+                className="btn-shadow btn-wide"
+                onClick={(e) => createNewJob(e)}
+              >
+                Create new job
+              </Button>{" "}
+              {"   "}
+              <Button
+                color="success"
+                size="lg"
+                className="btn-shadow btn-wide"
+                onClick={(e) => publishJob(true)}
+              >
+                Publish job
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <Button
+                color="primary"
+                size="lg"
+                className="btn-shadow btn-wide"
+                onClick={(e) => navigate(`/job-list`)}
+              >
+                Back to job list
+              </Button>{" "}
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -34,6 +34,11 @@ export const CustJobList = () => {
   const loading = useSelector((state) => state.custJobListReducer.loading);
   const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
 
+  let current = Number(totalRows) / custListPageSize;
+  if (current * custListPageSize !== totalRows) {
+    current++;
+  }
+
   useEffect(() => {
     getCompanyDetails();
     onPageChange(page);
@@ -71,6 +76,15 @@ export const CustJobList = () => {
 
   const getSelectedJob = (e) => {
     dispatch(custJobListActions.getJobDetails({ jobId: e }));
+  };
+
+  const publishNewJob = function (event) {
+    let jobId = event;
+    let payload = {
+      currentUserId: localStorage.getItem("userId"),
+    };
+    dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
+    // onPageChange(page);
   };
   return (
     <>
@@ -129,6 +143,7 @@ export const CustJobList = () => {
                         <CustJobDetail
                           jobDetails={jobDetail}
                           type={"Open"}
+                          publishJob={(e) => publishNewJob(e)}
                         ></CustJobDetail>
                       </>
                     ) : (
@@ -161,7 +176,7 @@ export const CustJobList = () => {
             {jobList?.length > 0 ? (
               <>
                 <CardPagination
-                  totalPages={totalRows / custListPageSize}
+                  totalPages={current}
                   pageIndex={page}
                   onCallBack={(evt) => handlePageChange(evt)}
                 ></CardPagination>

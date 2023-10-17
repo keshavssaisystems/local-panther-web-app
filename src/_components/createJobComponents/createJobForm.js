@@ -164,6 +164,7 @@ export default function CreateJob({
             ? {}
             : previousData?.jobPrescreenApplicationDtos,
       };
+      console.log(data);
       setBasicInformationData(data.basicInformation);
       setExperienceScheduleData(data.experienceSchedule);
       setPaymentBenifitsData(data.paymentBenifits);
