@@ -26,6 +26,7 @@ import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import { getCustReportJobList } from "./customerreport.slice";
+import { useParams } from "react-router-dom";
 import { data } from "./data";
 const columns = [
   {
@@ -87,8 +88,9 @@ const columns = [
 
 export function CustomerReportJobList() {
   const dispatch = useDispatch();
+  const { id } = useParams();
   useEffect(() => {
-    dispatch(getCustReportJobList());
+    dispatch(getCustReportJobList({ reportId: id }));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

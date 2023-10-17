@@ -17,7 +17,6 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import { scheduleInterviewActions } from "_store";
-import { ScheduleDetails } from "./scheduleDetails";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 
 export function CandidateSchedules() {

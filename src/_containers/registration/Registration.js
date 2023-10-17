@@ -4,19 +4,21 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
+import InputMask from "react-input-mask";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import Slider from "react-slick";
 import "./registration.scss";
 
 import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 
-import { Col, Row, Button, Form, FormGroup, Label, FormFeedback } from "reactstrap";
+import { Col, Row, Button, Form, FormGroup, Label, FormFeedback, InputGroup, InputGroupText } from "reactstrap";
 
 import { history } from "_helpers";
 
 import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
-const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+// const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 export function Registration() {
   const [sliderSettings] = useState({
     dots: true,
@@ -33,6 +35,9 @@ export function Registration() {
 
   const dispatch = useDispatch();
   const authUser = useSelector((x) => x?.auth?.token);
+
+  const [visible, setVisible] = useState(false);
+  const [visibleConfirm, setVisibleConfirm] = useState(false);
 
   useEffect(() => {
     // redirect to home if already logged in
@@ -55,8 +60,7 @@ export function Registration() {
       .max(30, "First name must be at most 30 characters"),
     email: Yup.string().required("Email is required"),
     phoneNumber: Yup.string()
-      .required("Phone number is required")
-      .matches(phoneRegExp, 'Phone number is not valid'),
+      .required("Phone number is required"),
     password: Yup.string()
       .required("Password is required")
       .min(4, "Password must be at least 4 characters")
@@ -71,7 +75,7 @@ export function Registration() {
 
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState } = useForm(formOptions);
-  const { errors, isSubmitting } = formState;
+  const { errors } = formState;
 
   function onSubmit(payload) {
     dispatch(authActions.registerThunk(payload))
@@ -149,13 +153,15 @@ export function Registration() {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="phoneNumber" className="input-label">Phone number</Label>
-                        <input
-                          type="text"
+                        <InputMask
+                          mask="(999)-999-9999"
+                          maskChar={null}
                           name="phoneNumber"
                           id="phoneNumber"
-                          placeholder="Enter phone number"
+                          placeholder="Eg: (987)-654-3210"
                           {...register("phoneNumber")}
                           className={`form-control placeholder-name ${errors.phoneNumber ? "is-invalid" : ""}`}
+
                         />
                         <FormFeedback>{errors.phoneNumber?.message}</FormFeedback>
                       </FormGroup>
@@ -165,13 +171,23 @@ export function Registration() {
                         <Label for="password" className="input-label">
                           <span className="text-danger">*</span> Password
                         </Label>
-                        <input
-                          placeholder="Enter password"
-                          name="password"
-                          type="password"
-                          id="password"  {...register("password")}
-                          className={`form-control placeholder-name ${errors.password ? "is-invalid" : ""}`} />
-                        <FormFeedback>{errors.password?.message}</FormFeedback>
+                          <InputGroup>
+                            <input
+                              placeholder="Enter password"
+                              name="password"
+                              type={visible ? "text" : "password"}
+                              id="password"
+                              {...register("password")}
+                              className={`form-control placeholder-name ${errors.password ? "is-invalid" : ""}`}
+                            />
+ 
+                            <InputGroupText onClick={() => setVisible(!visible)} style={{cursor: 'pointer'}}>
+                              {visible ? <FaEyeSlash /> : <FaEye />}
+                            </InputGroupText>
+
+                            <FormFeedback>{errors.password?.message}</FormFeedback>
+                          </InputGroup>
+                        
                       </FormGroup>
                     </Col>
                     <Col md={6}>
@@ -179,13 +195,20 @@ export function Registration() {
                         <Label for="confirmPassword" className="input-label">
                           <span className="text-danger">*</span> Repeat Password
                         </Label>
-                        <input
-                          type="password"
-                          placeholder="Enter confirm password"
-                          name="confirmPassword"
-                          id="confirmPassword"  {...register("confirmPassword")}
-                          className={`form-control placeholder-name ${errors.confirmPassword ? "is-invalid" : ""}`} />
-                        <FormFeedback>{errors.confirmPassword?.message}</FormFeedback>
+                        <InputGroup>
+                          <input
+                            placeholder="Enter confirm password"
+                            name="confirmPassword"
+                            type={visibleConfirm ? "text" : "password"}
+                            {...register("confirmPassword")}
+                            className={`form-control placeholder-name ${errors.confirmPassword ? "is-invalid" : ""}`}
+                          />
+
+                          <InputGroupText onClick={() => setVisibleConfirm(!visibleConfirm)} style={{cursor: 'pointer'}}>
+                            {visibleConfirm ? <FaEyeSlash /> : <FaEye />}
+                          </InputGroupText>
+                          <FormFeedback>{errors.confirmPassword?.message}</FormFeedback>
+                        </InputGroup>
                       </FormGroup>
                     </Col>
                   </Row>

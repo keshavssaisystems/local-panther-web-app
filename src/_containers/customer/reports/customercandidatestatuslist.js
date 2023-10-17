@@ -25,7 +25,7 @@ import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { getCustReportJobList } from "./customerreport.slice";
+import { getCustReporCandStatList } from "./customerreport.slice";
 import { data } from "./data";
 const columns = [
   {
@@ -78,12 +78,14 @@ const columns = [
 export function CustomerReportCandidateStatus() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getCustReportJobList());
+    dispatch(getCustReporCandStatList());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const jobList = useSelector((state) => state?.customerReportReducer?.jobList);
+  const candidateStatusList = useSelector(
+    (state) => state?.customerReportReducer?.candidateStatusList
+  );
 
   return (
     <>
