@@ -53,6 +53,8 @@ import { CustomerReportMatchedCandidate } from "_containers/customer/reports/cus
 import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
 import AdminCompanyList from "_containers/admin/AdminCompanyList";
 import AdminCustomersList from "_containers/admin/AdminCustomersList";
+import { CustomerVideoScreen } from "../../firebase/customerVideo";
+import { CandVideoScreen } from "../../firebase/candvideo";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -296,6 +298,14 @@ export function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/cust-video"
+            element={
+              <PrivateRoute>
+                <CustomerVideoScreen />
+              </PrivateRoute>
+            }
+          />
         </>
       );
     } else {
@@ -342,6 +352,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CandidateSchedules title={"Calendar"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/cand-video"
+            element={
+              <PrivateRoute>
+                <CandVideoScreen />
               </PrivateRoute>
             }
           />
