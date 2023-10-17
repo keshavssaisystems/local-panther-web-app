@@ -5,35 +5,29 @@ import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
-import { scheduleInterviewActions, customerDashboardActions } from "_store";
+import { customerDashboardActions } from "_store";
 import moment from "moment";
 
 export default function CustomerDashboard() {
   const dispatch = useDispatch();
-  const getUpcomingData = async function () {
-    await dispatch(
-      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("2", "days").format("YYYY-MM-DDTHH:mm:ss"),
-      })
-    );
-  };
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
   };
+  const getDashboardGraphData = async function () {
+    await dispatch(
+      customerDashboardActions.getCustomerDashboardGraphDataThunk()
+    );
+  };
   useEffect(() => {
-    getUpcomingData();
+    getDashboardGraphData();
     getDashboardCounts();
   }, []);
-  const upcomingInterviews = useSelector(
-    (state) =>
-      state.scheduleInterview.upcomingInterviewWOPagination
-        .scheduledInterviewList
-  );
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
-  console.log(dashboardCounts);
+  const dashboardGraphData = useSelector(
+    (state) => state.customerDashboard.dashboardGraphData
+  );
   let cardOptions = [
     {
       title: "Open jobs",
@@ -83,13 +77,17 @@ export default function CustomerDashboard() {
         </Row>
         <Row>
           <Col sm="12" md="7" lg="7">
-            <UpcomingInterviewTable tableData={upcomingInterviews} />
+            <UpcomingInterviewTable
+              tableData={dashboardGraphData.upcomingInterveiwDtos}
+            />
           </Col>
           <Col sm="12" md="5" lg="5">
-            <DonutChart />
+            <DonutChart graphData={dashboardGraphData.scheduledInterveiwDtos} />
           </Col>
         </Row>
-        <StackBarChart />
+        <StackBarChart
+          graphData={dashboardGraphData.candidateStatusByJobDtos}
+        />
       </div>
     </>
   );

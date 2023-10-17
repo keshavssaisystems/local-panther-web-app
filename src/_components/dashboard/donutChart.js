@@ -2,7 +2,11 @@ import React from "react";
 import { Card, CardBody, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
 
-export function DonutChart() {
+export function DonutChart({ graphData }) {
+  let total = graphData?.accepted + graphData?.scheduled + graphData?.rejected;
+  let acceptedPercentage = (graphData?.accepted / total) * 100;
+  let rejectedPercentage = (graphData?.rejected / total) * 100;
+  let scheduledPercentage = (graphData?.scheduled / total) * 100;
   let options = {
     chart: {
       type: "donut",
@@ -27,8 +31,12 @@ export function DonutChart() {
     fill: {
       type: "gradient",
     },
-    series: [21, 23, 19],
-    labels: ["Accepted", "Scheduled", "Rejected"],
+    series: [graphData?.accepted, graphData?.scheduled, graphData?.rejected],
+    labels: [
+      acceptedPercentage + "% Accepted",
+      scheduledPercentage + "% Scheduled",
+      rejectedPercentage + "% Rejected",
+    ],
     legend: {
       position: "right",
       offsetY: 60,
@@ -55,7 +63,6 @@ export function DonutChart() {
               </span>
             </Col>
           </Row>
-
           <Chart
             options={options}
             series={options.series}

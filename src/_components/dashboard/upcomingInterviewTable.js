@@ -65,7 +65,7 @@ export function UpcomingInterviewTable({ tableData }) {
     },
     {
       name: "Status",
-      selector: (row) => "-",
+      selector: (row) => (row.meetingstatus === "" ? "-" : row.meetingstatus),
       sortable: true,
     },
     {
