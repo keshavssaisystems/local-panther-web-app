@@ -5,7 +5,7 @@ import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
-import { scheduleInterviewActions } from "_store";
+import { scheduleInterviewActions, customerDashboardActions } from "_store";
 import moment from "moment";
 
 export default function CustomerDashboard() {
@@ -18,30 +18,37 @@ export default function CustomerDashboard() {
       })
     );
   };
+  const getDashboardCounts = async function () {
+    await dispatch(customerDashboardActions.getCustomerDashboardThunk());
+  };
   useEffect(() => {
     getUpcomingData();
+    getDashboardCounts();
   }, []);
   const upcomingInterviews = useSelector(
     (state) =>
       state.scheduleInterview.upcomingInterviewWOPagination
         .scheduledInterviewList
   );
+  const dashboardCounts = useSelector(
+    (state) => state.customerDashboard.dashboardCounts
+  );
   let cardOptions = [
     {
       title: "Matched jobs",
-      count: 20,
+      count: dashboardCounts.openjobcount,
       className: "success",
       icon: "lnr-graduation-hat",
     },
     {
       title: "Upcoming interviews",
-      count: 20,
+      count: dashboardCounts.upcominginterviewscheduledcount,
       className: "alternate",
       icon: "lnr-calendar-full",
     },
     {
       title: "Pending interviews",
-      count: 20,
+      count: dashboardCounts.upcominginterviewscheduledcount,
       className: "warning",
       icon: "lnr-calendar-full",
     },
