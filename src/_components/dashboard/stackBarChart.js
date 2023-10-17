@@ -21,11 +21,15 @@ export function StackBarChart() {
     },
     series: [
       {
-        name: "Clothing",
+        name: "Accepted",
         data: [42, 52, 16, 55, 59, 51, 45, 32, 26, 33],
       },
       {
-        name: "Food Products",
+        name: "Scheduled",
+        data: [6, 12, 4, 7, 5, 3, 6, 4, 3, 3],
+      },
+      {
+        name: "Rejected",
         data: [6, 12, 4, 7, 5, 3, 6, 4, 3, 3],
       },
     ],

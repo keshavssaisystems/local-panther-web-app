@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Col } from "reactstrap";
 import { DonutChart } from "_components/dashboard/donutChart";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
+import { useSelector, useDispatch } from "react-redux";
+import { scheduleInterviewActions } from "_store";
+import moment from "moment";
 
 export default function CustomerDashboard() {
+  const dispatch = useDispatch();
+  const getUpcomingData = async function () {
+    await dispatch(
+      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
+        start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+        end: moment().add("2", "days").format("YYYY-MM-DDTHH:mm:ss"),
+      })
+    );
+  };
+  useEffect(() => {
+    getUpcomingData();
+  }, []);
+  const upcomingInterviews = useSelector(
+    (state) =>
+      state.scheduleInterview.upcomingInterviewWOPagination
+        .scheduledInterviewList
+  );
   let cardOptions = [
     {
       title: "Matched jobs",
@@ -55,7 +75,7 @@ export default function CustomerDashboard() {
         </Row>
         <Row>
           <Col sm="12" md="7" lg="7">
-            <UpcomingInterviewTable />
+            <UpcomingInterviewTable tableData={upcomingInterviews} />
           </Col>
           <Col sm="12" md="5" lg="5">
             <DonutChart />

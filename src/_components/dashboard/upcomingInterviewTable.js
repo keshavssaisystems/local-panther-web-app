@@ -4,7 +4,7 @@ import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
 
-export function UpcomingInterviewTable() {
+export function UpcomingInterviewTable({ tableData }) {
   const customStyles = {
     headRow: {
       style: {
@@ -32,46 +32,45 @@ export function UpcomingInterviewTable() {
       name: "Candidate",
       selector: (row) => row.candidatename,
       sortable: true,
-      width: "150px",
+      width: "170px",
     },
     {
       name: "Job title",
       id: "jobtitle",
-      selector: (row) =>
-        row.candidateskills === "" ? "-" : row.candidateskills,
+      selector: (row) => (row.jobtitle === "" ? "-" : row.jobtitle),
       sortable: true,
-      width: "120px",
+      width: "170px",
     },
     {
       name: "Date",
       sortable: true,
-      width: "80px",
+      width: "120px",
       selector: (row) =>
         moment(
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
         )
           .tz("America/New_York")
-          .format("MM/DD/YYYY h:mm a"),
+          .format("MM/DD/YYYY"),
     },
     {
       name: "Time",
       sortable: true,
-      width: "80px",
+      width: "100px",
       selector: (row) =>
         moment(
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
         )
           .tz("America/New_York")
-          .format("MM/DD/YYYY h:mm a"),
+          .format("h:mm a"),
     },
     {
       name: "Status",
-      selector: (row) => (row.duration === "" ? "-" : row.duration),
+      selector: (row) => "-",
       sortable: true,
     },
     {
       name: "Action",
-      selector: (row) => (row.duration === "" ? "-" : row.duration),
+      selector: (row) => "-",
       sortable: true,
     },
   ];
@@ -87,7 +86,7 @@ export function UpcomingInterviewTable() {
         <CardBody className="pt-0">
           <DataTable
             columns={columns()}
-            data={[]}
+            data={tableData}
             persistTableHead
             customStyles={customStyles}
             pagination

@@ -12,6 +12,7 @@ export function DonutChart() {
     dataLabels: {
       enabled: false,
     },
+    colors: [],
     plotOptions: {
       pie: {
         customScale: 0.8,
