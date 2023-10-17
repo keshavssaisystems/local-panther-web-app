@@ -121,7 +121,7 @@ export function ScheduleInterview() {
       state.scheduleInterview.upcomingInterviewWOPagination
         .scheduledInterviewList
   );
-  const localizer = momentLocalizer(moment);
+  const localizer = momentLocalizer(moment, "Etc/Universal");
   let upData = [];
   if (
     upcomingInterviewsWOPagination !== undefined &&
@@ -132,9 +132,7 @@ export function ScheduleInterview() {
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
           upcomingInterview.starttime
-      )
-        .tz("America/New_York")
-        .format("YYYY-MM-DD HH:mm:ss");
+      ).format("YYYY-MM-DD HH:mm:ss");
       let durationArr =
         upcomingInterview.duration !== undefined
           ? upcomingInterview.duration.split(" ")
@@ -349,9 +347,7 @@ export function ScheduleInterview() {
           moment(blockedData.scheduledate).format("MMM D, YYYY") +
             " " +
             blockedData.starttime
-        )
-          .tz("America/New_York")
-          .format("YYYY-MM-DD HH:mm:ss");
+        ).format("YYYY-MM-DD HH:mm:ss");
         let durationArr =
           blockedData.duration !== undefined
             ? blockedData.duration.split(" ")

@@ -74,9 +74,7 @@ export function VideoInterviewDetails({
     moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
       " " +
       interviewDetail?.starttime
-  )
-    .tz("America/New_York")
-    .format("hh:mm a");
+  ).format("hh:mm a");
   let startDate =
     moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
     " " +
@@ -262,7 +260,14 @@ export function VideoInterviewDetails({
               <div className="p-custom">
                 <p className="mb-0">
                   Phone no -{" "}
-                  {"(" + USNumber[1] + ")-" + USNumber[2] + "-" + USNumber[3]}
+                  {interviewDetail.candidatephonenumber !== undefined
+                    ? ""
+                    : "(" +
+                      USNumber[1] +
+                      ")-" +
+                      USNumber[2] +
+                      "-" +
+                      USNumber[3]}
                 </p>
               </div>
             )}

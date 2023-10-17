@@ -48,9 +48,7 @@ export function UpcomingInterviewTable({ tableData }) {
       selector: (row) =>
         moment(
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
-        )
-          .tz("America/New_York")
-          .format("MM/DD/YYYY"),
+        ).format("MM/DD/YYYY"),
     },
     {
       name: "Time",
@@ -59,9 +57,7 @@ export function UpcomingInterviewTable({ tableData }) {
       selector: (row) =>
         moment(
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
-        )
-          .tz("America/New_York")
-          .format("h:mm a"),
+        ).format("h:mm a"),
     },
     {
       name: "Status",

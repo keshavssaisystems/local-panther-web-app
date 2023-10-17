@@ -14,13 +14,7 @@ import {
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import {
-  BsPersonVideo2,
-  BsFillCheckCircleFill,
-  BsXCircleFill,
-  BsTelephone,
-  BsPerson,
-} from "react-icons/bs";
+import { BsPersonVideo2, BsTelephone, BsPerson } from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
 import { useSelector } from "react-redux";
@@ -76,9 +70,7 @@ export function UpcomingVideoDetails({
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
       " " +
       interviewDetails?.starttime
-  )
-    .tz("America/New_York")
-    .format("hh:mm a");
+  ).format("hh:mm a");
   let startDate =
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
     " " +
