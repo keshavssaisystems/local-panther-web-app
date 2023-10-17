@@ -157,6 +157,7 @@ export const CandidateCardView = (props) => {
                         type="circle"
                         width={60}
                         strokeWidth={6}
+                        color="green"
                       />
                     ) : (
                       <></>

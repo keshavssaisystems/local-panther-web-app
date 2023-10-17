@@ -1,98 +1,98 @@
-.company-logo{
-    width: 150px;
-    height: 40px;
-    border-style: solid;
-    border-color: grey;
-    border-radius: 5px;
+.company-logo {
+  width: 150px;
+  height: 40px;
+  border-style: solid;
+  border-color: grey;
+  border-radius: 5px;
 }
 
-.logo-background{
-    background-color: #FFFFFF;
+.logo-background {
+  background-color: #ffffff;
 }
 
-.mr-10{
-    margin-right: 10px;
+.mr-10 {
+  margin-right: 10px;
 }
 
-.job-title{
-    text-transform: none !important;
-    color: #2F479B !important;
-    font-weight: 600 !important;
-    font-size: 16px !important;
+.job-title {
+  text-transform: none !important;
+  color: #2f479b !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
 }
 
-.display-logo-card{
-    width: 80px;
-    margin-top: 4px;
+.display-logo-card {
+  width: 80px;
+  margin-top: 4px;
 }
 
-.muted-name{
-    color : #AFABA5;
+.muted-name {
+  color: #afaba5;
 }
-.job-details{
-    margin : 0px 0px 2px 0px;
-    color : #2F2E2E;
-    font-weight: 400 !important;
-}
-
-.job-main-heading{
-    font-size: 20px;
-    font-weight: 500;
-    color : #2F2E2E;
+.job-details {
+  margin: 0px 0px 2px 0px;
+  color: #2f2e2e;
+  font-weight: 400 !important;
 }
 
-.heading-title{
-    padding-left : 15px;
-    padding-top : 25px
+.job-main-heading {
+  font-size: 20px;
+  font-weight: 500;
+  color: #2f2e2e;
 }
 
-.search-button{
-    margin-right: 20px;
-    margin-top: 30px;
-    width: 65px;
-    background: #2F479B !important;
+.heading-title {
+  padding-left: 15px;
+  padding-top: 15px;
 }
 
-.recommended-success{
-    color: #61D097 !important;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px;
-    letter-spacing: -0.13px;
+.search-button {
+  margin-right: 20px;
+  margin-top: 30px;
+  width: 65px;
+  background: #2f479b !important;
 }
 
-.recommended-danger{
-    color: #D92550 !important;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px;
-    letter-spacing: -0.13px;
+.recommended-success {
+  color: #61d097 !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.13px;
 }
 
-.recommended-warning{
-    color: #F7B924 !important;
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 16px;
-    letter-spacing: -0.13px;
+.recommended-danger {
+  color: #d92550 !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.13px;
 }
 
-.thumb-icon{
-    width: 12.69px;
-    height: 16px;
-    fill: #AFABA5;
+.recommended-warning {
+  color: #f7b924 !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: -0.13px;
 }
 
-.card-border-custom{
-    border: 1px solid #2F479B !important;
+.thumb-icon {
+  width: 12.69px;
+  height: 16px;
+  fill: #afaba5;
 }
 
-.card-filter{
-    font-family: Capitana;
-    .search-dropdown{
-        max-width: 100px;
-    }
+.card-border-custom {
+  border: 1px solid #2f479b !important;
+}
+
+.card-filter {
+  font-family: Capitana;
+  .search-dropdown {
+    max-width: 100px;
+  }
 }
