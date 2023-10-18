@@ -4,11 +4,17 @@ import { customers, company, users, roles, menuMapping } from "_containers/admin
 import PageTitle from "_components/common/pagetitle";
 import { Row, Col, Card, CardBody, CardHeader, Button, FormGroup, InputGroup, Input } from "reactstrap";
 import "_containers/admin/common/adminListing.scss"
-import { makeData } from "_containers/admin/Examples/candidatesUtils";
 import DataTable from "react-data-table-component";
+import { useDispatch, useSelector } from "react-redux";
+import { getCompanies } from '_containers/admin/_redux/adminListing.slice'
+import { useEffect } from "react";
+
 
 export const AdminListing = ({entity}) => {
-  const data = makeData();
+  const dispatch = useDispatch()
+  const {
+    companiesData,
+    loading = false } = useSelector((state) => state?.adminListing ?? {});
 
   let title, icon, listingTitle, columns = [], searchFilter = [], buttonsList = [];
 
@@ -56,6 +62,18 @@ export const AdminListing = ({entity}) => {
     default:
       break;
   }
+
+  const companyURLParams = {
+    isActive: true,
+    pageSize: 500,
+  };
+
+  useEffect(() => {
+    if (entity === "company") {
+      dispatch(getCompanies(companyURLParams))
+    }
+  }, [])
+
 
   const customStyles = {
     headCells: {
@@ -109,7 +127,7 @@ export const AdminListing = ({entity}) => {
                 {cardFilters}
                 {cardButtons}
               </Row>
-              <DataTable data={data}
+              <DataTable data={companiesData}
                 columns={columns}
                 pagination
                 fixedHeader
