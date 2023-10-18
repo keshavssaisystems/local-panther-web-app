@@ -58,7 +58,7 @@ export function AdditionalInfoModal(props) {
         candidateadditioninformationid:
           props.selected.candidateadditioninformationid,
         summary: props.selected.summary,
-        language: props.selected.language,
+        candidateLanguageDtos: props.selected.language,
         additionalinformation: props.selected.additionalinformation,
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
@@ -91,7 +91,7 @@ export function AdditionalInfoModal(props) {
 
   const removeTabs = function (index) {
     let new_data = { ...formDetails };
-    new_data.language.splice(index, 1);
+    new_data.candidateLanguageDtos.splice(index, 1);
 
     setFormData(new_data);
   };
@@ -105,7 +105,7 @@ export function AdditionalInfoModal(props) {
       proficiencyid: 0,
       proficiency: "",
     };
-    new_data.language.push(new_tab);
+    new_data.candidateLanguageDtos.push(new_tab);
 
     setFormData(new_data);
   };
@@ -113,13 +113,13 @@ export function AdditionalInfoModal(props) {
   const onHandleInputChange = function (check, data, index) {
     let new_data = { ...formDetails };
     if (check == "language") {
-      let language_details = [...new_data.language];
-      language_details[index].language = data;
-      new_data.language = language_details;
+      let language_details = [...new_data.candidateLanguageDtos];
+      language_details[index].candidateLanguageDtos = data;
+      new_data.candidateLanguageDtos = language_details;
     } else if (check == "proficiency") {
-      let language_details = [...new_data.language];
+      let language_details = [...new_data.candidateLanguageDtos];
       language_details[index].proficiencyid = data;
-      new_data.language = language_details;
+      new_data.candidateLanguageDtos = language_details;
     } else if (check == "summary") {
       setSummary(data);
       if (data != "") {
@@ -146,7 +146,7 @@ export function AdditionalInfoModal(props) {
     let post_data = {
       candidateid: userDetails.InternalUserId,
       summary: summary,
-      candidateLanguageDtos: formDetails.language,
+      candidateLanguageDtos: formDetails.candidateLanguageDtos,
       additionalinformation: additionalInfo,
       isactive: true,
       currentUserId: userDetails.UserId,
@@ -216,7 +216,7 @@ export function AdditionalInfoModal(props) {
             ) : (
               <></>
             )} */}
-            {formDetails?.language?.map((item, index) => (
+            {formDetails?.candidateLanguageDtos?.map((item, index) => (
               <Row>
                 <Col md={4}>
                   <FormGroup>
@@ -229,7 +229,7 @@ export function AdditionalInfoModal(props) {
                       type="text"
                       id="language"
                       maxLength={50}
-                      value={item.language}
+                      value={item.candidateLanguageDtos}
                       onInput={(evt) =>
                         onHandleInputChange("language", evt.target.value, index)
                       }
@@ -284,7 +284,7 @@ export function AdditionalInfoModal(props) {
                   </FormGroup>
                 </Col>
                 <Col>
-                  {index == formDetails?.language.length - 1 ? (
+                  {index == formDetails?.candidateLanguageDtos.length - 1 ? (
                     <img
                       src={addIcon}
                       alt="add-icon"
@@ -295,8 +295,9 @@ export function AdditionalInfoModal(props) {
                   ) : (
                     <></>
                   )}
-                  {(index == formDetails?.language?.length - 1 && index != 0) ||
-                  index < formDetails?.language?.length - 1 ? (
+                  {(index == formDetails?.candidateLanguageDtos?.length - 1 &&
+                    index != 0) ||
+                  index < formDetails?.candidateLanguageDtos?.length - 1 ? (
                     <img
                       src={subtract}
                       alt="add-icon"
