@@ -1,0 +1,16 @@
+.video-cont {
+  #webcamButton,
+  #callButton,
+  #callInput,
+  #answerButton {
+    width: 100%;
+  }
+
+  #webcamVideo,
+  #remoteVideo {
+    width: 35vw;
+    height: 30vw;
+    background: #2c3e50;
+    margin-bottom: 12px;
+  }
+}
