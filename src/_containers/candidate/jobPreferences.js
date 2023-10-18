@@ -120,6 +120,7 @@ export function JobPreferences(props) {
         workschedules: "",
         workschedulestext: null,
       });
+      setDetails(data);
     } else {
       if (get_response.length > 0) {
         data.push({

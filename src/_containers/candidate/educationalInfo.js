@@ -45,6 +45,7 @@ export function CandidateEducation(props) {
 
   const close = function () {
     setPersonalModal(false);
+    setEditModal(false);
   };
   const handlePageChange = () => {
     setPersonalModal(false);
