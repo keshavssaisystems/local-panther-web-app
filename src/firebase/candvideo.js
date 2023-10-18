@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { firebaseConfig, servers } from "../firebase/index";
-
+import { Row, Col } from "reactstrap";
+import "./video.scss";
 export const CandVideoScreen = () => {
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
@@ -81,27 +82,35 @@ export const CandVideoScreen = () => {
   };
 
   return (
-    <div>
+    <Row className="video-cont">
       <h3>Accept Call Screen</h3>
-      <div class="videos">
-        <span>
-          <h3>Customer Stream</h3>
-          <video id="webcamVideo" playsInline autoPlay></video>
-        </span>
-        <span>
-          <h3>Candidate Stream</h3>
-          <video id="remoteVideo" playsInline autoPlay></video>
-        </span>
+      <div style={{ display: "flex" }}>
+        <Col md={6} lg={6} sm={12}>
+          <span>
+            <h4>Customer Stream</h4>
+            <video id="webcamVideo" playsInline autoPlay></video>
+          </span>
+        </Col>
+        <Col md={6} lg={6} sm={12}>
+          <span>
+            <h4>Candidate Stream</h4>
+            <video id="remoteVideo" playsInline autoPlay></video>
+          </span>
+        </Col>
       </div>
-
-      <button id="webcamButton" onClick={() => onWebCamClick()}>
-        Start webcam
-      </button>
-
-      <input id="callInput" />
-      <button id="answerButton" onClick={() => onAnswerClick()}>
-        Answer
-      </button>
-    </div>
+      <Col md={2} lg={2} sm={12}>
+        <button id="webcamButton" onClick={() => onWebCamClick()}>
+          Start webcam
+        </button>
+      </Col>
+      <Col md={2} lg={2} sm={12}>
+        <input id="callInput" />
+      </Col>
+      <Col md={2} lg={2} sm={12}>
+        <button id="answerButton" onClick={() => onAnswerClick()}>
+          Answer
+        </button>
+      </Col>
+    </Row>
   );
 };
