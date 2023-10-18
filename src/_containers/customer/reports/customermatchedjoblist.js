@@ -28,7 +28,6 @@ import { useParams } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
-import { data } from "./data";
 const columns = [
   {
     name: "Candidate Id",
@@ -209,7 +208,7 @@ export function CustomerReportMatchedCandidate() {
                 ) : (
                   <DataTable
                     columns={columns}
-                    data={data}
+                    data={matchedCandidateList}
                     fixedHeader
                     pagination
                   />
