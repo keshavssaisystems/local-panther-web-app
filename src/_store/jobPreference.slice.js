@@ -29,6 +29,14 @@ export const deletejobPreferenceThunk = createAsyncThunk(
   }
 );
 
+export const deleteProfileImgThunk = createAsyncThunk(
+  `${name}/deleteProfileImg`,
+  async (id) => {
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/DeleteUserProfilePhoto/${id}`;
+    return await fetchWrapper.delete(LOGIN_END_POINT);
+  }
+);
+
 const jobPreferenceDataSlice = createSlice({
   name,
   initialState: {
@@ -59,6 +67,13 @@ const jobPreferenceDataSlice = createSlice({
     [deletejobPreferenceThunk.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [deleteProfileImgThunk.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [deleteProfileImgThunk.fulfilled]: (state, payload) => {},
+    [deleteProfileImgThunk.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -67,6 +82,7 @@ export const jobPreferenceDetailsActions = {
   addjobPreferenceThunk,
   updatejobPreferenceThunk,
   deletejobPreferenceThunk,
+  deleteProfileImgThunk,
 };
 
 export const jobPreferenceDataReducer = jobPreferenceDataSlice.reducer;

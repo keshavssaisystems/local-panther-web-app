@@ -6,6 +6,7 @@ import {
   formatDate,
   endDateValidation,
   formatMonthYear,
+  getEducText,
 } from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
@@ -41,39 +42,6 @@ export function CandidateEducation(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [selectedData, setSelectedData] = useState({});
-  const getText = function (data) {
-    let text = "";
-    if (data.school != "") {
-      text = data.school;
-      if (data.cityname != "") {
-        text += ", " + data.cityname;
-      }
-      if (data.statename != "") {
-        text += ", " + data.statename;
-      }
-      if (data.countryname != "") {
-        text += ", " + data.countryname;
-      }
-    } else if (data.cityname != "") {
-      text = data.cityname;
-      if (data.statename != "") {
-        text += ", " + data.statename;
-      }
-      if (data.countryname != "") {
-        text += ", " + data.countryname;
-      }
-    } else if (data.statename != "") {
-      text = data.statename;
-      if (data.countryname != "") {
-        text += ", " + data.countryname;
-      }
-    } else if (data.countryname != "") {
-      text = data.countryname;
-      text += data.countryname;
-    }
-
-    return text;
-  };
 
   const close = function () {
     setPersonalModal(false);
@@ -146,7 +114,7 @@ export function CandidateEducation(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
             <Row>
-              <Col>
+              <Col className="mb-2">
                 <strong className="card-title-text">Education</strong>
               </Col>
 
@@ -186,7 +154,7 @@ export function CandidateEducation(props) {
                       item.countryname != "" ||
                       item.school != "" ? (
                         <Label className="mb-0 mt-0 card-p-text-black">
-                          {getText(item)}
+                          {getEducText(item)}
                         </Label>
                       ) : (
                         ""

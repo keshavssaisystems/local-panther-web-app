@@ -369,7 +369,7 @@ export function CandidateSkills(props) {
                           : "",
                       }}
                     >
-                      <Label for={skills} className="input-label">
+                      <Label for={skills} className="fw-semi-bold">
                         Skills <span style={{ color: "red" }}>* </span>
                       </Label>
                       <AsyncSelect
@@ -400,7 +400,7 @@ export function CandidateSkills(props) {
                             <FormGroup>
                               <Label
                                 for={"skillsInput"}
-                                className="input-label"
+                                className="fw-semi-bold"
                               >
                                 Selected Skill
                               </Label>
@@ -419,7 +419,7 @@ export function CandidateSkills(props) {
                               <FormGroup>
                                 <Label
                                   for={"experienceLevel"}
-                                  className="input-label"
+                                  className="fw-semi-bold"
                                 >
                                   Experience level
                                 </Label>
@@ -463,7 +463,7 @@ export function CandidateSkills(props) {
                   </Row>
                 </Row>
                 <Row>
-                  <Label className="input-label">
+                  <Label className="fw-semi-bold">
                     Add any of these popular skills
                   </Label>
                 </Row>

@@ -37,6 +37,8 @@ export function JobPreferences(props) {
   const selectDate = function () {};
 
   const [jobTypes, setJobTypes] = useState([]);
+
+  const [workType, setWorkType] = useState([]);
   const [workSchedules, setWorkSchedules] = useState([]);
   const [shifts, setShiftsData] = useState([]);
   const [jobTitleId, setJobTitleId] = useState([]);
@@ -52,7 +54,10 @@ export function JobPreferences(props) {
     (state) => state.getProfile?.profileData?.jobPreferenceInfo
   );
 
-  const shiftsOption = useSelector((state) => state.dropdown?.shift);
+  const shiftsOption = useSelector((state) => state.shifts?.shift);
+  const workTypeOption = useSelector(
+    (state) => state.dropdown?.jobLocationType
+  );
   const workScheduleOptions = useSelector(
     (state) => state.workSchedule?.workSchedule
   );
@@ -157,7 +162,6 @@ export function JobPreferences(props) {
             (item2) => item1.value === item2.desiredjobtitleid
           );
         });
-
         let select = [...selectedTitle];
         select = commonData;
         setSelectedTitle(select);
@@ -186,20 +190,24 @@ export function JobPreferences(props) {
               (x) => x.id == rest.desiredjobtitleid
             )?.name,
             specificJobTitle: rest.candidateJobtitlesDtos
-              .filter((item) => item.ischecked)
+              ?.filter((item) => item.ischecked)
               .map((item) => item.desiredjobtitlename)
               .join(", "),
             desiredJobTypes: rest.candidateDesiredWorkTypeDtos
-              .filter((item) => item.ischecked)
+              ?.filter((item) => item.ischecked)
               .map((item) => item.desiredworktypename)
               .join(", "),
+            desiredWorkTypes: rest.candidateDesiredJobTypesDtos
+              ?.filter((item) => item.ischecked)
+              .map((item) => item.joblocationtype)
+              .join(", "),
             workSchedules: rest.candidateWorkSchedulesDtos
-              .filter((item) => item.ischecked)
+              ?.filter((item) => item.ischecked)
               .map((item) => item.workschedules)
               .join(", "),
 
             shifts: rest.candidateShiftsDtos
-              .filter((item) => item.ischecked)
+              ?.filter((item) => item.ischecked)
               .map((item) => item.shifts)
               .join(", "),
             pay:
@@ -253,6 +261,7 @@ export function JobPreferences(props) {
       desiredjobtitleid: 0,
       jobtitlesids: "",
       desiredjobtypes: "",
+      workTypes: "",
       workschedules: "",
       shifts: "",
       payperiodtypeid: 0,
@@ -313,6 +322,24 @@ export function JobPreferences(props) {
       } else {
         new_data[0].error = false;
       }
+    } else if (check == "workType") {
+      let type_data = [...workType];
+      type_data =
+        new_data[0].desiredjobtypes != ""
+          ? new_data[0].desiredjobtypes.split(",")
+          : [];
+      let i = type_data.indexOf(data);
+
+      if (i == -1) {
+        type_data.push(data);
+      } else {
+        const i = type_data.indexOf(data);
+        type_data.splice(i, 1);
+      }
+
+      setWorkType(type_data);
+
+      new_data[0].desiredjobtypes = type_data.join(",");
     } else if (check == "schedules") {
       let schedule_data = [...workSchedules];
       schedule_data =
@@ -608,11 +635,15 @@ export function JobPreferences(props) {
                             <strong>Willing to relocate</strong>
                             <div>{item.relocate ? "Yes" : "No"}</div>
                           </Row>
-                          {/* <hr /> */}
-                          {/* <Row>
-                        <strong>Desired work type</strong>
-                        <div>{item.workType}</div>
-                      </Row> */}
+                          <hr />
+                          <Row>
+                            <strong>Work type</strong>
+                            <div>
+                              {item.desiredWorkTypes != ""
+                                ? item.desiredWorkTypes
+                                : "-"}
+                            </div>
+                          </Row>
                           <hr />
                         </Col>
                       </Row>
@@ -665,7 +696,7 @@ export function JobPreferences(props) {
                             value={parentItem.desiredjobtitleid}
                             checked={parentItem.desiredjobtitleid == item.id}
                           />{" "}
-                          <Label check className="input-label">
+                          <Label check className="fw-semi-bold">
                             {item.name}
                           </Label>
                         </FormGroup>
@@ -680,7 +711,7 @@ export function JobPreferences(props) {
                   <Row>
                     <Col md={5}>
                       <FormGroup>
-                        <Label for="zipCode" className="input-label">
+                        <Label for="zipCode" className="fw-semi-bold">
                           Job Title
                         </Label>
                         <AsyncSelect
@@ -809,6 +840,40 @@ export function JobPreferences(props) {
                           ))}
                       </FormGroup>
                     </Col>
+
+                    <Col>
+                      <FormGroup>
+                        <Label for="shifts" className="fw-semi-bold">
+                          Work Type
+                        </Label>
+                        {workTypeOption?.length > 0 &&
+                          workTypeOption?.map((options) => (
+                            <div className="form-group-custom">
+                              <Input
+                                key={options.id}
+                                type="checkbox"
+                                name={"shifts"}
+                                id={"shifts_" + options.id}
+                                value={options.id}
+                                onInput={(evt) =>
+                                  onHandleInputChange(
+                                    "workType",
+                                    evt.target.value
+                                  )
+                                }
+                                checked={checkIdExists(
+                                  parentItem.desiredjobtypes,
+                                  options.id
+                                )}
+                              />{" "}
+                              {"  "}
+                              <Label check for={"workType" + options.id}>
+                                {options.name}
+                              </Label>
+                            </div>
+                          ))}
+                      </FormGroup>
+                    </Col>
                   </Row>
                   <Row>
                     <div className="mb-1 fw-bold">Desired minimum pay</div>
@@ -818,7 +883,7 @@ export function JobPreferences(props) {
                   <Row>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="zipCode" className="input-label">
+                        <Label for="zipCode" className="fw-semi-bold">
                           Pay type
                         </Label>
                         <AsyncSelect
@@ -836,7 +901,7 @@ export function JobPreferences(props) {
                     </Col>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="zipCode" className="input-label">
+                        <Label for="zipCode" className="fw-semi-bold">
                           Minimum base pay
                         </Label>
                         <input
@@ -870,7 +935,7 @@ export function JobPreferences(props) {
                           type="checkbox"
                           checked={parentItem.willingtorelocate}
                         />{" "}
-                        <Label check className="input-label">
+                        <Label check className="fw-semi-bold">
                           Willing to Relocate
                         </Label>
                       </FormGroup>
@@ -888,7 +953,7 @@ export function JobPreferences(props) {
                             }
                             checked={parentItem.anywhereonlynear == 1}
                           />{" "}
-                          <Label check className="input-label">
+                          <Label check className="fw-semi-bold">
                             Any where
                           </Label>
                         </FormGroup>
@@ -904,7 +969,7 @@ export function JobPreferences(props) {
                             }
                             checked={parentItem.anywhereonlynear == 2}
                           />{" "}
-                          <Label check className="input-label">
+                          <Label check className="fw-semi-bold">
                             Only near
                           </Label>
                         </FormGroup>
@@ -914,7 +979,7 @@ export function JobPreferences(props) {
                   <Row>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="city" className="input-label">
+                        <Label for="city" className="fw-semi-bold">
                           Location
                         </Label>
                         <AsyncSelect

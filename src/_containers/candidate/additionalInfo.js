@@ -28,7 +28,7 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDispatch } from "react-redux";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import Loader from "react-loaders";
-
+import { convertText } from "_helpers/helper";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -50,9 +50,14 @@ export function AdditionalInformation(props) {
 
   const [check, setCheck] = useState("");
 
+  const personal_Info = useSelector(
+    (state) => state.getProfile.profileData.personalInfo
+  );
+
   const additional_details = useSelector(
     (state) => state.getProfile.profileData.additionalInfo
   );
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const [additionalDetails, setDetails] = useState([]);
   const [getResponse, setGetResponse] = useState([]);
@@ -61,45 +66,20 @@ export function AdditionalInformation(props) {
     setDetails(additional_details);
 
     let data = [];
-
-    let language = [];
-
     additional_details.forEach((item) => {
       let obj = {
-        summary: item.summary,
-        additionalInfo: item.additionalinformation,
-        language: [],
+        summary: personal_Info?.summary,
+        additionalInfo: personal_Info?.additionalinformation,
+        language: item.candidateLanguageDetailsDtos,
         candidateadditioninformationid: item.candidateadditioninformationid,
       };
-      let lan_data = {
-        name: item.language,
-        proficiency: item.proficiency,
-      };
-      language.push(lan_data);
       data.push(obj);
     });
-
-    data.language = language;
     let filter_data = [...getResponse];
     filter_data = data;
+
     setGetResponse(filter_data);
   }, [additional_details]);
-
-  const convertText = function (htmlContent) {
-    let data;
-    const lines = htmlContent.split("<p>").map((line, index) => {
-      if (index === 0) {
-        data = "";
-      } else {
-        data += `<li>${line.replace("</p>", "")}</li>`;
-      }
-    });
-    if (data != "") {
-      return data;
-    } else {
-      return data;
-    }
-  };
 
   const edit = function (check, data) {
     let new_data;
@@ -108,13 +88,7 @@ export function AdditionalInformation(props) {
       setCheck("add");
     } else {
       setCheck("edit");
-      new_data = additionalDetails
-        ? additionalDetails.find(
-            (x) =>
-              x.candidateadditioninformationid ==
-              data.candidateadditioninformationid
-          )
-        : additionalDetails;
+      new_data = getResponse[0];
     }
 
     setSelectedData(new_data);
@@ -129,23 +103,6 @@ export function AdditionalInformation(props) {
   const close = function () {
     setPersonalModal(false);
   };
-  // form validation rules
-  const validationSchema = Yup.object().shape({
-    summary: Yup.string().max(500, "Summary should not extend 500 characters"),
-    language: Yup.string().max(50),
-    proficiency: Yup.string().max(50),
-    additionalInfo: Yup.string().max(
-      200,
-      "Summary should not extend 500 characters"
-    ),
-  });
-
-  const formOptions = { resolver: yupResolver(validationSchema) };
-
-  // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState } = useForm(formOptions);
-  const { errors, isSubmitting } = formState;
-  function onSubmit(payload) {}
 
   const handlePageChange = () => {
     setSuccess(false);
@@ -154,7 +111,7 @@ export function AdditionalInformation(props) {
     props.onCallBack();
   };
   const deleteModal = function (id) {
-    setDeleteId(id);
+    setDeleteId(userDetails.InternalUserId);
     setDeleteConfirm(true);
   };
 
@@ -177,24 +134,28 @@ export function AdditionalInformation(props) {
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
           <div className="mt-3 scroll-area-lg" style={{ marginLeft: "10px" }}>
-            <Row className="mb-2">
+            <Row className="mb-1">
               <Col>
                 <strong className="card-title-text">
                   Additional information
                 </strong>
               </Col>
-              <Col>
-                <Label
-                  className="float-end me-3 link-text"
-                  onClick={(evt) => edit("add")}
-                >
-                  Add
-                </Label>
-              </Col>
+              {getResponse?.length == 0 ? (
+                <Col>
+                  <Label
+                    className="float-end me-3 link-text"
+                    onClick={(evt) => edit("add")}
+                  >
+                    Add
+                  </Label>
+                </Col>
+              ) : (
+                <></>
+              )}
             </Row>
             {!loader ? (
               <div>
-                {getResponse.length > 0 ? (
+                {getResponse?.length > 0 ? (
                   <Row>
                     {getResponse.map((item) => (
                       <div>
@@ -222,7 +183,7 @@ export function AdditionalInformation(props) {
                             </div>
                           </Col>
                         </Row>
-                        <div>
+                        <div className="card-p-text-black">
                           <ul
                             dangerouslySetInnerHTML={{
                               __html: convertText(item.summary),
@@ -239,7 +200,7 @@ export function AdditionalInformation(props) {
                                   </strong>
                                 </Col>
                               </Row>
-                              <div>
+                              <div className="card-p-text-black">
                                 <ul
                                   dangerouslySetInnerHTML={{
                                     __html: convertText(item.additionalInfo),
@@ -251,39 +212,23 @@ export function AdditionalInformation(props) {
                             ""
                           )}
                         </div>
+                        <Row className="mb-2">
+                          <Col>
+                            <strong className="content-title">Languages</strong>
+                          </Col>
+                        </Row>
+                        <div>
+                          {item.language?.map((column, ind) => (
+                            <div className="card-p-text-black">
+                              {column.language}{" "}
+                              {column.proficiency
+                                ? "- " + column.proficiency
+                                : ""}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     ))}
-                    <Row>
-                      <Row>
-                        <strong className="content-title">Languages</strong>
-                        <Table
-                          responsive
-                          borderless
-                          className="align-middle mb-0 candidate-table"
-                        >
-                          <thead>
-                            <tr className="candidate-table-header">
-                              <th>Language</th>
-                              <th>Proficiency</th>
-                              <th></th>
-                              <th></th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody className="card-p-text-black">
-                            {getResponse.language.map((column, ind) => (
-                              <tr>
-                                <td>{column.name}</td>
-                                <td>{column.proficiency}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
-                      </Row>
-                    </Row>
                   </Row>
                 ) : (
                   <div className="d-flex justify-content-center">

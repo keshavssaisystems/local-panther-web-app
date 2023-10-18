@@ -16,6 +16,7 @@ import AsyncSelect from "react-select/async";
 import { formatDate, extractDatePart } from "_helpers/helper";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import {
+  BsUpload,
   BsPencil,
   BsTelephone,
   BsPinMap,
@@ -23,10 +24,14 @@ import {
   BsPeople,
   BsEnvelope,
   BsBalloon,
+  BsPencilSquare,
+  BsCamera,
 } from "react-icons/bs";
 import moment from "moment-timezone";
+import axios from "axios";
+import { useDropzone } from "react-dropzone";
 
-import profileImg from "../../assets/utils/images/avatars/1.jpg";
+import profileImg from "../../assets/utils/images/profile-pic 1.svg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -38,18 +43,28 @@ import "./profile.scss";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import { profileActions } from "_store";
+import imgHover from "../../assets/utils/images/profile-pic-hover.svg";
+import { profileActions, jobPreferenceDetailsActions } from "_store";
 import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.getProfile.loader);
+  const [editImg, setEditImg] = useState(false);
 
   const genderList = useSelector((state) => state.gender.genderList);
   const raceList = useSelector((state) => state.ethnicity.ethnicityList);
   const eligibilityList_temp = useSelector(
     (state) => state.getProfile.dropdownLists.eligibilityDropDown
   );
+
+  const [isHovered, setIsHovered] = useState(false);
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   const personalInfo_temp = useSelector(
     (state) => state.getProfile.profileData.personalInfo
@@ -183,9 +198,12 @@ export function PersonalInformation(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
+  const [profileSuccess, setProfileSuccess] = useState(false);
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
-
+  const [profileImage, setProfileImage] = useState(
+    localStorage.getItem("profileImage")
+  );
   const [dob, setDOB] = useState(null);
   const [isContactModal, setContactModal] = useState(false);
   const phoneRegExp =
@@ -371,6 +389,7 @@ export function PersonalInformation(props) {
     errors = obj;
     setRequiredErros(errors);
     setContactModal(false);
+    setEditImg(false);
     // props.onCallBack();
   };
   const closeModal = function () {
@@ -500,6 +519,87 @@ export function PersonalInformation(props) {
     setRequiredErros(errors);
     setGetResponse(new_data);
   };
+  const onDrop = (acceptedFiles) => {
+    addEditProfileImage(acceptedFiles);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: ".png",
+  });
+
+  // const getFileName = function () {
+  //   let name = "";
+
+  //   if (resumeDetails) {
+  //     if (resumeDetails.resumepath) {
+  //       const lastIndex = resumeDetails.resumepath.lastIndexOf(".");
+  //       let jobTitle = candidateDetails.position
+  //         ? candidateDetails.position.replace(/ /g, "_")
+  //         : "";
+  //       if (lastIndex !== -1) {
+  //         name =
+  //           candidateDetails.lastname +
+  //           (jobTitle ? "_" + jobTitle : "") +
+  //           "." +
+  //           resumeDetails.resumepath.slice(lastIndex + 1);
+  //       }
+  //     }
+  //     setFileName(name);
+  //   }
+  // };
+  const addEditProfileImage = function (acceptedFiles) {
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    };
+
+    const form = new FormData();
+    form.append("UserId", userDetails.UserId);
+    form.append("Profilephotopath", "");
+    form.append("ProfileFile", acceptedFiles[0]);
+
+    axios
+      .put(
+        "https://panther-api-dev.azurewebsites.net/api/User/UpdateProfilePhoto/" +
+          userDetails.UserId,
+        form,
+        config
+      )
+      .then((result) => {
+        if (result.data.statusCode == 204) {
+          setSuccess(true);
+          setMessage(result.data.message);
+          localStorage.setItem(
+            "profileImage",
+            result.data.data.profilephotopath
+          );
+          setProfileImage(result.data.data.profilephotopath);
+        } else {
+          setError(true);
+        }
+        setEditImg(false);
+      })
+      .catch((error) => {});
+  };
+
+  const deleteImg = async function () {
+    let id = userDetails.UserId;
+    let response = await dispatch(
+      jobPreferenceDetailsActions.deleteProfileImgThunk(id)
+    );
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+      localStorage.setItem("profileImage", "");
+      setProfileImage("");
+    } else {
+      setError(true);
+    }
+    setEditImg(false);
+    props.onCallBack();
+  };
 
   return (
     <div>
@@ -515,10 +615,20 @@ export function PersonalInformation(props) {
                         <img
                           width={100}
                           className="rounded-circle"
-                          src={profileImg}
-                          alt=""
+                          src={
+                            isHovered
+                              ? imgHover
+                              : profileImage == ""
+                              ? profileImg
+                              : profileImage
+                          }
+                          onMouseEnter={handleMouseEnter}
+                          onMouseLeave={handleMouseLeave}
+                          alt="profile-img"
+                          onClick={() => setEditImg(true)}
                         />
                       </div>
+
                       <div className="widget-chart-content">
                         <div>
                           <strong className="candidate-name mb-0">
@@ -631,7 +741,22 @@ export function PersonalInformation(props) {
                         <Col className="mb-2">
                           {selectedCandidate.personalInfo.gender != "" ? (
                             <div>
-                              <BsGenderMale className="personal-sec-icon me-2" />
+                              {selectedCandidate.personalInfo.gender ==
+                              "Female" ? (
+                                <i
+                                  className="pe-7s-female personal-sec-icon me-2"
+                                  style={{
+                                    fontSize: "20px",
+                                    color: "black",
+                                    fontWeight: "400",
+                                  }}
+                                >
+                                  {" "}
+                                </i>
+                              ) : (
+                                <BsGenderMale className="personal-sec-icon me-2" />
+                              )}
+
                               <span className="content-text">
                                 {selectedCandidate.personalInfo.gender}
                               </span>
@@ -1014,6 +1139,38 @@ export function PersonalInformation(props) {
                     </Col>
                   </Row>
 
+                  <Row>
+                    <div className="mb-1 fw-bold">Upload profile image</div>
+                    <hr />
+                  </Row>
+
+                  <Row>
+                    <div {...getRootProps()} className="dropzone">
+                      <input {...getInputProps()} />
+                      <Row>
+                        <label>
+                          <div className="dropZone" id="dragbox">
+                            <Button
+                              style={{
+                                width: "auto",
+                                backgroundColor: "#2F2E2E",
+                                borderColor: "#2F2E2E",
+                              }}
+                              className="mb-2 mt-0 btn-icon btn-pill btn-text"
+                              color="primary"
+                            >
+                              <span className="me-2">
+                                <BsUpload />
+                              </span>
+
+                              <span className="me-2">Upload</span>
+                            </Button>
+                          </div>
+                        </label>
+                      </Row>
+                    </div>
+                  </Row>
+
                   <div className="float-end">
                     <Button className="me-2 save-btn" type="submit">
                       Save
@@ -1047,7 +1204,6 @@ export function PersonalInformation(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              Thank you!
             </div>
             <div>
               <Row>
@@ -1116,6 +1272,67 @@ export function PersonalInformation(props) {
                   >
                     OK
                   </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={editImg}>
+        <ModalHeader toggle={() => close()} charCode="Y">
+          <strong className="card-title-text"> Profile Image Update</strong>
+        </ModalHeader>
+        <Card>
+          <CardBody>
+            <div className="mb-0 d-flex justify-content-center">
+              Accepted file formats include png,jpg,jpeg and
+            </div>
+            <div className="mb-0 d-flex justify-content-center">
+              gif with maximum size limit of 2MB
+            </div>
+
+            <div className="mt-3">
+              <Row>
+                <Col>
+                  <div {...getRootProps()} className="dropzone">
+                    <input {...getInputProps()} />
+                    <Row>
+                      <label>
+                        <div className="dropZone float-end" id="dragbox">
+                          <Button
+                            style={{
+                              width: "auto",
+                              backgroundColor: "#2F479B",
+                              borderColor: "#2F479B",
+                            }}
+                            className="mb-2 mt-0 btn-icon btn-text float-end"
+                            color="primary"
+                          >
+                            <span className="me-2">Upload</span>
+                          </Button>
+                        </div>
+                      </label>
+                    </Row>
+                  </div>
+                </Col>
+                <Col>
+                  <FormGroup>
+                    <Row style={{ marginLeft: "5px" }}>
+                      <Button
+                        style={{
+                          width: "auto",
+                          backgroundColor: "#2F2E2E",
+                          borderColor: "#2F2E2E",
+                        }}
+                        className="mb-2 me-2 btn-icon btn-text"
+                        color="primary"
+                        onClick={() => deleteImg()}
+                      >
+                        <span>Delete</span>
+                      </Button>
+                    </Row>
+                  </FormGroup>
                 </Col>
               </Row>
             </div>
