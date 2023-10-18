@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Input,
@@ -14,18 +14,20 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  ButtonGroup,
 } from "reactstrap";
 
-import { Table } from "_widgets";
-
-import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import { getCustReportMatchedCandList } from "./customerreport.slice";
+import { useParams } from "react-router-dom";
+
+import DataTable from "react-data-table-component";
+import Loader from "react-loaders";
 import { data } from "./data";
 const columns = [
   {
@@ -35,7 +37,7 @@ const columns = [
   },
   {
     name: "Name",
-    selector: (row) => row.name,
+    selector: (row) => row.candidatename,
     sortable: true,
   },
   {
@@ -77,15 +79,46 @@ const columns = [
 
 export function CustomerReportMatchedCandidate() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getCustReportMatchedCandList());
 
+  const { id } = useParams();
+
+  let [filter, setFilter] = useState({});
+  let [candidateId, setCandidateId] = useState();
+  useEffect(() => {
+    onGetCustReportMatchedCandList({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const matchedCandidateList = useSelector(
     (state) => state?.customerReportReducer?.matchedCandidateList
   );
+  const loading = useSelector((state) => state?.customerReportReducer?.loading);
+
+  const onGetCustReportMatchedCandList = (filter) => {
+    let data = {
+      ...filter,
+      reportId: id,
+    };
+
+    dispatch(getCustReportMatchedCandList(data));
+  };
+
+  const onSubmitHandler = () => {
+    onGetCustReportMatchedCandList(filter);
+  };
+
+  const handleChange = (name, value) => {
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
+  const onSubmitClear = () => {
+    setFilter({});
+    setCandidateId("");
+    onGetCustReportMatchedCandList({});
+  };
 
   return (
     <>
@@ -123,63 +156,65 @@ export function CustomerReportMatchedCandidate() {
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{ display: "none" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <Input name="skills" type="select">
-                    <option value="">Select skills</option>
-                  </Input>
-                </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <Input name="skills" type="select">
-                    <option value="">Select Location</option>
-                  </Input>
-                </Col>
+              <Row>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
-                    <InputGroup>
-                      <div className="input-group-text">
-                        <FontAwesomeIcon icon={faCalendarAlt} />
-                      </div>
-                      <DatePicker
-                        name="fromDate"
-                        id="fromDate"
-                        placeholderText="DD/MM/YYYY"
-                        className="form-control"
-                      />
-                    </InputGroup>
+                    {/* <Label for="jobid">Job Id</Label> */}
+                    <Input
+                      name="candidateid"
+                      id="candidateid"
+                      placeholder="Candidate Id"
+                      value={candidateId}
+                      onChange={(e) => {
+                        handleChange("candidateid", e.target.value);
+                        setCandidateId(e.target.value);
+                      }}
+                    />
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+
+                <Col lg="3" md="3" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
-                      <div className="input-group-text">
-                        <FontAwesomeIcon icon={faCalendarAlt} />
-                      </div>
-                      <DatePicker
-                        name="fromDate"
-                        id="fromDate"
-                        placeholderText="DD/MM/YYYY"
-                        className="form-control"
-                      />
-                    </InputGroup>
-                  </FormGroup>
-                </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <Button
-                        style={{ background: "rgb(47 71 155)" }}
-                        className="btn-square btn btn-primary"
-                        type="button"
-                      >
-                        <FontAwesomeIcon icon={faSearch} /> Search
-                      </Button>
+                      <ButtonGroup>
+                        <Button
+                          style={{ background: "rgb(47 71 155)" }}
+                          className="btn-square btn btn-primary me-4"
+                          type="button"
+                          onClick={() => onSubmitHandler()}
+                        >
+                          <FontAwesomeIcon icon={faSearch} /> Search
+                        </Button>
+                        <Button
+                          style={{ background: "rgb(47 71 155)" }}
+                          className="btn-square btn btn-primary"
+                          type="button"
+                          onClick={() => onSubmitClear()}
+                        >
+                          Clear
+                        </Button>
+                      </ButtonGroup>
                     </InputGroup>
                   </FormGroup>
                 </Col>
               </Row>
-
-              <Table columns={columns} data={data} fixedHeader />
+              <Row className="mt-1">
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <DataTable
+                    columns={columns}
+                    data={data}
+                    fixedHeader
+                    pagination
+                  />
+                )}
+              </Row>
             </CardBody>
           </Card>
         </Col>

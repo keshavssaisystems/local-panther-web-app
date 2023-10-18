@@ -260,7 +260,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/customer-interviewed-candidates"
+            path="/report/customer-interviewed-candidates/:id"
             element={
               <PrivateRoute>
                 <CustomerReportInterviewedCandidates />
@@ -268,7 +268,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/customer-job-aging"
+            path="/report/customer-job-aging/:id"
             element={
               <PrivateRoute>
                 <CustomerReportJobAging />
@@ -276,7 +276,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/customer-matched-candidate-list-by-job"
+            path="/report/customer-matched-candidate-list-by-job/:id"
             element={
               <PrivateRoute>
                 <CustomerReportMatchedCandidate />
@@ -284,7 +284,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/customer-candidate-list-by-status"
+            path="/report/customer-candidate-list-by-status/:id"
             element={
               <PrivateRoute>
                 <CustomerReportCandidateStatus />

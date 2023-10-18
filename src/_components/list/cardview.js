@@ -140,12 +140,28 @@ export const CandidateCardView = (props) => {
             <Col className="col-12">
               <Row>
                 <Col className="col-9">
-                  <div className="card-title">{props?.data?.jobtitle}</div>
+                  <div className="card-title">
+                    {props?.data?.candidateQualificationsDtos &&
+                    props?.data?.candidateQualificationsDtos.length > 0
+                      ? props?.data?.candidateQualificationsDtos[0]?.jobtitle
+                      : ""}
+                  </div>
                   <p className="card-details-op">
                     <span>
                       <FiMapPin size={"16px"} />
                     </span>{" "}
-                    {props?.data?.locationaddress}
+                    {props?.data?.candidateQualificationsDtos &&
+                    props?.data?.candidateQualificationsDtos.length > 0
+                      ? (props?.data?.candidateQualificationsDtos[0]?.cityname
+                          ? props?.data?.candidateQualificationsDtos[0]
+                              ?.cityname
+                          : "") +
+                        ", " +
+                        (props?.data?.candidateQualificationsDtos[0]?.statename
+                          ? props?.data?.candidateQualificationsDtos[0]
+                              ?.statename
+                          : "")
+                      : ""}
                   </p>
                 </Col>
                 <Col className="col-3">
