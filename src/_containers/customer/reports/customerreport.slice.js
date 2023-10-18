@@ -14,7 +14,11 @@ export const getCustReportJobList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_JOB_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=null,@enddate=null`;
+    const GET_CUST_REPORT_JOB_LIST_END_POINT = `${
+      process.env.REACT_APP_NEW_API_URL
+    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
+      payload.startDate ? `'${payload.startDate}'` : null
+    },@enddate=${payload.endDate ? `'${payload.endDate}'` : null}`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_LIST_END_POINT);
   }
 );
@@ -31,7 +35,13 @@ export const getCustReportScheduleIVList = createAsyncThunk(
 
     const GET_CUST_REPORT_SCHDINV_LIST_END_POINT = `${
       process.env.REACT_APP_NEW_API_URL
-    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
+      payload.startDate ? `'${payload.startDate}'` : null
+    },@enddate=${
+      payload.endDate ? `'${payload.endDate}'` : null
+    },@candidateid=${payload.candidateid ? payload.candidateid : null},@jobid=${
+      payload.jobid ? payload.jobid : null
+    }`;
     return await fetchWrapper.get(GET_CUST_REPORT_SCHDINV_LIST_END_POINT);
   }
 );
@@ -48,7 +58,13 @@ export const getCustReportIVDCandList = createAsyncThunk(
 
     const GET_CUST_REPORT_IVD_CND_LIST_END_POINT = `${
       process.env.REACT_APP_NEW_API_URL
-    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
+      payload.startDate ? `'${payload.startDate}'` : null
+    },@enddate=${
+      payload.endDate ? `'${payload.endDate}'` : null
+    },@candidateid=${payload.candidateid ? payload.candidateid : null},@jobid=${
+      payload.jobid ? payload.jobid : null
+    }`;
     return await fetchWrapper.get(GET_CUST_REPORT_IVD_CND_LIST_END_POINT);
   }
 );
@@ -65,7 +81,9 @@ export const getCustReportJobAgingList = createAsyncThunk(
 
     const GET_CUST_REPORT_JOB_AGING_LIST_END_POINT = `${
       process.env.REACT_APP_NEW_API_URL
-    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@jobid=${
+      payload.jobid ? payload.jobid : null
+    }`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_AGING_LIST_END_POINT);
   }
 );
@@ -82,7 +100,11 @@ export const getCustReportMatchedCandList = createAsyncThunk(
 
     const GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT = `${
       process.env.REACT_APP_NEW_API_URL
-    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    }/Report/GetReportData?reportId=${
+      payload.reportId
+    }&parameter=@candidateid=${
+      payload.candidateid ? payload.candidateid : null
+    }`;
     return await fetchWrapper.get(GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT);
   }
 );
@@ -99,7 +121,11 @@ export const getCustReporCandStatList = createAsyncThunk(
 
     const GET_CUST_REPORT_CAND_STAT_LIST_END_POINT = `${
       process.env.REACT_APP_NEW_API_URL
-    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    }/Report/GetReportData?reportId=${
+      payload.reportId
+    }&parameter=@candidateid=${
+      payload.candidateid ? payload.candidateid : null
+    }`;
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_STAT_LIST_END_POINT);
   }
 );
@@ -127,6 +153,7 @@ const customerReportSlice = createSlice({
     // open jobs
     [getCustReportJobList.pending]: (state) => {
       state.loading = true;
+      state.jobList = [];
     },
     [getCustReportJobList.fulfilled]: (state, action) => {
       state.loading = false;
@@ -139,6 +166,7 @@ const customerReportSlice = createSlice({
     // schedule interview list
     [getCustReportScheduleIVList.pending]: (state) => {
       state.loading = true;
+      state.schdInterviewList = [];
     },
     [getCustReportScheduleIVList.fulfilled]: (state, action) => {
       state.loading = false;
@@ -151,6 +179,7 @@ const customerReportSlice = createSlice({
     // interviewed candidate list
     [getCustReportIVDCandList.pending]: (state) => {
       state.loading = true;
+      state.interviewedCandidateList = [];
     },
     [getCustReportIVDCandList.fulfilled]: (state, action) => {
       state.loading = false;
@@ -163,6 +192,7 @@ const customerReportSlice = createSlice({
     // job aging list
     [getCustReportJobAgingList.pending]: (state) => {
       state.loading = true;
+      state.jobAgingList = [];
     },
     [getCustReportJobAgingList.fulfilled]: (state, action) => {
       state.loading = false;
@@ -175,6 +205,7 @@ const customerReportSlice = createSlice({
     // matched candidate list
     [getCustReportMatchedCandList.pending]: (state) => {
       state.loading = true;
+      state.matchedCandidateList = [];
     },
     [getCustReportMatchedCandList.fulfilled]: (state, action) => {
       state.loading = false;
@@ -187,6 +218,7 @@ const customerReportSlice = createSlice({
     // candidate status list
     [getCustReporCandStatList.pending]: (state) => {
       state.loading = true;
+      state.candidateStatusList = [];
     },
     [getCustReporCandStatList.fulfilled]: (state, action) => {
       state.loading = false;

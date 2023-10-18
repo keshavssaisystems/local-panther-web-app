@@ -20,8 +20,6 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
-import { getScheduleInterviewThunk } from "../scheduleInterview/scheduleinterview.slice";
-// import { candidateList, totalRecords } from "./data";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -59,10 +57,7 @@ export const CustomerCandidateLists = (props) => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
-    if (
-      window.location.pathname &&
-      window.location.pathname.includes("candidate-list")
-    ) {
+    if (window?.location?.pathname?.includes("candidate-list")) {
       onGetPageList(pageNo, props.type || activeTab, "");
     }
   }, []);
@@ -93,26 +88,11 @@ export const CustomerCandidateLists = (props) => {
     let candObj = {
       pageNumber: pageNo,
       pageSize: type === "matched" ? cardPageSize : listPageSize,
-      // isCustomerLike: type === "liked",
-      // isCustomerMaybe: type === "maybe",
-      // isCustomerAccepted: type === "accepted",
-      // isCustomerReject: type === "rejected",
-      // isCustomerScheduled: type === "scheduled",
-      // isCandidateApply: type === "applied,
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
     };
-    // if (type === "scheduled") {
-    //   dispatch(
-    //     customerCandidateListsActions.getScheduleListData({
-    //       jobId: id,
-    //       pageNumber: pageNo,
-    //       pageSize: type === "matched" ? cardPageSize : listPageSize,
-    //     })
-    //   );
-    // } else {
+
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
-    // }
   };
 
   const handlePageChange = (page) => {

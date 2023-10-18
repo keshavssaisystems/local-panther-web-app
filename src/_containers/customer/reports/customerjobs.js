@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Input,
   Col,
   Row,
   FormGroup,
@@ -14,10 +13,8 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  ButtonGroup,
 } from "reactstrap";
-
-import { Table } from "_widgets";
-
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +24,9 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import { getCustReportJobList } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
-import { data } from "./data";
+import moment from "moment";
+import DataTable from "react-data-table-component";
+import Loader from "react-loaders";
 const columns = [
   {
     name: "Job Code",
@@ -51,7 +50,8 @@ const columns = [
   },
   {
     name: "Posted date",
-    selector: (row) => row.createddate,
+    selector: (row) =>
+      row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : "",
     sortable: true,
   },
   {
@@ -89,13 +89,45 @@ const columns = [
 export function CustomerReportJobList() {
   const dispatch = useDispatch();
   const { id } = useParams();
+
+  let [filter, setFilter] = useState({});
+  let [startDate, setStartDate] = useState();
+  let [endDate, setEndDate] = useState();
+
   useEffect(() => {
-    dispatch(getCustReportJobList({ reportId: id }));
+    onGetCustReportJobList();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onGetCustReportJobList = (filter) => {
+    let data = {
+      ...filter,
+      reportId: id,
+    };
+    dispatch(getCustReportJobList(data));
+  };
+
   const jobList = useSelector((state) => state?.customerReportReducer?.jobList);
+  const loading = useSelector((state) => state?.customerReportReducer?.loading);
+
+  const onSubmitHandler = () => {
+    onGetCustReportJobList(filter);
+  };
+
+  const handleDateChange = (name, value) => {
+    setFilter({
+      ...filter,
+      [name]: moment(value).format("YYYY-MM-DD"),
+    });
+  };
+
+  const onSubmitClear = () => {
+    setFilter({});
+    setStartDate(null);
+    setEndDate(null);
+    onGetCustReportJobList({});
+  };
 
   return (
     <>
@@ -130,17 +162,7 @@ export function CustomerReportJobList() {
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{ display: "none" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <Input name="skills" type="select">
-                    <option value="">Select skills</option>
-                  </Input>
-                </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <Input name="skills" type="select">
-                    <option value="">Select Location</option>
-                  </Input>
-                </Col>
+              <Row>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
@@ -148,10 +170,15 @@ export function CustomerReportJobList() {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        name="fromDate"
-                        id="fromDate"
-                        placeholderText="DD/MM/YYYY"
+                        name="startDate"
+                        id="startDate"
+                        placeholderText="MM/DD/YYYY"
                         className="form-control"
+                        selected={startDate}
+                        onChange={(date) => {
+                          handleDateChange("startDate", date);
+                          setStartDate(date);
+                        }}
                       />
                     </InputGroup>
                   </FormGroup>
@@ -163,30 +190,61 @@ export function CustomerReportJobList() {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        name="fromDate"
-                        id="fromDate"
-                        placeholderText="DD/MM/YYYY"
+                        name="endDate"
+                        id="endDate"
+                        placeholderText="MM/DD/YYYY"
                         className="form-control"
+                        selected={endDate}
+                        onChange={(date) => {
+                          handleDateChange("endDate", date);
+                          setEndDate(date);
+                        }}
                       />
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="3" md="3" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
-                      <Button
-                        style={{ background: "rgb(47 71 155)" }}
-                        className="btn-square btn btn-primary"
-                        type="button"
-                      >
-                        <FontAwesomeIcon icon={faSearch} /> Search
-                      </Button>
+                      <ButtonGroup>
+                        <Button
+                          style={{ background: "rgb(47 71 155)" }}
+                          className="btn-square btn btn-primary me-4"
+                          type="button"
+                          onClick={() => onSubmitHandler()}
+                        >
+                          <FontAwesomeIcon icon={faSearch} /> Search
+                        </Button>
+                        <Button
+                          style={{ background: "rgb(47 71 155)" }}
+                          className="btn-square btn btn-primary"
+                          type="button"
+                          onClick={() => onSubmitClear()}
+                        >
+                          Clear
+                        </Button>
+                      </ButtonGroup>
                     </InputGroup>
                   </FormGroup>
                 </Col>
               </Row>
-
-              <Table columns={columns} data={jobList} fixedHeader />
+              <Row className="mt-1">
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <DataTable
+                    columns={columns}
+                    data={jobList}
+                    fixedHeader
+                    pagination
+                  />
+                )}
+              </Row>
             </CardBody>
           </Card>
         </Col>
