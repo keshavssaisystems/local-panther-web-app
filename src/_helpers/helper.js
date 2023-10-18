@@ -110,10 +110,10 @@ export const formatDateQualification = function (dateString) {
   const today_month = monthNames[new Date().getMonth()];
   const today_day = new Date().getDate();
   const today_year = new Date().getFullYear();
-  let today = `${today_month} ${today_day}, ${today_year}`;
+  let today = `${today_month} ${today_year}`;
 
   // Create the formatted date string
-  const formattedDate = `${month} ${day}, ${year}`;
+  const formattedDate = `${month} ${year}`;
 
   if (today == formattedDate) {
     return "Present";
@@ -212,3 +212,115 @@ export const endDateValidation = function (dateString) {
     return formattedDate;
   }
 };
+
+export function calculateExperience(fromDate, toDate) {
+  let fromDateObj = new Date(fromDate);
+  let toDateObj = toDate ? new Date(toDate) : new Date();
+
+  let yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
+  let monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
+
+  let yearsText =
+    yearDifference > 0
+      ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
+      : "";
+  let monthsText =
+    monthDifference > 0
+      ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
+      : "";
+
+  let experienceText;
+  if (monthsText != "" && yearsText != "") {
+    experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
+  } else if (yearsText != "" || monthsText != "") {
+    experienceText = [yearsText, monthsText].filter(Boolean).join("");
+  }
+  if (monthsText == "" && yearsText == "") {
+    experienceText = "";
+  }
+  if (experienceText != "") {
+    experienceText = `(${experienceText})`;
+  }
+
+  return experienceText;
+}
+
+export const getDate = function (data) {
+  let text = "";
+  if (data.startdate) {
+    text = formatDate(data.startdate);
+
+    if (data.enddate) {
+      text += " to " + formatDateQualification(data.enddate);
+    }
+  } else if (data.enddate) {
+    text = formatDateQualification(data.enddate);
+  }
+  return text;
+};
+
+export const getEducText = function (data) {
+  let text = "";
+  if (data.school != "") {
+    text = data.school;
+    if (data.cityname != "") {
+      text += ", " + data.cityname;
+    }
+    if (data.statename != "") {
+      text += ", " + data.statename;
+    }
+    if (data.countryname != "") {
+      text += ", " + data.countryname;
+    }
+  } else if (data.cityname != "") {
+    text = data.cityname;
+    if (data.statename != "") {
+      text += ", " + data.statename;
+    }
+    if (data.countryname != "") {
+      text += ", " + data.countryname;
+    }
+  } else if (data.statename != "") {
+    text = data.statename;
+    if (data.countryname != "") {
+      text += ", " + data.countryname;
+    }
+  } else if (data.countryname != "") {
+    text = data.countryname;
+    text += data.countryname;
+  }
+
+  return text;
+};
+export const convertText = function (htmlContent) {
+  let data;
+  const lines = htmlContent?.split("<p>").map((line, index) => {
+    if (index === 0) {
+      data = "";
+    } else {
+      data += `<li>${line?.replace("</p>", "")}</li>`;
+    }
+  });
+  if (data != "") {
+    return data;
+  } else {
+    return data;
+  }
+};
+
+export function convertDateToYYYMMDD(dateStr) {
+  if (dateStr.month == "" && dateStr.year == "") {
+    return null;
+  }
+
+  const monthStr = dateStr.month == "" ? "January" : dateStr.month;
+  const yearStr = dateStr.year == "" ? new Date().getFullYear() : dateStr.year;
+
+  // Convert the month string to a number (1-12)
+  const month = new Date(Date.parse(monthStr + " 1, 2000")).getMonth() + 1;
+
+  // Create a date string in "YYYY-MM-DD" format
+  const formattedDate = `${yearStr}-${month.toString().padStart(2, "0")}-01`;
+
+  return formattedDate;
+}

@@ -122,6 +122,8 @@ const getProfileSlice = createSlice({
           dob: filter_data.dob ? filter_data.dob : null,
           gender: filter_data.gendername,
           race: filter_data.ethnicityname,
+          summary: filter_data.summary,
+          additionalinformation: filter_data.additionalinformation,
 
           candidateid: 0,
           firstname: filter_data.firstname,
@@ -148,7 +150,7 @@ const getProfileSlice = createSlice({
         new_data.educationInfo = filter_data.candidateEducationDtos;
         new_data.certificationsInfo = filter_data.candidateCertificationDtos;
         new_data.additionalInfo =
-          filter_data.candidateAdditionalInformationDtos;
+          filter_data.candidateAdditionalInfoDetailsDtos;
         new_data.jobPreferenceInfo = filter_data.candidateJobPreferenceDtos;
         state.profileData = new_data;
 

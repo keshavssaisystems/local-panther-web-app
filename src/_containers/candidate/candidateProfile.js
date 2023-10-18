@@ -27,6 +27,7 @@ import { CertificationDetails } from "./certifications";
 import { AdditionalInformation } from "./additionalInfo";
 import { JobPreferences } from "./jobPreferences";
 import {
+  dropdownActions,
   getSkillsFilter,
   getJobTitleActions,
   educationActions,
@@ -128,6 +129,7 @@ export function CandidateProfile() {
     popular_skills = await getSkillsFilter("java");
     setPopularSkills(popular_skills.data);
     await dispatch(studyFieldActions.getStudyField());
+    await dispatch(dropdownActions.getJobLocationTypeThunk());
   };
 
   const getPersonalDetails = async function () {
@@ -142,7 +144,7 @@ export function CandidateProfile() {
       position: organization?.length > 0 ? organization[0].jobtitle : "",
       organization:
         organization?.length > 0 ? organization[0].company : "Not Working",
-      eligibility: dropdownLists.eligibilityDropDown.find(
+      eligibility: dropdownLists.eligibilityDropDown?.find(
         (x) => x.id == filter_data.employmenteligiblity
       ).name,
       readyToWork: filter_data.isreadytoworkimmediately ? "Yes" : "No",

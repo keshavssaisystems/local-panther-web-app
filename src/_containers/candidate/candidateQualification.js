@@ -3,7 +3,12 @@ import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 
 import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { profileActions } from "_store";
-import { formatDate, formatDateQualification } from "_helpers/helper";
+import {
+  formatDate,
+  formatDateQualification,
+  calculateExperience,
+  getDate,
+} from "_helpers/helper";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
@@ -58,19 +63,7 @@ export function CandidateQualification(props) {
     setError(false);
     props.onCallBack();
   };
-  const getDate = function (data) {
-    let text = "";
-    if (data.startdate) {
-      text = formatDate(data.startdate);
 
-      if (data.enddate) {
-        text += " to " + formatDateQualification(data.enddate);
-      }
-    } else if (data.enddate) {
-      text = formatDateQualification(data.enddate);
-    }
-    return text;
-  };
   const [newTabId, setNewTabId] = useState(2);
   const addMoreTabs = function () {
     const newTab = {
@@ -133,50 +126,6 @@ export function CandidateQualification(props) {
     }
   };
 
-  function calculateExperience(fromDate, toDate) {
-    let fromDateObj = new Date(fromDate);
-    let toDateObj = toDate ? new Date(toDate) : new Date();
-
-    let yearDifference = toDateObj.getFullYear() - fromDateObj.getFullYear();
-    let monthDifference = toDateObj.getMonth() - fromDateObj.getMonth();
-    let dayDifference = toDateObj.getDate() - fromDateObj.getDate();
-
-    if (dayDifference < 0) {
-      monthDifference--; // Adjust months if the "to" day is earlier than the "from" day
-      dayDifference += new Date(
-        toDateObj.getFullYear(),
-        toDateObj.getMonth(),
-        0
-      ).getDate();
-    }
-
-    let yearsText =
-      yearDifference > 0
-        ? `${yearDifference} ${yearDifference === 1 ? "year" : "years"}`
-        : "";
-    let monthsText =
-      monthDifference > 0
-        ? `${monthDifference} ${monthDifference === 1 ? "month" : "months"}`
-        : "";
-
-    let daysText =
-      dayDifference > 0
-        ? `${dayDifference} ${dayDifference === 1 ? "day" : "days"}`
-        : "";
-
-    let experienceText;
-    if (monthsText != "" && yearsText != "") {
-      experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
-    } else if (yearsText != "" || monthsText != "") {
-      experienceText = [yearsText, monthsText].filter(Boolean).join("");
-    }
-    if (monthsText == "" && yearsText == "") {
-      experienceText = daysText;
-    }
-
-    return experienceText;
-  }
-
   return (
     <div>
       <div className="profile-view">
@@ -185,7 +134,7 @@ export function CandidateQualification(props) {
             {!loading ? (
               <div>
                 <PerfectScrollbar>
-                  <Row className="mb-3">
+                  <Row className="mb-2">
                     <Col>
                       <strong className="card-title-text">
                         Qualifications
@@ -229,12 +178,11 @@ export function CandidateQualification(props) {
 
                           {item.startdate ? (
                             <div className="card-p-text-black">
-                              {getDate(item)} {" ("}
+                              {getDate(item)}
                               {calculateExperience(
                                 item.startdate,
                                 item.enddate
                               )}
-                              {")"}
                             </div>
                           ) : (
                             <></>

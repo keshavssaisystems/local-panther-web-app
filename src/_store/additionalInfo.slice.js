@@ -14,10 +14,9 @@ export const updateadditionalInfoThunk = createAsyncThunk(
 
 export const addadditionalInfoThunk = createAsyncThunk(
   `${name}/addadditionalInfoThunk`,
-  async (qualification_data) => {
-    console.log(qualification_data);
-    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateAdditionalInformations/AddCandidateAdditionalInformationList`;
-    return await fetchWrapper.post(LOGIN_END_POINT, qualification_data);
+  async (formDetails) => {
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateAdditionalInformations/UpsertCandidateAdditionalInformations`;
+    return await fetchWrapper.post(LOGIN_END_POINT, formDetails);
   }
 );
 

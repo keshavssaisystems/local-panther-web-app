@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import "./profile.scss";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-import { formatDate, extractDatePart } from "_helpers/helper";
+import { convertDateToYYYMMDD, extractDatePart } from "_helpers/helper";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -35,7 +35,9 @@ export function EducationModal(props) {
     loadData();
   }, []);
 
-  const studyFieldList = useSelector((state) => state.getStudyField.user.data);
+  const studyFieldList = useSelector(
+    (state) => state.getStudyField.studyFieldList
+  );
 
   const [countryList, setCountryList] = useState([]);
   const [stateList, setStateList] = useState([]);
@@ -45,7 +47,102 @@ export function EducationModal(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState([]);
-
+  const [monthList, setMonthList] = useState([
+    {
+      id: 1,
+      name: "January",
+    },
+    {
+      id: 2,
+      name: "February",
+    },
+    {
+      id: 3,
+      name: "March",
+    },
+    {
+      id: 4,
+      name: "April",
+    },
+    {
+      id: 5,
+      name: "May",
+    },
+    {
+      id: 6,
+      name: "June",
+    },
+    {
+      id: 7,
+      name: "July",
+    },
+    {
+      id: 8,
+      name: "August",
+    },
+    {
+      id: 9,
+      name: "September",
+    },
+    {
+      id: 10,
+      name: "October",
+    },
+    {
+      id: 11,
+      name: "November",
+    },
+    {
+      id: 12,
+      name: "December",
+    },
+  ]);
+  const [yearList, setYearList] = useState([
+    {
+      id: 1,
+      name: 2019,
+    },
+    {
+      id: 2,
+      name: 2020,
+    },
+    {
+      id: 3,
+      name: 2021,
+    },
+    {
+      id: 4,
+      name: 2022,
+    },
+    {
+      id: 5,
+      name: 2023,
+    },
+    {
+      id: 6,
+      name: 2024,
+    },
+    {
+      id: 7,
+      name: 2025,
+    },
+    {
+      id: 8,
+      name: 2026,
+    },
+    {
+      id: 9,
+      name: 2027,
+    },
+  ]);
+  const [fromDateSelect, setFromDateSelect] = useState({
+    month: "",
+    year: "",
+  });
+  const [toDateSelect, setToDateSelect] = useState({
+    month: "",
+    year: "",
+  });
   const [educationList, setEducationList] = useState(
     useSelector((state) => state.educationLevelReducer.educationList)
   );
@@ -63,7 +160,10 @@ export function EducationModal(props) {
 
         candidateid: 0,
 
-        fieldofstudy: "",
+        fieldofstudy: {
+          value: 0,
+          label: "",
+        },
         school: "",
         city: [
           {
@@ -90,6 +190,15 @@ export function EducationModal(props) {
         fromDateValid: false,
         fromDateReq: false,
         currentUserId: null,
+        fromDateSelect: {
+          month: "",
+          year: "",
+        },
+
+        toDateSelect: {
+          month: "",
+          year: "",
+        },
       });
     } else {
       data.push({
@@ -102,7 +211,10 @@ export function EducationModal(props) {
 
         candidateid: 0,
 
-        fieldofstudy: props.selected.fieldofstudy,
+        fieldofstudy: {
+          value: props.selected.fieldofstudyid,
+          label: props.selected.fieldofstudy,
+        },
         school: props.selected.school,
         city: {
           value: props.selected.cityid,
@@ -131,7 +243,36 @@ export function EducationModal(props) {
         currentUserId: null,
         fromDateValid: false,
         fromDateReq: false,
+        fromDateSelect: {
+          month: "",
+          year: "",
+        },
+
+        toDateSelect: {
+          month: "",
+          year: "",
+        },
       });
+
+      if (props.selected.startdate) {
+        let year = new Date(props.selected.startdate).getFullYear();
+        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
+
+        data[0].fromDateSelect.month = Number(
+          new Date(props.selected.startdate).getMonth() + 1
+        );
+        data[0].fromDateSelect.year = selectedYear;
+      }
+      if (props.selected.enddate) {
+        let year = new Date(props.selected.enddate).getFullYear();
+        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
+
+        data[0].toDateSelect.month = Number(
+          new Date(props.selected.enddate).getMonth() + 1
+        );
+        data[0].toDateSelect.year = selectedYear;
+      }
+
       loadOptions(props.selected.cityname.slice(0, 3));
     }
     setFormData(data);
@@ -217,7 +358,10 @@ export function EducationModal(props) {
 
       candidateid: 0,
 
-      fieldofstudy: "",
+      fieldofstudy: {
+        value: 0,
+        label: "",
+      },
       school: "",
       city: [
         {
@@ -242,8 +386,18 @@ export function EducationModal(props) {
       enddate: null,
       isactive: false,
       currentUserId: null,
+      fromDateSelect: {
+        month: "",
+        year: "",
+      },
+
+      toDateSelect: {
+        month: "",
+        year: "",
+      },
     };
     new_data.push(newTab);
+
     setFormData(new_data);
   };
 
@@ -259,7 +413,9 @@ export function EducationModal(props) {
 
       new_data[index].education = dropdown;
     } else if (check == "studyField") {
-      new_data[index].fieldofstudy = data;
+      dropdown.value = data.value;
+      dropdown.label = data.label;
+      new_data[index].fieldofstudy = dropdown;
     } else if (check == "school") {
       new_data[index].school = data;
     } else if (check == "city") {
@@ -286,45 +442,99 @@ export function EducationModal(props) {
         !new_data[index].iscurrentlystudying;
 
       if (new_data[index].iscurrentlystudying) {
-        if (new_data[index].startdate) {
-          if (new Date(data) < new Date(new_data[index].startdate)) {
-            new_data[index].fromDateValid = true;
-          } else {
-            new_data[index].fromDateValid = false;
-            new_data[index].enddate = extractDatePart(new Date());
-          }
-        } else {
-          new_data[index].fromDateValid = false;
-          new_data[index].enddate = extractDatePart(new Date());
-        }
-      }
-    } else if (check == "fromdate") {
-      if (new_data[index].enddate) {
-        if (new Date(data) > new Date(new_data[index].enddate)) {
-          new_data[index].fromDateValid = true;
-        } else {
-          new_data[index].fromDateValid = false;
-          new_data[index].startdate = extractDatePart(data);
-        }
-      } else {
-        new_data[index].fromDateValid = false;
-        new_data[index].startdate = extractDatePart(data);
-      }
-    } else if (check == "todate") {
-      new_data[index].enddate = data;
+        let year = new Date().getFullYear();
+        new_data[index].toDateSelect.month = Number(new Date().getMonth() + 1);
+        new_data[index].toDateSelect.year = year;
 
-      if (new_data[index].startdate) {
-        if (new Date(data) < new Date(new_data[index].startdate)) {
-          new_data[index].fromDateValid = true;
-        } else {
-          new_data[index].fromDateValid = false;
-          new_data[index].enddate = extractDatePart(data);
-        }
+        // if (new_data[index].startdate) {
+        //   if (new Date(data) < new Date(new_data[index].startdate)) {
+        //     new_data[index].fromDateValid = true;
+        //   } else {
+        //     new_data[index].fromDateValid = false;
+        //     new_data[index].enddate = extractDatePart(new Date());
+        //   }
+        // } else {
+        //   new_data[index].fromDateValid = false;
+        //   new_data[index].enddate = extractDatePart(new Date());
+        // }
       } else {
-        new_data[index].fromDateValid = false;
-        new_data[index].enddate = extractDatePart(data);
+        new_data[index].toDateSelect = {
+          month: "",
+          year: "",
+        };
       }
     }
+    // else if (check == "fromdate") {
+    //   if (new_data[index].enddate) {
+    //     if (new Date(data) > new Date(new_data[index].enddate)) {
+    //       new_data[index].fromDateValid = true;
+    //     } else {
+    //       new_data[index].fromDateValid = false;
+    //       new_data[index].startdate = extractDatePart(data);
+    //     }
+    //   } else {
+    //     new_data[index].fromDateValid = false;
+    //     new_data[index].startdate = extractDatePart(data);
+    //   }
+    // } else if (check == "todate") {
+    //   new_data[index].enddate = data;
+
+    //   if (new_data[index].startdate) {
+    //     if (new Date(data) < new Date(new_data[index].startdate)) {
+    //       new_data[index].fromDateValid = true;
+    //     } else {
+    //       new_data[index].fromDateValid = false;
+    //       new_data[index].enddate = extractDatePart(data);
+    //     }
+    //   } else {
+    //     new_data[index].fromDateValid = false;
+    //     new_data[index].enddate = extractDatePart(data);
+    //   }
+    // }
+    else if (check == "fromYear") {
+      new_data[index].fromDateSelect.year = yearList?.find(
+        (x) => x.id == Number(data)
+      )?.name;
+
+      if (new_data[index].toDateSelect.year != "") {
+        if (
+          new_data[index].fromDateSelect.year >
+          new_data[index].toDateSelect.year
+        ) {
+          new_data[index].fromDateValid = true;
+        } else {
+          new_data[index].fromDateValid = false;
+        }
+      } else {
+        new_data[index].fromDateValid = false;
+      }
+    } else if (check == "toYear") {
+      new_data[index].toDateSelect.year = yearList?.find(
+        (x) => x.id == Number(data)
+      )?.name;
+
+      if (new_data[index].fromDateSelect.year != "") {
+        if (
+          new_data[index].toDateSelect.year <
+          new_data[index].fromDateSelect.year
+        ) {
+          new_data[index].fromDateValid = true;
+        } else {
+          new_data[index].fromDateValid = false;
+        }
+      } else {
+        new_data[index].fromDateValid = false;
+      }
+    } else if (check == "fromMonth") {
+      new_data[index].fromDateSelect.month = monthList?.find(
+        (x) => x.id == Number(data)
+      )?.name;
+    } else if (check == "toMonth") {
+      new_data[index].toDateSelect.month = monthList?.find(
+        (x) => x.id == Number(data)
+      )?.name;
+    }
+
     setFormData(new_data);
   };
   async function onSubmit() {
@@ -344,15 +554,14 @@ export function EducationModal(props) {
         candidateeducationid: rest.candidateeducationid,
         candidateid: Number(userDetails.InternalUserId),
         levelofeducation: rest.education.label,
-        fieldofstudy: rest.fieldofstudy,
+        fieldofstudy: rest.fieldofstudy?.label,
         school: rest.school,
         countryid: rest.country.value,
         cityid: rest.city.value,
         stateid: rest.state.value,
         iscurrentlystudying: rest.iscurrentlystudying,
-        startdate:
-          rest.startdate && rest.startdate != "" ? rest.startdate : null,
-        enddate: rest.enddate && rest.enddate != "" ? rest.enddate : null,
+        startdate: convertDateToYYYMMDD(rest.fromDateSelect),
+        enddate: convertDateToYYYMMDD(rest.toDateSelect),
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
@@ -431,7 +640,7 @@ export function EducationModal(props) {
           <Row>
             <Col md={4}>
               <FormGroup>
-                <Label for="levelofeducation" className="input-label">
+                <Label for="levelofeducation" className="fw-semi-bold">
                   Level of education
                   <span className="required-icon"> *</span>
                 </Label>
@@ -454,8 +663,8 @@ export function EducationModal(props) {
               </FormGroup>
             </Col>
             <Col md={4}>
-              <FormGroup>
-                <Label for="studyField" className="input-label">
+              {/* <FormGroup>
+                <Label for="studyField" className="fw-semi-bold">
                   Field of study
                 </Label>
                 <input
@@ -470,11 +679,31 @@ export function EducationModal(props) {
                   }
                   className="field-input placeholder-text form-control"
                 />
-              </FormGroup>
+              </FormGroup> */}
+              <div>
+                <FormGroup>
+                  <Label for={"studyField"} className="fw-semi-bold">
+                    Field of study
+                  </Label>
+                  <AsyncSelect
+                    placeholder="Select..."
+                    name="studyField"
+                    defaultOptions={studyFieldList}
+                    isMulti={false}
+                    value={
+                      item.fieldofstudy?.value == 0 ? [] : item.fieldofstudy
+                    }
+                    className="location-dropdown-education"
+                    onChange={(evt) =>
+                      onHandleInputChange("studyField", evt, index, index)
+                    }
+                  />
+                </FormGroup>
+              </div>
             </Col>
             <Col md={4}>
               <FormGroup>
-                <Label for="school" className="input-label">
+                <Label for="school" className="fw-semi-bold">
                   School
                 </Label>
                 <input
@@ -495,7 +724,7 @@ export function EducationModal(props) {
           <Row>
             <Col md={4}>
               <FormGroup>
-                <Label for="city" className="input-label">
+                <Label for="city" className="fw-semi-bold">
                   City, State
                 </Label>
                 <AsyncSelect
@@ -513,7 +742,7 @@ export function EducationModal(props) {
 
             <Col md={4}>
               <FormGroup>
-                <Label for="country" className="input-label">
+                <Label for="country" className="fw-semi-bold">
                   Country
                 </Label>
                 <AsyncSelect
@@ -543,71 +772,129 @@ export function EducationModal(props) {
                     )
                   }
                 />{" "}
-                <Label check className="input-label">
+                <Label check className="fw-semi-bold">
                   Currently Studying
                 </Label>
               </FormGroup>
             </Col>
           </Row>
-          <Row className="mt-2">
+
+          <Row className="mt-2 fw-semi-bold">
+            <Label for="fromDate" className="fw-semi-bold">
+              From
+            </Label>
             <Col md={4}>
               <FormGroup>
-                <Label for="gender" className="input-label">
-                  From Date
-                </Label>
-                <InputGroup>
-                  <div className="input-group-text">
-                    <FontAwesomeIcon icon={faCalendarAlt} />
-                  </div>
-                  <DatePicker
-                    name="fromDate"
-                    autoComplete="off"
-                    id="fromDate"
-                    dateFormat="MM/yyyy"
-                    showMonthYearPicker
-                    scrollableYearDropdown
-                    selected={
-                      item.startdate ? new Date(item.startdate) : item.startdate
-                    }
-                    className="form-control"
-                    onChange={(evt) =>
-                      onHandleInputChange("fromdate", evt, index)
-                    }
-                  />
-                </InputGroup>
+                <Input
+                  id={"monthList"}
+                  name={"monthList"}
+                  type={"select"}
+                  onChange={(evt) =>
+                    onHandleInputChange("fromMonth", evt.target.value, index)
+                  }
+                >
+                  <option key={0}>Select month</option>
+                  {monthList?.length > 0 &&
+                    monthList?.map((options) => (
+                      <option
+                        selected={options.id == item.fromDateSelect.month}
+                        key={options.id}
+                        value={options.id}
+                      >
+                        {options.name}
+                      </option>
+                    ))}
+                </Input>
+
                 <div className="filter-info-text filter-error-msg">
-                  {item.fromDateValid
-                    ? "From Date should be less than To Date"
+                  {formDetails.fromDateValid
+                    ? "From date should be less than to date"
                     : ""}
                 </div>
               </FormGroup>
             </Col>
             <Col md={4}>
               <FormGroup>
-                <Label for="gender" className="input-label">
-                  To Date
-                </Label>
                 <InputGroup>
-                  <div className="input-group-text">
-                    <FontAwesomeIcon icon={faCalendarAlt} />
-                  </div>
-                  <DatePicker
-                    name="toDate"
-                    id="toDate"
-                    className="form-control"
-                    dateFormat="MM/yyyy"
-                    showMonthYearPicker
-                    scrollableYearDropdown
-                    autoComplete="off"
-                    disabled={item.iscurrentlystudying}
-                    selected={
-                      item.enddate ? new Date(item.enddate) : item.enddate
-                    }
+                  <Input
+                    id={"yearList"}
+                    name={"yearList"}
+                    type={"select"}
                     onChange={(evt) =>
-                      onHandleInputChange("todate", evt, index)
+                      onHandleInputChange("fromYear", evt.target.value, index)
                     }
-                  />
+                  >
+                    <option key={0}>Select year</option>
+                    {yearList?.length > 0 &&
+                      yearList?.map((options) => (
+                        <option
+                          selected={options.name == item.fromDateSelect.year}
+                          key={options.id}
+                          value={options.id}
+                        >
+                          {options.name}
+                        </option>
+                      ))}
+                  </Input>
                 </InputGroup>
+                <div className="filter-info-text filter-error-msg">
+                  {formDetails.fromDateValid
+                    ? "From date should be less than to date"
+                    : ""}
+                </div>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Label for="fromDate" className="fw-semi-bold">
+              To
+            </Label>
+            <Col md={4}>
+              <FormGroup>
+                <Input
+                  id={"monthList"}
+                  name={"monthList"}
+                  type={"select"}
+                  onChange={(evt) =>
+                    onHandleInputChange("toMonth", evt.target.value, index)
+                  }
+                >
+                  <option key={0}>Select month</option>
+                  {monthList?.length > 0 &&
+                    monthList?.map((options) => (
+                      <option
+                        selected={options.id == item.toDateSelect.month}
+                        key={options.id}
+                        value={options.id}
+                      >
+                        {options.name}
+                      </option>
+                    ))}
+                </Input>
+              </FormGroup>
+            </Col>
+            <Col md={4}>
+              <FormGroup>
+                <Input
+                  id={"yearList"}
+                  name={"yearList"}
+                  type={"select"}
+                  onChange={(evt) =>
+                    onHandleInputChange("toYear", evt.target.value, index)
+                  }
+                >
+                  <option key={0}>Select year</option>
+                  {yearList?.length > 0 &&
+                    yearList?.map((options) => (
+                      <option
+                        selected={options.name == item.toDateSelect.year}
+                        key={options.id}
+                        value={options.id}
+                      >
+                        {options.name}
+                      </option>
+                    ))}
+                </Input>
               </FormGroup>
             </Col>
           </Row>

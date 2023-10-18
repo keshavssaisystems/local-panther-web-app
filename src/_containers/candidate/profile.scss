@@ -28,7 +28,11 @@
     min-width: 100px !important;
     min-height: 130px !important;
     margin: 0 1rem 0 0 !important;
+    // &:hover {
+    //   background-image: url("../../assets/utils/images/profile-pic-hover.svg");
+    // }
   }
+
   .ml-border {
     border-right: solid 1px #afaba5 !important;
     margin-top: 20px;
@@ -309,6 +313,16 @@
     bottom: 25%;
     transform: translate(-50%, -50%);
   }
+
+  .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
 }
 
 .personal-information {
@@ -445,10 +459,40 @@
     color: #2f479b;
   }
 }
+.profile-pdf {
+  font-family: capitana, sans-serif;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 15px;
+  line-height: 150%;
+  h1 {
+    font-size: 2em;
+    color: #2f2e2e;
+  }
+  h2 {
+    font-size: 1.5em;
+    color: #2f2e2e;
+  }
+  h3 {
+    font-size: 1.17em;
+    color: #2f2e2e;
+    font-weight: 600;
+  }
+  h4 {
+    font-size: 16px;
+    color: #2f2e2e;
+  }
+  p {
+    margin: 0;
+
+    font-weight: 400;
+    color: #2f2e2e;
+  }
+}
 .react-date-picker-profile {
   .react-datepicker__month-container {
     float: left;
-    width: 193px !important;
+    min-width: 200px !important;
   }
   .react-datepicker__month {
     margin: 0.5rem;
@@ -457,4 +501,16 @@
     font-family: "capitana";
     cursor: pointer;
   }
+}
+
+input[type="month"]::before {
+  content: attr(placeholder) !important;
+  color: #aaa;
+  width: 100%;
+}
+
+input[type="month"]:focus::before,
+input[type="month"]:active::before {
+  content: "";
+  width: 0%;
 }

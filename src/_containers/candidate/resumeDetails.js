@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Label, ModalBody } from "reactstrap";
-import { Row, Col, Modal, Card, CardBody, Button, FormGroup } from "reactstrap";
+import {
+  Row,
+  Col,
+  Modal,
+  ModalHeader,
+  Card,
+  CardBody,
+  Button,
+  FormGroup,
+} from "reactstrap";
 import { formatDate } from "_helpers/helper";
 import { profileActions } from "_store";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +20,8 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDropzone } from "react-dropzone";
 import Loader from "react-loaders";
 import errorIcon from "../../assets/utils/images/error_icon.png";
+
+import { ProfilePDF } from "./profilePDF";
 
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
@@ -31,6 +42,7 @@ export function ResumeDetails(props) {
   const [sizeError, setSizeError] = useState(false);
   const [isModal, setModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
+  const [buildModal, setBuildModal] = useState(false);
 
   const loading = useSelector((state) => state.getProfile.loader);
 
@@ -116,6 +128,10 @@ export function ResumeDetails(props) {
     }
   };
 
+  const close = function () {
+    setBuildModal(false);
+  };
+
   const deleteResume = async function () {
     let resumeId = resumeDetails.candidateresumeid;
 
@@ -167,6 +183,9 @@ export function ResumeDetails(props) {
     }
   };
 
+  const handlePrint = function () {
+    setBuildModal(true);
+  };
   const handleChange = function (data) {};
 
   return (
@@ -236,7 +255,7 @@ export function ResumeDetails(props) {
                       </Label>
                     </p>
                   </Row>
-                  <Row className="me-2 ml-5" style={{ marginLeft: "2px" }}>
+                  <Row className="me-2 ml-5" style={{ marginLeft: "0px" }}>
                     <Col className="div-box me-1">
                       <Row className="mt-2">
                         <p className="card-p-text-black">
@@ -283,6 +302,15 @@ export function ResumeDetails(props) {
                           Build your own resume
                         </p>
                       </Row>
+
+                      {/* <Row className="card-p-text-black">
+                        The system generates a standard resume format by
+                        incorporating all necessary information from the
+                        candidate profile page, including demographics, work
+                        experience, education, skills, certifications, licenses,
+                        languages, and summary.
+                      </Row> */}
+
                       <FormGroup>
                         <Row style={{ marginLeft: "5px" }}>
                           <Button
@@ -292,7 +320,7 @@ export function ResumeDetails(props) {
                             }}
                             className="mb-2 me-2 btn-icon btn-pill btn-text"
                             color="primary"
-                            onClick={() => addEditResumeDetails()}
+                            onClick={() => handlePrint()}
                           >
                             <span className="me-2">
                               <BsUpload />
@@ -314,81 +342,6 @@ export function ResumeDetails(props) {
           </Col>
         </Row>
       </div>
-
-      {isModal ? (
-        <div className="resume-details">
-          <Modal
-            className="modal-dialog-align resume-details"
-            size="md"
-            isOpen={isModal}
-          >
-            <ModalBody>
-              <CardBody>
-                <div
-                  className="mb-0 d-flex justify-content-center success-modal-text mb-2"
-                  style={{ color: "#2f479b" }}
-                >
-                  Build your own Resume!!
-                </div>
-
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  The system generates a standard resume
-                </div>
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  format by incorporating all necessary
-                </div>
-
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  information from the candidate profile page,
-                </div>
-
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  including demographics, work experience, education
-                </div>
-
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  skills, certifications, licenses, languages
-                </div>
-                <div
-                  className="mb-0 d-flex justify-content-center"
-                  style={{ fontWeight: "500", fontSize: "15px" }}
-                >
-                  and summary
-                </div>
-
-                <Row>
-                  <Col className="d-flex justify-content-center interview-btn">
-                    <Button
-                      color="primary"
-                      className="me-2 accept-modal-btn"
-                      onClick={(evt) => setModal(false)}
-                    >
-                      OK
-                    </Button>
-                  </Col>
-                </Row>
-              </CardBody>
-            </ModalBody>
-          </Modal>
-        </div>
-      ) : (
-        <></>
-      )}
 
       <Modal
         className="modal-reject-align profile-view"
@@ -510,6 +463,12 @@ export function ResumeDetails(props) {
             </div>
           </CardBody>
         </Card>
+      </Modal>
+
+      <Modal className="personal-information" size="lg" isOpen={buildModal}>
+        <ModalHeader toggle={() => close()} charCode="Y"></ModalHeader>
+
+        <ProfilePDF />
       </Modal>
     </div>
   );

@@ -75,6 +75,7 @@ const authSlice = createSlice({
       localStorage.setItem("refreshToken", refreshToken);
       const decodedData = jwtDecode(token);
       localStorage.setItem("userId", decodedData.UserId);
+      localStorage.setItem("profileImage", decodedData.Profilephotopath);
       localStorage.setItem(
         "userroleid",
         decodedData.role.toLowerCase() === "admin"

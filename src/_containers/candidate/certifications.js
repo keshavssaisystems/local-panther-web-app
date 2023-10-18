@@ -44,6 +44,7 @@ export function CertificationDetails(props) {
 
   const close = function () {
     setPersonalModal(false);
+    setEditModal(false);
   };
   const edit = function (data) {
     setSelectedData(data);

@@ -37,6 +37,8 @@ export function JobPreferences(props) {
   const selectDate = function () {};
 
   const [jobTypes, setJobTypes] = useState([]);
+
+  const [workType, setWorkType] = useState([]);
   const [workSchedules, setWorkSchedules] = useState([]);
   const [shifts, setShiftsData] = useState([]);
   const [jobTitleId, setJobTitleId] = useState([]);
@@ -49,28 +51,31 @@ export function JobPreferences(props) {
 
   const [preferenceDetails, setDetails] = useState([]);
   const get_response = useSelector(
-    (state) => state.getProfile.profileData.jobPreferenceInfo
+    (state) => state.getProfile?.profileData?.jobPreferenceInfo
   );
 
-  const shiftsOption = useSelector((state) => state.shifts.shift);
-  const workScheduleOptions = useSelector(
-    (state) => state.workSchedule.workSchedule
+  const shiftsOption = useSelector((state) => state.shifts?.shift);
+  const workTypeOption = useSelector(
+    (state) => state.dropdown?.jobLocationType
   );
-  const jobTypeOption = useSelector((state) => state.jobType.jobType);
-  const loader = useSelector((state) => state.getProfile.loader);
+  const workScheduleOptions = useSelector(
+    (state) => state.workSchedule?.workSchedule
+  );
+  const jobTypeOption = useSelector((state) => state.jobType?.jobType);
+  const loader = useSelector((state) => state.getProfile?.loader);
 
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
 
-  let jobTitleList = useSelector((state) => state.getJobTitle.user.data);
-  let payPeriodList = useSelector((state) => state.getPayPeriod.user.data);
+  let jobTitleList = useSelector((state) => state.getJobTitle?.user?.data);
+  let payPeriodList = useSelector((state) => state.getPayPeriod?.user?.data);
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const experienceLevelOption = useSelector(
-    (state) => state.experienceLevel.experienceLevel
+    (state) => state.dropdown?.experienceLevel
   );
   const [formDetails, setFormData] = useState({});
 
-  const location = useSelector((state) => state.jobType.jobType);
+  const location = useSelector((state) => state.dropdown?.jobType);
 
   const [desiredJobType, setDesiredJobType] = useState([
     {
@@ -116,107 +121,113 @@ export function JobPreferences(props) {
         workschedulestext: null,
       });
     } else {
-      data.push({
-        anywhereonlynear: get_response[0].anywhereonlynear,
-        candidateDesiredWorkTypeDtos:
-          get_response[0].candidateDesiredWorkTypeDtos,
-        candidateJobtitlesDtos: get_response[0].candidateJobtitlesDtos,
-        candidateLocationsDtos: get_response[0].candidateLocationsDtos,
-        candidateShiftsDtos: get_response[0].candidateShiftsDtos,
-        candidateWorkSchedulesDtos: get_response[0].candidateWorkSchedulesDtos,
-        candidateid: userDetails.InternalUserId,
-        candidatejobpreferenceid: get_response[0].candidatejobpreferenceid,
-        desiredjobtitle: get_response[0].desiredjobtitle,
-        desiredjobtitleid: get_response[0].desiredjobtitleid,
-        desiredjobtypes: get_response[0].desiredjobtypes,
-        desiredjobtypestext: get_response[0].desiredjobtypestext,
-        desiredworktypeids: get_response[0].desiredworktypeids,
-        isactive: get_response[0].isactive,
-        jobtitlesids: get_response[0].jobtitlesids,
-        jobtitlestext: get_response[0].jobtitlestext,
-        locationids: get_response[0].locationids,
-        locationstext: get_response[0].locationstext,
-        minimumbasepay: get_response[0].minimumbasepay,
-        payperiodtype: get_response[0].payperiodtype,
-        payperiodtypeid: get_response[0].payperiodtypeid,
-        shifts: get_response[0].shifts,
-        shiftstext: get_response[0].shiftstext,
-        willingtorelocate: get_response[0].willingtorelocate,
-        workschedules: get_response[0].workschedules,
-        workschedulestext: get_response[0].workschedulestext,
-      });
+      if (get_response.length > 0) {
+        data.push({
+          anywhereonlynear: get_response[0].anywhereonlynear,
+          candidateDesiredWorkTypeDtos:
+            get_response[0].candidateDesiredWorkTypeDtos,
+          candidateJobtitlesDtos: get_response[0].candidateJobtitlesDtos,
+          candidateLocationsDtos: get_response[0].candidateLocationsDtos,
+          candidateShiftsDtos: get_response[0].candidateShiftsDtos,
+          candidateWorkSchedulesDtos:
+            get_response[0].candidateWorkSchedulesDtos,
+          candidateid: userDetails.InternalUserId,
+          candidatejobpreferenceid: get_response[0].candidatejobpreferenceid,
+          desiredjobtitle: get_response[0].desiredjobtitle,
+          desiredjobtitleid: get_response[0].desiredjobtitleid,
+          desiredjobtypes: get_response[0].desiredjobtypes,
+          desiredjobtypestext: get_response[0].desiredjobtypestext,
+          desiredworktypeids: get_response[0].desiredworktypeids,
+          isactive: get_response[0].isactive,
+          jobtitlesids: get_response[0].jobtitlesids,
+          jobtitlestext: get_response[0].jobtitlestext,
+          locationids: get_response[0].locationids,
+          locationstext: get_response[0].locationstext,
+          minimumbasepay: get_response[0].minimumbasepay,
+          payperiodtype: get_response[0].payperiodtype,
+          payperiodtypeid: get_response[0].payperiodtypeid,
+          shifts: get_response[0].shifts,
+          shiftstext: get_response[0].shiftstext,
+          willingtorelocate: get_response[0].willingtorelocate,
+          workschedules: get_response[0].workschedules,
+          workschedulestext: get_response[0].workschedulestext,
+        });
 
-      let new_data = data[0].candidateJobtitlesDtos.filter(
-        (x) => x.ischecked == true
-      );
-
-      const commonData = jobTitleList.filter((item1) => {
-        return new_data.some(
-          (item2) => item1.value === item2.desiredjobtitleid
+        let new_data = data[0].candidateJobtitlesDtos?.filter(
+          (x) => x.ischecked == true
         );
-      });
 
-      let select = [...selectedTitle];
-      select = commonData;
-      setSelectedTitle(select);
+        const commonData = jobTitleList.filter((item1) => {
+          return new_data.some(
+            (item2) => item1.value === item2.desiredjobtitleid
+          );
+        });
+        let select = [...selectedTitle];
+        select = commonData;
+        setSelectedTitle(select);
 
-      let payType = payPeriodList.find(
-        (x) => x.value == data[0].payperiodtypeid
-      );
+        let payType = payPeriodList.find(
+          (x) => x.value == data[0].payperiodtypeid
+        );
 
-      let select1 = [...selectedPayType];
-      select1.push(payType);
-      setSelectedPayType(select1);
+        let select1 = [...selectedPayType];
+        select1.push(payType);
+        setSelectedPayType(select1);
 
-      let location = data[0].candidateLocationsDtos.map((rest) => {
-        return {
-          value: rest.locationid,
-          label: rest.location,
-        };
-      });
+        let location = data[0].candidateLocationsDtos.map((rest) => {
+          return {
+            value: rest.locationid,
+            label: rest.location,
+          };
+        });
 
-      setSelectedLocation(location);
-      let filtered_data = [...getData];
-      filtered_data = get_response?.map((rest) => {
-        return {
-          candidatejobpreferenceid: rest.candidatejobpreferenceid,
-          desiredJobTitle: desiredJobType?.find(
-            (x) => x.id == rest.desiredjobtitleid
-          )?.name,
-          specificJobTitle: rest.candidateJobtitlesDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.desiredjobtitlename)
-            .join(", "),
-          desiredJobTypes: rest.candidateDesiredWorkTypeDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.desiredworktypename)
-            .join(", "),
-          workSchedules: rest.candidateWorkSchedulesDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.workschedules)
-            .join(", "),
+        setSelectedLocation(location);
+        let filtered_data = [...getData];
+        filtered_data = get_response?.map((rest) => {
+          return {
+            candidatejobpreferenceid: rest.candidatejobpreferenceid,
+            desiredJobTitle: desiredJobType?.find(
+              (x) => x.id == rest.desiredjobtitleid
+            )?.name,
+            specificJobTitle: rest.candidateJobtitlesDtos
+              ?.filter((item) => item.ischecked)
+              .map((item) => item.desiredjobtitlename)
+              .join(", "),
+            desiredJobTypes: rest.candidateDesiredWorkTypeDtos
+              ?.filter((item) => item.ischecked)
+              .map((item) => item.desiredworktypename)
+              .join(", "),
+            desiredWorkTypes: rest.candidateDesiredJobTypesDtos
+              ?.filter((item) => item.ischecked)
+              .map((item) => item.joblocationtype)
+              .join(", "),
+            workSchedules: rest.candidateWorkSchedulesDtos
+              ?.filter((item) => item.ischecked)
+              .map((item) => item.workschedules)
+              .join(", "),
 
-          shifts: rest.candidateShiftsDtos
-            .filter((item) => item.ischecked)
-            .map((item) => item.shifts)
-            .join(", "),
-          pay:
-            (rest.minimumbasepay && rest.payperiodtype) ||
-            (rest.minimumbasepay != "" && rest.payperiodtype != "")
-              ? rest.minimumbasepay + ", " + rest.payperiodtype
-              : rest.minimumbasepay
-              ? rest.minimumbasepay
-              : rest.payperiodtype
-              ? rest.payperiodtype
-              : "",
-          relocate: rest.willingtorelocate ? true : false,
-          workType: "",
-        };
-      });
+            shifts: rest.candidateShiftsDtos
+              ?.filter((item) => item.ischecked)
+              .map((item) => item.shifts)
+              .join(", "),
+            pay:
+              (rest.minimumbasepay && rest.payperiodtype) ||
+              (rest.minimumbasepay != "" && rest.payperiodtype != "")
+                ? rest.minimumbasepay + ", " + rest.payperiodtype
+                : rest.minimumbasepay
+                ? rest.minimumbasepay
+                : rest.payperiodtype
+                ? rest.payperiodtype
+                : "",
+            relocate: rest.willingtorelocate ? true : false,
+            workType: "",
+          };
+        });
 
-      setGetResponse(filtered_data);
+        setGetResponse(filtered_data);
+      }
+      setDetails(data);
     }
-    setDetails(data);
   }, [get_response]);
 
   useEffect(() => {
@@ -250,6 +261,7 @@ export function JobPreferences(props) {
       desiredjobtitleid: 0,
       jobtitlesids: "",
       desiredjobtypes: "",
+      workTypes: "",
       workschedules: "",
       shifts: "",
       payperiodtypeid: 0,
@@ -310,6 +322,24 @@ export function JobPreferences(props) {
       } else {
         new_data[0].error = false;
       }
+    } else if (check == "workType") {
+      let type_data = [...workType];
+      type_data =
+        new_data[0].desiredjobtypes != ""
+          ? new_data[0].desiredjobtypes.split(",")
+          : [];
+      let i = type_data.indexOf(data);
+
+      if (i == -1) {
+        type_data.push(data);
+      } else {
+        const i = type_data.indexOf(data);
+        type_data.splice(i, 1);
+      }
+
+      setWorkType(type_data);
+
+      new_data[0].desiredjobtypes = type_data.join(",");
     } else if (check == "schedules") {
       let schedule_data = [...workSchedules];
       schedule_data =
@@ -605,11 +635,15 @@ export function JobPreferences(props) {
                             <strong>Willing to relocate</strong>
                             <div>{item.relocate ? "Yes" : "No"}</div>
                           </Row>
-                          {/* <hr /> */}
-                          {/* <Row>
-                        <strong>Desired work type</strong>
-                        <div>{item.workType}</div>
-                      </Row> */}
+                          <hr />
+                          <Row>
+                            <strong>Work type</strong>
+                            <div>
+                              {item.desiredWorkTypes != ""
+                                ? item.desiredWorkTypes
+                                : "-"}
+                            </div>
+                          </Row>
                           <hr />
                         </Col>
                       </Row>
@@ -662,7 +696,7 @@ export function JobPreferences(props) {
                             value={parentItem.desiredjobtitleid}
                             checked={parentItem.desiredjobtitleid == item.id}
                           />{" "}
-                          <Label check className="input-label">
+                          <Label check className="fw-semi-bold">
                             {item.name}
                           </Label>
                         </FormGroup>
@@ -677,7 +711,7 @@ export function JobPreferences(props) {
                   <Row>
                     <Col md={5}>
                       <FormGroup>
-                        <Label for="zipCode" className="input-label">
+                        <Label for="zipCode" className="fw-semi-bold">
                           Job Title
                         </Label>
                         <AsyncSelect
@@ -704,8 +738,8 @@ export function JobPreferences(props) {
                         <Label className="fw-semi-bold">
                           Job type<span style={{ color: "red" }}> *</span>
                         </Label>
-                        {jobTypeOption.length > 0 &&
-                          jobTypeOption.map((options) => (
+                        {jobTypeOption?.length > 0 &&
+                          jobTypeOption?.map((options) => (
                             <div className="form-group-custom">
                               <Input
                                 key={options.id}
@@ -806,6 +840,40 @@ export function JobPreferences(props) {
                           ))}
                       </FormGroup>
                     </Col>
+
+                    <Col>
+                      <FormGroup>
+                        <Label for="shifts" className="fw-semi-bold">
+                          Work Type
+                        </Label>
+                        {workTypeOption?.length > 0 &&
+                          workTypeOption?.map((options) => (
+                            <div className="form-group-custom">
+                              <Input
+                                key={options.id}
+                                type="checkbox"
+                                name={"shifts"}
+                                id={"shifts_" + options.id}
+                                value={options.id}
+                                onInput={(evt) =>
+                                  onHandleInputChange(
+                                    "workType",
+                                    evt.target.value
+                                  )
+                                }
+                                checked={checkIdExists(
+                                  parentItem.desiredjobtypes,
+                                  options.id
+                                )}
+                              />{" "}
+                              {"  "}
+                              <Label check for={"workType" + options.id}>
+                                {options.name}
+                              </Label>
+                            </div>
+                          ))}
+                      </FormGroup>
+                    </Col>
                   </Row>
                   <Row>
                     <div className="mb-1 fw-bold">Desired minimum pay</div>
@@ -815,7 +883,7 @@ export function JobPreferences(props) {
                   <Row>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="zipCode" className="input-label">
+                        <Label for="zipCode" className="fw-semi-bold">
                           Pay type
                         </Label>
                         <AsyncSelect
@@ -833,7 +901,7 @@ export function JobPreferences(props) {
                     </Col>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="zipCode" className="input-label">
+                        <Label for="zipCode" className="fw-semi-bold">
                           Minimum base pay
                         </Label>
                         <input
@@ -867,7 +935,7 @@ export function JobPreferences(props) {
                           type="checkbox"
                           checked={parentItem.willingtorelocate}
                         />{" "}
-                        <Label check className="input-label">
+                        <Label check className="fw-semi-bold">
                           Willing to Relocate
                         </Label>
                       </FormGroup>
@@ -885,7 +953,7 @@ export function JobPreferences(props) {
                             }
                             checked={parentItem.anywhereonlynear == 1}
                           />{" "}
-                          <Label check className="input-label">
+                          <Label check className="fw-semi-bold">
                             Any where
                           </Label>
                         </FormGroup>
@@ -901,7 +969,7 @@ export function JobPreferences(props) {
                             }
                             checked={parentItem.anywhereonlynear == 2}
                           />{" "}
-                          <Label check className="input-label">
+                          <Label check className="fw-semi-bold">
                             Only near
                           </Label>
                         </FormGroup>
@@ -911,7 +979,7 @@ export function JobPreferences(props) {
                   <Row>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="city" className="input-label">
+                        <Label for="city" className="fw-semi-bold">
                           Location
                         </Label>
                         <AsyncSelect
