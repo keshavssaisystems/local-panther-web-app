@@ -43,6 +43,7 @@ import { workScheduleReducer } from "../_containers/customer/createJob/worksched
 import { shiftReducer } from "../_containers/customer/createJob/shifts.slice";
 import { experienceLevelReducer } from "../_containers/customer/createJob/experiencelevel.slice";
 import { graphReducer } from "_containers/customer/scheduleInterview/graph.slice";
+import { customerDashboardReducer } from "_containers/customer/dashboard/customerdashboard.slice";
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
 import { adminDashboardReducer } from "_containers/admin/_redux/adminDashboard.slice";
@@ -96,6 +97,7 @@ export * from "../_containers/customer/createJob/workschedule.slice";
 export * from "../_containers/customer/createJob/shifts.slice";
 export * from "../_containers/customer/createJob/experiencelevel.slice";
 export * from "_containers/customer/scheduleInterview/graph.slice";
+export * from "_containers/customer/dashboard/customerdashboard.slice";
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
 export * from "_containers/admin/_redux/adminDashboard.slice";
@@ -148,6 +150,7 @@ export const store = configureStore({
     shifts: shiftReducer,
     experienceLevel: experienceLevelReducer,
     graph: graphReducer,
+    customerDashboard: customerDashboardReducer,
     // admin reducer
     adminReportReducer,
     adminDashboard: adminDashboardReducer,

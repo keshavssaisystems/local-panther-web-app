@@ -116,7 +116,13 @@ export function BasicInformation({
         ? ""
         : previousData.companydetails,
   });
-  const [descriptionData, setDescriptionData] = useState("");
+  const [descriptionData, setDescriptionData] = useState(
+    prevStep === 3 && preValue.description !== ""
+      ? preValue.description
+      : prevStep === 1 && previousValue.description !== ""
+      ? previousValue.description
+      : ""
+  );
   const [companyValidation, setcompanyValidation] = useState(false);
   const [jobTitleValidation, setJobTitleValidation] = useState(false);
   const [openPositionValidation, setOpenPositionValidation] = useState(false);
@@ -138,12 +144,16 @@ export function BasicInformation({
     "undefined, undefined, undefined, undefined"
       ? setCityValidation(true)
       : setCityValidation(false);
+    descriptionData === ""
+      ? setDescriptionValidation(true)
+      : setDescriptionValidation(false);
     if (
       event.target.elements.companyName.value !== "" &&
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.openPositions.value !== "" &&
       event.target.elements.city.value !==
-        "undefined, undefined, undefined, undefined"
+        "undefined, undefined, undefined, undefined" &&
+      descriptionData !== ""
     ) {
       saveData(event);
     }
@@ -209,6 +219,10 @@ export function BasicInformation({
     });
   };
 
+  const setupDescriptionData = (event) => {
+    setDescriptionData(event);
+    setDescriptionValidation(false);
+  };
   return (
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
@@ -419,8 +433,7 @@ export function BasicInformation({
                     : previousValue.description
                 }
                 onChange={(e) => {
-                  setDescriptionData(e.editor.getData());
-                  setDescriptionValidation(false);
+                  setupDescriptionData(e.editor.getData());
                 }}
                 className={
                   descriptionValidation === true ? "ckeditor-invalid" : ""

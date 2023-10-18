@@ -45,10 +45,10 @@ export function CreateJobWizard({ type }) {
       companyId: localStorage.getItem("companyid"),
     });
   }, []);
-  const jobListData = useSelector((state) => state.custJobListReducer.jobList);
-  let selectedJobDetailsForEdit = jobListData.filter((jobs) => {
-    return jobs.jobid === Number(id);
-  });
+  const selectedJobDetailsForEdit = useSelector(
+    (state) => state.custJobListReducer.jobDetail
+  );
+
   const getOptionsData = (event) => {
     if (
       event.type === "previous_template" ||
@@ -101,7 +101,6 @@ export function CreateJobWizard({ type }) {
     await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
   const updateJob = async function (formElement) {
-    console.log("update");
     await dispatch(
       createjobActions.getUpdatejobThunk({ jobData: formElement, jobId: id })
     );
@@ -151,8 +150,8 @@ export function CreateJobWizard({ type }) {
     await dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
     setShowPopupWithNextStep(!showPopupWithNextStep);
   };
-  const [BIStatus, setBIStatus] = useState(false);
-  const [ESStatus, setESStatus] = useState(false);
+  const [BIStatus, setBIStatus] = useState(type === "edit" ? true : false);
+  const [ESStatus, setESStatus] = useState(type === "edit" ? true : false);
   const getBIStatus = (event) => {
     setBIStatus(event);
   };
@@ -335,7 +334,11 @@ export function CreateJobWizard({ type }) {
                             onClick={next}
                             disabled={buttonDisable}
                           >
-                            {compState === 2 ? "Confirm & create" : "Continue"}
+                            {compState === 2
+                              ? type === "edit"
+                                ? "Confirm & update"
+                                : "Confirm & create"
+                              : "Continue"}
                           </Button>
                         )}
                         {compState === 1 && jobType === "new_template" && (

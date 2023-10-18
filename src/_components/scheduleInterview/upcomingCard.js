@@ -86,7 +86,7 @@ export function UpcomingCard({
                       moment(interview.scheduledate).format("MMM D, YYYY") +
                         " " +
                         interview.starttime
-                    ).format("MM/DD/YYYY,  hh:mm a")}
+                    ).format("MM/DD/YYYY, hh:mm a")}
                   </p>
                   <p className="job-details">
                     <BsListStars className="icon-settings" /> Mode-{" "}

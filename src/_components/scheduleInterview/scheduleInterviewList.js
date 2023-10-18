@@ -73,9 +73,7 @@ export function ScheduleInterviewList({
       selector: (row) =>
         moment(
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
-        )
-          .tz("America/New_York")
-          .format("MM/DD/YYYY h:mm a"),
+        ).format("MM/DD/YYYY h:mm a"),
     },
     {
       name: "Duration",
@@ -147,7 +145,6 @@ export function ScheduleInterviewList({
             onRowClicked={handleRowClick}
             columns={columns(handleButtonClick)}
             data={candidateList}
-            selectableRows
             persistTableHead
             customStyles={customStyles}
             pagination
