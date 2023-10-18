@@ -4,6 +4,7 @@ import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 import {
   AdminDashboard,
+  CustomerDashboard,
   CandidateDashboard,
 } from "_containers/dashboard/Dashboard";
 
@@ -53,7 +54,7 @@ import { CustomerReportCandidateStatus } from "_containers/customer/reports/cust
 import { CustomerVideoScreen } from "../../firebase/customerVideo";
 import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
-import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
+// import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
