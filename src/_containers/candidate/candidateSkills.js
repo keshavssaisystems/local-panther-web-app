@@ -10,6 +10,7 @@ import {
   Button,
   FormGroup,
   Form,
+  CardTitle,
 } from "reactstrap";
 
 import { getSkillsFilter } from "_store";
@@ -284,70 +285,59 @@ export function CandidateSkills(props) {
   return (
     <div>
       <div className="profile-view">
-        <Row>
-          <Col sm="12" lg="12">
-            <Card className="main-card mb-3">
-              <div
-                className="mt-3 scroll-area-md"
-                style={{ marginLeft: "10px" }}
+        <Card className="main-card mb-3">
+          <CardBody className="scroll-area-lg">
+            <div className="mb-3">
+              <strong className="card-title-text">Skills</strong>
+              <Label
+                className="float-end me-3 link-text"
+                onClick={(evt) => setPersonalModal(true)}
               >
-                <Row className="mb-3">
-                  <Col>
-                    <strong className="card-title-text">Skills</strong>
-                  </Col>
+                Add
+              </Label>
+            </div>
 
-                  <Col>
-                    <Label
-                      className="float-end me-3 link-text"
-                      onClick={(evt) => setPersonalModal(true)}
-                    >
-                      Add
-                    </Label>
-                  </Col>
-                </Row>
-                {!loader ? (
-                  <Row style={{ marginLeft: "2px" }}>
-                    {getResponse?.length > 0 ? (
-                      getResponse.map((item) => (
-                        <Button
-                          className="
+            {!loader ? (
+              <div>
+                {getResponse?.length > 0 ? (
+                  getResponse.map((item) => (
+                    <Button
+                      className="
                        mb-2 me-2 skills-view btn-shadow btn-outline-2x"
-                          outline
-                          color="light"
-                        >
-                          <strong className="skills-view-text">
-                            {" "}
-                            {item.skillname + " "}
-                          </strong>
-                          <span className="skills-exp-text me-1">
-                            {item.yearsofexperience
-                              ? item.yearsofexperience + "years "
-                              : ""}
-                          </span>
-                          <span
-                            aria-hidden="true"
-                            style={{ fontSize: "15px", cursor: "pointer" }}
-                            onClick={(evt) => removeView(item)}
-                          >
-                            x
-                          </span>
-                        </Button>
-                      ))
-                    ) : (
-                      <div className="d-flex justify-content-center">
-                        No Data available
-                      </div>
-                    )}
-                  </Row>
+                      outline
+                      color="light"
+                    >
+                      <strong className="skills-view-text">
+                        {" "}
+                        {item.skillname + " "}
+                      </strong>
+                      <span className="skills-exp-text me-1">
+                        {item.yearsofexperience
+                          ? item.yearsofexperience + "years "
+                          : ""}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        style={{ fontSize: "15px", cursor: "pointer" }}
+                        onClick={(evt) => removeView(item)}
+                      >
+                        x
+                      </span>
+                    </Button>
+                  ))
                 ) : (
-                  <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                    <Loader active={true} type="line-scale-pulse-out-rapid" />
+                  <div className="d-flex justify-content-center">
+                    No Data available
                   </div>
                 )}
               </div>
-            </Card>
-          </Col>
-        </Row>
+            ) : (
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={true} type="line-scale-pulse-out-rapid" />
+              </div>
+            )}
+          </CardBody>
+        </Card>
       </div>
 
       {isPersonalModal ? (

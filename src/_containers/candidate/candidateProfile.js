@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Label, Input } from "reactstrap";
-import { candidateActions } from "_store";
+import { yearActions, monthActions } from "_store";
 import {
   Row,
   Col,
@@ -130,6 +130,8 @@ export function CandidateProfile() {
     setPopularSkills(popular_skills.data);
     await dispatch(studyFieldActions.getStudyField());
     await dispatch(dropdownActions.getJobLocationTypeThunk());
+    await dispatch(yearActions.getyear());
+    await dispatch(monthActions.getmonth());
   };
 
   const getPersonalDetails = async function () {
