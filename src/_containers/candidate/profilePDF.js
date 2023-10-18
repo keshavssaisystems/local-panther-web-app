@@ -106,16 +106,20 @@ export function ProfilePDF() {
                     </span>
                   </p>
                 </Col>
-                <Col>
-                  <div className="float-end rounded-circle profile-img me-3">
-                    <img
-                      width={100}
-                      className="rounded-circle"
-                      src={profile_img}
-                      alt="profile-icon"
-                    />
-                  </div>
-                </Col>
+                {profile_img != "" ? (
+                  <Col>
+                    <div className="float-end rounded-circle profile-img me-3">
+                      <img
+                        width={100}
+                        className="rounded-circle"
+                        src={profile_img}
+                        alt="profile-icon"
+                      />
+                    </div>
+                  </Col>
+                ) : (
+                  <></>
+                )}
               </Row>
             </div>
 

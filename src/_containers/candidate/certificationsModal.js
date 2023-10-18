@@ -36,6 +36,7 @@ export function CertificationsModal(props) {
   const [typeList, setTypeList] = useState(
     useSelector((state) => state.certificateType.user.data)
   );
+  let desc_temp;
   const [isSave, setSave] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -192,6 +193,7 @@ export function CertificationsModal(props) {
         toYearReq: false,
         toDateReq: false,
       };
+      desc_temp = props.selected.description;
       setSummary(props.selected.description);
       if (props.selected.startdate) {
         let year = new Date(props.selected.startdate).getFullYear();
@@ -895,7 +897,11 @@ export function CertificationsModal(props) {
               name="description"
               id="description"
               maxLength={2000}
-              initData={summary}
+              initData={
+                !props.selected.description
+                  ? summary
+                  : props.selected.description
+              }
               onChange={(e) => setSummary(e.editor.getData())}
             />
           </FormGroup>

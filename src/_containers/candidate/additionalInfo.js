@@ -140,18 +140,15 @@ export function AdditionalInformation(props) {
                   Additional information
                 </strong>
               </Col>
-              {getResponse?.length == 0 ? (
-                <Col>
-                  <Label
-                    className="float-end me-3 link-text"
-                    onClick={(evt) => edit("add")}
-                  >
-                    Add
-                  </Label>
-                </Col>
-              ) : (
-                <></>
-              )}
+              {/* {getResponse?.length == 0 ? ( */}
+              <Col>
+                <Label
+                  className="float-end me-3 link-text"
+                  onClick={(evt) => edit("add")}
+                >
+                  Add
+                </Label>
+              </Col>
             </Row>
             {!loader ? (
               <div>

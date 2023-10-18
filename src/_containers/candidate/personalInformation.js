@@ -103,6 +103,7 @@ export function PersonalInformation(props) {
   const [raceSelect, setRaceSelect] = useState("");
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
+    debugger;
     let data = {
       firstname: selectedCandidate.personalInfo.firstname,
       lastname: selectedCandidate.personalInfo.lastname,
@@ -641,7 +642,7 @@ export function PersonalInformation(props) {
                           </p>
                           <p className="candidate-label mt-0 mb-0">
                             {selectedCandidate.personalInfo.organization !=
-                              "Not working" &&
+                              "Not Working" &&
                             selectedCandidate.personalInfo.organization != ""
                               ? "at " +
                                 selectedCandidate.personalInfo.organization
@@ -724,18 +725,18 @@ export function PersonalInformation(props) {
                     </div>
                     <Row className="mt-3">
                       <Row>
-                        <Col className="mb-2">
-                          {selectedCandidate.personalInfo.dob != "" ? (
+                        {selectedCandidate.personalInfo.dob ? (
+                          <Col className="mb-2">
                             <div>
                               <BsBalloon className="personal-sec-icon me-2" />
                               <span className="content-text mt-3">
                                 {formatDate(selectedCandidate.personalInfo.dob)}
                               </span>
                             </div>
-                          ) : (
-                            <></>
-                          )}
-                        </Col>
+                          </Col>
+                        ) : (
+                          <></>
+                        )}
                       </Row>
                       <Row>
                         <Col className="mb-2">
@@ -1137,38 +1138,6 @@ export function PersonalInformation(props) {
                         </Label>
                       </FormGroup>
                     </Col>
-                  </Row>
-
-                  <Row>
-                    <div className="mb-1 fw-bold">Upload profile image</div>
-                    <hr />
-                  </Row>
-
-                  <Row>
-                    <div {...getRootProps()} className="dropzone">
-                      <input {...getInputProps()} />
-                      <Row>
-                        <label>
-                          <div className="dropZone" id="dragbox">
-                            <Button
-                              style={{
-                                width: "auto",
-                                backgroundColor: "#2F2E2E",
-                                borderColor: "#2F2E2E",
-                              }}
-                              className="mb-2 mt-0 btn-icon btn-pill btn-text"
-                              color="primary"
-                            >
-                              <span className="me-2">
-                                <BsUpload />
-                              </span>
-
-                              <span className="me-2">Upload</span>
-                            </Button>
-                          </div>
-                        </label>
-                      </Row>
-                    </div>
                   </Row>
 
                   <div className="float-end">
