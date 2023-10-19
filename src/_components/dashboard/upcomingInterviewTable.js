@@ -3,8 +3,10 @@ import { Card, CardBody, CardHeader } from "reactstrap";
 import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
+import { USPhoneNumber } from "_helpers/helper";
 
 export function UpcomingInterviewTable({ tableData }) {
+  console.log(USPhoneNumber("987654320"));
   const customStyles = {
     headRow: {
       style: {
