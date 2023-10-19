@@ -3,10 +3,9 @@ import { Card, CardBody, CardHeader } from "reactstrap";
 import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
-import { USPhoneNumber } from "_helpers/helper";
+import "./dashboard.scss";
 
 export function UpcomingInterviewTable({ tableData }) {
-  console.log(USPhoneNumber("987654320"));
   const customStyles = {
     headRow: {
       style: {
@@ -69,7 +68,7 @@ export function UpcomingInterviewTable({ tableData }) {
   ];
   return (
     <>
-      <Card className="mb-3" style={{ height: "340px" }}>
+      <Card className="mb-3 chart-fixed-height">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
             <BsFillCalendarWeekFill className="me-1" />
