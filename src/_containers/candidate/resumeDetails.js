@@ -46,6 +46,8 @@ export function ResumeDetails(props) {
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const [buildModal, setBuildModal] = useState(false);
 
+  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+
   const loading = useSelector((state) => state.getProfile.loader);
 
   useEffect(() => {
@@ -86,8 +88,7 @@ export function ResumeDetails(props) {
 
       axios
         .put(
-          "https://panther-api-dev.azurewebsites.net/PutResume/" +
-            resumeDetails.candidateresumeid,
+          `${url}/PutResume/` + resumeDetails.candidateresumeid,
           form,
           config
         )
@@ -109,11 +110,7 @@ export function ResumeDetails(props) {
       form.append("Resumefile", acceptedFiles[0]);
 
       axios
-        .post(
-          "https://panther-api-dev.azurewebsites.net/PostResume",
-          form,
-          config
-        )
+        .post(`${url}/PostResume`, form, config)
         .then((result) => {
           if (result.data) {
             if (result.data.status == "Success") {
