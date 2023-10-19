@@ -138,33 +138,43 @@ export const CustCandidateListView = (props) => {
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
-        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
-          <Col>
-            <Button
-              disabled={props.type === "liked"}
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onActionClick("like", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list liked"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              disabled={props.type === "maybe"}
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
+        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
+          {props.type !== "liked" ? (
+            <Col>
+              <Button
+                disabled={props.type === "liked"}
+                // outline
+                size="sm"
+                title="liked"
+                className=" btn-icon"
+                color="primary"
+                onClick={() => onActionClick("like", candidaterecommendedjobid)}
+              >
+                <img src={customerIcons.list_liked} alt="list liked"></img>
+              </Button>
+            </Col>
+          ) : (
+            <></>
+          )}
+          {props.type !== "maybe" ? (
+            <Col>
+              <Button
+                disabled={props.type === "maybe"}
+                // outline
+                size="sm"
+                title="maybe"
+                className=" btn-icon"
+                color="warning"
+                onClick={() =>
+                  onActionClick("maybe", candidaterecommendedjobid)
+                }
+              >
+                <img src={customerIcons.list_maybe} alt="list maybe"></img>
+              </Button>
+            </Col>
+          ) : (
+            <></>
+          )}
           <Col>
             <Button
               // outline
@@ -316,7 +326,7 @@ export const CustCandidateListView = (props) => {
       );
     } else if (props.type === "rejected") {
       return (
-        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
+        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
           <Col>
             <Button
               // outline
@@ -353,19 +363,7 @@ export const CustCandidateListView = (props) => {
               <img src={customerIcons.list_maybe} alt="list maybe"></img>
             </Button>
           </Col>
-          <Col>
-            <Button
-              disabled={props.type === "rejected"}
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() => onRejectClick()}
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
+
           <Col>
             <Button
               outline
@@ -417,7 +415,9 @@ export const CustCandidateListView = (props) => {
       name: <span className="table-title">Candidate</span>,
       id: "Candidate",
       selector: (row) => (
-        <span className="table-cell">{row.firstname + " " + row.lastname}</span>
+        <span className="table-cell" title={row.firstname + " " + row.lastname}>
+          {row.firstname + " " + row.lastname}
+        </span>
       ),
       sortable: true,
       width: "150px",
@@ -425,7 +425,9 @@ export const CustCandidateListView = (props) => {
     {
       name: <span className="table-title">Skills</span>,
       selector: (row) => (
-        <span className="table-cell">{returnSkills(row)}</span>
+        <span className="table-cell" title={returnSkills(row)}>
+          {returnSkills(row)}
+        </span>
       ),
       sortable: true,
       width: "312px",
@@ -433,7 +435,9 @@ export const CustCandidateListView = (props) => {
     {
       name: <span className="table-title">Location</span>,
       selector: (row) => (
-        <span className="table-cell">{row.locationaddress}</span>
+        <span className="table-cell" title={row.locationaddress}>
+          {row.locationaddress}
+        </span>
       ),
       sortable: true,
       width: "170px",
@@ -442,7 +446,15 @@ export const CustCandidateListView = (props) => {
     {
       name: <span className="table-title">Experience</span>,
       selector: (row) => (
-        <span className="table-cell">
+        <span
+          className="table-cell"
+          title={
+            row?.jobExperienceScheduleDtos &&
+            row?.jobExperienceScheduleDtos[0]?.experiencelevel
+              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+              : "-"
+          }
+        >
           <>
             {row?.jobExperienceScheduleDtos &&
             row?.jobExperienceScheduleDtos[0]?.experiencelevel
@@ -459,7 +471,14 @@ export const CustCandidateListView = (props) => {
       name: <span className="table-title">Scheduled time</span>,
       sortable: true,
       cell: (row) => (
-        <span className="table-cell">
+        <span
+          className="table-cell"
+          title={
+            row.customerscheduleddatetime
+              ? moment(row.customerscheduleddatetime).format("YYYY-MM-DD")
+              : ""
+          }
+        >
           {row.customerscheduleddatetime
             ? moment(row.customerscheduleddatetime).format("YYYY-MM-DD")
             : ""}
