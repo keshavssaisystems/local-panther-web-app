@@ -44,8 +44,8 @@ export const customers = {
   },
   {
     name: "Phone",
-    selector: row => (row.contactphonenumber
-),
+    id: "phonenumber",
+    selector: row => (row.phonenumber),
     sortable: true,
   },
   {
