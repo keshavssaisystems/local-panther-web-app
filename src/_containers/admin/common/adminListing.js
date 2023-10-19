@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { NewCompany } from "_components/common/newcompany";
 import errorIcon from "assets/utils/images/error_icon.png";
 import successIcon from "assets/utils/images/success_icon.svg";
+import { NewCustomer } from "_components/common/addCustomer";
 
 
 export const AdminListing = ({ entity }) => {
@@ -29,10 +30,10 @@ export const AdminListing = ({ entity }) => {
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
 
-  const [newComp, setNewComp] = useState({
+  const [newCompData, setNewCompData] = useState({
+    // ... other fields
     newCompName: { value: "", error: false },
     newIndusName: { value: "", error: false },
-
     newCompDesc: { value: "" },
     newCompEmp: { value: "" },
     newCompAdd: { value: "" },
@@ -43,6 +44,13 @@ export const AdminListing = ({ entity }) => {
     newCompZip: { value: "" },
     newCompEmail: { value: "" },
     newCompPhonenum: { value: "" },
+  });
+
+  const [newCustData, setNewCustData] = useState({
+    // ... other fields for customer form
+    custFName: { value: "", error: false },
+    custLName: { value: "", error: false },
+    // ... other fields for customer form
   });
 
   switch (entity) {
@@ -123,6 +131,7 @@ export const AdminListing = ({ entity }) => {
   };
 
   const onAddClick = () => {
+
     setEditMode(false); // Reset edit mode
     setAddComp(true); // Open the modal
   };
@@ -136,14 +145,16 @@ export const AdminListing = ({ entity }) => {
 
 
 
-  const onUpdateNewComp = (evt) => {
-    let newData = {};
-    newData[evt.target.name].value = evt.target.value;
+  const onUpdateNewComp = (evt, formType) => {
+    const newData = { ...formType === 'company' ? newCompData : newCustData };
+    newData[evt.target.name] = { value: evt.target.value, error: false };
+
+    // Update the state based on the form type
+    formType === 'company' ? setNewCompData(newData) : setNewCustData(newData);
   };
 
   const onSaveClick = async () => {
-    let newCompData = {};
-
+    if (entity === 'company') {
 
       if (newCompData.newCompName.value === "") {
         newCompData.newCompName.error = true;
@@ -160,12 +171,20 @@ export const AdminListing = ({ entity }) => {
       if (newCompData.newCompCountry.value === "") {
         newCompData.newCompCountry.error = true;
       }
-    if (newCompData.newCompName.error || newCompData.newIndusName.error || newCompData.newCompEmail.error || newCompData.newCompEmp.error || newCompData.newCompPhonenum.error
-      || newCompData.newCompAdd.error || newCompData.newCompState.error || newCompData.newCompState.error || newCompData.newCompCountry.error || newCompData.newCompZip.error || newCompData.newCompDesc.error) {
+      if (newCompData.newCompName.error || newCompData.newIndusName.error || newCompData.newCompEmail.error || newCompData.newCompEmp.error || newCompData.newCompPhonenum.error
+        || newCompData.newCompAdd.error || newCompData.newCompState.error || newCompData.newCompState.error || newCompData.newCompCountry.error || newCompData.newCompZip.error || newCompData.newCompDesc.error) {
 
-      return;
+        return;
+      }
+    } if (entity === 'customers') {
+      // ... existing validation logic for customer form
+
+      if (newCustData.custFName.error || newCustData.custLName.error) {
+        return;
+      }
+
+      // Handle submission for customer form
     }
-
   };
 
   const cardFilters = (searchFilter).map(item => (
@@ -273,21 +292,34 @@ export const AdminListing = ({ entity }) => {
         <Modal isOpen={addComp}>
           <ModalHeader toggle={() => close()} charCode="Y">
             <strong className="card-title-text">
-              {editMode ? "Edit Company" : "Add New Company"}
+              {editMode
+                ? `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
+                : `Add New ${entity.charAt(0).toUpperCase() + entity.slice(1)}`}
             </strong>
           </ModalHeader>
-
           <ModalBody>
-
-            {/* <NewCompany data={newComp} updateVal={(e) => onUpdateNewComp(e)} editingData={editingData} editMode={editMode} /> */}
-            <NewCompany editingData={editingData} editMode={editMode} />
-
+            {entity === 'company' && (
+              <NewCompany
+                editingData={editingData}
+                editMode={editMode}
+                data={newCompData}
+                updateVal={(evt) => onUpdateNewComp(evt, 'company')}
+              />
+            )}
+            {entity === 'customers' && (
+              <NewCustomer
+                editingData={editingData}
+                editMode={editMode}
+                data={newCustData}
+                updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
+              />
+            )}
             <Button color="primary" onClick={() => onSaveClick()}>
-              Submit
+              {editMode ? 'Update' : 'Submit'} {/* Conditional label */}
             </Button>
-
           </ModalBody>
         </Modal>
+
       </div> : <></>}
     </>
   );
