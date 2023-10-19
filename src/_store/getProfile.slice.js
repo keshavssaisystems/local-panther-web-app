@@ -72,6 +72,7 @@ const initialState = {
 
   error: null,
   loader: false,
+  profileImage: localStorage.getItem("profileImage"),
 };
 
 // Define the async action

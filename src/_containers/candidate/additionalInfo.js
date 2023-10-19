@@ -1,37 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-  Table,
-} from "reactstrap";
+import { Label, ModalHeader, ModalBody } from "reactstrap";
 import { additionalInfoDetailsSlice } from "_store";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  CardHeader,
-  Button,
-  FormGroup,
-  InputGroup,
-  Form,
-} from "reactstrap";
+import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDispatch } from "react-redux";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import Loader from "react-loaders";
-import { convertText } from "_helpers/helper";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
 import { AdditionalInfoModal } from "./additionalInfoModal";
 import { useSelector } from "react-redux";
@@ -39,11 +14,9 @@ import { useSelector } from "react-redux";
 export function AdditionalInformation(props) {
   const dispatch = useDispatch();
   const [isPersonalModal, setPersonalModal] = useState(false);
-  const selectDate = function () {};
+
   const loader = useSelector((state) => state.getProfile.loader);
-  const [commentLength, setCommentLength] = useState(0);
-  const [summary, setSummaryLength] = useState("");
-  const [info, setInfoLength] = useState("");
+
   const [selected, setSelectedData] = useState({});
   const [deleteId, setDeleteId] = useState(0);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
