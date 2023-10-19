@@ -103,7 +103,6 @@ export function PersonalInformation(props) {
   const [raceSelect, setRaceSelect] = useState("");
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
-    debugger;
     let data = {
       firstname: selectedCandidate.personalInfo.firstname,
       lastname: selectedCandidate.personalInfo.lastname,
@@ -563,7 +562,7 @@ export function PersonalInformation(props) {
 
     axios
       .put(
-        "https://panther-api-dev.azurewebsites.net/api/User/UpdateProfilePhoto/" +
+        `${process.env.REACT_APP_PANTHER_URL}/api/User/UpdateProfilePhoto/` +
           userDetails.UserId,
         form,
         config

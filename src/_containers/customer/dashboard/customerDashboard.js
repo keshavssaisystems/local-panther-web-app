@@ -6,7 +6,6 @@ import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewT
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
 import { customerDashboardActions } from "_store";
-import moment from "moment";
 
 export default function CustomerDashboard() {
   const dispatch = useDispatch();

@@ -1,12 +1,13 @@
 import React from "react";
 import { Card, CardBody, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
+import "./dashboard.scss";
 
 export function DonutChart({ graphData }) {
   let total = graphData?.accepted + graphData?.scheduled + graphData?.rejected;
-  let acceptedPercentage = (graphData?.accepted / total) * 100;
-  let rejectedPercentage = (graphData?.rejected / total) * 100;
-  let scheduledPercentage = (graphData?.scheduled / total) * 100;
+  let acceptedPercentage = (graphData?.accepted / total) * 100 ?? 0;
+  let rejectedPercentage = (graphData?.rejected / total) * 100 ?? 0;
+  let scheduledPercentage = (graphData?.scheduled / total) * 100 ?? 0;
   let options = {
     chart: {
       type: "donut",
@@ -45,7 +46,7 @@ export function DonutChart({ graphData }) {
   };
   return (
     <>
-      <Card className="mb-3">
+      <Card className="mb-3 chart-fixed-height">
         <CardBody className="p-0">
           <Row>
             <Col md={1} className="me-2">

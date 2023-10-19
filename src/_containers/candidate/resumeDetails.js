@@ -9,6 +9,7 @@ import {
   CardBody,
   Button,
   FormGroup,
+  CardTitle,
 } from "reactstrap";
 import { formatDate } from "_helpers/helper";
 import { profileActions } from "_store";
@@ -22,6 +23,7 @@ import Loader from "react-loaders";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 
 import { ProfilePDF } from "./profilePDF";
+import CardHeader from "react-bootstrap/esm/CardHeader";
 
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
@@ -43,6 +45,8 @@ export function ResumeDetails(props) {
   const [isModal, setModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const [buildModal, setBuildModal] = useState(false);
+
+  let url = `${process.env.REACT_APP_PANTHER_URL}`;
 
   const loading = useSelector((state) => state.getProfile.loader);
 
@@ -84,8 +88,7 @@ export function ResumeDetails(props) {
 
       axios
         .put(
-          "https://panther-api-dev.azurewebsites.net/PutResume/" +
-            resumeDetails.candidateresumeid,
+          `${url}/PutResume/` + resumeDetails.candidateresumeid,
           form,
           config
         )
@@ -107,11 +110,7 @@ export function ResumeDetails(props) {
       form.append("Resumefile", acceptedFiles[0]);
 
       axios
-        .post(
-          "https://panther-api-dev.azurewebsites.net/PostResume",
-          form,
-          config
-        )
+        .post(`${url}/PostResume`, form, config)
         .then((result) => {
           if (result.data) {
             if (result.data.status == "Success") {
@@ -191,77 +190,71 @@ export function ResumeDetails(props) {
   return (
     <div>
       <div className="profile-view">
-        <Row>
-          <Col sm="12" lg="12">
-            <Card className="card-hover-shadow-2x mb-3">
-              {!loading ? (
-                <div
-                  className="mt-3 scroll-area-md"
-                  style={{ marginLeft: "10px" }}
-                >
-                  <Row className="mb-2">
-                    <Col>
-                      <strong className="card-title-text">Resume</strong>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Label className="card-p-text">
-                      The recommendation is to utilize the build resume option
-                      for improved job matching
-                    </Label>
-                  </Row>
+        <Card className="card-hover-shadow-2x mb-3">
+          <CardBody className="scroll-area-lg">
+            <div className="mb-3">
+              <strong className="card-title-text">Resume</strong>
+            </div>
 
-                  {resumeDetails ? (
-                    <Row className="mb-1">
-                      {resumeDetails.resumepath ? (
-                        <div>
-                          <strong className="content-title">
-                            <span className="me-2">{fileName}</span>{" "}
-                            <a
-                              target="blank"
-                              href={resumeDetails.resumepath}
-                              download={fileName}
-                              className="me-2"
-                            >
-                              <BsDownload />
-                            </a>
-                            <BsTrash3 onClick={() => setDeleteConfirm(true)} />
-                          </strong>
-                          <div className="card-p-text">
-                            Uploaded on {formatDate(resumeDetails.uploadeddate)}
-                          </div>
+            {!loading ? (
+              <div>
+                <Row>
+                  <Label className="card-p-text">
+                    The recommendation is to utilize the build resume option for
+                    improved job matching
+                  </Label>
+                </Row>
+
+                {resumeDetails ? (
+                  <Row className="mb-1">
+                    {resumeDetails.resumepath ? (
+                      <div>
+                        <strong className="content-title">
+                          <span className="me-2">{fileName}</span>{" "}
+                          <a
+                            target="blank"
+                            href={resumeDetails.resumepath}
+                            download={fileName}
+                            className="me-2"
+                          >
+                            <BsDownload />
+                          </a>
+                          <BsTrash3 onClick={() => setDeleteConfirm(true)} />
+                        </strong>
+                        <div className="card-p-text">
+                          Uploaded on {formatDate(resumeDetails.uploadeddate)}
                         </div>
-                      ) : (
-                        <></>
-                      )}
-                    </Row>
-                  ) : (
-                    <></>
-                  )}
-
-                  <Row className="mb-1 mt-3">
-                    <p>
-                      <BsDownload />
-                      <a
-                        href={resumeTemplate?.[0]?.name}
-                        download="Resume_Template.docx"
-                        className="card-p-text-black"
-                        style={{ color: "#2F479B", marginLeft: "2px" }}
-                      >
-                        Click here{" "}
-                      </a>
-                      <Label className="card-p-text-black">
-                        to download standard template
-                      </Label>
-                    </p>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                   </Row>
-                  <Row className="me-2 ml-5" style={{ marginLeft: "0px" }}>
-                    <Col className="div-box me-1">
-                      <Row className="mt-2">
-                        <p className="card-p-text-black">
-                          Upload your resume here
-                        </p>
-                      </Row>
+                ) : (
+                  <></>
+                )}
+
+                <Row>
+                  <p>
+                    <BsDownload />
+                    <a
+                      href={resumeTemplate?.[0]?.name}
+                      download="Resume_Template.docx"
+                      className="card-p-text-black"
+                      style={{ color: "#2F479B", marginLeft: "2px" }}
+                    >
+                      Click here{" "}
+                    </a>
+                    <Label className="card-p-text-black">
+                      to download standard template
+                    </Label>
+                  </p>
+                </Row>
+                <Row>
+                  <Col className="col-12 mb-2">
+                    <div className=" div-box">
+                      <div className=" mb-2 card-p-text-black">
+                        Upload your resume here
+                      </div>
                       <Row>
                         <div {...getRootProps()} className="dropzone">
                           <input {...getInputProps()} />
@@ -277,6 +270,8 @@ export function ResumeDetails(props) {
                                     width: "auto",
                                     backgroundColor: "#2F2E2E",
                                     borderColor: "#2F2E2E",
+                                    float: "left",
+                                    marginRight: "15px",
                                   }}
                                   className="mb-2 mt-0 btn-icon btn-pill btn-text"
                                   color="primary"
@@ -287,60 +282,68 @@ export function ResumeDetails(props) {
 
                                   <span className="me-2">Upload</span>
                                 </Button>
+                                <div
+                                  className="file-info"
+                                  style={{ paddingTop: "10px" }}
+                                >
+                                  Support formats:doc, docx, pdf,rtf, upto 5 MB
+                                </div>
                               </div>
                             </label>
                           </Row>
-                          <span className="file-info">
-                            Support formats:doc, docx, pdf,rtf, upto 5 MB
-                          </span>
                         </div>
                       </Row>
-                    </Col>
-                    <Col className="div-box">
-                      <Row className="mt-2">
-                        <p className="card-p-text-black">
-                          Build your own resume
-                        </p>
-                      </Row>
+                    </div>
+                  </Col>
 
-                      {/* <Row className="card-p-text-black">
-                        The system generates a standard resume format by
-                        incorporating all necessary information from the
-                        candidate profile page, including demographics, work
-                        experience, education, skills, certifications, licenses,
-                        languages, and summary.
-                      </Row> */}
+                  <Col className="col-12">
+                    <div className="div-box build-resume-box">
+                      <div className="mb-2 card-p-text-black">
+                        Build your own resume
+                      </div>
 
-                      <FormGroup>
-                        <Row style={{ marginLeft: "5px" }}>
-                          <Button
-                            style={{
-                              width: "auto",
-                              backgroundColor: "#2F479B",
-                            }}
-                            className="mb-2 me-2 btn-icon btn-pill btn-text"
-                            color="primary"
-                            onClick={() => handlePrint()}
-                          >
-                            <span className="me-2">
-                              <BsUpload />
-                            </span>
+                      <div className="file-info">
+                        <div className="mb-2">
+                          The system generates a standard resume format by
+                          incorporating all necessary information from the
+                          candidate profile page, including demographics, work
+                          experience, education, skills, certifications,
+                          licenses, languages, and summary.
+                        </div>
+                        <span className="mt-2">
+                          <FormGroup>
+                            <Row style={{ marginLeft: "5px" }}>
+                              <Button
+                                style={{
+                                  width: "auto",
+                                  backgroundColor: "#2F479B",
+                                }}
+                                className="me-2 btn-icon btn-pill btn-text"
+                                color="primary"
+                                onClick={() => handlePrint()}
+                              >
+                                <span className="me-2">
+                                  <BsUpload />
+                                </span>
 
-                            <span className="me-2">Build</span>
-                          </Button>
-                        </Row>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </div>
-              ) : (
-                <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                  <Loader active={loading} type="line-scale-pulse-out-rapid" />
-                </div>
-              )}
-            </Card>
-          </Col>
-        </Row>
+                                <span className="me-2">Build</span>
+                              </Button>
+                            </Row>
+                          </FormGroup>
+                        </span>
+                        After submitting all necessary data.
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            ) : (
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={loading} type="line-scale-pulse-out-rapid" />
+              </div>
+            )}
+          </CardBody>
+        </Card>
       </div>
 
       <Modal

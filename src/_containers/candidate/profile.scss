@@ -223,8 +223,12 @@
     text-align: left;
   }
   .div-box {
-    border: solid 1px #afaba5 !important;
-    border-radius: 5px;
+    border: solid 1px #ced4da !important;
+    border-radius: 4px;
+    padding: 8px;
+  }
+  .build-resume-box {
+    min-height: 144px;
   }
   .nav-link {
     color: #545cd8;
@@ -391,8 +395,9 @@
 }
 .resume-details {
   .div-box {
-    border: solid 1px #afaba5 !important;
-    border-radius: 5px;
+    border: solid 1px #ced4da !important;
+    border-radius: 4px;
+    padding: 8px;
   }
   .link-text {
     color: #2f479b;

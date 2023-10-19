@@ -42,7 +42,6 @@ export function StackBarChart({ graphData }) {
   if (graphData?.length !== undefined) {
     graphData.forEach((jobValue) => {
       Object.keys(jobValue).forEach((key) => {
-        console.log(jobValue[key]);
         mainArray[key].push(jobValue[key]);
       });
     });
@@ -53,20 +52,7 @@ export function StackBarChart({ graphData }) {
       };
       seriesDataArray.push(seriesData);
     });
-    console.log(seriesDataArray);
   }
-  var colorPalette = [
-    "#00D8B6",
-    "#008FFB",
-    "#FEB019",
-    "#FF4560",
-    "#775DD0",
-    "#01BFD6",
-    "#5564BE",
-    "#F7A600",
-    "#EDCD24",
-    "#F74F58",
-  ];
   let baroptions = {
     chart: {
       type: "bar",

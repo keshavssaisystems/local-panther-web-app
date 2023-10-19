@@ -113,74 +113,74 @@ export function CandidateEducation(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
-            <Row>
-              <Col className="mb-2">
+          <CardBody className="scroll-area-md">
+            <div>
+              <Col className="mb-3">
                 <strong className="card-title-text">Education</strong>
-              </Col>
-
-              <Col>
                 <Label
-                  className="float-end me-3 link-text"
+                  className="float-end link-text"
                   onClick={(evt) => setPersonalModal(true)}
                 >
                   Add
                 </Label>
               </Col>
-            </Row>
-            {!loader ? (
-              <Row>
-                {educationalDetails.length > 0 ? (
-                  educationalDetails.map((item) => (
-                    <div className="mb-2">
-                      <Col>
-                        <strong className="me-2 content-title">
-                          {getTitle(item)}
-                        </strong>
-                        <div className="float-end">
-                          <BsPencil
-                            className="icons"
-                            onClick={() => edit(item)}
-                          />{" "}
-                          <BsTrash3
-                            className="icons me-3"
-                            onClick={(evt) =>
-                              deleteModal(item.candidateeducationid)
-                            }
-                          />
-                        </div>
-                      </Col>
-                      {item.cityname != "" ||
-                      item.statename != "" ||
-                      item.countryname != "" ||
-                      item.school != "" ? (
-                        <Label className="mb-0 mt-0 card-p-text-black">
-                          {getEducText(item)}
-                        </Label>
-                      ) : (
-                        ""
-                      )}
-                      {item.iscurrentlystudying ? (
-                        <p className="card-p-text-black">Curretly Studying </p>
-                      ) : (
-                        <div>
-                          <p className="card-p-text-black">{getDate(item)}</p>
-                        </div>
-                      )}
+
+              {!loader ? (
+                <Row>
+                  {educationalDetails.length > 0 ? (
+                    educationalDetails.map((item) => (
+                      <div className="mb-2">
+                        <Col>
+                          <strong className="me-2 content-title">
+                            {getTitle(item)}
+                          </strong>
+                          <div className="float-end">
+                            <BsPencil
+                              className="icons"
+                              onClick={() => edit(item)}
+                            />{" "}
+                            <BsTrash3
+                              className="icons"
+                              onClick={(evt) =>
+                                deleteModal(item.candidateeducationid)
+                              }
+                            />
+                          </div>
+                        </Col>
+                        {item.cityname != "" ||
+                        item.statename != "" ||
+                        item.countryname != "" ||
+                        item.school != "" ? (
+                          <Label className="mb-0 mt-0 card-p-text-black">
+                            {getEducText(item)}
+                          </Label>
+                        ) : (
+                          ""
+                        )}
+                        {item.iscurrentlystudying ? (
+                          <p className="card-p-text-black">
+                            Curretly Studying{" "}
+                          </p>
+                        ) : (
+                          <div>
+                            <p className="card-p-text-black">{getDate(item)}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="d-flex justify-content-center">
+                      No Data available
                     </div>
-                  ))
-                ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data available
-                  </div>
-                )}
-              </Row>
-            ) : (
-              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={true} type="line-scale-pulse-out-rapid" />
-              </div>
-            )}
-          </div>
+                  )}
+                </Row>
+              ) : (
+                <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                  <Loader active={true} type="line-scale-pulse-out-rapid" />
+                </div>
+              )}
+            </div>
+          </CardBody>
         </Card>
       </div>
 
