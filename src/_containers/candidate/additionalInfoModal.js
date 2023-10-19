@@ -105,13 +105,23 @@ export function AdditionalInfoModal(props) {
   const onHandleInputChange = function (check, data, index) {
     let new_data = { ...formDetails };
     if (check == "language") {
-      let language_details = [...new_data.candidateLanguageDtos];
-      language_details[index].language = data;
-      new_data.candidateLanguageDtos = language_details;
+      // let language_details = [...new_data.candidateLanguageDtos];
+      // language_details[index].language = data;
+      // new_data.candidateLanguageDtos = language_details;
+
+      let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+        ...item,
+      }));
+
+      temp_array[index].language = data;
+      new_data.candidateLanguageDtos = temp_array;
     } else if (check == "proficiency") {
-      let language_details = [...new_data.candidateLanguageDtos];
-      language_details[index].proficiencyid = data;
-      new_data.candidateLanguageDtos = language_details;
+      let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+        ...item,
+      }));
+
+      temp_array[index].proficiencyid = data;
+      new_data.candidateLanguageDtos = temp_array;
     } else if (check == "summary") {
       new_data.summary = data;
       if (data != "") {
@@ -128,7 +138,7 @@ export function AdditionalInfoModal(props) {
 
   const onSubmit = async function (e) {
     e.preventDefault();
-    if (summary == "") {
+    if (formDetails.summary == "") {
       setFormError(true);
       return;
     } else {
