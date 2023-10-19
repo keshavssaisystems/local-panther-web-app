@@ -114,7 +114,7 @@ export const AdminListing = ({ entity }) => {
       dispatch(getRoles(urlParams))
     } else if (entity === "menuMapping") {
       dispatch(getMenuMappings(urlParams))
-    } 
+    }
   }, [entity])
 
 

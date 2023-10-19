@@ -18,11 +18,7 @@ export const NewCompany = (props) => {
     }
   }, [props.editingData, props.editMode]);
   const stateList = useSelector((state) => state.state.user.data);
-  const countries = [
-    { id: 1, name: 'Country 1' },
-    { id: 2, name: 'Country 2' },
-    // Add more countries as needed
-  ];
+
   return (
     <Form>
       <Row>
@@ -105,7 +101,7 @@ export const NewCompany = (props) => {
           <FormGroup>
             <Label for="newCompPhonenum">
               Phone
-              {/* <span style={{ color: "red" }}>* </span> */}
+          
             </Label>
             <Input
               value={props?.data?.newCompPhonenum?.value}
@@ -126,7 +122,7 @@ export const NewCompany = (props) => {
           <FormGroup>
             <Label for="newCompEmail">
               Email
-              {/* <span style={{ color: "red" }}>* </span> */}
+      
             </Label>
             <Input
               value={props?.data?.newCompEmail?.value}
@@ -171,7 +167,7 @@ export const NewCompany = (props) => {
           <FormGroup>
             <Label for="newCompState">
               State
-              {/* <span style={{ color: "red" }}>* </span> */}
+      
             </Label>
 
 
@@ -201,7 +197,7 @@ export const NewCompany = (props) => {
 
                   <option
 
-                    // selected={options.id == item.experience}
+                  
 
                     key={options.id}
 

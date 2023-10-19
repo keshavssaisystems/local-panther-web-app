@@ -5,7 +5,7 @@ import {
   FormGroup,
   Label,
   Input,
-  Button,
+
   Row,
   Col,
   FormText,
@@ -122,7 +122,7 @@ export const NewCustomer = (props) => {
             <FormGroup>
               <Label for="newCompState">
                 State
-                <span style={{ color: "red" }}>* </span>
+
               </Label>
 
 
@@ -152,7 +152,7 @@ export const NewCustomer = (props) => {
 
                     <option
 
-                      // selected={options.id == item.experience}
+          
 
                       key={options.id}
 
