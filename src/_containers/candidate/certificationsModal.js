@@ -111,8 +111,7 @@ export function CertificationsModal(props) {
         toYearReq: false,
         toDateReq: false,
       };
-      desc_temp = props.selected.description;
-      setSummary(props.selected.description);
+
       if (props.selected.startdate) {
         let year = new Date(props.selected.startdate).getFullYear();
         let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
@@ -485,7 +484,7 @@ export function CertificationsModal(props) {
       isexpired: formDetails.isexpired,
       startdate: convertDateToYYYMMDD(fromDateSelect),
       enddate: convertDateToYYYMMDD(toDateSelect),
-      description: summary,
+      description: formDetails.description,
       isactive: formDetails.isactive,
       currentUserId: parseInt(userDetails.UserId),
     };
@@ -808,20 +807,24 @@ export function CertificationsModal(props) {
         </Row>
         <Row>
           <FormGroup>
-            <Label for="description" className="fw-semi-bold">
+            <Label for="summary" className="fw-semi-bold">
               Description
             </Label>
-            <CKEditor
-              name="description"
-              id="description"
-              maxLength={2000}
-              initData={
-                !props.selected.description
-                  ? summary
-                  : props.selected.description
+            <Input
+              style={{ height: "200px" }}
+              placeholder="Enter summary"
+              name="summary"
+              type="textarea"
+              id="summary"
+              maxLength={500}
+              value={formDetails.description}
+              onInput={(evt) =>
+                onHandleInputChange("description", evt.target.value)
               }
-              onChange={(e) => setSummary(e.editor.getData())}
             />
+            <span className="dropdown-placeholder float-end">
+              {formDetails.description ? formDetails.description.length : 0}/500
+            </span>
           </FormGroup>
         </Row>
         {/* {index < formDetails.length - 1 ? <hr /> : <></>} */}

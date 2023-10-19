@@ -16,23 +16,16 @@ import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import { CKEditor } from "ckeditor4-react";
-import { BsFillPlusCircleFill, BsDashCircleFill } from "react-icons/bs";
 import addIcon from "../../assets/utils/images/add.svg";
 import subtract from "../../assets/utils/images/Subtract 1.svg";
 
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
-  const [check, setCheck] = useState(props.check);
-  const [isSave, setSave] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
   const [summary, setSummary] = useState("");
-  const [additionalInfo, setadditionalInfo] = useState("");
-  let additionalInfo_temp = "";
-  let summary_temp = "";
 
   const loadData = function () {
     let data;
@@ -65,10 +58,6 @@ export function AdditionalInfoModal(props) {
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
-      summary_temp = props.selected.summary;
-      setSummary(props.selected.summary);
-      setadditionalInfo(props.selected.additionalinformation);
-      additionalInfo_temp = props.selected.additionalinformation;
     }
     setFormData(data);
   };
@@ -81,17 +70,6 @@ export function AdditionalInfoModal(props) {
     useSelector((state) => state.ProficiencyList.user.data)
   );
   const closeModal = function () {
-    // let data = [
-    //   {
-    //     id: 0,
-    //     summary: "",
-    //     language: "",
-    //     proficiency: "",
-    //     additionalInfo: "",
-    //   },
-    // ];
-    // setFormData(data);
-    // window.location.reload();
     props.onCallAdditionalInfo();
   };
 
@@ -175,48 +153,6 @@ export function AdditionalInfoModal(props) {
       <div>
         {formDetails ? (
           <Form>
-            {/* {check == "add" ? (
-              <Row>
-                <Col>
-                  <div className="float-end">
-                    {formDetails.length > 1 ? (
-                      <Label
-                        className="me-2"
-                        style={{
-                          cursor: "pointer",
-                          color: "#2f479b",
-                          borderBottom: "1px solid #2f479b",
-                          fontWeight: "500",
-                        }}
-                        onClick={() => removeTabs(index)}
-                      >
-                        Remove
-                      </Label>
-                    ) : (
-                      <></>
-                    )}
-                    {index == formDetails.length - 1 ? (
-                      <Label
-                        className="float-end"
-                        onClick={() => addMoreTabs(index + 1)}
-                        style={{
-                          cursor: "pointer",
-                          color: "#2f479b",
-                          borderBottom: "1px solid #2f479b",
-                          fontWeight: "500",
-                        }}
-                      >
-                        +Add More
-                      </Label>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </Col>
-              </Row>
-            ) : (
-              <></>
-            )} */}
             {formDetails?.candidateLanguageDtos?.map((item, index) => (
               <Row>
                 <Col md={4}>
@@ -339,22 +275,6 @@ export function AdditionalInfoModal(props) {
                   </span>
                 </FormGroup>
 
-                {/* <FormGroup>
-                  test -- {summary}-{formDetails.summary}
-                  <Label for="description" className="fw-semi-bold">
-                    Summary<span style={{ color: "red" }}>* </span>
-                  </Label>
-                  <CKEditor
-                    name="description"
-                    id="description"
-                    maxLength={2000}
-                    initData={
-                      !formDetails.summary ? summary : formDetails.summary
-                    }
-                    onChange={(e) => setSummary(e.editor.getData())}
-                  />
-                </FormGroup> */}
-
                 <div className="error-class">
                   {formError ? "Summary is required" : ""}
                 </div>
@@ -389,25 +309,6 @@ export function AdditionalInfoModal(props) {
               </Col>
             </Row>
 
-            {/* <Row>
-              <FormGroup>
-                <Label for="additionalInfo" className="fw-semi-bold">
-                  Additional information
-                </Label>
-                <CKEditor
-                  name="additionalInfo"
-                  id="additionalInfo"
-                  maxLength={500}
-                  initData={
-                    !additionalInfo_temp ? additionalInfo : additionalInfo_temp
-                  }
-                  onChange={(e) => setadditionalInfo(e.editor.getData())}
-                />
-              </FormGroup>
-            </Row> */}
-
-            {/* {index < formDetails.length - 1 ? <hr /> : <></>}
-            {index == formDetails.length - 1 ? ( */}
             <div className="float-end">
               <Button
                 className="me-2 save-btn"

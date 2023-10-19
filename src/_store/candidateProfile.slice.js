@@ -207,7 +207,7 @@ function resumedeleteActions() {
       `${name}/Candidate/GetCandidateById`,
       async (resumeId) =>
         await fetchWrapper.delete(
-          `${baseUrl}/api/DeleteResume?candidateResumeId=${resumeId}`
+          `${baseUrl}/DeleteResume?candidateResumeId=${resumeId}`
         )
     );
   }
@@ -279,7 +279,9 @@ function deleteQualificationActions() {
     return createAsyncThunk(
       `${name}/Candidate/deleteQualification`,
       async (id) =>
-        await fetchWrapper.delete(`${baseUrl}/CandidateQualifications/${id}`)
+        await fetchWrapper.delete(
+          `${baseUrl}/api/CandidateQualifications/${id}`
+        )
     );
   }
 }
