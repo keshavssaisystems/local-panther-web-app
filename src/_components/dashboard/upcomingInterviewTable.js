@@ -40,7 +40,7 @@ export function UpcomingInterviewTable({ tableData }) {
       id: "jobtitle",
       selector: (row) => (row.jobtitle === "" ? "-" : row.jobtitle),
       sortable: true,
-      width: "170px",
+      width: "150px",
     },
     {
       name: "Date",
