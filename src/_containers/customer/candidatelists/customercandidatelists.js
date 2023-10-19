@@ -112,6 +112,7 @@ export const CustomerCandidateLists = (props) => {
   };
 
   const onSelectClick = (evt) => {
+    setPageNo(1);
     setSelectedJobId(evt.target.value);
     navigate(`/customer-candidate-${activeTab}/${parseInt(evt.target.value)}`);
   };
@@ -278,8 +279,12 @@ export const CustomerCandidateLists = (props) => {
               {jobList.map((data) => {
                 return (
                   <option value={data.jobid} key={data.jobid}>
-                    {data?.jobtitle && data?.locationaddress
-                      ? data.jobtitle + "," + data?.locationaddress
+                    {data?.jobtitle && data?.cityname && data?.statename
+                      ? data.jobtitle +
+                        " ," +
+                        data?.cityname +
+                        " ," +
+                        data?.statename
                       : data.jobtitle}
                   </option>
                 );

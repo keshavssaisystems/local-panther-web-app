@@ -3,7 +3,8 @@ import { Pagination, PaginationItem, PaginationLink } from "reactstrap";
 import "./cardpagination.scss";
 
 export function CardPagination(props) {
-  var totalPages = Math.round(props.totalPages);
+  var totalPages = Math.ceil(props.totalPages);
+
   var pageIndex = props.pageIndex;
 
   const renderPaginationItems = () => {

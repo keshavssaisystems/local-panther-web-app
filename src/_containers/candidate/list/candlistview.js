@@ -299,7 +299,11 @@ export const CandListView = (props) => {
     {
       name: <span className="table-title">Job Id</span>,
       id: "Job Id",
-      selector: (row) => <span className="table-cell">{row.jobid}</span>,
+      selector: (row) => (
+        <span className="table-cell" title={row.jobid}>
+          {row.jobid}
+        </span>
+      ),
       sortable: true,
       maxWidth: "150px",
       minWidth: "100px",
@@ -307,7 +311,11 @@ export const CandListView = (props) => {
     {
       name: <span className="table-title">Title</span>,
       id: "Title",
-      selector: (row) => <span className="table-cell">{row.jobtitle}</span>,
+      selector: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          {row.jobtitle}
+        </span>
+      ),
       sortable: true,
       maxWidth: "220px",
       minWidth: "150px",
@@ -316,7 +324,9 @@ export const CandListView = (props) => {
     {
       name: <span className="table-title">Location</span>,
       selector: (row) => (
-        <span className="table-cell">{row.locationaddress}</span>
+        <span className="table-cell" title={row.locationaddress}>
+          {row.locationaddress}
+        </span>
       ),
       sortable: true,
       maxWidth: "350px",
@@ -326,7 +336,15 @@ export const CandListView = (props) => {
     {
       name: <span className="table-title">Experience</span>,
       selector: (row) => (
-        <span className="table-cell">
+        <span
+          className="table-cell"
+          title={
+            row?.jobExperienceScheduleDtos &&
+            row?.jobExperienceScheduleDtos[0]?.experiencelevel
+              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+              : "-"
+          }
+        >
           <>
             {row?.jobExperienceScheduleDtos &&
             row?.jobExperienceScheduleDtos[0]?.experiencelevel
