@@ -1,0 +1,13 @@
+
+.message {
+display: flex;
+align-items: center;
+}
+.sent {
+flex-direction: row-reverse;
+align-self: flex-end;
+}
+.received {
+background: #e5e5ea;
+color: black;
+}
