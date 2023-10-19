@@ -188,6 +188,13 @@ export function CertificationsModal(props) {
     } else if (check == "expired") {
       new_data.isexpired = !new_data.isexpired;
 
+      if (!new_data.expired) {
+        let date = { ...toDateSelect };
+        date.year = "";
+        date.month = "";
+        setToDateSelect(date);
+      }
+
       // let toSelected = { ...toDateSelect };
       // if (!new_data.isexpired) {
       //   let year = new Date().getFullYear();
@@ -456,13 +463,20 @@ export function CertificationsModal(props) {
       new_data.typeError = true;
       valid = false;
     }
-    if (
-      formDetails.fromMonthReq ||
-      formDetails.fromYearReq ||
-      formDetails.toMonthReq ||
-      formDetails.toYearReq
-    ) {
-      valid = false;
+
+    if (formDetails.isexpired) {
+      if (
+        formDetails.fromMonthReq ||
+        formDetails.fromYearReq ||
+        formDetails.toMonthReq ||
+        formDetails.toYearReq
+      ) {
+        valid = false;
+      }
+    } else {
+      if (formDetails.fromMonthReq || formDetails.fromYearReq) {
+        valid = false;
+      }
     }
 
     if (formDetails.fromDateValid) {
@@ -753,6 +767,7 @@ export function CertificationsModal(props) {
                 onChange={(evt) =>
                   onHandleInputChange("toMonth", evt.target.value)
                 }
+                disabled={!formDetails.isexpired}
                 className={`form-control ${
                   formDetails.toMonthReq ? "is-invalid" : ""
                 }`}
@@ -783,6 +798,7 @@ export function CertificationsModal(props) {
                 onChange={(evt) =>
                   onHandleInputChange("toYear", evt.target.value)
                 }
+                disabled={!formDetails.isexpired}
                 className={`form-control ${
                   formDetails.toYearReq ? "is-invalid" : ""
                 }`}
