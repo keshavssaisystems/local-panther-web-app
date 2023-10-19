@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import companyLogo from "assets/utils/images/candidate.svg";
 import { customers, company, users, roles, menuMapping } from "_containers/admin/common/adminColumnsListing"
 import PageTitle from "_components/common/pagetitle";
@@ -6,19 +6,21 @@ import { Row, Col, Card, CardBody, CardHeader, Button, FormGroup, InputGroup, In
 import "_containers/admin/common/adminListing.scss"
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { getCompanies, getCustomers, getUsers, getRoles, getMenuMappings } from '_containers/admin/_redux/adminListing.slice'
-import { useEffect } from "react";
+import { getCompanies, getIndustries, getCustomers, getUsers, getRoles, getMenuMappings } from '_containers/admin/_redux/adminListing.slice'
 import { NewCompany } from "_components/common/newcompany";
 import errorIcon from "assets/utils/images/error_icon.png";
 import successIcon from "assets/utils/images/success_icon.svg";
 import { NewCustomer } from "_components/common/addCustomer";
-
+import AsyncSelect from 'react-select/async';
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch()
   const {
     data,
+    industyList,
+    industryCompanyMapping,
     loading = false } = useSelector((state) => state?.adminListing ?? {});
+
   let title, icon, listingTitle, columns = [], searchFilter = [], buttonsList = [];
   const [error, setError] = useState(false)
   const [message, setMessage] = useState("")
@@ -94,13 +96,15 @@ export const AdminListing = ({ entity }) => {
 
   const urlParams = {
     isActive: true,
-    pageSize: 500,
+    pageSize: 50,
+    pageNumber:1
   };
 
   useEffect(() => {
     if (entity === "company") {
       dispatch(getCompanies(urlParams))
     } else if (entity === "customers") {
+      dispatch(getIndustries(urlParams))
       dispatch(getCustomers(urlParams))
     } else if (entity === "users") {
       dispatch(getUsers(urlParams))
@@ -110,6 +114,7 @@ export const AdminListing = ({ entity }) => {
       dispatch(getMenuMappings(urlParams))
     }
   }, [entity])
+
   const customStyles = {
     headCells: {
       style: {
@@ -177,15 +182,38 @@ export const AdminListing = ({ entity }) => {
     }
   };
 
-  const cardFilters = (searchFilter).map(item => (
+  const [inputValue, setValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  // handle input change event
+  // onInputChange={handleInputChange}
+  const handleInputChange = value => {
+    // const newData = data.filter((ele)=>{
+    //   console.log("NG ")
+    // })
+    // setTableData
+    // setValue(value);
+  };
+
+  // handle selection
+  const handleChange = e => {
+    setSelectedValue(e.target.value);
+  }
+
+  const cardFilters = searchFilter.map(item => (
     < Col lg="3" md="3" sm="12" sx="12" >
-      <Input name={item.id} type="select">
+      <Input name={item.id} type="select" onChange={handleChange}>
+        {industyList.map((ele) => (
+          <option key={ele} value={ele}>
+            {ele}
+          </option>
+        ))}
         <option value="">{item.name}</option>
       </Input>
     </Col >
   ))
 
-  const cardButtons = (buttonsList).map(item => (
+  const cardButtons = buttonsList.map(item => (
     <Col lg="3" md="2" sm="12" sx="12">
       <FormGroup>
         <InputGroup>
@@ -198,6 +226,7 @@ export const AdminListing = ({ entity }) => {
       </FormGroup>
     </Col>
   ))
+
   return (
     <>
       <Row>

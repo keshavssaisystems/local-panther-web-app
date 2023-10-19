@@ -3,8 +3,29 @@ export const companyResponse = {
   "data": {
     "companyDetailsList": [
       {
+        "companyid": 210,
+        "companyname": "",
+        "industry": "ssaa",
+        "description": "",
+        "noofemployees": 0,
+        "contactemail": "",
+        "contactphonenumber": "",
+        "address": "",
+        "cityid": 1,
+        "cityname": "Eagle Point",
+        "stateid": 1,
+        "statename": "Alabama",
+        "countryid": 0,
+        "countryname": "US",
+        "zipcode": "",
+        "logourl": "",
+        "isactive": true,
+        "currentUserId": 0
+      },
+      {
         "companyid": 209,
         "companyname": "Hactor group",
+        "industry": "Car industry",
         "description": "Car manufecturer and supplier",
         "noofemployees": 34773,
         "contactemail": "hector@gmail.com",
@@ -24,6 +45,7 @@ export const companyResponse = {
       {
         "companyid": 208,
         "companyname": "suzuki1",
+        "industry": "car industry",
         "description": "car manu. and supplier.",
         "noofemployees": 10099,
         "contactemail": "suzu@gmail.com",
@@ -43,6 +65,7 @@ export const companyResponse = {
       {
         "companyid": 207,
         "companyname": "suzuki",
+        "industry": "car industry",
         "description": "car manu. and supplier.",
         "noofemployees": 10099,
         "contactemail": "suzu@gmail.com",
@@ -62,6 +85,7 @@ export const companyResponse = {
       {
         "companyid": 206,
         "companyname": "Nano parts",
+        "industry": "nano industry",
         "description": "parts mechanical",
         "noofemployees": 12312,
         "contactemail": "nanoparts@gamila.com",
@@ -81,6 +105,7 @@ export const companyResponse = {
       {
         "companyid": 205,
         "companyname": "Nano parts industry",
+        "industry": "Parts Industry",
         "description": "Car Parts supplier",
         "noofemployees": 12781,
         "contactemail": "nano@gmail.com",
@@ -100,6 +125,7 @@ export const companyResponse = {
       {
         "companyid": 204,
         "companyname": "MG hactor",
+        "industry": "Industry",
         "description": "Car manufacturer",
         "noofemployees": 2361,
         "contactemail": "mghector@gmail.com",
@@ -119,6 +145,7 @@ export const companyResponse = {
       {
         "companyid": 203,
         "companyname": "KIA",
+        "industry": "Industry",
         "description": "Car supplier",
         "noofemployees": 10202,
         "contactemail": "KIA@yahoo.com",
@@ -137,26 +164,28 @@ export const companyResponse = {
       },
       {
         "companyid": 202,
-        "companyname": "KIA",
-        "description": "Car supplier",
-        "noofemployees": 10202,
+        "companyname": "KIA Moto",
+        "industry": "Motor car industry",
+        "description": "manufracturer",
+        "noofemployees": 132300,
         "contactemail": "KIA@yahoo.com",
         "contactphonenumber": "2362830923",
-        "address": "ss road, pune",
+        "address": "",
         "cityid": 473,
         "cityname": "Cullomburg",
         "stateid": 20,
         "statename": "Maine",
-        "countryid": 0,
+        "countryid": 1,
         "countryname": "US",
-        "zipcode": "573468",
-        "logourl": "",
+        "zipcode": "434333",
+        "logourl": "https://sadeveastusa001.blob.core.windows.net/cndev-appdata-001/Companies/202/Logo/KIA%20logo.jpg",
         "isactive": true,
         "currentUserId": 0
       },
       {
         "companyid": 201,
         "companyname": "Hyundai ",
+        "industry": "Industry",
         "description": "Car supplier",
         "noofemployees": 10202,
         "contactemail": "hyundai@yahoo.com",
@@ -175,64 +204,68 @@ export const companyResponse = {
       },
       {
         "companyid": 200,
-        "companyname": "puytrr",
-        "description": "",
-        "noofemployees": 0,
-        "contactemail": "adsmin@gmail.com",
-        "contactphonenumber": "99999999",
-        "address": "",
-        "cityid": 0,
-        "cityname": "",
-        "stateid": 2,
-        "statename": "Alaska",
-        "countryid": 0,
+        "companyname": "bingo pvt ltd",
+        "industry": "snacks industry",
+        "description": "cooking tasty snacks ",
+        "noofemployees": 23452,
+        "contactemail": "bingo@gmail.com",
+        "contactphonenumber": "4375838433",
+        "address": "Mumbai",
+        "cityid": 473,
+        "cityname": "Cullomburg",
+        "stateid": 20,
+        "statename": "Maine",
+        "countryid": 1,
         "countryname": "US",
-        "zipcode": "",
-        "logourl": "",
+        "zipcode": "347783",
+        "logourl": "https://sadeveastusa001.blob.core.windows.net/cndev-appdata-001/Companies/200/Logo/ThinkLite%20Air.html",
         "isactive": true,
         "currentUserId": 0
       },
       {
         "companyid": 199,
-        "companyname": "puytrr",
-        "description": "ddffdgfd",
-        "noofemployees": 0,
+        "companyname": "Kurkure ",
+        "industry": "Snacks industry",
+        "description": "everyone loves kurkure",
+        "noofemployees": 4367,
         "contactemail": "xadmin@gmail.com",
         "contactphonenumber": "99999999",
         "address": "",
-        "cityid": 0,
-        "cityname": "",
-        "stateid": 1,
-        "statename": "Alabama",
-        "countryid": 0,
+        "cityid": 473,
+        "cityname": "Cullomburg",
+        "stateid": 20,
+        "statename": "Maine",
+        "countryid": 1,
         "countryname": "US",
         "zipcode": "",
-        "logourl": "",
+        "logourl": "https://sadeveastusa001.blob.core.windows.net/cndev-appdata-001/Companies/199/Logo/company-logo-transparent-png-19.png",
         "isactive": true,
         "currentUserId": 0
       },
       {
         "companyid": 198,
-        "companyname": "wolf",
-        "description": "street",
-        "noofemployees": 29,
-        "contactemail": "wolf@gmail.com",
-        "contactphonenumber": "123531434",
-        "address": "wolf street, bombay",
-        "cityid": 1,
-        "cityname": "Eagle Point",
-        "stateid": 0,
-        "statename": "",
-        "countryid": 0,
+        "companyname": "Parle-G",
+        "industry": "Biscuit indusrty",
+        "description": "Parle-G, G mane Genius",
+        "noofemployees": 4564,
+        "contactemail": "parleg@gmail.com",
+        "contactphonenumber": "483957943",
+        "address": "Kolkatta,India",
+        "cityid": 473,
+        "cityname": "Cullomburg",
+        "stateid": 20,
+        "statename": "Maine",
+        "countryid": 1,
         "countryname": "US",
-        "zipcode": "532349",
-        "logourl": "",
+        "zipcode": "987655",
+        "logourl": "https://sadeveastusa001.blob.core.windows.net/cndev-appdata-001/Companies/198/Logo/parle-g.svg",
         "isactive": true,
         "currentUserId": 0
       },
       {
         "companyid": 197,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "wwwadmin@gmail.com",
@@ -252,6 +285,7 @@ export const companyResponse = {
       {
         "companyid": 196,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtySmin@gmail.com",
@@ -271,6 +305,7 @@ export const companyResponse = {
       {
         "companyid": 195,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adasasmin@gmail.com",
@@ -290,6 +325,7 @@ export const companyResponse = {
       {
         "companyid": 194,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "kadtymin@gmail.com",
@@ -309,6 +345,7 @@ export const companyResponse = {
       {
         "companyid": 193,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "kadtymin@gmail.com",
@@ -328,6 +365,7 @@ export const companyResponse = {
       {
         "companyid": 192,
         "companyname": "ww",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "awwdtymin@gmail.com",
@@ -347,6 +385,7 @@ export const companyResponse = {
       {
         "companyid": 191,
         "companyname": "wee",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "asdmin@gmail.com",
@@ -366,6 +405,7 @@ export const companyResponse = {
       {
         "companyid": 190,
         "companyname": "wee",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "asdmin@gmail.com",
@@ -385,6 +425,7 @@ export const companyResponse = {
       {
         "companyid": 189,
         "companyname": "saisystem",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 134,
         "contactemail": "bindu2@gmail.com",
@@ -404,6 +445,7 @@ export const companyResponse = {
       {
         "companyid": 188,
         "companyname": "wweewew",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "awdtymin@gmail.com",
@@ -423,6 +465,7 @@ export const companyResponse = {
       {
         "companyid": 187,
         "companyname": "wweewew",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "awdtymin@gmail.com",
@@ -442,6 +485,7 @@ export const companyResponse = {
       {
         "companyid": 186,
         "companyname": "w",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "awdtymin@gmail.com",
@@ -461,6 +505,7 @@ export const companyResponse = {
       {
         "companyid": 185,
         "companyname": "w",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "awdtymin@gmail.com",
@@ -480,6 +525,7 @@ export const companyResponse = {
       {
         "companyid": 184,
         "companyname": "rrr",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "",
@@ -499,6 +545,7 @@ export const companyResponse = {
       {
         "companyid": 183,
         "companyname": "dad",
+        "industry": "Industry",
         "description": "ddd",
         "noofemployees": 23,
         "contactemail": "",
@@ -518,6 +565,7 @@ export const companyResponse = {
       {
         "companyid": 182,
         "companyname": "dsadsad",
+        "industry": "Industry",
         "description": "sadsa",
         "noofemployees": 4444,
         "contactemail": "",
@@ -537,6 +585,7 @@ export const companyResponse = {
       {
         "companyid": 181,
         "companyname": "ass",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "",
@@ -556,6 +605,7 @@ export const companyResponse = {
       {
         "companyid": 180,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtymin@gmail.com",
@@ -575,6 +625,7 @@ export const companyResponse = {
       {
         "companyid": 179,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtymin@gmail.com",
@@ -594,6 +645,7 @@ export const companyResponse = {
       {
         "companyid": 178,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtymin@gmail.com",
@@ -613,6 +665,7 @@ export const companyResponse = {
       {
         "companyid": 177,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtymin@gmail.com",
@@ -632,6 +685,7 @@ export const companyResponse = {
       {
         "companyid": 176,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtymin@gmail.com",
@@ -651,6 +705,7 @@ export const companyResponse = {
       {
         "companyid": 175,
         "companyname": "puytrr",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adtymin@gmail.com",
@@ -670,6 +725,7 @@ export const companyResponse = {
       {
         "companyid": 174,
         "companyname": "www",
+        "industry": "Industry",
         "description": "www",
         "noofemployees": 4444,
         "contactemail": "adwmin@gmail.com",
@@ -689,6 +745,7 @@ export const companyResponse = {
       {
         "companyid": 173,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "addmin@gmail.com",
@@ -708,6 +765,7 @@ export const companyResponse = {
       {
         "companyid": 172,
         "companyname": "fdf",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "awdmin@gmail.com",
@@ -727,6 +785,7 @@ export const companyResponse = {
       {
         "companyid": 171,
         "companyname": "alfa company",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 0,
         "contactemail": "",
@@ -746,6 +805,7 @@ export const companyResponse = {
       {
         "companyid": 170,
         "companyname": "alfa company",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 0,
         "contactemail": "",
@@ -765,6 +825,7 @@ export const companyResponse = {
       {
         "companyid": 169,
         "companyname": "alfa company",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 0,
         "contactemail": "alfa@gmail.com",
@@ -784,6 +845,7 @@ export const companyResponse = {
       {
         "companyid": 168,
         "companyname": "fdf",
+        "industry": "Industry",
         "description": "fdfd",
         "noofemployees": 4444,
         "contactemail": "awdmin@gmail.com",
@@ -803,6 +865,7 @@ export const companyResponse = {
       {
         "companyid": 167,
         "companyname": "fdf",
+        "industry": "Industry",
         "description": "fdfd",
         "noofemployees": 4444,
         "contactemail": "awdmin@gmail.com",
@@ -822,6 +885,7 @@ export const companyResponse = {
       {
         "companyid": 166,
         "companyname": "fdf",
+        "industry": "Industry",
         "description": "fdfd",
         "noofemployees": 4444,
         "contactemail": "awdmin@gmail.com",
@@ -841,6 +905,7 @@ export const companyResponse = {
       {
         "companyid": 165,
         "companyname": "asd",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "",
@@ -860,6 +925,7 @@ export const companyResponse = {
       {
         "companyid": 164,
         "companyname": "sai",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "",
@@ -879,6 +945,7 @@ export const companyResponse = {
       {
         "companyid": 163,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "",
@@ -898,6 +965,7 @@ export const companyResponse = {
       {
         "companyid": 162,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adsssmin@gmail.com",
@@ -917,6 +985,7 @@ export const companyResponse = {
       {
         "companyid": 161,
         "companyname": "qwee",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adfmin@gmail.com",
@@ -936,6 +1005,7 @@ export const companyResponse = {
       {
         "companyid": 160,
         "companyname": "pomanss",
+        "industry": "Industry",
         "description": "rrrerere",
         "noofemployees": 77,
         "contactemail": "adffffmin@gmail.com",
@@ -955,6 +1025,7 @@ export const companyResponse = {
       {
         "companyid": 159,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "weadmin@gmail.com",
@@ -974,6 +1045,7 @@ export const companyResponse = {
       {
         "companyid": 158,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "admweerrin@gmail.com",
@@ -993,6 +1065,7 @@ export const companyResponse = {
       {
         "companyid": 157,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "admweerrin@gmail.com",
@@ -1012,6 +1085,7 @@ export const companyResponse = {
       {
         "companyid": 156,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 4444,
         "contactemail": "admiwn@gmail.com",
@@ -1031,6 +1105,7 @@ export const companyResponse = {
       {
         "companyid": 155,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "addmin@gmail.com",
@@ -1050,6 +1125,7 @@ export const companyResponse = {
       {
         "companyid": 154,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adgin@gmail.com",
@@ -1069,6 +1145,7 @@ export const companyResponse = {
       {
         "companyid": 153,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "saasa",
         "noofemployees": 4444,
         "contactemail": "assdmin@gmail.com",
@@ -1088,6 +1165,7 @@ export const companyResponse = {
       {
         "companyid": 152,
         "companyname": "Evolutionary Engineers Pvt Ltd.",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 0,
         "contactemail": "raoiswa@gmail.com",
@@ -1107,6 +1185,7 @@ export const companyResponse = {
       {
         "companyid": 151,
         "companyname": "Nyra International Pvt Ltd",
+        "industry": "Industry",
         "description": "Gas and Oil based services",
         "noofemployees": 5007,
         "contactemail": "nyra1@gmail.com",
@@ -1126,6 +1205,7 @@ export const companyResponse = {
       {
         "companyid": 150,
         "companyname": "saisystem technology",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 3333,
         "contactemail": "assdmin@gmail.com",
@@ -1145,6 +1225,7 @@ export const companyResponse = {
       {
         "companyid": 149,
         "companyname": "saisystem technology",
+        "industry": "Industry",
         "description": "Pune",
         "noofemployees": 4444,
         "contactemail": "assdmin@gmail.com",
@@ -1164,6 +1245,7 @@ export const companyResponse = {
       {
         "companyid": 148,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "adeeeeemin@gmail.com",
@@ -1183,6 +1265,7 @@ export const companyResponse = {
       {
         "companyid": 147,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "ddffdgfd",
         "noofemployees": 4444,
         "contactemail": "re@gmail.com",
@@ -1202,6 +1285,7 @@ export const companyResponse = {
       {
         "companyid": 146,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "hjkjkjkjkjkjkj",
         "noofemployees": 99999,
         "contactemail": "archana@gmail.com",
@@ -1221,6 +1305,7 @@ export const companyResponse = {
       {
         "companyid": 145,
         "companyname": "saisystem technology",
+        "industry": "Industry",
         "description": "reactsss",
         "noofemployees": 2323,
         "contactemail": "archana@gmail.com",
@@ -1240,6 +1325,7 @@ export const companyResponse = {
       {
         "companyid": 144,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1259,6 +1345,7 @@ export const companyResponse = {
       {
         "companyid": 143,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1278,6 +1365,7 @@ export const companyResponse = {
       {
         "companyid": 142,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1297,6 +1385,7 @@ export const companyResponse = {
       {
         "companyid": 141,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1316,6 +1405,7 @@ export const companyResponse = {
       {
         "companyid": 140,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1335,6 +1425,7 @@ export const companyResponse = {
       {
         "companyid": 139,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1354,6 +1445,7 @@ export const companyResponse = {
       {
         "companyid": 138,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1373,6 +1465,7 @@ export const companyResponse = {
       {
         "companyid": 137,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1392,6 +1485,7 @@ export const companyResponse = {
       {
         "companyid": 136,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1411,6 +1505,7 @@ export const companyResponse = {
       {
         "companyid": 135,
         "companyname": "adddd",
+        "industry": "Industry",
         "description": "dsdss",
         "noofemployees": 44,
         "contactemail": "archana@gmail.com",
@@ -1430,6 +1525,7 @@ export const companyResponse = {
       {
         "companyid": 134,
         "companyname": "fdfdfd",
+        "industry": "Industry",
         "description": "fdfd",
         "noofemployees": 665,
         "contactemail": "dsddsf@gmail.com",
@@ -1449,6 +1545,7 @@ export const companyResponse = {
       {
         "companyid": 133,
         "companyname": "dffdgfd",
+        "industry": "Industry",
         "description": "gfd",
         "noofemployees": 8879879,
         "contactemail": "",
@@ -1468,6 +1565,7 @@ export const companyResponse = {
       {
         "companyid": 132,
         "companyname": "dsfdsf",
+        "industry": "Industry",
         "description": "sfdsfdf",
         "noofemployees": 767,
         "contactemail": "sadsfffdf",
@@ -1487,6 +1585,7 @@ export const companyResponse = {
       {
         "companyid": 131,
         "companyname": "ddd",
+        "industry": "Industry",
         "description": "dsddd",
         "noofemployees": 6666,
         "contactemail": "aseeee@gmail.com",
@@ -1506,6 +1605,7 @@ export const companyResponse = {
       {
         "companyid": 130,
         "companyname": "ADSD",
+        "industry": "Industry",
         "description": "DSADSA",
         "noofemployees": 76767,
         "contactemail": "DDSFDSF",
@@ -1525,6 +1625,7 @@ export const companyResponse = {
       {
         "companyid": 129,
         "companyname": "sfdgf",
+        "industry": "Industry",
         "description": "fdffd",
         "noofemployees": 666,
         "contactemail": "christop@gmail.com",
@@ -1544,6 +1645,7 @@ export const companyResponse = {
       {
         "companyid": 128,
         "companyname": "FDFGF",
+        "industry": "Industry",
         "description": "fdgfgfh",
         "noofemployees": 665765,
         "contactemail": "sudhagard@yopmail.com",
@@ -1563,6 +1665,7 @@ export const companyResponse = {
       {
         "companyid": 127,
         "companyname": "dgfdg",
+        "industry": "Industry",
         "description": "fdd",
         "noofemployees": 555,
         "contactemail": "sudhagar@yopfmail.com",
@@ -1582,6 +1685,7 @@ export const companyResponse = {
       {
         "companyid": 126,
         "companyname": "fdsf",
+        "industry": "Industry",
         "description": "fds",
         "noofemployees": 12,
         "contactemail": "abc@gmail.com",
@@ -1601,6 +1705,7 @@ export const companyResponse = {
       {
         "companyid": 125,
         "companyname": "dddd",
+        "industry": "Industry",
         "description": "ddd",
         "noofemployees": 10,
         "contactemail": "assss@gmail.com",
@@ -1620,6 +1725,7 @@ export const companyResponse = {
       {
         "companyid": 124,
         "companyname": "sss",
+        "industry": "Industry",
         "description": "hhh",
         "noofemployees": 20,
         "contactemail": "abs@gmail.com",
@@ -1639,6 +1745,7 @@ export const companyResponse = {
       {
         "companyid": 123,
         "companyname": "djkj",
+        "industry": "Industry",
         "description": "fdsf",
         "noofemployees": 23,
         "contactemail": "ddd@gmail.com",
@@ -1658,6 +1765,7 @@ export const companyResponse = {
       {
         "companyid": 122,
         "companyname": "ddsfdg",
+        "industry": "Industry",
         "description": "dgfhfh",
         "noofemployees": 66657,
         "contactemail": "sudhragar@yopmail.com",
@@ -1677,6 +1785,7 @@ export const companyResponse = {
       {
         "companyid": 121,
         "companyname": "ffdgg",
+        "industry": "Industry",
         "description": "gfhfh",
         "noofemployees": 5,
         "contactemail": "sudhagfar@yopmail.com",
@@ -1696,6 +1805,7 @@ export const companyResponse = {
       {
         "companyid": 120,
         "companyname": "fffdgfd",
+        "industry": "Industry",
         "description": "ddsfdd",
         "noofemployees": 5,
         "contactemail": "sudhagadr@yopmail.com",
@@ -1715,6 +1825,7 @@ export const companyResponse = {
       {
         "companyid": 119,
         "companyname": "ddda",
+        "industry": "Industry",
         "description": "addsad",
         "noofemployees": 54545645,
         "contactemail": "sudhafgar@yopmail.com",
@@ -1734,6 +1845,7 @@ export const companyResponse = {
       {
         "companyid": 118,
         "companyname": "saisystem",
+        "industry": "Industry",
         "description": "wetrehs",
         "noofemployees": 3000,
         "contactemail": "sudhagare@yopmail.com",
@@ -1753,6 +1865,7 @@ export const companyResponse = {
       {
         "companyid": 117,
         "companyname": "SaiSystems",
+        "industry": "Industry",
         "description": "test",
         "noofemployees": 300,
         "contactemail": "test111@gmail.com",
@@ -1772,6 +1885,7 @@ export const companyResponse = {
       {
         "companyid": 116,
         "companyname": "sai",
+        "industry": "Industry",
         "description": "ffdgf",
         "noofemployees": 6000,
         "contactemail": "sai1@gmail.com",
@@ -1791,6 +1905,7 @@ export const companyResponse = {
       {
         "companyid": 115,
         "companyname": "sai",
+        "industry": "Industry",
         "description": "ffdgf",
         "noofemployees": 6000,
         "contactemail": "sai@gmail.com",
@@ -1810,6 +1925,7 @@ export const companyResponse = {
       {
         "companyid": 114,
         "companyname": "archana",
+        "industry": "Industry",
         "description": "react",
         "noofemployees": 3000,
         "contactemail": "sudhagar@yopmail.com",
@@ -1829,6 +1945,7 @@ export const companyResponse = {
       {
         "companyid": 113,
         "companyname": "string",
+        "industry": "Industry",
         "description": "string",
         "noofemployees": 0,
         "contactemail": "string",
@@ -1848,6 +1965,7 @@ export const companyResponse = {
       {
         "companyid": 112,
         "companyname": "Safari",
+        "industry": "Industry",
         "description": "Product based",
         "noofemployees": 2000,
         "contactemail": "saari@gmail.com",
@@ -1867,6 +1985,7 @@ export const companyResponse = {
       {
         "companyid": 111,
         "companyname": "Zookeeper career",
+        "industry": "Industry",
         "description": "Software company",
         "noofemployees": 0,
         "contactemail": "animall@sys.com",
@@ -1886,6 +2005,7 @@ export const companyResponse = {
       {
         "companyid": 110,
         "companyname": "Zoho service",
+        "industry": "Industry",
         "description": "Zoho service",
         "noofemployees": 70,
         "contactemail": "zoho@gmail.com",
@@ -1905,6 +2025,7 @@ export const companyResponse = {
       {
         "companyid": 109,
         "companyname": "Ziemann - Hintz",
+        "industry": "Industry",
         "description": "multi-tasking",
         "noofemployees": 0,
         "contactemail": "Paris.Harber@yahoo.com",
@@ -1924,6 +2045,7 @@ export const companyResponse = {
       {
         "companyid": 108,
         "companyname": "Ziemann - Hintz",
+        "industry": "Industry",
         "description": "multi-tasking",
         "noofemployees": 0,
         "contactemail": "Paris.Harber@yahoo.com",
@@ -1943,6 +2065,7 @@ export const companyResponse = {
       {
         "companyid": 107,
         "companyname": "Yundt - Smith",
+        "industry": "Industry",
         "description": "radical",
         "noofemployees": 0,
         "contactemail": "Florian1@hotmail.com",
@@ -1962,6 +2085,7 @@ export const companyResponse = {
       {
         "companyid": 106,
         "companyname": "Yundt - Smith",
+        "industry": "Industry",
         "description": "radical",
         "noofemployees": 0,
         "contactemail": "Florian1@hotmail.com",
@@ -1981,6 +2105,7 @@ export const companyResponse = {
       {
         "companyid": 105,
         "companyname": "Yundt - Casper",
+        "industry": "Industry",
         "description": "regional",
         "noofemployees": 0,
         "contactemail": "Abby.Davis75@hotmail.com",
@@ -2000,6 +2125,7 @@ export const companyResponse = {
       {
         "companyid": 104,
         "companyname": "Yundt - Casper",
+        "industry": "Industry",
         "description": "regional",
         "noofemployees": 0,
         "contactemail": "Abby.Davis75@hotmail.com",
@@ -2019,6 +2145,7 @@ export const companyResponse = {
       {
         "companyid": 102,
         "companyname": "Wintheiser and Sons",
+        "industry": "Industry",
         "description": "tangible",
         "noofemployees": 0,
         "contactemail": "Robyn_Parisian@hotmail.com",
@@ -2038,6 +2165,7 @@ export const companyResponse = {
       {
         "companyid": 101,
         "companyname": "Wintheiser and Sons",
+        "industry": "Industry",
         "description": "tangible",
         "noofemployees": 0,
         "contactemail": "Robyn_Parisian@hotmail.com",
@@ -2057,6 +2185,7 @@ export const companyResponse = {
       {
         "companyid": 100,
         "companyname": "Wiegand - Tillman",
+        "industry": "Industry",
         "description": "tangible",
         "noofemployees": 0,
         "contactemail": "Jimmy25@hotmail.com",
@@ -2076,6 +2205,7 @@ export const companyResponse = {
       {
         "companyid": 99,
         "companyname": "Wiegand - Tillman",
+        "industry": "Industry",
         "description": "tangible",
         "noofemployees": 0,
         "contactemail": "Jimmy25@hotmail.com",
@@ -2095,6 +2225,7 @@ export const companyResponse = {
       {
         "companyid": 98,
         "companyname": "Toy and Sons",
+        "industry": "Industry",
         "description": "multi-state",
         "noofemployees": 0,
         "contactemail": "Neva_Lemke@gmail.com",
@@ -2114,6 +2245,7 @@ export const companyResponse = {
       {
         "companyid": 97,
         "companyname": "Toy and Sons",
+        "industry": "Industry",
         "description": "multi-state",
         "noofemployees": 0,
         "contactemail": "Neva_Lemke@gmail.com",
@@ -2133,6 +2265,7 @@ export const companyResponse = {
       {
         "companyid": 96,
         "companyname": "TATA Group",
+        "industry": "Industry",
         "description": "IT, Automobile,Steel and Healthcare industry services",
         "noofemployees": 0,
         "contactemail": "tata.com",
@@ -2152,6 +2285,7 @@ export const companyResponse = {
       {
         "companyid": 95,
         "companyname": "systems",
+        "industry": "Industry",
         "description": "Software company",
         "noofemployees": 0,
         "contactemail": "system@sys.com",
@@ -2171,6 +2305,7 @@ export const companyResponse = {
       {
         "companyid": 94,
         "companyname": "Stokes Inc",
+        "industry": "Industry",
         "description": "multi-state",
         "noofemployees": 0,
         "contactemail": "Alysson_Spencer87@yahoo.com",
@@ -2190,6 +2325,7 @@ export const companyResponse = {
       {
         "companyid": 93,
         "companyname": "Stokes Inc",
+        "industry": "Industry",
         "description": "multi-state",
         "noofemployees": 0,
         "contactemail": "Alysson_Spencer87@yahoo.com",
@@ -2209,6 +2345,7 @@ export const companyResponse = {
       {
         "companyid": 92,
         "companyname": "Sporer Inc",
+        "industry": "Industry",
         "description": "maximized",
         "noofemployees": 0,
         "contactemail": "Elna_Gerlach@gmail.com",
@@ -2228,6 +2365,7 @@ export const companyResponse = {
       {
         "companyid": 91,
         "companyname": "Sporer Inc",
+        "industry": "Industry",
         "description": "maximized",
         "noofemployees": 0,
         "contactemail": "Elna_Gerlach@gmail.com",
@@ -2247,6 +2385,7 @@ export const companyResponse = {
       {
         "companyid": 90,
         "companyname": "Spinka - Pollich",
+        "industry": "Industry",
         "description": "zero defect",
         "noofemployees": 0,
         "contactemail": "Kali.Bernier@gmail.com",
@@ -2266,6 +2405,7 @@ export const companyResponse = {
       {
         "companyid": 89,
         "companyname": "Spinka - Pollich",
+        "industry": "Industry",
         "description": "zero defect",
         "noofemployees": 0,
         "contactemail": "Kali.Bernier@gmail.com",
@@ -2285,6 +2425,7 @@ export const companyResponse = {
       {
         "companyid": 88,
         "companyname": "Simonis, Champlin and Friesen",
+        "industry": "Industry",
         "description": "zero administration",
         "noofemployees": 0,
         "contactemail": "Nathan_Bergnaum7@gmail.com",
@@ -2304,6 +2445,7 @@ export const companyResponse = {
       {
         "companyid": 87,
         "companyname": "Simonis, Champlin and Friesen",
+        "industry": "Industry",
         "description": "zero administration",
         "noofemployees": 0,
         "contactemail": "Nathan_Bergnaum7@gmail.com",
@@ -2323,6 +2465,7 @@ export const companyResponse = {
       {
         "companyid": 86,
         "companyname": "Schimmel Group",
+        "industry": "Industry",
         "description": "regional",
         "noofemployees": 0,
         "contactemail": "Gail_Wintheiser60@gmail.com",
@@ -2342,6 +2485,7 @@ export const companyResponse = {
       {
         "companyid": 85,
         "companyname": "Schimmel Group",
+        "industry": "Industry",
         "description": "regional",
         "noofemployees": 0,
         "contactemail": "Gail_Wintheiser60@gmail.com",
@@ -2361,6 +2505,7 @@ export const companyResponse = {
       {
         "companyid": 84,
         "companyname": "Schaefer LLC",
+        "industry": "Industry",
         "description": "6th generation",
         "noofemployees": 0,
         "contactemail": "Carolyn50@gmail.com",
@@ -2380,6 +2525,7 @@ export const companyResponse = {
       {
         "companyid": 83,
         "companyname": "Schaefer LLC",
+        "industry": "Industry",
         "description": "6th generation",
         "noofemployees": 0,
         "contactemail": "Carolyn50@gmail.com",
@@ -2399,6 +2545,7 @@ export const companyResponse = {
       {
         "companyid": 82,
         "companyname": "SaiSystems",
+        "industry": "Industry",
         "description": "IT and Healthcare industry services",
         "noofemployees": 0,
         "contactemail": "saisystem.com",
@@ -2418,6 +2565,7 @@ export const companyResponse = {
       {
         "companyid": 81,
         "companyname": "Ruecker Group",
+        "industry": "Industry",
         "description": "multi-state",
         "noofemployees": 0,
         "contactemail": "Teagan54@yahoo.com",
@@ -2437,6 +2585,7 @@ export const companyResponse = {
       {
         "companyid": 80,
         "companyname": "Ruecker Group",
+        "industry": "Industry",
         "description": "multi-state",
         "noofemployees": 0,
         "contactemail": "Teagan54@yahoo.com",
@@ -2456,6 +2605,7 @@ export const companyResponse = {
       {
         "companyid": 79,
         "companyname": "Rau, Stanton and Johnson",
+        "industry": "Industry",
         "description": "heuristic",
         "noofemployees": 0,
         "contactemail": "Kylee_Reilly94@yahoo.com",
@@ -2475,6 +2625,7 @@ export const companyResponse = {
       {
         "companyid": 78,
         "companyname": "Rau, Stanton and Johnson",
+        "industry": "Industry",
         "description": "heuristic",
         "noofemployees": 0,
         "contactemail": "Kylee_Reilly94@yahoo.com",
@@ -2494,6 +2645,7 @@ export const companyResponse = {
       {
         "companyid": 77,
         "companyname": "Ratke, Kovacek and Huel",
+        "industry": "Industry",
         "description": "content-based",
         "noofemployees": 0,
         "contactemail": "Agustina.Mann79@hotmail.com",
@@ -2513,6 +2665,7 @@ export const companyResponse = {
       {
         "companyid": 76,
         "companyname": "Ratke, Kovacek and Huel",
+        "industry": "Industry",
         "description": "content-based",
         "noofemployees": 0,
         "contactemail": "Agustina.Mann79@hotmail.com",
@@ -2532,6 +2685,7 @@ export const companyResponse = {
       {
         "companyid": 75,
         "companyname": "Ranveer Media Ltd",
+        "industry": "Industry",
         "description": "Media service",
         "noofemployees": 120,
         "contactemail": "ranveer@gmail.com",
@@ -2551,6 +2705,7 @@ export const companyResponse = {
       {
         "companyid": 74,
         "companyname": "Price Inc",
+        "industry": "Industry",
         "description": "logistical",
         "noofemployees": 0,
         "contactemail": "Mathilde53@yahoo.com",
@@ -2570,6 +2725,7 @@ export const companyResponse = {
       {
         "companyid": 73,
         "companyname": "Price Inc",
+        "industry": "Industry",
         "description": "logistical",
         "noofemployees": 0,
         "contactemail": "Mathilde53@yahoo.com",
@@ -2589,6 +2745,7 @@ export const companyResponse = {
       {
         "companyid": 72,
         "companyname": "Paucek - Shanahan",
+        "industry": "Industry",
         "description": "attitude-oriented",
         "noofemployees": 0,
         "contactemail": "Bernice23@yahoo.com",
@@ -2608,6 +2765,7 @@ export const companyResponse = {
       {
         "companyid": 71,
         "companyname": "Paucek - Shanahan",
+        "industry": "Industry",
         "description": "attitude-oriented",
         "noofemployees": 0,
         "contactemail": "Bernice23@yahoo.com",
@@ -2627,6 +2785,7 @@ export const companyResponse = {
       {
         "companyid": 70,
         "companyname": "Panther",
+        "industry": "Industry",
         "description": "IT and Healthcare industry services",
         "noofemployees": 0,
         "contactemail": "panther.com",
@@ -2646,6 +2805,7 @@ export const companyResponse = {
       {
         "companyid": 69,
         "companyname": "Pagac - Cormier",
+        "industry": "Industry",
         "description": "even-keeled",
         "noofemployees": 0,
         "contactemail": "Laurence_Wehner@yahoo.com",
@@ -2665,6 +2825,7 @@ export const companyResponse = {
       {
         "companyid": 68,
         "companyname": "Pagac - Cormier",
+        "industry": "Industry",
         "description": "even-keeled",
         "noofemployees": 0,
         "contactemail": "Laurence_Wehner@yahoo.com",
@@ -2684,6 +2845,7 @@ export const companyResponse = {
       {
         "companyid": 67,
         "companyname": "Oberbrunner - Hickle",
+        "industry": "Industry",
         "description": "optimal",
         "noofemployees": 0,
         "contactemail": "Melissa_Casper3@gmail.com",
@@ -2703,6 +2865,7 @@ export const companyResponse = {
       {
         "companyid": 66,
         "companyname": "Oberbrunner - Hickle",
+        "industry": "Industry",
         "description": "optimal",
         "noofemployees": 0,
         "contactemail": "Melissa_Casper3@gmail.com",
@@ -2722,6 +2885,7 @@ export const companyResponse = {
       {
         "companyid": 65,
         "companyname": "Mayert LLC",
+        "industry": "Industry",
         "description": "local",
         "noofemployees": 0,
         "contactemail": "Abigayle_Borer47@gmail.com",
@@ -2741,6 +2905,7 @@ export const companyResponse = {
       {
         "companyid": 64,
         "companyname": "Mayert LLC",
+        "industry": "Industry",
         "description": "local",
         "noofemployees": 0,
         "contactemail": "Abigayle_Borer47@gmail.com",
@@ -2760,6 +2925,7 @@ export const companyResponse = {
       {
         "companyid": 63,
         "companyname": "Marquardt, Champlin and Mann",
+        "industry": "Industry",
         "description": "upward-trending",
         "noofemployees": 0,
         "contactemail": "Gwendolyn.Rohan@gmail.com",
@@ -2779,6 +2945,7 @@ export const companyResponse = {
       {
         "companyid": 62,
         "companyname": "Marquardt, Champlin and Mann",
+        "industry": "Industry",
         "description": "upward-trending",
         "noofemployees": 0,
         "contactemail": "Gwendolyn.Rohan@gmail.com",
@@ -2798,6 +2965,7 @@ export const companyResponse = {
       {
         "companyid": 61,
         "companyname": "MacGyver LLC",
+        "industry": "Industry",
         "description": "heuristic",
         "noofemployees": 0,
         "contactemail": "Bernhard59@hotmail.com",
@@ -2817,6 +2985,7 @@ export const companyResponse = {
       {
         "companyid": 60,
         "companyname": "MacGyver LLC",
+        "industry": "Industry",
         "description": "heuristic",
         "noofemployees": 0,
         "contactemail": "Bernhard59@hotmail.com",
@@ -2836,6 +3005,7 @@ export const companyResponse = {
       {
         "companyid": 58,
         "companyname": "Little, Luettgen and Schaefer",
+        "industry": "Industry",
         "description": "asynchronous",
         "noofemployees": 0,
         "contactemail": "Isabell_Auer48@yahoo.com",
@@ -2855,6 +3025,7 @@ export const companyResponse = {
       {
         "companyid": 57,
         "companyname": "Leffler - Prosacco",
+        "industry": "Industry",
         "description": "intangible",
         "noofemployees": 0,
         "contactemail": "Nathan_Beier70@hotmail.com",
@@ -2874,6 +3045,7 @@ export const companyResponse = {
       {
         "companyid": 56,
         "companyname": "Leffler - Prosacco",
+        "industry": "Industry",
         "description": "intangible",
         "noofemployees": 0,
         "contactemail": "Nathan_Beier70@hotmail.com",
@@ -2893,6 +3065,7 @@ export const companyResponse = {
       {
         "companyid": 55,
         "companyname": "Leannon - Blanda",
+        "industry": "Industry",
         "description": "bottom-line",
         "noofemployees": 0,
         "contactemail": "Raoul_Schuster20@gmail.com",
@@ -2912,6 +3085,7 @@ export const companyResponse = {
       {
         "companyid": 54,
         "companyname": "Leannon - Blanda",
+        "industry": "Industry",
         "description": "bottom-line",
         "noofemployees": 0,
         "contactemail": "Raoul_Schuster20@gmail.com",
@@ -2931,6 +3105,7 @@ export const companyResponse = {
       {
         "companyid": 53,
         "companyname": "Larson - Lynch",
+        "industry": "Industry",
         "description": "directional",
         "noofemployees": 0,
         "contactemail": "Imani.Rice@yahoo.com",
@@ -2950,6 +3125,7 @@ export const companyResponse = {
       {
         "companyid": 52,
         "companyname": "Larson - Lynch",
+        "industry": "Industry",
         "description": "directional",
         "noofemployees": 0,
         "contactemail": "Imani.Rice@yahoo.com",
@@ -2969,6 +3145,7 @@ export const companyResponse = {
       {
         "companyid": 51,
         "companyname": "Klocko Group",
+        "industry": "Industry",
         "description": "actuating",
         "noofemployees": 0,
         "contactemail": "Kevin_Little14@gmail.com",
@@ -2988,6 +3165,7 @@ export const companyResponse = {
       {
         "companyid": 50,
         "companyname": "Klocko Group",
+        "industry": "Industry",
         "description": "actuating",
         "noofemployees": 0,
         "contactemail": "Kevin_Little14@gmail.com",
@@ -3007,6 +3185,7 @@ export const companyResponse = {
       {
         "companyid": 49,
         "companyname": "Kling - Cassin",
+        "industry": "Industry",
         "description": "multi-tasking",
         "noofemployees": 0,
         "contactemail": "Loren27@hotmail.com",
@@ -3026,6 +3205,7 @@ export const companyResponse = {
       {
         "companyid": 48,
         "companyname": "Kling - Cassin",
+        "industry": "Industry",
         "description": "multi-tasking",
         "noofemployees": 0,
         "contactemail": "Loren27@hotmail.com",
@@ -3045,6 +3225,7 @@ export const companyResponse = {
       {
         "companyid": 47,
         "companyname": "Kerluke, D'Amore and Nitzsche",
+        "industry": "Industry",
         "description": "client-driven",
         "noofemployees": 0,
         "contactemail": "Jayden.Kreiger87@yahoo.com",
@@ -3064,6 +3245,7 @@ export const companyResponse = {
       {
         "companyid": 46,
         "companyname": "Code Crafters Pvt Ltd.",
+        "industry": "Industry",
         "description": "",
         "noofemployees": 0,
         "contactemail": "Jayden.Kreiger87@yahoo.com",
@@ -3083,6 +3265,7 @@ export const companyResponse = {
       {
         "companyid": 45,
         "companyname": "Kautzer LLC",
+        "industry": "Industry",
         "description": "analyzing",
         "noofemployees": 0,
         "contactemail": "Shirley.Mitchell54@gmail.com",
@@ -3102,6 +3285,7 @@ export const companyResponse = {
       {
         "companyid": 44,
         "companyname": "Kautzer LLC",
+        "industry": "Industry",
         "description": "analyzing",
         "noofemployees": 0,
         "contactemail": "Shirley.Mitchell54@gmail.com",
@@ -3121,6 +3305,7 @@ export const companyResponse = {
       {
         "companyid": 43,
         "companyname": "Jones, Schinner and Schroeder",
+        "industry": "Industry",
         "description": "disintermediate",
         "noofemployees": 0,
         "contactemail": "Tremayne.Sanford@yahoo.com",
@@ -3140,6 +3325,7 @@ export const companyResponse = {
       {
         "companyid": 42,
         "companyname": "Jones, Schinner and Schroeder",
+        "industry": "Industry",
         "description": "disintermediate",
         "noofemployees": 0,
         "contactemail": "Tremayne.Sanford@yahoo.com",
@@ -3159,6 +3345,7 @@ export const companyResponse = {
       {
         "companyid": 41,
         "companyname": "Hilpert - DuBuque",
+        "industry": "Industry",
         "description": "homogeneous",
         "noofemployees": 0,
         "contactemail": "Edwina.Nolan13@yahoo.com",
@@ -3178,6 +3365,7 @@ export const companyResponse = {
       {
         "companyid": 40,
         "companyname": "Hilpert - DuBuque",
+        "industry": "Industry",
         "description": "homogeneous",
         "noofemployees": 0,
         "contactemail": "Edwina.Nolan13@yahoo.com",
@@ -3197,6 +3385,7 @@ export const companyResponse = {
       {
         "companyid": 39,
         "companyname": "Hessel - Parker",
+        "industry": "Industry",
         "description": "upward-trending",
         "noofemployees": 0,
         "contactemail": "Otis.Cummings15@gmail.com",
@@ -3216,6 +3405,7 @@ export const companyResponse = {
       {
         "companyid": 38,
         "companyname": "Hessel - Parker",
+        "industry": "Industry",
         "description": "upward-trending",
         "noofemployees": 0,
         "contactemail": "Otis.Cummings15@gmail.com",
@@ -3235,6 +3425,7 @@ export const companyResponse = {
       {
         "companyid": 37,
         "companyname": "Heathcote and Sons",
+        "industry": "Industry",
         "description": "non-volatile",
         "noofemployees": 0,
         "contactemail": "Hellen_Mueller@gmail.com",
@@ -3254,6 +3445,7 @@ export const companyResponse = {
       {
         "companyid": 36,
         "companyname": "Heathcote and Sons",
+        "industry": "Industry",
         "description": "non-volatile",
         "noofemployees": 0,
         "contactemail": "Hellen_Mueller@gmail.com",
@@ -3273,6 +3465,7 @@ export const companyResponse = {
       {
         "companyid": 35,
         "companyname": "Harvey - Kuphal",
+        "industry": "Industry",
         "description": "regional",
         "noofemployees": 0,
         "contactemail": "Margot58@hotmail.com",
@@ -3292,6 +3485,7 @@ export const companyResponse = {
       {
         "companyid": 34,
         "companyname": "Harvey - Kuphal",
+        "industry": "Industry",
         "description": "regional",
         "noofemployees": 0,
         "contactemail": "Margot58@hotmail.com",
@@ -3311,6 +3505,7 @@ export const companyResponse = {
       {
         "companyid": 33,
         "companyname": "Hand - Harvey",
+        "industry": "Industry",
         "description": "attitude-oriented",
         "noofemployees": 0,
         "contactemail": "Jayden36@hotmail.com",
@@ -3330,6 +3525,7 @@ export const companyResponse = {
       {
         "companyid": 32,
         "companyname": "Hand - Harvey",
+        "industry": "Industry",
         "description": "attitude-oriented",
         "noofemployees": 0,
         "contactemail": "Jayden36@hotmail.com",
@@ -3349,6 +3545,7 @@ export const companyResponse = {
       {
         "companyid": 31,
         "companyname": "Halvorson, Heller and Klocko",
+        "industry": "Industry",
         "description": "asynchronous",
         "noofemployees": 0,
         "contactemail": "Liza24@yahoo.com",
@@ -3368,6 +3565,7 @@ export const companyResponse = {
       {
         "companyid": 30,
         "companyname": "Halvorson, Heller and Klocko",
+        "industry": "Industry",
         "description": "asynchronous",
         "noofemployees": 0,
         "contactemail": "Liza24@yahoo.com",
@@ -3387,6 +3585,7 @@ export const companyResponse = {
       {
         "companyid": 29,
         "companyname": "Fahey, Orn and Wisozk",
+        "industry": "Industry",
         "description": "asymmetric",
         "noofemployees": 0,
         "contactemail": "Michelle16@yahoo.com",
@@ -3406,6 +3605,7 @@ export const companyResponse = {
       {
         "companyid": 28,
         "companyname": "Fahey, Orn and Wisozk",
+        "industry": "Industry",
         "description": "asymmetric",
         "noofemployees": 0,
         "contactemail": "Michelle16@yahoo.com",
@@ -3425,6 +3625,7 @@ export const companyResponse = {
       {
         "companyid": 27,
         "companyname": "Elaij courier and Services",
+        "industry": "Industry",
         "description": "Connecting people thoughts",
         "noofemployees": 99,
         "contactemail": "elaij@gmail.com",
@@ -3444,6 +3645,7 @@ export const companyResponse = {
       {
         "companyid": 26,
         "companyname": "Dietrich, Blanda and Leuschke",
+        "industry": "Industry",
         "description": "web-enabled",
         "noofemployees": 0,
         "contactemail": "Wendell.Stiedemann@gmail.com",
@@ -3463,6 +3665,7 @@ export const companyResponse = {
       {
         "companyid": 25,
         "companyname": "Dietrich, Blanda and Leuschke",
+        "industry": "Industry",
         "description": "web-enabled",
         "noofemployees": 0,
         "contactemail": "Wendell.Stiedemann@gmail.com",
@@ -3482,6 +3685,7 @@ export const companyResponse = {
       {
         "companyid": 24,
         "companyname": "Dicki Inc",
+        "industry": "Industry",
         "description": "next generation",
         "noofemployees": 0,
         "contactemail": "Dameon.Smith@gmail.com",
@@ -3501,6 +3705,7 @@ export const companyResponse = {
       {
         "companyid": 23,
         "companyname": "Dicki Inc",
+        "industry": "Industry",
         "description": "next generation",
         "noofemployees": 0,
         "contactemail": "Dameon.Smith@gmail.com",
@@ -3520,6 +3725,7 @@ export const companyResponse = {
       {
         "companyid": 22,
         "companyname": "Denesik - Gaylord",
+        "industry": "Industry",
         "description": "impactful",
         "noofemployees": 0,
         "contactemail": "Liam34@hotmail.com",
@@ -3539,6 +3745,7 @@ export const companyResponse = {
       {
         "companyid": 21,
         "companyname": "Denesik - Gaylord",
+        "industry": "Industry",
         "description": "impactful",
         "noofemployees": 0,
         "contactemail": "Liam34@hotmail.com",
@@ -3558,6 +3765,7 @@ export const companyResponse = {
       {
         "companyid": 20,
         "companyname": "Corkery, Raynor and McClure",
+        "industry": "Industry",
         "description": "stable",
         "noofemployees": 0,
         "contactemail": "Claudine_Streich74@hotmail.com",
@@ -3577,6 +3785,7 @@ export const companyResponse = {
       {
         "companyid": 19,
         "companyname": "Corkery, Raynor and McClure",
+        "industry": "Industry",
         "description": "stable",
         "noofemployees": 0,
         "contactemail": "Claudine_Streich74@hotmail.com",
@@ -3596,6 +3805,7 @@ export const companyResponse = {
       {
         "companyid": 18,
         "companyname": "Breitenberg, Quigley and Abbott",
+        "industry": "Industry",
         "description": "4th generation",
         "noofemployees": 0,
         "contactemail": "Laila.Abshire@yahoo.com",
@@ -3615,6 +3825,7 @@ export const companyResponse = {
       {
         "companyid": 17,
         "companyname": "Breitenberg, Quigley and Abbott",
+        "industry": "Industry",
         "description": "4th generation",
         "noofemployees": 0,
         "contactemail": "Laila.Abshire@yahoo.com",
@@ -3634,6 +3845,7 @@ export const companyResponse = {
       {
         "companyid": 16,
         "companyname": "Bosco - Roberts",
+        "industry": "Industry",
         "description": "fault-tolerant",
         "noofemployees": 0,
         "contactemail": "Kaitlin.Ziemann96@yahoo.com",
@@ -3653,6 +3865,7 @@ export const companyResponse = {
       {
         "companyid": 15,
         "companyname": "Bosco - Roberts",
+        "industry": "Industry",
         "description": "fault-tolerant",
         "noofemployees": 0,
         "contactemail": "Kaitlin.Ziemann96@yahoo.com",
@@ -3672,6 +3885,7 @@ export const companyResponse = {
       {
         "companyid": 14,
         "companyname": "Beier - Mayer",
+        "industry": "Industry",
         "description": "optimizing",
         "noofemployees": 0,
         "contactemail": "Lambert.Prosacco82@hotmail.com",
@@ -3691,6 +3905,7 @@ export const companyResponse = {
       {
         "companyid": 13,
         "companyname": "Beier - Mayer",
+        "industry": "Industry",
         "description": "optimizing",
         "noofemployees": 0,
         "contactemail": "Lambert.Prosacco82@hotmail.com",
@@ -3710,6 +3925,7 @@ export const companyResponse = {
       {
         "companyid": 12,
         "companyname": "Beahan, Mueller and Bogisich",
+        "industry": "Industry",
         "description": "heuristic",
         "noofemployees": 0,
         "contactemail": "Nico_Mante66@hotmail.com",
@@ -3729,6 +3945,7 @@ export const companyResponse = {
       {
         "companyid": 11,
         "companyname": "Beahan, Mueller and Bogisich",
+        "industry": "Industry",
         "description": "heuristic",
         "noofemployees": 0,
         "contactemail": "Nico_Mante66@hotmail.com",
@@ -3748,6 +3965,7 @@ export const companyResponse = {
       {
         "companyid": 9,
         "companyname": "Batz, Klein and Smitham",
+        "industry": "Industry",
         "description": "24/7",
         "noofemployees": 0,
         "contactemail": "Alisha57@gmail.com",
@@ -3767,6 +3985,7 @@ export const companyResponse = {
       {
         "companyid": 8,
         "companyname": "Balistreri - Homenick",
+        "industry": "Industry",
         "description": "foreground",
         "noofemployees": 0,
         "contactemail": "General.Davis@gmail.com",
@@ -3786,6 +4005,7 @@ export const companyResponse = {
       {
         "companyid": 7,
         "companyname": "Balistreri - Homenick",
+        "industry": "Industry",
         "description": "foreground",
         "noofemployees": 0,
         "contactemail": "General.Davis@gmail.com",
@@ -3805,6 +4025,7 @@ export const companyResponse = {
       {
         "companyid": 5,
         "companyname": "Altenwerth - Kuhn",
+        "industry": "Industry",
         "description": "intangible",
         "noofemployees": 0,
         "contactemail": "Augustine_Gutmann@yahoo.com",
@@ -3824,6 +4045,7 @@ export const companyResponse = {
       {
         "companyid": 4,
         "companyname": "Altenwerth - Kuhn",
+        "industry": "Industry",
         "description": "intangible",
         "noofemployees": 0,
         "contactemail": "Augustine_Gutmann@yahoo.com",
@@ -3843,6 +4065,7 @@ export const companyResponse = {
       {
         "companyid": 3,
         "companyname": "Alfa career",
+        "industry": "Industry",
         "description": "Software company",
         "noofemployees": 0,
         "contactemail": "alfao@sys.com",
@@ -3862,6 +4085,7 @@ export const companyResponse = {
       {
         "companyid": 2,
         "companyname": "Bandcamp",
+        "industry": "Industry",
         "description": "Bandcamp",
         "noofemployees": 100,
         "contactemail": "",
@@ -3881,6 +4105,7 @@ export const companyResponse = {
       {
         "companyid": 1,
         "companyname": "Adams - Runolfsdottir",
+        "industry": "Industry",
         "description": "attitude-oriented",
         "noofemployees": 0,
         "contactemail": "Eddie_Sanford30@yahoo.com",
@@ -3898,7 +4123,7 @@ export const companyResponse = {
         "currentUserId": 0
       }
     ],
-    "totalRows": 205
+    "totalRows": 206
   },
   "status": "Success",
   "message": "Company get List API requested"

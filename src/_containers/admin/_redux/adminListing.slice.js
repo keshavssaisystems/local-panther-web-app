@@ -35,6 +35,14 @@ export const getCustomers = createAsyncThunk(
     return await fetchWrapper.get(GET_CUSTOMERS_STATS);
   }
 );
+export const getIndustries = createAsyncThunk(
+  `${name}/getIndustry`,
+  async (payload = {}) => {
+    const GET_INDUSTRIES_STATS = `${baseUrl}/Company/Get?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(GET_INDUSTRIES_STATS);
+  }
+);
+
 
 // https://panther-api-dev.azurewebsites.net/api/User?pageSize=500
 export const getUsers = createAsyncThunk(
@@ -64,7 +72,6 @@ export const getMenuMappings = createAsyncThunk(
   }
 );
 
-
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -73,6 +80,8 @@ const adminListingSlice = createSlice({
     loading: false,
     error: null,
     data: [],
+    industyList: [],
+    industryCompanyMapping: []
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -89,12 +98,31 @@ const adminListingSlice = createSlice({
     [getCompanies.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data?.companyDetailsList.map((item) => {
+      state.data = data?.companyDetailsList?.map((item) => {
         const newContact = item?.contactphonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
         return ({ ...item, contactphonenumber: newContact ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3] : null })
     })
     },
     [getCompanies.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [getIndustries.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getIndustries.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      const industryData = data?.companyDetailsList?.map(item => {
+        return item.industry
+      })
+      state.industyList = [...new Set(industryData)]
+      state.industryCompanyMapping = data?.companyDetailsList?.map(item => {
+        return { [item.companyid] : item.industry }
+      })
+    },
+    [getIndustries.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
@@ -105,7 +133,7 @@ const adminListingSlice = createSlice({
     [getCustomers.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data?.customerDetailsList.map((item) => {
+      state.data = data?.customerDetailsList?.map((item) => {
         const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
         return ({ ...item, phonenumber: newContact ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3] : null })
       })
@@ -122,7 +150,7 @@ const adminListingSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.data = data?.userList;
-      state.data = data?.userList.map((item) => {
+      state.data = data?.userList?.map((item) => {
         const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
         return ({ ...item, phonenumber: newContact ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3] : null })
       })
@@ -165,6 +193,7 @@ const adminListingSlice = createSlice({
 export const adminListingActions = {
   ...adminListingSlice.actions,
   getCompanies,
+  getIndustries,
   getCustomers,
   getUsers,
   getRoles,
