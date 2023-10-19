@@ -50,31 +50,31 @@ const columns = [
     selector: (row) => row.phone,
     sortable: true,
   },
-  {
-    name: "Skills",
-    selector: (row) => row.skills,
-    sortable: true,
-  },
-  {
-    name: "Education",
-    selector: (row) => row.education,
-    sortable: true,
-  },
-  {
-    name: "Experience",
-    selector: (row) => row.experience,
-    sortable: true,
-  },
-  {
-    name: "Location",
-    selector: (row) => row.location,
-    sortable: true,
-  },
-  {
-    name: "Certifications",
-    selector: (row) => row.certifications,
-    sortable: true,
-  },
+  // {
+  //   name: "Skills",
+  //   selector: (row) => row.skills,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Education",
+  //   selector: (row) => row.education,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Experience",
+  //   selector: (row) => row.experience,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Location",
+  //   selector: (row) => row.location,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Certifications",
+  //   selector: (row) => row.certifications,
+  //   sortable: true,
+  // },
 ];
 
 export function CustomerReportCandidateStatus() {

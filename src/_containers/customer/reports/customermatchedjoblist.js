@@ -29,51 +29,55 @@ import { useParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
 const columns = [
-  {
-    name: "Candidate Id",
-    selector: (row) => row.candidateid,
-    sortable: true,
-  },
+  // {
+  //   name: "Candidate Id",
+  //   selector: (row) => row?.candidateid,
+  //   sortable: true,
+  // },
   {
     name: "Name",
-    selector: (row) => row.candidatename,
+    selector: (row) => row?.candidatename,
     sortable: true,
   },
   {
     name: "Email",
-    selector: (row) => row.email,
+    selector: (row) => row?.email,
     sortable: true,
   },
   {
     name: "Phone",
-    selector: (row) => row.phone,
+    selector: (row) => row?.phone,
     sortable: true,
   },
-  {
-    name: "Skills",
-    selector: (row) => row.skills,
-    sortable: true,
-  },
-  {
-    name: "Education",
-    selector: (row) => row.education,
-    sortable: true,
-  },
-  {
-    name: "Experience",
-    selector: (row) => row.experience,
-    sortable: true,
-  },
-  {
-    name: "Location",
-    selector: (row) => row.location,
-    sortable: true,
-  },
-  {
-    name: "Certifications",
-    selector: (row) => row.certifications,
-    sortable: true,
-  },
+  // {
+  //   name: "Skills",
+  //   selector: (row) => row?.skill,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Education",
+  //   selector: (row) =>
+  //     Object.keys(row?.education).length > 0 ? row?.education : "",
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Experience",
+  //   selector: (row) =>
+  //     Object.keys(row?.experience).length > 0 ? row?.experience : "",
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Location",
+  //   selector: (row) =>
+  //     Object.keys(row?.location).length > 0 ? row?.location : "",
+  //   sortable: true,
+  // },
+  // {
+  //   name: "Certifications",
+  //   selector: (row) =>
+  //     Object.keys(row?.certification).length > 0 ? row?.certification : "",
+  //   sortable: true,
+  // },
 ];
 
 export function CustomerReportMatchedCandidate() {
