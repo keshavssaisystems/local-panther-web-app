@@ -3,6 +3,7 @@ import { Card, CardBody, CardHeader } from "reactstrap";
 import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
+import "./dashboard.scss";
 
 export function UpcomingInterviewTable({ tableData }) {
   const customStyles = {
@@ -39,7 +40,7 @@ export function UpcomingInterviewTable({ tableData }) {
       id: "jobtitle",
       selector: (row) => (row.jobtitle === "" ? "-" : row.jobtitle),
       sortable: true,
-      width: "170px",
+      width: "150px",
     },
     {
       name: "Date",
@@ -67,7 +68,7 @@ export function UpcomingInterviewTable({ tableData }) {
   ];
   return (
     <>
-      <Card className="mb-3">
+      <Card className="mb-3 chart-fixed-height">
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-lg text-capitalize fw-normal">
             <BsFillCalendarWeekFill className="me-1" />

@@ -6,7 +6,7 @@ import { Row, Col, Card, CardBody, CardHeader, Button, FormGroup, InputGroup, In
 import "_containers/admin/common/adminListing.scss"
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { getCompanies, getCustomers } from '_containers/admin/_redux/adminListing.slice'
+import { getCompanies, getCustomers, getUsers, getRoles, getMenuMappings } from '_containers/admin/_redux/adminListing.slice'
 import { useEffect } from "react";
 
 
@@ -69,13 +69,18 @@ export const AdminListing = ({entity}) => {
   };
 
   useEffect(() => {
-    // dispatch(getCustomers(urlParams));
     if (entity === "company") {
       dispatch(getCompanies(urlParams))
     } else if (entity === "customers") {
       dispatch(getCustomers(urlParams))
-    }
-  }, [])
+    } else if (entity === "users") {
+      dispatch(getUsers(urlParams))
+    } else if (entity === "roles") {
+      dispatch(getRoles(urlParams))
+    } else if (entity === "menuMapping") {
+      dispatch(getMenuMappings(urlParams))
+    } 
+  }, [entity])
 
 
   const customStyles = {

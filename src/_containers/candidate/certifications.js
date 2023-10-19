@@ -95,24 +95,20 @@ export function CertificationDetails(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <div className="mt-3 scroll-area-lg" style={{ marginLeft: "10px" }}>
+          <CardBody className="scroll-area-lg">
             <PerfectScrollbar>
-              <Row className="mb-2">
-                <Col>
-                  <strong className="card-title-text">
-                    Certifications and licenses
-                  </strong>
-                </Col>
+              <div className="mb-3">
+                <strong className="card-title-text">
+                  Certifications and licenses
+                </strong>
 
-                <Col>
-                  <Label
-                    className="float-end me-3 link-text"
-                    onClick={(evt) => setPersonalModal(true)}
-                  >
-                    Add
-                  </Label>
-                </Col>
-              </Row>
+                <Label
+                  className="float-end link-text"
+                  onClick={(evt) => setPersonalModal(true)}
+                >
+                  Add
+                </Label>
+              </div>
               {!loader ? (
                 <Row>
                   {certificationDetails ? (
@@ -129,7 +125,7 @@ export function CertificationDetails(props) {
                                 onClick={() => edit(item)}
                               />{" "}
                               <BsTrash3
-                                className="icons me-3"
+                                className="icons"
                                 onClick={() =>
                                   deleteModal(
                                     certificationDetails[index]
@@ -177,7 +173,7 @@ export function CertificationDetails(props) {
                 </div>
               )}
             </PerfectScrollbar>
-          </div>
+          </CardBody>
         </Card>
       </div>
 
