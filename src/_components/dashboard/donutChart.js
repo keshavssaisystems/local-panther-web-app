@@ -45,7 +45,7 @@ export function DonutChart({ graphData }) {
   };
   return (
     <>
-      <Card className="mb-3">
+      <Card className="mb-3" style={{ height: "340px" }}>
         <CardBody className="p-0">
           <Row>
             <Col md={1} className="me-2">

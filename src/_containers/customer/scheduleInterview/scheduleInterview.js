@@ -560,7 +560,7 @@ export function ScheduleInterview() {
                 <Col lg="8">
                   <UpcomingDetail
                     interviewDetails={
-                      selectedJobData[0] === undefined
+                      selectedJobData === undefined
                         ? upcomingInterviews?.scheduledInterviewList[0]
                         : selectedJobData[0]
                     }
