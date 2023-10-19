@@ -1,37 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-  Table,
-} from "reactstrap";
+import { Label, ModalHeader, ModalBody } from "reactstrap";
 import { additionalInfoDetailsSlice } from "_store";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  CardHeader,
-  Button,
-  FormGroup,
-  InputGroup,
-  Form,
-} from "reactstrap";
+import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDispatch } from "react-redux";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import Loader from "react-loaders";
-import { convertText } from "_helpers/helper";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
 import "./profile.scss";
 import { AdditionalInfoModal } from "./additionalInfoModal";
 import { useSelector } from "react-redux";
@@ -39,11 +14,9 @@ import { useSelector } from "react-redux";
 export function AdditionalInformation(props) {
   const dispatch = useDispatch();
   const [isPersonalModal, setPersonalModal] = useState(false);
-  const selectDate = function () {};
+
   const loader = useSelector((state) => state.getProfile.loader);
-  const [commentLength, setCommentLength] = useState(0);
-  const [summary, setSummaryLength] = useState("");
-  const [info, setInfoLength] = useState("");
+
   const [selected, setSelectedData] = useState({});
   const [deleteId, setDeleteId] = useState(0);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
@@ -77,7 +50,6 @@ export function AdditionalInformation(props) {
     });
     let filter_data = [...getResponse];
     filter_data = data;
-
     setGetResponse(filter_data);
   }, [additional_details]);
 
@@ -133,100 +105,99 @@ export function AdditionalInformation(props) {
       {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <div className="mt-3 scroll-area-lg" style={{ marginLeft: "10px" }}>
-            <Row className="mb-1">
-              <Col>
-                <strong className="card-title-text">
-                  Additional information
-                </strong>
-              </Col>
-              {/* {getResponse?.length == 0 ? ( */}
-              <Col>
-                <Label
-                  className="float-end me-3 link-text"
-                  onClick={(evt) => edit("add")}
-                >
-                  Add
-                </Label>
-              </Col>
-            </Row>
+          <CardBody className="scroll-area-lg">
+            <div className=" mb-3">
+              <strong className="card-title-text">
+                Additional information
+              </strong>
+              <Label
+                className="float-end link-text"
+                onClick={(evt) => edit("add")}
+              >
+                Add
+              </Label>
+            </div>
+
             {!loader ? (
               <div>
                 {getResponse?.length > 0 ? (
-                  <Row>
+                  <div>
                     {getResponse.map((item) => (
                       <div>
-                        <Row>
-                          <Col>
-                            <strong className="content-title mb-1">
-                              Summary
-                            </strong>
-                          </Col>
+                        {item.summary != "" ? (
+                          <div>
+                            <div className="mb-2">
+                              <strong className="content-title">Summary</strong>
 
-                          <Col style={{ marginTop: "10px" }}>
-                            <div className="float-end">
-                              <BsPencil
-                                className="icons"
-                                onClick={(evt) => edit("edit", item)}
-                              />{" "}
-                              <BsTrash3
-                                className="me-3 icons"
-                                onClick={() =>
-                                  deleteModal(
-                                    item.candidateadditioninformationid
-                                  )
-                                }
-                              />
-                            </div>
-                          </Col>
-                        </Row>
-                        <div className="card-p-text-black">
-                          <ul
-                            dangerouslySetInnerHTML={{
-                              __html: convertText(item.summary),
-                            }}
-                          />
-                        </div>
-                        <div>
-                          {item.additionalInfo ? (
-                            <div>
-                              <Row>
-                                <Col>
-                                  <strong className="content-title mb-1">
-                                    Additional Information
-                                  </strong>
-                                </Col>
-                              </Row>
-                              <div className="card-p-text-black">
-                                <ul
-                                  dangerouslySetInnerHTML={{
-                                    __html: convertText(item.additionalInfo),
-                                  }}
+                              <div className="float-end">
+                                <BsPencil
+                                  className="icons"
+                                  onClick={(evt) => edit("edit", item)}
+                                />{" "}
+                                <BsTrash3
+                                  className="icons"
+                                  onClick={() =>
+                                    deleteModal(
+                                      item.candidateadditioninformationid
+                                    )
+                                  }
                                 />
                               </div>
                             </div>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                        <Row className="mb-2">
-                          <Col>
-                            <strong className="content-title">Languages</strong>
-                          </Col>
-                        </Row>
-                        <div>
-                          {item.language?.map((column, ind) => (
-                            <div className="card-p-text-black">
-                              {column.language}{" "}
-                              {column.proficiency
-                                ? "- " + column.proficiency
-                                : ""}
+                            <div className="card-p-text-black mb-3">
+                              {item.summary}
                             </div>
-                          ))}
-                        </div>
+                            <div>
+                              {item.additionalInfo ? (
+                                <div>
+                                  <Row>
+                                    <Col>
+                                      <strong className="content-title mb-1">
+                                        Additional Information
+                                      </strong>
+                                    </Col>
+                                  </Row>
+                                  <div className="card-p-text-black">
+                                    {item.summary}
+                                  </div>
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+
+                            {item.language?.length > 0 ? (
+                              <div>
+                                <Row className="mb-2">
+                                  <Col>
+                                    <strong className="content-title">
+                                      Languages
+                                    </strong>
+                                  </Col>
+                                </Row>
+                                {item.language?.map((column, ind) => (
+                                  <div>
+                                    <div className="card-p-text-black mb-1">
+                                      {column.language}{" "}
+                                      {column.proficiency
+                                        ? "- " + column.proficiency
+                                        : ""}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <></>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="d-flex justify-content-center">
+                            No Data Available
+                          </div>
+                        )}
                       </div>
                     ))}
-                  </Row>
+                  </div>
                 ) : (
                   <div className="d-flex justify-content-center">
                     No Data Available
@@ -238,7 +209,7 @@ export function AdditionalInformation(props) {
                 <Loader active={loader} type="line-scale-pulse-out-rapid" />
               </div>
             )}
-          </div>
+          </CardBody>
         </Card>
       </div>
 

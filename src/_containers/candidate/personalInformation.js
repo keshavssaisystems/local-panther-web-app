@@ -44,7 +44,11 @@ import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import imgHover from "../../assets/utils/images/profile-pic-hover.svg";
-import { profileActions, jobPreferenceDetailsActions } from "_store";
+import {
+  profileActions,
+  jobPreferenceDetailsActions,
+  getProfileActions,
+} from "_store";
 import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
@@ -103,7 +107,6 @@ export function PersonalInformation(props) {
   const [raceSelect, setRaceSelect] = useState("");
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
-    debugger;
     let data = {
       firstname: selectedCandidate.personalInfo.firstname,
       lastname: selectedCandidate.personalInfo.lastname,
@@ -563,7 +566,7 @@ export function PersonalInformation(props) {
 
     axios
       .put(
-        "https://panther-api-dev.azurewebsites.net/api/User/UpdateProfilePhoto/" +
+        `${process.env.REACT_APP_PANTHER_URL}/api/User/UpdateProfilePhoto/` +
           userDetails.UserId,
         form,
         config
@@ -577,6 +580,11 @@ export function PersonalInformation(props) {
             result.data.data.profilephotopath
           );
           setProfileImage(result.data.data.profilephotopath);
+          dispatch(
+            getProfileActions.updateProfileImage(
+              result.data.data.profilephotopath
+            )
+          );
         } else {
           setError(true);
         }

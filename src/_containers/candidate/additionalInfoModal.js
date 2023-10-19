@@ -16,31 +16,26 @@ import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import { CKEditor } from "ckeditor4-react";
-import { BsFillPlusCircleFill, BsDashCircleFill } from "react-icons/bs";
 import addIcon from "../../assets/utils/images/add.svg";
 import subtract from "../../assets/utils/images/Subtract 1.svg";
 
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
-  const [check, setCheck] = useState(props.check);
-  const [isSave, setSave] = useState(true);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
   const [summary, setSummary] = useState("");
-  const [additionalInfo, setadditionalInfo] = useState("");
 
   const loadData = function () {
     let data;
 
-    if (!props.selected) {
+    if (!props.selected || props.selected?.summary == "") {
       data = {
         candidateadditioninformationid: 0,
         candidateid: userDetails.InternalUserId,
         summary: "",
-        language: [
+        candidateLanguageDtos: [
           {
             languageid: 0,
             language: "",
@@ -75,37 +70,34 @@ export function AdditionalInfoModal(props) {
     useSelector((state) => state.ProficiencyList.user.data)
   );
   const closeModal = function () {
-    // let data = [
-    //   {
-    //     id: 0,
-    //     summary: "",
-    //     language: "",
-    //     proficiency: "",
-    //     additionalInfo: "",
-    //   },
-    // ];
-    // setFormData(data);
-    // window.location.reload();
     props.onCallAdditionalInfo();
   };
 
   const removeTabs = function (index) {
     let new_data = { ...formDetails };
-    new_data.candidateLanguageDtos.splice(index, 1);
 
+    let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+      ...item,
+    }));
+    temp_array.splice(index, 1);
+    new_data.candidateLanguageDtos = temp_array;
     setFormData(new_data);
   };
 
   const addMoreTabs = function (index) {
     let new_data = { ...formDetails };
-
+    let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+      ...item,
+      selected: false,
+    }));
     const new_tab = {
       languageid: 0,
       language: "",
       proficiencyid: 0,
       proficiency: "",
     };
-    new_data.candidateLanguageDtos.push(new_tab);
+    temp_array.push(new_tab);
+    new_data.candidateLanguageDtos = temp_array;
 
     setFormData(new_data);
   };
@@ -114,21 +106,21 @@ export function AdditionalInfoModal(props) {
     let new_data = { ...formDetails };
     if (check == "language") {
       let language_details = [...new_data.candidateLanguageDtos];
-      language_details[index].candidateLanguageDtos = data;
+      language_details[index].language = data;
       new_data.candidateLanguageDtos = language_details;
     } else if (check == "proficiency") {
       let language_details = [...new_data.candidateLanguageDtos];
       language_details[index].proficiencyid = data;
       new_data.candidateLanguageDtos = language_details;
     } else if (check == "summary") {
-      setSummary(data);
+      new_data.summary = data;
       if (data != "") {
         setFormError(false);
       } else {
         setFormError(true);
       }
     } else if (check == "additionalInfo") {
-      setadditionalInfo(data);
+      new_data.additionalinformation = data;
     }
     setFormData(new_data);
   };
@@ -143,18 +135,7 @@ export function AdditionalInfoModal(props) {
       setFormError(false);
     }
 
-    let post_data = {
-      candidateid: userDetails.InternalUserId,
-      summary: summary,
-      candidateLanguageDtos: formDetails.candidateLanguageDtos,
-      additionalinformation: additionalInfo,
-      isactive: true,
-      currentUserId: userDetails.UserId,
-    };
-
     let response;
-    formDetails.summary = summary;
-    formDetails.additionalinformation = additionalInfo;
     response = await dispatch(
       additionalInfoDetailsSlice.addadditionalInfoThunk(formDetails)
     );
@@ -167,55 +148,11 @@ export function AdditionalInfoModal(props) {
     }
   };
 
-  const selectDate = function () {};
-
   return (
     <div>
       <div>
         {formDetails ? (
           <Form>
-            {/* {check == "add" ? (
-              <Row>
-                <Col>
-                  <div className="float-end">
-                    {formDetails.length > 1 ? (
-                      <Label
-                        className="me-2"
-                        style={{
-                          cursor: "pointer",
-                          color: "#2f479b",
-                          borderBottom: "1px solid #2f479b",
-                          fontWeight: "500",
-                        }}
-                        onClick={() => removeTabs(index)}
-                      >
-                        Remove
-                      </Label>
-                    ) : (
-                      <></>
-                    )}
-                    {index == formDetails.length - 1 ? (
-                      <Label
-                        className="float-end"
-                        onClick={() => addMoreTabs(index + 1)}
-                        style={{
-                          cursor: "pointer",
-                          color: "#2f479b",
-                          borderBottom: "1px solid #2f479b",
-                          fontWeight: "500",
-                        }}
-                      >
-                        +Add More
-                      </Label>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </Col>
-              </Row>
-            ) : (
-              <></>
-            )} */}
             {formDetails?.candidateLanguageDtos?.map((item, index) => (
               <Row>
                 <Col md={4}>
@@ -229,7 +166,7 @@ export function AdditionalInfoModal(props) {
                       type="text"
                       id="language"
                       maxLength={50}
-                      value={item.candidateLanguageDtos}
+                      value={item.language}
                       onInput={(evt) =>
                         onHandleInputChange("language", evt.target.value, index)
                       }
@@ -314,87 +251,64 @@ export function AdditionalInfoModal(props) {
 
             <Row className="mb-2">
               <Col>
-                {/* <FormGroup>
+                <FormGroup>
                   <Label for="summary" className="fw-semi-bold">
                     Summary <span className="required-icon">*</span>
                   </Label>
                   <Input
-                    style={{ height: "100px" }}
+                    style={{ height: "200px" }}
                     placeholder="Enter summary"
                     name="summary"
                     type="textarea"
                     id="summary"
                     maxLength={500}
-                    value={item.summary}
+                    value={formDetails.summary}
                     onInput={(evt) =>
-                      onHandleInputChange("summary", evt.target.value, index)
+                      onHandleInputChange("summary", evt.target.value)
                     }
                     className={`field-input placeholder-text form-control ${
-                      item.error ? "is-invalid" : ""
+                      formDetails.error ? "is-invalid" : ""
                     }`}
                   />
-                </FormGroup> */}
-
-                <FormGroup>
-                  <Label for="description" className="fw-semi-bold">
-                    Summary<span style={{ color: "red" }}>* </span>
-                  </Label>
-                  <CKEditor
-                    name="description"
-                    id="description"
-                    maxLength={2000}
-                    initData={formDetails.summary}
-                    onChange={(e) => setSummary(e.editor.getData())}
-                  />
+                  <span className="dropdown-placeholder float-end">
+                    {formDetails.summary ? formDetails.summary.length : 0}/500
+                  </span>
                 </FormGroup>
 
                 <div className="error-class">
                   {formError ? "Summary is required" : ""}
                 </div>
               </Col>
-              {/* <Col md={6}>
+            </Row>
+            <Row>
+              <Col>
                 <FormGroup>
                   <Label for="state" className="fw-semi-bold">
                     Additional information
                   </Label>
                   <Input
-                    style={{ height: "100px" }}
+                    style={{ height: "200px" }}
                     maxLength={500}
                     placeholder="Enter additional information"
                     name="state"
                     type="textarea"
-                    value={item.additionalinformation}
+                    value={formDetails.additionalinformation}
                     onInput={(evt) =>
-                      onHandleInputChange(
-                        "additionalInfo",
-                        evt.target.value,
-                        index
-                      )
+                      onHandleInputChange("additionalInfo", evt.target.value)
                     }
                     id="state"
                     className="field-input placeholder-text form-control"
                   />
+                  <span className="dropdown-placeholder float-end">
+                    {formDetails.additionalinformation
+                      ? formDetails.additionalinformation.length
+                      : 0}
+                    /500
+                  </span>
                 </FormGroup>
-              </Col> */}
+              </Col>
             </Row>
 
-            <Row>
-              <FormGroup>
-                <Label for="additionalInfo" className="fw-semi-bold">
-                  Additional information
-                </Label>
-                <CKEditor
-                  name="additionalInfo"
-                  id="additionalInfo"
-                  maxLength={500}
-                  initData={formDetails.additionalinformation}
-                  onChange={(e) => setadditionalInfo(e.editor.getData())}
-                />
-              </FormGroup>
-            </Row>
-
-            {/* {index < formDetails.length - 1 ? <hr /> : <></>}
-            {index == formDetails.length - 1 ? ( */}
             <div className="float-end">
               <Button
                 className="me-2 save-btn"

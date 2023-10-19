@@ -31,7 +31,7 @@ const slice = createSlice({
   qualificationRemoveReducer,
 });
 
-const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}`;
 
 // exports
 export const profileActions = {
@@ -84,7 +84,7 @@ function personalInfoInsertActions() {
         isactive,
         userid,
       }) =>
-        await fetchWrapper.put(`${baseUrl}/Candidate/${candidateid}`, {
+        await fetchWrapper.put(`${baseUrl}/api/Candidate/${candidateid}`, {
           candidateid,
           firstname,
           lastname,
@@ -137,11 +137,7 @@ function resumeAddActions() {
     return createAsyncThunk(
       `${name}/Candidate/GetCandidateById`,
       async (form) =>
-        await fetchWrapper.post(
-          `https://panther-api-dev.azurewebsites.net/PostResume`,
-          form,
-          "form"
-        )
+        await fetchWrapper.post(`${baseUrl}/api/PostResume`, form, "form")
     );
   }
 }
@@ -174,8 +170,10 @@ function resumeUpdateActions() {
       `${name}/Candidate/GetCandidateById`,
       async (candidateresumeid, form) =>
         await fetchWrapper.put(
-          `https://panther-api-dev.azurewebsites.net/PutResume/${candidateresumeid}`,
-          { form }
+          `${baseUrl}/api/PutResume/${candidateresumeid}`,
+          {
+            form,
+          }
         )
     );
   }
@@ -209,7 +207,7 @@ function resumedeleteActions() {
       `${name}/Candidate/GetCandidateById`,
       async (resumeId) =>
         await fetchWrapper.delete(
-          `https://panther-api-dev.azurewebsites.net/DeleteResume?candidateResumeId=${resumeId}`
+          `${baseUrl}/DeleteResume?candidateResumeId=${resumeId}`
         )
     );
   }
@@ -244,7 +242,7 @@ function addSkillsActions() {
 
       async (id, skills_data) => {
         await fetchWrapper.put(
-          `${baseUrl}/CandidateSkill/UpdateCandidateSkill/${id}/${candidateId}`,
+          `${baseUrl}/api/CandidateSkill/UpdateCandidateSkill/${id}/${candidateId}`,
           skills_data
         );
       }
@@ -282,7 +280,7 @@ function deleteQualificationActions() {
       `${name}/Candidate/deleteQualification`,
       async (id) =>
         await fetchWrapper.delete(
-          `https://panther-api-dev.azurewebsites.net/api/CandidateQualifications/${id}`
+          `${baseUrl}/api/CandidateQualifications/${id}`
         )
     );
   }

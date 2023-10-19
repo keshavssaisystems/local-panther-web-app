@@ -130,26 +130,19 @@ export function CandidateQualification(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <div className="mt-3 scroll-area-md" style={{ marginLeft: "10px" }}>
+          <CardBody className="scroll-area-md">
+            <div className="mb-3">
+              <strong className="card-title-text">Qualifications</strong>
+              <Label
+                className="float-end link-text"
+                onClick={(evt) => setPersonalModal(true)}
+              >
+                Add
+              </Label>
+            </div>
             {!loading ? (
               <div>
                 <PerfectScrollbar>
-                  <Row className="mb-2">
-                    <Col>
-                      <strong className="card-title-text">
-                        Qualifications
-                      </strong>
-                    </Col>
-
-                    <Col>
-                      <Label
-                        className="float-end me-3 link-text"
-                        onClick={(evt) => setPersonalModal(true)}
-                      >
-                        Add
-                      </Label>
-                    </Col>
-                  </Row>
                   <Row>
                     {qualificationDetails?.length > 0 ? (
                       qualificationDetails.map((item) => (
@@ -164,7 +157,7 @@ export function CandidateQualification(props) {
                                 onClick={(evt) => edit(item)}
                               />{" "}
                               <BsTrash3
-                                className="icons me-3"
+                                className="icons"
                                 onClick={() =>
                                   deleteData(item.candidatequalificationid)
                                 }
@@ -202,7 +195,7 @@ export function CandidateQualification(props) {
                 <Loader active={loading} type="line-scale-pulse-out-rapid" />
               </div>
             )}
-          </div>
+          </CardBody>
         </Card>
       </div>
 
