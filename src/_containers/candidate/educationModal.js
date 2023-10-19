@@ -47,94 +47,13 @@ export function EducationModal(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState([]);
-  const [monthList, setMonthList] = useState([
-    {
-      id: 1,
-      name: "January",
-    },
-    {
-      id: 2,
-      name: "February",
-    },
-    {
-      id: 3,
-      name: "March",
-    },
-    {
-      id: 4,
-      name: "April",
-    },
-    {
-      id: 5,
-      name: "May",
-    },
-    {
-      id: 6,
-      name: "June",
-    },
-    {
-      id: 7,
-      name: "July",
-    },
-    {
-      id: 8,
-      name: "August",
-    },
-    {
-      id: 9,
-      name: "September",
-    },
-    {
-      id: 10,
-      name: "October",
-    },
-    {
-      id: 11,
-      name: "November",
-    },
-    {
-      id: 12,
-      name: "December",
-    },
-  ]);
-  const [yearList, setYearList] = useState([
-    {
-      id: 1,
-      name: 2019,
-    },
-    {
-      id: 2,
-      name: 2020,
-    },
-    {
-      id: 3,
-      name: 2021,
-    },
-    {
-      id: 4,
-      name: 2022,
-    },
-    {
-      id: 5,
-      name: 2023,
-    },
-    {
-      id: 6,
-      name: 2024,
-    },
-    {
-      id: 7,
-      name: 2025,
-    },
-    {
-      id: 8,
-      name: 2026,
-    },
-    {
-      id: 9,
-      name: 2027,
-    },
-  ]);
+  const [monthList, setMonthList] = useState(
+    useSelector((state) => state.monthList.user.data)
+  );
+  const [yearList, setYearList] = useState(
+    useSelector((state) => state.yearList.user.data)
+  );
+  debugger;
   const [fromDateSelect, setFromDateSelect] = useState({
     month: "",
     year: "",

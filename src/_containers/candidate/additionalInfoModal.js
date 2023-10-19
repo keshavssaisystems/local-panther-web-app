@@ -31,16 +31,18 @@ export function AdditionalInfoModal(props) {
   const [message, setMessage] = useState(false);
   const [summary, setSummary] = useState("");
   const [additionalInfo, setadditionalInfo] = useState("");
+  let additionalInfo_temp = "";
+  let summary_temp = "";
 
   const loadData = function () {
     let data;
 
-    if (!props.selected) {
+    if (!props.selected || props.selected?.summary == "") {
       data = {
         candidateadditioninformationid: 0,
         candidateid: userDetails.InternalUserId,
         summary: "",
-        language: [
+        candidateLanguageDtos: [
           {
             languageid: 0,
             language: "",
@@ -63,6 +65,10 @@ export function AdditionalInfoModal(props) {
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
+      summary_temp = props.selected.summary;
+      setSummary(props.selected.summary);
+      setadditionalInfo(props.selected.additionalinformation);
+      additionalInfo_temp = props.selected.additionalinformation;
     }
     setFormData(data);
   };
@@ -91,21 +97,29 @@ export function AdditionalInfoModal(props) {
 
   const removeTabs = function (index) {
     let new_data = { ...formDetails };
-    new_data.candidateLanguageDtos.splice(index, 1);
 
+    let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+      ...item,
+    }));
+    temp_array.splice(index, 1);
+    new_data.candidateLanguageDtos = temp_array;
     setFormData(new_data);
   };
 
   const addMoreTabs = function (index) {
     let new_data = { ...formDetails };
-
+    let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+      ...item,
+      selected: false,
+    }));
     const new_tab = {
       languageid: 0,
       language: "",
       proficiencyid: 0,
       proficiency: "",
     };
-    new_data.candidateLanguageDtos.push(new_tab);
+    temp_array.push(new_tab);
+    new_data.candidateLanguageDtos = temp_array;
 
     setFormData(new_data);
   };
@@ -114,21 +128,21 @@ export function AdditionalInfoModal(props) {
     let new_data = { ...formDetails };
     if (check == "language") {
       let language_details = [...new_data.candidateLanguageDtos];
-      language_details[index].candidateLanguageDtos = data;
+      language_details[index].language = data;
       new_data.candidateLanguageDtos = language_details;
     } else if (check == "proficiency") {
       let language_details = [...new_data.candidateLanguageDtos];
       language_details[index].proficiencyid = data;
       new_data.candidateLanguageDtos = language_details;
     } else if (check == "summary") {
-      setSummary(data);
+      new_data.summary = data;
       if (data != "") {
         setFormError(false);
       } else {
         setFormError(true);
       }
     } else if (check == "additionalInfo") {
-      setadditionalInfo(data);
+      new_data.additionalinformation = data;
     }
     setFormData(new_data);
   };
@@ -143,18 +157,7 @@ export function AdditionalInfoModal(props) {
       setFormError(false);
     }
 
-    let post_data = {
-      candidateid: userDetails.InternalUserId,
-      summary: summary,
-      candidateLanguageDtos: formDetails.candidateLanguageDtos,
-      additionalinformation: additionalInfo,
-      isactive: true,
-      currentUserId: userDetails.UserId,
-    };
-
     let response;
-    formDetails.summary = summary;
-    formDetails.additionalinformation = additionalInfo;
     response = await dispatch(
       additionalInfoDetailsSlice.addadditionalInfoThunk(formDetails)
     );
@@ -166,8 +169,6 @@ export function AdditionalInfoModal(props) {
       setError(true);
     }
   };
-
-  const selectDate = function () {};
 
   return (
     <div>
@@ -229,7 +230,7 @@ export function AdditionalInfoModal(props) {
                       type="text"
                       id="language"
                       maxLength={50}
-                      value={item.candidateLanguageDtos}
+                      value={item.language}
                       onInput={(evt) =>
                         onHandleInputChange("language", evt.target.value, index)
                       }
@@ -314,28 +315,32 @@ export function AdditionalInfoModal(props) {
 
             <Row className="mb-2">
               <Col>
-                {/* <FormGroup>
+                <FormGroup>
                   <Label for="summary" className="fw-semi-bold">
                     Summary <span className="required-icon">*</span>
                   </Label>
                   <Input
-                    style={{ height: "100px" }}
+                    style={{ height: "200px" }}
                     placeholder="Enter summary"
                     name="summary"
                     type="textarea"
                     id="summary"
                     maxLength={500}
-                    value={item.summary}
+                    value={formDetails.summary}
                     onInput={(evt) =>
-                      onHandleInputChange("summary", evt.target.value, index)
+                      onHandleInputChange("summary", evt.target.value)
                     }
                     className={`field-input placeholder-text form-control ${
-                      item.error ? "is-invalid" : ""
+                      formDetails.error ? "is-invalid" : ""
                     }`}
                   />
-                </FormGroup> */}
+                  <span className="dropdown-placeholder float-end">
+                    {formDetails.summary ? formDetails.summary.length : 0}/500
+                  </span>
+                </FormGroup>
 
-                <FormGroup>
+                {/* <FormGroup>
+                  test -- {summary}-{formDetails.summary}
                   <Label for="description" className="fw-semi-bold">
                     Summary<span style={{ color: "red" }}>* </span>
                   </Label>
@@ -343,42 +348,48 @@ export function AdditionalInfoModal(props) {
                     name="description"
                     id="description"
                     maxLength={2000}
-                    initData={formDetails.summary}
+                    initData={
+                      !formDetails.summary ? summary : formDetails.summary
+                    }
                     onChange={(e) => setSummary(e.editor.getData())}
                   />
-                </FormGroup>
+                </FormGroup> */}
 
                 <div className="error-class">
                   {formError ? "Summary is required" : ""}
                 </div>
               </Col>
-              {/* <Col md={6}>
+            </Row>
+            <Row>
+              <Col>
                 <FormGroup>
                   <Label for="state" className="fw-semi-bold">
                     Additional information
                   </Label>
                   <Input
-                    style={{ height: "100px" }}
+                    style={{ height: "200px" }}
                     maxLength={500}
                     placeholder="Enter additional information"
                     name="state"
                     type="textarea"
-                    value={item.additionalinformation}
+                    value={formDetails.additionalinformation}
                     onInput={(evt) =>
-                      onHandleInputChange(
-                        "additionalInfo",
-                        evt.target.value,
-                        index
-                      )
+                      onHandleInputChange("additionalInfo", evt.target.value)
                     }
                     id="state"
                     className="field-input placeholder-text form-control"
                   />
+                  <span className="dropdown-placeholder float-end">
+                    {formDetails.additionalinformation
+                      ? formDetails.additionalinformation.length
+                      : 0}
+                    /500
+                  </span>
                 </FormGroup>
-              </Col> */}
+              </Col>
             </Row>
 
-            <Row>
+            {/* <Row>
               <FormGroup>
                 <Label for="additionalInfo" className="fw-semi-bold">
                   Additional information
@@ -387,11 +398,13 @@ export function AdditionalInfoModal(props) {
                   name="additionalInfo"
                   id="additionalInfo"
                   maxLength={500}
-                  initData={formDetails.additionalinformation}
+                  initData={
+                    !additionalInfo_temp ? additionalInfo : additionalInfo_temp
+                  }
                   onChange={(e) => setadditionalInfo(e.editor.getData())}
                 />
               </FormGroup>
-            </Row>
+            </Row> */}
 
             {/* {index < formDetails.length - 1 ? <hr /> : <></>}
             {index == formDetails.length - 1 ? ( */}
