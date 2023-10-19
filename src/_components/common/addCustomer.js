@@ -13,7 +13,6 @@ import {
 
 export const NewCustomer = (props) => {
   const onChangeVal = (evt) => {
-    // props.onUpdateCustomer(evt);
   };
   const stateList = useSelector((state) => state.state.user.data);
   return (
@@ -122,15 +121,8 @@ export const NewCustomer = (props) => {
             <FormGroup>
               <Label for="newCompState">
                 State
-
               </Label>
-
-
-
-
               <Input
-
-
                 value={props?.data?.newCompState?.value}
                 invalid={props?.data?.newCompState?.error}
                 type="select"
@@ -138,54 +130,25 @@ export const NewCustomer = (props) => {
                 id="newCompState"
                 onChange={(e) => onChangeVal(e)}
 
-              >
-
-                <option key={0}>
-
+              > <option key={0}>
                   Select state
-
                 </option>
-
                 {stateList?.length > 0 &&
-
                   stateList?.map((options) => (
-
                     <option
-
-          
-
                       key={options.id}
-
                       value={options.id}
-
                     >
-
                       {options.name}
-
                     </option>
-
                   ))}
-
               </Input>
-
-
-
-
-
-              {/* {props?.data?.newCompState?.error ? (
-              <FormText color="danger">
-                Please enter company city and state
-              </FormText>
-            ) : (
-              <></>
-            )} */}
             </FormGroup>
           </Col>
           <Col md={12}>
             <FormGroup>
               <Label for="newCompZip">
                 Zip code
-                {/* <span style={{ color: "red" }}>* </span> */}
               </Label>
               <Input
                 value={props?.data?.newCompZip?.value}
@@ -206,7 +169,6 @@ export const NewCustomer = (props) => {
             <FormGroup>
               <Label for="newCompPhonenum">
                 Phone
-                {/* <span style={{ color: "red" }}>* </span> */}
               </Label>
               <Input
                 value={props?.data?.newCompPhonenum?.value}
@@ -247,7 +209,6 @@ export const NewCustomer = (props) => {
         </Row>
       </Form>
       <Col>
-        {/* <Button color="primary">+ Add another</Button> */}
       </Col>
     </Row>
   );

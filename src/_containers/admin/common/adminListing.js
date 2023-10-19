@@ -19,9 +19,7 @@ export const AdminListing = ({ entity }) => {
   const {
     data,
     loading = false } = useSelector((state) => state?.adminListing ?? {});
-
   let title, icon, listingTitle, columns = [], searchFilter = [], buttonsList = [];
-
   const [error, setError] = useState(false)
   const [message, setMessage] = useState("")
   const [success, setSuccess] = useState(false)
@@ -29,7 +27,6 @@ export const AdminListing = ({ entity }) => {
   const [editMode, setEditMode] = useState(false)
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
-
   const [newCompData, setNewCompData] = useState({
     // ... other fields
     newCompName: { value: "", error: false },
@@ -45,12 +42,9 @@ export const AdminListing = ({ entity }) => {
     newCompEmail: { value: "" },
     newCompPhonenum: { value: "" },
   });
-
   const [newCustData, setNewCustData] = useState({
-    // ... other fields for customer form
     custFName: { value: "", error: false },
     custLName: { value: "", error: false },
-    // ... other fields for customer form
   });
 
   switch (entity) {
@@ -116,8 +110,6 @@ export const AdminListing = ({ entity }) => {
       dispatch(getMenuMappings(urlParams))
     }
   }, [entity])
-
-
   const customStyles = {
     headCells: {
       style: {
@@ -148,13 +140,9 @@ export const AdminListing = ({ entity }) => {
     setEditingData(null); // Reset editing data
   }
 
-
-
   const onUpdateNewComp = (evt, formType) => {
     const newData = { ...formType === 'company' ? newCompData : newCustData };
     newData[evt.target.name] = { value: evt.target.value, error: false };
-
-    // Update the state based on the form type
     formType === 'company' ? setNewCompData(newData) : setNewCustData(newData);
   };
 
@@ -182,13 +170,10 @@ export const AdminListing = ({ entity }) => {
         return;
       }
     } if (entity === 'customers') {
-      // ... existing validation logic for customer form
-
       if (newCustData.custFName.error || newCustData.custLName.error) {
         return;
       }
 
-      // Handle submission for customer form
     }
   };
 
@@ -213,7 +198,6 @@ export const AdminListing = ({ entity }) => {
       </FormGroup>
     </Col>
   ))
-
   return (
     <>
       <Row>

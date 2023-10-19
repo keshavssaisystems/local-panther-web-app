@@ -8,14 +8,12 @@ export const NewCompany = (props) => {
   };
   useEffect(() => {
     if (props.editingData && props.editMode) {
-      // Pre-fill form fields with editingData
       const { companyname, industryname, description, noofemployees, ...otherData } = props.editingData;
       props.updateVal({ target: { name: 'newCompName', value: companyname } });
       props.updateVal({ target: { name: 'newIndusName', value: industryname } });
       props.updateVal({ target: { name: 'newCompDesc', value: description } });
       props.updateVal({ target: { name: 'newCompEmp', value: noofemployees } });
-      // ... pre-fill other form fields as needed
-    }
+     }
   }, [props.editingData, props.editMode]);
   const stateList = useSelector((state) => state.state.user.data);
 
@@ -96,12 +94,10 @@ export const NewCompany = (props) => {
             )}
           </FormGroup>
         </Col>
-
         <Col md={12}>
           <FormGroup>
             <Label for="newCompPhonenum">
               Phone
-          
             </Label>
             <Input
               value={props?.data?.newCompPhonenum?.value}
@@ -122,7 +118,6 @@ export const NewCompany = (props) => {
           <FormGroup>
             <Label for="newCompEmail">
               Email
-      
             </Label>
             <Input
               value={props?.data?.newCompEmail?.value}
@@ -139,7 +134,6 @@ export const NewCompany = (props) => {
             )}
           </FormGroup>
         </Col>
-
         <Col md={12}>
           <FormGroup>
             <Label for="newCompCity">
@@ -167,52 +161,28 @@ export const NewCompany = (props) => {
           <FormGroup>
             <Label for="newCompState">
               State
-      
             </Label>
-
-
-
-
             <Input
-
-
               value={props?.data?.newCompState?.value}
               invalid={props?.data?.newCompState?.error}
               type="select"
               name="newCompState"
               id="newCompState"
               onChange={(e) => onChangeVal(e)}
-
             >
-
               <option key={0}>
-
                 Select state
-
               </option>
-
               {stateList?.length > 0 &&
-
                 stateList?.map((options) => (
-
                   <option
-
-                  
-
                     key={options.id}
-
                     value={options.id}
-
                   >
-
                     {options.name}
-
                   </option>
-
                 ))}
-
             </Input>
-
           </FormGroup>
         </Col>
         {props.editMode && (
@@ -220,8 +190,7 @@ export const NewCompany = (props) => {
             <FormGroup>
               <Label for="newCompCountry">
                 Country
-                {/* Add your validation and onChange logic here */}
-              </Label>
+                         </Label>
               <Input
                 value={props?.data?.newCompCountry?.value}
                 invalid={props?.data?.newCompCountry?.error}
@@ -230,8 +199,6 @@ export const NewCompany = (props) => {
                 id="newCompCountry"
                 onChange={(e) => onChangeVal(e)}
               />
-
-
             </FormGroup>
           </Col>
         )}
@@ -239,7 +206,6 @@ export const NewCompany = (props) => {
           <FormGroup>
             <Label for="newCompZip">
               Zip code
-              {/* <span style={{ color: "red" }}>* </span> */}
             </Label>
             <Input
               value={props?.data?.newCompZip?.value}
@@ -256,14 +222,12 @@ export const NewCompany = (props) => {
             )}
           </FormGroup>
         </Col>
-
         <Col md={12}>
           <FormGroup>
             <Label for="logo">
               Logo
             </Label>
             <Input
-              // Note: value and invalid are not applicable for file inputs
               type="file"
               name="logo"
               id="logo"
