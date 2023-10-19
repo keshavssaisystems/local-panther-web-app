@@ -80,7 +80,7 @@ export const AdminListing = ({entity}) => {
     } else if (entity === "menuMapping") {
       dispatch(getMenuMappings(urlParams))
     } 
-  }, [])
+  }, [entity])
 
 
   const customStyles = {
