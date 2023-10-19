@@ -3,7 +3,19 @@ import React, { useRef, useState } from "react";
 import "firebase/firestore";
 import { firebaseConfig } from "../index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import {
+  CardBody,
+  Card,
+  CardFooter,
+  FormGroup,
+  Col,
+  Input,
+  Button,
+  Form,
+} from "reactstrap";
 import "./chat.scss";
+import avatar1 from "../../assets/utils/images/avatars/1.jpg";
+
 const userId = localStorage.getItem("userId");
 
 export function CustomerChat() {
@@ -37,24 +49,31 @@ export function CustomerChat() {
   };
   return (
     <>
-      <main>
-        {messages &&
-          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
-
-        <span ref={dummy}></span>
-      </main>
-
-      <form onSubmit={sendMessage}>
-        <input
-          value={formValue}
-          onChange={(e) => setFormValue(e.target.value)}
-          placeholder="say something nice"
-        />
-
-        <button type="submit" disabled={!formValue}>
-          {">"}
-        </button>
-      </form>
+      <>
+        <Card>
+          <CardBody>
+            <main>
+              {messages &&
+                messages.map((msg) => (
+                  <ChatMessage key={msg.id} message={msg} />
+                ))}
+              <span ref={dummy}></span>
+            </main>
+          </CardBody>
+          <CardFooter>
+            <Form onSubmit={sendMessage}>
+              <FormGroup className=" ms-2 mb-0" row>
+                <Input
+                  type="text"
+                  value={formValue}
+                  onChange={(e) => setFormValue(e.target.value)}
+                  placeholder="Write here and hit enter to send..."
+                />
+              </FormGroup>
+            </Form>
+          </CardFooter>
+        </Card>
+      </>
     </>
   );
 }
@@ -65,8 +84,41 @@ function ChatMessage(props) {
   const messageClass = sender === userId ? "sent" : "received";
   return (
     <>
-      <div className={`message ${messageClass}`}>
-        <p>{text}</p>
+      <div className="chat-wrapper">
+        {messageClass === "received" && (
+          <div className="chat-box-wrapper">
+            <div>
+              <div className="avatar-icon-wrapper me-1">
+                <div className="badge badge-bottom btn-shine bg-success badge-dot badge-dot-lg" />
+                <div className="avatar-icon avatar-icon-lg rounded">
+                  <img src={avatar1} alt="" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="chat-box">{text}</div>
+              <small className="opacity-6">11:01 AM</small>
+            </div>
+          </div>
+        )}
+        {messageClass === "sent" && (
+          <div className="float-end">
+            <div className="chat-box-wrapper chat-box-wrapper-right">
+              <div>
+                <div className="chat-box">{text}</div>
+                <small className="opacity-6">11:01 AM </small>
+              </div>
+              <div>
+                <div className="avatar-icon-wrapper ms-1">
+                  <div className="badge badge-bottom btn-shine bg-success badge-dot badge-dot-lg" />
+                  <div className="avatar-icon avatar-icon-lg rounded">
+                    <img src={avatar1} alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
