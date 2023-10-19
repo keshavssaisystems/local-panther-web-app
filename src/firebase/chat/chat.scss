@@ -3,11 +3,17 @@
 display: flex;
 align-items: center;
 }
+
 .sent {
 flex-direction: row-reverse;
+}
+
+.sent p {
+color: white;
+background: #0b93f6;
 align-self: flex-end;
 }
-.received {
+.received p {
 background: #e5e5ea;
 color: black;
 }
