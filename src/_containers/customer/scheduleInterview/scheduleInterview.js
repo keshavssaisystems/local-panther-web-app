@@ -207,7 +207,7 @@ export function ScheduleInterview() {
   const [selectedJobData, setSelectedJobData] = useState(
     upcomingInterviews.scheduledInterviewList !== undefined &&
       upcomingInterviews.scheduledInterviewList.length > 0
-      ? [upcomingInterviews.scheduledInterviewList[0]]
+      ? upcomingInterviews.scheduledInterviewList[0]
       : []
   );
   let selectedJobDetails =
@@ -232,6 +232,7 @@ export function ScheduleInterview() {
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
     };
     getUpcomingData(filterOnPageChange);
+    setSelectedJobData([]);
   };
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
@@ -560,7 +561,7 @@ export function ScheduleInterview() {
                 <Col lg="8">
                   <UpcomingDetail
                     interviewDetails={
-                      selectedJobData === undefined
+                      selectedJobData[0] === undefined
                         ? upcomingInterviews?.scheduledInterviewList[0]
                         : selectedJobData[0]
                     }
@@ -582,7 +583,6 @@ export function ScheduleInterview() {
                     events={upData}
                     startAccessor="start"
                     endAccessor="end"
-                    popup
                     eventPropGetter={(upData) => {
                       const backgroundColor = upData.color
                         ? upData.color

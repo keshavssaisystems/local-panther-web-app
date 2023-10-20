@@ -68,17 +68,25 @@ export function CandCardView({
       additionalData?.jobPaymentBenefitDtos[0]?.minimumamount &&
       additionalData?.jobPaymentBenefitDtos[0]?.payperiodtype
     ) {
-      return `${additionalData.jobPaymentBenefitDtos[0].minimumamount} - ${additionalData.jobPaymentBenefitDtos[0].maximumamount} ${additionalData.jobPaymentBenefitDtos[0].payperiodtype}`;
+      return `$${new Intl.NumberFormat("en-US").format(
+        additionalData.jobPaymentBenefitDtos[0].minimumamount
+      )} - $${new Intl.NumberFormat("en-US").format(
+        additionalData.jobPaymentBenefitDtos[0].maximumamount
+      )} ${additionalData.jobPaymentBenefitDtos[0].payperiodtype}`;
     } else if (
       additionalData?.jobPaymentBenefitDtos &&
       additionalData?.jobPaymentBenefitDtos[0]?.minimumamount
     ) {
-      return `${additionalData.jobPaymentBenefitDtos[0].minimumamount}`;
+      return `$${new Intl.NumberFormat("en-US").format(
+        additionalData.jobPaymentBenefitDtos[0].minimumamount
+      )}`;
     } else if (
       additionalData?.jobPaymentBenefitDtos &&
       additionalData?.jobPaymentBenefitDtos[0]?.maximumamount
     ) {
-      return `${additionalData.jobPaymentBenefitDtos[0].maximumamount}`;
+      return `$${new Intl.NumberFormat("en-US").format(
+        additionalData.jobPaymentBenefitDtos[0].maximumamount
+      )}`;
     }
   };
 
