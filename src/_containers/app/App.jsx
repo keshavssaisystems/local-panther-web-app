@@ -42,6 +42,7 @@ import {
   CandidateReport,
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
+  AdminCalendar
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
 import { Calendar } from "_containers/customer/common/calendar";
@@ -97,7 +98,7 @@ export function App() {
             path="/calendar"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Calendar"} />
+                <AdminCalendar title={"Calendar"} />
               </PrivateRoute>
             }
           />

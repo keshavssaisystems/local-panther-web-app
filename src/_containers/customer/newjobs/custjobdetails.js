@@ -58,17 +58,25 @@ export function CustJobDetail({ jobDetails, type, publishJob }) {
       jobDetail?.jobPaymentBenefitDtos[0]?.minimumamount &&
       jobDetail?.jobPaymentBenefitDtos[0]?.payperiodtype
     ) {
-      return `${jobDetail.jobPaymentBenefitDtos[0].minimumamount} - ${jobDetail.jobPaymentBenefitDtos[0].maximumamount} ${jobDetail.jobPaymentBenefitDtos[0].payperiodtype}`;
+      return `$${new Intl.NumberFormat("en-US").format(
+        jobDetail.jobPaymentBenefitDtos[0].minimumamount
+      )} - $${new Intl.NumberFormat("en-US").format(
+        jobDetail.jobPaymentBenefitDtos[0].maximumamount
+      )} ${jobDetail.jobPaymentBenefitDtos[0].payperiodtype}`;
     } else if (
       jobDetail?.jobPaymentBenefitDtos &&
       jobDetail?.jobPaymentBenefitDtos[0]?.minimumamount
     ) {
-      return `${jobDetail.jobPaymentBenefitDtos[0].minimumamount}`;
+      return `$${new Intl.NumberFormat("en-US").format(
+        jobDetail.jobPaymentBenefitDtos[0].minimumamount
+      )}`;
     } else if (
       jobDetail?.jobPaymentBenefitDtos &&
       jobDetail?.jobPaymentBenefitDtos[0]?.maximumamount
     ) {
-      return `${jobDetail.jobPaymentBenefitDtos[0].maximumamount}`;
+      return `$${new Intl.NumberFormat("en-US").format(
+        jobDetail.jobPaymentBenefitDtos[0].maximumamount
+      )}`;
     }
   };
 
