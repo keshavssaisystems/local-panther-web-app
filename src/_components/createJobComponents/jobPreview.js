@@ -315,7 +315,10 @@ export default function JobPreview({ previewData, editdata }) {
                     {previewData.paymentBenifits === undefined ||
                     previewData.paymentBenifits.minimumAmount === undefined
                       ? "-"
-                      : previewData.paymentBenifits.minimumAmount}
+                      : "$" +
+                        new Intl.NumberFormat("en-US").format(
+                          previewData.paymentBenifits.minimumAmount
+                        )}
                   </p>
                 </div>
               </Col>
@@ -326,7 +329,10 @@ export default function JobPreview({ previewData, editdata }) {
                     {previewData.paymentBenifits === undefined ||
                     previewData.paymentBenifits.maximumAmount === undefined
                       ? "-"
-                      : previewData.paymentBenifits.maximumAmount}
+                      : "$" +
+                        new Intl.NumberFormat("en-US").format(
+                          previewData.paymentBenifits.maximumAmount
+                        )}
                   </p>
                 </div>
               </Col>
