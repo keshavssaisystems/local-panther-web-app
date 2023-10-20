@@ -7,7 +7,6 @@ const name = "customerReport";
 export const getCustReportJobList = createAsyncThunk(
   `${name}/getCustReportJobList`,
   async (payload = {}) => {
-    debugger;
     payload = {
       ...payload,
       pageNumber: 1,
@@ -100,10 +99,12 @@ export const getCustReportMatchedCandList = createAsyncThunk(
 
     const GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT = `${
       process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${
-      payload.reportId
-    }&parameter=@candidateid=${
-      payload.candidateid ? payload.candidateid : null
+    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@jobid=${
+      payload.jobid ? payload.jobid : null
+    },@customerrecommendedjobstatusid=${
+      payload.customerrecommendedjobstatusid
+        ? payload.customerrecommendedjobstatusid
+        : null
     }`;
     return await fetchWrapper.get(GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT);
   }
@@ -123,10 +124,39 @@ export const getCustReporCandStatList = createAsyncThunk(
       process.env.REACT_APP_NEW_API_URL
     }/Report/GetReportData?reportId=${
       payload.reportId
-    }&parameter=@candidateid=${
-      payload.candidateid ? payload.candidateid : null
+    }&parameter=@customerrecommendedjobstatusid=${
+      payload.customerrecommendedjobstatusid
+        ? payload.customerrecommendedjobstatusid
+        : null
     }`;
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_STAT_LIST_END_POINT);
+  }
+);
+
+// get job dropdown list
+export const getJobDropdown = createAsyncThunk(
+  `${name}/getJobDropdown`,
+  async () => {
+    const GET_JOB_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDropdown`;
+    return await fetchWrapper.get(GET_JOB_DROPDOWN_END_POINT);
+  }
+);
+
+// get candidate dropdown list
+export const getCandidateDropdown = createAsyncThunk(
+  `${name}/getCandidateDropdown`,
+  async () => {
+    const GET_CANDIDATE_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Candidate/GetCandidateDropdown`;
+    return await fetchWrapper.get(GET_CANDIDATE_DROPDOWN_END_POINT);
+  }
+);
+
+// get candidate Recommended Job Status list
+export const getRecommendedJobStatus = createAsyncThunk(
+  `${name}/getRecommendedJobStatus`,
+  async () => {
+    const GET_RECOMMENDED_STATUS_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=RecommendedJobStatus`;
+    return await fetchWrapper.get(GET_RECOMMENDED_STATUS_DROPDOWN_END_POINT);
   }
 );
 
@@ -142,6 +172,9 @@ const customerReportSlice = createSlice({
     jobAgingList: [],
     matchedCandidateList: [],
     candidateStatusList: [],
+    jobDropDownList: [],
+    candidateDropDownList: [],
+    recommendedJobStatusList: [],
   },
   reducers: {
     // logout: (state, { payload }) => {
@@ -227,6 +260,33 @@ const customerReportSlice = createSlice({
     [getCustReporCandStatList.rejected]: (state, action) => {
       state.loading = false;
     },
+
+    // candidate dropdown list
+    [getCandidateDropdown.pending]: (state) => {
+      state.candidateDropDownList = [];
+    },
+    [getCandidateDropdown.fulfilled]: (state, action) => {
+      state.candidateDropDownList = action?.payload?.data;
+    },
+    [getCandidateDropdown.rejected]: (state, action) => {},
+
+    // job dropdown list
+    [getJobDropdown.pending]: (state) => {
+      state.jobDropDownList = [];
+    },
+    [getJobDropdown.fulfilled]: (state, action) => {
+      state.jobDropDownList = action?.payload?.data;
+    },
+    [getJobDropdown.rejected]: (state, action) => {},
+
+    // recommended status dropdown list
+    [getRecommendedJobStatus.pending]: (state) => {
+      state.recommendedJobStatusList = [];
+    },
+    [getRecommendedJobStatus.fulfilled]: (state, action) => {
+      state.recommendedJobStatusList = action?.payload?.data;
+    },
+    [getRecommendedJobStatus.rejected]: (state, action) => {},
   },
 });
 
@@ -239,6 +299,9 @@ export const customerReportActions = {
   getCustReportJobAgingList,
   getCustReportMatchedCandList,
   getCustReporCandStatList,
+  getCandidateDropdown,
+  getJobDropdown,
+  getRecommendedJobStatus,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;

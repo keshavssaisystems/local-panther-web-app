@@ -333,3 +333,7 @@ export const USPhoneNumber = function (inputValue) {
     return "Invalid phone no";
   }
 };
+
+export const updateMonthstoYears = (months) => {
+  return ((months / 12) | 0) + " years and " + (months % 12) + " months";
+};

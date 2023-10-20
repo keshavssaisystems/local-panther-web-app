@@ -12,6 +12,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { CandListView } from "./candlistview";
 import { JobDetailModal } from "_components/modal/jobdetailmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
+import { NoDataFound } from "_components/common/nodatafound";
 import "./candidatelist.scss";
 
 export const CandidateList = (props) => {
@@ -418,7 +419,10 @@ export const CandidateList = (props) => {
                   <Row>
                     {candidateJobList.length === 0 && !loading ? (
                       <Row style={{ textAlign: "center" }}>
-                        <Col>No Records found!</Col>
+                        <Col>
+                          {" "}
+                          <NoDataFound></NoDataFound>
+                        </Col>
                       </Row>
                     ) : (
                       ""
@@ -468,7 +472,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -520,7 +527,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -572,7 +582,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -624,7 +637,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -676,7 +692,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -728,7 +747,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""

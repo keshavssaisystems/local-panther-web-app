@@ -24,12 +24,18 @@ import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { getCustReportIVDCandList } from "./customerreport.slice";
+import {
+  getCustReportIVDCandList,
+  getCandidateDropdown,
+  getJobDropdown,
+} from "./customerreport.slice";
 
 import DataTable from "react-data-table-component";
 import { useParams } from "react-router";
 import moment from "moment";
 import Loader from "react-loaders";
+import { exportToExcel } from "react-json-to-excel";
+
 const columns = [
   {
     name: "Job Code",
@@ -78,16 +84,42 @@ export function CustomerReportInterviewedCandidates() {
   let [endDate, setEndDate] = useState();
   let [jobId, setJobId] = useState();
   let [candidateId, setCandidateId] = useState();
-  useEffect(() => {
-    onGetCustReportIVDCandList({});
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [excelData, setExcelData] = useState([]);
 
   const interviewedCandidateList = useSelector(
     (state) => state?.customerReportReducer?.interviewedCandidateList
   );
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDropDownList = useSelector(
+    (state) => state?.customerReportReducer?.jobDropDownList
+  );
+  const candidateDropDownList = useSelector(
+    (state) => state?.customerReportReducer?.candidateDropDownList
+  );
+  useEffect(() => {
+    if (interviewedCandidateList?.length > 0) {
+      let filteredData = interviewedCandidateList.map((data) => {
+        return {
+          "Job Code": data.jobid,
+          Title: data.jobtitle,
+          Status: data.jobstatus,
+          "Candidate Name": data.candidatename,
+          "Interviewed date": data.scheduledate
+            ? moment(data.scheduledate).format("MM/DD/YYYY")
+            : "",
+          Interviewers: data.intervieweremailids,
+          "Comments/Notes": data.interviewnotes,
+        };
+      });
+      setExcelData(filteredData);
+    }
+  }, [interviewedCandidateList]);
+  useEffect(() => {
+    onGetCustReportIVDCandList({});
+    dispatch(getCandidateDropdown());
+    dispatch(getJobDropdown());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onGetCustReportIVDCandList = (filter) => {
     let data = {
@@ -147,7 +179,14 @@ export function CustomerReportInterviewedCandidates() {
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(
+                          excelData,
+                          "customerInterviewedCandidatesReport"
+                        )
+                      }
+                    >
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
@@ -163,32 +202,57 @@ export function CustomerReportInterviewedCandidates() {
               <Row>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
-                    {/* <Label for="candidateid">Candidate Id</Label> */}
                     <Input
+                      type="select"
+                      value={candidateId}
                       name="candidateid"
                       id="candidateid"
                       placeholder="Candidate Id"
-                      value={candidateId}
                       onChange={(e) => {
                         handleChange("candidateid", e.target.value);
                         setCandidateId(e.target.value);
                       }}
-                    />
+                    >
+                      <option value={""}>Select a Candidate</option>
+                      {candidateDropDownList?.length > 0 ? (
+                        candidateDropDownList.map((data) => (
+                          <option
+                            value={data.candidateid}
+                            key={data.candidateid}
+                          >
+                            {data.firstname + " " + data.lastname}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
-                    {/* <Label for="jobid">Job Id</Label> */}
                     <Input
+                      type="select"
+                      value={jobId}
                       name="jobid"
                       id="jobid"
                       placeholder="Job Id"
-                      value={jobId}
                       onChange={(e) => {
                         handleChange("jobid", e.target.value);
                         setJobId(e.target.value);
                       }}
-                    />
+                    >
+                      <option value={""}>Select a Job</option>
+                      {jobDropDownList?.length > 0 ? (
+                        jobDropDownList.map((data) => (
+                          <option value={data.jobid} key={data.jobid}>
+                            {data.jobtitle}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
