@@ -23,7 +23,7 @@ const events = [
   }
 ];
 
-export function ReactBigCalender() {
+export function ReactBigCalender({ toolbar = false }) {
   const localizer = momentLocalizer(moment, "Etc/Universal");
 
   const handleSelectEvent = (event) => {
@@ -45,7 +45,7 @@ export function ReactBigCalender() {
           }}
           today={true}
           views={{ month: true }}
-          toolbar={false}
+          toolbar={toolbar}
           onSelectEvent={handleSelectEvent}
         />
       </CardBody>
