@@ -45,6 +45,7 @@ export function ReactBigCalender() {
           }}
           today={true}
           views={{ month: true }}
+          toolbar={false}
           onSelectEvent={handleSelectEvent}
         />
       </CardBody>
