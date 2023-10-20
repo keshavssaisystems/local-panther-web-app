@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import {
   Form,
@@ -12,83 +12,101 @@ import {
 } from "reactstrap";
 
 export const NewCustomer = (props) => {
+  console.log("NG props", props)
   const onChangeVal = (evt) => {
   };
   const stateList = useSelector((state) => state.state.user.data);
+
+  const [company, setCompan] = useState(false);
+  const [firstName, setFirstName] = useState(false);
+  const [lastName, setLastName] = useState(false);
+  const [emailValidation, setEmailValidation] = useState(false);
+  const [cityValidation, setCityValidation] = useState(false);
+  const [stateOnchange, setStateOnChange] = useState(false);
+
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log('NG You clicked submit.',e.target.value);
+  }
   return (
     <Row>
-      <Form>
+      <Form onSubmit={(e) => handleSubmit(e)}>
         <Row>
           <Col md={12}>
             <FormGroup>
-              <Label for="newCompName">
+              <Label for="company">
                 Company  <span style={{ color: "red" }}>* </span>
               </Label>
               <Input
-                value={props?.data?.newCompName?.value}
-                invalid={props?.data?.newCompName?.error}
+                value={props?.data?.company?.value}
+                invalid={props?.data?.company?.error}
                 type="input"
-                name="newCompName"
-                id="newCompName"
+                name="company"
+                id="company"
                 onChange={(e) => onChangeVal(e)}
               />
-              {props?.data?.newCompName?.error ? (
+              {props?.data?.company?.error ? (
                 <FormText color="danger">Please enter company name</FormText>
               ) : (
                 <></>
               )}
             </FormGroup>
-          </Col><Col md={12}>
-            <FormGroup>
-              <Label for="custFName">
-                First Name<span style={{ color: "red" }}>* </span>
-              </Label>
-              <Input
-                value={props?.data?.custFName?.value}
-                invalid={props?.data?.custFName?.error}
-                type="input"
-                onChange={(e) => onChangeVal(e)}
-                name="custFName"
-                id="custFName"
-              />
-              {props?.data?.custFName?.error ? (
-                <FormText color="danger">Please enter customer first name</FormText>
-              ) : (
-                <></>
-              )}
-            </FormGroup></Col>  <Col md={12}>
-            <FormGroup>
-              <Label for="custLName">
-                Last Name<span style={{ color: "red" }}>* </span>
-              </Label>
-              <Input
-                value={props?.data?.custLName?.value}
-                invalid={props?.data?.custLName?.error}
-                type="input"
-                name="custLName"
-                id="custLName"
-                onChange={(e) => onChangeVal(e)}
-              />
-              {props?.data?.custLName?.error ? (
-                <FormText color="danger">Please enter customer last name</FormText>
-              ) : (
-                <></>
-              )}
-            </FormGroup></Col>
+          </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="custTitle">
+              <Label for="firstName">
+                First name <span style={{ color: "red" }}>* </span>
+              </Label>
+              <Input
+                value={props?.data?.firstName?.value}
+                invalid={props?.data?.firstName?.error}
+                type="input"
+                name="firstName"
+                id="firstName"
+                onChange={(e) => onChangeVal(e)}
+              />
+              {props?.data?.firstName?.error ? (
+                <FormText color="danger">Please enter company name</FormText>
+              ) : (
+                <></>
+              )}
+            </FormGroup>
+          </Col>
+          <Col md={12}>
+            <FormGroup>
+              <Label for="lastName">
+                Last name <span style={{ color: "red" }}>* </span>
+              </Label>
+              <Input
+                value={props?.data?.lastName?.value}
+                invalid={props?.data?.lastName?.error}
+                type="input"
+                name="lastName"
+                id="lastName"
+                onChange={(e) => onChangeVal(e)}
+              />
+              {props?.data?.lastName?.error ? (
+                <FormText color="danger">Please enter company name</FormText>
+              ) : (
+                <></>
+              )}
+            </FormGroup>
+          </Col>
+          <Col md={12}>
+            <FormGroup>
+              <Label for="address">
                 Address
               </Label>
               <Input
-                value={props?.data?.custTitle?.value}
-                invalid={props?.data?.custTitle?.error}
+                value={props?.data?.address?.value}
+                invalid={props?.data?.address?.error}
                 type="input"
-                name="custTitle"
-                id="custTitle"
+                name="address"
+                id="address"
                 onChange={(e) => onChangeVal(e)}
               />
-              {props?.data?.custTitle?.error ? (
+              {props?.data?.address?.error ? (
                 <FormText color="danger">Please enter customer title</FormText>
               ) : (
                 <></>
@@ -96,19 +114,19 @@ export const NewCustomer = (props) => {
             </FormGroup></Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="newCompCity">
+              <Label for="city">
                 City
                 <span style={{ color: "red" }}>* </span>
               </Label>
               <Input
-                value={props?.data?.newCompCity?.value}
-                invalid={props?.data?.newCompCity?.error}
+                value={props?.data?.city?.value}
+                invalid={props?.data?.city?.error}
                 type="input"
-                name="newCompCity"
-                id="newCompCity"
+                name="city"
+                id="city"
                 onChange={(e) => onChangeVal(e)}
               />
-              {props?.data?.newCompCity?.error ? (
+              {props?.data?.city?.error ? (
                 <FormText color="danger">
                   Please enter company city
                 </FormText>
@@ -119,15 +137,15 @@ export const NewCustomer = (props) => {
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="newCompState">
+              <Label for="state">
                 State
               </Label>
               <Input
-                value={props?.data?.newCompState?.value}
-                invalid={props?.data?.newCompState?.error}
+                value={props?.data?.state?.value}
+                invalid={props?.data?.state?.error}
                 type="select"
-                name="newCompState"
-                id="newCompState"
+                name="state"
+                id="state"
                 onChange={(e) => onChangeVal(e)}
 
               > <option key={0}>
@@ -147,18 +165,18 @@ export const NewCustomer = (props) => {
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="newCompZip">
+              <Label for="zipCode">
                 Zip code
               </Label>
               <Input
-                value={props?.data?.newCompZip?.value}
-                invalid={props?.data?.newCompZip?.error}
+                value={props?.data?.zipCode?.value}
+                invalid={props?.data?.zipCode?.error}
                 type="input"
-                name="newCompZip"
-                id="newCompZip"
+                name="zipCode"
+                id="zipCode"
                 onChange={(e) => onChangeVal(e)}
               />
-              {props?.data?.newCompZip?.error ? (
+              {props?.data?.zipCode?.error ? (
                 <FormText color="danger">Please enter zip code</FormText>
               ) : (
                 <></>
@@ -167,18 +185,18 @@ export const NewCustomer = (props) => {
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="newCompPhonenum">
+              <Label for="phone">
                 Phone
               </Label>
               <Input
-                value={props?.data?.newCompPhonenum?.value}
-                invalid={props?.data?.newCompPhonenum?.error}
+                value={props?.data?.phone?.value}
+                invalid={props?.data?.phone?.error}
                 type="input"
-                name="newCompPhonenum"
-                id="newCompPhonenum"
+                name="phone"
+                id="phone"
                 onChange={(e) => onChangeVal(e)}
               />
-              {props?.data?.newCompPhonenum?.error ? (
+              {props?.data?.phone?.error ? (
                 <FormText color="danger">Please enter a valid phone number.</FormText>
               ) : (
                 <></>
@@ -187,19 +205,19 @@ export const NewCustomer = (props) => {
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="newCompEmail">
+              <Label for="email">
                 Email
                 <span style={{ color: "red" }}>* </span>
               </Label>
               <Input
-                value={props?.data?.newCompEmail?.value}
-                invalid={props?.data?.newCompEmail?.error}
+                value={props?.data?.email?.value}
+                invalid={props?.data?.email?.error}
                 type="input"
-                name="newCompEmail"
-                id="newCompEmail"
+                name="email"
+                id="email"
                 onChange={(e) => onChangeVal(e)}
               />
-              {props?.data?.newCompEmail?.error ? (
+              {props?.data?.email?.error ? (
                 <FormText color="danger">Please enter contact Email-ID in proper format</FormText>
               ) : (
                 <></>

@@ -12,6 +12,8 @@ import errorIcon from "assets/utils/images/error_icon.png";
 import successIcon from "assets/utils/images/success_icon.svg";
 import { NewCustomer } from "_components/common/addCustomer";
 import AsyncSelect from 'react-select/async';
+import { AddEdit } from "./addEdit";
+import { createEntityAdapter } from "@reduxjs/toolkit";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch()
@@ -25,7 +27,7 @@ export const AdminListing = ({ entity }) => {
   const [error, setError] = useState(false)
   const [message, setMessage] = useState("")
   const [success, setSuccess] = useState(false)
-  const [addComp, setAddComp] = useState(false)
+  const [isAddMode, setIsAddMode] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
@@ -44,11 +46,6 @@ export const AdminListing = ({ entity }) => {
     newCompEmail: { value: "" },
     newCompPhonenum: { value: "" },
   });
-  const [newCustData, setNewCustData] = useState({
-    custFName: { value: "", error: false },
-    custLName: { value: "", error: false },
-  });
-
   switch (entity) {
     case "customers":
       title = customers.title;
@@ -129,55 +126,33 @@ export const AdminListing = ({ entity }) => {
   const handleRowClick = (row) => {
     setSelectedRowData(row);
     setEditMode(true);
-    setAddComp(true); // Open the modal
+    setIsAddMode(false); // Open the modal
   };
 
   const onAddClick = () => {
-
     setEditMode(false); // Reset edit mode
-    setAddComp(true); // Open the modal
+    setIsAddMode(true); // Open the modal
   };
 
   const close = () => {
-    setAddComp(false)
+    setIsAddMode(false)
     setSuccess(false)
     setEditMode(false); // Reset edit mode
     setEditingData(null); // Reset editing data
   }
 
   const onUpdateNewComp = (evt, formType) => {
-    const newData = { ...formType === 'company' ? newCompData : newCustData };
-    newData[evt.target.name] = { value: evt.target.value, error: false };
-    formType === 'company' ? setNewCompData(newData) : setNewCustData(newData);
+    // const newData = { ...formType === 'company' ? newCompData : newCustData };
+    // newData[evt.target.name] = { value: evt.target.value, error: false };
+    // formType === 'company' ? setNewCompData(newData) : setNewCustData(newData);
   };
 
-  const onSaveClick = async () => {
-    if (entity === 'company') {
+  const onSaveClick = async (e) => {
+    if ( editMode ) {
+      console.log("NG UPDATE customers listing", e.target.value)
 
-      if (newCompData.newCompName.value === "") {
-        newCompData.newCompName.error = true;
-      }
-      if (newCompData.newIndusName.value === "") {
-        newCompData.newIndusName.error = true;
-      }
-      if (newCompData.newCompAdd.value === "") {
-        newCompData.newCompAdd.error = true;
-      }
-      if (newCompData.newCompCity.value === "") {
-        newCompData.newCompCity.error = true;
-      }
-      if (newCompData.newCompCountry.value === "") {
-        newCompData.newCompCountry.error = true;
-      }
-      if (newCompData.newCompName.error || newCompData.newIndusName.error || newCompData.newCompEmail.error || newCompData.newCompEmp.error || newCompData.newCompPhonenum.error
-        || newCompData.newCompAdd.error || newCompData.newCompState.error || newCompData.newCompState.error || newCompData.newCompCountry.error || newCompData.newCompZip.error || newCompData.newCompDesc.error) {
-
-        return;
-      }
-    } if (entity === 'customers') {
-      if (newCustData.custFName.error || newCustData.custLName.error) {
-        return;
-      }
+    } else {
+      console.log("NG ADD MODE admin listing, entity", e.target.value)
 
     }
   };
@@ -306,8 +281,8 @@ export const AdminListing = ({ entity }) => {
           </CardBody>
         </Card>
       </Modal>
-      {addComp ? <div>
-        <Modal isOpen={addComp}>
+      {isAddMode ? <div>
+        <Modal isOpen={isAddMode}>
           <ModalHeader toggle={() => close()} charCode="Y">
             <strong className="card-title-text">
               {editMode
@@ -325,16 +300,15 @@ export const AdminListing = ({ entity }) => {
               />
             )}
             {entity === 'customers' && (
-              <NewCustomer
+              <AddEdit
                 editingData={editingData}
-                editMode={editMode}
-                data={newCustData}
-                updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
+                isAddMode={isAddMode}
+                selectedRowData={selectedRowData}
+                // data={newCustData}
+                entity={entity}
+                // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
               />
             )}
-            <Button color="primary" onClick={() => onSaveClick()}>
-              {editMode ? 'Update' : 'Submit'} {/* Conditional label */}
-            </Button>
           </ModalBody>
         </Modal>
 

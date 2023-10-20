@@ -342,7 +342,6 @@ export function PersonalInformationNew(props) {
                           errors.lastname ? "is-invalid" : ""
                         }`}
                       />
-
                       <div className="invalid-feedback">
                         {errors.lastname?.message}
                       </div>
