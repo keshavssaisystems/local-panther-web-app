@@ -23,11 +23,16 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { getCustReportJobAgingList } from "./customerreport.slice";
+import {
+  getCustReportJobAgingList,
+  getJobDropdown,
+} from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
+import { exportToExcel } from "react-json-to-excel";
+
 const columns = [
   {
     name: "Job Code",
@@ -63,16 +68,36 @@ export function CustomerReportJobAging() {
 
   let [filter, setFilter] = useState({});
   let [jobId, setJobId] = useState();
-  useEffect(() => {
-    onGetCustReportJobAgingList({});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [excelData, setExcelData] = useState([]);
 
   const jobAgingList = useSelector(
     (state) => state?.customerReportReducer?.jobAgingList
   );
 
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDropDownList = useSelector(
+    (state) => state?.customerReportReducer?.jobDropDownList
+  );
+  useEffect(() => {
+    onGetCustReportJobAgingList({});
+    dispatch(getJobDropdown());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (jobAgingList?.length > 0) {
+      let filteredData = jobAgingList.map((data) => {
+        return {
+          "Job Code": data.jobid,
+          Title: data.jobtitle,
+          Status: data.jobstatus,
+          "No. of Days": data.noofdays,
+          "Aging group": data.aginggroup,
+        };
+      });
+      setExcelData(filteredData);
+    }
+  }, [jobAgingList]);
 
   const onGetCustReportJobAgingList = (filter) => {
     let data = {
@@ -119,7 +144,11 @@ export function CustomerReportJobAging() {
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(excelData, "customerJobAgingReport")
+                      }
+                    >
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
@@ -135,17 +164,28 @@ export function CustomerReportJobAging() {
               <Row>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
-                    {/* <Label for="jobid">Job Id</Label> */}
                     <Input
+                      type="select"
+                      value={jobId}
                       name="jobid"
                       id="jobid"
                       placeholder="Job Id"
-                      value={jobId}
                       onChange={(e) => {
                         handleChange("jobid", e.target.value);
                         setJobId(e.target.value);
                       }}
-                    />
+                    >
+                      <option value={""}>Select a Job</option>
+                      {jobDropDownList?.length > 0 ? (
+                        jobDropDownList.map((data) => (
+                          <option value={data.jobid} key={data.jobid}>
+                            {data.jobtitle}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
                   </FormGroup>
                 </Col>
 
