@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 import { useSelector } from "react-redux";
+
 import {
   Form,
   FormGroup,
@@ -49,14 +48,18 @@ export const AddEdit = (props) => {
 
   });
 
+  const formOptions = { resolver: yupResolver(validationSchema) };
+
+
   // functions to build form returned by useForm() hook
   // const { register, handleSubmit, reset, setValue, getValues, formState } = useForm({
   //   resolver: yupResolver(validationSchema)
   // });
 
-  const { register, handleSubmit, reset, setValue, getValues, formState } = useForm({company: ''});
-
-
+  // get functions to build form with useForm() hook
+  const { register, handleSubmit, formState } = useForm(formOptions);
+  const { errors, isSubmitting } = formState;
+  console.log('errors, isSubmitting :>> ', errors, isSubmitting);
 
   function createEntity(data) {
     console.log("NG create Entity")
@@ -80,26 +83,19 @@ export const AddEdit = (props) => {
     }
   }, []);
 
-  console.log("NG formState", formState)
-  console.log("NG register", register)
-  const { errors, isSubmitting } = formState;
-  const values = getValues("company");
-  console.log("NG values", values)
-
 
   return (
     <Row>
-      <Form onSubmit={handleSubmit(onSubmit)} onReset={reset}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Row>
           <Col md={12}>
             <FormGroup>
               <Label for="company">
                 Company  <span style={{ color: "red" }}>* </span>
               </Label>
-              <Input
+              <input
                 type="text"
                 name="company"
-                id="company"
                 {...register("company")}
                 placeholder="company name..."
                 className={`field-input placeholder-text form-control ${errors?.company
@@ -117,10 +113,10 @@ export const AddEdit = (props) => {
               <Label for="firstName">
                 First name <span style={{ color: "red" }}>* </span>
               </Label>
-              <Input
+              <input
                 type="text"
                 name="firstName"
-                id="firstName"
+                
                 {...register("firstName")} 
                 placeholder="First name..."
                 className={`field-input placeholder-text form-control ${errors?.firstName
@@ -128,11 +124,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {props?.data?.firstName?.error ? (
-                <FormText color="danger">Please enter first name</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.firstName?.message}
+              </div>
             </FormGroup>
           </Col>
           <Col md={12}>
@@ -140,10 +134,10 @@ export const AddEdit = (props) => {
               <Label for="lastName">
                 Last name <span style={{ color: "red" }}>* </span>
               </Label>
-              <Input
+              <input
                 type="text"
                 name="lastName"
-                id="lastName"
+                
                 {...register("lastName")}
                 placeholder="Last name..."
                 className={`field-input placeholder-text form-control ${errors?.lastName
@@ -151,11 +145,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {errors?.lastName?.error ? (
-                <FormText color="danger">Please enter last name</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.lastName?.message}
+              </div>
             </FormGroup>
           </Col>
           <Col md={12}>
@@ -163,10 +155,10 @@ export const AddEdit = (props) => {
               <Label for="email">
                 Email <span style={{ color: "red" }}>* </span>
               </Label>
-              <Input
-                type="text"
+              <input
+                type="email"
                 name="email"
-                id="email"
+                
                 {...register("email")}
                 placeholder="Email..."
                 className={`field-input placeholder-text form-control ${errors?.email
@@ -174,11 +166,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {errors?.email?.error ? (
-                <FormText color="danger">Please enter email</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.email?.message}
+              </div>
             </FormGroup>
           </Col>
           <Col md={12}>
@@ -186,10 +176,10 @@ export const AddEdit = (props) => {
               <Label for="address">
                 Address
               </Label>
-              <Input
+              <input
                 type="text"
                 name="address"
-                id="address"
+                
                 {...register("address")}
                 placeholder="address..."
                 className={`field-input placeholder-text form-control ${errors?.address
@@ -197,11 +187,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {errors?.address?.error ? (
-                <FormText color="danger">Please enter address</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.address?.message}
+              </div>
             </FormGroup></Col>
           <Col md={12}>
             <FormGroup>
@@ -209,10 +197,10 @@ export const AddEdit = (props) => {
                 City
                 <span style={{ color: "red" }}>* </span>
               </Label>
-              <Input
+              <input
                 type="text"
                 name="city"
-                id="city"
+                
                 {...register("city")}
                 placeholder="city..."
                 className={`field-input placeholder-text form-control ${errors?.city
@@ -220,11 +208,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {errors?.city?.error ? (
-                <FormText color="danger">Please enter city</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.city?.message}
+              </div>
             </FormGroup>
           </Col>
           <Col md={12}>
@@ -232,17 +218,16 @@ export const AddEdit = (props) => {
               <Label for="state">
                 State
               </Label>
-              <Input
-                type="select"
-                name="state"
-                id="state"
+              <select
+                name="state"                
                 placeholder="state..."
                 className={`field-input placeholder-text form-control ${errors?.state
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
+                  {...register("state")}
               >
-                <option key={0}> Select state </option>
+                <option key={0} value=""> Select state </option>
                 <option value="state1">state1</option>
                 <option value="state2">state2</option>
                 <option value="state3">state3</option>
@@ -256,7 +241,7 @@ export const AddEdit = (props) => {
                       {options.name}
                     </option>
                   ))}
-              </Input>
+              </select>
             </FormGroup>
           </Col>
           <Col md={12}>
@@ -264,10 +249,10 @@ export const AddEdit = (props) => {
               <Label for="zipCode">
                 Zip code
               </Label>
-              <Input
-                type="input"
+              <input
+                type="text"
                 name="zipCode"
-                id="zipCode"
+                
                 {...register("zipCode")}
                 placeholder="zipCode..."
                 className={`field-input placeholder-text form-control ${errors?.zipCode
@@ -275,11 +260,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {errors?.zipCode?.error ? (
-                <FormText color="danger">Please enter zipCode</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.zipCode?.message}
+              </div>
             </FormGroup>
           </Col>
           <Col md={12}>
@@ -287,10 +270,10 @@ export const AddEdit = (props) => {
               <Label for="phone">
                 Phone
               </Label>
-              <Input
-                type="input"
+              <input
+                type="text"
                 name="phone"
-                id="phone"
+                
                 {...register("phone")}
                 placeholder="phone..."
                 className={`field-input placeholder-text form-control ${errors?.phone
@@ -298,11 +281,9 @@ export const AddEdit = (props) => {
                   : "input-text"
                   }`}
               />
-              {errors?.phone?.error ? (
-                <FormText color="danger">Please enter phone</FormText>
-              ) : (
-                <></>
-              )}
+              <div className="invalid-feedback">
+                {errors?.phone?.message}
+              </div>
             </FormGroup>
           </Col>
         </Row>
