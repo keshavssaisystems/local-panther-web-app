@@ -1,16 +1,10 @@
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import momentTimezone from "moment-timezone";
+// import momentTimezone from "moment-timezone";
 import {
-  Row,
-  Col,
   Card,
-  Container,
-  ButtonGroup,
-  Button,
   CardBody,
-  Input,
 } from "reactstrap";
 
 const events = [
