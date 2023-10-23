@@ -43,7 +43,6 @@ export function ReactBigCalender({ toolbar = false, events = [] }) {
           toolbar={toolbar}
           onSelectEvent={handleSelectEvent}
           onShowMore={handleSelectEvent}
-          onSelectSlot={handleSelectSlot}
         />
       </CardBody>
     </Card>
