@@ -73,8 +73,8 @@ export function OpenJobs({ title }) {
     dispatch(openJobsThunk())
   }
 
-  const handleSheduleClick = (jobid) => {
-    dispatch(scheduledInterviewListThunk(jobid))
+  const handleSheduleClick = (jobId) => {
+    dispatch(scheduledInterviewListThunk({ jobId }))
     setIsOpen(true)
   }
 

@@ -11,10 +11,10 @@ export function CompanyFilter({
 }) {
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
-    const { data: {companyDetailsList = []} = {} } = await getCompanyDropDown(inputValue);
-    return companyDetailsList.map(({ companyid: value, companyname: label }) => {
-        return { value, label };
-    });
+      const { data = [] } = await getCompanyDropDown(inputValue);
+      return data.map(({ companyid: value, companyname: label }) => {
+          return { value, label };
+      });
     }
   };
 
