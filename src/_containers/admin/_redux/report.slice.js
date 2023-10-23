@@ -57,8 +57,13 @@ export const hiringManagerThunk = createAsyncThunk(
 // scheduled interview list thunk
 export const scheduledInterviewListThunk = createAsyncThunk(
   `${name}/scheduledInterviewListThunk`,
-  async (jobid) => {
-    const SCHEDULED_INTERVIEW_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?jobId=${jobid}`;
+  async (payload = {}) => {
+    payload = {
+      ...payload,
+      isActive: true
+    }
+    
+    const SCHEDULED_INTERVIEW_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(SCHEDULED_INTERVIEW_END_POINT);
   }
 );

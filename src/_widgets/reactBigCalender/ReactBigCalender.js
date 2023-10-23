@@ -1,5 +1,5 @@
 import React from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 // import momentTimezone from "moment-timezone";
 
@@ -8,17 +8,7 @@ import {
   CardBody,
 } from "reactstrap";
 
-const events = [
-  {
-    start: moment().toDate(),
-    end: moment()
-      .add(1, "days")
-      .toDate(),
-    title: "Some title"
-  }
-];
-
-export function ReactBigCalender({ toolbar = false }) {
+export function ReactBigCalender({ toolbar = false, events = [] }) {
   const localizer = momentLocalizer(moment, "Etc/Universal");
 
   const handleSelectEvent = (event) => {
@@ -29,7 +19,7 @@ export function ReactBigCalender({ toolbar = false }) {
     <Card>
       <CardBody className="scheduled-calender">
         <Calendar
-          defaultView="month"
+          defaultView={Views.MONTH}
           localizer={localizer}
           events={events}
           startAccessor="start"
@@ -37,6 +27,13 @@ export function ReactBigCalender({ toolbar = false }) {
           popup
           formats={{
             dayFormat: "dddd",
+          }}
+          eventPropGetter={(events) => {
+            const backgroundColor = events.color
+              ? events.color
+              : "blue";
+            const fontSize = "0.8rem";
+            return { style: { backgroundColor, fontSize } };
           }}
           today={true}
           views={{ month: true }}
