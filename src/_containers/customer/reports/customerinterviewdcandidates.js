@@ -35,6 +35,7 @@ import { useParams } from "react-router";
 import moment from "moment";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
+import { NoDataFound } from "_components/common/nodatafound";
 
 const columns = [
   {
@@ -329,12 +330,20 @@ export function CustomerReportInterviewedCandidates() {
                     />
                   </>
                 ) : (
-                  <DataTable
-                    columns={columns}
-                    data={interviewedCandidateList}
-                    fixedHeader
-                    pagination
-                  />
+                  <>
+                    {interviewedCandidateList.length > 0 ? (
+                      <DataTable
+                        columns={columns}
+                        data={interviewedCandidateList}
+                        fixedHeader
+                        pagination
+                      />
+                    ) : (
+                      <Row className="center-align">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
                 )}
               </Row>
             </CardBody>

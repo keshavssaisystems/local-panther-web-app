@@ -32,7 +32,7 @@ import { useParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
-
+import { NoDataFound } from "_components/common/nodatafound";
 const columns = [
   {
     name: "Job Code",
@@ -223,12 +223,20 @@ export function CustomerReportJobAging() {
                     />
                   </>
                 ) : (
-                  <DataTable
-                    columns={columns}
-                    data={jobAgingList}
-                    fixedHeader
-                    pagination
-                  />
+                  <>
+                    {jobAgingList.length > 0 ? (
+                      <DataTable
+                        columns={columns}
+                        data={jobAgingList}
+                        fixedHeader
+                        pagination
+                      />
+                    ) : (
+                      <Row className="center-align">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
                 )}
               </Row>
             </CardBody>

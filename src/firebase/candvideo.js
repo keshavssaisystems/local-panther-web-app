@@ -87,14 +87,14 @@ export const CandVideoScreen = () => {
       <div style={{ display: "flex" }}>
         <Col md={6} lg={6} sm={12}>
           <span>
-            <h4>Customer Stream</h4>
-            <video id="webcamVideo" playsInline autoPlay></video>
+            <h4>Candidate Stream</h4>
+            <video controls id="webcamVideo" playsInline autoPlay></video>
           </span>
         </Col>
         <Col md={6} lg={6} sm={12}>
           <span>
-            <h4>Candidate Stream</h4>
-            <video id="remoteVideo" playsInline autoPlay></video>
+            <h4>Customer Stream</h4>
+            <video controls id="remoteVideo" playsInline autoPlay></video>
           </span>
         </Col>
       </div>
