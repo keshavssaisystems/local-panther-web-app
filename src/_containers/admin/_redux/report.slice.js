@@ -6,7 +6,7 @@ const name = 'adminReport';
 export const getCompanyDropDown = async (searchText) => {
   const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
   return await fetchWrapper.get(
-    `${baseUrl}/Company/Get?isActive=true&searchText=${searchText}`
+    `${baseUrl}/Company/GetCompanyDropdown?companyName=${searchText}`
   );
 };
 
