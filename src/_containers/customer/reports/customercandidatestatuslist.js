@@ -33,6 +33,8 @@ import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
 import { updateMonthstoYears, USPhoneNumber } from "_helpers/helper";
 import { exportToExcel } from "react-json-to-excel";
+import { NoDataFound } from "_components/common/nodatafound";
+
 const columns = [
   // {
   //   name: "Candidate Id",
@@ -255,12 +257,20 @@ export function CustomerReportCandidateStatus() {
                     />
                   </>
                 ) : (
-                  <DataTable
-                    columns={columns}
-                    data={candidateStatusList}
-                    fixedHeader
-                    pagination
-                  />
+                  <>
+                    {candidateStatusList.length > 0 ? (
+                      <DataTable
+                        columns={columns}
+                        data={candidateStatusList}
+                        fixedHeader
+                        pagination
+                      />
+                    ) : (
+                      <Row className="center-align">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
                 )}
               </Row>
             </CardBody>

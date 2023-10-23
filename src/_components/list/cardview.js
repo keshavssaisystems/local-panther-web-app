@@ -27,6 +27,7 @@ import { customerCandidateListsActions } from "../../_containers/customer/candid
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { Progress } from "react-sweet-progress";
 import "./cardview.scss";
+import { updateMonthstoYears } from "_helpers/helper";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -144,7 +145,7 @@ export const CandidateCardView = (props) => {
                     {props?.data?.candidateQualificationsDtos &&
                     props?.data?.candidateQualificationsDtos.length > 0
                       ? props?.data?.candidateQualificationsDtos[0]?.jobtitle
-                      : ""}
+                      : "-"}
                   </div>
                   <p className="card-details-op">
                     <span>
@@ -155,13 +156,13 @@ export const CandidateCardView = (props) => {
                       ? (props?.data?.candidateQualificationsDtos[0]?.cityname
                           ? props?.data?.candidateQualificationsDtos[0]
                               ?.cityname
-                          : "") +
+                          : "-") +
                         ", " +
                         (props?.data?.candidateQualificationsDtos[0]?.statename
                           ? props?.data?.candidateQualificationsDtos[0]
                               ?.statename
-                          : "")
-                      : ""}
+                          : "-")
+                      : "-"}
                   </p>
                 </Col>
                 <Col className="col-3">
@@ -194,10 +195,23 @@ export const CandidateCardView = (props) => {
                   <Col md="11" lg="11">
                     <b>Work Experience</b>
                     <p>
-                      {props?.data?.jobExperienceScheduleDtos &&
-                      props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
-                        ? props?.data?.jobExperienceScheduleDtos[0]
-                            ?.experiencelevel
+                      {props?.data?.recommendedationCandidateShortList &&
+                      props?.data?.recommendedationCandidateShortList[0]
+                        ?.experience &&
+                      parseInt(
+                        props?.data?.recommendedationCandidateShortList[0]
+                          ?.experience
+                      ) > 0
+                        ? updateMonthstoYears(
+                            props?.data?.recommendedationCandidateShortList[0]
+                              ?.experience
+                              ? parseInt(
+                                  props?.data
+                                    ?.recommendedationCandidateShortList[0]
+                                    ?.experience
+                                )
+                              : 0
+                          )
                         : "-"}
                     </p>
                   </Col>

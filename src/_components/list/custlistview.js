@@ -11,6 +11,7 @@ import {
   Row,
   Col,
   Button,
+  ButtonGroup,
 } from "reactstrap";
 import {
   IoIosCheckmark,
@@ -410,107 +411,228 @@ export const CustCandidateListView = (props) => {
     );
   };
 
-  const columns = memoize((clickHandler) => [
-    {
-      name: <span className="table-title">Candidate</span>,
-      id: "Candidate",
-      selector: (row) => (
-        <span className="table-cell" title={row.firstname + " " + row.lastname}>
-          {row.firstname + " " + row.lastname}
-        </span>
-      ),
-      sortable: true,
-      width: "150px",
-    },
-    {
-      name: <span className="table-title">Skills</span>,
-      selector: (row) => (
-        <span className="table-cell" title={returnSkills(row)}>
-          {returnSkills(row)}
-        </span>
-      ),
-      sortable: true,
-      width: "312px",
-    },
-    {
-      name: <span className="table-title">Location</span>,
-      selector: (row) => (
-        <span className="table-cell" title={row.locationaddress}>
-          {row.locationaddress}
-        </span>
-      ),
-      sortable: true,
-      width: "170px",
-    },
+  const columns = memoize((clickHandler) =>
+    props.type !== "scheduled"
+      ? [
+          {
+            name: <span className="table-title">Candidate</span>,
+            id: "Candidate",
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={row.firstname + " " + row.lastname}
+              >
+                {row.firstname + " " + row.lastname}
+              </span>
+            ),
+            sortable: true,
+            wrap: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Skills</span>,
+            selector: (row) => (
+              <span className="table-cell" title={returnSkills(row)}>
+                {returnSkills(row)}
+              </span>
+            ),
+            sortable: true,
+            width: "35%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList[0]?.length > 0
+                    ? row?.recommendedationCandidateShortList[0].cityname +
+                      ", " +
+                      row.recommendedationCandidateShortList[0].statename
+                    : ""
+                }
+              >
+                {row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList[0]?.length > 0
+                  ? row?.recommendedationCandidateShortList[0].cityname +
+                    ", " +
+                    row.recommendedationCandidateShortList[0].statename
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
 
-    {
-      name: <span className="table-title">Experience</span>,
-      selector: (row) => (
-        <span
-          className="table-cell"
-          title={
-            row?.jobExperienceScheduleDtos &&
-            row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              : "-"
-          }
-        >
-          <>
-            {row?.jobExperienceScheduleDtos &&
-            row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              : "-"}
-          </>
-        </span>
-      ),
-      sortable: true,
-      width: "150px",
-    },
+          {
+            name: <span className="table-title">Experience</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                <>
+                  {row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"}
+                </>
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
 
-    {
-      name: <span className="table-title">Scheduled time</span>,
-      sortable: true,
-      cell: (row) => (
-        <span
-          className="table-cell"
-          title={
-            row.customerscheduleddatetime
-              ? moment(row.customerscheduleddatetime).format("YYYY-MM-DD")
-              : ""
-          }
-        >
-          {row.customerscheduleddatetime
-            ? moment(row.customerscheduleddatetime).format("YYYY-MM-DD")
-            : ""}
-        </span>
-      ),
-      width: "170px",
-    },
-    // {
-    //   name: <span className="table-title">Interview mode</span>,
-    //   selector: (row) => <span className="table-cell">{row.mode}</span>,
-    //   sortable: true,
-    // },
-    {
-      name: <span className="table-title">Interest</span>,
-      cell: (row) => (
-        <div className="list-btn-group">
-          {renderButtons(row.candidaterecommendedjobid, row)}
-        </div>
-      ),
-      ignoreRowClick: true,
-      button: true,
-      width: "200px",
-    },
-    {
-      name: <span className="table-title">Action</span>,
-      cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-      width: "70px",
-    },
-  ]);
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">
+                <ButtonGroup>
+                  {renderButtons(row.candidaterecommendedjobid, row)}
+                </ButtonGroup>
+              </div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "5%",
+          },
+        ]
+      : [
+          {
+            name: <span className="table-title">Candidate</span>,
+            id: "Candidate",
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={row.firstname + " " + row.lastname}
+              >
+                {row.firstname + " " + row.lastname}
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Skills</span>,
+            selector: (row) => (
+              <span className="table-cell" title={returnSkills(row)}>
+                {returnSkills(row)}
+              </span>
+            ),
+            sortable: true,
+            width: "30%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList[0]?.length > 0
+                    ? row?.recommendedationCandidateShortList[0].cityname +
+                      ", " +
+                      row.recommendedationCandidateShortList[0].statename
+                    : ""
+                }
+              >
+                {row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList[0]?.length > 0
+                  ? row?.recommendedationCandidateShortList[0].cityname +
+                    ", " +
+                    row.recommendedationCandidateShortList[0].statename
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                <>
+                  {row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"}
+                </>
+              </span>
+            ),
+            sortable: true,
+            width: "10%",
+          },
+
+          {
+            name: <span className="table-title">Scheduled</span>,
+            sortable: true,
+            cell: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? moment(
+                        row?.scheduledInterviewDtos[0]?.scheduledate
+                      ).format("MM/DD/YYYY")
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
+                      "MM/DD/YYYY"
+                    )
+                  : ""}
+              </span>
+            ),
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">
+                {renderButtons(row.candidaterecommendedjobid, row)}
+              </div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "5%",
+          },
+        ]
+  );
 
   const handleButtonClick = () => {
     console.log("clicked");
@@ -540,10 +662,10 @@ export const CustCandidateListView = (props) => {
         onRowClicked={handleRowClick}
         data={props.data}
         columns={columns(handleButtonClick)}
-        selectableRows
         persistTableHead
         // pagination
         className="cust-list-view"
+        responsive
       />
       <>
         {showAModal ? (

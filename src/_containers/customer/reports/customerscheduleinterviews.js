@@ -35,6 +35,8 @@ import DataTable from "react-data-table-component";
 import moment from "moment";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./customerreport.scss";
 const columns = [
   {
     name: "Job Code",
@@ -351,12 +353,20 @@ export function CustomerReportScheduledInterviews() {
                     />
                   </>
                 ) : (
-                  <DataTable
-                    columns={columns}
-                    data={schdInterviewList}
-                    fixedHeader
-                    pagination
-                  />
+                  <>
+                    {schdInterviewList.length > 0 ? (
+                      <DataTable
+                        columns={columns}
+                        data={schdInterviewList}
+                        fixedHeader
+                        pagination
+                      />
+                    ) : (
+                      <Row className="center-align">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
                 )}
               </Row>
             </CardBody>
