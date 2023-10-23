@@ -14,6 +14,9 @@ export function ReactBigCalender({ toolbar = false, events = [] }) {
   const handleSelectEvent = (event) => {
     console.log('event :>> ', event);
   };
+  const handleSelectSlot = (event) => {
+    console.log('event :>> ', event);
+  };
 
   return (
     <Card>
@@ -24,7 +27,7 @@ export function ReactBigCalender({ toolbar = false, events = [] }) {
           events={events}
           startAccessor="start"
           endAccessor="end"
-          popup
+          popup={true}
           formats={{
             dayFormat: "dddd",
           }}
@@ -39,6 +42,8 @@ export function ReactBigCalender({ toolbar = false, events = [] }) {
           views={{ month: true }}
           toolbar={toolbar}
           onSelectEvent={handleSelectEvent}
+          onShowMore={handleSelectEvent}
+          onSelectSlot={handleSelectSlot}
         />
       </CardBody>
     </Card>
