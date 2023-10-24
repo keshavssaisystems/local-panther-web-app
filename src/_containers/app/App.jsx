@@ -54,8 +54,7 @@ import { CustomerReportCandidateStatus } from "_containers/customer/reports/cust
 import { CustomerVideoScreen } from "../../firebase/customerVideo";
 import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
-import { CustomerChat } from "../../firebase/chat/customer";
-import { CandidateChat } from "firebase/chat/candidate";
+import { Chat } from "../../firebase/chat/chat";
 // import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 
 export function App() {
@@ -309,7 +308,7 @@ export function App() {
             path="/customer-chat"
             element={
               <PrivateRoute>
-                <CustomerChat />
+                <Chat />
               </PrivateRoute>
             }
           />
@@ -374,7 +373,7 @@ export function App() {
             path="/candidate-chat"
             element={
               <PrivateRoute>
-                <CandidateChat />
+                <Chat />
               </PrivateRoute>
             }
           />
