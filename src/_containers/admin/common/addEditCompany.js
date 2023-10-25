@@ -70,7 +70,7 @@ export const AddEditCompany = (props) => {
   
   const createEntity = async(data) => {
     // citiesList.find((cty)=> {return })
-    const payload = { companyid: "0", companyname: data.company, contactemail: data.email, contactphonenumber: data.phone, cityid: "0", stateid: data.state, countryid: data.country, currentUserId: "0" }
+    const payload = { Companyid: "0", Companyname: data.company, Industry: data.industry, Contactemail: data.email, Description: data.description, Noofemployees: data.numOfEmployees, Contactphonenumber: data.phone, Cityid: "0", Stateid: data.state, Countryid: data.country, CurrentUserId: "0", Address: data.address, Zipcode: data.zipcode, Logourl : data.logo}
     console.log("NG Create country payload", payload)
     await dispatch(addCompany(payload))
     // setIsAddMode(false)
