@@ -13,6 +13,8 @@ import {
   Button,
 } from "reactstrap";
 
+import { BsCheckCircle } from "react-icons/bs";
+
 import customerIcons from "assets/utils/images/customer";
 
 export const CandListView = (props) => {
@@ -57,15 +59,16 @@ export const CandListView = (props) => {
           </Col>
           <Col>
             <Button
+              outline
               size="sm"
-              title="accept"
+              title="apply"
               className="btn-icon"
-              color="success"
+              color="primary"
               onClick={() =>
-                onBtnClick("accepted", row.candidaterecommendedjobid)
+                onBtnClick("applied", row.candidaterecommendedjobid)
               }
             >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
+              <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
         </Row>
@@ -101,15 +104,16 @@ export const CandListView = (props) => {
           </Col>
           <Col>
             <Button
+              outline
               size="sm"
-              title="accept"
+              title="apply"
               className="btn-icon"
-              color="success"
+              color="primary"
               onClick={() =>
-                onBtnClick("accepted", row.candidaterecommendedjobid)
+                onBtnClick("applied", row.candidaterecommendedjobid)
               }
             >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
+              <BsCheckCircle></BsCheckCircle>
             </Button>
           </Col>
         </Row>
@@ -281,7 +285,7 @@ export const CandListView = (props) => {
               <span>Job details</span>
             </DropdownItem>
 
-            {row.customerscheduleddatetime ? (
+            {props.type === "interview" ? (
               <DropdownItem onClick={() => onShowModal(row, "id")}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
@@ -305,8 +309,7 @@ export const CandListView = (props) => {
         </span>
       ),
       sortable: true,
-      maxWidth: "150px",
-      minWidth: "100px",
+      width: "12%",
     },
     {
       name: <span className="table-title">Title</span>,
@@ -317,20 +320,27 @@ export const CandListView = (props) => {
         </span>
       ),
       sortable: true,
-      maxWidth: "220px",
-      minWidth: "150px",
+      width: "30%",
     },
 
     {
       name: <span className="table-title">Location</span>,
       selector: (row) => (
-        <span className="table-cell" title={row.locationaddress}>
-          {row.locationaddress}
+        <span
+          className="table-cell"
+          title={
+            row.cityname && row.statename
+              ? row.cityname + ", " + row.statename
+              : ""
+          }
+        >
+          {row.cityname && row.statename
+            ? row.cityname + ", " + row.statename
+            : ""}
         </span>
       ),
       sortable: true,
-      maxWidth: "350px",
-      minWidth: "250px",
+      width: "20%",
     },
 
     {
@@ -354,8 +364,7 @@ export const CandListView = (props) => {
         </span>
       ),
       sortable: true,
-      maxWidth: "250px",
-      minWidth: "150px",
+      width: "15%",
     },
 
     {
@@ -363,8 +372,7 @@ export const CandListView = (props) => {
       cell: (row) => <div className="list-btn-group">{renderButtons(row)}</div>,
       ignoreRowClick: true,
       button: true,
-      maxWidth: "350px",
-      minWidth: "200px",
+      width: "15%",
     },
     {
       name: <span className="table-title">Action</span>,
@@ -372,8 +380,7 @@ export const CandListView = (props) => {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      maxWidth: "150px",
-      minWidth: "100px",
+      width: "8%",
     },
   ]);
 
@@ -391,7 +398,7 @@ export const CandListView = (props) => {
         onRowClicked={handleRowClick}
         data={props.data}
         columns={columns(handleButtonClick)}
-        selectableRows
+        // selectableRows
         persistTableHead
         // pagination
         className="cust-list-view"

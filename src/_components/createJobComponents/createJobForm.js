@@ -39,6 +39,9 @@ export default function CreateJob({
   const [preScreenData, setPreScreenData] = useState(
     previousStep === 3 ? jobData.preScreen : {}
   );
+  const [preScreenCustomData, setPreScreenCustomData] = useState(
+    previousStep === 3 ? jobData.basicInformation.customquestionanswertype : ""
+  );
   const [formData, setSetFormData] = useState({});
   const [accordion, setAccordion] = useState([
     true,
@@ -69,7 +72,8 @@ export default function CreateJob({
     getPostJobData("KQ", event);
   };
   const getPSPostData = (event) => {
-    setPreScreenData(event);
+    setPreScreenData(event.questionArr);
+    setPreScreenCustomData(event.customAnserType);
     getPostJobData("PS", event);
   };
   const getPostJobData = (type, event) => {
@@ -81,7 +85,9 @@ export default function CreateJob({
       experienceSchedule: type === "ES" ? event : experienceScheduleData,
       paymentBenifits: type === "PB" ? event : paymentBenifitsData,
       keyQualification: type === "KQ" ? event : keyQualificationData,
-      preScreen: type === "PS" ? event : preScreenData,
+      preScreen: type === "PS" ? event.questionArr : preScreenData,
+      preCustomScreen:
+        type === "PS" ? event.customAnserType : preScreenCustomData,
     };
     JobDataForPreview(data);
     setSetFormData(data);
@@ -103,6 +109,7 @@ export default function CreateJob({
           description: previousData.description,
           companyDetail: previousData.companydetails,
           jobLoactionOptions: jobLocationOptions,
+          customquestionanswertype: previousData.customquestionanswertype,
         },
         experienceSchedule: {
           jobType:
@@ -168,6 +175,7 @@ export default function CreateJob({
       setPaymentBenifitsData(data.paymentBenifits);
       setKeyQualificationData(data.keyQualification);
       setPreScreenData(data.preScreen);
+      setPreScreenCustomData(data.basicInformation.customquestionanswertype);
       JobDataForPreview(data);
     }
   }, []);

@@ -25,8 +25,10 @@ import {
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
-import { Progress } from "react-sweet-progress";
 import "./cardview.scss";
+import { updateMonthstoYears } from "_helpers/helper";
+import { ProgressCircle } from "_components/common/progress";
+import moment from "moment";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -132,6 +134,46 @@ export const CandidateCardView = (props) => {
     }
   };
 
+  const returnWorkExperince = () => {
+    if (
+      props?.data?.candidateQualificationsDtos &&
+      props?.data?.candidateQualificationsDtos?.length > 0
+    ) {
+      return (
+        <Row>
+          {props.data.candidateQualificationsDtos.map((data) => {
+            return (
+              <>
+                <Col sm={12} md={12} lg={12} xl={12} className="card-details">
+                  {data.jobtitle ? data.jobtitle : "-"}
+                </Col>
+                <Col sm={8} md={8} lg={8} xl={8} className="card-details-op">
+                  {data.company ? data.company : "-"}
+                </Col>
+                <Col
+                  sm={4}
+                  md={4}
+                  lg={4}
+                  xl={4}
+                  className="right-align card-details-op pl-0"
+                >
+                  {" "}
+                  {data.iscurrentlyworking
+                    ? `${moment(data.startdate).format("YYYY")} - Present`
+                    : `${moment(data.startdate).format("YYYY")} - ${moment(
+                        data.enddate
+                      ).format("YYYY")}`}
+                </Col>
+              </>
+            );
+          })}
+        </Row>
+      );
+    } else {
+      return "-";
+    }
+  };
+
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
@@ -144,7 +186,7 @@ export const CandidateCardView = (props) => {
                     {props?.data?.candidateQualificationsDtos &&
                     props?.data?.candidateQualificationsDtos.length > 0
                       ? props?.data?.candidateQualificationsDtos[0]?.jobtitle
-                      : ""}
+                      : "-"}
                   </div>
                   <p className="card-details-op">
                     <span>
@@ -155,26 +197,21 @@ export const CandidateCardView = (props) => {
                       ? (props?.data?.candidateQualificationsDtos[0]?.cityname
                           ? props?.data?.candidateQualificationsDtos[0]
                               ?.cityname
-                          : "") +
+                          : "-") +
                         ", " +
                         (props?.data?.candidateQualificationsDtos[0]?.statename
                           ? props?.data?.candidateQualificationsDtos[0]
                               ?.statename
-                          : "")
-                      : ""}
+                          : "-")
+                      : "-"}
                   </p>
                 </Col>
                 <Col className="col-3">
                   <div className="card-title right-align">
                     {props?.data?.avgscore ? (
-                      <Progress
-                        className="mb-3"
-                        percent={props?.data?.avgscore * 10}
-                        type="circle"
-                        width={60}
-                        strokeWidth={6}
-                        color="green"
-                      />
+                      <>
+                        <ProgressCircle avgscore={props?.data?.avgscore} />
+                      </>
                     ) : (
                       <></>
                     )}
@@ -193,13 +230,7 @@ export const CandidateCardView = (props) => {
                   </Col>
                   <Col md="11" lg="11">
                     <b>Work Experience</b>
-                    <p>
-                      {props?.data?.jobExperienceScheduleDtos &&
-                      props?.data?.jobExperienceScheduleDtos[0]?.experiencelevel
-                        ? props?.data?.jobExperienceScheduleDtos[0]
-                            ?.experiencelevel
-                        : "-"}
-                    </p>
+                    <p>{returnWorkExperince()}</p>
                   </Col>
                 </Row>
               </p>

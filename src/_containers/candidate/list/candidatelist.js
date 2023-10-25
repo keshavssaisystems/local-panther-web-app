@@ -12,6 +12,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { CandListView } from "./candlistview";
 import { JobDetailModal } from "_components/modal/jobdetailmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
+import { NoDataFound } from "_components/common/nodatafound";
 import "./candidatelist.scss";
 
 export const CandidateList = (props) => {
@@ -212,15 +213,50 @@ export const CandidateList = (props) => {
     } else if (type === "id") {
       //with dummy data
       let obj = {
-        scheduledate: "2023-10-09T00:00:00",
-        starttime: "20:00:00",
-        duration: "45 min",
+        scheduledate:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].scheduledate
+            : null,
+        starttime:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].starttime
+            : null,
+        duration:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].duration
+            : null,
 
-        jobtitle: "Sr iOS and React Native developer",
-        format: "In-person",
-        interviewername: "",
-        videolink: "",
+        jobtitle:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].jobtitle
+            : null,
+        format:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].format
+            : null,
+        interviewername:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].interviewername
+            : null,
+        videolink:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].videolink
+            : null,
+        isappvideocall:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].isappvideocall
+            : null,
+        interviewaddress:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].interviewaddress
+            : null,
+        textremaindernumbers:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].textremaindernumbers
+            : null,
       };
+
+      debugger;
       setSelectedIDData(obj);
       setShowIDModal(true);
     }
@@ -418,7 +454,10 @@ export const CandidateList = (props) => {
                   <Row>
                     {candidateJobList.length === 0 && !loading ? (
                       <Row style={{ textAlign: "center" }}>
-                        <Col>No Records found!</Col>
+                        <Col>
+                          {" "}
+                          <NoDataFound></NoDataFound>
+                        </Col>
                       </Row>
                     ) : (
                       ""
@@ -468,7 +507,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -520,7 +562,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -572,7 +617,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -624,7 +672,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -676,7 +727,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -728,7 +782,10 @@ export const CandidateList = (props) => {
                       <>
                         {candidateJobList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""

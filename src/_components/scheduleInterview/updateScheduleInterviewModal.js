@@ -25,13 +25,13 @@ export function UpdateScheduleInterviewModal({
   onClose,
 }) {
   let formatedData =
-    interviewData.format === "In-person"
+    interviewData?.format === "In-person"
       ? 3
-      : interviewData.format === "Phone"
+      : interviewData?.format === "Phone"
       ? 2
       : 1;
   const [videoModeCheck, setVideoModeCheck] = useState(
-    interviewData.isappvideocall === true ? 0 : 1
+    interviewData?.isappvideocall === true ? 0 : 1
   );
   const [timeOption, setTimeOption] = useState([]);
   const [modal, setModal] = useState(false);
@@ -209,16 +209,18 @@ export function UpdateScheduleInterviewModal({
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Candidate</h6>
                     <p className="mb-0 mt-1 mr-1">
-                      {interviewData.candidatename === undefined
-                        ? interviewData.firstname + " " + interviewData.lastname
-                        : interviewData.candidatename}
+                      {interviewData?.candidatename === undefined
+                        ? interviewData?.firstname +
+                          " " +
+                          interviewData?.lastname
+                        : interviewData?.candidatename}
                     </p>
                   </div>
                 </Col>
                 <Col md={4}>
                   <div className="detail-padding">
                     <h6 className="mb-0 heading-custom">Job title</h6>
-                    <p className="mb-0 mt-1 mr-1">{interviewData.jobtitle}</p>
+                    <p className="mb-0 mt-1 mr-1">{interviewData?.jobtitle}</p>
                   </div>
                 </Col>
                 <Col></Col>
@@ -233,7 +235,7 @@ export function UpdateScheduleInterviewModal({
                       id="scheduleDate"
                       placeholder="Enter date"
                       invalid={scheduleDateValidation}
-                      defaultValue={moment(interviewData.scheduledate).format(
+                      defaultValue={moment(interviewData?.scheduledate).format(
                         "YYYY-MM-DD"
                       )}
                       onChange={() => setScheduleDateValidation(false)}
@@ -263,7 +265,7 @@ export function UpdateScheduleInterviewModal({
                           <option
                             key={options}
                             value={options}
-                            selected={moment(interviewData.starttime).format(
+                            selected={moment(interviewData?.starttime).format(
                               "hh:mm A"
                             )}
                           >
@@ -299,7 +301,7 @@ export function UpdateScheduleInterviewModal({
                             <option
                               value={data.id}
                               key={data.id}
-                              selected={Number(interviewData.durationid)}
+                              selected={Number(interviewData?.durationid)}
                             >
                               {data.name}
                             </option>
@@ -393,7 +395,7 @@ export function UpdateScheduleInterviewModal({
                     id="videoLink"
                     placeholder="Enter video link"
                     invalid={videoLinkValidation}
-                    defaultValue={interviewData.videolink}
+                    defaultValue={interviewData?.videolink}
                     onChange={() => setVideoLinkValidation(false)}
                   />
                   {videoLinkValidation === true && (
@@ -412,7 +414,7 @@ export function UpdateScheduleInterviewModal({
                     id="interviewAddress"
                     placeholder="Enter interview address"
                     invalid={interviewAddressValidation}
-                    defaultValue={interviewData.interviewaddress}
+                    defaultValue={interviewData?.interviewaddress}
                     onChange={() => setInterviewAddressValidation(false)}
                   />
                   {interviewAddressValidation === true && (
@@ -430,7 +432,7 @@ export function UpdateScheduleInterviewModal({
                   type="textarea"
                   name="message"
                   id="message"
-                  defaultValue={interviewData.messagetocandidate}
+                  defaultValue={interviewData?.messagetocandidate}
                   placeholder="Enter message to candidate"
                 />
               </FormGroup>
@@ -442,7 +444,7 @@ export function UpdateScheduleInterviewModal({
                   type="textarea"
                   name="hmEmails"
                   id="hmEmails"
-                  defaultValue={interviewData.intervieweremailids}
+                  defaultValue={interviewData?.intervieweremailids}
                   placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
                 />
               </FormGroup>
@@ -457,7 +459,7 @@ export function UpdateScheduleInterviewModal({
                       mask="(999)-999-9999"
                       maskChar={null}
                       name="phoneNo"
-                      defaultValue={interviewData.textremaindernumbers}
+                      defaultValue={interviewData?.textremaindernumbers}
                       id="phoneNo"
                       placeholder="Eg: (987)-654-3210"
                     />

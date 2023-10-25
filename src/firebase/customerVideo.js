@@ -48,12 +48,10 @@ export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
 
   // 2. Create an offer
   const onCreateCall = async () => {
-    debugger;
     // Reference Firestore collections for signaling
     const callDoc = firestore.collection("calls").doc();
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
-    debugger;
     const callInput = document.getElementById("callInput");
     callInput.value = callDoc.id;
 
@@ -65,7 +63,6 @@ export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
     // Create offer
     const offerDescription = await pc.createOffer();
     await pc.setLocalDescription(offerDescription);
-
     const offer = {
       sdp: offerDescription.sdp,
       type: offerDescription.type,
@@ -100,13 +97,13 @@ export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
         <Col md={6} lg={6} sm={12}>
           <span>
             <h4>Customer Stream</h4>
-            <video id="webcamVideo" playsInline autoPlay></video>
+            <video controls id="webcamVideo" playsInline autoPlay></video>
           </span>
         </Col>
         <Col md={6} lg={6} sm={12}>
           <span>
             <h4>Candidate Stream</h4>
-            <video id="remoteVideo" playsInline autoPlay></video>
+            <video controls id="remoteVideo" playsInline autoPlay></video>
           </span>
         </Col>
       </div>

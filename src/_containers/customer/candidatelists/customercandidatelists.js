@@ -20,6 +20,7 @@ import { customerCandidateListsActions } from "./customercandidatelists.slice";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -346,7 +347,9 @@ export const CustomerCandidateLists = (props) => {
                     <>
                       {candidateList.length === 0 && !loading ? (
                         <Row style={{ textAlign: "center" }}>
-                          <Col>No Records found!</Col>
+                          <Col>
+                            <NoDataFound></NoDataFound>
+                          </Col>
                         </Row>
                       ) : (
                         ""
@@ -395,7 +398,10 @@ export const CustomerCandidateLists = (props) => {
                       <>
                         {candidateList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -445,7 +451,10 @@ export const CustomerCandidateLists = (props) => {
                       <>
                         {candidateList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -495,7 +504,10 @@ export const CustomerCandidateLists = (props) => {
                       <>
                         {candidateList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -545,7 +557,10 @@ export const CustomerCandidateLists = (props) => {
                       <>
                         {candidateList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -595,7 +610,10 @@ export const CustomerCandidateLists = (props) => {
                       <>
                         {candidateList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""
@@ -645,7 +663,10 @@ export const CustomerCandidateLists = (props) => {
                       <>
                         {candidateList.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>No Records found!</Col>
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
                           </Row>
                         ) : (
                           ""

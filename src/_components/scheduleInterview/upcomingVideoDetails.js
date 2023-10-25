@@ -97,8 +97,8 @@ export function UpcomingVideoDetails({
   let customQuestion = [];
   let preQuestions = [];
   if (
-    interviewDetails.jobCandidatePrescreenApplicantDtos !== null &&
-    interviewDetails.jobCandidatePrescreenApplicantDtos.length > 0
+    interviewDetails?.jobCandidatePrescreenApplicantDtos !== null &&
+    interviewDetails?.jobCandidatePrescreenApplicantDtos.length > 0
   ) {
     interviewDetails.jobCandidatePrescreenApplicantDtos.forEach((element) => {
       if (element.iscustomquestion === false) {
@@ -278,7 +278,7 @@ export function UpcomingVideoDetails({
                   <div className="p-custom">
                     <p className="mb-0">
                       <a
-                        href={interviewDetails.videolink}
+                        href={interviewDetails?.videolink}
                         target={"_blank"}
                         rel="noreferrer"
                       >
@@ -288,7 +288,7 @@ export function UpcomingVideoDetails({
                     </p>
                   </div>
                 )}
-              {interviewDetails.isappvideocall === true &&
+              {interviewDetails?.isappvideocall === true &&
                 interviewDetails?.format === "Video" && (
                   <div className="p-custom">
                     <p className="mb-0">

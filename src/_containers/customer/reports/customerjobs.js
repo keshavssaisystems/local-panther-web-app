@@ -27,6 +27,9 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
+import { exportToExcel } from "react-json-to-excel";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./customerreport.scss";
 const columns = [
   {
     name: "Job Code",
@@ -93,12 +96,38 @@ export function CustomerReportJobList() {
   let [filter, setFilter] = useState({});
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
+  const [excelData, setExcelData] = useState([]);
 
+  const jobList = useSelector((state) => state?.customerReportReducer?.jobList);
+  const loading = useSelector((state) => state?.customerReportReducer?.loading);
   useEffect(() => {
     onGetCustReportJobList();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (jobList?.length > 0) {
+      let filteredData = jobList.map((data) => {
+        return {
+          "Job Code": data.jobid,
+          Title: data.jobtitle,
+          Status: data.jobstatus,
+          "No. of Positions": data.noofopenposition,
+          "Posted date": data.createddate
+            ? moment(data.createddate).format("MM/DD/YYYY")
+            : "",
+          "No. of Matched": data.matchedcandidates,
+          "No. of Liked": data.likedcandidates,
+          "No. of Maybe": data.maybecandidates,
+          "No. of Accepted": data.acceptedcandidates,
+          "No. of Rejected": data.rejectedcandidates,
+          "No. of Interviews Scheduled": data.scheduledinterviews,
+        };
+      });
+      setExcelData(filteredData);
+    }
+  }, [jobList]);
 
   const onGetCustReportJobList = (filter) => {
     let data = {
@@ -107,9 +136,6 @@ export function CustomerReportJobList() {
     };
     dispatch(getCustReportJobList(data));
   };
-
-  const jobList = useSelector((state) => state?.customerReportReducer?.jobList);
-  const loading = useSelector((state) => state?.customerReportReducer?.loading);
 
   const onSubmitHandler = () => {
     onGetCustReportJobList(filter);
@@ -132,7 +158,7 @@ export function CustomerReportJobList() {
   return (
     <>
       <PageTitle heading={"Customer Job List Report"} icon={titlelogo} />
-      <Row>
+      <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardHeader className="card-header-tab">
@@ -149,7 +175,11 @@ export function CustomerReportJobList() {
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(excelData, "customerJobsReport")
+                      }
+                    >
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
@@ -237,12 +267,20 @@ export function CustomerReportJobList() {
                     />
                   </>
                 ) : (
-                  <DataTable
-                    columns={columns}
-                    data={jobList}
-                    fixedHeader
-                    pagination
-                  />
+                  <>
+                    {jobList.length > 0 ? (
+                      <DataTable
+                        columns={columns}
+                        data={jobList}
+                        fixedHeader
+                        pagination
+                      />
+                    ) : (
+                      <Row className="center-align">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
                 )}
               </Row>
             </CardBody>

@@ -42,6 +42,7 @@ import {
   CandidateReport,
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
+  AdminCalendar
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
 import { Calendar } from "_containers/customer/common/calendar";
@@ -54,6 +55,7 @@ import { CustomerReportCandidateStatus } from "_containers/customer/reports/cust
 import { CustomerVideoScreen } from "../../firebase/customerVideo";
 import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
+import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 
 export function App() {
@@ -97,7 +99,7 @@ export function App() {
             path="/calendar"
             element={
               <PrivateRoute>
-                <AdminUnderConstruction title={"Calendar"} />
+                <AdminCalendar title={"Calendar"} />
               </PrivateRoute>
             }
           />
@@ -303,6 +305,14 @@ export function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/customer-chat"
+            element={
+              <PrivateRoute>
+                <Chat />
+              </PrivateRoute>
+            }
+          />
         </>
       );
     } else {
@@ -357,6 +367,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CandVideoScreen />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/candidate-chat"
+            element={
+              <PrivateRoute>
+                <Chat />
               </PrivateRoute>
             }
           />

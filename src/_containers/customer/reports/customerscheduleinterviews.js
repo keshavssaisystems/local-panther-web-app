@@ -24,12 +24,19 @@ import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { getCustReportScheduleIVList } from "./customerreport.slice";
+import {
+  getCustReportScheduleIVList,
+  getCandidateDropdown,
+  getJobDropdown,
+} from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
 import moment from "moment";
 import Loader from "react-loaders";
+import { exportToExcel } from "react-json-to-excel";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./customerreport.scss";
 const columns = [
   {
     name: "Job Code",
@@ -77,17 +84,44 @@ export function CustomerReportScheduledInterviews() {
   let [endDate, setEndDate] = useState();
   let [jobId, setJobId] = useState();
   let [candidateId, setCandidateId] = useState();
-
-  useEffect(() => {
-    onGetCustReportScheduleIVList({});
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [excelData, setExcelData] = useState([]);
 
   const schdInterviewList = useSelector(
     (state) => state?.customerReportReducer?.schdInterviewList
   );
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDropDownList = useSelector(
+    (state) => state?.customerReportReducer?.jobDropDownList
+  );
+  const candidateDropDownList = useSelector(
+    (state) => state?.customerReportReducer?.candidateDropDownList
+  );
+  useEffect(() => {
+    onGetCustReportScheduleIVList({});
+    dispatch(getCandidateDropdown());
+    dispatch(getJobDropdown());
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (schdInterviewList?.length > 0) {
+      let filteredData = schdInterviewList.map((data) => {
+        return {
+          "Job Code": data.jobid,
+          Title: data.jobtitle,
+          Status: data.jobstatus,
+          "Candidate Name": data.candidatename,
+          "Scheduled date": data.scheduledate
+            ? moment(data.scheduledate).format("MM/DD/YYYY")
+            : "",
+          Interviewers: data.intervieweremailids,
+          "Meeting Status": data.meetingstatus,
+        };
+      });
+      setExcelData(filteredData);
+    }
+  }, [schdInterviewList]);
 
   const onGetCustReportScheduleIVList = (filter) => {
     let data = {
@@ -147,7 +181,14 @@ export function CustomerReportScheduledInterviews() {
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(
+                          excelData,
+                          "customerScheduledInterviewReport"
+                        )
+                      }
+                    >
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
@@ -164,7 +205,7 @@ export function CustomerReportScheduledInterviews() {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
                     {/* <Label for="candidateid">Candidate Id</Label> */}
-                    <Input
+                    {/* <Input
                       name="candidateid"
                       id="candidateid"
                       placeholder="Candidate Id"
@@ -173,13 +214,38 @@ export function CustomerReportScheduledInterviews() {
                         handleChange("candidateid", e.target.value);
                         setCandidateId(e.target.value);
                       }}
-                    />
+                    /> */}
+                    <Input
+                      type="select"
+                      value={candidateId}
+                      name="candidateid"
+                      id="candidateid"
+                      placeholder="Candidate Id"
+                      onChange={(e) => {
+                        handleChange("candidateid", e.target.value);
+                        setCandidateId(e.target.value);
+                      }}
+                    >
+                      <option value={""}>Select a Candidate</option>
+                      {candidateDropDownList?.length > 0 ? (
+                        candidateDropDownList.map((data) => (
+                          <option
+                            value={data.candidateid}
+                            key={data.candidateid}
+                          >
+                            {data.firstname + " " + data.lastname}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
                     {/* <Label for="jobid">Job Id</Label> */}
-                    <Input
+                    {/* <Input
                       name="jobid"
                       id="jobid"
                       placeholder="Job Id"
@@ -188,7 +254,29 @@ export function CustomerReportScheduledInterviews() {
                         handleChange("jobid", e.target.value);
                         setJobId(e.target.value);
                       }}
-                    />
+                    /> */}
+                    <Input
+                      type="select"
+                      value={jobId}
+                      name="jobid"
+                      id="jobid"
+                      placeholder="Job Id"
+                      onChange={(e) => {
+                        handleChange("jobid", e.target.value);
+                        setJobId(e.target.value);
+                      }}
+                    >
+                      <option value={""}>Select a Job</option>
+                      {jobDropDownList?.length > 0 ? (
+                        jobDropDownList.map((data) => (
+                          <option value={data.jobid} key={data.jobid}>
+                            {data.jobtitle}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
@@ -265,12 +353,20 @@ export function CustomerReportScheduledInterviews() {
                     />
                   </>
                 ) : (
-                  <DataTable
-                    columns={columns}
-                    data={schdInterviewList}
-                    fixedHeader
-                    pagination
-                  />
+                  <>
+                    {schdInterviewList.length > 0 ? (
+                      <DataTable
+                        columns={columns}
+                        data={schdInterviewList}
+                        fixedHeader
+                        pagination
+                      />
+                    ) : (
+                      <Row className="center-align">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
                 )}
               </Row>
             </CardBody>
