@@ -36,7 +36,7 @@ export const AdminListing = ({ entity }) => {
   const [message, setMessage] = useState("")
   const [success, setSuccess] = useState(false)
   const [isAddMode, setIsAddMode] = useState(false)
-  const [editMode, setEditMode] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
   const [newCompData, setNewCompData] = useState({
@@ -133,13 +133,13 @@ export const AdminListing = ({ entity }) => {
 
   const handleRowClick = (row) => {
     setSelectedRowData(row);
-    setEditMode(true);
     setIsAddMode(false); // Open the modal
+    setOpenModal(true)
   };
 
   const onAddClick = () => {
-    setEditMode(false); // Reset edit mode
     setIsAddMode(true); // Open the modal
+    setOpenModal(true)
   };
 
   const onSearchClick = () => {
@@ -149,7 +149,6 @@ export const AdminListing = ({ entity }) => {
   const close = () => {
     setIsAddMode(false)
     setSuccess(false)
-    setEditMode(false); // Reset edit mode
     setEditingData(null); // Reset editing data
   }
 
@@ -160,10 +159,10 @@ export const AdminListing = ({ entity }) => {
   };
 
   const onSaveClick = async (e) => {
-    if ( editMode ) {
-      console.log("NG UPDATE customers listing", e.target.value)
+    if ( isAddMode ) {
+      // do something for  e.target.value in Add mode
     } else {
-      console.log("NG ADD MODE admin listing, entity", e.target.value)
+      // do something for  e.target.value in EDIT mode
     }
   };
 
@@ -297,11 +296,11 @@ export const AdminListing = ({ entity }) => {
           </CardBody>
         </Card>
       </Modal>
-      {isAddMode ? <div>
-        <Modal isOpen={isAddMode}>
+      {openModal ? <div>
+        <Modal isOpen={openModal}>
           <ModalHeader toggle={() => close()} charCode="Y">
             <strong className="card-title-text">
-              {editMode
+              {!isAddMode
                 ? `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
                 : `Add New ${entity.charAt(0).toUpperCase() + entity.slice(1)}`}
             </strong>
@@ -310,7 +309,7 @@ export const AdminListing = ({ entity }) => {
             {entity === 'company1' && (
               <NewCompany
                 editingData={editingData}
-                editMode={editMode}
+                isAddMode={isAddMode}
                 data={newCompData}
                 updateVal={(evt) => onUpdateNewComp(evt, 'company')}
               />
@@ -320,7 +319,7 @@ export const AdminListing = ({ entity }) => {
                 editingData={editingData}
                 isAddMode={isAddMode}
                 setIsAddMode={setIsAddMode}
-                selectedRowData={selectedRowData}
+                data={selectedRowData}
                 // data={newCustData}
                 entity={entity}
               // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
@@ -332,7 +331,7 @@ export const AdminListing = ({ entity }) => {
                 editingData={editingData}
                 isAddMode={isAddMode}
                 setIsAddMode={setIsAddMode}
-                selectedRowData={selectedRowData}
+                data={selectedRowData}
                 // data={newCustData}
                 entity={entity}
                 // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}

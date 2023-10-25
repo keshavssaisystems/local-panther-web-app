@@ -18,29 +18,54 @@ import {
 import { async } from "q";
 
 export const AddEditCustomer = (props) => {
+  const { entity, isAddMode, data } = props;
+  const customerId = data.customerid
   const dispatch = useDispatch()
   const {
     companyDropdownData
   } = useSelector((state) => state?.addCustomer ?? {});
+  const { statesList, citiesList, companiesList } = useSelector((state) => state.addCustomer);
+  // console.log("NG stateList in Add edit component", statesList)
+  // console.log("NG citiesList in Add edit component", citiesList)
+  // console.log("NG companiesList in Add edit component", companiesList)
 
-
-
-  const { entity, isAddMode, selectedRowData } = props;
 
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+/*
+  companyid
+  countryid
+  countryname
+  customerid
+  cityid : city
+  stateid : state
+  isactive
+  title
+  userid
+  userroleid
+  
+  companyname : companyname
+  firstname
+  lastname
+  address
+  cityname : city
+  statename : //need to figure out label for the value
+  zipcode
+  phonenumber
+  email
 
+  */
   // form validation rules 
   const validationSchema = Yup.object().shape({
-    company: Yup.string()
-      .required('Company is required')
+    companyname: Yup.string()
+      .required('Company name is required')
       .max(50),
     firstname: Yup.string()
-      .required('First Name is required')
+      .required('First name is required')
       .max(50),
     lastname: Yup.string()
-      .required('Last Name is required')
+      .required('Last name is required')
       .max(50),
     city: Yup.string()
       .required("City is required").max(30),
@@ -48,8 +73,8 @@ export const AddEditCustomer = (props) => {
       .required("State is required").max(30),
     address: Yup.string().max(50),
     phonenumber: Yup.string()
-      .required("phonenumber is required")
-      .matches(phoneRegExp, "phonenumber number is not valid")
+      .required("Phone# is required")
+      .matches(phoneRegExp, "Phone# is not valid")
       .max(20),
     email: Yup.string()
       .required("Email is required")
@@ -60,37 +85,32 @@ export const AddEditCustomer = (props) => {
 
   const formOptions = { resolver: yupResolver(validationSchema) };
 
-
   // functions to build form returned by useForm() hook
   // const { register, handleSubmit, reset, setValue, getValues, formState } = useForm({
   //   resolver: yupResolver(validationSchema)
   // });
 
   // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState } = useForm(formOptions);
+  const { register, handleSubmit, reset, setValue, getValues, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
-  const { statesList, citiesList, companiesList } = useSelector((state) => state.addCustomer);
-  // console.log("NG stateList in Add edit component", statesList)
-  // console.log("NG citiesList in Add edit component", citiesList)
-  // console.log("NG companiesList in Add edit component", companiesList)
   
   const createEntity = async(data) => {
     // citiesList.find((cty)=> {return })
-    const payload = { ...data, stateid: data.state, companyid: data.company, title: data.firstname }
+    const payload = { ...data, stateid: data.state, companyid: data.companyname, title: data.firstname }
     console.log("NG Create customer payload", payload)
     await dispatch(addCustomer(payload))
     props.setIsAddMode(false)
   }
 
-  function updateEntity(selectedRowData, data) {
-    console.log("NG Update Entity")
+  function updateEntity(customerId, data) {
+    // update entity here
   }
 
   const onSubmit = (data) => {
     return (isAddMode
       ? createEntity(data)
-      : updateEntity(selectedRowData, data))
+      : updateEntity(customerId, data))
   }
 
   useEffect(() => {
@@ -100,9 +120,11 @@ export const AddEditCustomer = (props) => {
       dispatch(getCompaniesList())
     }else {
       console.log("NG This is EDIT mode !!!")
+ // set default to state, city, companyname
+      const formFields = [ "companyname", "firstname", "lastname", "address", "cityname", "statename","zipcode", "phonenumber", "email" ]
+      formFields.forEach(field => setValue(field, data[field]))
     }
   }, []);
-
 
   return (
     <Row>
@@ -284,20 +306,20 @@ export const AddEditCustomer = (props) => {
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="company">
+              <Label for="companyname">
                 Company  <span style={{ color: "red" }}>* </span>
               </Label>
               <select
-                name="company"
+                name="companyname"
                 placeholder="company..."
-                className={`field-input placeholder-text form-control ${errors?.company
+                className={`field-input placeholder-text form-control ${errors?.companyname
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
-                {...register("company")}
+                {...register("companyname")}
               >
                 <option key={0} value=""> 
-                Select company 
+                Select company
                 </option>
                 {companiesList?.length > 0 &&
                   companiesList?.map((options) => (
@@ -310,7 +332,7 @@ export const AddEditCustomer = (props) => {
                   ))}
               </select>
               <div className="invalid-feedback">
-                {errors?.company?.message}
+                {errors?.companyname?.message}
               </div>
             </FormGroup>
           </Col>
