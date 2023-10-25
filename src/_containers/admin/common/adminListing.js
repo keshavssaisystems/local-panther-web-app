@@ -7,12 +7,16 @@ import "_containers/admin/common/adminListing.scss"
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { getCompanies, getIndustries, getCustomers, getUsers, getRoles, getMenuMappings } from '_containers/admin/_redux/adminListing.slice'
+import { addCustomer } from '_containers/admin/_redux/addCustomer.slice'
+
+
 import { NewCompany } from "_components/common/newcompany";
 import errorIcon from "assets/utils/images/error_icon.png";
 import successIcon from "assets/utils/images/success_icon.svg";
 import { NewCustomer } from "_components/common/addCustomer";
 import AsyncSelect from 'react-select/async';
-import { AddEdit } from "./addEdit";
+import { AddEditCustomer } from "./addEditCustomer";
+import { AddEditCompany } from "./addEditCompany";
 import { createEntityAdapter } from "@reduxjs/toolkit";
 
 export const AdminListing = ({ entity }) => {
@@ -22,6 +26,10 @@ export const AdminListing = ({ entity }) => {
     industyList,
     industryCompanyMapping,
     loading = false } = useSelector((state) => state?.adminListing ?? {});
+
+    const {
+      companyDropdownData
+    } = useSelector((state) => state?.addCustomer ?? {});
 
   let title, icon, listingTitle, columns = [], searchFilter = [], buttonsList = [];
   const [error, setError] = useState(false)
@@ -134,6 +142,10 @@ export const AdminListing = ({ entity }) => {
     setIsAddMode(true); // Open the modal
   };
 
+  const onSearchClick = () => {
+    console.log("Search is clicked")
+  }
+
   const close = () => {
     setIsAddMode(false)
     setSuccess(false)
@@ -150,10 +162,8 @@ export const AdminListing = ({ entity }) => {
   const onSaveClick = async (e) => {
     if ( editMode ) {
       console.log("NG UPDATE customers listing", e.target.value)
-
     } else {
       console.log("NG ADD MODE admin listing, entity", e.target.value)
-
     }
   };
 
@@ -178,11 +188,17 @@ export const AdminListing = ({ entity }) => {
   const cardFilters = searchFilter.map(item => (
     < Col lg="3" md="3" sm="12" sx="12" >
       <Input name={item.id} type="select" onChange={handleChange}>
-        {industyList.map((ele) => (
+        { item.id === 'industry' ? industyList?.map((ele) => (
           <option key={ele} value={ele}>
             {ele}
           </option>
-        ))}
+        )) : ''
+          // : companyDropdown?.map((ele) => (
+          //   <option key={ele} value={ele}>
+          //     {ele}
+          //   </option>
+          // ))
+      }
         <option value="">{item.name}</option>
       </Input>
     </Col >
@@ -193,7 +209,7 @@ export const AdminListing = ({ entity }) => {
       <FormGroup>
         <InputGroup>
           <div className="admin-list btn-actions-pane-right ">
-            <Button className="mb-2 me-2  " color="primary" onClick={onAddClick}>
+            <Button className="mb-2 me-2  " color="primary" onClick={item.id === 'search' ? onSearchClick : onAddClick}>
               {item.name}
             </Button>
           </div>
@@ -291,7 +307,7 @@ export const AdminListing = ({ entity }) => {
             </strong>
           </ModalHeader>
           <ModalBody>
-            {entity === 'company' && (
+            {entity === 'company1' && (
               <NewCompany
                 editingData={editingData}
                 editMode={editMode}
@@ -299,10 +315,23 @@ export const AdminListing = ({ entity }) => {
                 updateVal={(evt) => onUpdateNewComp(evt, 'company')}
               />
             )}
-            {entity === 'customers' && (
-              <AddEdit
+            {entity === 'company' && (
+              <AddEditCompany
                 editingData={editingData}
                 isAddMode={isAddMode}
+                setIsAddMode={setIsAddMode}
+                selectedRowData={selectedRowData}
+                // data={newCustData}
+                entity={entity}
+              // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
+              />
+            )}
+
+            {entity === 'customers' && (
+              <AddEditCustomer
+                editingData={editingData}
+                isAddMode={isAddMode}
+                setIsAddMode={setIsAddMode}
                 selectedRowData={selectedRowData}
                 // data={newCustData}
                 entity={entity}

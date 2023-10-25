@@ -2,20 +2,28 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getStatesList, getCitiesList, getCompaniesList, addCustomer } from '_containers/admin/_redux/addCustomer.slice'
+// import { getState } from '_store/dropdownstate.slice'
 
 import {
   Form,
   FormGroup,
   Label,
-  Input,
   Row,
   Col,
   FormText,
   Button,
 } from "reactstrap";
+import { async } from "q";
 
-export const AddEdit = (props) => {
+export const AddEditCustomer = (props) => {
+  const dispatch = useDispatch()
+  const {
+    companyDropdownData
+  } = useSelector((state) => state?.addCustomer ?? {});
+
+
 
   const { entity, isAddMode, selectedRowData } = props;
 
@@ -26,26 +34,28 @@ export const AddEdit = (props) => {
   // form validation rules 
   const validationSchema = Yup.object().shape({
     company: Yup.string()
-      .required('Company is required'),
-    firstName: Yup.string()
-      .required('First Name is required'),
-    lastName: Yup.string()
-      .required('Last Name is required'),
+      .required('Company is required')
+      .max(50),
+    firstname: Yup.string()
+      .required('First Name is required')
+      .max(50),
+    lastname: Yup.string()
+      .required('Last Name is required')
+      .max(50),
     city: Yup.string()
-      .required("City is required").max(50),
+      .required("City is required").max(30),
     state: Yup.string()
-      .required("State is required").max(50),
+      .required("State is required").max(30),
     address: Yup.string().max(50),
-    phone: Yup.string()
-      .required("Phone Number is required")
-      .matches(phoneRegExp, "Phone number is not valid")
+    phonenumber: Yup.string()
+      .required("phonenumber is required")
+      .matches(phoneRegExp, "phonenumber number is not valid")
       .max(20),
     email: Yup.string()
       .required("Email is required")
       .matches(emailRegex, "Email is not valid")
-      .max(50),
-    zipCode: Yup.string().max(50),
-
+      .max(30),
+    zipcode: Yup.string().max(15),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -59,27 +69,37 @@ export const AddEdit = (props) => {
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
-  console.log('errors, isSubmitting :>> ', errors, isSubmitting);
 
-  function createEntity(data) {
-    console.log("NG create Entity")
+  const { statesList, citiesList, companiesList } = useSelector((state) => state.addCustomer);
+  // console.log("NG stateList in Add edit component", statesList)
+  // console.log("NG citiesList in Add edit component", citiesList)
+  // console.log("NG companiesList in Add edit component", companiesList)
+  
+  const createEntity = async(data) => {
+    // citiesList.find((cty)=> {return })
+    const payload = { ...data, stateid: data.state, companyid: data.company, title: data.firstname }
+    console.log("NG Create customer payload", payload)
+    await dispatch(addCustomer(payload))
+    props.setIsAddMode(false)
   }
 
   function updateEntity(selectedRowData, data) {
     console.log("NG Update Entity")
   }
-  const stateList = useSelector((state) => state.state.user.data);
 
   const onSubmit = (data) => {
-    console.log("NG data collected", data)
     return (isAddMode
       ? createEntity(data)
       : updateEntity(selectedRowData, data))
   }
 
   useEffect(() => {
-    if (!isAddMode) {
-      console.log("NG This is NOT AddMode")
+    if (isAddMode) {
+      dispatch(getStatesList())
+      dispatch(getCitiesList())
+      dispatch(getCompaniesList())
+    }else {
+      console.log("NG This is EDIT mode !!!")
     }
   }, []);
 
@@ -90,63 +110,43 @@ export const AddEdit = (props) => {
         <Row>
           <Col md={12}>
             <FormGroup>
-              <Label for="company">
-                Company  <span style={{ color: "red" }}>* </span>
-              </Label>
-              <input
-                type="text"
-                name="company"
-                {...register("company")}
-                placeholder="company name..."
-                className={`field-input placeholder-text form-control ${errors?.company
-                    ? "is-invalid error-text"
-                    : "input-text"
-                  }`}
-              />
-              <div className="invalid-feedback">
-                {errors?.company?.message}
-              </div>
-            </FormGroup>
-          </Col>
-          <Col md={12}>
-            <FormGroup>
-              <Label for="firstName">
+              <Label for="firstname">
                 First name <span style={{ color: "red" }}>* </span>
               </Label>
               <input
                 type="text"
-                name="firstName"
+                name="firstname"
                 
-                {...register("firstName")} 
+                {...register("firstname")} 
                 placeholder="First name..."
-                className={`field-input placeholder-text form-control ${errors?.firstName
+                className={`field-input placeholder-text form-control ${errors?.firstname
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
               />
               <div className="invalid-feedback">
-                {errors?.firstName?.message}
+                {errors?.firstname?.message}
               </div>
             </FormGroup>
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="lastName">
+              <Label for="lastname">
                 Last name <span style={{ color: "red" }}>* </span>
               </Label>
               <input
                 type="text"
-                name="lastName"
+                name="lastname"
                 
-                {...register("lastName")}
+                {...register("lastname")}
                 placeholder="Last name..."
-                className={`field-input placeholder-text form-control ${errors?.lastName
+                className={`field-input placeholder-text form-control ${errors?.lastname
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
               />
               <div className="invalid-feedback">
-                {errors?.lastName?.message}
+                {errors?.lastname?.message}
               </div>
             </FormGroup>
           </Col>
@@ -168,6 +168,27 @@ export const AddEdit = (props) => {
               />
               <div className="invalid-feedback">
                 {errors?.email?.message}
+              </div>
+            </FormGroup>
+          </Col>
+          <Col md={12}>
+            <FormGroup>
+              <Label for="phonenumber">
+                Phone
+              </Label>
+              <input
+                type="text"
+                name="phonenumber"
+
+                {...register("phonenumber")}
+                placeholder="phonenumber..."
+                className={`field-input placeholder-text form-control ${errors?.phonenumber
+                  ? "is-invalid error-text"
+                  : "input-text"
+                  }`}
+              />
+              <div className="invalid-feedback">
+                {errors?.phonenumber?.message}
               </div>
             </FormGroup>
           </Col>
@@ -228,12 +249,8 @@ export const AddEdit = (props) => {
                   {...register("state")}
               >
                 <option key={0} value=""> Select state </option>
-                <option value="state1">state1</option>
-                <option value="state2">state2</option>
-                <option value="state3">state3</option>
-                <option value="state4">state4</option>
-                {stateList?.length > 0 &&
-                  stateList?.map((options) => (
+                {statesList?.length > 0 &&
+                  statesList?.map((options) => (
                     <option
                       key={options.id}
                       value={options.id}
@@ -246,43 +263,54 @@ export const AddEdit = (props) => {
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="zipCode">
+              <Label for="zipcode">
                 Zip code
               </Label>
               <input
                 type="text"
-                name="zipCode"
+                name="zipcode"
                 
-                {...register("zipCode")}
-                placeholder="zipCode..."
-                className={`field-input placeholder-text form-control ${errors?.zipCode
+                {...register("zipcode")}
+                placeholder="zipcode..."
+                className={`field-input placeholder-text form-control ${errors?.zipcode
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
               />
               <div className="invalid-feedback">
-                {errors?.zipCode?.message}
+                {errors?.zipcode?.message}
               </div>
             </FormGroup>
           </Col>
           <Col md={12}>
             <FormGroup>
-              <Label for="phone">
-                Phone
+              <Label for="company">
+                Company  <span style={{ color: "red" }}>* </span>
               </Label>
-              <input
-                type="text"
-                name="phone"
-                
-                {...register("phone")}
-                placeholder="phone..."
-                className={`field-input placeholder-text form-control ${errors?.phone
+              <select
+                name="company"
+                placeholder="company..."
+                className={`field-input placeholder-text form-control ${errors?.company
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
-              />
+                {...register("company")}
+              >
+                <option key={0} value=""> 
+                Select company 
+                </option>
+                {companiesList?.length > 0 &&
+                  companiesList?.map((options) => (
+                    <option
+                      key={options.id}
+                      value={options.id}
+                    >
+                      {options.name}
+                    </option>
+                  ))}
+              </select>
               <div className="invalid-feedback">
-                {errors?.phone?.message}
+                {errors?.company?.message}
               </div>
             </FormGroup>
           </Col>
@@ -293,7 +321,6 @@ export const AddEdit = (props) => {
         {isAddMode ? 'Submit' : 'Update'}
       </Button>
       </Form>
-
     </Row>
   );
 };

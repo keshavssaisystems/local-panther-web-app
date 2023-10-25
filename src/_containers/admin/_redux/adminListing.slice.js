@@ -16,7 +16,8 @@ const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
 
 const urlParams= {
   isActive : true,
-  pageSize : 1000
+  pageSize: 500,
+  pageNumber: 1
 };
 
 export const getCompanies = createAsyncThunk(
