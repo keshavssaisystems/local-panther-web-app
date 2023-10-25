@@ -64,20 +64,16 @@ export const AddEditCompany = (props) => {
   const { errors, isSubmitting } = formState;
 
   const { statesList, citiesList, companiesList, countriesList } = useSelector((state) => state.addCustomer);
-  // console.log("NG stateList in Add edit component", statesList)
-  // console.log("NG citiesList in Add edit component", citiesList)
-  console.log("NG countriesList in Add edit component", countriesList)
   
   const createEntity = async(data) => {
     // citiesList.find((cty)=> {return })
     const payload = { Companyid: "0", Companyname: data.company, Industry: data.industry, Contactemail: data.email, Description: data.description, Noofemployees: data.numOfEmployees, Contactphonenumber: data.phone, Cityid: "0", Stateid: data.state, Countryid: data.country, CurrentUserId: "0", Address: data.address, Zipcode: data.zipcode, Logourl : data.logo}
-    console.log("NG Create country payload", payload)
     await dispatch(addCompany(payload))
     // setIsAddMode(false)
   }
 
   function updateEntity(selectedRowData, data) {
-    console.log("NG Update Entity")
+    // console.log("NG Update Entity")
   }
 
   const onSubmit = (data) => {
@@ -92,7 +88,7 @@ export const AddEditCompany = (props) => {
       dispatch(getCitiesList())
       dispatch(getCountriesList())
     }else {
-      console.log("NG This is EDIT mode !!!")
+      // console.log("NG This is EDIT mode !!!")
     }
   }, []);
 

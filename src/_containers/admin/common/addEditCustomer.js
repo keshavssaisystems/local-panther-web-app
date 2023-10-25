@@ -114,15 +114,21 @@ export const AddEditCustomer = (props) => {
   }
 
   useEffect(() => {
-    if (isAddMode) {
-      dispatch(getStatesList())
-      dispatch(getCitiesList())
-      dispatch(getCompaniesList())
-    }else {
+    dispatch(getStatesList())
+    dispatch(getCitiesList())
+    dispatch(getCompaniesList())
+
+    if (!isAddMode) {
       console.log("NG This is EDIT mode !!!")
  // set default to state, city, companyname
-      const formFields = [ "companyname", "firstname", "lastname", "address", "cityname", "statename","zipcode", "phonenumber", "email" ]
-      formFields.forEach(field => setValue(field, data[field]))
+      const formFields = [ "firstname", "lastname", "address", "cityname","zipcode", "phonenumber", "email" ]
+      formFields.forEach(field => {
+        // stateid 
+        setValue(field, data[field])
+      })
+      setValue("state", data["stateid"])
+      setValue("city", data["cityid"])
+      setValue("company", data["companyid"])
     }
   }, []);
 
@@ -159,7 +165,6 @@ export const AddEditCustomer = (props) => {
               <input
                 type="text"
                 name="lastname"
-                
                 {...register("lastname")}
                 placeholder="Last name..."
                 className={`field-input placeholder-text form-control ${errors?.lastname
@@ -243,13 +248,13 @@ export const AddEditCustomer = (props) => {
               <input
                 type="text"
                 name="city"
-                
                 {...register("city")}
                 placeholder="city..."
                 className={`field-input placeholder-text form-control ${errors?.city
                   ? "is-invalid error-text"
                   : "input-text"
                   }`}
+                value={getValues('city')}
               />
               <div className="invalid-feedback">
                 {errors?.city?.message}
@@ -269,6 +274,7 @@ export const AddEditCustomer = (props) => {
                   : "input-text"
                   }`}
                   {...register("state")}
+                  value={getValues('state')}
               >
                 <option key={0} value=""> Select state </option>
                 {statesList?.length > 0 &&
@@ -317,6 +323,7 @@ export const AddEditCustomer = (props) => {
                   : "input-text"
                   }`}
                 {...register("companyname")}
+                value={getValues('company')}
               >
                 <option key={0} value=""> 
                 Select company
