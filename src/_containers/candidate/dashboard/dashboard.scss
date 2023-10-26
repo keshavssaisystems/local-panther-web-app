@@ -1,0 +1,39 @@
+.vertical-progress-bar {
+  height: 40px; /* Set the desired height of the vertical progress bar */
+  width: 0px; /* Set the desired width of the vertical progress bar */
+  background-color: #007bff; /* Background color of the progress bar container */
+  border-radius: 10px; /* Adjust the border radius to make it rounder */
+  display: flex;
+  flex-direction: column-reverse; /* Display the progress bar from bottom to top */
+}
+
+// .vertical-progress-bar .progress {
+//   border-radius: 10px; /* Adjust the border radius to make it rounder */
+//   background-color: #007bff; /* Color of the progress bar */
+// }
+.progress.vertical {
+  position: relative;
+  width: 20px;
+  min-height: 240px;
+  float: left;
+  margin-right: 20px;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  border: none;
+}
+
+.add-label {
+  color: #2b80fd !important;
+  cursor: pointer;
+  font-family: Capitana;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: right;
+}
+.todo-icons {
+  cursor: pointer;
+  font-size: 16px;
+}

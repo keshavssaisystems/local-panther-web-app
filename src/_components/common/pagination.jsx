@@ -15,40 +15,35 @@ export function CustomPagination(props) {
     const items = [];
 
     for (let page = 1; page <= totalPages; page++) {
-      items.push(
-        <PaginationItem key={page} active={pageIndex === page}>
-          <PaginationLink onClick={() => props.onCallBack(page)}>
-            {page}
-          </PaginationLink>
-        </PaginationItem>
-      );
+      if (page <= 3 || page > totalPages - 3) {
+        items.push(
+          <PaginationItem
+            className="middle-page"
+            key={page}
+            active={pageIndex === page}
+          >
+            <PaginationLink onClick={() => props.onCallBack(page)}>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
     }
-
     return items;
   };
 
   return (
-    <Card className="mb-2 pagination-cont">
-      <CardBody>
-        <Pagination
-          aria-label="Page navigation example"
-          className="text-center float-end"
-        >
-          <PaginationItem disabled={pageIndex == 1}>
-            <PaginationLink
-              previous
-              onClick={() => props.onCallBack(pageIndex - 1)}
-            />
-          </PaginationItem>
-          {renderPaginationItems()}
-          <PaginationItem disabled={pageIndex === totalPages}>
-            <PaginationLink
-              next
-              onClick={() => props.onCallBack(pageIndex + 1)}
-            />
-          </PaginationItem>
-        </Pagination>
-      </CardBody>
-    </Card>
+    <Pagination className="pagination-cont">
+      <PaginationItem disabled={pageIndex === 1}>
+        <PaginationLink
+          previous
+          onClick={() => props.onCallBack(pageIndex - 1)}
+        />
+      </PaginationItem>
+      {renderPaginationItems()}
+      <PaginationItem disabled={pageIndex === totalPages}>
+        <PaginationLink next onClick={() => props.onCallBack(pageIndex + 1)} />
+      </PaginationItem>
+    </Pagination>
   );
 }
