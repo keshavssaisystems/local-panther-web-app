@@ -5,7 +5,6 @@ import { PrivateRoute } from "_components";
 import {
   AdminDashboard,
   // CustomerDashboard,
-  CandidateDashboard,
 } from "_containers/dashboard/Dashboard";
 
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
@@ -24,6 +23,7 @@ import { CustomerCandidateLists } from "_containers/customer/candidatelists/cust
 // import { CandidateTablist } from "_containers/candidate/candidateTablist";
 import { CandidateList } from "_containers/candidate/list/candidatelist";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
+import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
 import { Policy } from "_containers/policy";
 import { Terms } from "_containers/terms";
 import { Security } from "_containers/security";
@@ -350,6 +350,15 @@ export function App() {
               </PrivateRoute>
             }
           />
+          {/* <Route
+            path="/candidate-dashboard"
+            element={
+              <PrivateRoute>
+                <CandidateDashboard />
+              </PrivateRoute>
+            }
+          /> */}
+
           <Route
             path="/candidate-profile/:id"
             element={<CandidateProfile></CandidateProfile>}

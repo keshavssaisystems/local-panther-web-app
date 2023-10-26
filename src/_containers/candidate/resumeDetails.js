@@ -286,7 +286,7 @@ export function ResumeDetails(props) {
                                   className="file-info"
                                   style={{ paddingTop: "10px" }}
                                 >
-                                  Support formats:doc, docx, pdf,rtf, upto 5 MB
+                                  Support formats: doc, docx, pdf, upto 5 MB
                                 </div>
                               </div>
                             </label>

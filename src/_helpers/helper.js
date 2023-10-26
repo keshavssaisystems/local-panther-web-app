@@ -344,3 +344,16 @@ export const getTimezoneDateTime = (dateTime, format) => {
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return moment.utc(dateTime).tz(systemTimeZone).format(format);
 };
+export function convertTo12HourFormat(time24) {
+  // Split the time string into hours and minutes
+  const [hours, minutes] = time24.split(":");
+
+  // Create a new Date object with the given hours and minutes
+  const date = new Date(0, 0, 0, hours, minutes);
+
+  // Format the time in 12-hour format
+  const options = { hour: "numeric", minute: "numeric", hour12: true };
+  const time12 = date.toLocaleTimeString([], options);
+
+  return time12;
+}
