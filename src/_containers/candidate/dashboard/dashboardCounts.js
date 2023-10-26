@@ -10,7 +10,7 @@ export function DashboardCounts() {
   return (
     <>
       <Row>
-        <Col md="6" xl="4">
+        <Col md="6" xl="3">
           <div className="card mb-3 widget-content bg-night-fade">
             <div className="widget-content-wrapper text-white">
               <div className="widget-content-left">
@@ -24,7 +24,7 @@ export function DashboardCounts() {
             </div>
           </div>
         </Col>
-        <Col md="6" xl="4">
+        <Col md="6" xl="3">
           <div className="card mb-3 widget-content bg-arielle-smile">
             <div className="widget-content-wrapper text-white">
               <div className="widget-content-left">
@@ -38,11 +38,25 @@ export function DashboardCounts() {
             </div>
           </div>
         </Col>
-        <Col md="6" xl="4">
+        <Col md="6" xl="3">
           <div className="card mb-3 widget-content bg-happy-green">
             <div className="widget-content-wrapper text-white">
               <div className="widget-content-left">
                 <div className="widget-heading">Accepted</div>
+              </div>
+              <div className="widget-content-right">
+                <div className="widget-numbers text-white">
+                  {counts ? counts.acceptedbycandidate : 0}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Col>
+        <Col md="6" xl="3">
+          <div className="card mb-3 widget-content bg-strong-bliss">
+            <div className="widget-content-wrapper text-white">
+              <div className="widget-content-left">
+                <div className="widget-heading">Rejected</div>
               </div>
               <div className="widget-content-right">
                 <div className="widget-numbers text-white">
