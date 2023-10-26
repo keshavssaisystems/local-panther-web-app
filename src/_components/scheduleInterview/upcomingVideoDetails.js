@@ -11,6 +11,9 @@ import {
   Card,
   CardBody,
   ButtonGroup,
+  ModalHeader,
+  ModalBody,
+  Modal,
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
@@ -22,6 +25,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
+import { Chat } from "firebase/chat/chat";
 
 export function UpcomingVideoDetails({
   interviewId,
@@ -109,6 +113,10 @@ export function UpcomingVideoDetails({
       }
     });
   }
+  const [modal, setModal] = useState(false);
+  const toggle = () => {
+    setModal(!modal);
+  };
   return (
     <>
       <CardBody>
@@ -330,6 +338,16 @@ export function UpcomingVideoDetails({
               {" "}
               Add interview guide{" "}
             </Button>
+            <Button
+              outline
+              className="mb-2 mr-2 btn-transition"
+              color="primary"
+              size={"sm"}
+              onClick={(e) => setModal(true)}
+            >
+              {" "}
+              Chat{" "}
+            </Button>
           </CardFooter>
         </Card>
         {showNotes === true && (
@@ -468,6 +486,22 @@ export function UpcomingVideoDetails({
         isOpen={showEditScheduleModal}
         onClose={() => setShowEditScheduleModal(false)}
       />
+      <Modal
+        isOpen={modal}
+        fullscreen={"lg"}
+        size="lg"
+        backdrop={true}
+        fade={true}
+        toggle={toggle}
+        className="interview-details-modal"
+      >
+        <ModalHeader toggle={(e) => setModal(false)}>
+          Chat with {interviewDetails?.candidatename}
+        </ModalHeader>
+        <ModalBody className="pt-4">
+          <Chat scheduledInterviewId={interviewDetails?.scheduleinterviewid} />
+        </ModalBody>
+      </Modal>
     </>
   );
 }

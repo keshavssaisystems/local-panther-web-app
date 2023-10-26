@@ -56,7 +56,12 @@ import { CustomerVideoScreen } from "../../firebase/customerVideo";
 import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
 import { Chat } from "../../firebase/chat/chat";
+<<<<<<< HEAD
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
+=======
+import { ChatInterface } from "_containers/common/chats/chatInterface";
+// import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
+>>>>>>> fa55124 (TFS-8754)
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -383,7 +388,7 @@ export function App() {
             path="/candidate-chat"
             element={
               <PrivateRoute>
-                <Chat />
+                <ChatInterface />
               </PrivateRoute>
             }
           />

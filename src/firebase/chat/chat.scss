@@ -20,3 +20,13 @@ color: black;
 .width-full{
     width: 100%;
 }
+
+.chat-layout .chat-box-wrapper {
+     padding: 0.5rem !important;
+}
+
+.chat-box-wrapper {
+    display: flex;
+    clear: both;
+    padding: 0.05rem !important;
+}

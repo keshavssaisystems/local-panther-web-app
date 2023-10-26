@@ -33,6 +33,7 @@ export function Chat({ scheduledInterviewId = 1 }) {
       sender: localStorage.getItem("userId"),
     });
     setFormValue("");
+
     dummy.current.scrollIntoView({ behavior: "smooth" });
   };
   return (
