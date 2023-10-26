@@ -25,6 +25,7 @@ import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import "./candidatelist.scss";
 import "./candcardview.scss";
+import { ProgressCircle } from "_components/common/progress";
 
 export function CandCardView({
   name,
@@ -109,12 +110,14 @@ export function CandCardView({
                     <div className="job-title">{name}</div>
                     <div className="muted-name">{customer}</div>
                   </Col>
-                  <Col>
-                    <img
-                      src={logo}
-                      alt="logo"
-                      className="float-end display-logo-card"
-                    />
+                  <Col className="right-align">
+                    {additionalData.avgscore ? (
+                      <>
+                        <ProgressCircle avgscore={additionalData.avgscore} />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </Col>
                 </Row>
                 <p className="job-details">

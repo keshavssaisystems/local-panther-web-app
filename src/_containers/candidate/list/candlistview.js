@@ -285,7 +285,7 @@ export const CandListView = (props) => {
               <span>Job details</span>
             </DropdownItem>
 
-            {row.customerscheduleddatetime ? (
+            {props.type === "interview" ? (
               <DropdownItem onClick={() => onShowModal(row, "id")}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
