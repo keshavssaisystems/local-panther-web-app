@@ -1,3 +1,5 @@
+import moment from "moment-timezone";
+
 export const applyMask = function (inputValue) {
   const numCharsToMask = inputValue.length - (inputValue.length - 2);
   const maskedValue =
@@ -336,4 +338,9 @@ export const USPhoneNumber = function (inputValue) {
 
 export const updateMonthstoYears = (months) => {
   return ((months / 12) | 0) + " years and " + (months % 12) + " months";
+};
+
+export const getTimezoneDateTime = (dateTime, format) => {
+  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return moment.utc(dateTime).tz(systemTimeZone).format(format);
 };
