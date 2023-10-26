@@ -21,19 +21,19 @@ export const ProgressCircle = (props) => {
         theme={{
           error: {
             symbol: <span className="perc">{props?.avgscore * 10 + "%"}</span>,
-            trailColor: "pink",
-            color: "red",
+            trailColor: "#FFEBF0",
+            color: "#FF406D",
           },
 
           active: {
             symbol: <span className="perc">{props?.avgscore * 10 + "%"}</span>,
-            trailColor: "lightblue",
-            color: "blue",
+            trailColor: "#FFF3D6",
+            color: "#F7B924",
           },
           success: {
             symbol: <span className="perc">{props?.avgscore * 10 + "%"}</span>,
-            trailColor: "lime",
-            color: "green",
+            trailColor: "#D0F2E0",
+            color: "#14BD66",
           },
         }}
       />
