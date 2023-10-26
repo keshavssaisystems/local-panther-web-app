@@ -54,6 +54,8 @@ import { addCustomerReducer } from "_containers/admin/_redux/addCustomer.slice";
 import { customerReportReducer } from "_containers/customer/reports/customerreport.slice";
 import { monthReducer } from "./dropDownMonth.slice";
 import { yearReducer } from "./dropDownYear.slice";
+import { candidateDashboardReducer } from "./dashboard.slice";
+import { SettingsReducer } from "./settings.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -109,6 +111,8 @@ export * from "_containers/admin/_redux/adminListing.slice";
 export * from "_containers/admin/_redux/addCustomer.slice";
 export * from "./dropDownMonth.slice";
 export * from "./dropDownYear.slice";
+export * from "./dashboard.slice";
+export * from "./settings.slice";
 
 // export all customer slice fn
 export * from "_containers/customer/reports/customerreport.slice";
@@ -168,5 +172,7 @@ export const store = configureStore({
     customerReportReducer: customerReportReducer,
     monthList: monthReducer,
     yearList: yearReducer,
+    candidateDashboard: candidateDashboardReducer,
+    getSettings: SettingsReducer,
   },
 });
