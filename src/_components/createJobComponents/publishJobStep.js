@@ -29,6 +29,7 @@ export default function PublishJobStep({
       isclosed: false,
       isactive: true,
       currentUserId: 0,
+      customquestionanswertype: reqData.preCustomScreen,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,

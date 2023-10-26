@@ -62,6 +62,10 @@ export function PreScreenApplicant({
   const getFormValues = (event) => {
     event.preventDefault();
     let questionArr = [];
+    let customAnswer =
+      event.target.elements.applicantsRecordAnswer.value === undefined
+        ? ""
+        : event.target.elements.applicantsRecordAnswer.value;
     if (event.target.elements.question.length > 0) {
       event.target.elements.question.forEach((element) => {
         if (element.checked === true) {
@@ -108,7 +112,7 @@ export function PreScreenApplicant({
       };
       questionArr.push(obj);
     }
-    postData(questionArr);
+    postData({ questionArr: questionArr, customAnserType: customAnswer });
     setSuccessMessage(true);
   };
 
@@ -165,6 +169,41 @@ export function PreScreenApplicant({
             })}
           </Col>
         </Row>
+        {customQuestionInput.length > 1 && (
+          <Row>
+            <Col md={5}>
+              <FormGroup>
+                <Label className="fw-semi-bold">
+                  How would you like applicants to record their answers?
+                </Label>
+                <FormGroup>
+                  <Row>
+                    <Col md={3}>
+                      <Input
+                        id={"applicantsRecordAnswer"}
+                        name={"applicantsRecordAnswer"}
+                        type={"radio"}
+                        value={"Audio"}
+                      />{" "}
+                      {"  "}
+                      <Label className="fw-semi-bold">Audio</Label>
+                    </Col>
+                    <Col md={5}>
+                      <Input
+                        id={"applicantsRecordAnswer"}
+                        name={"applicantsRecordAnswer"}
+                        type={"radio"}
+                        value={"Video"}
+                      />{" "}
+                      {"  "}
+                      <Label className="fw-semi-bold">Video</Label>
+                    </Col>
+                  </Row>
+                </FormGroup>
+              </FormGroup>
+            </Col>
+          </Row>
+        )}
         {customQuestionInput.length < 4 && (
           <Button color="link" onClick={addInput}>
             + Add another

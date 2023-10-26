@@ -91,7 +91,10 @@ export default function JobPreview({ previewData, editdata }) {
       }
     });
   }
-
+  let customAnswerType =
+    previewData.preCustomScreen === undefined
+      ? previewData.basicInformation.customquestionanswertype
+      : previewData.preCustomScreen;
   return (
     <>
       <Row className="mt-4">
@@ -430,6 +433,9 @@ export default function JobPreview({ previewData, editdata }) {
                               : ""}
                           </b>{" "}
                           {options.prescreenquestion}
+                          {options.iscustomquestion === true
+                            ? " (" + customAnswerType + ")"
+                            : ""}
                         </li>
                       ))}
                   </ul>
