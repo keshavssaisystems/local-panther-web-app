@@ -42,7 +42,7 @@ export function StackBarChart({ graphData }) {
   if (graphData?.length !== undefined) {
     graphData.forEach((jobValue) => {
       Object.keys(jobValue).forEach((key) => {
-        mainArray[key].push(jobValue[key]);
+        mainArray[key]?.push(jobValue[key]);
       });
     });
     stackValues.forEach((element) => {
