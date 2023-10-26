@@ -48,6 +48,7 @@ import { customerDashboardReducer } from "_containers/customer/dashboard/custome
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
 import { adminDashboardReducer } from "_containers/admin/_redux/adminDashboard.slice";
 import { adminListingReducer } from "_containers/admin/_redux/adminListing.slice";
+import { addCustomerReducer } from "_containers/admin/_redux/addCustomer.slice";
 
 //Customer slice
 import { customerReportReducer } from "_containers/customer/reports/customerreport.slice";
@@ -105,6 +106,7 @@ export * from "_containers/customer/dashboard/customerdashboard.slice";
 export * from "_containers/admin/_redux/report.slice";
 export * from "_containers/admin/_redux/adminDashboard.slice";
 export * from "_containers/admin/_redux/adminListing.slice";
+export * from "_containers/admin/_redux/addCustomer.slice";
 export * from "./dropDownMonth.slice";
 export * from "./dropDownYear.slice";
 
@@ -161,7 +163,7 @@ export const store = configureStore({
     adminReportReducer,
     adminDashboard: adminDashboardReducer,
     adminListing: adminListingReducer,
-
+    addCustomer: addCustomerReducer,
     // customer reducer
     customerReportReducer: customerReportReducer,
     monthList: monthReducer,

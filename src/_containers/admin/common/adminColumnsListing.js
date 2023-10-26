@@ -61,10 +61,9 @@ searchFilter: [
         id: "company",
       },
       {
-        name: "isActive",
-        id: "isActive",
+        name: "Industry",
+        id: "industry",
       },
-
     ],
 buttonsList: [
       {
