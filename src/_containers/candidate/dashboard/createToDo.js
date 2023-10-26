@@ -106,18 +106,20 @@ export function CreateToDo(props) {
                     name="todo"
                     type="textarea"
                     id="todo"
-                    maxLength={500}
+                    maxLength={250}
                     style={{ height: "200px" }}
                     value={todoData.tododetail}
                     onInput={(evt) =>
                       onHandleInputChange("notes", evt.target.value)
                     }
-                    className="field-input placeholder-text form-control"
+                    className={`form-control ${
+                      todoData.tododetail ? "required-error-input" : ""
+                    }`}
                   />
                   <span className="dropdown-placeholder float-end">
-                    {todoData.tododetail ? todoData.tododetail.length : 0}/500
+                    {todoData.tododetail ? todoData.tododetail.length : 0}/250
                   </span>
-                  <div className="">
+                  <div className="required-error-text">
                     {todoData.error ? "Todo is required" : ""}
                   </div>
                 </FormGroup>
@@ -157,7 +159,7 @@ export function CreateToDo(props) {
       <Modal size="md" isOpen={success}>
         <SuccessPopUp
           icon={"success"}
-          message={"New todo added"}
+          message={props.check == "add" ? "New todo added" : "Updated todo"}
           callBack={() => [setSuccess(false), props.onCallToDo()]}
         />
       </Modal>

@@ -58,6 +58,8 @@ export function TodoList(props) {
     setCheck(mode);
     if (mode == "edit") {
       setSelectedData(data);
+    } else {
+      setSelectedData(null);
     }
     setModal(true);
   };
