@@ -213,15 +213,50 @@ export const CandidateList = (props) => {
     } else if (type === "id") {
       //with dummy data
       let obj = {
-        scheduledate: "2023-10-09T00:00:00",
-        starttime: "20:00:00",
-        duration: "45 min",
+        scheduledate:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].scheduledate
+            : null,
+        starttime:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].starttime
+            : null,
+        duration:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].duration
+            : null,
 
-        jobtitle: "Sr iOS and React Native developer",
-        format: "In-person",
-        interviewername: "",
-        videolink: "",
+        jobtitle:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].jobtitle
+            : null,
+        format:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].format
+            : null,
+        interviewername:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].interviewername
+            : null,
+        videolink:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].videolink
+            : null,
+        isappvideocall:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].isappvideocall
+            : null,
+        interviewaddress:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].interviewaddress
+            : null,
+        textremaindernumbers:
+          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+            ? row.scheduledInterviewDtos[0].textremaindernumbers
+            : null,
       };
+
+      debugger;
       setSelectedIDData(obj);
       setShowIDModal(true);
     }
