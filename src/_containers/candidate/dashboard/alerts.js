@@ -16,18 +16,15 @@ export function Alerts() {
     },
     {
       id: 2,
-      alert: "Another meeting today",
+      alert: "Scheduled interview for UI developer",
     },
     {
       id: 3,
       alert: "Build the production release",
     },
+
     {
       id: 4,
-      alert: " Something not important",
-    },
-    {
-      id: 5,
       alert: "All Hands Meeting",
     },
   ];

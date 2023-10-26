@@ -12,12 +12,19 @@ import {
   PaginationLink,
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { formatDate, convertTo12HourFormat } from "_helpers/helper";
+import {
+  formatDate,
+  convertTo12HourFormat,
+  getEducText,
+} from "_helpers/helper";
 import { history } from "_helpers";
 import DataTable from "react-data-table-component";
 import scheduleIcon from "../../../assets/utils/images/upcoming-interview.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
+import personIcon from "../../../assets/utils/images/person-fill.svg";
+import { BsFillTelephoneFill } from "react-icons/bs";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -35,13 +42,18 @@ export function UpcomingInterviews() {
     {
       name: "Job location",
       selector: (row) => (
-        <span title={row.locationaddress}>{row.locationaddress}</span>
+        // <span title={getEducText(row)}>{getEducText(row)}</span>
+        <span title="Florida,Missouri,US">Florida,Missouri,US</span>
       ),
       sortable: false,
     },
     {
       name: "Company",
-      selector: (row) => <span title={row.companyname}>{row.companyname}</span>,
+      selector: (row) => (
+        //   <span title={row.companyname}>{row.companyname}</span>,
+
+        <span title="Adams - Runolfsdottir">Adams - Runolfsdottir</span>
+      ),
       sortable: false,
     },
     {
@@ -62,6 +74,13 @@ export function UpcomingInterviews() {
       sortable: false,
     },
 
+    {
+      name: "Mode",
+      cell: (row) => <>{interviewMode("Video")}</>,
+      sortable: false,
+      ignoreRowClick: true,
+      button: false,
+    },
     {
       name: "Actions",
       cell: (row) => <>{renderMenu(row.jobid)}</>,
@@ -100,7 +119,28 @@ export function UpcomingInterviews() {
     return items;
   };
 
-  const renderMenu = (jobid) => {
+  const interviewMode = (interviewmode) => {
+    return (
+      <div className="d-block w-100 ">
+        {interviewmode === "Video" || interviewmode === "In-person" ? (
+          <div className="ellipse d-flex justify-content-center align-items-center">
+            <img
+              src={interviewmode === "Video" ? videoIcon : personIcon}
+              alt="interview-icon"
+            />
+          </div>
+        ) : (
+          <>
+            <div className="ellipse d-flex justify-content-center align-items-center">
+              <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp" />
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  const renderMenu = (row) => {
     return (
       <div className="d-block w-100 text-center">
         <UncontrolledButtonDropdown direction="start">

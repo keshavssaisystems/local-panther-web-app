@@ -10,7 +10,6 @@ import { candidateDashboardActions, candidateListActions } from "_store";
 
 export function CandidateDashboard() {
   const dispatch = useDispatch();
-  debugger;
   let candidateId = JSON.parse(
     localStorage.getItem("userDetails")
   ).InternalUserId;
@@ -43,7 +42,7 @@ export function CandidateDashboard() {
         <Col sm={12} md={12} lg={5}>
           <TodoList onCallBack={() => loadPage()} />
         </Col>
-        <Col>
+        <Col sm={12} md={12} lg={7}>
           <UpcomingInterviews />
         </Col>
       </Row>
