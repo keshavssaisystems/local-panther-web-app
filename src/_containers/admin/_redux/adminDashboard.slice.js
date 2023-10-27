@@ -68,6 +68,19 @@ export const getCandidates = createAsyncThunk(
   }
 );
 
+export const getInterviewStatusThunk = createAsyncThunk(
+  `${name}/getInterviewStatusThunk`,
+  async (payload = {}) => {
+    payload = {
+      ...payload,
+      isActive: true,
+      isPaginationRequired: false
+    }
+    const GET_CANDIDATES_STATS = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(GET_CANDIDATES_STATS);
+  }
+);
+
 // Create the slice
 const adminDashboardSlice = createSlice({
   name,
@@ -119,6 +132,21 @@ const adminDashboardSlice = createSlice({
     },
     [getCandidates.rejected]: (state, action) => {
       state.loading = false;
+      state.error = action.error;
+    },
+    
+    // scheduled interview Status  
+    [getInterviewStatusThunk.pending]: (state) => {
+      state.scheduledInterviewLoading = true;
+      state.error = null;
+    },
+    [getInterviewStatusThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { scheduledInterviewList = [] } = {} } = payload;
+      state.scheduledInterviewLoading = false;
+      state.scheduledInterviewList = scheduledInterviewList;    // dummy data, api not available
+    },
+    [getInterviewStatusThunk.rejected]: (state, action) => {
+      state.scheduledInterviewLoading = false;
       state.error = action.error;
     },
 
