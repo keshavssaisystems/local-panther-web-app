@@ -140,6 +140,9 @@ export function JobsList(props) {
     setOpenJob(false);
     props.onCallBack();
   };
+
+  const onApplyClickBtn = () => {};
+
   return (
     <>
       <Card className="card-hover-shadow-2x mb-3">
@@ -224,7 +227,7 @@ export function JobsList(props) {
             <CandJobDetail
               jobDetails={selected}
               type={"Open"}
-              onApplyClick=""
+              onApplyClick={() => onApplyClickBtn()}
             ></CandJobDetail>
           </ModalBody>
         </Modal>
