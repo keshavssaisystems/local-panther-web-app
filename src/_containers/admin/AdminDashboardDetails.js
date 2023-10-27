@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { getScores } from '_containers/admin/_redux/adminDashboard.slice'
+import { getMissedInterviewThunk, getScores } from '_containers/admin/_redux/adminDashboard.slice'
 import { getInterviewStatusThunk } from "_containers/admin/_redux/adminDashboard.slice";
 import { Table as DataTable } from "_widgets";
 import Loader from "react-loaders";
@@ -11,10 +11,10 @@ import Chart from "react-apexcharts";
 import './adminDashboardDetails.scss'
 import IncomeReport from "_containers/admin/Examples/IncomeReport";
 
-import avatar1 from "assets/utils/images/avatars/1.jpg";
-import avatar2 from "assets/utils/images/avatars/2.jpg";
-import avatar3 from "assets/utils/images/avatars/3.jpg";
-import avatar4 from "assets/utils/images/avatars/4.jpg";
+// import avatar1 from "assets/utils/images/avatars/1.jpg";
+// import avatar2 from "assets/utils/images/avatars/2.jpg";
+// import avatar3 from "assets/utils/images/avatars/3.jpg";
+// import avatar4 from "assets/utils/images/avatars/4.jpg";
 
 import {
   Row,
@@ -22,8 +22,8 @@ import {
   Alert,
   Button,
   CardHeader,
-  Table,
-  ButtonGroup,
+  // Table,
+  // ButtonGroup,
   Nav,
   NavItem,
   NavLink,
@@ -36,32 +36,29 @@ import {
   DropdownToggle,
   DropdownMenu,
   UncontrolledButtonDropdown,
-  CardFooter,
 } from "reactstrap";
 
 import {
   faAngleUp,
   faAngleDown,
   faQuestionCircle,
-  faBusinessTime,
-  faCog,
-  faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TabbedContent from "./Examples/Tabbed";
 import classnames from "classnames";
 import CountUp from "react-countup";
 import moment from "moment";
-
+import { TabbedContent } from "./Examples/Tabbed";
 
 const AdminDashboardDetails = () => {
   const dispatch = useDispatch()
   const {
+    loading = false,
     cardStats,
     scheduledInterviewLoading = false,
     scheduledInterviewList,
-    loading = false } = useSelector((state) => state?.adminDashboard ?? {});
+    missedInterviewList,
+  } = useSelector((state) => state?.adminDashboard ?? {});
 
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
@@ -345,6 +342,7 @@ const AdminDashboardDetails = () => {
   useEffect(()=>{
     dispatch(getScores(today))
     dispatch(getInterviewStatusThunk({ startDate: today, endDate: today }));    
+    dispatch(getMissedInterviewThunk({ startDate: today, endDate: today }));    
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -774,7 +772,7 @@ const AdminDashboardDetails = () => {
                     </div>
                   </CardHeader>
                   <CardBody className="p-0">
-                    <TabbedContent />
+                    <TabbedContent data={missedInterviewList} />
                   </CardBody>
                 </Card>
               </Col>

@@ -76,8 +76,15 @@ export const getInterviewStatusThunk = createAsyncThunk(
       isActive: true,
       isPaginationRequired: false
     }
-    const GET_CANDIDATES_STATS = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?${new URLSearchParams(payload)}`;
-    return await fetchWrapper.get(GET_CANDIDATES_STATS);
+    const FETCH_SCHEDULED_INTERVIEW = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(FETCH_SCHEDULED_INTERVIEW);
+  }
+);
+export const getMissedInterviewThunk = createAsyncThunk(
+  `${name}/getMissedInterviewThunk`,
+  async (payload = {}) => {
+    const FETCH_MISSED_INTERVIEW = `${process.env.REACT_APP_NEW_API_URL}/AdminDashboard/GetMissedInterviewList?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(FETCH_MISSED_INTERVIEW);
   }
 );
 
@@ -147,6 +154,21 @@ const adminDashboardSlice = createSlice({
     },
     [getInterviewStatusThunk.rejected]: (state, action) => {
       state.scheduledInterviewLoading = false;
+      state.error = action.error;
+    },
+    
+    // missed interview Status  
+    [getMissedInterviewThunk.pending]: (state) => {
+      state.missedInterviewLoading = true;
+      state.error = null;
+    },
+    [getMissedInterviewThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { missedInterviewList = [] } = {} } = payload;
+      state.missedInterviewLoading = false;
+      state.missedInterviewList = missedInterviewList;    // dummy data, api not available
+    },
+    [getMissedInterviewThunk.rejected]: (state, action) => {
+      state.missedInterviewLoading = false;
       state.error = action.error;
     },
 
