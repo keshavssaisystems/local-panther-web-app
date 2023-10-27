@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  Table,
+  Modal,
+  ModalHeader,
+  ModalBody,
   CardHeader,
   Pagination,
   PaginationItem,
@@ -20,8 +22,9 @@ import jobsIcon from "../../../assets/utils/images/latest-job.svg";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { CandJobDetail } from "../list/candjobcard";
 
-export function JobsList() {
+export function JobsList(props) {
   const [pageNo, setPageNo] = useState(1);
   const dispatch = useDispatch();
   let candidateId = JSON.parse(
@@ -33,6 +36,8 @@ export function JobsList() {
   const totalRecords = useSelector(
     (state) => state.candidateListReducer.totalRecords
   );
+  const [selected, setSelected] = useState([]);
+  const [openJob, setOpenJob] = useState(false);
 
   const columns = [
     {
@@ -64,7 +69,7 @@ export function JobsList() {
 
     {
       name: "Actions",
-      cell: (row) => <>{renderMenu(row.jobid)}</>,
+      cell: (row) => <>{renderMenu(row)}</>,
       sortable: false,
       ignoreRowClick: true,
       button: true,
@@ -82,7 +87,7 @@ export function JobsList() {
     dispatch(candidateListActions.getRecommendedJobList(candObj));
   };
 
-  const renderMenu = (jobid) => {
+  const renderMenu = (row) => {
     return (
       <div className="d-block w-100 text-center">
         <UncontrolledButtonDropdown direction="start">
@@ -95,15 +100,20 @@ export function JobsList() {
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
             <DropdownItem>
               <i className="dropdown-icon lnr-license"> </i>
-              <span onClick={() => navigateToJobs()}>Job details</span>
+              <span onClick={() => navigateToJobs(row)}>Job details</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
     );
   };
-  const navigateToJobs = function () {
-    history.navigate("/job-list");
+  const navigateToJobs = function (data) {
+    //history.navigate("/job-list");
+    debugger;
+    let new_data = [...selected];
+    new_data.push(data);
+    setSelected(new_data);
+    setOpenJob(true);
   };
   const renderPaginationItems = () => {
     const items = [];
@@ -125,6 +135,14 @@ export function JobsList() {
     }
     return items;
   };
+
+  const close = function () {
+    setOpenJob(false);
+    props.onCallBack();
+  };
+
+  const onApplyClickBtn = () => {};
+
   return (
     <>
       <Card className="card-hover-shadow-2x mb-3">
@@ -136,7 +154,7 @@ export function JobsList() {
         </CardHeader>
         <div className="scroll-area-md">
           <DataTable
-            data={candidateJobList}
+            data={candidateJobList ? candidateJobList : []}
             columns={columns}
             fixedHeader
             fixedHeaderScrollHeight="390px"
@@ -199,6 +217,23 @@ export function JobsList() {
           <></>
         )}
       </Card>
+
+      {openJob ? (
+        <Modal isOpen={openJob} size="lg">
+          <ModalHeader toggle={() => close()} charCode="Y">
+            <strong className="card-title-text">Job Details</strong>
+          </ModalHeader>
+          <ModalBody>
+            <CandJobDetail
+              jobDetails={selected}
+              type={"Open"}
+              onApplyClick={() => onApplyClickBtn()}
+            ></CandJobDetail>
+          </ModalBody>
+        </Modal>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

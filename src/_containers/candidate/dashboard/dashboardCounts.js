@@ -1,12 +1,20 @@
 import React, { useState } from "react";
 import { Row, Col } from "reactstrap";
 import { useSelector } from "react-redux";
+import { history } from "_helpers";
 
 export function DashboardCounts() {
   const counts = useSelector(
     (state) => state.candidateDashboard.dashboardCounts
   );
-
+  const navigateToJobsPage = function (e, count, tab) {
+    if (count == 0) {
+      e.preventDefault();
+      return;
+    } else {
+      history.navigate("/job-list-" + tab);
+    }
+  };
   return (
     <>
       <Row>
@@ -18,7 +26,17 @@ export function DashboardCounts() {
               </div>
               <div className="widget-content-right">
                 <div className="widget-numbers text-white">
-                  {counts ? counts.matchedcandidate : 0}
+                  <span
+                    onClick={(e) =>
+                      navigateToJobsPage(e, counts.matchedcandidate, "matched")
+                    }
+                    style={{
+                      cursor:
+                        counts.matchedcandidate == 0 ? "block" : "pointer",
+                    }}
+                  >
+                    {counts ? counts.matchedcandidate : 0}
+                  </span>
                 </div>
               </div>
             </div>
@@ -32,7 +50,21 @@ export function DashboardCounts() {
               </div>
               <div className="widget-content-right">
                 <div className="widget-numbers text-white">
-                  {counts ? counts.interveiwSchedule : 0}
+                  <span
+                    onClick={(e) =>
+                      navigateToJobsPage(
+                        e,
+                        counts.interveiwSchedule,
+                        "interview"
+                      )
+                    }
+                    style={{
+                      cursor:
+                        counts.interveiwSchedule == 0 ? "block" : "pointer",
+                    }}
+                  >
+                    {counts ? counts.interveiwSchedule : 0}
+                  </span>
                 </div>
               </div>
             </div>
@@ -46,7 +78,21 @@ export function DashboardCounts() {
               </div>
               <div className="widget-content-right">
                 <div className="widget-numbers text-white">
-                  {counts ? counts.acceptedbycandidate : 0}
+                  <span
+                    onClick={(e) =>
+                      navigateToJobsPage(
+                        e,
+                        counts.acceptedbycandidate,
+                        "accepted"
+                      )
+                    }
+                    style={{
+                      cursor:
+                        counts.acceptedbycandidate == 0 ? "block" : "pointer",
+                    }}
+                  >
+                    {counts ? counts.acceptedbycandidate : 0}
+                  </span>
                 </div>
               </div>
             </div>
@@ -60,7 +106,21 @@ export function DashboardCounts() {
               </div>
               <div className="widget-content-right">
                 <div className="widget-numbers text-white">
-                  {counts ? counts.acceptedbycandidate : 0}
+                  <span
+                    onClick={(e) =>
+                      navigateToJobsPage(
+                        e,
+                        counts.acceptedbycandidate,
+                        "rejected"
+                      )
+                    }
+                    style={{
+                      cursor:
+                        counts.acceptedbycandidate == 0 ? "block" : "pointer",
+                    }}
+                  >
+                    {counts ? counts.acceptedbycandidate : 0}
+                  </span>
                 </div>
               </div>
             </div>
