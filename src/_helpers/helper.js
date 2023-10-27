@@ -357,3 +357,28 @@ export function convertTo12HourFormat(time24) {
 
   return time12;
 }
+export function calculateEndTime(startTime, duration) {
+  // Parse the start time in HH:MM format
+  debugger;
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+
+  // Parse the duration in hours and minutes
+  const [durationHour, durationMinute] = duration.split(":").map(Number);
+
+  // Calculate the end time
+  let endHour = startHour + durationHour;
+  let endMinute = startMinute + durationMinute;
+
+  // Adjust the end time if minutes exceed 60
+  if (endMinute >= 60) {
+    endHour += Math.floor(endMinute / 60);
+    endMinute = endMinute % 60;
+  }
+
+  // Format the end time as HH:MM
+  const endHourStr = endHour.toString().padStart(2, "0");
+  const endMinuteStr = endMinute.toString().padStart(2, "0");
+
+  const endTime = `${endHourStr}:${endMinuteStr}`;
+  return endTime;
+}

@@ -68,13 +68,13 @@ export function Alerts() {
             </div>
           </PerfectScrollbar>
         </div>
-        {totalRecords > 0 ? (
+        {/* {totalRecords > 0 ? (
           <CardFooter className="mb-3 mt-1" style={{ border: "none" }}>
             &nbsp;
           </CardFooter>
         ) : (
           <></>
-        )}
+        )} */}
       </Card>
     </>
   );

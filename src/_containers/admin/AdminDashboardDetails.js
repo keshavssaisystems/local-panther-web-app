@@ -1,17 +1,20 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { getScores } from '_containers/admin/_redux/adminDashboard.slice'
+import { getDashboardCountThunk, getMissedInterviewThunk, getScores } from '_containers/admin/_redux/adminDashboard.slice'
+import { getInterviewStatusThunk } from "_containers/admin/_redux/adminDashboard.slice";
+import { Table as DataTable } from "_widgets";
+import Loader from "react-loaders";
+
 import { useDispatch, useSelector } from "react-redux";
-import DataTable from 'react-data-table-component';
 import { makeData } from "_containers/admin/Examples/utils.js";
 import Chart from "react-apexcharts";
 import './adminDashboardDetails.scss'
 import IncomeReport from "_containers/admin/Examples/IncomeReport";
 
-import avatar1 from "assets/utils/images/avatars/1.jpg";
-import avatar2 from "assets/utils/images/avatars/2.jpg";
-import avatar3 from "assets/utils/images/avatars/3.jpg";
-import avatar4 from "assets/utils/images/avatars/4.jpg";
+// import avatar1 from "assets/utils/images/avatars/1.jpg";
+// import avatar2 from "assets/utils/images/avatars/2.jpg";
+// import avatar3 from "assets/utils/images/avatars/3.jpg";
+// import avatar4 from "assets/utils/images/avatars/4.jpg";
 
 import {
   Row,
@@ -19,8 +22,8 @@ import {
   Alert,
   Button,
   CardHeader,
-  Table,
-  ButtonGroup,
+  // Table,
+  // ButtonGroup,
   Nav,
   NavItem,
   NavLink,
@@ -33,29 +36,30 @@ import {
   DropdownToggle,
   DropdownMenu,
   UncontrolledButtonDropdown,
-  CardFooter,
 } from "reactstrap";
 
 import {
   faAngleUp,
   faAngleDown,
   faQuestionCircle,
-  faBusinessTime,
-  faCog,
-  faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TabbedContent from "./Examples/Tabbed";
 import classnames from "classnames";
 import CountUp from "react-countup";
-
+import moment from "moment";
+import { TabbedContent } from "./Examples/Tabbed";
 
 const AdminDashboardDetails = () => {
   const dispatch = useDispatch()
   const {
+    loading = false,
     cardStats,
-    loading = false } = useSelector((state) => state?.adminDashboard ?? {});
+    scheduledInterviewLoading = false,
+    scheduledInterviewList,
+    missedInterviewList,
+    dashboardCountDetails
+  } = useSelector((state) => state?.adminDashboard ?? {});
 
   const [visible, setVisible] = useState(true)
   const [activeTab, setActiveTab] = useState("1")
@@ -303,36 +307,45 @@ const AdminDashboardDetails = () => {
   const columns = [
     {
       name: "Candidate",
-      selector: row => row.firstName,
+      selector: row => row.candidatename,
       sortable: true,
+      wrap: true,
+      width: '120px'
     },
     {
-      name: "Job",
-      id: "lastName",
-      selector: row => row.lastName,
+      name: "Job Title",
+      selector: row => row.jobtitle,
       sortable: true,
+      wrap: true,
+      width: '120px'
     },
-
     {
-      name: "Time",
-      selector: row => row.age,
+      name: "Skills",
+      selector: row => row.candidateskills,
       sortable: true,
+      wrap: true,
+      width: '300px'
+    },
+    {
+      name: "Scheduled Date",
+      selector: row => moment(row.scheduledate).format('MM-DD-YYYY'),
+      sortable: true,
+      wrap: true,
     },
     {
       name: "Status",
-      selector: row => row.visits,
+      selector: row => !row.isaccepted && !row.isrejected ? 'Not responded' : row.isrejected ? 'Rejected' : 'Accepted',
       sortable: true,
-    },
-
-    {
-      name: "Action",
-      selector: row => row.status,
-      sortable: true,
+      wrap: true,
     },
   ];
 
   useEffect(()=>{
+    dispatch(getDashboardCountThunk())
     dispatch(getScores(today))
+    dispatch(getInterviewStatusThunk({ startDate: today, endDate: today }));    
+    dispatch(getMissedInterviewThunk({ startDate: today, endDate: today }));    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onDismiss = () => {
@@ -455,7 +468,7 @@ const AdminDashboardDetails = () => {
                         toggle("1");
                       }}>
                       <div className="widget-number">
-                        <CountUp start={0} end={cardStats.totalCandidates} separator="," decimals={0}
+                        <CountUp start={0} end={dashboardCountDetails?.activecandidatecount || 0} separator="," decimals={0}
                           decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -476,7 +489,7 @@ const AdminDashboardDetails = () => {
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
-                        <CountUp start={0} end={453} separator="" decimals={0} decimal=""
+                        <CountUp start={0} end={dashboardCountDetails?.openjobcount || 0} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -494,7 +507,7 @@ const AdminDashboardDetails = () => {
                         toggle("3");
                       }}>
                       <div className="widget-number text-danger">
-                        <CountUp start={0} end={67} separator=","
+                        <CountUp start={0} end={dashboardCountDetails?.todaysinterviewscheduledcount || 0} separator=","
                           decimals={0} decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -691,7 +704,7 @@ const AdminDashboardDetails = () => {
             </Card>
             <CardHeader className="mbg-3 h-auto ps-0 pe-0 bg-transparent no-border">
               <div className="card-header-title fsize-2 text-capitalize fw-normal">
-                Interview Stats
+                Interview Status
               </div>
               <div className="btn-actions-pane-right text-capitalize actions-icon-btn">
                 <Button size="sm" color="link">
@@ -707,7 +720,7 @@ const AdminDashboardDetails = () => {
                       <i className="header-icon lnr-dice me-3 text-muted opacity-6"> {" "} </i>
                       Today's Interviews
                     </div>
-                    <div className="btn-actions-pane-right actions-icon-btn">
+                    {/* <div className="btn-actions-pane-right actions-icon-btn">
                       <UncontrolledButtonDropdown>
                         <DropdownToggle className="btn-icon btn-icon-only" color="link">
                           <i className="pe-7s-menu btn-icon-wrapper" />
@@ -737,12 +750,15 @@ const AdminDashboardDetails = () => {
                           </div>
                         </DropdownMenu>
                       </UncontrolledButtonDropdown>
-                    </div>
+                    </div> */}
                   </CardHeader>
                   <CardBody>
-                    <DataTable data={data}
+                    <DataTable 
+                      progressPending={scheduledInterviewLoading}
+                      progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
                       columns={columns}
-                      pagination
+                      data={scheduledInterviewList}
+                      // onRowClicked={handleRowClicked}
                       fixedHeader
                       fixedHeaderScrollHeight="370px"
                     />
@@ -758,15 +774,15 @@ const AdminDashboardDetails = () => {
                     </div>
                   </CardHeader>
                   <CardBody className="p-0">
-                    <TabbedContent />
+                    <TabbedContent data={missedInterviewList} />
                   </CardBody>
                 </Card>
               </Col>
             </Row>
-            <Card className="main-card mb-3">
+            {/* <Card className="main-card mb-3">
               <CardHeader>
                 <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                  Hiring Managers
+                  Customer
                 </div>
                 <div className="btn-actions-pane-right">
                 </div>
@@ -1045,15 +1061,7 @@ const AdminDashboardDetails = () => {
                   </tr>
                 </tbody>
               </Table>
-              <CardFooter className="d-block p-4 text-center">
-                <Button color="dark" className="btn-pill btn-shadow btn-wide fsize-1" size="lg">
-                  <span className="me-2 opacity-7">
-                    <FontAwesomeIcon spin fixedWidth={false} icon={faCog} />
-                  </span>
-                  <span className="me-1">View Complete Report</span>
-                </Button>
-              </CardFooter>
-            </Card>
+            </Card> */}
           </div>
         </CSSTransition>
       </TransitionGroup>

@@ -15,7 +15,9 @@ const IncomeReport = () => {
   const {
     candidatesData,
     loading = false } = useSelector((state) => state?.adminDashboard ?? {});
-  const { cardStats, totalInterviewScheduled } = useSelector((state) => state?.adminDashboard ?? {});
+  const { cardStats, 
+    totalInterviewScheduled,
+    dashboardCountDetails } = useSelector((state) => state?.adminDashboard ?? {});
 
   const selectTimeInterval = (timeInterval) => {
     // dispatch(showScores(timeInterval))
@@ -73,11 +75,11 @@ const IncomeReport = () => {
               <div className="widget-content-wrapper">
                 <div className="widget-content-left">
                   {/* <div className="widget-numbers text-dark">{cardStats.todaysinterviewscheduledcount}</div> */}
-                  <div className="widget-numbers text-dark">{totalInterviewScheduled}</div>
+                  <div className="widget-numbers text-dark">{dashboardCountDetails?.todaysinterviewscheduledcount || 0}</div>
                 </div>
               </div>
               <div className="widget-progress-wrapper mt-1">
-                <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value="65" />
+                <Progress className="progress-bar-xs progress-bar-animated-alt" color="info" value={dashboardCountDetails?.todaysinterviewscheduledcount || 0} />
                 <div className="progress-sub-label">
                   <div className="sub-label-left font-size-md">Interviews Scheduled</div>
                 </div>
@@ -90,13 +92,13 @@ const IncomeReport = () => {
             <div className="widget-content-outer">
               <div className="widget-content-wrapper">
                 <div className="widget-content-left">
-                  <div className="widget-numbers text-dark">83%</div>
+                  <div className="widget-numbers text-dark">3%</div>
                 </div>
               </div>
               <div className="widget-progress-wrapper mt-1">
-                <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="83" />
+                <Progress className="progress-bar-xs progress-bar-animated-alt" color="success" value="3" />
                 <div className="progress-sub-label">
-                  <div className="sub-label-left font-size-md">some Candidate Stats</div>
+                  <div className="sub-label-left font-size-md">some Candidate Status</div>
                 </div>
               </div>
             </div>
@@ -107,11 +109,11 @@ const IncomeReport = () => {
             <div className="widget-content-outer">
               <div className="widget-content-wrapper">
                 <div className="widget-content-left">
-                  <div className="widget-numbers text-dark">12%</div>
+                  <div className="widget-numbers text-dark">0%</div>
                 </div>
               </div>
               <div className="widget-progress-wrapper mt-1">
-                <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="22" />
+                <Progress className="progress-bar-xs progress-bar-animated-alt" color="warning" value="0" />
                 <div className="progress-sub-label">
                   <div className="sub-label-left font-size-md">some Candidate Stats. eg Not Active</div>
                 </div>
