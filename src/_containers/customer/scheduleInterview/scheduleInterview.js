@@ -241,6 +241,7 @@ export function ScheduleInterview() {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
+    debugger;
     setPopupData(event.data);
     setOpenModal(true);
     setPopupType(event.format);

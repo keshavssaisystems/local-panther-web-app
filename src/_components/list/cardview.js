@@ -29,6 +29,7 @@ import "./cardview.scss";
 import { updateMonthstoYears } from "_helpers/helper";
 import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
+import customerIcons from "assets/utils/images/customer";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -174,6 +175,14 @@ export const CandidateCardView = (props) => {
     }
   };
 
+  const onBuildResume = () => {
+    if (props?.data?.recommendedationCandidateShortList?.length > 0) {
+      props.onBuildResume(
+        props?.data?.recommendedationCandidateShortList[0].candidateid
+      );
+    }
+  };
+
   return (
     <>
       <Card className="main-card mb-3 cust-cand-card">
@@ -274,7 +283,27 @@ export const CandidateCardView = (props) => {
                     </span>
                   </Col>
                   <Col md="11" lg="11">
-                    <b>Certfications/Licences </b> <p>{returnCert()}</p>
+                    <b>Certfications/Licences </b>{" "}
+                    <div>
+                      <img
+                        style={{
+                          float: "right",
+                          marginLeft: "0.25rem",
+                          marginTop: "2px",
+                        }}
+                        src={customerIcons.view_cv_text}
+                        alt="view cv text"
+                        onClick={() => onBuildResume()}
+                      ></img>
+                      <img
+                        style={{ float: "right" }}
+                        src={customerIcons.view_cv_icon}
+                        alt="view cv icon"
+                        onClick={() => onBuildResume()}
+                      ></img>
+
+                      <p style={{ overflow: "visible" }}>{returnCert()}</p>
+                    </div>
                   </Col>
                 </Row>
               </p>

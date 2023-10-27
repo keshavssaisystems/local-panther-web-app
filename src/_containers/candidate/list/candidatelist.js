@@ -13,6 +13,7 @@ import { CandListView } from "./candlistview";
 import { JobDetailModal } from "_components/modal/jobdetailmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { NoDataFound } from "_components/common/nodatafound";
+import { PrescreenModal } from "_components/modal/prescreenmodal";
 import "./candidatelist.scss";
 
 export const CandidateList = (props) => {
@@ -21,6 +22,8 @@ export const CandidateList = (props) => {
   const [selectedRow, setSelectedRow] = useState([]);
   const [showIDModal, setShowIDModal] = useState(false);
   const [selectedIDData, setSelectedIDData] = useState([]);
+  const [showPSModal, setShowPSModal] = useState(false);
+  const [preScreenData, setPreScreenData] = useState([]);
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -256,10 +259,13 @@ export const CandidateList = (props) => {
             : null,
       };
 
-      debugger;
       setSelectedIDData(obj);
       setShowIDModal(true);
     }
+  };
+
+  const onPrescreenClickAction = (type, row) => {
+    setShowPSModal(true);
   };
 
   return (
@@ -492,6 +498,9 @@ export const CandidateList = (props) => {
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
                         />
                         {totalRecords > candLPSize ? (
                           <CardPagination
@@ -547,6 +556,9 @@ export const CandidateList = (props) => {
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
                         />
                         {totalRecords > candLPSize ? (
                           <CardPagination
@@ -602,6 +614,9 @@ export const CandidateList = (props) => {
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
                         />
                         {totalRecords > candLPSize ? (
                           <CardPagination
@@ -657,6 +672,9 @@ export const CandidateList = (props) => {
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
                         />
                         {totalRecords > candLPSize ? (
                           <CardPagination
@@ -712,6 +730,9 @@ export const CandidateList = (props) => {
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
                         />
                         {totalRecords > candLPSize ? (
                           <CardPagination
@@ -767,6 +788,9 @@ export const CandidateList = (props) => {
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
                         />
                         {totalRecords > candLPSize ? (
                           <CardPagination
@@ -833,6 +857,20 @@ export const CandidateList = (props) => {
                   setShowIDModal(false);
                 }}
               ></InterViewDetailModal>
+            </>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {showPSModal ? (
+            <>
+              <PrescreenModal
+                isOpen={showPSModal}
+                onClose={() => {
+                  setShowPSModal(false);
+                }}
+              ></PrescreenModal>
             </>
           ) : (
             <></>

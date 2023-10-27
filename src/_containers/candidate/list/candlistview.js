@@ -299,90 +299,203 @@ export const CandListView = (props) => {
     );
   };
 
-  const columns = memoize((clickHandler) => [
-    {
-      name: <span className="table-title">Job Id</span>,
-      id: "Job Id",
-      selector: (row) => (
-        <span className="table-cell" title={row.jobid}>
-          {row.jobid}
-        </span>
-      ),
-      sortable: true,
-      width: "12%",
-    },
-    {
-      name: <span className="table-title">Title</span>,
-      id: "Title",
-      selector: (row) => (
-        <span className="table-cell" title={row.jobtitle}>
-          {row.jobtitle}
-        </span>
-      ),
-      sortable: true,
-      width: "30%",
-    },
+  const columns = memoize((clickHandler) =>
+    props.type === "interview"
+      ? [
+          {
+            name: <span className="table-title">Job Id</span>,
+            id: "Job Id",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobid}>
+                {row.jobid}
+              </span>
+            ),
+            sortable: true,
+            width: "12%",
+          },
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobtitle}>
+                {row.jobtitle}
+              </span>
+            ),
+            sortable: true,
+            width: "30%",
+          },
 
-    {
-      name: <span className="table-title">Location</span>,
-      selector: (row) => (
-        <span
-          className="table-cell"
-          title={
-            row.cityname && row.statename
-              ? row.cityname + ", " + row.statename
-              : ""
-          }
-        >
-          {row.cityname && row.statename
-            ? row.cityname + ", " + row.statename
-            : ""}
-        </span>
-      ),
-      sortable: true,
-      width: "20%",
-    },
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "20%",
+          },
 
-    {
-      name: <span className="table-title">Experience</span>,
-      selector: (row) => (
-        <span
-          className="table-cell"
-          title={
-            row?.jobExperienceScheduleDtos &&
-            row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              : "-"
-          }
-        >
-          <>
-            {row?.jobExperienceScheduleDtos &&
-            row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-              : "-"}
-          </>
-        </span>
-      ),
-      sortable: true,
-      width: "15%",
-    },
+          {
+            name: <span className="table-title">Experience</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                <>
+                  {row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"}
+                </>
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
 
-    {
-      name: <span className="table-title">Interest</span>,
-      cell: (row) => <div className="list-btn-group">{renderButtons(row)}</div>,
-      ignoreRowClick: true,
-      button: true,
-      width: "15%",
-    },
-    {
-      name: <span className="table-title">Action</span>,
-      cell: (row) => <>{renderMenu(row)}</>,
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-      width: "8%",
-    },
-  ]);
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "8%",
+          },
+        ]
+      : [
+          {
+            name: <span className="table-title">Job Id</span>,
+            id: "Job Id",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobid}>
+                {row.jobid}
+              </span>
+            ),
+            sortable: true,
+            width: "12%",
+          },
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobtitle}>
+                {row.jobtitle}
+              </span>
+            ),
+            sortable: true,
+            width: "25%",
+          },
+
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                <>
+                  {row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"}
+                </>
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "8%",
+          },
+        ]
+  );
 
   const handleButtonClick = () => {
     console.log("clicked");
@@ -390,6 +503,10 @@ export const CandListView = (props) => {
 
   const handleRowClick = (data) => {
     console.log(data);
+  };
+
+  const onPrescreenClick = (type, row) => {
+    props.onPrescreenClick(type, row);
   };
 
   return (
