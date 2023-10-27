@@ -112,6 +112,7 @@ export function OpenJobs({ title }) {
         name: 'Skills',
         selector: row => row.musthaveskills,
         wrap: true,
+        width: "200px"
     },
     {
         name: 'Posted',
@@ -182,6 +183,7 @@ export function OpenJobs({ title }) {
         selector: row => row.candidateskills,
         sortable: true,
         wrap: true,
+        width: "400px"
     },
     {
         name: 'Duration',
@@ -206,6 +208,7 @@ export function OpenJobs({ title }) {
         name: 'Note',
         selector: row => row.interviewnotes,
         wrap: true,
+        width: "300px"
     },
     {
         name: 'Scheduled Date',
