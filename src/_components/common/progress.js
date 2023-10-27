@@ -14,7 +14,7 @@ export const ProgressCircle = (props) => {
         status={
           props?.avgscore * 10 < 40
             ? "error"
-            : props?.avgscore * 10 > 80
+            : props?.avgscore * 10 >= 80
             ? "success"
             : "active"
         }

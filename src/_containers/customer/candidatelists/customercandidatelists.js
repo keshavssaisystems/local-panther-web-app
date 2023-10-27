@@ -21,6 +21,8 @@ import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { getProfileActions } from "_store";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -34,6 +36,7 @@ export const CustomerCandidateLists = (props) => {
     title: "",
     description: "",
   });
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -165,6 +168,14 @@ export const CustomerCandidateLists = (props) => {
 
   const onUpdateList = () => {
     onGetPageList(pageNo, props.type || activeTab, id);
+  };
+
+  const onBuildResumeClick = async (candidateId) => {
+    debugger;
+    let response = await dispatch(getProfileActions.getCandidate(candidateId));
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
   };
 
   return (
@@ -328,6 +339,9 @@ export const CustomerCandidateLists = (props) => {
                                 }
                                 updateList={() => onUpdateList()}
                                 durationOptions={durationOptions}
+                                onBuildResume={(candidateId) =>
+                                  onBuildResumeClick(candidateId)
+                                }
                               ></CandidateCardView>
                             </Col>
                           );
@@ -681,7 +695,6 @@ export const CustomerCandidateLists = (props) => {
         </Col>
       </Row>
       <>
-        {" "}
         <SweetAlert
           title={showAlert.title}
           show={showAlert.show}
@@ -689,6 +702,19 @@ export const CustomerCandidateLists = (props) => {
           onConfirm={() => closeSweetAlert()}
         />
         {showAlert.description}
+      </>
+
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
       </>
     </>
   );

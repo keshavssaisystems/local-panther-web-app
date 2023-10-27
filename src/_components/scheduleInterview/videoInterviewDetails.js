@@ -38,22 +38,31 @@ export function VideoInterviewDetails({
   postMessageData,
   acceptInterview,
   rejectInterview,
+  interviewDetails, // Optional from customer schedule list
+  fromCustList, // Optional from customer schedule list
 }) {
+  debugger;
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
   const [showRejectPopup, setShowRejectPopup] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
+  let interviewDetail = [];
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
   );
-  let selectedJobDetails = allInterview.scheduledInterviewList.filter(
-    (element) => {
-      return element.scheduleinterviewid === interviewId;
-    }
-  );
-  const interviewDetail = selectedJobDetails[0];
+  if (!interviewDetails) {
+    let selectedJobDetails = allInterview.scheduledInterviewList.filter(
+      (element) => {
+        return element.scheduleinterviewid === interviewId;
+      }
+    );
+    interviewDetail = selectedJobDetails[0];
+  } else {
+    interviewDetail = interviewDetails;
+  }
+
   let scheduled = moment(interviewDetail?.scheduledate).format("MM/DD/YYYY");
   let currentDay = moment().format("YYYY-MM-DD");
   let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
@@ -92,9 +101,9 @@ export function VideoInterviewDetails({
     };
     cancelScheduleData(cancelData);
   };
-  let USNumber = interviewDetail.candidatephonenumber.match(
-    /(\d{3})(\d{3})(\d{4})/
-  );
+  let USNumber = interviewDetail?.candidatephonenumber
+    ? interviewDetail?.candidatephonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
+    : null;
   const acceptSchedule = () => {
     acceptInterview(interviewId);
   };
@@ -131,38 +140,42 @@ export function VideoInterviewDetails({
               </h6>
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
-                outline={!showInviteCard}
-                size="sm"
-                className="mb-2 mr-2 btn-transition"
-                color="primary"
-                onClick={() => setShowInviteCard(!showInviteCard)}
-              >
-                {" "}
-                Invite to interview{" "}
-              </Button>
-              <Button
-                outline
-                size="sm"
-                className="mb-2 mr-2 btn-transition"
-                color="primary"
-                onClick={() => setShowMessage(!showMessage)}
-              >
-                {" "}
-                Message{" "}
-              </Button>
-              <ButtonGroup size={"sm"}>
-                <Button
-                  name="format"
-                  color={"success"}
-                  size={"sm"}
-                  className="mb-2 btn-transition"
-                  outline
-                  onClick={(e) => setShowAcceptPopup(true)}
-                >
-                  <BsFillCheckCircleFill className="mb-1" />
-                </Button>
-                {/* <Button
+              {fromCustList ? (
+                <></>
+              ) : (
+                <>
+                  <Button
+                    outline={!showInviteCard}
+                    size="sm"
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    onClick={() => setShowInviteCard(!showInviteCard)}
+                  >
+                    {" "}
+                    Invite to interview{" "}
+                  </Button>
+                  <Button
+                    outline
+                    size="sm"
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    onClick={() => setShowMessage(!showMessage)}
+                  >
+                    {" "}
+                    Message{" "}
+                  </Button>
+                  <ButtonGroup size={"sm"}>
+                    <Button
+                      name="format"
+                      color={"success"}
+                      size={"sm"}
+                      className="mb-2 btn-transition"
+                      outline
+                      onClick={(e) => setShowAcceptPopup(true)}
+                    >
+                      <BsFillCheckCircleFill className="mb-1" />
+                    </Button>
+                    {/* <Button
                   name="format"
                   color={"primary"}
                   size={"sm"}
@@ -171,28 +184,30 @@ export function VideoInterviewDetails({
                 >
                   <BsFillQuestionCircleFill className="mb-1" />
                 </Button> */}
-                <Button
-                  name="format"
-                  color={"danger"}
-                  size={"sm"}
-                  className="mb-2 btn-transition"
-                  outline
-                  onClick={(e) => setShowRejectPopup(true)}
-                >
-                  <BsXCircleFill className="mb-1" />
-                </Button>
-              </ButtonGroup>
+                    <Button
+                      name="format"
+                      color={"danger"}
+                      size={"sm"}
+                      className="mb-2 btn-transition"
+                      outline
+                      onClick={(e) => setShowRejectPopup(true)}
+                    >
+                      <BsXCircleFill className="mb-1" />
+                    </Button>
+                  </ButtonGroup>
 
-              <Button
-                outline
-                size="sm"
-                className="mb-2 ms-1 btn-transition"
-                color="danger"
-                title="Cancel"
-                onClick={(e) => setShowCancelPopup(true)}
-              >
-                <ImBin className="mb-1" />
-              </Button>
+                  <Button
+                    outline
+                    size="sm"
+                    className="mb-2 ms-1 btn-transition"
+                    color="danger"
+                    title="Cancel"
+                    onClick={(e) => setShowCancelPopup(true)}
+                  >
+                    <ImBin className="mb-1" />
+                  </Button>
+                </>
+              )}
             </Col>
           </div>
         </div>
@@ -236,7 +251,7 @@ export function VideoInterviewDetails({
             <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
               <UncontrolledButtonDropdown>
                 <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                  <FaEllipsisV />
+                  {fromCustList ? <></> : <FaEllipsisV />}
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
                   <DropdownItem onClick={(e) => editScheduledInterview(true)}>
@@ -315,25 +330,31 @@ export function VideoInterviewDetails({
           </div>
         </CardBody>
         <CardFooter className="d-block text-left">
-          <Button
-            outline={!showNotes}
-            className="mb-2 mr-2 btn-transition"
-            color="primary"
-            size={"sm"}
-            onClick={() => setShowNotes(!showNotes)}
-          >
-            {" "}
-            Take notes{" "}
-          </Button>
-          <Button
-            outline
-            className="mb-2 mr-2 btn-transition"
-            color="primary"
-            size={"sm"}
-          >
-            {" "}
-            Add interview guide{" "}
-          </Button>
+          {fromCustList ? (
+            <></>
+          ) : (
+            <>
+              <Button
+                outline={!showNotes}
+                className="mb-2 mr-2 btn-transition"
+                color="primary"
+                size={"sm"}
+                onClick={() => setShowNotes(!showNotes)}
+              >
+                {" "}
+                Take notes{" "}
+              </Button>
+              <Button
+                outline
+                className="mb-2 mr-2 btn-transition"
+                color="primary"
+                size={"sm"}
+              >
+                {" "}
+                Add interview guide{" "}
+              </Button>
+            </>
+          )}
         </CardFooter>
       </Card>
       {showNotes === true && (
