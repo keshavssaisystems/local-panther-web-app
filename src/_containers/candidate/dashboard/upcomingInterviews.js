@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Card,
-  Table,
+  CardFooter,
   CardHeader,
   UncontrolledButtonDropdown,
   DropdownItem,
@@ -16,6 +16,7 @@ import {
   formatDate,
   convertTo12HourFormat,
   getEducText,
+  calculateEndTime,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import DataTable from "react-data-table-component";
@@ -25,6 +26,7 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
 import personIcon from "../../../assets/utils/images/person-fill.svg";
 import { BsFillTelephoneFill } from "react-icons/bs";
+import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -32,6 +34,8 @@ export function UpcomingInterviews() {
   const schedules = useSelector(
     (state) => state.candidateDashboard.dashboardGraphData
   );
+  const [showInterviewDetails, setDetails] = useState(false);
+  const [popupData, setPopupData] = useState({});
 
   const columns = [
     {
@@ -42,33 +46,41 @@ export function UpcomingInterviews() {
     {
       name: "Job location",
       selector: (row) => (
-        // <span title={getEducText(row)}>{getEducText(row)}</span>
-        <span title="Florida,Missouri,US">Florida,Missouri,US</span>
+        <span title={getEducText(row)}>{getEducText(row)}</span>
       ),
       sortable: false,
     },
     {
       name: "Company",
+      selector: (row) => <span title={row.companyname}>{row.companyname}</span>,
+      sortable: false,
+    },
+    {
+      name: "Scheduled date",
       selector: (row) => (
-        //   <span title={row.companyname}>{row.companyname}</span>,
-
-        <span title="Adams - Runolfsdottir">Adams - Runolfsdottir</span>
+        <span title={formatDate(row.scheduledate)}>
+          {formatDate(row.scheduledate)}
+        </span>
       ),
       sortable: false,
     },
     {
       name: "Time",
       selector: (row) => (
-        <span
-          title={
-            formatDate(row.scheduledate) +
-            " " +
-            convertTo12HourFormat(row.starttime)
-          }
-        >
-          {formatDate(row.scheduledate) +
-            " " +
-            convertTo12HourFormat(row.starttime)}
+        // <span
+        //   title={
+        //     convertTo12HourFormat(row.starttime) +
+        //     " To " +
+        //     calculateEndTime(row.starttime, row.duration)
+        //   }
+        // >
+        //   {convertTo12HourFormat(row.starttime) +
+        //     " To " +
+        //     calculateEndTime(row.starttime, row.duration)}
+        // </span>
+
+        <span title={convertTo12HourFormat(row.starttime)}>
+          {convertTo12HourFormat(row.starttime)}
         </span>
       ),
       sortable: false,
@@ -153,7 +165,7 @@ export function UpcomingInterviews() {
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
             <DropdownItem>
               <i className="dropdown-icon lnr-license"> </i>
-              <span onClick={() => navigateToInterviews()}>
+              <span onClick={() => navigateToInterviews(row)}>
                 Interview details
               </span>
             </DropdownItem>
@@ -163,8 +175,10 @@ export function UpcomingInterviews() {
     );
   };
 
-  const navigateToInterviews = function () {
-    history.navigate("/calendar");
+  const navigateToInterviews = function (data) {
+    // history.navigate("/calendar");
+    setPopupData(data);
+    setDetails(true);
   };
 
   return (
@@ -176,40 +190,57 @@ export function UpcomingInterviews() {
             Upcoming Interviews
           </div>
         </CardHeader>
-        <div className="scroll-area-md">
+        <div>
           <DataTable
-            data={schedules}
+            data={schedules ? schedules : []}
             columns={columns}
             fixedHeader
             fixedHeaderScrollHeight="390px"
           />
         </div>
-        {totalRecords > 0 ? (
-          <div className="mt-2">
-            {totalRecords > 5 ? (
-              <Pagination className="float-end pagination-cont me-2">
-                <PaginationItem disabled={pageNo === 1}>
-                  <PaginationLink
-                    previous
-                    onClick={() => handlePageChange(pageNo + 1)}
-                  />
-                </PaginationItem>
-                {renderPaginationItems()}
-                <PaginationItem disabled={pageNo === totalRecords / 5}>
-                  <PaginationLink
-                    next
-                    onClick={() => handlePageChange(pageNo + 1)}
-                  />
-                </PaginationItem>
-              </Pagination>
-            ) : (
-              <></>
-            )}
-          </div>
+        <CardFooter>
+          {totalRecords > 0 ? (
+            <div className="mt-2">
+              {totalRecords > 5 ? (
+                <Pagination className="float-end pagination-cont me-2">
+                  <PaginationItem disabled={pageNo === 1}>
+                    <PaginationLink
+                      previous
+                      onClick={() => handlePageChange(pageNo + 1)}
+                    />
+                  </PaginationItem>
+                  {renderPaginationItems()}
+                  <PaginationItem disabled={pageNo === totalRecords / 5}>
+                    <PaginationLink
+                      next
+                      onClick={() => handlePageChange(pageNo + 1)}
+                    />
+                  </PaginationItem>
+                </Pagination>
+              ) : (
+                <></>
+              )}
+            </div>
+          ) : (
+            <></>
+          )}
+        </CardFooter>
+      </Card>
+      <>
+        {showInterviewDetails ? (
+          <>
+            <InterViewDetailModal
+              data={popupData}
+              onClose={() => {
+                setDetails(false);
+              }}
+              isOpen={showInterviewDetails}
+            ></InterViewDetailModal>
+          </>
         ) : (
           <></>
         )}
-      </Card>
+      </>
     </>
   );
 }

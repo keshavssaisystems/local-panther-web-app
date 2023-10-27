@@ -159,13 +159,13 @@ export function TodoList(props) {
             </div>
           </PerfectScrollbar>
         </div>
-        {totalRecords > 5 ? (
+        {/* {totalRecords > 5 ? (
           <CardFooter className="mb-3 mt-1" style={{ border: "none" }}>
             &nbsp;
           </CardFooter>
         ) : (
           <></>
-        )}
+        )} */}
       </Card>
       <div>
         <Modal className="personal-information" size="md" isOpen={isOpenModal}>

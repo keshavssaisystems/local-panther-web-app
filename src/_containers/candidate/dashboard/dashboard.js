@@ -39,62 +39,25 @@ export function CandidateDashboard() {
         </Col>
       </Row>
       <Row>
-        <Col sm={12} md={12} lg={5}>
+        <Col>
           <TodoList onCallBack={() => loadPage()} />
         </Col>
-        <Col sm={12} md={12} lg={7}>
+        <Col>
+          <Alerts />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
           <UpcomingInterviews />
         </Col>
       </Row>
 
       <Row>
-        <Col sm={12} md={12} lg={5}>
-          <Alerts />
-        </Col>
-        <Col sm={12} md={12} lg={7}>
-          <JobsList />
+        <Col>
+          <JobsList onCallBack={() => loadPage()} />
         </Col>
       </Row>
-
-      {/* <div class="card-container">
-        <div class="card">
-          
-        </div>
-
-        <Row>
-          <Col sm={12} md={12} lg={5}>
-            <div class="card">
-              <div class="card-body">
-                <TodoList onCallBack={() => loadPage()} />
-              </div>
-            </div>
-          </Col>
-          <Col>
-            <div class="card">
-              <div class="card-body">
-                <UpcomingInterviews />
-              </div>
-            </div>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col sm={12} md={12} lg={5}>
-            <div class="card">
-              <div class="card-body">
-                <Alerts />
-              </div>
-            </div>
-          </Col>
-          <Col>
-            <div class="card">
-              <div class="card-body">
-                <JobsList />
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </div> */}
     </>
   );
 }
