@@ -40,6 +40,7 @@ export const CustCandidateListView = (props) => {
   const [currCRJId, setCurrCRJId] = useState("");
   const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState("");
+  const [selectedIDData, setSelectedIDData] = useState("");
   const [showJDModal, setShowJDModal] = useState(false);
   const dispatch = useDispatch();
 
@@ -67,8 +68,10 @@ export const CustCandidateListView = (props) => {
   };
 
   const onInterviewDetails = (row) => {
-    setSelectedRowData(row);
-    setShowIDModal(true);
+    if (row?.scheduledInterviewDtos?.length > 0) {
+      setSelectedIDData(row.scheduledInterviewDtos[0]);
+      setShowIDModal(true);
+    }
   };
 
   const onCloseIdModal = () => {
@@ -397,7 +400,9 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Job details</span>
             </DropdownItem>
-            {row.customerscheduleddatetime ? (
+            {row?.scheduledInterviewDtos &&
+            row?.scheduledInterviewDtos?.length > 0 &&
+            row?.scheduledInterviewDtos[0]?.scheduledate ? (
               <DropdownItem onClick={() => onInterviewDetails(row)}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
@@ -684,7 +689,7 @@ export const CustCandidateListView = (props) => {
             isOpen={showIDModal}
             type={"Video"}
             onClose={() => onCloseIdModal()}
-            interviewDetail={selectedRowData}
+            interviewDetail={selectedIDData}
             postNotesData={(e) => onCloseIdModal(e)}
             postInviteData={(e) => onCloseIdModal(e)}
             cancelScheduleData={(e) => onCloseIdModal(e)}
@@ -692,6 +697,7 @@ export const CustCandidateListView = (props) => {
             postMessageData={(e) => onCloseIdModal(e)}
             acceptInterview={(e) => onCloseIdModal(e)}
             rejectInterview={(e) => onCloseIdModal(e)}
+            fromCustList={true}
           />
         ) : (
           <></>

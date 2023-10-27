@@ -25,7 +25,7 @@ import {
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-export function ProfilePDF() {
+export function ProfilePDF(props) {
   const componentRef = useRef();
   const personalInfo_temp = useSelector(
     (state) => state.getProfile.profileData.personalInfo
@@ -195,12 +195,16 @@ export function ProfilePDF() {
           </div>
         </CardBody>
         <Col>
-          <Button
-            className="float-end me-2 mb-2"
-            onClick={(evt) => generatePDF(false)}
-          >
-            download
-          </Button>
+          {!props?.hideDownLoad ? (
+            <Button
+              className="float-end me-2 mb-2"
+              onClick={(evt) => generatePDF(false)}
+            >
+              download
+            </Button>
+          ) : (
+            <></>
+          )}
         </Col>
       </Card>
     </div>
