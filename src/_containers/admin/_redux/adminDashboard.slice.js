@@ -87,6 +87,13 @@ export const getMissedInterviewThunk = createAsyncThunk(
     return await fetchWrapper.get(FETCH_MISSED_INTERVIEW);
   }
 );
+export const getDashboardCountThunk = createAsyncThunk(
+  `${name}/getDashboardCountThunk`,
+  async (payload = {}) => {
+    const FETCH_MISSED_INTERVIEW = `${process.env.REACT_APP_NEW_API_URL}/AdminDashboard/DasboardCount?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(FETCH_MISSED_INTERVIEW);
+  }
+);
 
 // Create the slice
 const adminDashboardSlice = createSlice({
@@ -135,7 +142,7 @@ const adminDashboardSlice = createSlice({
     [getCandidates.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.candidatesData = candidatesDataDummy;    // dummy data, api not available
+      state.candidatesData = candidatesDataDummy;
     },
     [getCandidates.rejected]: (state, action) => {
       state.loading = false;
@@ -150,7 +157,7 @@ const adminDashboardSlice = createSlice({
     [getInterviewStatusThunk.fulfilled]: (state, { payload = {} }) => {
       const { data: { scheduledInterviewList = [] } = {} } = payload;
       state.scheduledInterviewLoading = false;
-      state.scheduledInterviewList = scheduledInterviewList;    // dummy data, api not available
+      state.scheduledInterviewList = scheduledInterviewList;
     },
     [getInterviewStatusThunk.rejected]: (state, action) => {
       state.scheduledInterviewLoading = false;
@@ -165,10 +172,25 @@ const adminDashboardSlice = createSlice({
     [getMissedInterviewThunk.fulfilled]: (state, { payload = {} }) => {
       const { data: { missedInterviewList = [] } = {} } = payload;
       state.missedInterviewLoading = false;
-      state.missedInterviewList = missedInterviewList;    // dummy data, api not available
+      state.missedInterviewList = missedInterviewList;
     },
     [getMissedInterviewThunk.rejected]: (state, action) => {
       state.missedInterviewLoading = false;
+      state.error = action.error;
+    },
+    
+    // dashboard count  
+    [getDashboardCountThunk.pending]: (state) => {
+      state.dashboardCountLoading = true;
+      state.error = null;
+    },
+    [getDashboardCountThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data = {} } = payload;
+      state.dashboardCountLoading = false;
+      state.dashboardCountDetails = data;
+    },
+    [getDashboardCountThunk.rejected]: (state, action) => {
+      state.dashboardCountLoading = false;
       state.error = action.error;
     },
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { getMissedInterviewThunk, getScores } from '_containers/admin/_redux/adminDashboard.slice'
+import { getDashboardCountThunk, getMissedInterviewThunk, getScores } from '_containers/admin/_redux/adminDashboard.slice'
 import { getInterviewStatusThunk } from "_containers/admin/_redux/adminDashboard.slice";
 import { Table as DataTable } from "_widgets";
 import Loader from "react-loaders";
@@ -58,6 +58,7 @@ const AdminDashboardDetails = () => {
     scheduledInterviewLoading = false,
     scheduledInterviewList,
     missedInterviewList,
+    dashboardCountDetails
   } = useSelector((state) => state?.adminDashboard ?? {});
 
   const [visible, setVisible] = useState(true)
@@ -340,6 +341,7 @@ const AdminDashboardDetails = () => {
   ];
 
   useEffect(()=>{
+    dispatch(getDashboardCountThunk())
     dispatch(getScores(today))
     dispatch(getInterviewStatusThunk({ startDate: today, endDate: today }));    
     dispatch(getMissedInterviewThunk({ startDate: today, endDate: today }));    
@@ -466,7 +468,7 @@ const AdminDashboardDetails = () => {
                         toggle("1");
                       }}>
                       <div className="widget-number">
-                        <CountUp start={0} end={cardStats.totalCandidates} separator="," decimals={0}
+                        <CountUp start={0} end={dashboardCountDetails?.activecandidatecount || 0} separator="," decimals={0}
                           decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -487,7 +489,7 @@ const AdminDashboardDetails = () => {
                         <span className="pe-2 text-success">
                           <FontAwesomeIcon icon={faAngleUp} />
                         </span>
-                        <CountUp start={0} end={453} separator="" decimals={0} decimal=""
+                        <CountUp start={0} end={dashboardCountDetails?.openjobcount || 0} separator="" decimals={0} decimal=""
                           delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
@@ -505,7 +507,7 @@ const AdminDashboardDetails = () => {
                         toggle("3");
                       }}>
                       <div className="widget-number text-danger">
-                        <CountUp start={0} end={67} separator=","
+                        <CountUp start={0} end={dashboardCountDetails?.todaysinterviewscheduledcount || 0} separator=","
                           decimals={0} decimal="" delay={2} prefix="" duration="10" />
                       </div>
                       <div className="tab-subheading fsize-1 fw-normal">
