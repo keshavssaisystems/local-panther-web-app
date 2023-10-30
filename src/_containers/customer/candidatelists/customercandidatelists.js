@@ -171,7 +171,6 @@ export const CustomerCandidateLists = (props) => {
   };
 
   const onBuildResumeClick = async (candidateId) => {
-    debugger;
     let response = await dispatch(getProfileActions.getCandidate(candidateId));
     if (response?.payload) {
       setShowProfileModal(true);

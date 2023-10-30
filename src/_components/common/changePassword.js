@@ -31,7 +31,6 @@ export function ChangePassword(props) {
   const [message, setMessage] = useState("");
 
   const togglePasswordVisibility = (check) => {
-    debugger;
     if (check === "current") {
       setCurrentPassword(!currentPassword);
     } else if (check === "new") {
@@ -63,7 +62,6 @@ export function ChangePassword(props) {
   const { errors, isSubmitting } = formState;
 
   async function onSubmit(payload) {
-    debugger;
     let password_data = {
       userId: JSON.parse(localStorage.getItem("userDetails"))?.UserId,
       currentPassword: payload.currentPassword,
