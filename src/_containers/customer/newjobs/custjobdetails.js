@@ -6,12 +6,13 @@ import { ButtonWithCount } from "../../../_components/jobDetailComponents/Button
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
-import { FiMapPin, FiEdit, FiCheckSquare } from "react-icons/fi";
+import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-export function CustJobDetail({ jobDetails, type, publishJob }) {
+export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
   const [publishSuccess, setPublishSuccess] = useState(false);
+  const [closeConfirmation, setCloseConfirmation] = useState(false);
   let loading = true;
   let jobDetail = {};
   let skillArray = [];
@@ -227,6 +228,20 @@ export function CustJobDetail({ jobDetails, type, publishJob }) {
                   ) : (
                     <></>
                   )}
+                  {jobDetail.isdraft === false &&
+                    jobDetail.isclosed === false && (
+                      <Col md={4} lg={4} className="right-align">
+                        <Button
+                          color="danger"
+                          className={"me-3 mt-3"}
+                          onClick={(e) => {
+                            setCloseConfirmation(true);
+                          }}
+                        >
+                          <FiXSquare className="mb-1" /> Close job
+                        </Button>
+                      </Col>
+                    )}
                 </Row>
               </div>
             </div>
@@ -410,6 +425,25 @@ export function CustJobDetail({ jobDetails, type, publishJob }) {
           title="Job published successfully!!!"
           onConfirm={(e) => setPublishSuccess(false)}
         ></SweetAlert>
+      )}
+      {closeConfirmation === true && (
+        <SweetAlert
+          warning
+          showCancel
+          confirmBtnText="Yes, close job!"
+          confirmBtnBsStyle="danger"
+          cancelBtnText="No"
+          cancelBtnBsStyle="secondary"
+          title="Are you sure?"
+          onConfirm={(e) => {
+            closeJob(jobDetail.jobid);
+            setCloseConfirmation(false);
+          }}
+          onCancel={() => setCloseConfirmation(false)}
+          focusCancelBtn
+        >
+          You really want to close the {jobDetail.jobtitle} job !
+        </SweetAlert>
       )}
     </>
   );

@@ -84,7 +84,16 @@ export const CustJobList = () => {
       currentUserId: localStorage.getItem("userId"),
     };
     dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
-    // onPageChange(page);
+    onPageChange(page);
+  };
+  const closeJob = (event) => {
+    console.log(event);
+    let jobId = event;
+    let payload = {
+      currentUserId: localStorage.getItem("userId"),
+    };
+    dispatch(createjobActions.getCloseJobThunk({ jobId, payload }));
+    onPageChange(page);
   };
   return (
     <>
@@ -144,6 +153,7 @@ export const CustJobList = () => {
                           jobDetails={jobDetail}
                           type={"Open"}
                           publishJob={(e) => publishNewJob(e)}
+                          closeJob={(e) => closeJob(e)}
                         ></CustJobDetail>
                       </>
                     ) : (
