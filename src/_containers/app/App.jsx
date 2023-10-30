@@ -43,6 +43,9 @@ import {
   IncompleteCandidateProfile,
   PartiallyFilledJobs,
   AdminCalendar,
+  JobsWithoutMatchedCandidates,
+  CandidateWithoutMatchedJobs,
+  NonPublishedJobs,
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
 import { Calendar } from "_containers/customer/common/calendar";
@@ -133,11 +136,7 @@ export function App() {
           />
           <Route
             path="/report"
-            element={<HiringManager title={"Hiring Manager Report"} />}
-          />
-          <Route
-            path="/report/hiring-manager-report"
-            element={<HiringManager title={"Hiring Manager Report"} />}
+            element={<OpenJobs title={"Partially Filled Jobs"} />}
           />
           <Route
             path="/report/open-jobs"
@@ -148,28 +147,28 @@ export function App() {
             element={<NewCandidate title={"New Candidate"} />}
           />
           <Route
-            path="/report/partially-filled-job"
-            element={<OpenJobs title={"Partially Filled Jobs"} />}
+            path="/report/hiring-manager-report/:id"
+            element={<HiringManager title={"Hiring Manager Report"} />}
           />
           <Route
-            path="/report/incomplete-candidate-profile"
-            element={<OpenJobs title={"Incomplete Candidate Profile"} />}
+            path="/report/incomplete-candidate-profile/:id"
+            element={<IncompleteCandidateProfile title={"Incomplete Candidate Profile"} />}
           />
           <Route
-            path="/report/candidate-report"
-            element={<OpenJobs title={"Candidate Report"} />}
+            path="/report/candidate-report/:id"
+            element={<CandidateReport title={"Candidate Report"} />}
           />
           <Route
-            path="/report/jobs-without-matched-candidates"
-            element={<OpenJobs title={"Jobs Without Matched Candidate"} />}
+            path="/report/jobs-without-matched-candidates/:id"
+            element={<JobsWithoutMatchedCandidates title={"Jobs Without Matched Candidate"} />}
           />
           <Route
-            path="/report/canddates-without-matched-jobs"
-            element={<OpenJobs title={"Candidate Without Matched Jobs"} />}
+            path="/report/canddates-without-matched-jobs/:id"
+            element={<CandidateWithoutMatchedJobs title={"Candidate Without Matched Jobs"} />}
           />
           <Route
-            path="/report/non-published-jobs"
-            element={<OpenJobs title={"Non Published Jobs"} />}
+            path="/report/non-published-jobs/:id"
+            element={<NonPublishedJobs title={"Non Published Jobs"} />}
           />
         </>
       );

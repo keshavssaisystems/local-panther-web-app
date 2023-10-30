@@ -33,6 +33,7 @@ export function Table({
   progressComponent,
   onRowClicked,
 }) {
+
   return (
     <DataTable
       progressPending={progressPending}
