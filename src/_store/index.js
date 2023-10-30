@@ -44,6 +44,7 @@ import { shiftReducer } from "../_containers/customer/createJob/shifts.slice";
 import { experienceLevelReducer } from "../_containers/customer/createJob/experiencelevel.slice";
 import { graphReducer } from "_containers/customer/scheduleInterview/graph.slice";
 import { customerDashboardReducer } from "_containers/customer/dashboard/customerdashboard.slice";
+import { chatReducer } from "_containers/common/chats/chat.slice";
 // admin slice
 import { adminReportReducer } from "_containers/admin/_redux/report.slice";
 import { adminDashboardReducer } from "_containers/admin/_redux/adminDashboard.slice";
@@ -104,6 +105,7 @@ export * from "../_containers/customer/createJob/shifts.slice";
 export * from "../_containers/customer/createJob/experiencelevel.slice";
 export * from "_containers/customer/scheduleInterview/graph.slice";
 export * from "_containers/customer/dashboard/customerdashboard.slice";
+export * from "_containers/common/chats/chat.slice";
 // export all admin slice fn
 export * from "_containers/admin/_redux/report.slice";
 export * from "_containers/admin/_redux/adminDashboard.slice";
@@ -163,6 +165,7 @@ export const store = configureStore({
     experienceLevel: experienceLevelReducer,
     graph: graphReducer,
     customerDashboard: customerDashboardReducer,
+    chat: chatReducer,
     // admin reducer
     adminReportReducer,
     adminDashboard: adminDashboardReducer,

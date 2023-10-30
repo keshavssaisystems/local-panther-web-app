@@ -301,7 +301,7 @@ export function App() {
             path="/customer-chat"
             element={
               <PrivateRoute>
-                <Chat />
+                <ChatInterface />
               </PrivateRoute>
             }
           />

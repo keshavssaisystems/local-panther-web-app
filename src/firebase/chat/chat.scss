@@ -30,3 +30,14 @@ color: black;
     clear: both;
     padding: 0.05rem !important;
 }
+
+.chat-heading{
+    border-bottom: 1px solid rgba(32, 39, 140, 0.125);
+    background-color: #e0f3ff;
+}
+.chat{
+    .badge-custom{
+        text-transform: none !important;
+        font-weight: 300 !important;
+    }
+}

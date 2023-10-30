@@ -499,7 +499,17 @@ export function UpcomingVideoDetails({
           Chat with {interviewDetails?.candidatename}
         </ModalHeader>
         <ModalBody className="pt-4">
-          <Chat scheduledInterviewId={interviewDetails?.scheduleinterviewid} />
+          <Chat
+            groupId={
+              Number(localStorage.getItem("userId")) +
+              "-" +
+              interviewDetails?.candidateuserid
+            }
+            details={{
+              id: interviewDetails?.candidateuserid,
+              name: interviewDetails?.candidatename,
+            }}
+          />
         </ModalBody>
       </Modal>
     </>
