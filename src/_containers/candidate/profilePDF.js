@@ -48,10 +48,8 @@ export function ProfilePDF(props) {
   const additionalInfo = useSelector(
     (state) => state.getProfile.profileData.additionalInfo
   );
-  debugger;
-  const generatePDF = function () {
-    debugger;
 
+  const generatePDF = function () {
     const doc = new jsPDF();
     const content = componentRef.current;
 
@@ -73,7 +71,6 @@ export function ProfilePDF(props) {
   };
   const profile_img = localStorage.getItem("profileImage");
 
-  debugger;
   return (
     <div>
       <Card>

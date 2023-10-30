@@ -41,7 +41,6 @@ export function VideoInterviewDetails({
   interviewDetails, // Optional from customer schedule list
   fromCustList, // Optional from customer schedule list
 }) {
-  debugger;
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
   const [showRejectPopup, setShowRejectPopup] = useState(false);
