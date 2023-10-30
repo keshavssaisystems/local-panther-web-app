@@ -18,7 +18,7 @@ import {
   DropdownMenu, 
   DropdownItem } from "reactstrap";
 
-import { SkillsFilter, LocationFilter } from "../filterComponent";
+import { SkillsFilter, LocationFilter, CompanyFilter } from "../filterComponent";
 import { Table } from "_widgets";
 import { getReportDataThunk } from "../_redux/report.slice";
 
@@ -29,27 +29,30 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-
+const initFilter = {
+  '@startdate': null,
+  '@enddate': null,
+  '@companyid': null,
+  '@skillid': null,
+  '@cityid': null
+}
 export function NonPublishedJobs({ title }) {
   const dispatch = useDispatch()
   let { id: reportId } = useParams();
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
-  let [filter, setFilter] = useState({
-    '@startdate': null,
-    '@enddate': null,
-    '@companyid': null,
-    '@skillid': null,
-    '@cityid': null
-  });
+  let [filter, setFilter] = useState(initFilter);
 
   const { 
     reportData: data = [],
     loading = false 
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
-  const getReportData = () => {
+  const getReportData = (isClearAll) => {
+    if (isClearAll) {
+      filter = initFilter;
+    }
     let parameter = "";
     for (const key in filter) {
       if (Object.hasOwnProperty.call(filter, key)) {
@@ -84,16 +87,10 @@ export function NonPublishedJobs({ title }) {
   }
   
   const clearFilter = () => {
-    const initFilter = {
-      '@startdate': null,
-      '@enddate': null,
-      '@skillid': null,
-      '@cityid': null
-    };
     setFilter(initFilter);
     setStartDate(null)
     setEndDate(null)
-    getReportData();
+    getReportData(true);
   }
 
   const columns = [
@@ -168,6 +165,9 @@ export function NonPublishedJobs({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{zIndex: 9, position: 'relative'}}>
+                <Col lg="2" md="2" sm="12" sx="12">
+                  <CompanyFilter name={"@companyid"} placeholder={"Select Company"} onChange={handleChange}/>
+                </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter name={"@skillid"} placeholder={"Select Skills"} onChange={handleChange}/>
                 </Col>

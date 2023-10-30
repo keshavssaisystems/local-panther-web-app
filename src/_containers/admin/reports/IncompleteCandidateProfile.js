@@ -29,6 +29,12 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
+const initFilter = {
+  '@startdate': null,
+  '@enddate': null,
+  '@skillid': null,
+  '@cityid': null
+};
 
 export function IncompleteCandidateProfile({ title }) {
   const dispatch = useDispatch()
@@ -36,19 +42,17 @@ export function IncompleteCandidateProfile({ title }) {
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
-  let [filter, setFilter] = useState({
-    '@startdate': null,
-    '@enddate': null,
-    '@skillid': null,
-    '@cityid': null
-  });
+  let [filter, setFilter] = useState(initFilter);
 
   const { 
     reportData: data = [],
     loading = false 
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
-  const getReportData = () => {
+  const getReportData = (isClearAll) => {
+    if (isClearAll) {
+      filter = initFilter;
+    }
     let parameter = "";
     for (const key in filter) {
       if (Object.hasOwnProperty.call(filter, key)) {
@@ -83,16 +87,10 @@ export function IncompleteCandidateProfile({ title }) {
   }
   
   const clearFilter = () => {
-    const initFilter = {
-      '@startdate': null,
-      '@enddate': null,
-      '@skillid': null,
-      '@cityid': null
-    };
     setFilter(initFilter);
     setStartDate(null)
     setEndDate(null)
-    getReportData();
+    getReportData(true);
   }
 
   const columns = [
