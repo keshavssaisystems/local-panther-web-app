@@ -23,7 +23,7 @@ export const CandidateList = (props) => {
   const [showIDModal, setShowIDModal] = useState(false);
   const [selectedIDData, setSelectedIDData] = useState([]);
   const [showPSModal, setShowPSModal] = useState(false);
-  const [preScreenData, setPreScreenData] = useState([]);
+  const [preScreenType, setPreScreenType] = useState("");
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -48,6 +48,10 @@ export const CandidateList = (props) => {
   const jdLoading = useSelector(
     (state) => state.candidateListReducer.jdLoading
   );
+
+  const prescreenQues = useSelector(
+    (state) => state.candidateListReducer.prescreenQues
+  );
   const handlePageChange = (page) => {
     setPageNo(page);
     toggle(activeTab, page);
@@ -58,7 +62,7 @@ export const CandidateList = (props) => {
   }, []);
 
   useEffect(() => {
-    if (candidateJobList?.length > 0) {
+    if (candidateJobList?.length > 0 && activeTab === "matched") {
       getJobDetails(candidateJobList[0].jobid);
     }
     //make api call for first selected
@@ -264,8 +268,50 @@ export const CandidateList = (props) => {
     }
   };
 
-  const onPrescreenClickAction = (type, row) => {
+  const onPrescreenClickAction = async (type, row) => {
+    if (type === "pending") {
+      let res = await dispatch(
+        candidateListActions.getJobPrescreenApplicationQues(row.jobid)
+      );
+    } else {
+      let res = await dispatch(
+        candidateListActions.getCompJobPrescreenApplication(row.jobid)
+      );
+    }
+
+    setPreScreenType(type);
     setShowPSModal(true);
+  };
+
+  const onSendPrescreenData = async (formData) => {
+    let newData = formData.map((data) => {
+      return {
+        jobcandidateprescreenapplicationid: 0,
+        jobprescreenapplicationid: data.jobprescreenapplicationid,
+        jobid: data.jobid,
+        candidateid: parseInt(
+          JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+        ),
+        answer: data.answer,
+        isactive: data.isactive,
+        currentUserId: parseInt(
+          JSON.parse(localStorage.getItem("userDetails")).UserId
+        ),
+      };
+    });
+    let res = await dispatch(
+      candidateListActions.postJobPrescreenApplication(newData)
+    );
+
+    if (res.payload.statusCode === 201) {
+      setShowPSModal(false);
+      showSweetAlert({ title: res.payload.message, type: "success" });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
   };
 
   return (
@@ -870,6 +916,9 @@ export const CandidateList = (props) => {
                 onClose={() => {
                   setShowPSModal(false);
                 }}
+                data={prescreenQues}
+                sendFormData={(data) => onSendPrescreenData(data)}
+                preScreenType={preScreenType}
               ></PrescreenModal>
             </>
           ) : (

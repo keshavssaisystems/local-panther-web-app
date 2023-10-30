@@ -81,6 +81,33 @@ export const candidateReject = createAsyncThunk(
   }
 );
 
+// get JobPrescreenApplication thunk
+export const getJobPrescreenApplicationQues = createAsyncThunk(
+  `${name}/getJobPrescreenApplicationQues`,
+  async (jobId) => {
+    const PRESCREEN_QUES_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/JobPrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}&isActive=true`;
+    return await fetchWrapper.get(PRESCREEN_QUES_END_POINT);
+  }
+);
+
+// post JobPrescreenApplication thunk
+export const postJobPrescreenApplication = createAsyncThunk(
+  `${name}/postJobPrescreenApplication`,
+  async (payload) => {
+    const POST_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/JobCandidatePrescreenApplication`;
+    return await fetchWrapper.post(POST_PRESCREEN_END_POINT, payload);
+  }
+);
+
+// get completed JobPrescreenApplication thunk
+export const getCompJobPrescreenApplication = createAsyncThunk(
+  `${name}/getCompJobPrescreenApplication`,
+  async (jobId) => {
+    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/JobCandidatePrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}&isActive=true`;
+    return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
+  }
+);
+
 // Create the slice
 const candidateList = createSlice({
   name,
@@ -90,6 +117,7 @@ const candidateList = createSlice({
     loading: false,
     jobDetail: [],
     jdLoading: false,
+    prescreenQues: [],
   },
   reducers: {},
 
@@ -193,6 +221,82 @@ const candidateList = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    // prescreen questions
+    [getJobPrescreenApplicationQues.pending]: (state) => {
+      state.loading = false;
+      state.prescreenQues = [];
+    },
+    [getJobPrescreenApplicationQues.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+      if (payload?.data?.jobPrescreenApplicationDetailsList?.length > 0) {
+        let newData = payload?.data?.jobPrescreenApplicationDetailsList.map(
+          (data) => {
+            return {
+              isactive: data.isactive,
+              iscustomquestion: data.iscustomquestion,
+              jobid: data.jobid,
+              jobprescreenapplicationid: data.jobprescreenapplicationid,
+              prescreenquestion: data.prescreenquestion,
+              prescreenquestionid: data.prescreenquestionid,
+              error: false,
+              answer: "",
+            };
+          }
+        );
+        state.prescreenQues = newData;
+      }
+    },
+    [getJobPrescreenApplicationQues.rejected]: (state, action) => {
+      state.loading = false;
+    },
+
+    // post prescreen questions
+    [postJobPrescreenApplication.pending]: (state) => {
+      state.loading = false;
+    },
+    [postJobPrescreenApplication.fulfilled]: (state, action) => {
+      state.loading = false;
+      let jobId = action?.meta?.arg[0]?.jobid;
+      let ind = state.candidateJobList.findIndex(
+        (data) => data.jobid === jobId
+      );
+      if (ind > -1) {
+        state.candidateJobList[ind].candidateprescreenstatus = "Completed";
+      }
+    },
+    [postJobPrescreenApplication.rejected]: (state, action) => {
+      state.loading = false;
+    },
+
+    // prescreen completed questions
+    [getCompJobPrescreenApplication.pending]: (state) => {
+      state.loading = false;
+      state.prescreenQues = [];
+    },
+    [getCompJobPrescreenApplication.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+      if (payload?.data?.jobCandidatePrescreenApplicationList?.length > 0) {
+        let newData = payload?.data?.jobCandidatePrescreenApplicationList.map(
+          (data) => {
+            return {
+              isactive: data.isactive,
+              iscustomquestion: data.iscustomquestion,
+              jobid: data.jobid,
+              jobprescreenapplicationid: data.jobprescreenapplicationid,
+              prescreenquestion: data.prescreenquestion,
+              prescreenquestionid: data.prescreenquestionid,
+              error: false,
+              answer: data.answer,
+            };
+          }
+        );
+        state.prescreenQues = newData;
+      }
+    },
+    [getCompJobPrescreenApplication.rejected]: (state, action) => {
+      state.loading = false;
+    },
   },
 });
 
@@ -206,5 +310,8 @@ export const candidateListActions = {
   getJobDetails,
   candidateApply,
   candidateReject,
+  getJobPrescreenApplicationQues,
+  postJobPrescreenApplication,
+  getCompJobPrescreenApplication,
 };
 export const candidateListReducer = candidateList.reducer;

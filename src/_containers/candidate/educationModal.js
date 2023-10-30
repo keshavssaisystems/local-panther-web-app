@@ -53,7 +53,6 @@ export function EducationModal(props) {
   const [yearList, setYearList] = useState(
     useSelector((state) => state.yearList.user.data)
   );
-  debugger;
   const [fromDateSelect, setFromDateSelect] = useState({
     month: "",
     year: "",
