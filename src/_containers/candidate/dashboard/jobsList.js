@@ -109,7 +109,7 @@ export function JobsList(props) {
   };
   const navigateToJobs = function (data) {
     //history.navigate("/job-list");
-    debugger;
+
     let new_data = [...selected];
     new_data.push(data);
     setSelected(new_data);
