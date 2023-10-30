@@ -54,7 +54,9 @@ export const PrescreenModal = (props) => {
       isOpen={props.isOpen}
       backdrop="fade"
     >
-      <ModalHeader toggle={() => props.onClose()}>Pre-screen</ModalHeader>
+      <ModalHeader toggle={() => props.onClose()}>
+        <b>Pre-screen</b>
+      </ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
         {props.preScreenType === "pending" ? (
           <>
