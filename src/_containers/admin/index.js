@@ -4,5 +4,8 @@ export * from './reports/HiringManager';
 export * from './reports/CandidateReport';
 export * from './reports/CandidateReport';
 export * from './reports/IncompleteCandidateProfile';
+export * from './reports/JobsWithoutMatchedCandidates';
+export * from './reports/CandidateWithoutMatchedJobs';
+export * from './reports/NonPublishedJobs';
 export * from './reports/PartiallyFilledJobs';
 export * from './calender/AdminCalendar';

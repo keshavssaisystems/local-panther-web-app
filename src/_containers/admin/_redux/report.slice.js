@@ -68,6 +68,19 @@ export const scheduledInterviewListThunk = createAsyncThunk(
   }
 );
 
+// get report data thunk
+export const getReportDataThunk = createAsyncThunk(
+  `${name}/getReportDataThunk`,
+  async (payload = {}) => {
+    payload = {
+      ...payload
+    }
+
+    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetReportData?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(OPEN_JOBS_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -75,6 +88,7 @@ const adminReportSlice = createSlice({
     // initialize state from local storage to enable user to stay logged in
     loading: false,
     error: null,
+    reportData: []
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -131,6 +145,22 @@ const adminReportSlice = createSlice({
       state.error = action.error;
     },
     
+    // Get Report Data
+    [getReportDataThunk.pending]: (state) => {
+      state.loading = true;
+      state.reportData = [];
+      state.error = null;
+    },
+    [getReportDataThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data = []} = payload;
+      state.loading = false;
+      state.reportData = data;
+    },
+    [getReportDataThunk.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    
     // scheduled interview list
     [scheduledInterviewListThunk.pending]: (state) => {
       state.scheduledLoading = true;
@@ -155,7 +185,8 @@ export const adminReportActions = {
   ...adminReportSlice.actions,
   openJobsThunk, // Export the async open jobs action
   newCandidateThunk, // Export the async new candidate action
-  hiringManagerThunk // Export the async hiring manager action
+  hiringManagerThunk, // Export the async hiring manager action
+  getReportDataThunk // Export the async report data action
 };
 
 export const adminReportReducer = adminReportSlice.reducer;

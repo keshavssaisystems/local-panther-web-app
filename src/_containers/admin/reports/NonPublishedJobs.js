@@ -30,7 +30,7 @@ import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 
-export function HiringManager({ title }) {
+export function NonPublishedJobs({ title }) {
   const dispatch = useDispatch()
   let { id: reportId } = useParams();
 
@@ -108,27 +108,32 @@ export function HiringManager({ title }) {
         selector: row => row?.experience,
         sortable: true,
         wrap: true,
-        width: '150px'
+        width: '100px'
     },
     {
         name: 'Skills',
-        selector: row => typeof row?.skills === 'string' && row?.skills,
+        selector: row => typeof row?.skill === 'string' && row?.skill,
         wrap: true,
     },
     {
-      name: 'Location',
-      selector: row => row?.location,
-      sortable: true,
-      wrap: true,
-      width: '300px'
-    },
-    {
-        name: 'Created',
-        selector: row => row?.createddate,
-        format: (row) => moment(row?.createddate).format('MM/DD/YYYY'),
+        name: 'Education',
+        selector: row => row?.education,
         wrap: true,
         width: '150px'
     },
+    {
+        name: 'Matched Jobs',
+        selector: row => row?.matchedjobs,
+        wrap: true,
+        width: '100px'
+    },
+    {
+      name: 'Address',
+      selector: row => row?.address,
+      sortable: true,
+      wrap: true,
+      width: '300px'
+    }
   ];
 
   return (
