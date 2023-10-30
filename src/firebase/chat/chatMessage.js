@@ -11,10 +11,10 @@ export function ChatMessage(props) {
   let displayTime = moment.utc(sendDate).tz(offset).format("hh:mm a");
   let displayDateTime =
     displayDate === today
-      ? "Today, " + displayTime
-      : moment.utc(sendDate).tz(offset).format("MM/DD/YYYY") +
-        ", " +
-        displayTime;
+      ? displayTime + " | Today"
+      : displayTime +
+        " | " +
+        moment.utc(sendDate).tz(offset).format("MM/DD/YYYY");
   const messageClass =
     sender === localStorage.getItem("userId") ? "sent" : "received";
   return (

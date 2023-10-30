@@ -11,6 +11,7 @@ import {
   Input,
   FormText,
 } from "reactstrap";
+import "./prescreen.scss";
 
 export const PrescreenModal = (props) => {
   const [formData, setFormData] = useState([]);
@@ -50,12 +51,14 @@ export const PrescreenModal = (props) => {
   return (
     <Modal
       toggle={() => props.onClose()}
-      className="modal-reject-align "
+      className="modal-reject-align prescreen-modal"
       isOpen={props.isOpen}
       backdrop="fade"
     >
       <ModalHeader toggle={() => props.onClose()}>
-        <b>Pre-screen</b>
+        <h3>
+          <b>Pre-screen</b>
+        </h3>
       </ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
         {props.preScreenType === "pending" ? (
@@ -65,7 +68,9 @@ export const PrescreenModal = (props) => {
                 {formData.map((data, index) => {
                   return (
                     <Row key={data.prescreenquestion}>
-                      <Label>{data.prescreenquestion}</Label>
+                      <Label>
+                        <b className="modal-title">{data.prescreenquestion}</b>
+                      </Label>
                       {data.iscustomquestion ? (
                         <>
                           <Label>
@@ -133,9 +138,11 @@ export const PrescreenModal = (props) => {
                 {formData.map((data, index) => {
                   return (
                     <Row key={data.prescreenquestion}>
-                      <Label>{data.prescreenquestion}</Label>
                       <Label>
-                        <div className="mb-2 me-2 badge bg-light">
+                        <b className="modal-title">{data.prescreenquestion}</b>
+                      </Label>
+                      <Label>
+                        <div className="mb-2 me-2 badge bg-light modal-badge">
                           {data.answer}
                         </div>
                       </Label>

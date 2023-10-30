@@ -38,10 +38,11 @@ const columns = [
       wrap: true,
   },
   {
-      name: 'Location',
-      selector: row => row.location,
-      sortable: true,
-      wrap: true,
+    name: 'Skills',
+    selector: row => row.skills,
+    sortable: true,
+    wrap: true,
+    width: '400px'
   },
   {
       name: 'Experience',
@@ -50,11 +51,10 @@ const columns = [
       wrap: true,
   },
   {
-      name: 'Skills',
-      selector: row => row.skills,
-      sortable: true,
-      wrap: true,
-      width: '400px'
+    name: 'Location',
+    selector: row => row.location,
+    sortable: true,
+    wrap: true,
   },
   {
       name: 'Created',

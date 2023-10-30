@@ -18,7 +18,7 @@ import {
   DropdownMenu, 
   DropdownItem } from "reactstrap";
 
-import { SkillsFilter, LocationFilter } from "../filterComponent";
+import { SkillsFilter, LocationFilter, CompanyFilter } from "../filterComponent";
 import { Table } from "_widgets";
 import { getReportDataThunk } from "../_redux/report.slice";
 
@@ -29,6 +29,14 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
+const initFilter = {
+  '@startdate': null,
+  '@enddate': null,
+  '@customerid': null,
+  '@companyid': null,
+  '@skillid': null,
+  '@cityid': null
+}
 
 export function HiringManager({ title }) {
   const dispatch = useDispatch()
@@ -36,20 +44,18 @@ export function HiringManager({ title }) {
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
-  let [filter, setFilter] = useState({
-    '@startdate': null,
-    '@enddate': null,
-    '@skillid': null,
-    '@cityid': null
-  });
+  let [filter, setFilter] = useState(initFilter);
 
   const { 
     reportData: data = [],
     loading = false 
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
-  const getReportData = () => {
+  const getReportData = (isClearAll) => {
     let parameter = "";
+    if (isClearAll) {
+      filter = initFilter
+    }
     for (const key in filter) {
       if (Object.hasOwnProperty.call(filter, key)) {
         parameter += key + '=' + filter[key]+',';
@@ -83,51 +89,45 @@ export function HiringManager({ title }) {
   }
   
   const clearFilter = () => {
-    const initFilter = {
-      '@startdate': null,
-      '@enddate': null,
-      '@skillid': null,
-      '@cityid': null
-    };
     setFilter(initFilter);
     setStartDate(null)
     setEndDate(null)
-    getReportData();
+    getReportData(true);
   }
 
   const columns = [
     {
-        name: 'Candidate',
-        selector: row => row?.candidatename,
+        name: 'Company',
+        selector: row => row?.companyname,
         sortable: true,
         wrap: true,
-        width: '150px'
+        width: '250px'
     },
     {
-        name: 'Experience',
-        selector: row => row?.experience,
+        name: 'Customer',
+        selector: row => row?.customername,
         sortable: true,
         wrap: true,
-        width: '150px'
+        width: '250px'
     },
     {
-        name: 'Skills',
-        selector: row => typeof row?.skills === 'string' && row?.skills,
+        name: 'Email',
+        selector: row => row?.email,
         wrap: true,
+        width: '250px'
     },
     {
-      name: 'Location',
-      selector: row => row?.location,
+      name: 'Phone',
+      selector: row => row?.phonenumber,
       sortable: true,
       wrap: true,
-      width: '300px'
+      width: '150px'
     },
     {
-        name: 'Created',
-        selector: row => row?.createddate,
-        format: (row) => moment(row?.createddate).format('MM/DD/YYYY'),
-        wrap: true,
-        width: '150px'
+      name: 'Address',
+      selector: row => row?.address,
+      sortable: true,
+      wrap: true,
     },
   ];
 
@@ -162,6 +162,9 @@ export function HiringManager({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{zIndex: 9, position: 'relative'}}>
+                <Col lg="2" md="2" sm="12" sx="12">
+                  <CompanyFilter name={"@companyid"} placeholder={"Select Company"} onChange={handleChange}/>
+                </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter name={"@skillid"} placeholder={"Select Skills"} onChange={handleChange}/>
                 </Col>

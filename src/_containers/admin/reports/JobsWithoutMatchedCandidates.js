@@ -18,7 +18,7 @@ import {
   DropdownMenu, 
   DropdownItem } from "reactstrap";
 
-import { SkillsFilter, LocationFilter } from "../filterComponent";
+import { SkillsFilter, LocationFilter, CompanyFilter } from "../filterComponent";
 import { Table } from "_widgets";
 import { getReportDataThunk } from "../_redux/report.slice";
 
@@ -29,6 +29,13 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
+const initFilter = {
+  '@startdate': null,
+  '@enddate': null,
+  '@companyid': null,
+  '@skillid': null,
+  '@cityid': null
+}
 
 export function JobsWithoutMatchedCandidates({ title }) {
   const dispatch = useDispatch()
@@ -36,20 +43,19 @@ export function JobsWithoutMatchedCandidates({ title }) {
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
-  let [filter, setFilter] = useState({
-    '@startdate': null,
-    '@enddate': null,
-    '@skillid': null,
-    '@cityid': null
-  });
+  let [filter, setFilter] = useState(initFilter);
 
   const { 
     reportData: data = [],
     loading = false 
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
-  const getReportData = () => {
+  const getReportData = (isClearAll) => {
     let parameter = "";
+    if (isClearAll) {
+      filter = initFilter;
+    }
+    
     for (const key in filter) {
       if (Object.hasOwnProperty.call(filter, key)) {
         parameter += key + '=' + filter[key]+',';
@@ -83,47 +89,40 @@ export function JobsWithoutMatchedCandidates({ title }) {
   }
   
   const clearFilter = () => {
-    const initFilter = {
-      '@startdate': null,
-      '@enddate': null,
-      '@skillid': null,
-      '@cityid': null
-    };
     setFilter(initFilter);
     setStartDate(null)
     setEndDate(null)
-    getReportData();
+    getReportData(true);
   }
 
   const columns = [
     {
-        name: 'Candidate',
-        selector: row => row?.candidatename,
+        name: 'Company',
+        selector: row => row?.companyname,
         sortable: true,
         wrap: true,
         width: '150px'
     },
     {
-        name: 'Experience',
-        selector: row => row?.experience,
+        name: 'Job Title',
+        selector: row => row?.jobtitle,
         sortable: true,
         wrap: true,
         width: '100px'
     },
     {
         name: 'Skills',
-        selector: row => typeof row?.skill === 'string' && row?.skill,
+        selector: row => typeof row?.musthaveskills === 'string' && row?.musthaveskills,
         wrap: true,
     },
     {
-        name: 'Education',
-        selector: row => row?.education,
+        name: 'Nice to have',
+        selector: row => typeof row?.nicetohaveskills === 'string' && row?.nicetohaveskills,
         wrap: true,
-        width: '150px'
     },
     {
-        name: 'Matched Jobs',
-        selector: row => row?.matchedjobs,
+        name: 'Open position',
+        selector: row => row?.noofopenposition,
         wrap: true,
         width: '100px'
     },
@@ -167,6 +166,9 @@ export function JobsWithoutMatchedCandidates({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{zIndex: 9, position: 'relative'}}>
+                <Col lg="2" md="2" sm="12" sx="12">
+                  <CompanyFilter name={"@companyid"} placeholder={"Select Company"} onChange={handleChange}/>
+                </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter name={"@skillid"} placeholder={"Select Skills"} onChange={handleChange}/>
                 </Col>
