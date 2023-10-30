@@ -297,7 +297,7 @@ export function App() {
             }
           />
           <Route
-            path="/customer-chat"
+            path="/chat"
             element={
               <PrivateRoute>
                 <ChatInterface />
@@ -389,7 +389,7 @@ export function App() {
             }
           />
           <Route
-            path="/candidate-chat"
+            path="/chat"
             element={
               <PrivateRoute>
                 <ChatInterface />
