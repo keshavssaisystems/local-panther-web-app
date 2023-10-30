@@ -114,7 +114,7 @@
         "react-resize-detector": "^7.0.0",
         "react-responsive-tabs": "^4.4.3",
         "react-router-dom": "^6.8.1",
-        "react-scripts": "5.0.1",
+        "react-scripts": "^5.0.1",
         "react-scroll": "^1.8.4",
         "react-select": "^5.7.4",
         "react-select-search": "^4.1.6",
