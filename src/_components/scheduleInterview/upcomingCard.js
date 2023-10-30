@@ -57,13 +57,14 @@ export function UpcomingCard({
                         Applied for {interview.jobtitle}
                       </div>
                     </Col>
-                    {interview.isaccepted === true && (
-                      <Col md="5">
-                        <div className="mb-2 me-2 badge bg-success float-end badge-custom">
-                          Scheduled
-                        </div>
-                      </Col>
-                    )}
+                    {interview.isaccepted === true &&
+                      interview.isrejected === false && (
+                        <Col md="5">
+                          <div className="mb-2 me-2 badge bg-success float-end badge-custom">
+                            Scheduled
+                          </div>
+                        </Col>
+                      )}
                     {interview.isaccepted === false &&
                       interview.isrejected === false && (
                         <Col md="5">
@@ -72,7 +73,9 @@ export function UpcomingCard({
                           </div>
                         </Col>
                       )}
-                    {interview.isrejected === true && (
+                    {((interview.isrejected === true &&
+                      interview.isaccepted === true) ||
+                      interview.isrejected === true) && (
                       <Col md="5">
                         <div className="mb-2 me-2 badge bg-danger float-end badge-custom">
                           Rejected
