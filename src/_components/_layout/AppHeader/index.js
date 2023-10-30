@@ -1,12 +1,11 @@
 import React from "react";
 import cx from "classnames";
-
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
-
 import { UserBox } from "./Components/UserBox";
 import logo from "../../../assets/utils/images/panther-logo.png";
 import { useSelector } from "react-redux";
 import "./appheader.scss";
+import { ChatCounter } from "./Components/chatCounter";
 export function AppHeader({
   headerBackgroundColor = "white",
   enableMobileMenuSmall = true,
@@ -40,6 +39,7 @@ export function AppHeader({
             </h4>
           </div>
           <div className="app-header-right">
+            {/* <ChatCounter /> */}
             <UserBox />
           </div>
         </div>

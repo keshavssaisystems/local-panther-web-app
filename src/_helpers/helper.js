@@ -359,7 +359,7 @@ export function convertTo12HourFormat(time24) {
 }
 export function calculateEndTime(startTime, duration) {
   // Parse the start time in HH:MM format
-  debugger;
+
   const [startHour, startMinute] = startTime.split(":").map(Number);
 
   // Parse the duration in hours and minutes

@@ -34,9 +34,9 @@ export function DonutChart({ graphData }) {
     },
     series: [graphData?.accepted, graphData?.scheduled, graphData?.rejected],
     labels: [
-      acceptedPercentage + "% Accepted",
-      scheduledPercentage + "% Scheduled",
-      rejectedPercentage + "% Rejected",
+      Math.round(acceptedPercentage) + "% Accepted",
+      Math.round(scheduledPercentage) + "% Scheduled",
+      Math.round(rejectedPercentage) + "% Rejected",
     ],
     legend: {
       position: "right",

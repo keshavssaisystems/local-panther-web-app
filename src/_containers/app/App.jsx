@@ -4,7 +4,6 @@ import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 import {
   AdminDashboard,
-  // CustomerDashboard,
 } from "_containers/dashboard/Dashboard";
 
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
@@ -20,21 +19,13 @@ import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
 import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
-// import { CandidateTablist } from "_containers/candidate/candidateTablist";
 import { CandidateList } from "_containers/candidate/list/candidatelist";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
-import { Policy } from "_containers/policy";
-import { Terms } from "_containers/terms";
-import { Security } from "_containers/security";
-import { Contact } from "_containers/contact";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
-import { CustomerUnderConstruction } from "_containers/customer/common/customerUnderConstruction";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
-
 // Admin
 import { OnboardCustomer } from "_containers/admin/customer";
-import { AdminUnderConstruction } from "_containers/admin/common/adminUnderConstruction";
 import {
   OpenJobs,
   NewCandidate,
@@ -60,6 +51,7 @@ import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
 import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
+import { ChatInterface } from "_containers/common/chats/chatInterface";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -308,7 +300,7 @@ export function App() {
             path="/customer-chat"
             element={
               <PrivateRoute>
-                <Chat />
+                <ChatInterface />
               </PrivateRoute>
             }
           />
@@ -400,7 +392,7 @@ export function App() {
             path="/candidate-chat"
             element={
               <PrivateRoute>
-                <Chat />
+                <ChatInterface />
               </PrivateRoute>
             }
           />
