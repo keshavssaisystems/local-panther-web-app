@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -67,10 +67,19 @@ export const CustCandidateListView = (props) => {
     setShowJDModal(true);
   };
 
-  const onInterviewDetails = (row) => {
+  const onInterviewDetails = async (row) => {
     if (row?.scheduledInterviewDtos?.length > 0) {
-      setSelectedIDData(row.scheduledInterviewDtos[0]);
-      setShowIDModal(true);
+      let res = await dispatch(
+        customerCandidateListsActions.getScheduleIVList(
+          row.scheduledInterviewDtos[0].scheduleinterviewid
+        )
+      );
+      if (res.payload.statusCode === 200) {
+        setSelectedIDData(res?.payload?.data?.scheduledInterviewList[0]);
+        setShowIDModal(true);
+      } else {
+        //do nothing
+      }
     }
   };
 

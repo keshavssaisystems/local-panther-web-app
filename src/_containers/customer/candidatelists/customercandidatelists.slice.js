@@ -24,6 +24,7 @@ function createInitialState() {
     candidateList: [],
     totalRecords: 0,
     durationOptions: [],
+    scheduledInterviewList: [],
   };
 }
 
@@ -40,6 +41,7 @@ function createExtraActions() {
     getDurationOptions: getDurationOptions(),
     postScheduleInterview: postScheduleInterview(),
     getScheduleListData: getScheduleListData(),
+    getScheduleIVList: getScheduleIVList(),
   };
 
   function getDrpDwnJobLists() {
@@ -173,6 +175,17 @@ function createExtraActions() {
         )
     );
   }
+
+  function getScheduleIVList() {
+    return createAsyncThunk(
+      `${name}/getScheduleIVList`,
+
+      async (scheduleInterviewId) =>
+        await fetchWrapper.get(
+          `${newUrl}/ScheduledInterview?pageSize=10&pageNumber=1&scheduleInterviewId=${scheduleInterviewId}&isActive=true&isPaginationRequired=true`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -187,6 +200,7 @@ function createExtraReducers() {
     getDurationOptions();
     postScheduleInterview();
     getScheduleListData();
+    getScheduleIVList();
 
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
@@ -352,6 +366,21 @@ function createExtraReducers() {
         .addCase(rejected, (state, action) => {
           state.loading = false;
         });
+    }
+
+    function getScheduleIVList() {
+      let { pending, fulfilled, rejected } = extraActions.getScheduleIVList;
+      builder
+        .addCase(pending, (state) => {
+          state.scheduledInterviewList = [];
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.scheduledInterviewList = action?.payload?.data
+            ?.scheduledInterviewList
+            ? action?.payload?.data?.scheduledInterviewList
+            : [];
+        })
+        .addCase(rejected, (state, action) => {});
     }
   };
 }
