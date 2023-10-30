@@ -75,6 +75,15 @@ export const getJobDetailForUpdateThunk = createAsyncThunk(
   }
 );
 
+// getCloseJobThunk thunk
+export const getCloseJobThunk = createAsyncThunk(
+  `${name}/getCloseJobThunk`,
+  async ({ jobId, payload }) => {
+    const CLOSE_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/CloseJob/${jobId}`;
+    return await fetchWrapper.put(CLOSE_JOB_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const createjobSlice = createSlice({
   name,
@@ -181,6 +190,17 @@ const createjobSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getCloseJobThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCloseJobThunk.fulfilled]: (state, action) => {
+      state.CloseJob = action;
+      state.loading = false;
+    },
+    [getCloseJobThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -195,6 +215,7 @@ export const createjobActions = {
   getRecommendedListThunk,
   getUpdatejobThunk,
   getJobDetailForUpdateThunk,
+  getCloseJobThunk,
 };
 
 export const createjobReducer = createjobSlice.reducer;
