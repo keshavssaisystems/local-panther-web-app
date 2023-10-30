@@ -84,7 +84,7 @@ export const CustJobList = () => {
       currentUserId: localStorage.getItem("userId"),
     };
     dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
-    onPageChange(page);
+    // onPageChange(page);
   };
   const closeJob = (event) => {
     console.log(event);
