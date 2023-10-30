@@ -39,6 +39,7 @@ export function JobsWithoutMatchedCandidates({ title }) {
   let [filter, setFilter] = useState({
     '@startdate': null,
     '@enddate': null,
+    '@companyid': null,
     '@skillid': null,
     '@cityid': null
   });
@@ -97,33 +98,32 @@ export function JobsWithoutMatchedCandidates({ title }) {
 
   const columns = [
     {
-        name: 'Candidate',
-        selector: row => row?.candidatename,
+        name: 'Company',
+        selector: row => row?.companyname,
         sortable: true,
         wrap: true,
         width: '150px'
     },
     {
-        name: 'Experience',
-        selector: row => row?.experience,
+        name: 'Job Title',
+        selector: row => row?.jobtitle,
         sortable: true,
         wrap: true,
         width: '100px'
     },
     {
         name: 'Skills',
-        selector: row => typeof row?.skill === 'string' && row?.skill,
+        selector: row => typeof row?.musthaveskills === 'string' && row?.musthaveskills,
         wrap: true,
     },
     {
-        name: 'Education',
-        selector: row => row?.education,
+        name: 'Nice to have',
+        selector: row => typeof row?.nicetohaveskills === 'string' && row?.nicetohaveskills,
         wrap: true,
-        width: '150px'
     },
     {
-        name: 'Matched Jobs',
-        selector: row => row?.matchedjobs,
+        name: 'Open position',
+        selector: row => row?.noofopenposition,
         wrap: true,
         width: '100px'
     },

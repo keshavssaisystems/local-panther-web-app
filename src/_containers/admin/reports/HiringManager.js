@@ -39,6 +39,8 @@ export function HiringManager({ title }) {
   let [filter, setFilter] = useState({
     '@startdate': null,
     '@enddate': null,
+    '@customerid': null,
+    '@companyid': null,
     '@skillid': null,
     '@cityid': null
   });
@@ -97,37 +99,37 @@ export function HiringManager({ title }) {
 
   const columns = [
     {
-        name: 'Candidate',
-        selector: row => row?.candidatename,
+        name: 'Company',
+        selector: row => row?.companyname,
         sortable: true,
         wrap: true,
-        width: '150px'
+        width: '250px'
     },
     {
-        name: 'Experience',
-        selector: row => row?.experience,
+        name: 'Customer',
+        selector: row => row?.customername,
         sortable: true,
         wrap: true,
-        width: '150px'
+        width: '250px'
     },
     {
-        name: 'Skills',
-        selector: row => typeof row?.skills === 'string' && row?.skills,
+        name: 'Email',
+        selector: row => row?.email,
         wrap: true,
+        width: '250px'
     },
     {
-      name: 'Location',
-      selector: row => row?.location,
+      name: 'Phone',
+      selector: row => row?.phonenumber,
       sortable: true,
       wrap: true,
-      width: '300px'
+      width: '150px'
     },
     {
-        name: 'Created',
-        selector: row => row?.createddate,
-        format: (row) => moment(row?.createddate).format('MM/DD/YYYY'),
-        wrap: true,
-        width: '150px'
+      name: 'Address',
+      selector: row => row?.address,
+      sortable: true,
+      wrap: true,
     },
   ];
 
