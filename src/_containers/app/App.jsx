@@ -128,7 +128,7 @@ export function App() {
           />
           <Route
             path="/report"
-            element={<OpenJobs title={"Partially Filled Jobs"} />}
+            element={<OpenJobs title={"Open Jobs"} />}
           />
           <Route
             path="/report/open-jobs"
