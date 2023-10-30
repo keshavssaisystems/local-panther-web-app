@@ -54,6 +54,7 @@ const columns = [
       selector: row => row.skills,
       sortable: true,
       wrap: true,
+      width: '400px'
   },
   {
       name: 'Created',

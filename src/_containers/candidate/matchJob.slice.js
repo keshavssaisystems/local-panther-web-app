@@ -34,7 +34,7 @@ function createExtraActions() {
         candidateId
       ) =>
         await fetchWrapper.get(
-          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?candidateId=${candidateId}`
+          `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=true&candidateId=${candidateId}`
         )
     );
   }

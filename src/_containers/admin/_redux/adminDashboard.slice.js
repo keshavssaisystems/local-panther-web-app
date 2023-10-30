@@ -68,6 +68,33 @@ export const getCandidates = createAsyncThunk(
   }
 );
 
+export const getInterviewStatusThunk = createAsyncThunk(
+  `${name}/getInterviewStatusThunk`,
+  async (payload = {}) => {
+    payload = {
+      ...payload,
+      isActive: true,
+      isPaginationRequired: false
+    }
+    const FETCH_SCHEDULED_INTERVIEW = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(FETCH_SCHEDULED_INTERVIEW);
+  }
+);
+export const getMissedInterviewThunk = createAsyncThunk(
+  `${name}/getMissedInterviewThunk`,
+  async (payload = {}) => {
+    const FETCH_MISSED_INTERVIEW = `${process.env.REACT_APP_NEW_API_URL}/AdminDashboard/GetMissedInterviewList?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(FETCH_MISSED_INTERVIEW);
+  }
+);
+export const getDashboardCountThunk = createAsyncThunk(
+  `${name}/getDashboardCountThunk`,
+  async (payload = {}) => {
+    const FETCH_MISSED_INTERVIEW = `${process.env.REACT_APP_NEW_API_URL}/AdminDashboard/DasboardCount?${new URLSearchParams(payload)}`;
+    return await fetchWrapper.get(FETCH_MISSED_INTERVIEW);
+  }
+);
+
 // Create the slice
 const adminDashboardSlice = createSlice({
   name,
@@ -115,10 +142,55 @@ const adminDashboardSlice = createSlice({
     [getCandidates.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.candidatesData = candidatesDataDummy;    // dummy data, api not available
+      state.candidatesData = candidatesDataDummy;
     },
     [getCandidates.rejected]: (state, action) => {
       state.loading = false;
+      state.error = action.error;
+    },
+    
+    // scheduled interview Status  
+    [getInterviewStatusThunk.pending]: (state) => {
+      state.scheduledInterviewLoading = true;
+      state.error = null;
+    },
+    [getInterviewStatusThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { scheduledInterviewList = [] } = {} } = payload;
+      state.scheduledInterviewLoading = false;
+      state.scheduledInterviewList = scheduledInterviewList;
+    },
+    [getInterviewStatusThunk.rejected]: (state, action) => {
+      state.scheduledInterviewLoading = false;
+      state.error = action.error;
+    },
+    
+    // missed interview Status  
+    [getMissedInterviewThunk.pending]: (state) => {
+      state.missedInterviewLoading = true;
+      state.error = null;
+    },
+    [getMissedInterviewThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data: { missedInterviewList = [] } = {} } = payload;
+      state.missedInterviewLoading = false;
+      state.missedInterviewList = missedInterviewList;
+    },
+    [getMissedInterviewThunk.rejected]: (state, action) => {
+      state.missedInterviewLoading = false;
+      state.error = action.error;
+    },
+    
+    // dashboard count  
+    [getDashboardCountThunk.pending]: (state) => {
+      state.dashboardCountLoading = true;
+      state.error = null;
+    },
+    [getDashboardCountThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data = {} } = payload;
+      state.dashboardCountLoading = false;
+      state.dashboardCountDetails = data;
+    },
+    [getDashboardCountThunk.rejected]: (state, action) => {
+      state.dashboardCountLoading = false;
       state.error = action.error;
     },
 

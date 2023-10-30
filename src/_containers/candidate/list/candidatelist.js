@@ -17,7 +17,8 @@ import { PrescreenModal } from "_components/modal/prescreenmodal";
 import "./candidatelist.scss";
 
 export const CandidateList = (props) => {
-  const [activeTab, setActiveTab] = useState("matched");
+  const [activeTab, setActiveTab] = useState(props.type || "matched");
+
   const [showJDModal, setShowJDModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -58,7 +59,7 @@ export const CandidateList = (props) => {
   };
 
   useEffect(() => {
-    toggle("matched", pageNo);
+    toggle(activeTab, pageNo);
   }, []);
 
   useEffect(() => {
