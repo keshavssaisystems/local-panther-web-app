@@ -119,6 +119,7 @@ export function CandidateSchedules() {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
+    console.log(event.data);
     setPopupData(event.data);
     setOpenModal(true);
     setPopupType(event.format);

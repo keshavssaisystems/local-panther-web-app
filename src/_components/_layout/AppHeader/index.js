@@ -39,7 +39,7 @@ export function AppHeader({
             </h4>
           </div>
           <div className="app-header-right">
-            {/* <ChatCounter /> */}
+            <ChatCounter />
             <UserBox />
           </div>
         </div>
