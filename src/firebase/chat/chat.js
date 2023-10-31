@@ -7,6 +7,7 @@ import { CardBody, CardFooter, Input, Form, Col } from "reactstrap";
 import "./chat.scss";
 import { ChatMessage } from "./chatMessage";
 import moment from "moment-timezone";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 export function Chat({ groupId, details }) {
   let userRole = Number(localStorage.getItem("userroleid"));
@@ -77,16 +78,18 @@ export function Chat({ groupId, details }) {
   return (
     <>
       <CardBody className="overflow-auto">
-        <main>
-          {messages &&
-            messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
-          {messages?.length === 0 && (
-            <>
-              <div className="text-center">
-                Start a new chat with {details.name}
-              </div>
-            </>
-          )}
+        <main className="scroll-area-lg">
+          <PerfectScrollbar>
+            {messages &&
+              messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+            {messages?.length === 0 && (
+              <>
+                <div className="text-center">
+                  Start a new chat with {details.name}
+                </div>
+              </>
+            )}
+          </PerfectScrollbar>
           <span ref={dummy}></span>
         </main>
       </CardBody>
