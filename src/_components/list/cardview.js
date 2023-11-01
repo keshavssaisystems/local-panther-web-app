@@ -7,6 +7,7 @@ import {
   Col,
   Button,
   ButtonGroup,
+  UncontrolledPopover,
 } from "reactstrap";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { RejectModal } from "_components/modal/rejectmodal";
@@ -26,10 +27,10 @@ import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import "./cardview.scss";
-import { updateMonthstoYears } from "_helpers/helper";
 import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
+import { ScorePopup } from "./scorePopup";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -219,7 +220,33 @@ export const CandidateCardView = (props) => {
                   <div className="card-title right-align">
                     {props?.data?.avgscore ? (
                       <>
-                        <ProgressCircle avgscore={props?.data?.avgscore} />
+                        <Button
+                          className="me-2 mb-2"
+                          color="link"
+                          id={
+                            "PopoverCustom-" +
+                            props?.data?.candidaterecommendedjobid
+                          }
+                        >
+                          <ProgressCircle avgscore={props?.data?.avgscore} />
+                        </Button>
+                        <UncontrolledPopover
+                          className="popover-custom"
+                          placement={"bottom"}
+                          trigger="legacy"
+                          fade={false}
+                          target={
+                            "PopoverCustom-" +
+                            props?.data?.candidaterecommendedjobid
+                          }
+                        >
+                          <ScorePopup
+                            scoreJson={props?.data?.scorejson?.replace(
+                              /'/g,
+                              '"'
+                            )}
+                          />
+                        </UncontrolledPopover>
                       </>
                     ) : (
                       <></>
