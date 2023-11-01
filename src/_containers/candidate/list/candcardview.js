@@ -1,31 +1,32 @@
-import React from "react";
-import { Row, Col, Card, CardBody, Button, ButtonGroup } from "reactstrap";
-import logo from "../../../assets/utils/images/panther-logo.png";
-import { FiMapPin } from "react-icons/fi";
+import React, { useState } from "react";
 import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-} from "react-icons/io";
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Button,
+  ButtonGroup,
+  DropdownMenu,
+  Dropdown,
+  DropdownToggle,
+} from "reactstrap";
+import { FiMapPin } from "react-icons/fi";
 import {
   BsBriefcase,
   BsListStars,
   BsFillFlagFill,
   BsHandThumbsUp,
-  BsFillHandThumbsUpFill,
   BsXCircle,
   BsQuestionCircle,
-  BsClock,
   BsCheckCircle,
   BsCashStack,
 } from "react-icons/bs";
 import moment from "moment/moment";
-import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import "./candidatelist.scss";
 import "./candcardview.scss";
 import { ProgressCircle } from "_components/common/progress";
+import { ScorePopup } from "_components/list/scorePopup";
 
 export function CandCardView({
   name,
@@ -94,7 +95,7 @@ export function CandCardView({
   const onBtnClick = (type) => {
     onCandidateActions(type, additionalData.candidaterecommendedjobid);
   };
-
+  const [button, setButton] = useState(false);
   return (
     <>
       <div className="cand-card-view">
@@ -113,7 +114,28 @@ export function CandCardView({
                   <Col className="right-align">
                     {additionalData.avgscore ? (
                       <>
-                        <ProgressCircle avgscore={additionalData.avgscore} />
+                        <Dropdown
+                          className="d-inline-block"
+                          onMouseOver={(e) => setButton(true)}
+                          onMouseLeave={(e) => setButton(false)}
+                          isOpen={button}
+                          toggle={(e) => setButton(!button)}
+                          direction="end"
+                        >
+                          <DropdownToggle color="link">
+                            <ProgressCircle
+                              avgscore={additionalData?.avgscore}
+                            />
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            <ScorePopup
+                              scoreJson={additionalData?.scorejson?.replace(
+                                /'/g,
+                                '"'
+                              )}
+                            />
+                          </DropdownMenu>
+                        </Dropdown>
                       </>
                     ) : (
                       <></>

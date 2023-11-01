@@ -17,4 +17,34 @@
   p {
     margin-bottom: 4px;
   }
+  .dropdown-menu::after {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    left: -6px;
+    top: 30px;
+    transform: rotate(45deg);
+    border-radius: 4px;
+    content: "";
+    display: block;
+    z-index: 5;
+    background: #fff;
+  }
+  .dropdown-menu::before {
+    background: #fff;
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    left: -5px;
+    top: 31px;
+    transform: rotate(45deg);
+    border-radius: 4px;
+    content: "";
+    display: block;
+    z-index: 5;
+  }
+  .dropdown-menu{
+    padding: 0 !important;
+  }
+
 }
