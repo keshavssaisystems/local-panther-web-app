@@ -79,12 +79,12 @@ export function ChatNameCard({
               </div>
               <div className="widget-content-left">
                 <div className="widget-heading">
-                  {userName.length > 25
+                  {userName?.length > 25
                     ? userName.slice(0, 25 - 1) + "…"
                     : userName}{" "}
                 </div>
                 <div className="widget-subheading">
-                  {lastMessage.length > 30
+                  {lastMessage?.length > 30
                     ? lastMessage.slice(0, 30 - 1) + "…"
                     : lastMessage}
                 </div>
