@@ -20,7 +20,7 @@ export function ChatInterface() {
     await dispatch(chatActions.getCandidateListThunk());
   };
   const getCustomerList = async function () {
-    await dispatch(chatActions.getCandidateListThunk());
+    await dispatch(chatActions.getCustomerListThunk());
   };
   const newChatUserList = useSelector((state) => state.chat.candidateList);
   const newChatUserCustomerList = useSelector(
