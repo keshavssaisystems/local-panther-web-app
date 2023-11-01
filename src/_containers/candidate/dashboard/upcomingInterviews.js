@@ -10,6 +10,8 @@ import {
   Pagination,
   PaginationItem,
   PaginationLink,
+  Row,
+  Col,
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -27,6 +29,8 @@ import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
 import personIcon from "../../../assets/utils/images/person-fill.svg";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
+import { NoDataFound } from "_components/common/nodatafound";
+import Loader from "react-loaders";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -36,6 +40,9 @@ export function UpcomingInterviews() {
   );
   const [showInterviewDetails, setDetails] = useState(false);
   const [popupData, setPopupData] = useState({});
+  const loader = useSelector(
+    (state) => state.candidateDashboard.schedulesLoader
+  );
 
   const columns = [
     {
@@ -67,18 +74,6 @@ export function UpcomingInterviews() {
     {
       name: "Time",
       selector: (row) => (
-        // <span
-        //   title={
-        //     convertTo12HourFormat(row.starttime) +
-        //     " To " +
-        //     calculateEndTime(row.starttime, row.duration)
-        //   }
-        // >
-        //   {convertTo12HourFormat(row.starttime) +
-        //     " To " +
-        //     calculateEndTime(row.starttime, row.duration)}
-        // </span>
-
         <span title={convertTo12HourFormat(row.starttime)}>
           {convertTo12HourFormat(row.starttime)}
         </span>
@@ -176,7 +171,6 @@ export function UpcomingInterviews() {
   };
 
   const navigateToInterviews = function (data) {
-    // history.navigate("/calendar");
     setPopupData(data);
     setDetails(true);
   };
@@ -190,14 +184,30 @@ export function UpcomingInterviews() {
             Upcoming Interviews
           </div>
         </CardHeader>
-        <div>
-          <DataTable
-            data={schedules ? schedules : []}
-            columns={columns}
-            fixedHeader
-            fixedHeaderScrollHeight="390px"
-          />
-        </div>
+
+        {!loader ? (
+          <div>
+            {schedules?.length > 0 ? (
+              <DataTable
+                data={schedules ? schedules : []}
+                columns={columns}
+                fixedHeader
+                fixedHeaderScrollHeight="390px"
+              />
+            ) : (
+              <Row style={{ textAlign: "center" }}>
+                <Col>
+                  {" "}
+                  <NoDataFound imageSize={"25px"} />
+                </Col>
+              </Row>
+            )}
+          </div>
+        ) : (
+          <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+            <Loader active={loader} type="line-scale-pulse-out-rapid" />
+          </div>
+        )}
         <CardFooter>
           {totalRecords > 0 ? (
             <div className="mt-2">

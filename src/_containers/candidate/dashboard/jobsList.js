@@ -12,10 +12,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Row,
+  Col,
 } from "reactstrap";
 import { useSelector } from "react-redux";
 import { formatDate } from "_helpers/helper";
-import { history } from "_helpers";
 import { candidateListActions } from "_store";
 import { useDispatch } from "react-redux";
 import jobsIcon from "../../../assets/utils/images/latest-job.svg";
@@ -23,6 +24,8 @@ import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { CandJobDetail } from "../list/candjobcard";
+import Loader from "react-loaders";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function JobsList(props) {
   const [pageNo, setPageNo] = useState(1);
@@ -36,6 +39,9 @@ export function JobsList(props) {
   const totalRecords = useSelector(
     (state) => state.candidateListReducer.totalRecords
   );
+
+  const loader = useSelector((state) => state.candidateListReducer.jdLoading);
+
   const [selected, setSelected] = useState([]);
   const [openJob, setOpenJob] = useState(false);
 
@@ -108,8 +114,6 @@ export function JobsList(props) {
     );
   };
   const navigateToJobs = function (data) {
-    //history.navigate("/job-list");
-
     let new_data = [...selected];
     new_data.push(data);
     setSelected(new_data);
@@ -152,45 +156,29 @@ export function JobsList(props) {
             Latest jobs
           </div>
         </CardHeader>
-        <div className="scroll-area-md">
-          <DataTable
-            data={candidateJobList ? candidateJobList : []}
-            columns={columns}
-            fixedHeader
-            fixedHeaderScrollHeight="390px"
-          />
-          {/* <PerfectScrollbar>
-            <Table
-              responsive
-              hover
-              striped
-              borderless
-              className="align-middle mb-0"
-            >
-              <thead>
-                <tr>
-                  <th>Job title</th>
-                  <th>Job location</th>
-                  <th>Company</th>
-                  <th>Updated date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody style={{ fontSize: "12px" }}>
-                {candidateJobList?.map((col) => (
-                  <tr>
-                    <td>{col.jobtitle}</td>
-
-                    <td>{col.locationaddress}</td>
-                    <td>{col.companyname}</td>
-                    <td>{formatDate(col.jobcreatedatetime)}</td>
-                    <td></td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </PerfectScrollbar> */}
-        </div>
+        {!loader ? (
+          <div className="scroll-area-md">
+            {candidateJobList?.length > 0 ? (
+              <DataTable
+                data={candidateJobList ? candidateJobList : []}
+                columns={columns}
+                fixedHeader
+                fixedHeaderScrollHeight="390px"
+              />
+            ) : (
+              <Row style={{ textAlign: "center" }}>
+                <Col>
+                  {" "}
+                  <NoDataFound imageSize={"25px"} />
+                </Col>
+              </Row>
+            )}
+          </div>
+        ) : (
+          <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+            <Loader active={loader} type="line-scale-pulse-out-rapid" />
+          </div>
+        )}
         {totalRecords > 0 ? (
           <div className="mt-2">
             {totalRecords > 5 ? (

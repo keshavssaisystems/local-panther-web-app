@@ -52,7 +52,7 @@ export function ResumeDetails(props) {
 
   useEffect(() => {
     getFileName();
-  }, []);
+  }, [resumeDetails]);
 
   const addEditResumeDetails = function () {
     setModal(true);
@@ -166,17 +166,7 @@ export function ResumeDetails(props) {
 
     if (resumeDetails) {
       if (resumeDetails.resumepath) {
-        const lastIndex = resumeDetails.resumepath.lastIndexOf(".");
-        let jobTitle = candidateDetails.position
-          ? candidateDetails.position.replace(/ /g, "_")
-          : "";
-        if (lastIndex !== -1) {
-          name =
-            candidateDetails.lastname +
-            (jobTitle ? "_" + jobTitle : "") +
-            "." +
-            resumeDetails.resumepath.slice(lastIndex + 1);
-        }
+        name = resumeDetails.resumepath.replace(/^.*[\\\/]/, "");
       }
       setFileName(name);
     }
@@ -256,42 +246,41 @@ export function ResumeDetails(props) {
                         Upload your resume here
                       </div>
                       <Row>
-                        <div {...getRootProps()} className="dropzone">
-                          <input {...getInputProps()} />
-                          <Row>
-                            <label>
-                              <div
-                                className="dropZone"
-                                id="dragbox"
-                                onChange={handleChange}
+                        <Row>
+                          <label>
+                            <div
+                              className="dropZone"
+                              id="dragbox"
+                              onChange={handleChange}
+                            >
+                              <input {...getInputProps()} />
+                              <Button
+                                style={{
+                                  width: "auto",
+                                  backgroundColor: "#2F2E2E",
+                                  borderColor: "#2F2E2E",
+                                  float: "left",
+                                  marginRight: "15px",
+                                }}
+                                {...getRootProps()}
+                                className="mb-2 mt-0 btn-icon btn-pill btn-text dropzone"
+                                color="primary"
                               >
-                                <Button
-                                  style={{
-                                    width: "auto",
-                                    backgroundColor: "#2F2E2E",
-                                    borderColor: "#2F2E2E",
-                                    float: "left",
-                                    marginRight: "15px",
-                                  }}
-                                  className="mb-2 mt-0 btn-icon btn-pill btn-text"
-                                  color="primary"
-                                >
-                                  <span className="me-2">
-                                    <BsUpload />
-                                  </span>
+                                <span className="me-2">
+                                  <BsUpload />
+                                </span>
 
-                                  <span className="me-2">Upload</span>
-                                </Button>
-                                <div
-                                  className="file-info"
-                                  style={{ paddingTop: "10px" }}
-                                >
-                                  Support formats: doc, docx, pdf, upto 5 MB
-                                </div>
-                              </div>
-                            </label>
-                          </Row>
-                        </div>
+                                <span className="me-2">Upload</span>
+                              </Button>
+                            </div>
+                            <div
+                              className="file-info"
+                              style={{ paddingTop: "10px" }}
+                            >
+                              Support formats: doc, docx, pdf, upto 5 MB
+                            </div>
+                          </label>
+                        </Row>
                       </Row>
                     </div>
                   </Col>
@@ -310,28 +299,34 @@ export function ResumeDetails(props) {
                           experience, education, skills, certifications,
                           licenses, languages, and summary.
                         </div>
-                        <span className="mt-2">
+                        <span>
                           <FormGroup>
-                            <Row style={{ marginLeft: "5px" }}>
-                              <Button
-                                style={{
-                                  width: "auto",
-                                  backgroundColor: "#2F479B",
-                                }}
-                                className="me-2 btn-icon btn-pill btn-text"
-                                color="primary"
-                                onClick={() => handlePrint()}
-                              >
-                                <span className="me-2">
-                                  <BsUpload />
-                                </span>
+                            <Row>
+                              <Col className="col-5 d-flex justify-content-center align-items-center">
+                                After submitting all necessary data
+                              </Col>
+                            </Row>
+                            <Row className="mt-2">
+                              <Col>
+                                <Button
+                                  style={{
+                                    width: "auto",
+                                    backgroundColor: "#2F479B",
+                                  }}
+                                  className="me-2 btn-icon btn-pill btn-text"
+                                  color="primary"
+                                  onClick={() => handlePrint()}
+                                >
+                                  <span className="me-2">
+                                    <BsUpload />
+                                  </span>
 
-                                <span className="me-2">Build</span>
-                              </Button>
+                                  <span className="me-2">Build</span>
+                                </Button>
+                              </Col>
                             </Row>
                           </FormGroup>
                         </span>
-                        After submitting all necessary data.
                       </div>
                     </div>
                   </Col>

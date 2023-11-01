@@ -24,13 +24,13 @@ import errorIcon from "../../../assets/utils/images/error_icon.png";
 import { useSelector, useDispatch } from "react-redux";
 import { formatDate } from "_helpers/helper";
 import { SuccessPopUp } from "_components/common/successPopUp";
+import { NoDataFound } from "_components/common/nodatafound";
+import Loader from "react-loaders";
 
 export function TodoList(props) {
   const dispatch = useDispatch();
 
-  const totalRecords = useSelector(
-    (state) => state.candidateDashboard?.dashboardGraphData?.length
-  );
+  const loading = useSelector((state) => state.candidateDashboard.todoLoader);
 
   const toDoList = useSelector((state) => state.candidateDashboard?.toDoList);
   const [isOpenModal, setModal] = useState(false);
@@ -98,74 +98,90 @@ export function TodoList(props) {
           </div>
         </CardHeader>
         <div className="scroll-area-md">
-          <PerfectScrollbar>
-            <div className="p-2">
-              {toDoList ? (
-                toDoList.map((item) => (
-                  <ListGroup className="todo-list-wrapper" flush>
-                    <ListGroupItem>
-                      <div
-                        className={
-                          item.iscompleted
-                            ? "todo-indicator bg-success"
-                            : "todo-indicator bg-warning"
-                        }
-                      />
-                      <div className="widget-content p-0">
-                        <div className="widget-content-wrapper">
-                          <div className="widget-content-left me-2 ms-2">
-                            <Input
-                              type="checkbox"
-                              checked={item.iscompleted}
-                              className="me-2 form-check-input-custom"
-                              id="exampleCustomCheckbox12"
-                              disabled
-                              label="&nbsp;"
+          {!loading ? (
+            <PerfectScrollbar>
+              <div className="p-2">
+                {toDoList ? (
+                  <div>
+                    {toDoList.length > 0 ? (
+                      toDoList.map((item) => (
+                        <ListGroup className="todo-list-wrapper" flush>
+                          <ListGroupItem>
+                            <div
+                              className={
+                                item.iscompleted
+                                  ? "todo-indicator bg-success"
+                                  : "todo-indicator bg-warning"
+                              }
                             />
-                          </div>
-                          <div className="widget-content-left">
-                            <div className="widget-heading">
-                              {item.tododetail}
-                            </div>
-                            <div className="widget-subheading">
-                              {formatDate(
-                                item.modifieddate
-                                  ? item.modifieddate
-                                  : item.createddate
-                              )}
-                            </div>
-                          </div>
-                          <div className="widget-content-right widget-content-actions todo-icons">
-                            <BsPencil
-                              className="me-2"
-                              onClick={(e) => addNotes("edit", item, e)}
-                            />
+                            <div className="widget-content p-0">
+                              <div className="widget-content-wrapper">
+                                <div className="widget-content-left me-2 ms-2">
+                                  <Input
+                                    type="checkbox"
+                                    checked={item.iscompleted}
+                                    className="me-2 form-check-input-custom"
+                                    id="exampleCustomCheckbox12"
+                                    disabled
+                                    label="&nbsp;"
+                                  />
+                                </div>
+                                <div className="widget-content-left">
+                                  <div className="widget-heading">
+                                    {item.tododetail}
+                                  </div>
+                                  <div className="widget-subheading">
+                                    {formatDate(
+                                      item.modifieddate
+                                        ? item.modifieddate
+                                        : item.createddate
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="widget-content-right widget-content-actions todo-icons">
+                                  <BsPencil
+                                    className="me-2"
+                                    onClick={(e) => addNotes("edit", item, e)}
+                                  />
 
-                            <BsTrash3
-                              onClick={() => [
-                                setDeleteId(item.todoid),
-                                setDeleteConfirm(true),
-                              ]}
-                            />
-                          </div>
-                        </div>
+                                  <BsTrash3
+                                    onClick={() => [
+                                      setDeleteId(item.todoid),
+                                      setDeleteConfirm(true),
+                                    ]}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </ListGroupItem>
+                        </ListGroup>
+                      ))
+                    ) : (
+                      <div>
+                        {toDoList?.length === 0 && !loading ? (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>
+                              {" "}
+                              <NoDataFound imageSize={"25px"} />
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
                       </div>
-                    </ListGroupItem>
-                  </ListGroup>
-                ))
-              ) : (
-                <></>
-              )}
+                    )}
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </PerfectScrollbar>
+          ) : (
+            <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+              <Loader active={loading} type="line-scale-pulse-out-rapid" />
             </div>
-          </PerfectScrollbar>
+          )}
         </div>
-        {/* {totalRecords > 5 ? (
-          <CardFooter className="mb-3 mt-1" style={{ border: "none" }}>
-            &nbsp;
-          </CardFooter>
-        ) : (
-          <></>
-        )} */}
       </Card>
       <div>
         <Modal className="personal-information" size="md" isOpen={isOpenModal}>

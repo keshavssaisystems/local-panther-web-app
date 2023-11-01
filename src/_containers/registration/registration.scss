@@ -65,4 +65,39 @@
     padding: 12px, 20px, 12px, 20px;
     background: #2f479b;
   }
+  .async-border-red {
+    .css-13cymwt-control {
+      border-color: #d92550 !important;
+    }
+  }
+  .async-no-error {
+    .css-13cymwt-control {
+      border-color: hsl(0, 0%, 80%) !important;
+    }
+  }
+
+  .async-error-text {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #d92550;
+  }
+}
+.otp-link-label {
+  color: #2b80fd !important;
+  cursor: pointer;
+  font-family: Capitana;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: right;
+}
+.grp-btn {
+  border-radius: 5px;
+}
+
+.otp-header-text {
+  color: #2e2f2f;
+  font-weight: 600;
 }

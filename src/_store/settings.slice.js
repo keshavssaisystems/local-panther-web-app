@@ -65,6 +65,19 @@ export const deactivateUser = createAsyncThunk(
   }
 );
 
+export const notifications = createAsyncThunk(
+  "settings/notifications",
+  async ({ id, data }) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    return await fetchWrapper.put(
+      `${baseUrl}/User/UpdatePushnotificationSetting/${id}`,
+      data
+    );
+
+    // Assuming your API response has a "data" property
+  }
+);
+
 // Create the slice
 const settingsSlice = createSlice({
   name: "settings",
@@ -116,6 +129,14 @@ const settingsSlice = createSlice({
       .addCase(deactivateUser.fulfilled, (state, action) => {})
       .addCase(deactivateUser.rejected, (state, action) => {
         state.error = action.error;
+      })
+
+      .addCase(notifications.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(notifications.fulfilled, (state, action) => {})
+      .addCase(notifications.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -128,5 +149,6 @@ export const settingsActions = {
   getCompanyDetails,
   changePassword,
   deactivateUser,
+  notifications,
 };
 export const SettingsReducer = settingsSlice.reducer;
