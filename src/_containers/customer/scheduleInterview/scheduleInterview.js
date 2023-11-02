@@ -26,7 +26,7 @@ import {
   graphActions,
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
-// import { msdummy } from "./msdummy";
+import { getTimezoneDateTime } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
@@ -121,25 +121,27 @@ export function ScheduleInterview() {
       state.scheduleInterview.upcomingInterviewWOPagination
         .scheduledInterviewList
   );
-  const localizer = momentLocalizer(moment, "Etc/Universal");
+  const localizer = momentLocalizer(moment);
   let upData = [];
   if (
     upcomingInterviewsWOPagination !== undefined &&
     upcomingInterviewsWOPagination.length > 0
   ) {
     upcomingInterviewsWOPagination.forEach((upcomingInterview) => {
-      let startDate = momentTimezone(
+      let startDate = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
-          upcomingInterview.starttime
-      ).format("YYYY-MM-DD HH:mm:ss");
+          upcomingInterview.starttime,
+        "YYYY-MM-DD HH:mm:ss"
+      );
       let durationArr =
         upcomingInterview.duration !== undefined
           ? upcomingInterview.duration.split(" ")
           : [];
-      let endDate = moment(startDate)
-        .add(durationArr[0], "m")
-        .format("YYYY-MM-DD HH:mm:ss");
+      let endDate = getTimezoneDateTime(
+        moment(startDate).add(durationArr[0], "m"),
+        "YYYY-MM-DD HH:mm:ss"
+      );
       let interviewData = {
         id: upcomingInterview.scheduleinterviewid,
         data: upcomingInterview,
@@ -308,20 +310,34 @@ export function ScheduleInterview() {
   let msBlockData = [];
   if (syncData?.length > 0) {
     syncData.forEach((syncDataElement) => {
-      let dynamicStartDate = moment().weekday(Number(0)).format("YYYY-MM-DD");
-      let dynamicEndDate = moment().weekday(Number(6)).format("YYYY-MM-DD");
+      let dynamicStartDate = getTimezoneDateTime(
+        moment().weekday(Number(0)).format("YYYY-MM-DD"),
+        "YYYY-MM-DD"
+      );
+      let dynamicEndDate = getTimezoneDateTime(
+        moment().weekday(Number(6)).format("YYYY-MM-DD"),
+        "YYYY-MM-DD"
+      );
       if (
         dynamicStartDate <
-          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD") &&
+          getTimezoneDateTime(
+            moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
+            "YYYY-MM-DD"
+          ) &&
         dynamicEndDate >
-          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD")
+          getTimezoneDateTime(
+            moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
+            "YYYY-MM-DD"
+          )
       ) {
-        let startDate = momentTimezone(syncDataElement.start.dateTime)
-          .tz("Etc/UTC")
-          .format("YYYY-MM-DD HH:mm:ss");
-        let endDate = momentTimezone(syncDataElement.end.dateTime)
-          .tz("Etc/UTC")
-          .format("YYYY-MM-DD HH:mm:ss");
+        let startDate = getTimezoneDateTime(
+          syncDataElement.start.dateTime,
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        let endDate = getTimezoneDateTime(
+          syncDataElement.end.dateTime,
+          "YYYY-MM-DD HH:mm:ss"
+        );
         let interviewData = {
           id: syncDataElement.id,
           data: syncDataElement.location,
@@ -337,25 +353,40 @@ export function ScheduleInterview() {
   }
   if (allInterview?.length > 0) {
     allInterview.forEach((blockedData) => {
-      let dynamicStartDate = moment().weekday(Number(0)).format("YYYY-MM-DD");
-      let dynamicEndDate = moment().weekday(Number(6)).format("YYYY-MM-DD");
+      let dynamicStartDate = getTimezoneDateTime(
+        moment().weekday(Number(0)).format("YYYY-MM-DD"),
+        "YYYY-MM-DD"
+      );
+      let dynamicEndDate = getTimezoneDateTime(
+        moment().weekday(Number(6)).format("YYYY-MM-DD"),
+        "YYYY-MM-DD"
+      );
       if (
         dynamicStartDate <
-          moment(blockedData.scheduledate).format("YYYY-MM-DD") &&
-        dynamicEndDate > moment(blockedData.scheduledate).format("YYYY-MM-DD")
+          getTimezoneDateTime(
+            moment(blockedData.scheduledate).format("YYYY-MM-DD"),
+            "YYYY-MM-DD"
+          ) &&
+        dynamicEndDate >
+          getTimezoneDateTime(
+            moment(blockedData.scheduledate).format("YYYY-MM-DD"),
+            "YYYY-MM-DD"
+          )
       ) {
-        let startDate = momentTimezone(
+        let startDate = getTimezoneDateTime(
           moment(blockedData.scheduledate).format("MMM D, YYYY") +
             " " +
-            blockedData.starttime
-        ).format("YYYY-MM-DD HH:mm:ss");
+            blockedData.starttime,
+          "YYYY-MM-DD HH:mm:ss"
+        );
         let durationArr =
           blockedData.duration !== undefined
             ? blockedData.duration.split(" ")
             : [];
-        let endDate = moment(startDate)
-          .add(durationArr[0], "m")
-          .format("YYYY-MM-DD HH:mm:ss");
+        let endDate = getTimezoneDateTime(
+          moment(startDate).add(durationArr[0], "m"),
+          "YYYY-MM-DD HH:mm:ss"
+        );
         let interviewData = {
           id: blockedData.scheduleinterviewid,
           data: blockedData,

@@ -46,7 +46,7 @@ export const CustJobList = () => {
 
   useEffect(() => {
     if (jobList.length > 0) {
-      dispatch(custJobListActions.getJobDetails({ jobId: jobList[0].jobid }));
+      dispatch(custJobListActions.getJobDetail({ jobId: jobList[0].jobid }));
     }
   }, [jobList]);
 
@@ -75,7 +75,7 @@ export const CustJobList = () => {
   };
 
   const getSelectedJob = (e) => {
-    dispatch(custJobListActions.getJobDetails({ jobId: e }));
+    dispatch(custJobListActions.getJobDetail({ jobId: e }));
   };
 
   const publishNewJob = function (event) {
@@ -84,7 +84,14 @@ export const CustJobList = () => {
       currentUserId: localStorage.getItem("userId"),
     };
     dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
-    // onPageChange(page);
+    dispatch(
+      custJobListActions.publishJob({
+        jobList: jobList,
+        jobDetail: jobDetail,
+        jobId: jobId,
+      })
+    );
+    getSelectedJob(jobId);
   };
   const closeJob = (event) => {
     console.log(event);
@@ -93,7 +100,14 @@ export const CustJobList = () => {
       currentUserId: localStorage.getItem("userId"),
     };
     dispatch(createjobActions.getCloseJobThunk({ jobId, payload }));
-    onPageChange(page);
+    dispatch(
+      custJobListActions.closeJob({
+        jobList: jobList,
+        jobDetail: jobDetail,
+        jobId: jobId,
+      })
+    );
+    getSelectedJob(jobId);
   };
   return (
     <>

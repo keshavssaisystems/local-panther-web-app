@@ -9,6 +9,7 @@ import {
 } from "react-icons/bs";
 import moment from "moment-timezone";
 import { CardPagination } from "../common/cardpagination";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function UpcomingCard({
   upcomingList,
@@ -85,11 +86,12 @@ export function UpcomingCard({
                   </Row>
                   <p className="job-details">
                     <BsCalendar2Date className="icon-settings" /> Scheduled for{" "}
-                    {moment(
+                    {getTimezoneDateTime(
                       moment(interview.scheduledate).format("MMM D, YYYY") +
                         " " +
-                        interview.starttime
-                    ).format("MM/DD/YYYY, hh:mm a")}
+                        interview.starttime,
+                      "MM/DD/YYYY, hh:mm a"
+                    )}
                   </p>
                   <p className="job-details">
                     <BsListStars className="icon-settings" /> Mode-{" "}
@@ -97,7 +99,7 @@ export function UpcomingCard({
                   </p>
                   <p className="job-details">
                     <BsClock className="icon-settings" /> Request sent on{" "}
-                    {moment(interview.createddate).format("MM/DD/YYYY")}
+                    {getTimezoneDateTime(interview.createddate, "MM/DD/YYYY")}
                   </p>
                   <p className="job-details">
                     <BsPersonBoundingBox className="icon-settings" />{" "}

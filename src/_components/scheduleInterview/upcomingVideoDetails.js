@@ -26,6 +26,7 @@ import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
 import { Chat } from "firebase/chat/chat";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function UpcomingVideoDetails({
   interviewId,
@@ -54,11 +55,21 @@ export function UpcomingVideoDetails({
     (state) => state.scheduleInterview.duration
   );
   const interviewDetails = selectedJobDetails[0];
-  let scheduled = moment(interviewDetails?.scheduledate).format("MM/DD/YYYY");
-  let currentDay = moment().format("YYYY-MM-DD");
-  let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
-  let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
-  let scheduledDate = moment(interviewDetails?.scheduledate).format(
+  let scheduled = getTimezoneDateTime(
+    interviewDetails?.scheduledate,
+    "MM/DD/YYYY"
+  );
+  let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
+  let yesterdayDate = getTimezoneDateTime(
+    moment().subtract(1, "days").format("YYYY-MM-DD"),
+    "YYYY-MM-DD"
+  );
+  let tomorrowDate = getTimezoneDateTime(
+    moment().add(1, "days").format("YYYY-MM-DD"),
+    "YYYY-MM-DD"
+  );
+  let scheduledDate = getTimezoneDateTime(
+    moment(interviewDetails?.scheduledate),
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -70,11 +81,12 @@ export function UpcomingVideoDetails({
   if (scheduledDate === tomorrowDate) {
     scheduled = "Tommorow";
   }
-  let startTime = moment(
+  let startTime = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
       " " +
-      interviewDetails?.starttime
-  ).format("hh:mm a");
+      interviewDetails?.starttime,
+    "hh:mm a"
+  );
   let startDate =
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
     " " +
@@ -83,7 +95,10 @@ export function UpcomingVideoDetails({
     interviewDetails?.duration !== undefined
       ? interviewDetails?.duration.split(" ")
       : [];
-  let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
+  let endTime = getTimezoneDateTime(
+    moment(startDate).add(durationArr[0], "m"),
+    "hh:mm a"
+  );
   let userId = localStorage.getItem("userId");
   const cancelSchedule = () => {
     let cancelData = {
@@ -407,7 +422,10 @@ export function UpcomingVideoDetails({
         <div className="d-block text-center mb-1">
           <h6 className="fw-bold">
             Request sent on{" "}
-            {moment(interviewDetails?.createddate).format("MM/DD/YYYY")}
+            {getTimezoneDateTime(
+              moment(interviewDetails?.createddate).format("MM/DD/YYYY"),
+              "MM/DD/YYYY"
+            )}
           </h6>
         </div>
       </CardBody>
