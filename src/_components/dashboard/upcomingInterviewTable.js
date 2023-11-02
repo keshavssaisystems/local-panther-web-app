@@ -4,6 +4,7 @@ import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
 import "./dashboard.scss";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function UpcomingInterviewTable({ tableData }) {
   const customStyles = {
@@ -47,18 +48,20 @@ export function UpcomingInterviewTable({ tableData }) {
       sortable: true,
       width: "120px",
       selector: (row) =>
-        moment(
-          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
-        ).format("MM/DD/YYYY"),
+        getTimezoneDateTime(
+          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
+          "MM/DD/YYYY"
+        ),
     },
     {
       name: "Time",
       sortable: true,
       width: "100px",
       selector: (row) =>
-        moment(
-          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
-        ).format("h:mm a"),
+        getTimezoneDateTime(
+          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
+          "h:mm a"
+        ),
     },
     {
       name: "Status",
