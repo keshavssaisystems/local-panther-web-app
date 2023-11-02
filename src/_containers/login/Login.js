@@ -92,7 +92,12 @@ export function Login() {
               <div className="">
                 <Slider {...sliderSettings}>
                   <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                    <div className="slide-img-bg" />
+                    <div
+                      className="slide-img-bg"
+                      style={{
+                        backgroundImage: "url(" + loginBgImg + ")",
+                      }}
+                    />
                     <div className="login-slider-title">
                       <p>Experts In Human Capital</p>
                       <p className="login-slider-text m-5">
