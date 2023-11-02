@@ -78,7 +78,7 @@ export function UpcomingInterviewTable({ tableData }) {
             Upcoming interviews
           </div>
         </CardHeader>
-        <CardBody className="pt-0">
+        <CardBody className="pt-0 overflow-auto">
           <DataTable
             columns={columns()}
             data={tableData}
@@ -86,6 +86,8 @@ export function UpcomingInterviewTable({ tableData }) {
             customStyles={customStyles}
             pagination
             className="mt-2"
+            paginationPerPage={5}
+            paginationRowsPerPageOptions={[5, 10, 15, 20, 25, 50, 100]}
           />
         </CardBody>
       </Card>
