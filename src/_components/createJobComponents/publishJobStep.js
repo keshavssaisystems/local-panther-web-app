@@ -28,7 +28,7 @@ export default function PublishJobStep({
       isdraft: true,
       isclosed: false,
       isactive: true,
-      currentUserId: 0,
+      currentUserId: Number(localStorage.getItem("userId")),
       customquestionanswertype: reqData.preCustomScreen,
       jobExperienceScheduleDtos: [
         {
