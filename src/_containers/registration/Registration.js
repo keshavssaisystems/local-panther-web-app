@@ -738,7 +738,7 @@ export function Registration() {
                           placeholderText="search"
                           isMulti={false}
                           className={`placeholder-name ${
-                            errors.countryid && countryValue
+                            errors.countryid && countryValue === 0
                               ? "async-border-red"
                               : ""
                           }`}
