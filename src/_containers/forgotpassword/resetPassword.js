@@ -56,9 +56,9 @@ export function ResetPassword() {
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
-                    // style={{
-                    //   backgroundImage: "url(" + loginBgImg + ")",
-                    // }}
+                    style={{
+                      backgroundImage: "url(" + loginBgImg + ")",
+                    }}
                   />
                   <div className="login-slider-title">
                     <p>Experts In Human Capital</p>
