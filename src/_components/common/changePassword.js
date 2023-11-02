@@ -197,7 +197,7 @@ export function ChangePassword(props) {
       <Modal size="md" isOpen={success}>
         <SuccessPopUp
           icon={"success"}
-          message={"Account deactivated !!!"}
+          message={"Password changed"}
           callBack={() => [setSuccess(false), props.callBack()]}
         />
       </Modal>

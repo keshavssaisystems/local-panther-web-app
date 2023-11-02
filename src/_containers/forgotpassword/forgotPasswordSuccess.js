@@ -1,9 +1,7 @@
 import { useState } from "react";
 import "./forgotpassword.scss";
 import Slider from "react-slick";
-
-import bg3 from "../../assets/utils/images/originals/citynights.jpg";
-
+import loginBgImg from "../../assets/utils/images/login.png";
 import { Col, Row, Button } from "reactstrap";
 
 import { history } from "_helpers";
@@ -32,21 +30,20 @@ export function ForgotPasswordSuccess() {
       <div className="h-100 forgot-password">
         <Row className="h-100 g-0">
           <Col lg="5" className="d-xs-none">
-            <div className="slider-light">
+            <div className="">
               <Slider {...sliderSettings}>
-                <div className="h-100 d-flex justify-content-center align-items-center bg-premium-dark">
+                <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
                     style={{
-                      backgroundImage: "url(" + bg3 + ")",
+                      backgroundImage: "url(" + loginBgImg + ")",
                     }}
                   />
-                  <div className="slider-content">
-                    <h3>Scalable, Modular, Consistent</h3>
-                    <p>
-                      Easily exclude the components you don't require.
-                      Lightweight, consistent Bootstrap based styles across all
-                      elements and components
+                  <div className="login-slider-title">
+                    <p>Experts In Human Capital</p>
+                    <p className="login-slider-text m-5">
+                      What makes The Panther Group the ideal career partner? We
+                      focus on what you want most from your career!
                     </p>
                   </div>
                 </div>

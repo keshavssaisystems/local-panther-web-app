@@ -26,6 +26,7 @@ export function CandidateDashboard() {
       pageSize: 5,
     };
     dispatch(candidateDashboardActions.getDashboardCount({ candidateId }));
+    dispatch(candidateDashboardActions.getAlerts({ candidateId }));
     dispatch(candidateDashboardActions.getSchedules({ candidateId }));
     dispatch(candidateDashboardActions.getToDo({ userId }));
     dispatch(candidateListActions.getRecommendedJobList(candObj));

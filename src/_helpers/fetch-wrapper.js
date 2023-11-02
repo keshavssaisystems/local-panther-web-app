@@ -15,6 +15,7 @@ function request(method) {
     };
     if (body) {
       requestOptions.headers["Content-Type"] = "application/json";
+
       requestOptions.body = JSON.stringify(body);
     }
     return fetch(url, requestOptions).then(handleResponse);
@@ -27,16 +28,16 @@ function authHeader(url) {
   // return auth header with basic auth credentials if user is logged in and request is to the api url
   const authData = basicAuthData();
   const isLoggedIn = !!authData;
-  const isApiUrl = url.startsWith(process.env.REACT_APP_API_URL);
+  const isApiUrl = url.startsWith(process.env.REACT_APP_MAIN_API_URL);
   if (isLoggedIn && isApiUrl) {
-    return { Authorization: `Basic ${authData}` };
+    return { Authorization: `Bearer ${authData}` };
   } else {
     return {};
   }
 }
 
 function basicAuthData() {
-  return store.getState().auth.user?.authdata;
+  return localStorage.getItem("token") ? localStorage.getItem("token") : "";
 }
 
 async function handleResponse(response) {
