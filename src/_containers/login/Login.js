@@ -201,7 +201,9 @@ export function Login() {
                     <Row>
                       <Col className="login-divider me-2" />
 
-                      <Col className="col-md-1 login-mt">or</Col>
+                      <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                        or
+                      </Col>
                       <Col className="login-divider" />
                     </Row>
 
@@ -226,7 +228,7 @@ export function Login() {
                     )}
                   </Form>
 
-                  <Row className="mt-5 d-flex justify-content-center align-items-center">
+                  {/* <Row className="mt-5 d-flex justify-content-center align-items-center">
                     <Col></Col>
                     <Col>
                       <Row>
@@ -248,7 +250,7 @@ export function Login() {
                       </Row>
                     </Col>
                     <Col></Col>
-                  </Row>
+                  </Row> */}
 
                   <p className="mt-3 d-flex justify-content-center align-items-center">
                     <Link to="/registration" className="forgot-pwd-text">
