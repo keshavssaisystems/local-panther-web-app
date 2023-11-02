@@ -62,7 +62,7 @@ export function UserBox() {
 
     let response = await dispatch(settingsActions.deactivateUser({ id, data }));
     if (response.payload) {
-      setSuccess(true);
+      logout();
     } else {
       setError(true);
     }
@@ -72,6 +72,13 @@ export function UserBox() {
     setChangePwd(false);
     setSuccess(false);
   };
+
+  const closeChangePassword = function () {
+    setChangePwd(false);
+    setSuccess(false);
+    logout();
+  };
+
   const closeModal = function () {
     setSuccess(false);
     setChangePwd(false);
@@ -270,7 +277,7 @@ export function UserBox() {
         </ModalHeader>
         <ModalBody>
           <ChangePassword
-            callBack={() => close()}
+            callBack={() => closeChangePassword()}
             callBackError={() => closeModal()}
           />
         </ModalBody>
