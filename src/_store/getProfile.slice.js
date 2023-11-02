@@ -88,6 +88,18 @@ export const getCandidate = createAsyncThunk(
   }
 );
 
+export const updateProfileImage = createAsyncThunk(
+  "candidate/getCandidate",
+  async (candidateid) => {
+    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Candidate/GetCandidateById/${candidateid}`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
 // Create the slice
 const getProfileSlice = createSlice({
   name: "getProfile",

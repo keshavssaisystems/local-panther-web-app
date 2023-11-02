@@ -15,6 +15,7 @@ import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { NoDataFound } from "_components/common/nodatafound";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
 import "./candidatelist.scss";
+import { customerCandidateListsActions } from "_store";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -214,58 +215,70 @@ export const CandidateList = (props) => {
     SetShowAlert(data);
   };
 
-  const onShowModal = (row, type) => {
+  const onShowModal = async (row, type) => {
     if (type === "jd") {
       setSelectedRow(row);
       setShowJDModal(true);
     } else if (type === "id") {
-      //with dummy data
-      let obj = {
-        scheduledate:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].scheduledate
-            : null,
-        starttime:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].starttime
-            : null,
-        duration:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].duration
-            : null,
+      let res = await dispatch(
+        customerCandidateListsActions.getScheduleIVList(
+          row.scheduledInterviewDtos[0].scheduleinterviewid
+        )
+      );
 
-        jobtitle:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].jobtitle
-            : null,
-        format:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].format
-            : null,
-        interviewername:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].interviewername
-            : null,
-        videolink:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].videolink
-            : null,
-        isappvideocall:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].isappvideocall
-            : null,
-        interviewaddress:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].interviewaddress
-            : null,
-        textremaindernumbers:
-          row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
-            ? row.scheduledInterviewDtos[0].textremaindernumbers
-            : null,
-      };
+      if (res.payload?.statusCode === 200) {
+        setSelectedIDData(res?.payload?.data?.scheduledInterviewList[0]);
+        setShowIDModal(true);
+      } else {
+        //do nothing
+      }
 
-      setSelectedIDData(obj);
-      setShowIDModal(true);
+      // let obj = {
+      //   scheduledate:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].scheduledate
+      //       : null,
+      //   starttime:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].starttime
+      //       : null,
+      //   duration:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].duration
+      //       : null,
+
+      //   jobtitle:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].jobtitle
+      //       : null,
+      //   format:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].format
+      //       : null,
+      //   interviewername:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].interviewername
+      //       : null,
+      //   videolink:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].videolink
+      //       : null,
+      //   isappvideocall:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].isappvideocall
+      //       : null,
+      //   interviewaddress:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].interviewaddress
+      //       : null,
+      //   textremaindernumbers:
+      //     row?.scheduledInterviewDtos && row?.scheduledInterviewDtos?.length > 0
+      //       ? row.scheduledInterviewDtos[0].textremaindernumbers
+      //       : null,
+      // };
+
+      // setSelectedIDData(obj);
+      // setShowIDModal(true);
     }
   };
 
@@ -506,7 +519,10 @@ export const CandidateList = (props) => {
                   </Row>
                   <Row>
                     {candidateJobList.length === 0 && !loading ? (
-                      <Row style={{ textAlign: "center" }}>
+                      <Row
+                        style={{ textAlign: "center" }}
+                        className="center-middle-align"
+                      >
                         <Col>
                           {" "}
                           <NoDataFound></NoDataFound>
@@ -562,7 +578,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -620,7 +639,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -678,7 +700,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -736,7 +761,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -794,7 +822,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -852,7 +883,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>

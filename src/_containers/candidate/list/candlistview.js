@@ -243,25 +243,24 @@ export const CandListView = (props) => {
             <Button
               // outline
               size="sm"
+              title="liked"
+              className=" btn-icon"
+              color="primary"
+              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+            >
+              <img src={customerIcons.list_liked} alt="list like"></img>
+            </Button>
+          </Col>
+          <Col>
+            <Button
+              // outline
+              size="sm"
               title="maybe"
               className=" btn-icon"
               color="warning"
               onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
             >
               <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="sm"
-              title="accept"
-              className="btn-icon"
-              color="success"
-              onClick={() =>
-                onBtnClick("accepted", row.candidaterecommendedjobid)
-              }
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
             </Button>
           </Col>
         </Row>

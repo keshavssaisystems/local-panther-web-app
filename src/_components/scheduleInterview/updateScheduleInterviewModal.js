@@ -181,7 +181,7 @@ export function UpdateScheduleInterviewModal({
       intervieweremailids: event.target.elements.hmEmails.value,
       textremaindernumbers: event.target.elements.phoneNo.value,
       isactive: true,
-      currentUserId: 0,
+      currentUserId: Number(localStorage.getItem("userId")),
     };
     postData(data);
     onClose();

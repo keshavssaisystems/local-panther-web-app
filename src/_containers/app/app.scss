@@ -21,4 +21,11 @@ body {
   .app-main .center-align {
     text-align: center;
   }
+
+  .app-main .center-middle-align {
+    min-height: 65vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

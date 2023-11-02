@@ -48,7 +48,7 @@
     border: solid 1px #afaba5;
     border-radius: 5px;
     width: auto;
-    height: 35px;
+    height: auto;
     margin-left: 10px;
   }
   .link-text {
@@ -117,7 +117,7 @@
   .content-text {
     color: #2f2e2e;
     font-family: Capitana;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     line-height: 16px;
     letter-spacing: 0em;
@@ -137,7 +137,7 @@
     text-align: left;
     margin-left: 0px;
     font-family: Capitana;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 500;
     line-height: 32px;
     letter-spacing: 0em;
@@ -172,7 +172,6 @@
     cursor: pointer;
     height: 18px;
     width: 18px;
-    margin-top: -10px;
   }
   .save-btn {
     border-radius: 4px;
@@ -207,7 +206,7 @@
   .card-p-text {
     color: #afaba5;
     font-family: Capitana;
-    font-size: 12px;
+    font-size: 13px;
     font-style: normal;
     font-weight: 400 !important;
     line-height: 16px;
@@ -284,7 +283,7 @@
   }
   .file-info {
     font-family: Capitana;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 400;
     line-height: 16px;
     letter-spacing: 0em;

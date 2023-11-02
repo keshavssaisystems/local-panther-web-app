@@ -258,7 +258,7 @@ export const CustCandidateListView = (props) => {
               // outline
               size="sm"
               title="reject"
-              onClick={() => onRejectClick()}
+              onClick={() => onRejectClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="danger"
             >
@@ -299,7 +299,7 @@ export const CustCandidateListView = (props) => {
               // outline
               size="sm"
               title="reject"
-              onClick={() => onRejectClick()}
+              onClick={() => onRejectClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="danger"
             >
@@ -316,7 +316,7 @@ export const CustCandidateListView = (props) => {
               // outline
               size="sm"
               title="reject"
-              onClick={() => onRejectClick()}
+              onClick={() => onRejectClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="danger"
             >
@@ -493,16 +493,16 @@ export const CustCandidateListView = (props) => {
               <span
                 className="table-cell"
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
                     : "-"
                 }
               >
                 <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  {row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
                     : "-"}
                 </>
               </span>
@@ -598,16 +598,16 @@ export const CustCandidateListView = (props) => {
               <span
                 className="table-cell"
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
                     : "-"
                 }
               >
                 <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  {row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
                     : "-"}
                 </>
               </span>

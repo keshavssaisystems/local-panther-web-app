@@ -310,6 +310,28 @@ export const convertText = function (htmlContent) {
   }
 };
 
+export const getLocationText = function (data) {
+  let text = "";
+  if (data.cityname !== "") {
+    text = data.cityname;
+    if (data.statename !== "") {
+      text += ", " + data.statename;
+    }
+    if (data.countryname !== "") {
+      text += ", " + data.countryname;
+    }
+  } else if (data.statename !== "") {
+    text = data.statename;
+    if (data.countryname !== "") {
+      text += ", " + data.countryname;
+    }
+  } else if (data.countryname !== "") {
+    text = data.countryname;
+    text += data.countryname;
+  }
+  return text;
+};
+
 export function convertDateToYYYMMDD(dateStr) {
   if (dateStr.month == "" && dateStr.year == "") {
     return null;
@@ -358,27 +380,26 @@ export function convertTo12HourFormat(time24) {
   return time12;
 }
 export function calculateEndTime(startTime, duration) {
-  // Parse the start time in HH:MM format
+  // Parse the start time and duration
+  const [hours, minutes, seconds] = startTime.split(":").map(Number);
+  const [durationValue, durationUnit] = duration.split(" ");
+  const durationInMinutes = parseInt(durationValue);
 
-  const [startHour, startMinute] = startTime.split(":").map(Number);
+  // Calculate the end time in minutes
+  let totalMinutes = hours * 60 + minutes + durationInMinutes;
 
-  // Parse the duration in hours and minutes
-  const [durationHour, durationMinute] = duration.split(":").map(Number);
+  // Calculate the new hours and minutes
+  const newHours = Math.floor(totalMinutes / 60);
+  const newMinutes = totalMinutes % 60;
 
-  // Calculate the end time
-  let endHour = startHour + durationHour;
-  let endMinute = startMinute + durationMinute;
+  // Convert to 12-hour format
+  const amPm = newHours >= 12 ? "PM" : "AM";
+  const formattedHours = newHours % 12 || 12; // Handle midnight (0) as 12 AM
 
-  // Adjust the end time if minutes exceed 60
-  if (endMinute >= 60) {
-    endHour += Math.floor(endMinute / 60);
-    endMinute = endMinute % 60;
-  }
+  // Format the end time as "hh:mm:ss AM/PM"
+  const endTime = `${String(formattedHours).padStart(2, "0")}:${String(
+    newMinutes
+  ).padStart(2, "0")} ${amPm}`;
 
-  // Format the end time as HH:MM
-  const endHourStr = endHour.toString().padStart(2, "0");
-  const endMinuteStr = endMinute.toString().padStart(2, "0");
-
-  const endTime = `${endHourStr}:${endMinuteStr}`;
   return endTime;
 }

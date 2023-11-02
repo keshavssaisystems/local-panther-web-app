@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import calendarLogo from "../../../assets/utils/images/calendar.svg";
-import {
-  Row,
-  Col,
-  Card,
-  Container,
-  ModalHeader,
-  CardBody,
-  Input,
-  Modal,
-} from "reactstrap";
+import { Row, Col, Card, Container, CardBody } from "reactstrap";
 import "../../customer/scheduleInterview/scheduleInterview.scss";
 import { BsArrowRight, BsArrowLeft } from "react-icons/bs";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";

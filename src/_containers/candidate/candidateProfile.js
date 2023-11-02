@@ -43,6 +43,7 @@ import {
   experienceLevelActions,
   resumeTemplateActions,
   studyFieldActions,
+  profileSkillsActions,
 } from "_store";
 
 export function CandidateProfile() {
@@ -132,6 +133,7 @@ export function CandidateProfile() {
     await dispatch(dropdownActions.getJobLocationTypeThunk());
     await dispatch(yearActions.getyear());
     await dispatch(monthActions.getmonth());
+    await dispatch(profileSkillsActions.getPopularSkills());
   };
 
   const getPersonalDetails = async function () {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 
@@ -18,7 +18,6 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
-
 import { useSelector, useDispatch } from "react-redux";
 
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
@@ -33,6 +32,8 @@ import { authActions } from "_store";
 import { ChangePassword } from "../../../common/changePassword";
 import { SuccessPopUp } from "_components/common/successPopUp";
 import { settingsActions } from "_store";
+import cx from "classnames";
+import Switch from "react-switch";
 
 export function UserBox() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -40,6 +41,8 @@ export function UserBox() {
   const [deactivateConfirm, setDeactivateConfirm] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [isToggleOn, setIsToggleOn] = useState(false);
+
   const dispatch = useDispatch();
   const logout = () => dispatch(authActions.logout());
   useEffect(() => {
@@ -66,191 +69,149 @@ export function UserBox() {
   };
 
   const close = function () {
-    setSuccess(false);
     setChangePwd(false);
-    dispatch(authActions.logout());
+    setSuccess(false);
   };
   const closeModal = function () {
     setSuccess(false);
     setChangePwd(false);
   };
 
+  const toggleNotification = async function (value) {
+    setIsToggleOn(value);
+    let id = JSON.parse(localStorage.getItem("userDetails"))?.UserId;
+    let data = {
+      userId: id,
+      pushnotification: value,
+    };
+
+    let response = await dispatch(settingsActions.notifications({ id, data }));
+    if (response.payload) {
+      setSuccess(true);
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <>
-      <div className="header-btn-lg pr-0">
-        <div className="widget-content p-0">
-          <div className="widget-content-wrapper">
-            <div className="widget-content-left">
-              <UncontrolledButtonDropdown>
-                <DropdownToggle color="link" className="p-0">
-                  <img
-                    width={42}
-                    className="rounded-circle"
-                    src={
-                      userDetail?.Profilephotopath?.length
-                        ? userDetail?.Profilephotopath
-                        : avatar1
-                    }
-                    alt=""
-                  />
-                  <FontAwesomeIcon
-                    className="ms-2 opacity-8"
-                    icon={faAngleDown}
-                  />
-                </DropdownToggle>
-                <DropdownMenu end className="rm-pointers dropdown-menu-lg">
-                  <div className="dropdown-menu-header">
-                    <div className="dropdown-menu-header-inner bg-info">
-                      <div
-                        className="menu-header-image opacity-2"
-                        style={{
-                          backgroundImage: "url(" + city3 + ")",
-                        }}
-                      />
-                      <div className="menu-header-content text-left">
-                        <div className="widget-content p-0">
-                          <div className="widget-content-wrapper">
-                            <div className="widget-content-left ml-3">
-                              <img
-                                width={42}
-                                className="rounded-circle"
-                                src={avatar1}
-                                alt=""
-                              />
-                            </div>
-                            <div className="widget-content-left">
-                              <div className="widget-heading">
-                                {userDetail?.FirstName} {userDetail?.LastName}
+      <Fragment>
+        <div className="header-btn-lg pe-0">
+          <div className="widget-content p-0">
+            <div className="widget-content-wrapper">
+              <div className="widget-content-left">
+                <UncontrolledButtonDropdown>
+                  <DropdownToggle color="link" className="p-0">
+                    <img
+                      width={42}
+                      className="rounded-circle"
+                      src={
+                        userDetail?.Profilephotopath?.length
+                          ? userDetail?.Profilephotopath
+                          : avatar1
+                      }
+                      alt=""
+                    />
+                    <FontAwesomeIcon
+                      className="ms-2 opacity-8"
+                      icon={faAngleDown}
+                    />
+                  </DropdownToggle>
+                  <DropdownMenu end className="rm-pointers dropdown-menu-lg">
+                    <div className="dropdown-menu-header">
+                      <div className="dropdown-menu-header-inner bg-info">
+                        <div
+                          className="menu-header-image opacity-2"
+                          style={{
+                            backgroundImage: "url(" + city3 + ")",
+                          }}
+                        />
+                        <div className="menu-header-content text-start">
+                          <div className="widget-content p-0">
+                            <div className="widget-content-wrapper">
+                              <div className="widget-content-left me-3">
+                                <img
+                                  width={42}
+                                  className="rounded-circle"
+                                  src={avatar1}
+                                  alt=""
+                                />
                               </div>
-                              <div className="widget-subheading opacity-8">
-                                {userDetail?.role}
+                              <div className="widget-content-left">
+                                <div className="widget-heading">
+                                  {userDetail?.FirstName} {userDetail?.LastName}
+                                </div>
+                                <div className="widget-subheading opacity-8">
+                                  {userDetail?.role}
+                                </div>
                               </div>
-                            </div>
-                            <div className="widget-content-right ms-2 float-end">
-                              <Button
-                                onClick={logout}
-                                className="btn-pill btn-shadow btn-shine float-end"
-                                color="focus"
-                              >
-                                {" "}
-                                Logout{" "}
-                              </Button>
+                              <div className="widget-content-right me-2">
+                                <Button
+                                  onClick={() => logout()}
+                                  className="btn-pill btn-shadow btn-shine"
+                                  color="focus"
+                                >
+                                  Logout
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    className="scroll-area-xs"
-                    style={{
-                      height: "150px",
-                    }}
-                  >
-                    <PerfectScrollbar>
-                      <Nav vertical>
-                        <NavItem className="nav-item-header">Activity</NavItem>
-                        {/* <NavItem>
-                          <NavLink href="#">
-                            Chat
-                            <div className="ml-auto badge badge-pill badge-info">
-                              8
-                            </div>
-                          </NavLink>
-                        </NavItem> */}
-                        <NavItem>
-                          <NavLink
-                            href="javascript:void(0)"
-                            onClick={() => setChangePwd(true)}
-                          >
-                            Change password
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink
-                            href="javascript:void(0)"
-                            onClick={() => setDeactivateConfirm(true)}
-                          >
-                            Deactivate account
-                          </NavLink>
-                        </NavItem>
-                        {/* <NavItem className="nav-item-header">
-                          My Account
-                        </NavItem>
-                        <NavItem>
-                          <NavLink href="#">
-                            Settings
-                            <div className="ml-auto badge badge-success">
-                              New
-                            </div>
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink href="#">
-                            Messages
-                            <div className="ml-auto badge badge-warning">
-                              512
-                            </div>
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink href="#">Logs</NavLink>
-                        </NavItem> */}
-                      </Nav>
-                    </PerfectScrollbar>
-                  </div>
-                  {/* <Nav vertical>
-                    <NavItem className="nav-item-divider mb-0" />
-                  </Nav>
-                  <div className="grid-menu grid-menu-2col">
-                    <Row className="no-gutters">
-                      <Col sm="6">
-                        <Button
-                          className="btn-icon-vertical btn-transition btn-transition-alt pt-2 pb-2"
-                          outline
-                          color="warning"
-                        >
-                          <i className="pe-7s-chat icon-gradient bg-amy-crisp btn-icon-wrapper mb-2">
-                            {" "}
-                          </i>
-                          Message Inbox
-                        </Button>
-                      </Col>
-                      <Col sm="6">
-                        <Button
-                          className="btn-icon-vertical btn-transition btn-transition-alt pt-2 pb-2"
-                          outline
-                          color="danger"
-                        >
-                          <i className="pe-7s-ticket icon-gradient bg-love-kiss btn-icon-wrapper mb-2">
-                            {" "}
-                          </i>
-                          <b>Support Tickets</b>
-                        </Button>
-                      </Col>
-                    </Row>
-                  </div> */}
-                  {/* <Nav vertical>
-                    <NavItem className="nav-item-divider" />
-                    <NavItem className="nav-item-btn text-center">
-                      <Button size="sm" className="btn-wide" color="primary">
-                        {" "}
-                        Open Messages{" "}
-                      </Button>
-                    </NavItem>
-                  </Nav> */}
-                </DropdownMenu>
-              </UncontrolledButtonDropdown>
-            </div>
-            <div className="widget-content-left  ms-3 header-user-info">
-              <div className="widget-heading">
-                {userDetail.FirstName} {userDetail.LastName}
+                    <div
+                      className="scroll-area-md"
+                      style={{
+                        height: "150px",
+                      }}
+                    >
+                      <PerfectScrollbar>
+                        <Nav vertical>
+                          <NavItem className="mb-1">
+                            <NavLink
+                              href="javascript:void(0)"
+                              onClick={() => setChangePwd(true)}
+                            >
+                              Change password
+                            </NavLink>
+                          </NavItem>
+
+                          <NavItem>
+                            <NavLink
+                              href="javascript:void(0)"
+                              onClick={() => setDeactivateConfirm(true)}
+                            >
+                              Deactivate account
+                            </NavLink>
+                          </NavItem>
+                          <NavItem>
+                            <NavLink href="javascript:void(0)">
+                              Notifications
+                              <Switch
+                                onChange={() => toggleNotification(!isToggleOn)}
+                                checked={isToggleOn}
+                                className="m-1 ms-auto ml-auto"
+                                id="normal-switch"
+                              />
+                            </NavLink>
+                          </NavItem>
+                        </Nav>
+                      </PerfectScrollbar>
+                    </div>
+                  </DropdownMenu>
+                </UncontrolledButtonDropdown>
               </div>
-              <div className="widget-subheading">{userDetail.role}</div>
+              <div className="widget-content-left  ms-3 header-user-info">
+                <div className="widget-heading">
+                  {" "}
+                  {userDetail.FirstName} {userDetail.LastName}
+                </div>
+                <div className="widget-subheading">{userDetail.role}</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Fragment>
 
       <Modal size="md" isOpen={deactivateConfirm}>
         <Card>
@@ -290,7 +251,7 @@ export function UserBox() {
       <Modal size="md" isOpen={success}>
         <SuccessPopUp
           icon={"success"}
-          message={"Account deactivated"}
+          message={"Push notification settings updated"}
           callBack={() => close()}
         />
       </Modal>
