@@ -276,7 +276,7 @@ export function CustomerReportJobList() {
                         pagination
                       />
                     ) : (
-                      <Row className="center-align">
+                      <Row className="center-align ">
                         <NoDataFound></NoDataFound>
                       </Row>
                     )}

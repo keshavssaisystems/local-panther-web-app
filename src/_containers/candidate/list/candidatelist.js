@@ -506,7 +506,10 @@ export const CandidateList = (props) => {
                   </Row>
                   <Row>
                     {candidateJobList.length === 0 && !loading ? (
-                      <Row style={{ textAlign: "center" }}>
+                      <Row
+                        style={{ textAlign: "center" }}
+                        className="center-middle-align"
+                      >
                         <Col>
                           {" "}
                           <NoDataFound></NoDataFound>
@@ -562,7 +565,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -620,7 +626,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -678,7 +687,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -736,7 +748,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -794,7 +809,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
@@ -852,7 +870,10 @@ export const CandidateList = (props) => {
                     ) : (
                       <>
                         {candidateJobList.length === 0 && !loading ? (
-                          <Row style={{ textAlign: "center" }}>
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
                             <Col>
                               {" "}
                               <NoDataFound></NoDataFound>
