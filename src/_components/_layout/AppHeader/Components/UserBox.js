@@ -33,6 +33,7 @@ import { ChangePassword } from "../../../common/changePassword";
 import { SuccessPopUp } from "_components/common/successPopUp";
 import { settingsActions } from "_store";
 import cx from "classnames";
+import Switch from "react-switch";
 
 export function UserBox() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -166,7 +167,7 @@ export function UserBox() {
                     >
                       <PerfectScrollbar>
                         <Nav vertical>
-                          <NavItem>
+                          <NavItem className="mb-1">
                             <NavLink
                               href="javascript:void(0)"
                               onClick={() => setChangePwd(true)}
@@ -176,36 +177,22 @@ export function UserBox() {
                           </NavItem>
 
                           <NavItem>
-                            <NavLink href="javascript:void(0)">
-                              Notifications
-                              <div
-                                style={{ margin: "auto" }}
-                                className="switch has-switch mb-2 me-2"
-                                data-on-label="ON"
-                                data-off-label="OFF"
-                                onClick={(e) => toggleNotification(!isToggleOn)}
-                              >
-                                <div
-                                  className={cx("switch-animate", {
-                                    "switch-on": isToggleOn,
-                                    "switch-off": !isToggleOn,
-                                  })}
-                                >
-                                  <input type="checkbox" />
-                                  <span className="switch-left">ON</span>
-                                  <label>&nbsp;</label>
-                                  <span className="switch-right">OFF</span>
-                                </div>
-                              </div>
-                            </NavLink>
-                          </NavItem>
-
-                          <NavItem>
                             <NavLink
                               href="javascript:void(0)"
                               onClick={() => setDeactivateConfirm(true)}
                             >
                               Deactivate account
+                            </NavLink>
+                          </NavItem>
+                          <NavItem>
+                            <NavLink href="javascript:void(0)">
+                              Notifications
+                              <Switch
+                                onChange={() => toggleNotification(!isToggleOn)}
+                                checked={isToggleOn}
+                                className="m-1 ms-auto ml-auto"
+                                id="normal-switch"
+                              />
                             </NavLink>
                           </NavItem>
                         </Nav>

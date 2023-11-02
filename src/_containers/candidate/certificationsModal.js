@@ -188,7 +188,7 @@ export function CertificationsModal(props) {
     } else if (check == "expired") {
       new_data.isexpired = !new_data.isexpired;
 
-      if (!new_data.expired) {
+      if (new_data.expired) {
         let date = { ...toDateSelect };
         date.year = "";
         date.month = "";
@@ -767,7 +767,7 @@ export function CertificationsModal(props) {
                 onChange={(evt) =>
                   onHandleInputChange("toMonth", evt.target.value)
                 }
-                disabled={!formDetails.isexpired}
+                disabled={formDetails.isexpired}
                 className={`form-control ${
                   formDetails.toMonthReq ? "is-invalid" : ""
                 }`}
@@ -798,7 +798,7 @@ export function CertificationsModal(props) {
                 onChange={(evt) =>
                   onHandleInputChange("toYear", evt.target.value)
                 }
-                disabled={!formDetails.isexpired}
+                disabled={formDetails.isexpired}
                 className={`form-control ${
                   formDetails.toYearReq ? "is-invalid" : ""
                 }`}

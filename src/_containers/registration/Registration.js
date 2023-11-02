@@ -738,7 +738,7 @@ export function Registration() {
                           placeholderText="search"
                           isMulti={false}
                           className={`placeholder-name ${
-                            errors.countryid && countryValue
+                            errors.countryid && countryValue === 0
                               ? "async-border-red"
                               : ""
                           }`}
@@ -776,9 +776,9 @@ export function Registration() {
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
-                    style={{
-                      backgroundImage: "url(" + bg1 + ")",
-                    }}
+                    // style={{
+                    //   backgroundImage: "url(" + bg1 + ")",
+                    // }}
                   />
                   <div>
                     <h3 className="slider-title">Experts In Human Capital</h3>
