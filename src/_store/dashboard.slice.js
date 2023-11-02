@@ -13,6 +13,15 @@ export const getSchedules = createAsyncThunk(
   }
 );
 
+// getAlerts thunk
+export const getAlerts = createAsyncThunk(
+  `${name}/getAlerts`,
+  async ({ candidateId }) => {
+    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateDashboard/NotificationList/${candidateId}`;
+    return await fetchWrapper.get(DASHBOARD_END_POINT);
+  }
+);
+
 // getDashboardCount thunk
 export const getDashboardCount = createAsyncThunk(
   `${name}/getDashboardCount`,
@@ -60,73 +69,88 @@ const candidateDashboardSlice = createSlice({
     dashboardCounts: [],
     dashboardGraphData: [],
     toDoList: [],
+    alertsList: [],
     loading: false,
+    todoLoader: false,
+    alertsLoader: false,
+    schedulesLoader: false,
   },
   reducers: {},
 
   extraReducers: {
     [getSchedules.pending]: (state) => {
-      state.loading = true;
+      state.schedulesLoader = true;
     },
     [getSchedules.fulfilled]: (state, action) => {
       state.dashboardGraphData = action.payload.data;
-      state.loading = false;
+      state.schedulesLoader = false;
     },
     [getSchedules.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.schedulesLoader = false;
     },
-    [getDashboardCount.pending]: (state) => {
-      state.loading = true;
-    },
+    [getDashboardCount.pending]: (state) => {},
     [getDashboardCount.fulfilled]: (state, action) => {
       state.dashboardCounts = action.payload.data;
-      state.loading = false;
     },
     [getDashboardCount.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
     },
 
     [createToDo.pending]: (state) => {
-      state.loading = true;
+      state.todoLoader = true;
     },
     [createToDo.fulfilled]: (state, action) => {
       state.dashboardCounts = action.payload.data;
-      state.loading = false;
+      state.todoLoader = false;
     },
     [createToDo.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.todoLoader = false;
     },
 
     [getToDo.pending]: (state) => {
-      state.loading = true;
+      state.todoLoader = true;
     },
     [getToDo.fulfilled]: (state, action) => {
       state.toDoList = action.payload.data;
-      state.loading = false;
+      state.todoLoader = false;
     },
     [getToDo.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.todoLoader = false;
     },
 
     [updateToDo.pending]: (state) => {
-      state.loading = true;
+      state.todoLoader = true;
     },
-    [updateToDo.fulfilled]: (state, action) => {},
+    [updateToDo.fulfilled]: (state, action) => {
+      state.todoLoader = false;
+    },
     [updateToDo.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.todoLoader = false;
     },
     [deleteToDo.pending]: (state) => {
-      state.loading = true;
+      state.todoLoader = true;
     },
-    [deleteToDo.fulfilled]: (state, action) => {},
+    [deleteToDo.fulfilled]: (state, action) => {
+      state.todoLoader = false;
+    },
     [deleteToDo.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.todoLoader = false;
+    },
+    [getAlerts.pending]: (state) => {
+      state.alertsLoader = true;
+    },
+    [getAlerts.fulfilled]: (state, action) => {
+      state.alertsList = action.payload.data;
+      state.alertsLoader = false;
+    },
+    [getAlerts.rejected]: (state, action) => {
+      state.error = action.error;
+      state.alertsLoader = false;
     },
   },
 });
@@ -140,6 +164,7 @@ export const candidateDashboardActions = {
   getToDo,
   updateToDo,
   deleteToDo,
+  getAlerts,
 };
 
 export const candidateDashboardReducer = candidateDashboardSlice.reducer;

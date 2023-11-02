@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { history, fetchWrapper } from "_helpers";
 
 // create slice name
-const name = "profile-skills";
+const name = "profileSkills";
 
 // login thunk
 export const updateSkillThunk = createAsyncThunk(
@@ -16,9 +16,16 @@ export const updateSkillThunk = createAsyncThunk(
 export const deleteSkillThunk = createAsyncThunk(
   `${name}/deleteSkillThunk`,
   async (id) => {
-    console.log("triggered--");
     const SKILL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateSkill/${id}`;
     return await fetchWrapper.delete(SKILL_END_POINT);
+  }
+);
+
+export const getPopularSkills = createAsyncThunk(
+  `${name}/getPopularSkills`,
+  async () => {
+    const SKILL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=PopularSkills`;
+    return await fetchWrapper.get(SKILL_END_POINT);
   }
 );
 
@@ -46,6 +53,22 @@ const profileSkillSlice = createSlice({
     [deleteSkillThunk.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [getPopularSkills.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [getPopularSkills.fulfilled]: (state, action) => {
+      let filtered_data = action?.payload?.data.map((rest) => {
+        return {
+          value: rest.id,
+          label: rest.name,
+        };
+      });
+
+      state.skill_data_profile = filtered_data;
+    },
+    [getPopularSkills.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -54,6 +77,7 @@ export const profileSkillsActions = {
   ...profileSkillSlice.actions,
   updateSkillThunk,
   deleteSkillThunk,
+  getPopularSkills,
 };
 
-export const profileSkillsReducer = profileSkillsActions.reducer;
+export const profileSkillsReducer = profileSkillSlice.reducer;

@@ -41,7 +41,6 @@ export function ProfilePDF(props) {
   const educationInfo = useSelector(
     (state) => state.getProfile.profileData.educationInfo
   );
-
   const certificationInfo = useSelector(
     (state) => state.getProfile.profileData.certificationsInfo
   );
@@ -103,7 +102,7 @@ export function ProfilePDF(props) {
                     </span>
                   </p>
                 </Col>
-                {profile_img != "" ? (
+                {/* {profile_img != "" ? (
                   <Col>
                     <div className="float-end rounded-circle profile-img me-3">
                       <img
@@ -116,7 +115,7 @@ export function ProfilePDF(props) {
                   </Col>
                 ) : (
                   <></>
-                )}
+                )} */}
               </Row>
             </div>
 

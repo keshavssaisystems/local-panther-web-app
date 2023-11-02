@@ -31,6 +31,33 @@ export const forgotPasswordThunk = createAsyncThunk(
   }
 );
 
+// user register thunk
+export const userRegisterThunk = createAsyncThunk(
+  `${name}/userRegisterThunk`,
+  async (payload) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/UserRegistration`;
+    return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
+  }
+);
+
+// verigy otp thunk
+export const verifyOTPThunk = createAsyncThunk(
+  `${name}/verifyOTPThunk`,
+  async ({ userRegistrationId, otpDetails }) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/VerifyOTP?userRegistrationId=${userRegistrationId}`;
+    return await fetchWrapper.put(REGISTRATION_END_POINT, otpDetails);
+  }
+);
+
+// userRegisterThunkNew thunk
+export const userRegisterThunkNew = createAsyncThunk(
+  `${name}/userRegisterThunkNew`,
+  async ({ userRegistrationId, post_data }) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/VerifyEmailOrPhone?userRegistrationId=${userRegistrationId}`;
+    return await fetchWrapper.put(REGISTRATION_END_POINT, post_data);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -118,6 +145,29 @@ const authSlice = createSlice({
     [forgotPasswordThunk.rejected]: (state, action) => {
       state.error = action.error;
     },
+
+    [userRegisterThunk.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunk.rejected]: (state, action) => {
+      state.error = action.error;
+    },
+    [verifyOTPThunk.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => {},
+    [verifyOTPThunk.rejected]: (state, action) => {
+      state.error = action.error;
+    },
+
+    [userRegisterThunkNew.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunkNew.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -127,6 +177,9 @@ export const authActions = {
   loginThunk, // Export the async login action
   registerThunk, // Export the register action
   forgotPasswordThunk,
+  userRegisterThunk,
+  verifyOTPThunk,
+  userRegisterThunkNew,
 };
 
 export const authReducer = authSlice.reducer;

@@ -10,6 +10,7 @@ import Loader from "react-loaders";
 import "./profile.scss";
 import { AdditionalInfoModal } from "./additionalInfoModal";
 import { useSelector } from "react-redux";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function AdditionalInformation(props) {
   const dispatch = useDispatch();
@@ -191,17 +192,23 @@ export function AdditionalInformation(props) {
                             )}
                           </div>
                         ) : (
-                          <div className="d-flex justify-content-center">
-                            No Data Available
-                          </div>
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>
+                              {" "}
+                              <NoDataFound imageSize={"25px"} />
+                            </Col>
+                          </Row>
                         )}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data Available
-                  </div>
+                  <Row style={{ textAlign: "center" }}>
+                    <Col>
+                      {" "}
+                      <NoDataFound imageSize={"25px"} />
+                    </Col>
+                  </Row>
                 )}
               </div>
             ) : (

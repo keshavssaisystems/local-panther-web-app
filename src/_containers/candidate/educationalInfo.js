@@ -14,7 +14,7 @@ import { EducationModal } from "./educationModal";
 import Loader from "react-loaders";
 
 import { BsPencil, BsTrash3 } from "react-icons/bs";
-
+import { NoDataFound } from "_components/common/nodatafound";
 import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 
@@ -169,9 +169,12 @@ export function CandidateEducation(props) {
                       </div>
                     ))
                   ) : (
-                    <div className="d-flex justify-content-center">
-                      No Data available
-                    </div>
+                    <Row style={{ textAlign: "center" }}>
+                      <Col>
+                        {" "}
+                        <NoDataFound imageSize={"25px"} />
+                      </Col>
+                    </Row>
                   )}
                 </Row>
               ) : (
@@ -280,9 +283,12 @@ export function CandidateEducation(props) {
                         </div>
                       ))
                     ) : (
-                      <div className="d-flex justify-content-center">
-                        No Data available
-                      </div>
+                      <Row style={{ textAlign: "center" }}>
+                        <Col>
+                          {" "}
+                          <NoDataFound imageSize={"25px"} />
+                        </Col>
+                      </Row>
                     )}
                   </Row>
                 </CardBody>

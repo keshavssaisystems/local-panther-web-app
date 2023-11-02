@@ -23,7 +23,7 @@ import { history } from "_helpers";
 import { authActions } from "_store";
 
 import logo from "../../assets/utils/images/panther-logo.png";
-import bg1 from "../../assets/utils/images/originals/buildings.jpg";
+import loginBgImg from "../../assets/utils/images/login.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./login.scss";
 
@@ -88,19 +88,19 @@ export function Login() {
       <div className="app-container login-container">
         <div className="h-100">
           <Row className="h-100 g-0">
-            <Col lg="4" className="d-none d-lg-block">
+            <Col lg="4" className="d-lg-block">
               <div className="">
                 <Slider {...sliderSettings}>
                   <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                     <div
                       className="slide-img-bg"
                       style={{
-                        backgroundImage: "url(" + bg1 + ")",
+                        backgroundImage: "url(" + loginBgImg + ")",
                       }}
                     />
-                    <div className="login-slider-text">
+                    <div className="login-slider-title">
                       <p>Experts In Human Capital</p>
-                      <p>
+                      <p className="login-slider-text m-5">
                         What makes The Panther Group the ideal career partner?
                         We focus on what you want most from your career!
                       </p>
@@ -201,7 +201,9 @@ export function Login() {
                     <Row>
                       <Col className="login-divider me-2" />
 
-                      <Col className="col-md-1 login-mt">or</Col>
+                      <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                        or
+                      </Col>
                       <Col className="login-divider" />
                     </Row>
 
@@ -226,7 +228,7 @@ export function Login() {
                     )}
                   </Form>
 
-                  <Row className="mt-5 d-flex justify-content-center align-items-center">
+                  {/* <Row className="mt-5 d-flex justify-content-center align-items-center">
                     <Col></Col>
                     <Col>
                       <Row>
@@ -248,7 +250,7 @@ export function Login() {
                       </Row>
                     </Col>
                     <Col></Col>
-                  </Row>
+                  </Row> */}
 
                   <p className="mt-3 d-flex justify-content-center align-items-center">
                     <Link to="/registration" className="forgot-pwd-text">

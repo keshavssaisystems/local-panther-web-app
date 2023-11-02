@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-} from "reactstrap";
+import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
 import { jobPreferenceDetailsActions } from "_store";
 import {
   Row,
@@ -14,11 +7,8 @@ import {
   Modal,
   Card,
   CardBody,
-  Collapse,
-  CardHeader,
   Button,
   FormGroup,
-  InputGroup,
   Form,
 } from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
@@ -30,6 +20,7 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import "./profile.scss";
 import { getLocationFilter } from "_store";
 import Loader from "react-loaders";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -544,36 +535,26 @@ export function JobPreferences(props) {
   return (
     <div>
       <div className="profile-view">
-        <Card>
-          <Row className="mt-3">
-            <Col>
-              <strong
-                className="card-title-text"
-                style={{ marginLeft: "10px" }}
-              >
-                Job preferences
-              </strong>
-            </Col>
-
-            <Col>
-              <div className="mt-3 float-end" style={{ marginLeft: "10px" }}>
+        <Card className="card-hover-shadow-2x mb-3">
+          <CardBody>
+            <div className="mb-3">
+              <strong className="card-title-text">Job Preferences</strong>
+              <div className="float-end">
                 <BsPencil
                   className="icons me-2"
                   onClick={() => setPersonalModal(true)}
                 />
                 {getData?.length > 0 ? (
                   <BsTrash3
-                    className="me-3 icons"
+                    className="me-2 icons"
                     onClick={() => deleteModal()}
                   />
                 ) : (
-                  <></>
+                  ""
                 )}
               </div>
-            </Col>
-          </Row>
+            </div>
 
-          <CardBody>
             {!loader ? (
               <div>
                 {getData?.length > 0 ? (
@@ -651,9 +632,12 @@ export function JobPreferences(props) {
                     ))}
                   </div>
                 ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data available
-                  </div>
+                  <Row style={{ textAlign: "center" }}>
+                    <Col>
+                      {" "}
+                      <NoDataFound imageSize={"25px"} />
+                    </Col>
+                  </Row>
                 )}
               </div>
             ) : (

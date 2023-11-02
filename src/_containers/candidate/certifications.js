@@ -17,6 +17,7 @@ import "./profile.scss";
 import Loader from "react-loaders";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function CertificationDetails(props) {
   const dispatch = useDispatch();
@@ -156,15 +157,21 @@ export function CertificationDetails(props) {
                           </div>
                         ))
                       ) : (
-                        <div className="d-flex justify-content-center">
-                          No Data available
-                        </div>
+                        <Row style={{ textAlign: "center" }}>
+                          <Col>
+                            {" "}
+                            <NoDataFound imageSize={"25px"} />
+                          </Col>
+                        </Row>
                       )}
                     </div>
                   ) : (
-                    <div className="d-flex justify-content-center">
-                      No Data available
-                    </div>
+                    <Row style={{ textAlign: "center" }}>
+                      <Col>
+                        {" "}
+                        <NoDataFound imageSize={"25px"} />
+                      </Col>
+                    </Row>
                   )}
                 </Row>
               ) : (

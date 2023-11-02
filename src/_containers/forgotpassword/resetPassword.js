@@ -7,8 +7,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
-
-import bg1 from "../../assets/utils/images/originals/buildings.jpg";
+import loginBgImg from "../../assets/utils/images/login.png";
 
 import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import logo from "../../assets/utils/images/panther-logo.png";
@@ -52,21 +51,20 @@ export function ResetPassword() {
       <div className="h-100 forgot-password">
         <Row className="h-100 g-0">
           <Col lg="4" className="d-none d-lg-block">
-            <div className="slider-light">
+            <div className="">
               <Slider {...sliderSettings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
                     style={{
-                      backgroundImage: "url(" + bg1 + ")",
+                      backgroundImage: "url(" + loginBgImg + ")",
                     }}
                   />
-                  <div className="slider-content">
-                    <h3>Perfect Balance</h3>
-                    <p>
-                      ArchitectUI is like a dream. Some think it's too good to
-                      be true! Extensive collection of unified React Boostrap
-                      Components and Elements.
+                  <div className="login-slider-title">
+                    <p>Experts In Human Capital</p>
+                    <p className="login-slider-text m-5">
+                      What makes The Panther Group the ideal career partner? We
+                      focus on what you want most from your career!
                     </p>
                   </div>
                 </div>

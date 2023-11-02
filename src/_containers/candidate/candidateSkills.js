@@ -22,6 +22,7 @@ import "./profile.scss";
 import { profileSkillsActions } from "_store";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
@@ -83,7 +84,6 @@ export function CandidateSkills(props) {
     });
     setSelectedExp(selected_exp);
     setLoader(false);
-    loadDefaultOptions(data);
   }, [get_response]);
 
   const closeModal = function () {
@@ -98,17 +98,27 @@ export function CandidateSkills(props) {
   };
   const [selectedData, setSelectedData] = useState({});
   const [skills, setSkills] = useState([]);
+
+  let skills_data = useSelector(
+    (state) => state.profileSkills.skill_data_profile
+  );
+  useEffect(() => {
+    if (skills_data) {
+      setSkills(skills_data);
+    }
+  }, [skills_data]);
+
   const [skillsTemp, setSkillsTemp] = useState([]);
 
   const removeSkills = function (data) {
-    let filter_data = skills.find((x) => x.value == data.value);
+    let filter_data = skills?.find((x) => x.value == data.value);
     if (data) {
       let new_array = [...skills];
       new_array.push(data);
       setSkills(new_array);
     }
     let multiple_skills = [...skillsMultiple];
-    let multiple_skills_new = multiple_skills.filter(function (obj) {
+    let multiple_skills_new = multiple_skills?.filter(function (obj) {
       return obj.value !== data.value;
     });
 
@@ -120,26 +130,11 @@ export function CandidateSkills(props) {
     setSelectedSkillData(data_new);
   };
 
-  // useEffect(() => {
-  //   loadDefaultOptions();
-  // }, []);
-  useEffect(() => {
-    let slice_array = [...skills];
-
-    let index = skills.findIndex((x) => x.value == selectedData.value);
-
-    let data = slice_array.filter(function (obj) {
-      return obj.value !== selectedData.value;
-    });
-    setSkills(data);
-    setSkillsTemp(data);
-  }, [selectedData]);
-
   const onSelectSkillsDropdown = function (data) {
     setSkillsMultiple(data);
 
     let new_data = [...skills];
-    let index = skills.findIndex(
+    let index = skills?.findIndex(
       (x) => x.value == data[data.length - 1]?.value
     );
 
@@ -241,21 +236,6 @@ export function CandidateSkills(props) {
     }
   };
 
-  const loadDefaultOptions = async function (selectedData) {
-    const { data = [] } = await getSkillsFilter("java");
-    let filtered_data = data.map(({ skillid: value, ...rest }) => {
-      return {
-        value,
-        label: `${rest.skillname}`,
-      };
-    });
-
-    const uniqueArray = filtered_data.filter((item1) => {
-      return !selectedData.find((item2) => item1.value === item2.value);
-    });
-
-    setSkills(uniqueArray);
-  };
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
@@ -278,7 +258,7 @@ export function CandidateSkills(props) {
     );
 
     let new_array = [...selectedSkillData];
-    new_array[index].experience = selectedSkill;
+    new_array[index].experience = data;
 
     setSelectedSkillData(new_array);
   };
@@ -290,7 +270,7 @@ export function CandidateSkills(props) {
             <div className="mb-3">
               <strong className="card-title-text">Skills</strong>
               <Label
-                className="float-end me-3 link-text"
+                className="float-end  link-text"
                 onClick={(evt) => setPersonalModal(true)}
               >
                 Add
@@ -326,9 +306,12 @@ export function CandidateSkills(props) {
                     </Button>
                   ))
                 ) : (
-                  <div className="d-flex justify-content-center">
-                    No Data available
-                  </div>
+                  <Row style={{ textAlign: "center" }}>
+                    <Col>
+                      {" "}
+                      <NoDataFound imageSize={"25px"} />
+                    </Col>
+                  </Row>
                 )}
               </div>
             ) : (
@@ -461,7 +444,7 @@ export function CandidateSkills(props) {
                   {skills?.map((item) => (
                     <Button
                       className="
-                       mb-1 me-2 mt-3 skills-view-popup btn-shadow btn-outline-2x"
+                       m-2 skills-view-popup btn-shadow btn-outline-2x"
                       outline
                       color="light"
                       onClick={(evt) => onSelectPopSkills(item)}

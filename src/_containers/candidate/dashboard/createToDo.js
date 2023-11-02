@@ -99,10 +99,11 @@ export function CreateToDo(props) {
               <Col>
                 <FormGroup>
                   <Label for="todo" className="fw-semi-bold">
-                    Todo<span className="required-icon"> *</span>
+                    {props?.check === "add" ? "Add task" : "Edit task"}{" "}
+                    <span className="required-icon"> *</span>
                   </Label>
                   <Input
-                    placeholder="Enter todo"
+                    placeholder="Enter task"
                     name="todo"
                     type="textarea"
                     id="todo"

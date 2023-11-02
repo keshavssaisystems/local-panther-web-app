@@ -6,7 +6,7 @@ import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
 import personIcon from "../../../assets/utils/images/person-fill.svg";
 import linkIcon from "../../../assets/utils/images/link.png";
 import copyLinkIcon from "../../../assets/utils/images/copy-link.png";
-import { BsPersonVideo2, BsFillTelephoneFill, BsPinMap } from "react-icons/bs";
+import { BsFillTelephoneFill } from "react-icons/bs";
 
 export function ScheduleDetails({ interviewDetail }) {
   const [isCopied, setIsCopied] = useState(false);
@@ -125,6 +125,9 @@ export function ScheduleDetails({ interviewDetail }) {
             </div>
 
             <div className="p-custom mb-3">
+              <p className="mb-0 interview-details-label">Duration </p>
+              <p>{interviewDetail.duration}</p>
+
               <p className="mb-0 interview-details-label">Mode </p>
               <div>
                 {interviewDetail?.format === "Video" && (
