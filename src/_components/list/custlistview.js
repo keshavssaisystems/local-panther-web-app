@@ -460,18 +460,26 @@ export const CustCandidateListView = (props) => {
                 className="table-cell"
                 title={
                   row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList[0]?.length > 0
-                    ? row?.recommendedationCandidateShortList[0].cityname +
-                      ", " +
-                      row.recommendedationCandidateShortList[0].statename
+                  row.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row.recommendedationCandidateShortList[0].statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
                     : ""
                 }
               >
                 {row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList[0]?.length > 0
-                  ? row?.recommendedationCandidateShortList[0].cityname +
-                    ", " +
-                    row.recommendedationCandidateShortList[0].statename
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
                   : ""}
               </span>
             ),
@@ -557,18 +565,26 @@ export const CustCandidateListView = (props) => {
                 className="table-cell"
                 title={
                   row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList[0]?.length > 0
-                    ? row?.recommendedationCandidateShortList[0].cityname +
-                      ", " +
-                      row.recommendedationCandidateShortList[0].statename
+                  row?.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row?.recommendedationCandidateShortList[0]?.statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
                     : ""
                 }
               >
                 {row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList[0]?.length > 0
-                  ? row?.recommendedationCandidateShortList[0].cityname +
-                    ", " +
-                    row.recommendedationCandidateShortList[0].statename
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
                   : ""}
               </span>
             ),
@@ -611,14 +627,14 @@ export const CustCandidateListView = (props) => {
                   row?.scheduledInterviewDtos?.length > 0
                     ? moment(
                         row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY")
+                      ).format("MM/DD/YYYY hh:mm A")
                     : ""
                 }
               >
                 {row?.scheduledInterviewDtos &&
                 row?.scheduledInterviewDtos?.length > 0
                   ? moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
-                      "MM/DD/YYYY"
+                      "MM/DD/YYYY hh:mm A"
                     )
                   : ""}
               </span>
