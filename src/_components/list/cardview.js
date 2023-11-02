@@ -202,18 +202,19 @@ export const CandidateCardView = (props) => {
                     <span>
                       <FiMapPin size={"16px"} />
                     </span>{" "}
-                    {props?.data?.candidateQualificationsDtos &&
-                    props?.data?.candidateQualificationsDtos.length > 0
-                      ? (props?.data?.candidateQualificationsDtos[0]?.cityname
-                          ? props?.data?.candidateQualificationsDtos[0]
-                              ?.cityname
-                          : "-") +
-                        ", " +
-                        (props?.data?.candidateQualificationsDtos[0]?.statename
-                          ? props?.data?.candidateQualificationsDtos[0]
+                    {props?.data?.recommendedationCandidateShortList &&
+                    props?.data?.recommendedationCandidateShortList.length > 0
+                      ? (props?.data?.recommendedationCandidateShortList[0]
+                          ?.cityname
+                          ? `${props?.data?.recommendedationCandidateShortList[0]?.cityname}, `
+                          : "") +
+                        "" +
+                        (props?.data?.recommendedationCandidateShortList[0]
+                          ?.statename
+                          ? props?.data?.recommendedationCandidateShortList[0]
                               ?.statename
-                          : "-")
-                      : "-"}
+                          : "")
+                      : ""}
                   </p>
                 </Col>
                 <Col className="col-3">

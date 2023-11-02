@@ -1,102 +1,125 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "_helpers";
 
-// create slice
+// create slice name
 const name = "custjobList";
-const initialState = createInitialState();
-const extraActions = createExtraActions();
-const extraReducers = createExtraReducers();
-const slice = createSlice({ name, initialState, extraReducers });
 
-// exports
-export const custJobListActions = { ...slice.actions, ...extraActions };
-export const custJobListReducer = slice.reducer;
+// getJobList thunk
+export const getJobList = createAsyncThunk(
+  `${name}/getJobList`,
+  async ({
+    pageSize,
+    pageNumber,
+    searchText,
+    jobId,
+    companyId,
+    cityId,
+    skillId,
+  }) => {
+    const LIST_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/job?isActive=true&jobId=${jobId}&companyId=${companyId}&pageSize=${pageSize}&pageNumber=${pageNumber}&searchText=${searchText}&cityId=${cityId}&skillId=${skillId}`;
+    return await fetchWrapper.get(LIST_JOB_END_POINT);
+  }
+);
 
-// implementation
-function createInitialState() {
-  return {
+// getJobDetail thunk
+export const getJobDetail = createAsyncThunk(
+  `${name}/getJobDetail`,
+  async ({ jobId }) => {
+    const JOB_DETAIL_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/GetJobDetails/${jobId}`;
+    return await fetchWrapper.get(JOB_DETAIL_END_POINT);
+  }
+);
+
+// Create the slice
+const custJobListSlice = createSlice({
+  name,
+  initialState: {
     jobList: [],
     totalRows: 0,
     jobDetail: [],
     loading: false,
     jdLoading: false,
-  };
-}
+  },
+  reducers: {
+    closeJob: (state, action) => {
+      state.jobDetail[0].isclosed = true;
+      let modifiedJobList = [];
+      action?.payload?.jobList.forEach((element) => {
+        let elementObject = {};
+        if (element.jobid === action?.payload?.jobId) {
+          elementObject = element;
+          let close = {
+            isclosed: true,
+          };
+          elementObject = {
+            ...elementObject,
+            ...close,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifiedJobList?.push(elementObject);
+      });
+      state.jobList = modifiedJobList;
+    },
+    publishJob: (state, action) => {
+      state.jobDetail[0].isdraft = false;
+      state.jobDetail[0].isclosed = false;
+      let modifiedJobList = [];
+      action?.payload?.jobList.forEach((element) => {
+        let elementObject = {};
+        if (element.jobid === action?.payload?.jobId) {
+          elementObject = element;
+          let publish = {
+            isdraft: false,
+            isclosed: false,
+          };
+          elementObject = {
+            ...elementObject,
+            ...publish,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifiedJobList?.push(elementObject);
+      });
+      state.jobList = modifiedJobList;
+    },
+  },
 
-function createExtraActions() {
-  const baseUrl = `${process.env.REACT_APP_NEW_API_URL}`;
+  extraReducers: {
+    [getJobList.pending]: (state) => {
+      state.loading = true;
+    },
+    [getJobList.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.jobList = action.payload.data.jobList;
+      state.totalRows = action.payload.data.totalRows;
+    },
+    [getJobList.rejected]: (state, action) => {
+      state.loading = false;
+      state.jobList = { error: action.error };
+    },
+    [getJobDetail.pending]: (state) => {
+      state.jdLoading = true;
+    },
+    [getJobDetail.fulfilled]: (state, action) => {
+      state.jdLoading = false;
+      let data = [];
+      data.push(action.payload.data);
+      state.jobDetail = data;
+    },
+    [getJobDetail.rejected]: (state, action) => {
+      state.jdLoading = false;
+    },
+  },
+});
 
-  return {
-    getJobList: getJobList(),
-    getJobDetails: getJobDetails(),
-  };
+// Export the actions and reducer
+export const custJobListActions = {
+  ...custJobListSlice.actions,
+  getJobList,
+  getJobDetail,
+};
 
-  function getJobList() {
-    return createAsyncThunk(
-      `${name}/getJobList`,
-
-      async ({
-        pageSize,
-        pageNumber,
-        searchText,
-        jobId,
-        companyId,
-        cityId,
-        skillId,
-      }) =>
-        await fetchWrapper.get(
-          `${baseUrl}/job?isActive=true&jobId=${jobId}&companyId=${companyId}&pageSize=${pageSize}&pageNumber=${pageNumber}&searchText=${searchText}&cityId=${cityId}&skillId=${skillId}`
-        )
-    );
-  }
-
-  function getJobDetails() {
-    return createAsyncThunk(
-      `${name}/getJobDetails`,
-
-      async ({ jobId }) =>
-        await fetchWrapper.get(`${baseUrl}/Job/GetJobDetails/${jobId}`)
-    );
-  }
-}
-
-function createExtraReducers() {
-  return (builder) => {
-    getJobList();
-    getJobDetails();
-
-    function getJobList() {
-      var { pending, fulfilled, rejected } = extraActions.getJobList;
-      builder
-        .addCase(pending, (state) => {
-          state.loading = true;
-        })
-        .addCase(fulfilled, (state, action) => {
-          state.loading = false;
-          state.jobList = action.payload.data.jobList;
-          state.totalRows = action.payload.data.totalRows;
-        })
-        .addCase(rejected, (state, action) => {
-          state.loading = false;
-          state.jobList = { error: action.error };
-        });
-    }
-
-    function getJobDetails() {
-      var { pending, fulfilled, rejected } = extraActions.getJobDetails;
-      builder
-        .addCase(pending, (state) => {
-          state.jdLoading = true;
-        })
-        .addCase(fulfilled, (state, action) => {
-          state.jdLoading = false;
-          let data = [];
-          data.push(action.payload.data);
-          state.jobDetail = data;
-        })
-        .addCase(rejected, (state, action) => {
-          state.jdLoading = false;
-        });
-    }
-  };
-}
+export const custJobListReducer = custJobListSlice.reducer;
