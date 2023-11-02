@@ -14,6 +14,7 @@ import { InterviewDetailsModal } from "./interviewDetailsModal";
 import moment from "moment-timezone";
 import { useSelector } from "react-redux";
 import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function ScheduleInterviewList({
   candidateList,
@@ -71,9 +72,10 @@ export function ScheduleInterviewList({
       name: "Scheduled time",
       sortable: true,
       selector: (row) =>
-        moment(
-          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime
-        ).format("MM/DD/YYYY h:mm a"),
+        getTimezoneDateTime(
+          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
+          "MM/DD/YYYY h:mm a"
+        ),
     },
     {
       name: "Duration",
