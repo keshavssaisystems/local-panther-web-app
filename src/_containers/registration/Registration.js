@@ -776,9 +776,9 @@ export function Registration() {
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
-                    style={{
-                      backgroundImage: "url(" + bg1 + ")",
-                    }}
+                    // style={{
+                    //   backgroundImage: "url(" + bg1 + ")",
+                    // }}
                   />
                   <div>
                     <h3 className="slider-title">Experts In Human Capital</h3>
