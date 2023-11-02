@@ -47,6 +47,13 @@ export function UpcomingInterviews() {
     (state) => state.candidateDashboard.schedulesLoader
   );
 
+  let settings = {
+    ...ToastContainer.defaultProps,
+    transition: "bounce",
+    type: "success",
+    disableAutoClose: true,
+  };
+
   const columns = [
     {
       name: "Job title",

@@ -299,7 +299,7 @@ export function CertificationDetails(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Qualification!!
+              want to delete the Certification/license!!
             </div>
             <div>
               <Row>
