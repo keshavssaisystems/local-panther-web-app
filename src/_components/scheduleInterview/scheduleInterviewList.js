@@ -108,14 +108,6 @@ export function ScheduleInterviewList({
                   <span value={row.scheduleinterviewid}>Interview detail</span>
                 </DropdownItem>
               )}
-              {/* <DropdownItem>
-                <i className="dropdown-icon lnr-layers"> </i>
-                <span>Candidate detail</span>
-              </DropdownItem> */}
-              <DropdownItem>
-                <i className="dropdown-icon lnr-trash"> </i>
-                <span>Delete</span>
-              </DropdownItem>
             </DropdownMenu>
           </UncontrolledButtonDropdown>
         </div>

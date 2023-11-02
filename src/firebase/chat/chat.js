@@ -3,9 +3,18 @@ import React, { useRef, useState } from "react";
 import "firebase/firestore";
 import { firebaseConfig } from "firebase/index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { CardBody, CardFooter, Input, Form, Col } from "reactstrap";
+import {
+  CardBody,
+  CardFooter,
+  Input,
+  Form,
+  Col,
+  Button,
+  Row,
+} from "reactstrap";
 import "./chat.scss";
 import { ChatMessage } from "./chatMessage";
+import { BsFillSendFill } from "react-icons/bs";
 import moment from "moment-timezone";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
@@ -95,14 +104,21 @@ export function Chat({ groupId, details }) {
       </CardBody>
       <CardFooter>
         <Form onSubmit={sendMessage} className="width-full">
-          <Col sm={12}>
-            <Input
-              type="text"
-              value={formValue}
-              onChange={(e) => setFormValue(e.target.value)}
-              placeholder="Message"
-            />
-          </Col>
+          <Row>
+            <Col sm={11} md={11} lg={11}>
+              <Input
+                type="text"
+                value={formValue}
+                onChange={(e) => setFormValue(e.target.value)}
+                placeholder="Type your message here"
+              />
+            </Col>
+            <Col sm={1} md={1} lg={1} className="custom-padding-button-col">
+              <Button type={"submit"} title="Send">
+                <BsFillSendFill />
+              </Button>
+            </Col>
+          </Row>
         </Form>
       </CardFooter>
     </>

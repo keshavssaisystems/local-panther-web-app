@@ -362,9 +362,16 @@ export const updateMonthstoYears = (months) => {
   return ((months / 12) | 0) + " years and " + (months % 12) + " months";
 };
 
-export const getTimezoneDateTime = (dateTime, format) => {
+export const getTimezoneDateTime = (
+  dateTime,
+  format = "MM/DD/YYYY hh:mm a"
+) => {
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return moment.utc(dateTime).tz(systemTimeZone).format(format);
+};
+export const getTimezoneDateTimeForNow = (dateTime, format) => {
+  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return moment.utc(dateTime).tz(systemTimeZone).fromNow();
 };
 export function convertTo12HourFormat(time24) {
   // Split the time string into hours and minutes

@@ -318,13 +318,14 @@ export const CandidateCardView = (props) => {
                           float: "right",
                           marginLeft: "0.25rem",
                           marginTop: "2px",
+                          cursor: "pointer",
                         }}
                         src={customerIcons.view_cv_text}
                         alt="view cv text"
                         onClick={() => onBuildResume()}
                       ></img>
                       <img
-                        style={{ float: "right" }}
+                        style={{ float: "right", cursor: "pointer" }}
                         src={customerIcons.view_cv_icon}
                         alt="view cv icon"
                         onClick={() => onBuildResume()}
