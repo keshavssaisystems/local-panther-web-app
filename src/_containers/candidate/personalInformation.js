@@ -640,7 +640,7 @@ export function PersonalInformation(props) {
 
                       <div className="widget-chart-content">
                         <div>
-                          <strong className="candidate-name mb-0">
+                          <strong className="candidate-name mb-1">
                             {selectedCandidate.personalInfo.firstname +
                               " " +
                               selectedCandidate.personalInfo.lastname}
@@ -887,6 +887,7 @@ export function PersonalInformation(props) {
                         </Label>
                         <InputMask
                           placeholder="Eg: (987)-654-3210"
+                          disabled
                           name="phonenumber"
                           type="text"
                           id="phonenumber"
@@ -924,6 +925,7 @@ export function PersonalInformation(props) {
                           type="text"
                           name="email"
                           id="email"
+                          disabled
                           placeholder="Enter Email"
                           value={getResponse.email}
                           onInput={(evt) =>

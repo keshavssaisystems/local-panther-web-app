@@ -189,29 +189,31 @@ export function ResumeDetails(props) {
             {!loading ? (
               <div>
                 <Row>
-                  <Label className="card-p-text">
+                  <Label className="card-p-text mb-3">
                     The recommendation is to utilize the build resume option for
                     improved job matching
                   </Label>
                 </Row>
 
                 {resumeDetails ? (
-                  <Row className="mb-1">
+                  <Row className="mb-3">
                     {resumeDetails.resumepath ? (
                       <div>
                         <strong className="content-title">
                           <span className="me-2">{fileName}</span>{" "}
-                          <a
-                            target="blank"
-                            href={resumeDetails.resumepath}
-                            download={fileName}
-                            className="me-2"
-                          >
-                            <BsDownload />
-                          </a>
-                          <BsTrash3 onClick={() => setDeleteConfirm(true)} />
+                          <div className="float-end">
+                            <a
+                              target="blank"
+                              href={resumeDetails.resumepath}
+                              download={fileName}
+                              className="me-2"
+                            >
+                              <BsDownload />
+                            </a>
+                            <BsTrash3 onClick={() => setDeleteConfirm(true)} />
+                          </div>
                         </strong>
-                        <div className="card-p-text">
+                        <div className="card-p-text mt-1 mb-1">
                           Uploaded on {formatDate(resumeDetails.uploadeddate)}
                         </div>
                       </div>
@@ -302,7 +304,7 @@ export function ResumeDetails(props) {
                         <span>
                           <FormGroup>
                             <Row>
-                              <Col className="col-5 d-flex justify-content-center align-items-center">
+                              <Col className="col-5">
                                 After submitting all necessary data
                               </Col>
                             </Row>

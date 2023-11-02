@@ -85,8 +85,6 @@ export function TodoList(props) {
             To-do list
           </div>
 
-          {/* <div className="card-header-title font-size-md text-capitalize fw-bold"> */}
-
           <div className="btn-actions-pane-right text-capitalize">
             <a
               href="javascript:void(0)"
@@ -97,9 +95,9 @@ export function TodoList(props) {
             </a>
           </div>
         </CardHeader>
-        <div className="scroll-area-md">
-          {!loading ? (
-            <PerfectScrollbar>
+        <CardBody className="scroll-area-md">
+          <PerfectScrollbar>
+            {!loading ? (
               <div className="p-2">
                 {toDoList ? (
                   <div>
@@ -160,7 +158,7 @@ export function TodoList(props) {
                       <div>
                         {toDoList?.length === 0 && !loading ? (
                           <Row style={{ textAlign: "center" }}>
-                            <Col>
+                            <Col className="d-flex justify-content-center align-items-center">
                               {" "}
                               <NoDataFound imageSize={"25px"} />
                             </Col>
@@ -175,13 +173,13 @@ export function TodoList(props) {
                   <></>
                 )}
               </div>
-            </PerfectScrollbar>
-          ) : (
-            <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-              <Loader active={loading} type="line-scale-pulse-out-rapid" />
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className="d-flex justify-content-center align-items-center loader">
+                <Loader active={loading} type="line-scale-pulse-out-rapid" />
+              </div>
+            )}
+          </PerfectScrollbar>
+        </CardBody>
       </Card>
       <div>
         <Modal className="personal-information" size="md" isOpen={isOpenModal}>

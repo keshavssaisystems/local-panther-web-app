@@ -64,7 +64,7 @@ export function Alerts() {
               </div>
             </PerfectScrollbar>
           ) : (
-            <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+            <div className="d-flex justify-content-center align-items-center loader">
               <Loader active={loader} type="line-scale-pulse-out-rapid" />
             </div>
           )}

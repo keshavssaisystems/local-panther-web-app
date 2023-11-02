@@ -11,7 +11,7 @@ import Slider from "react-slick";
 import "./registration.scss";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-import bg3 from "../../assets/utils/images/originals/citynights.jpg";
+import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
 
 import {
@@ -36,7 +36,7 @@ import {
 import { history } from "_helpers";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-
+import { SuccessPopUp } from "_components/common/successPopUp";
 import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
@@ -44,7 +44,7 @@ import { getLocationFilter } from "_store";
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 export function Registration() {
-  const [sliderSettings] = useState({
+  let settings = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -55,7 +55,7 @@ export function Registration() {
     initialSlide: 0,
     autoplay: true,
     adaptiveHeight: true,
-  });
+  };
 
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
@@ -88,7 +88,7 @@ export function Registration() {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    jobProfile: Yup.string()
+    jobprofile: Yup.string()
       .required("Job profile is required")
       .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
       .min(3, "Job profile must be at least 3 characters")
@@ -152,64 +152,194 @@ export function Registration() {
 
   const [mobileValidError, setMobileValidError] = useState(false);
   const [emailValidError, setEmailValidError] = useState(false);
+  const [formValid, setFormValid] = useState(false);
+  const [field, setField] = useState(false);
+  const [otpDetails, setOTPDetails] = useState([]);
 
-  const validateOTP = function (check) {
-    console.log(validationSchema);
+  const validateOTP = async function (check) {
+    let formDetails = getValues();
+    let data = { ...field };
+    data = "";
+    if (
+      formDetails.jobprofile === "" ||
+      !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
+    ) {
+      data = "job profile";
+    }
+    if (
+      formDetails.firstName === "" ||
+      !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
+    ) {
+      data = data !== "" ? data + ", first name" : "first name";
+    }
+    if (
+      formDetails.lastName === "" ||
+      !validationSchema.fields.lastName.isValidSync(getValues("lastName"))
+    ) {
+      data = data !== "" ? data + ", last name" : "last name";
+    }
+    if (
+      formDetails.email === "" ||
+      !validationSchema.fields.email.isValidSync(getValues("email"))
+    ) {
+      data = data !== "" ? data + ", email" : "email";
+    }
+    if (
+      formDetails.phoneNumber === "" ||
+      !validationSchema.fields.phoneNumber.isValidSync(getValues("phoneNumber"))
+    ) {
+      data = data !== "" ? data + ", phone number" : "phone number";
+    }
+    if (cityValue === 0) {
+      data = data !== "" ? data + ", city, state" : "city, state";
+    }
+    if (countryValue === 0) {
+      data = data !== "" ? data + ", country" : "country";
+    }
+
+    if (data !== "") {
+      setField(data);
+      setFormValid(true);
+      return;
+    }
+    let userRegistrationId = otpDetails.userregistrationid;
+    let post_data = {
+      userregistrationid: 0,
+      firstname: getValues("firstName"),
+      lastname: getValues("lastName"),
+      phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
+      email: getValues("email"),
+      countryid: countryValue,
+      stateid: parseInt(getValues("stateid")),
+      cityid: cityValue,
+      phoneotp: null,
+      phoneotpgeneratedate: new Date().toISOString(),
+      isphonenumberverify: false,
+      emailotp: null,
+      emailotpgeneratedate: null,
+      isemailverify: false,
+      isactive: true,
+      currentuserid: 0,
+      type: "phone",
+    };
+    let response;
     if (check === "phone") {
-      if (
-        validationSchema.fields.phoneNumber.isValidSync(
-          getValues("phoneNumber")
-        )
-      ) {
-        setMobileValidError(false);
+      if (!validated.email) {
+        response = await dispatch(authActions.userRegisterThunk(post_data));
+      } else {
+        post_data.isemailverify = true;
+        post_data.userregistrationid = otpDetails.userregistrationid;
+        response = await dispatch(
+          authActions.userRegisterThunkNew({ userRegistrationId, post_data })
+        );
+      }
+
+      if (response?.payload) {
+        setOTPDetails(response.payload.data);
         setOtpForm(true);
       } else {
-        setMobileValidError(true);
+        setMessage(response?.error?.message);
+        setError(true);
+        setOtpForm(false);
       }
     }
     if (check === "email") {
-      if (validationSchema.fields.email.isValidSync(getValues("email"))) {
-        setEmailValidError(false);
+      post_data.type = "email";
+      post_data.emailotpgeneratedate = new Date().toISOString();
+      post_data.phoneotpgeneratedate = null;
+      post_data.isemailverify = false;
+      post_data.isphonenumberverify = false;
+
+      if (!validated.mobile) {
+        response = await dispatch(authActions.userRegisterThunk(post_data));
+      } else {
+        post_data.isphonenumberverify = true;
+        post_data.userregistrationid = otpDetails.userregistrationid;
+        response = await dispatch(
+          authActions.userRegisterThunkNew({ userRegistrationId, post_data })
+        );
+      }
+
+      if (response?.payload) {
+        setOTPDetails(response.payload.data);
         setEmailForm(true);
       } else {
-        setEmailValidError(true);
+        setMessage(response?.error?.message);
+        setError(true);
+        setOtpForm(false);
       }
     }
   };
 
-  const verifyMobileOTPDetails = function () {
+  const verifyMobileOTPDetails = async function () {
     let new_data = { ...validated };
+    let otp_new = { ...otp };
     if (otp.mobile !== "") {
-      new_data.mobile = true;
-      setOtpForm(false);
-    }
-    setValidated(new_data);
-    if (otp.mobile !== "" && otp.email !== "") {
-      onSubmit(postData);
+      otpDetails.phoneotp = otp.mobile;
+      otpDetails.emailotp = null;
+      let userRegistrationId = otpDetails.userregistrationid;
+
+      let response = await dispatch(
+        authActions.verifyOTPThunk({ userRegistrationId, otpDetails })
+      );
+      if (response.payload) {
+        setSaveOTP([]);
+        new_data.mobile = true;
+        setValidated(new_data);
+        setSuccess(true);
+        setOtpForm(false);
+        setMessage("Phone number verified");
+      } else {
+        otp_new.mobile = "";
+        setMessage("Something went wrong");
+        setError(true);
+      }
+
+      setOtp(otp_new);
     }
   };
 
-  const verifyEMailOTPDetails = function () {
+  const verifyEmailOTPDetails = async function () {
     let new_data = { ...validated };
+    let otp_new = { ...otp };
     if (otp.email !== "") {
       new_data.email = true;
-      setEmailForm(false);
-    }
-    setValidated(new_data);
-    if (otp.mobile !== "" && otp.email !== "") {
-      onSubmit(postData);
+      otpDetails.phoneotp = null;
+      otpDetails.emailotp = otp.email;
+
+      let userRegistrationId = otpDetails.userregistrationid;
+
+      let response = await dispatch(
+        authActions.verifyOTPThunk({ userRegistrationId, otpDetails })
+      );
+      if (response.payload) {
+        new_data.email = true;
+        setValidated(new_data);
+        setSaveOTP([]);
+        setSuccess(true);
+        setEmailForm(false);
+        setMessage("Email verified");
+      } else {
+        otp_new.email = "";
+        setMessage("Something went wrong");
+        setError(true);
+      }
+      setOtp(otp_new);
     }
   };
 
+  const [countryValue, setCountryValue] = useState(0);
+  const [cityValue, setCityValue] = useState(0);
+
   const setAsyncSelectValue = (data) => {
-    debugger;
-    console.log(errors);
     setValue("cityid", String(data.value));
+    setCityValue(data.value);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
   };
 
   const onSelectCountryDropdown = (data) => {
+    setCountryValue(data.value);
     setValue("countryid", String(data.value));
   };
 
@@ -273,20 +403,28 @@ export function Registration() {
     }
   }, [timer]);
 
-  const handleInputChange = (check, e) => {
+  const [saveOTP, setSaveOTP] = useState([]);
+
+  const handleInputChange = (check, e, index) => {
+    let new_data = [...saveOTP];
     let otp_new = { ...otp };
     if (check === "mobile") {
-      otp_new.mobile += e;
+      new_data[index] = e;
+
+      setSaveOTP(new_data);
+      otp_new.mobile = new_data.join("");
       setOtp(otp_new);
     }
     if (check === "email") {
-      otp_new.email += e;
+      new_data[index] = e;
+
+      setSaveOTP(new_data);
+      otp_new.email = new_data.join("");
       setOtp(otp_new);
     }
   };
 
   const handleFormData = function (check, data) {
-    debugger;
     console.log(getValues("email"));
     if (check === "mobile") {
       if (validationSchema.fields.phoneNumber.isValidSync(data)) {
@@ -305,6 +443,17 @@ export function Registration() {
     }
   };
 
+  const resendOTP = function (check) {
+    setTimer(60);
+
+    if (check === "mobile") {
+      validateOTP("phone");
+    }
+    if (check === "email") {
+      validateOTP("email");
+    }
+  };
+
   return (
     <>
       <div className=" registration-container h-100">
@@ -318,7 +467,7 @@ export function Registration() {
               <div className="">
                 <img src={logo} width={"130px"} alt="logo" className="logo" />
               </div>
-              <div className="app-logo" />
+              <div className="app-logo mb-0" />
               <h4>
                 <div className="title-text">Welcome,</div>
                 <span className="title-text">
@@ -332,21 +481,21 @@ export function Registration() {
                   <Row>
                     <Col md={6}>
                       <FormGroup>
-                        <Label for="firstName" className="input-label">
+                        <Label for="jobprofile" className="input-label">
                           <span className="text-danger">*</span> Job Profile
                         </Label>
                         <input
                           type="text"
-                          name="jobProfile"
-                          id="jobProfile"
+                          name="jobprofile"
+                          id="jobprofile"
                           placeholder="Enter job profile"
-                          {...register("jobProfile")}
+                          {...register("jobprofile")}
                           className={`form-control placeholder-name ${
-                            errors.jobProfile ? "is-invalid" : ""
+                            errors.jobprofile ? "is-invalid" : ""
                           }`}
                         />
                         <FormFeedback>
-                          {errors.jobProfile?.message}
+                          {errors.jobprofile?.message}
                         </FormFeedback>
                       </FormGroup>
                     </Col>
@@ -413,7 +562,7 @@ export function Registration() {
                             <Button
                               className="grp-btn"
                               color="light"
-                              onClick={() => validateOTP("email")}
+                              onClick={() => validateOTP("email", errors)}
                             >
                               Verify
                             </Button>
@@ -467,7 +616,7 @@ export function Registration() {
                             <Button
                               className="grp-btn"
                               color="light"
-                              onClick={() => validateOTP("phone")}
+                              onClick={() => validateOTP("phone", errors)}
                             >
                               Verify
                             </Button>
@@ -552,13 +701,10 @@ export function Registration() {
                         </InputGroup>
                       </FormGroup>
                     </Col>
-                  </Row>
-
-                  <Row>
                     <Col>
                       <FormGroup>
                         <Label for="city" className="fw-semi-bold">
-                          City, State <span className="required-icon">*</span>
+                          <span className="text-danger">* </span>City, State
                         </Label>
                         <AsyncSelect
                           name="city"
@@ -567,7 +713,7 @@ export function Registration() {
                           loadOptions={loadOptions}
                           isMulti={false}
                           className={`placeholder-name ${
-                            errors.cityid
+                            errors.cityid && cityValue === 0
                               ? "async-border-red"
                               : "async-no-error"
                           }`}
@@ -575,14 +721,16 @@ export function Registration() {
                           onChange={(e) => setAsyncSelectValue(e)}
                         />
                         <div className="async-error-text">
-                          {errors.cityid?.message}
+                          {errors.cityid && cityValue === 0
+                            ? "City, State is required"
+                            : ""}
                         </div>
                       </FormGroup>
                     </Col>
                     <Col>
                       <FormGroup>
                         <Label for="country" className="fw-semi-bold">
-                          Country <span className="required-icon">*</span>
+                          <span className="text-danger">* </span>Country
                         </Label>
                         <AsyncSelect
                           name="country"
@@ -590,7 +738,9 @@ export function Registration() {
                           placeholderText="search"
                           isMulti={false}
                           className={`placeholder-name ${
-                            errors.countryid ? "async-border-red" : ""
+                            errors.countryid && countryValue
+                              ? "async-border-red"
+                              : ""
                           }`}
                           {...register("countryid")}
                           defaultOptions={countryList}
@@ -598,7 +748,9 @@ export function Registration() {
                           onMenuOpen={() => checkCityValid()}
                         />
                         <div className="async-error-text">
-                          {errors.countryid?.message}
+                          {errors.countryid && countryValue === 0
+                            ? "Country is required"
+                            : ""}
                         </div>
                       </FormGroup>
                     </Col>
@@ -610,7 +762,7 @@ export function Registration() {
                     </h5>
                     <div className="ms-auto">
                       <Button color="primary" className=" btn-text" size="lg">
-                        Create Account
+                        Register
                       </Button>
                     </div>
                   </div>
@@ -620,20 +772,19 @@ export function Registration() {
           </Col>
           <Col lg="5" className="d-xs-none">
             <div className="slider-light">
-              <Slider {...sliderSettings}>
-                <div className="h-100 d-flex justify-content-center align-items-center bg-premium-dark">
+              <Slider {...settings}>
+                <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
                     style={{
-                      backgroundImage: "url(" + bg3 + ")",
+                      backgroundImage: "url(" + bg1 + ")",
                     }}
                   />
-                  <div className="slider-content">
-                    <h3>Scalable, Modular, Consistent</h3>
-                    <p>
-                      Easily exclude the components you don't require.
-                      Lightweight, consistent Bootstrap based styles across all
-                      elements and components
+                  <div>
+                    <h3 className="slider-title">Experts In Human Capital</h3>
+                    <p className="m-5 slider-content">
+                      What makes The Panther Group the ideal career partner? We
+                      focus on what you want most from your career!
                     </p>
                   </div>
                 </div>
@@ -664,7 +815,7 @@ export function Registration() {
             <div>
               <Form>
                 <div className="d-flex justify-content-center align-items-center">
-                  {otpLength?.map((item) => (
+                  {otpLength?.map((item, index) => (
                     <FormGroup className="m-2">
                       <Input
                         type="text"
@@ -674,7 +825,7 @@ export function Registration() {
                         style={{ fontSize: "24px" }}
                         className="form-control placeholder-name text-center"
                         onInput={(e) =>
-                          handleInputChange("mobile", e.target.value)
+                          handleInputChange("mobile", e.target.value, index)
                         }
                       />
                     </FormGroup>
@@ -694,7 +845,7 @@ export function Registration() {
                     ) : (
                       <a
                         href="javascript:void(0)"
-                        onClick={() => setTimer(30)}
+                        onClick={() => resendOTP("mobile")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
                         Resend otp
@@ -748,7 +899,7 @@ export function Registration() {
             <div>
               <Form>
                 <div className="d-flex justify-content-center align-items-center">
-                  {otpLength?.map((item) => (
+                  {otpLength?.map((item, index) => (
                     <FormGroup className="m-2">
                       <Input
                         type="text"
@@ -758,7 +909,7 @@ export function Registration() {
                         style={{ fontSize: "24px" }}
                         className="form-control placeholder-name text-center"
                         onInput={(e) =>
-                          handleInputChange("email", e.target.value)
+                          handleInputChange("email", e.target.value, index)
                         }
                       />
                     </FormGroup>
@@ -778,7 +929,7 @@ export function Registration() {
                     ) : (
                       <a
                         href="javascript:void(0)"
-                        onClick={() => setTimer(30)}
+                        onClick={() => resendOTP("email")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
                         Resend otp
@@ -802,7 +953,7 @@ export function Registration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyEMailOTPDetails()}
+                onClick={() => verifyEmailOTPDetails()}
               >
                 Verify OTP
               </Button>
@@ -811,7 +962,7 @@ export function Registration() {
         </Card>
       </Modal>
 
-      <Modal className="modal-reject-align profile-view" isOpen={error}>
+      {/* <Modal className="modal-reject-align profile-view" isOpen={error}>
         <Card>
           <CardBody>
             <div className="d-flex justify-content-center mb-3">
@@ -834,6 +985,15 @@ export function Registration() {
             </div>
           </CardBody>
         </Card>
+      </Modal> */}
+
+      <Modal size="md" isOpen={error}>
+        <SuccessPopUp
+          icon={"error"}
+          message={message}
+          tryAgain={false}
+          callBack={() => setError(false)}
+        />
       </Modal>
 
       <Modal className="modal-reject-align profile-view" isOpen={cityReqError}>
@@ -863,6 +1023,40 @@ export function Registration() {
             </div>
           </CardBody>
         </Card>
+      </Modal>
+
+      <Modal className="modal-reject-align profile-view" isOpen={formValid}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="m-3 rejected-success-text">
+              Please enter valid {field} to verify email/phone
+            </div>
+
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setFormValid(false)}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal size="md" isOpen={success}>
+        <SuccessPopUp
+          icon={"success"}
+          message={message}
+          callBack={() => [setSuccess(false)]}
+        />
       </Modal>
     </>
   );

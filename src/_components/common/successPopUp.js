@@ -15,17 +15,29 @@ export function SuccessPopUp(props) {
               alt="success-icon"
             />
           </div>
-          <div className="mb-0 d-flex justify-content-center popup-message">
+          <div className="m-3 d-flex justify-content-center popup-message">
             {props?.message}
           </div>
           <div className="mb-0 d-flex justify-content-center popup-message">
-            {props?.icon === "success" ? "successfully" : "Please try again"}
+            {props.tryAgain !== false ? (
+              <span>
+                {props?.icon === "success"
+                  ? "successfully"
+                  : "Please try again"}
+              </span>
+            ) : (
+              ""
+            )}
           </div>
 
           <div className="margin-custom">
             <Row>
               <Col className="d-flex justify-content-center mb-4 ">
-                <Button className="" onClick={() => props?.callBack()}>
+                <Button
+                  style={{ backgroundColor: "#2f479b" }}
+                  className=" btn-text"
+                  onClick={() => props?.callBack()}
+                >
                   OK
                 </Button>
               </Col>

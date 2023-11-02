@@ -17,7 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   formatDate,
   convertTo12HourFormat,
-  getEducText,
+  getLocationText,
   calculateEndTime,
 } from "_helpers/helper";
 import { history } from "_helpers";
@@ -31,6 +31,9 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
+import { customerCandidateListsActions } from "_store";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -53,7 +56,7 @@ export function UpcomingInterviews() {
     {
       name: "Job location",
       selector: (row) => (
-        <span title={getEducText(row)}>{getEducText(row)}</span>
+        <span title={getLocationText(row)}>{getLocationText(row)}</span>
       ),
       sortable: false,
     },
@@ -75,7 +78,9 @@ export function UpcomingInterviews() {
       name: "Time",
       selector: (row) => (
         <span title={convertTo12HourFormat(row.starttime)}>
-          {convertTo12HourFormat(row.starttime)}
+          {convertTo12HourFormat(row.starttime) +
+            " to " +
+            calculateEndTime(row.starttime, row.duration)}
         </span>
       ),
       sortable: false,
@@ -83,14 +88,14 @@ export function UpcomingInterviews() {
 
     {
       name: "Mode",
-      cell: (row) => <>{interviewMode("Video")}</>,
+      cell: (row) => <>{interviewMode(row)}</>,
       sortable: false,
       ignoreRowClick: true,
       button: false,
     },
     {
       name: "Actions",
-      cell: (row) => <>{renderMenu(row.jobid)}</>,
+      cell: (row) => <>{renderMenu(row)}</>,
       sortable: false,
       ignoreRowClick: true,
       button: true,
@@ -126,20 +131,53 @@ export function UpcomingInterviews() {
     return items;
   };
 
-  const interviewMode = (interviewmode) => {
+  const onInterviewDetails = async (scheduleInterviewId) => {
+    let res = await dispatch(
+      customerCandidateListsActions.getScheduleIVList(scheduleInterviewId)
+    );
+    if (res.payload) {
+      setPopupData(res?.payload?.data?.scheduledInterviewList[0]);
+      setDetails(true);
+    } else {
+      //do nothing
+    }
+  };
+
+  const checkInterview = function (data) {
+    const [year, month, day] = data.scheduledate.split("-").map(Number);
+    const [hours, minutes, seconds] = data.starttime.split(":").map(Number);
+
+    // Create a Date object using the parsed values
+    const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
+
+    if (targetDate === new Date()) {
+      toast.success("Interview started, Please join...");
+    } else if (targetDate > new Date()) {
+      toast.success("Interview is not started yet!!");
+    }
+  };
+
+  const interviewMode = (row) => {
     return (
       <div className="d-block w-100 ">
-        {interviewmode === "Video" || interviewmode === "In-person" ? (
-          <div className="ellipse d-flex justify-content-center align-items-center">
+        {row.format === "Video" || row.format === "In-person" ? (
+          <div
+            className="ellipse d-flex justify-content-center align-items-center"
+            // onClick={() => checkInterview(row)}
+          >
             <img
-              src={interviewmode === "Video" ? videoIcon : personIcon}
+              src={row.format === "Video" ? videoIcon : personIcon}
               alt="interview-icon"
             />
           </div>
         ) : (
           <>
             <div className="ellipse d-flex justify-content-center align-items-center">
-              <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp" />
+              <BsFillTelephoneFill
+                // onClick={() => checkInterview(row)}
+                style={{ cursor: "pointer" }}
+                className="header-icon icon-gradient bg-amy-crisp"
+              />
             </div>
           </>
         )}
@@ -160,7 +198,7 @@ export function UpcomingInterviews() {
           <DropdownMenu className="rm-pointers dropdown-menu-hover-link">
             <DropdownItem>
               <i className="dropdown-icon lnr-license"> </i>
-              <span onClick={() => navigateToInterviews(row)}>
+              <span onClick={() => onInterviewDetails(row.scheduleinterviewid)}>
                 Interview details
               </span>
             </DropdownItem>
@@ -168,11 +206,6 @@ export function UpcomingInterviews() {
         </UncontrolledButtonDropdown>
       </div>
     );
-  };
-
-  const navigateToInterviews = function (data) {
-    setPopupData(data);
-    setDetails(true);
   };
 
   return (
@@ -204,7 +237,7 @@ export function UpcomingInterviews() {
             )}
           </div>
         ) : (
-          <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+          <div className="d-flex justify-content-center align-items-center loader">
             <Loader active={loader} type="line-scale-pulse-out-rapid" />
           </div>
         )}
@@ -251,6 +284,7 @@ export function UpcomingInterviews() {
           <></>
         )}
       </>
+      <ToastContainer />
     </>
   );
 }

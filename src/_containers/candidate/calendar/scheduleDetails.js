@@ -125,6 +125,9 @@ export function ScheduleDetails({ interviewDetail }) {
             </div>
 
             <div className="p-custom mb-3">
+              <p className="mb-0 interview-details-label">Duration </p>
+              <p>{interviewDetail.duration}</p>
+
               <p className="mb-0 interview-details-label">Mode </p>
               <div>
                 {interviewDetail?.format === "Video" && (

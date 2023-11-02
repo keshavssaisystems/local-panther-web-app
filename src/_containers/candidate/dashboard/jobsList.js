@@ -16,6 +16,7 @@ import {
   Col,
 } from "reactstrap";
 import { useSelector } from "react-redux";
+import SweetAlert from "react-bootstrap-sweetalert";
 import { formatDate } from "_helpers/helper";
 import { candidateListActions } from "_store";
 import { useDispatch } from "react-redux";
@@ -40,7 +41,14 @@ export function JobsList(props) {
     (state) => state.candidateListReducer.totalRecords
   );
 
-  const loader = useSelector((state) => state.candidateListReducer.jdLoading);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+
+  const loader = useSelector((state) => state.candidateListReducer.loading);
 
   const [selected, setSelected] = useState([]);
   const [openJob, setOpenJob] = useState(false);
@@ -145,7 +153,46 @@ export function JobsList(props) {
     props.onCallBack();
   };
 
-  const onApplyClickBtn = () => {};
+  const onApplyClickBtn = () => {
+    let rec = candidateJobList.find((data) => data.jobid === selected[0].jobid);
+    if (rec?.candidaterecommendedjobid) {
+      onCandidateCardActions("applied", rec?.candidaterecommendedjobid);
+    }
+  };
+
+  const onCandidateCardActions = async (type, candidaterecommendedjobid) => {
+    if (type === "applied") {
+      let res = await dispatch(
+        candidateListActions.candidateApply(candidaterecommendedjobid)
+      );
+      setOpenJob(false);
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+      close();
+    }
+  };
+
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
 
   return (
     <>
@@ -175,7 +222,7 @@ export function JobsList(props) {
             )}
           </div>
         ) : (
-          <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+          <div className=" d-flex justify-content-center align-items-center loader">
             <Loader active={loader} type="line-scale-pulse-out-rapid" />
           </div>
         )}
@@ -222,6 +269,17 @@ export function JobsList(props) {
       ) : (
         <></>
       )}
+
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 }

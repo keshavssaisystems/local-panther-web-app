@@ -68,10 +68,12 @@ export function UserBox() {
   };
 
   const close = function () {
+    setChangePwd(false);
     setSuccess(false);
   };
   const closeModal = function () {
     setSuccess(false);
+    setChangePwd(false);
   };
 
   const toggleNotification = async function (value) {
@@ -176,26 +178,23 @@ export function UserBox() {
                           <NavItem>
                             <NavLink href="javascript:void(0)">
                               Notifications
-                              <div className="ml-auto ms-auto">
+                              <div
+                                style={{ margin: "auto" }}
+                                className="switch has-switch mb-2 me-2"
+                                data-on-label="ON"
+                                data-off-label="OFF"
+                                onClick={(e) => toggleNotification(!isToggleOn)}
+                              >
                                 <div
-                                  className="switch has-switch mb-2 me-2"
-                                  data-on-label="ON"
-                                  data-off-label="OFF"
-                                  onClick={(e) =>
-                                    toggleNotification(!isToggleOn)
-                                  }
+                                  className={cx("switch-animate", {
+                                    "switch-on": isToggleOn,
+                                    "switch-off": !isToggleOn,
+                                  })}
                                 >
-                                  <div
-                                    className={cx("switch-animate", {
-                                      "switch-on": isToggleOn,
-                                      "switch-off": !isToggleOn,
-                                    })}
-                                  >
-                                    <input type="checkbox" />
-                                    <span className="switch-left">ON</span>
-                                    <label>&nbsp;</label>
-                                    <span className="switch-right">OFF</span>
-                                  </div>
+                                  <input type="checkbox" />
+                                  <span className="switch-left">ON</span>
+                                  <label>&nbsp;</label>
+                                  <span className="switch-right">OFF</span>
                                 </div>
                               </div>
                             </NavLink>
