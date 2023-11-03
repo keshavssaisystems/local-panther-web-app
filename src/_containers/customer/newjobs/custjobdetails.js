@@ -244,7 +244,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                     )}
                   {jobDetail.isclosed === true && (
                     <Col md={4} lg={4} className="right-align">
-                      <div className="mb-2 me-3 mt-3 badge bg-danger">
+                      <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
                         Job closed
                       </div>
                     </Col>
@@ -402,27 +402,40 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   : ""
               }
             />
-
-            <HeadingAndDetailWithoutIcon
-              heading={"Additional crieteria for the role"}
-              detail={
-                jobDetail?.jobKeyQualificationDtos &&
-                jobDetail?.jobKeyQualificationDtos?.length > 0
-                  ? returnAdditionalCriteria()
-                  : ""
-              }
-              type={"list"}
-            />
-            <HeadingAndDetailWithoutIcon
-              heading={"Pre-screen applicants"}
-              detail={
-                jobDetail?.jobPrescreenApplicationDtos &&
-                jobDetail?.jobPrescreenApplicationDtos?.length > 0
-                  ? returnPrescreenInfo()
-                  : ""
-              }
-              type={"list"}
-            />
+            {jobDetail?.jobKeyQualificationDtos &&
+            jobDetail?.jobKeyQualificationDtos?.length > 0 ? (
+              <>
+                <HeadingAndDetailWithoutIcon
+                  heading={"Additional crieteria for the role"}
+                  detail={
+                    jobDetail?.jobKeyQualificationDtos &&
+                    jobDetail?.jobKeyQualificationDtos?.length > 0
+                      ? returnAdditionalCriteria()
+                      : ""
+                  }
+                  type={"list"}
+                />
+              </>
+            ) : (
+              <></>
+            )}
+            {jobDetail?.jobPrescreenApplicationDtos &&
+            jobDetail?.jobPrescreenApplicationDtos?.length > 0 ? (
+              <>
+                <HeadingAndDetailWithoutIcon
+                  heading={"Pre-screen applicants"}
+                  detail={
+                    jobDetail?.jobPrescreenApplicationDtos &&
+                    jobDetail?.jobPrescreenApplicationDtos?.length > 0
+                      ? returnPrescreenInfo()
+                      : ""
+                  }
+                  type={"list"}
+                />
+              </>
+            ) : (
+              <></>
+            )}
           </Card>
         )}
       </Col>

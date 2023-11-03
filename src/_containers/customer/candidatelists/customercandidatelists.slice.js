@@ -206,14 +206,14 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
         .addCase(pending, (state) => {
-          state.loading = true;
+          // state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          state.loading = false;
           state.jobLists = action?.payload?.data ? action.payload.data : [];
+          // state.loading = false;
         })
         .addCase(rejected, (state, action) => {
-          state.loading = false;
+          // state.loading = false;
         });
     }
 
@@ -221,16 +221,16 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.getRejectDropDown;
       builder
         .addCase(pending, (state) => {
-          state.loading = true;
+          // state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          state.loading = false;
           state.rejectDrpDwnList = action?.payload?.data
             ? action?.payload?.data
             : [];
+          // state.loading = false;
         })
         .addCase(rejected, (state, action) => {
-          state.loading = false;
+          // state.loading = false;
         });
     }
 
@@ -243,7 +243,6 @@ function createExtraReducers() {
           state.totalRecords = 0;
         })
         .addCase(fulfilled, (state, action) => {
-          state.loading = false;
           state.candidateList = action?.payload?.data
             ?.candidateRecommendedJobDtoList
             ? action?.payload?.data?.candidateRecommendedJobDtoList
@@ -252,6 +251,7 @@ function createExtraReducers() {
           state.totalRecords = action?.payload?.data?.totalRows
             ? action?.payload?.data?.totalRows
             : 0;
+          state.loading = false;
         })
         .addCase(rejected, (state, action) => {
           state.loading = false;
@@ -318,16 +318,16 @@ function createExtraReducers() {
       let { pending, fulfilled, rejected } = extraActions.getDurationOptions;
       builder
         .addCase(pending, (state) => {
-          state.loading = true;
+          // state.loading = true;
         })
         .addCase(fulfilled, (state, action) => {
-          state.loading = false;
           state.durationOptions = action?.payload?.data
             ? action.payload.data
             : [];
+          // state.loading = false;
         })
         .addCase(rejected, (state, action) => {
-          state.loading = false;
+          // state.loading = false;
         });
     }
 
@@ -354,7 +354,6 @@ function createExtraReducers() {
           state.totalRecords = 0;
         })
         .addCase(fulfilled, (state, action) => {
-          state.loading = false;
           state.candidateList = action?.payload?.data?.scheduledInterviewList
             ? action?.payload?.data?.scheduledInterviewList
             : [];
@@ -362,6 +361,7 @@ function createExtraReducers() {
           state.totalRecords = action?.payload?.data?.totalRows
             ? action?.payload?.data?.totalRows
             : 0;
+          state.loading = false;
         })
         .addCase(rejected, (state, action) => {
           state.loading = false;

@@ -191,6 +191,7 @@ export const CustomerCandidateLists = (props) => {
           <ButtonGroup size="md" className="cust-btn-tabs">
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "matched" })
@@ -203,6 +204,7 @@ export const CustomerCandidateLists = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "liked" })
@@ -215,6 +217,7 @@ export const CustomerCandidateLists = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition " +
                 classnames({ active: activeTab === "maybe" })
@@ -227,6 +230,7 @@ export const CustomerCandidateLists = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "applied" })
@@ -239,6 +243,7 @@ export const CustomerCandidateLists = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "scheduled" })
@@ -251,6 +256,7 @@ export const CustomerCandidateLists = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "accepted" })
@@ -263,6 +269,7 @@ export const CustomerCandidateLists = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "rejected" })

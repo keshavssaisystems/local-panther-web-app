@@ -16,6 +16,7 @@ export const CustJobList = () => {
   const [placeHolder, setPlaceHolder] = useState("Search");
   const [selectedOpt, setSelectedOpt] = useState("Search");
   const [searchText, setSearchText] = useState("");
+  const [jobStatus, setJobStatus] = useState("");
 
   const dispatch = useDispatch();
   const getCompanyDetails = async function () {
@@ -60,6 +61,7 @@ export const CustJobList = () => {
       companyId: localStorage.getItem("companyid"),
       cityId: selectedOpt === "City" ? searchText : "",
       skillId: selectedOpt === "Skill" ? searchText : "",
+      jobStatus: jobStatus,
     };
     getJobList(filterOnPageChange);
   };
@@ -94,7 +96,6 @@ export const CustJobList = () => {
     getSelectedJob(jobId);
   };
   const closeJob = (event) => {
-    console.log(event);
     let jobId = event;
     let payload = {
       currentUserId: localStorage.getItem("userId"),
@@ -108,6 +109,22 @@ export const CustJobList = () => {
       })
     );
     getSelectedJob(jobId);
+  };
+
+  const onJobStatusChange = (event) => {
+    setJobStatus(event);
+    let filterOnPageChange = {
+      pageSize: custListPageSize,
+      pageNumber: page,
+      searchText:
+        selectedOpt === "Search" || selectedOpt === "State" ? searchText : "",
+      jobId: "",
+      companyId: localStorage.getItem("companyid"),
+      cityId: selectedOpt === "City" ? searchText : "",
+      skillId: selectedOpt === "Skill" ? searchText : "",
+      jobStatus: event,
+    };
+    getJobList(filterOnPageChange);
   };
   return (
     <>
@@ -123,6 +140,7 @@ export const CustJobList = () => {
           setSelectedOpt={setSelectedOpt}
           searchText={searchText}
           setSearchText={setSearchText}
+          onJobStatusChange={onJobStatusChange}
         />
 
         <Row>
