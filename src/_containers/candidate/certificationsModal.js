@@ -185,7 +185,7 @@ export function CertificationsModal(props) {
       } else {
         new_data.error = false;
       }
-    } else if (check == "expired") {
+    } else if (check === "expired") {
       new_data.isexpired = !new_data.isexpired;
 
       if (new_data.expired) {
@@ -194,22 +194,9 @@ export function CertificationsModal(props) {
         date.month = "";
         setToDateSelect(date);
       }
-
-      // let toSelected = { ...toDateSelect };
-      // if (!new_data.isexpired) {
-      //   let year = new Date().getFullYear();
-      //   toSelected.month = Number(new Date().getMonth() + 1);
-      //   toSelected.year = year;
-      // } else {
-      //   toSelected = {
-      //     month: "",
-      //     year: "",
-      //   };
-      // }
-      // setToDateSelect(toSelected);
-    } else if (check == "description") {
+    } else if (check === "description") {
       new_data.description = data;
-    } else if (check == "fromYear") {
+    } else if (check === "fromYear") {
       new_data.fromDateValid = false;
       let date = { ...fromDateSelect };
       date.year = yearList?.find((x) => x.id == Number(data))?.name;
@@ -267,24 +254,24 @@ export function CertificationsModal(props) {
         }
       }
       setFromDateSelect(date);
-    } else if (check == "toYear") {
+    } else if (check === "toYear") {
       new_data.fromDateValid = false;
       let date = { ...toDateSelect };
       date.year = yearList?.find((x) => x.id == Number(data))?.name;
       setToDateSelect(date);
       if (date.year) {
         new_data.toYearReq = false;
-        if (date.month == "" || !date.month) {
+        if (date.month === "" || !date.month) {
           new_data.toMonthReq = true;
         } else {
           new_data.toMonthReq = false;
         }
-        if (fromDateSelect.month == "" || !fromDateSelect.month) {
+        if (fromDateSelect.month === "" || !fromDateSelect.month) {
           new_data.fromMonthReq = true;
         } else {
           new_data.fromMonthReq = false;
         }
-        if (fromDateSelect.year == "" || !fromDateSelect.year) {
+        if (fromDateSelect.year === "" || !fromDateSelect.year) {
           new_data.fromYearReq = true;
         } else {
           new_data.fromYearReq = false;

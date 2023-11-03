@@ -15,12 +15,12 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 import "./profile.scss";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-import { convertDateToYYYMMDD, extractDatePart } from "_helpers/helper";
+import {
+  convertDateToYYYMMDD,
+  extractDatePart,
+  checkDateValidation,
+} from "_helpers/helper";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import DatePicker from "react-datepicker";
 import AsyncSelect from "react-select/async";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
@@ -325,18 +325,18 @@ export function EducationModal(props) {
       value: 0,
       label: "",
     };
-    if (check == "levelofeducation") {
+    if (check === "levelofeducation") {
       dropdown.value = data.value;
       dropdown.label = data.label;
 
       new_data[index].education = dropdown;
-    } else if (check == "studyField") {
+    } else if (check === "studyField") {
       dropdown.value = data.value;
       dropdown.label = data.label;
       new_data[index].fieldofstudy = dropdown;
-    } else if (check == "school") {
+    } else if (check === "school") {
       new_data[index].school = data;
-    } else if (check == "city") {
+    } else if (check === "city") {
       dropdown.value = data.value;
       dropdown.label = data.label;
       new_data[index].city = dropdown;
@@ -346,111 +346,88 @@ export function EducationModal(props) {
         label: cityList.find((x) => x.cityid == data.value)?.statename,
       };
       new_data[index].state = obj_new;
-    } else if (check == "state") {
+    } else if (check === "state") {
       dropdown.value = data.value;
       dropdown.label = data.label;
       new_data[index].state = dropdown;
-    } else if (check == "country") {
+    } else if (check === "country") {
       dropdown.value = data.value;
       dropdown.label = data.label;
 
       new_data[index].country = dropdown;
-    } else if (check == "currentlyStudying") {
+    } else if (check === "currentlyStudying") {
       new_data[index].iscurrentlystudying =
         !new_data[index].iscurrentlystudying;
 
       if (new_data[index].iscurrentlystudying) {
+        let month = new Date().getMonth() + 1;
         let year = new Date().getFullYear();
-        new_data[index].toDateSelect.month = Number(new Date().getMonth() + 1);
-        new_data[index].toDateSelect.year = year;
 
-        // if (new_data[index].startdate) {
-        //   if (new Date(data) < new Date(new_data[index].startdate)) {
-        //     new_data[index].fromDateValid = true;
-        //   } else {
-        //     new_data[index].fromDateValid = false;
-        //     new_data[index].enddate = extractDatePart(new Date());
-        //   }
-        // } else {
-        //   new_data[index].fromDateValid = false;
-        //   new_data[index].enddate = extractDatePart(new Date());
-        // }
+        new_data[index].toDateSelect.month = monthList.find(
+          (x) => x.id == month
+        )?.id;
+        new_data[index].toDateSelect.year = yearList.find(
+          (x) => x.name == year
+        )?.name;
+
+        if (
+          new_data[index].fromDateSelect.year !== "" &&
+          new_data[index].fromDateSelect.month !== ""
+        ) {
+          let fromDate = convertDateToYYYMMDD(new_data[index].fromDateSelect);
+          let toDate = convertDateToYYYMMDD(new_data[index].toDateSelect);
+
+          if (new Date(fromDate) <= new Date(toDate)) {
+            new_data[index].fromDateValid = false;
+          } else {
+            new_data[index].fromDateValid = true;
+          }
+        }
       } else {
         new_data[index].toDateSelect = {
           month: "",
           year: "",
         };
       }
-    }
-    // else if (check == "fromdate") {
-    //   if (new_data[index].enddate) {
-    //     if (new Date(data) > new Date(new_data[index].enddate)) {
-    //       new_data[index].fromDateValid = true;
-    //     } else {
-    //       new_data[index].fromDateValid = false;
-    //       new_data[index].startdate = extractDatePart(data);
-    //     }
-    //   } else {
-    //     new_data[index].fromDateValid = false;
-    //     new_data[index].startdate = extractDatePart(data);
-    //   }
-    // } else if (check == "todate") {
-    //   new_data[index].enddate = data;
-
-    //   if (new_data[index].startdate) {
-    //     if (new Date(data) < new Date(new_data[index].startdate)) {
-    //       new_data[index].fromDateValid = true;
-    //     } else {
-    //       new_data[index].fromDateValid = false;
-    //       new_data[index].enddate = extractDatePart(data);
-    //     }
-    //   } else {
-    //     new_data[index].fromDateValid = false;
-    //     new_data[index].enddate = extractDatePart(data);
-    //   }
-    // }
-    else if (check == "fromYear") {
-      new_data[index].fromDateSelect.year = yearList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
-
-      if (new_data[index].toDateSelect.year != "") {
-        if (
-          new_data[index].fromDateSelect.year >
-          new_data[index].toDateSelect.year
-        ) {
-          new_data[index].fromDateValid = true;
-        } else {
-          new_data[index].fromDateValid = false;
-        }
+    } else if (check === "fromYear") {
+      if (data === "Select year") {
+        new_data[index].fromDateSelect.year = "";
       } else {
-        new_data[index].fromDateValid = false;
+        new_data[index].fromDateSelect.year = yearList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
       }
-    } else if (check == "toYear") {
-      new_data[index].toDateSelect.year = yearList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
-
-      if (new_data[index].fromDateSelect.year != "") {
-        if (
-          new_data[index].toDateSelect.year <
-          new_data[index].fromDateSelect.year
-        ) {
-          new_data[index].fromDateValid = true;
-        } else {
-          new_data[index].fromDateValid = false;
-        }
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
+    } else if (check === "toYear") {
+      if (data === "Select year") {
+        new_data[index].toDateSelect.year = "";
       } else {
-        new_data[index].fromDateValid = false;
+        new_data[index].toDateSelect.year = yearList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
       }
-    } else if (check == "fromMonth") {
-      new_data[index].fromDateSelect.month = monthList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
-    } else if (check == "toMonth") {
-      new_data[index].toDateSelect.month = monthList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
+
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
+    } else if (check === "fromMonth") {
+      if (data === "Select month") {
+        new_data[index].fromDateSelect.month = "";
+      } else {
+        new_data[index].fromDateSelect.month = monthList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
+      }
+
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
+    } else if (check === "toMonth") {
+      if (data === "Select month") {
+        new_data[index].toDateSelect.month = "";
+      } else {
+        new_data[index].toDateSelect.month = monthList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
+      }
+
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
     }
 
     setFormData(new_data);
@@ -581,23 +558,6 @@ export function EducationModal(props) {
               </FormGroup>
             </Col>
             <Col md={4}>
-              {/* <FormGroup>
-                <Label for="studyField" className="fw-semi-bold">
-                  Field of study
-                </Label>
-                <input
-                  placeholder="Enter field of study"
-                  name="studyField"
-                  type="text"
-                  id="studyField"
-                  maxLength={50}
-                  value={item.fieldofstudy}
-                  onInput={(evt) =>
-                    onHandleInputChange("studyField", evt.target.value, index)
-                  }
-                  className="field-input placeholder-text form-control"
-                />
-              </FormGroup> */}
               <div>
                 <FormGroup>
                   <Label for={"studyField"} className="fw-semi-bold">
@@ -707,6 +667,9 @@ export function EducationModal(props) {
                   id={"monthList"}
                   name={"monthList"}
                   type={"select"}
+                  className={`form-control ${
+                    item.fromYearReq || item.fromDateValid ? "is-invalid" : ""
+                  }`}
                   onChange={(evt) =>
                     onHandleInputChange("fromMonth", evt.target.value, index)
                   }
@@ -725,7 +688,7 @@ export function EducationModal(props) {
                 </Input>
 
                 <div className="filter-info-text filter-error-msg">
-                  {formDetails.fromDateValid
+                  {item.fromDateValid
                     ? "From date should be less than to date"
                     : ""}
                 </div>
@@ -741,6 +704,9 @@ export function EducationModal(props) {
                     onChange={(evt) =>
                       onHandleInputChange("fromYear", evt.target.value, index)
                     }
+                    className={`form-control ${
+                      item.fromYearReq || item.fromDateValid ? "is-invalid" : ""
+                    }`}
                   >
                     <option key={0}>Select year</option>
                     {yearList?.length > 0 &&
@@ -756,7 +722,7 @@ export function EducationModal(props) {
                   </Input>
                 </InputGroup>
                 <div className="filter-info-text filter-error-msg">
-                  {formDetails.fromDateValid
+                  {item.fromDateValid
                     ? "From date should be less than to date"
                     : ""}
                 </div>
@@ -773,6 +739,7 @@ export function EducationModal(props) {
                   id={"monthList"}
                   name={"monthList"}
                   type={"select"}
+                  disabled={item.iscurrentlystudying}
                   onChange={(evt) =>
                     onHandleInputChange("toMonth", evt.target.value, index)
                   }
@@ -797,6 +764,7 @@ export function EducationModal(props) {
                   id={"yearList"}
                   name={"yearList"}
                   type={"select"}
+                  disabled={item.iscurrentlystudying}
                   onChange={(evt) =>
                     onHandleInputChange("toYear", evt.target.value, index)
                   }
@@ -818,7 +786,7 @@ export function EducationModal(props) {
           </Row>
           {index < formDetails.length - 1 ? <hr /> : <></>}
 
-          {index == formDetails.length - 1 ? (
+          {index === formDetails.length - 1 ? (
             <div className="float-end">
               <Button
                 className="me-2 save-btn"

@@ -410,3 +410,23 @@ export function calculateEndTime(startTime, duration) {
 
   return endTime;
 }
+
+export function checkDateValidation(data) {
+  if (
+    data.toDateSelect.year !== "" &&
+    data.toDateSelect.month !== "" &&
+    data.fromDateSelect.month !== "" &&
+    data.fromDateSelect.year !== ""
+  ) {
+    let fromDate = convertDateToYYYMMDD(data.fromDateSelect);
+    let toDate = convertDateToYYYMMDD(data.toDateSelect);
+
+    if (new Date(fromDate) <= new Date(toDate)) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return false;
+  }
+}

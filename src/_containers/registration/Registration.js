@@ -43,6 +43,8 @@ import { getLocationFilter } from "_store";
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+// /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+])[A-Za-z0-9!@#$%^&*()_+]{8,}$/;
+
 export function Registration() {
   let settings = {
     dots: true,
@@ -110,8 +112,12 @@ export function Registration() {
         /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
         "Please enter valid email"
       ),
-    phoneNumber: Yup.string().required("Phone number is required"),
-    // .matches(phoneRegExp, "Phone number is not valid"),
+    phoneNumber: Yup.string()
+      .required("Phone number is required")
+      .matches(
+        phoneRegExp,
+        "Phone number must have atleast 1 special character,1 captial letter,1 number"
+      ),
     password: Yup.string()
       .required("Password is required")
       .min(4, "Password must be at least 4 characters")
