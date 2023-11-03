@@ -84,7 +84,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         .map((item) => item.jobtypes)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -97,7 +97,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         .map((item) => item.shifts)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -110,7 +110,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         .map((item) => item.workschedules)
         .join(", ");
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -275,16 +275,19 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
             }
             type={"list"}
           />
-          <HeadingAndDetailWithoutIcon
-            heading={"Pre-screen applicants"}
-            detail={
-              jobDetail?.jobPrescreenApplicationDtos &&
-              jobDetail?.jobPrescreenApplicationDtos?.length > 0
-                ? returnPrescreenInfo()
-                : ""
-            }
-            type={"list"}
-          />
+          {jobDetail?.jobPrescreenApplicationDtos &&
+            jobDetail?.jobPrescreenApplicationDtos?.length > 0 && (
+              <HeadingAndDetailWithoutIcon
+                heading={"Pre-screen applicants"}
+                detail={
+                  jobDetail?.jobPrescreenApplicationDtos &&
+                  jobDetail?.jobPrescreenApplicationDtos?.length > 0
+                    ? returnPrescreenInfo()
+                    : ""
+                }
+                type={"list"}
+              />
+            )}
         </Card>
       </Col>
     </>

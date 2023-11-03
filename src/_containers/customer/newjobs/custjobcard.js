@@ -8,16 +8,10 @@ import {
   IoIosThumbsUp,
   IoIosHelp,
 } from "react-icons/io";
-import {
-  BsBriefcase,
-  BsListStars,
-  BsFillFlagFill,
-  BsHandThumbsUp,
-  BsFillHandThumbsUpFill,
-} from "react-icons/bs";
+import { BsBriefcase, BsListStars, BsFillFlagFill } from "react-icons/bs";
 import moment from "moment/moment";
 import customerIcons from "../../../assets/utils/images/customer";
-
+import { getTimezoneDateTimeForNow } from "_helpers/helper";
 import "../../../_components/job/job.scss";
 
 export function CustJobCard({
@@ -145,17 +139,7 @@ export function CustJobCard({
               <Row>
                 <Col md={9} lg={9}>
                   <div className="muted-name mt-2">
-                    Posted {moment(createdDate).fromNow()}
-                    {/* {type === "Recommended" && (
-                      <p className="thumb-icon float-end">
-                        {additionalData.iscandidateliked === false && (
-                          <BsHandThumbsUp />
-                        )}
-                        {additionalData.iscandidateliked === true && (
-                          <BsFillHandThumbsUpFill />
-                        )}
-                      </p>
-                    )} */}
+                    Posted {getTimezoneDateTimeForNow(moment(createdDate))}
                   </div>
                 </Col>
                 <Col md={3} lg={3} className="mt-2 right-align">
