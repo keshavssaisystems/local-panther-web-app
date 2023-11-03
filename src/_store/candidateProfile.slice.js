@@ -278,9 +278,9 @@ function deleteQualificationActions() {
   function deleteQualification() {
     return createAsyncThunk(
       `${name}/Candidate/deleteQualification`,
-      async (id) =>
+      async (deleteId) =>
         await fetchWrapper.delete(
-          `${baseUrl}/api/CandidateQualifications/${id}`
+          `${baseUrl}/api/CandidateQualifications/${deleteId}`
         )
     );
   }

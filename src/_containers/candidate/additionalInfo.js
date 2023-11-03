@@ -125,9 +125,9 @@ export function AdditionalInformation(props) {
                   <div>
                     {getResponse.map((item) => (
                       <div>
-                        {item.summary != "" ? (
+                        {item.summary !== "" ? (
                           <div>
-                            <div className="mb-2">
+                            <div>
                               <strong className="content-title">Summary</strong>
 
                               <div className="float-end">
@@ -145,7 +145,7 @@ export function AdditionalInformation(props) {
                                 />
                               </div>
                             </div>
-                            <div className="card-p-text-black mb-3">
+                            <div className="mt-1 card-p-text-black mb-3">
                               {item.summary}
                             </div>
                             <div>

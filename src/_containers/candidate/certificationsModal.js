@@ -17,6 +17,7 @@ import {
   formatDate,
   extractDatePart,
   convertDateToYYYMMDD,
+  checkDateValidation,
 } from "_helpers/helper";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
@@ -174,18 +175,17 @@ export function CertificationsModal(props) {
 
   const onHandleInputChange = function (check, data) {
     let new_data = { ...formDetails };
-
-    if (check == "certificateType") {
+    if (check === "certificateType") {
       new_data.certificationtypeid = data;
       new_data.typeError = false;
-    } else if (check == "name") {
+    } else if (check === "name") {
       new_data.certificationname = data;
       if (new_data.certificationname == "") {
         new_data.error = true;
       } else {
         new_data.error = false;
       }
-    } else if (check == "expired") {
+    } else if (check === "expired") {
       new_data.isexpired = !new_data.isexpired;
 
       if (new_data.expired) {
@@ -194,260 +194,104 @@ export function CertificationsModal(props) {
         date.month = "";
         setToDateSelect(date);
       }
-
-      // let toSelected = { ...toDateSelect };
-      // if (!new_data.isexpired) {
-      //   let year = new Date().getFullYear();
-      //   toSelected.month = Number(new Date().getMonth() + 1);
-      //   toSelected.year = year;
-      // } else {
-      //   toSelected = {
-      //     month: "",
-      //     year: "",
-      //   };
-      // }
-      // setToDateSelect(toSelected);
-    } else if (check == "description") {
+    } else if (check === "description") {
       new_data.description = data;
-    } else if (check == "fromYear") {
-      new_data.fromDateValid = false;
+    } else if (check === "fromYear") {
       let date = { ...fromDateSelect };
-      date.year = yearList?.find((x) => x.id == Number(data))?.name;
-
-      if (date.year) {
+      if (data === "Select year") {
+        date.year = "";
+        if (date.month === "" || !date.month) {
+          new_data.fromYearReq = false;
+          new_data.fromMonthReq = false;
+        } else {
+          new_data.fromYearReq = true;
+        }
+      } else {
         new_data.fromYearReq = false;
-        if (date.month == "" || !date.month) {
+        if (date.month === "" || !date.month) {
           new_data.fromMonthReq = true;
-        } else {
-          new_data.fromMonthReq = false;
         }
-        if (toDateSelect.month == "" || !toDateSelect.month) {
-          new_data.toMonthReq = true;
-        } else {
-          new_data.toMonthReq = false;
-        }
-        if (toDateSelect.year == "" || !toDateSelect.year) {
-          new_data.toYearReq = true;
-        } else {
-          new_data.toYearReq = false;
-        }
-        if (date.month && toDateSelect.month && toDateSelect.year) {
-          let fromDate = convertDateToYYYMMDD(date);
-          let toDate = convertDateToYYYMMDD(toDateSelect);
+        date.year = yearList?.find((x) => x.id == Number(data))?.name;
+      }
+      let validData = {
+        fromDateSelect: date,
+        toDateSelect: toDateSelect,
+      };
+      new_data.fromDateValid = checkDateValidation(validData);
 
-          if (new Date(fromDate) >= new Date(toDate)) {
-            new_data.fromDateValid = true;
-          } else {
-            new_data.fromDateValid = false;
-          }
+      setFromDateSelect(date);
+    } else if (check === "toYear") {
+      let date = { ...toDateSelect };
+
+      if (data === "Select year") {
+        date.year = "";
+        if (date.month === "" || !date.month) {
+          new_data.toYearReq = false;
+          new_data.toMonthReq = false;
+        } else {
+          new_data.toYearReq = true;
         }
       } else {
-        if (date.month || toDateSelect.month || toDateSelect.year) {
-          new_data.fromYearReq = true;
-        } else if (!date.month && !toDateSelect.month && !toDateSelect.year) {
-          new_data.fromMonthReq = false;
-          new_data.toMonthReq = false;
-          new_data.toYearReq = false;
-        } else {
-          if (date.month == "" || !date.month) {
-            new_data.fromMonthReq = true;
-          } else {
-            new_data.fromMonthReq = false;
-          }
-          if (toDateSelect.month == "" || !toDateSelect.month) {
-            new_data.toMonthReq = true;
-          } else {
-            new_data.toMonthReq = false;
-          }
-          if (toDateSelect.year == "" || !toDateSelect.year) {
-            new_data.toYearReq = true;
-          } else {
-            new_data.toYearReq = false;
-          }
-        }
-      }
-      setFromDateSelect(date);
-    } else if (check == "toYear") {
-      new_data.fromDateValid = false;
-      let date = { ...toDateSelect };
-      date.year = yearList?.find((x) => x.id == Number(data))?.name;
-      setToDateSelect(date);
-      if (date.year) {
         new_data.toYearReq = false;
-        if (date.month == "" || !date.month) {
+        if (date.month === "" || !date.month) {
           new_data.toMonthReq = true;
-        } else {
-          new_data.toMonthReq = false;
         }
-        if (fromDateSelect.month == "" || !fromDateSelect.month) {
-          new_data.fromMonthReq = true;
-        } else {
-          new_data.fromMonthReq = false;
-        }
-        if (fromDateSelect.year == "" || !fromDateSelect.year) {
-          new_data.fromYearReq = true;
-        } else {
-          new_data.fromYearReq = false;
-        }
-
-        if (date.month && fromDateSelect.month && fromDateSelect.year) {
-          let fromDate = convertDateToYYYMMDD(fromDateSelect);
-          let toDate = convertDateToYYYMMDD(date);
-
-          if (new Date(fromDate) >= new Date(toDate)) {
-            new_data.fromDateValid = true;
-          } else {
-            new_data.fromDateValid = false;
-          }
-        }
-      } else {
-        if (date.month || fromDateSelect.month || fromDateSelect.year) {
-          new_data.toYearReq = true;
-        } else if (
-          !date.month &&
-          !fromDateSelect.month &&
-          !fromDateSelect.year
-        ) {
-          new_data.toMonthReq = false;
-          new_data.fromMonthReq = false;
-          new_data.fromYearReq = false;
-        } else {
-          if (date.month == "" || !date.month) {
-            new_data.toMonthReq = true;
-          } else {
-            new_data.toMonthReq = false;
-          }
-          if (fromDateSelect.month == "" || !fromDateSelect.month) {
-            new_data.fromMonthReq = true;
-          } else {
-            new_data.fromMonthReq = false;
-          }
-          if (fromDateSelect.year == "" || !fromDateSelect.year) {
-            new_data.fromYearReq = true;
-          } else {
-            new_data.fromYearReq = false;
-          }
-        }
+        date.year = yearList?.find((x) => x.id == Number(data))?.name;
       }
-    } else if (check == "fromMonth") {
-      new_data.fromYearReq = false;
-      let date = { ...fromDateSelect };
-      date.month = monthList?.find((x) => x.id == Number(data))?.name;
-      setFromDateSelect(date);
-      if (date.month) {
-        new_data.fromMonthReq = false;
-        if (date.year == "" || !date.year) {
-          new_data.fromYearReq = true;
-        } else {
-          new_data.fromYearReq = false;
-        }
-        if (toDateSelect.month == "" || !toDateSelect.month) {
-          new_data.toMonthReq = true;
-        } else {
-          new_data.toMonthReq = false;
-        }
-        if (toDateSelect.year == "" || !toDateSelect.year) {
-          new_data.toYearReq = true;
-        } else {
-          new_data.toYearReq = false;
-        }
-
-        if (date.year && toDateSelect.month && toDateSelect.year) {
-          let fromDate = convertDateToYYYMMDD(date);
-          let toDate = convertDateToYYYMMDD(toDateSelect);
-
-          if (new Date(fromDate) >= new Date(toDate)) {
-            new_data.fromDateValid = true;
-          } else {
-            new_data.fromDateValid = false;
-          }
-        }
-      } else {
-        if (date.year || toDateSelect.month || toDateSelect.year) {
-          new_data.fromMonthReq = true;
-        } else if (!date.year && !toDateSelect.month && !toDateSelect.year) {
-          new_data.fromYearReq = false;
-          new_data.toMonthReq = false;
-          new_data.toYearReq = false;
-        } else {
-          if (date.year == "" || !date.year) {
-            new_data.fromYearReq = true;
-          } else {
-            new_data.fromYearReq = false;
-          }
-          if (toDateSelect.month == "" || !toDateSelect.month) {
-            new_data.toMonthReq = true;
-          } else {
-            new_data.toMonthReq = false;
-          }
-          if (toDateSelect.year == "" || !toDateSelect.year) {
-            new_data.toYearReq = true;
-          } else {
-            new_data.toYearReq = false;
-          }
-        }
-      }
-    } else if (check == "toMonth") {
-      let date = { ...toDateSelect };
-      date.month = monthList?.find((x) => x.id == Number(data))?.name;
-
+      let validData = {
+        fromDateSelect: fromDateSelect,
+        toDateSelect: date,
+      };
+      new_data.fromDateValid = checkDateValidation(validData);
       setToDateSelect(date);
-      if (date.month) {
-        new_data.toMonthReq = false;
-        if (date.year == "" || !date.year) {
-          new_data.toYearReq = true;
-        } else {
-          new_data.toYearReq = false;
-        }
-        if (fromDateSelect.month == "" || !fromDateSelect.month) {
-          new_data.fromMonthReq = true;
-        } else {
-          new_data.fromMonthReq = false;
-        }
-        if (fromDateSelect.year == "" || !fromDateSelect.year) {
-          new_data.fromYearReq = true;
-        } else {
+    } else if (check === "fromMonth") {
+      debugger;
+      let date = { ...fromDateSelect };
+      if (data === "Select month") {
+        date.month = "";
+        if (date.year === "" || !date.year) {
           new_data.fromYearReq = false;
-        }
-        if (date.year && fromDateSelect.month && fromDateSelect.year) {
-          let fromDate = convertDateToYYYMMDD(fromDateSelect);
-          let toDate = convertDateToYYYMMDD(date);
-
-          if (new Date(fromDate) >= new Date(toDate)) {
-            new_data.fromDateValid = true;
-          } else {
-            new_data.fromDateValid = false;
-          }
+          new_data.fromMonthReq = false;
+        } else {
+          new_data.fromMonthReq = true;
         }
       } else {
-        if (date.year || fromDateSelect.month || fromDateSelect.year) {
-          new_data.toMonthReq = true;
-        } else if (
-          !date.year &&
-          !fromDateSelect.month &&
-          !fromDateSelect.year
-        ) {
-          new_data.toYearReq = false;
-          new_data.fromMonthReq = false;
-          new_data.fromYearReq = false;
-        } else {
-          if (date.year == "" || !date.year) {
-            new_data.toYearReq = true;
-          } else {
-            new_data.toYearReq = false;
-          }
-          if (fromDateSelect.month == "" || !fromDateSelect.month) {
-            new_data.fromMonthReq = true;
-          } else {
-            new_data.fromMonthReq = false;
-          }
-          if (fromDateSelect.year == "" || !fromDateSelect.year) {
-            new_data.fromYearReq = true;
-          } else {
-            new_data.fromYearReq = false;
-          }
+        new_data.fromMonthReq = false;
+        if (date.year === "" || !date.year) {
+          new_data.fromYearReq = true;
         }
+        date.month = monthList?.find((x) => x.id == Number(data))?.name;
       }
+      let validData = {
+        fromDateSelect: date,
+        toDateSelect: toDateSelect,
+      };
+      new_data.fromDateValid = checkDateValidation(validData);
+      setFromDateSelect(date);
+    } else if (check === "toMonth") {
+      let date = { ...toDateSelect };
+
+      if (data === "Select month") {
+        if (date.year === "" || !date.year) {
+          new_data.toYearReq = false;
+          new_data.toMonthReq = false;
+        } else {
+          new_data.toMonthReq = true;
+        }
+        date.month = "";
+      } else {
+        new_data.toMonthReq = false;
+        if (date.year === "" || !date.year) {
+          new_data.toYearReq = true;
+        }
+        date.month = monthList?.find((x) => x.id == Number(data))?.name;
+      }
+      let validData = {
+        fromDateSelect: fromDateSelect,
+        toDateSelect: date,
+      };
+      new_data.fromDateValid = checkDateValidation(validData);
+      setToDateSelect(date);
     }
     setFormData(new_data);
   };
@@ -455,11 +299,14 @@ export function CertificationsModal(props) {
   async function onSubmit() {
     let valid = true;
     let new_data = { ...formDetails };
-    if (!formDetails.certificationname || formDetails.certificationname == "") {
+    if (
+      !formDetails.certificationname ||
+      formDetails.certificationname === ""
+    ) {
       new_data.error = true;
       valid = false;
     }
-    if (formDetails.certificationtypeid == 0) {
+    if (formDetails.certificationtypeid === 0) {
       new_data.typeError = true;
       valid = false;
     }

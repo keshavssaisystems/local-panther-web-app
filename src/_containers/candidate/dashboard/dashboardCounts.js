@@ -46,7 +46,7 @@ export function DashboardCounts() {
           <div className="card mb-3 widget-content bg-arielle-smile">
             <div className="widget-content-wrapper text-white">
               <div className="widget-content-left">
-                <div className="widget-heading">Interview scheduled</div>
+                <div className="widget-heading">Interviews scheduled</div>
               </div>
               <div className="widget-content-right">
                 <div className="widget-numbers text-white">

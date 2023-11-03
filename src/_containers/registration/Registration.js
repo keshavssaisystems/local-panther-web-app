@@ -41,8 +41,9 @@ import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
 
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
+
 export function Registration() {
   let settings = {
     dots: true,
@@ -111,10 +112,13 @@ export function Registration() {
         "Please enter valid email"
       ),
     phoneNumber: Yup.string().required("Phone number is required"),
-    // .matches(phoneRegExp, "Phone number is not valid"),
     password: Yup.string()
       .required("Password is required")
       .min(4, "Password must be at least 4 characters")
+      .matches(
+        passwordRegex,
+        "Phone number must have atleast 1 special character,1 captial letter,1 number"
+      )
       .max(30, "Password can be at most 30 characters"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")

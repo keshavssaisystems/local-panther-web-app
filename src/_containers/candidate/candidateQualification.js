@@ -17,13 +17,14 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { QualificationModal } from "./qualificationModal";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "react-loaders";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function CandidateQualification(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [tabs, setTabs] = useState([
     { id: 1, title: "Tab 1", content: <QualificationModal /> },
   ]);
-
+  const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const loading = useSelector((state) => state.getProfile.loader);
   const dispatch = useDispatch();
   const [editModal, setEditModal] = useState(false);
@@ -42,13 +43,13 @@ export function CandidateQualification(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
-
+  const [deleteId, setDeleteId] = useState(0);
   const edit = function (data) {
     setSelectedData(data);
     setEditModal(true);
   };
-  const deleteData = async function (id) {
-    let response = await dispatch(profileActions.deleteQualification(id));
+  const deleteData = async function () {
+    let response = await dispatch(profileActions.deleteQualification(deleteId));
 
     if (response.payload) {
       setSuccess(true);
@@ -58,7 +59,13 @@ export function CandidateQualification(props) {
     }
   };
 
+  const deleteModal = function (data) {
+    setDeleteId(data);
+    setDeleteConfirm(true);
+  };
+
   const closeModal = function () {
+    setDeleteConfirm(false);
     setSuccess(false);
     setError(false);
     props.onCallBack();
@@ -146,7 +153,7 @@ export function CandidateQualification(props) {
                   <Row>
                     {qualificationDetails?.length > 0 ? (
                       qualificationDetails.map((item) => (
-                        <div className="mb-2">
+                        <div className="mb-4">
                           <Col>
                             <strong className="me-2 content-title">
                               {item.jobtitle}{" "}
@@ -159,18 +166,18 @@ export function CandidateQualification(props) {
                               <BsTrash3
                                 className="icons"
                                 onClick={() =>
-                                  deleteData(item.candidatequalificationid)
+                                  deleteModal(item.candidatequalificationid)
                                 }
                               />
                             </div>
                           </Col>
 
-                          <span className="mb-0 card-p-text-black">
+                          <span className="mt-1 card-p-text-black">
                             {getText(item)}
                           </span>
 
                           {item.startdate ? (
-                            <div className="card-p-text-black">
+                            <div className="mt-1 card-p-text-black">
                               {getDate(item)}
                               {calculateExperience(
                                 item.startdate,
@@ -183,9 +190,12 @@ export function CandidateQualification(props) {
                         </div>
                       ))
                     ) : (
-                      <div className="d-flex justify-content-center">
-                        No Data available
-                      </div>
+                      <Row style={{ textAlign: "center" }}>
+                        <Col>
+                          {" "}
+                          <NoDataFound imageSize={"25px"} />
+                        </Col>
+                      </Row>
                     )}
                   </Row>
                 </PerfectScrollbar>
@@ -361,6 +371,44 @@ export function CandidateQualification(props) {
                     onClick={(evt) => setError(false)}
                   >
                     OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
+      <Modal
+        className="modal-reject-align profile-view"
+        isOpen={deleteConfirmation}
+      >
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              want to delete the Qualification!!
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => deleteData()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    className="success-close-btn"
+                    onClick={(evt) => closeModal(false)}
+                  >
+                    NO
                   </Button>
                 </Col>
               </Row>
