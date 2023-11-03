@@ -150,7 +150,10 @@ const createjobSlice = createSlice({
     },
     [getCustomerDetailsThunk.fulfilled]: (state, action) => {
       state.customerDetails = action.payload.data;
-      localStorage.setItem("companyid", action.payload.data.companyid);
+      localStorage.setItem(
+        "companyid",
+        action?.payload?.data?.companyid ? action?.payload?.data?.companyid : ""
+      );
       state.loading = false;
     },
     [getCustomerDetailsThunk.rejected]: (state, action) => {
