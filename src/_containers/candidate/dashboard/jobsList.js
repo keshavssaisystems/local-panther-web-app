@@ -62,7 +62,21 @@ export function JobsList(props) {
     {
       name: "Job location",
       selector: (row) => (
-        <span title={row.locationaddress}>{row.locationaddress}</span>
+        <span
+          title={
+            (row?.cityname ? `${row?.cityname}, ` : "") +
+            "" +
+            (row.statename
+              ? row.recommendedationCandidateShortList[0].statename
+              : "")
+          }
+        >
+          {(row?.cityname ? `${row?.cityname}, ` : "") +
+            "" +
+            (row.statename
+              ? row.recommendedationCandidateShortList[0].statename
+              : "")}
+        </span>
       ),
       sortable: false,
     },

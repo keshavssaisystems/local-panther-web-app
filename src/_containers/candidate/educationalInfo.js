@@ -147,10 +147,10 @@ export function CandidateEducation(props) {
                             />
                           </div>
                         </Col>
-                        {item.cityname != "" ||
-                        item.statename != "" ||
-                        item.countryname != "" ||
-                        item.school != "" ? (
+                        {item.cityname !== "" ||
+                        item.statename !== "" ||
+                        item.countryname !== "" ||
+                        item.school !== "" ? (
                           <Label className="mb-0 mt-0 card-p-text-black">
                             {getEducText(item)}
                           </Label>
@@ -158,12 +158,14 @@ export function CandidateEducation(props) {
                           ""
                         )}
                         {item.iscurrentlystudying ? (
-                          <p className="card-p-text-black">
+                          <p className="mt-1 card-p-text-black">
                             Curretly Studying{" "}
                           </p>
                         ) : (
                           <div>
-                            <p className="card-p-text-black">{getDate(item)}</p>
+                            <p className="mt-1 card-p-text-black">
+                              {getDate(item)}
+                            </p>
                           </div>
                         )}
                       </div>

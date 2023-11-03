@@ -15,16 +15,13 @@ import {
 import AsyncSelect from "react-select/async";
 import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Loader from "react-loaders";
 import {
   formatDate,
   extractDatePart,
   convertDateToYYYMMDD,
+  checkDateValidation,
 } from "_helpers/helper";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import DatePicker from "react-datepicker";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
@@ -347,125 +344,84 @@ export function QualificationModal(props) {
   const handleInputChange = function (check, index, data) {
     let new_data = [...formDetails];
 
-    if (check == "title") {
+    if (check === "title") {
       new_data[index].jobTitle = data;
       new_data[index].error = false;
-    } else if (check == "company") {
+    } else if (check === "company") {
       new_data[index].organization = data;
-    } else if (check == "description") {
+    } else if (check === "description") {
       new_data[index].jobdescription = data;
-    } else if (check == "status") {
+    } else if (check === "status") {
       new_data[index].iscurrentlyworking = !new_data[index].iscurrentlyworking;
       if (new_data[index].iscurrentlyworking) {
         new_data[index].toDateReq = false;
         new_data[index].enddate = extractDatePart(new Date());
-        if (new_data[index].startdate) {
-          if (new Date(data) <= new Date(new_data[index].startdate)) {
-            new_data[index].fromDateValid = true;
-          } else {
+        let month = new Date().getMonth() + 1;
+        let year = new Date().getFullYear();
+
+        new_data[index].toDateSelect.month = monthList.find(
+          (x) => x.id == month
+        )?.id;
+        new_data[index].toDateSelect.year = yearList.find(
+          (x) => x.name == year
+        )?.name;
+
+        if (
+          new_data[index].fromDateSelect.year !== "" &&
+          new_data[index].fromDateSelect.month !== ""
+        ) {
+          let fromDate = convertDateToYYYMMDD(new_data[index].fromDateSelect);
+          let toDate = convertDateToYYYMMDD(new_data[index].toDateSelect);
+
+          if (new Date(fromDate) <= new Date(toDate)) {
             new_data[index].fromDateValid = false;
-            new_data[index].enddate = extractDatePart(new Date());
+          } else {
+            new_data[index].fromDateValid = true;
           }
-        } else {
-          new_data[index].fromDateValid = false;
-          new_data[index].enddate = extractDatePart(new Date());
         }
-      }
-    }
-    // else if (check == "fromDate") {
-    //   new_data[index].fromDateReq = false;
-    //   if (new_data[index].enddate) {
-    //     if (new Date(data) >= new Date(new_data[index].enddate)) {
-    //       new_data[index].fromDateValid = true;
-    //     } else {
-    //       new_data[index].fromDateValid = false;
-    //       new_data[index].startdate = extractDatePart(data);
-    //     }
-    //   } else {
-    //     new_data[index].fromDateValid = false;
-    //     new_data[index].startdate = extractDatePart(data);
-    //   }
-    // } else if (check == "toDate") {
-    //   new_data[index].enddate = data;
-    //   new_data[index].toDateReq = false;
-    //   if (new_data[index].startdate) {
-    //     if (new Date(data) <= new Date(new_data[index].startdate)) {
-    //       new_data[index].fromDateValid = true;
-    //     } else {
-    //       new_data[index].fromDateValid = false;
-    //       new_data[index].enddate = extractDatePart(data);
-    //     }
-    //   } else {
-    //     new_data[index].fromDateValid = false;
-    //     new_data[index].enddate = extractDatePart(data);
-    //   }
-    // }
-    else if (check == "fromYear") {
-      new_data[index].fromDateSelect.year = yearList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
-
-      if (new_data[index].fromDateSelect.year) {
-        new_data[index].fromYearReq = false;
       } else {
-        new_data[index].fromYearReq = true;
+        new_data[index].toDateSelect.month = "";
+        new_data[index].toDateSelect.year = "";
       }
-
-      // if (new_data[index].toDateSelect.year != "") {
-      //   if (
-      //     new_data[index].fromDateSelect.year >
-      //     new_data[index].toDateSelect.year
-      //   ) {
-      //     new_data[index].fromDateValid = true;
-      //   } else {
-      //     new_data[index].fromDateValid = false;
-      //   }
-      // } else {
-      //   new_data[index].fromDateValid = false;
-      // }
-    } else if (check == "toYear") {
-      new_data[index].toDateSelect.year = yearList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
-
-      if (new_data[index].toDateSelect.year) {
-        new_data[index].toYearReq = false;
+    } else if (check === "fromYear") {
+      if (data === "Select year") {
+        new_data[index].fromDateSelect.year = "";
       } else {
-        new_data[index].toYearReq = true;
+        new_data[index].fromDateSelect.year = yearList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
       }
-
-      // if (new_data[index].fromDateSelect.year != "") {
-      //   if (
-      //     new_data[index].toDateSelect.year <
-      //     new_data[index].fromDateSelect.year
-      //   ) {
-      //     new_data[index].fromDateValid = true;
-      //   } else {
-      //     new_data[index].fromDateValid = false;
-      //   }
-      // } else {
-      //   new_data[index].fromDateValid = false;
-      // }
-    } else if (check == "fromMonth") {
-      new_data[index].fromDateSelect.month = monthList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
-
-      if (new_data[index].fromDateSelect.month) {
-        new_data[index].fromDateReq = false;
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
+    } else if (check === "toYear") {
+      if (data === "Select year") {
+        new_data[index].toDateSelect.year = "";
       } else {
-        new_data[index].fromDateReq = true;
+        new_data[index].toDateSelect.year = yearList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
       }
-    } else if (check == "toMonth") {
-      new_data[index].toDateSelect.month = monthList?.find(
-        (x) => x.id == Number(data)
-      )?.name;
 
-      if (new_data[index].toDateSelect.month) {
-        new_data[index].toDateReq = false;
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
+    } else if (check === "fromMonth") {
+      if (data === "Select year") {
+        new_data[index].fromDateSelect.month = "";
       } else {
-        new_data[index].toDateReq = true;
+        new_data[index].fromDateSelect.month = monthList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
       }
+
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
+    } else if (check === "toMonth") {
+      if (data === "Select year") {
+        new_data[index].toDateSelect.month = "";
+      } else {
+        new_data[index].toDateSelect.month = monthList?.find(
+          (x) => x.id == Number(data)
+        )?.name;
+      }
+
+      new_data[index].fromDateValid = checkDateValidation(new_data[index]);
     }
 
     setFormData(new_data);
@@ -841,30 +797,7 @@ export function QualificationModal(props) {
               </Col>
             </Row>
             <Row>
-              <Col>
-                <FormGroup>
-                  <Label for="jobDescription" className="fw-semi-bold">
-                    Job description
-                  </Label>
-                  <Input
-                    style={{ height: "100px" }}
-                    placeholder="Enter job description"
-                    name="jobDescription"
-                    type="textarea"
-                    id="jobDescription"
-                    value={item.jobdescription}
-                    maxLength={500}
-                    className="field-input placeholder-text form-control"
-                    onInput={(evt) =>
-                      handleInputChange("description", index, evt.target.value)
-                    }
-                  />
-
-                  <span className="dropdown-placeholder float-end">
-                    {item.jobdescription ? item.jobdescription.length : 0}/500
-                  </span>
-                </FormGroup>
-              </Col>
+             
             </Row> */}
 
             <Row className="mt-2 fw-semi-bold">
@@ -881,7 +814,7 @@ export function QualificationModal(props) {
                       handleInputChange("fromMonth", index, evt.target.value)
                     }
                     className={`form-control ${
-                      item.fromDateReq ? "is-invalid" : ""
+                      item.fromDateReq || item.fromDateValid ? "is-invalid" : ""
                     }`}
                   >
                     <option key={0}>Select month</option>
@@ -917,7 +850,7 @@ export function QualificationModal(props) {
                       handleInputChange("fromYear", index, evt.target.value)
                     }
                     className={`form-control ${
-                      item.fromYearReq ? "is-invalid" : ""
+                      item.fromYearReq || item.fromDateValid ? "is-invalid" : ""
                     }`}
                   >
                     <option key={0}>Select year</option>
@@ -952,6 +885,7 @@ export function QualificationModal(props) {
                   <Input
                     id={"monthList"}
                     name={"monthList"}
+                    disabled={item.iscurrentlyworking}
                     type={"select"}
                     onChange={(evt) =>
                       handleInputChange("toMonth", index, evt.target.value)
@@ -983,6 +917,7 @@ export function QualificationModal(props) {
                     id={"yearList"}
                     name={"yearList"}
                     type={"select"}
+                    disabled={item.iscurrentlyworking}
                     onChange={(evt) =>
                       handleInputChange("toYear", index, evt.target.value)
                     }
@@ -1005,6 +940,32 @@ export function QualificationModal(props) {
                   <div className="filter-info-text filter-error-msg">
                     {item.toYearReq ? "To year is required" : ""}
                   </div>
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <FormGroup>
+                  <Label for="jobDescription" className="fw-semi-bold">
+                    Job description
+                  </Label>
+                  <Input
+                    style={{ height: "100px" }}
+                    placeholder="Enter job description"
+                    name="jobDescription"
+                    type="textarea"
+                    id="jobDescription"
+                    value={item.jobdescription}
+                    maxLength={500}
+                    className="field-input placeholder-text form-control"
+                    onInput={(evt) =>
+                      handleInputChange("description", index, evt.target.value)
+                    }
+                  />
+
+                  <span className="dropdown-placeholder float-end">
+                    {item.jobdescription ? item.jobdescription.length : 0}/500
+                  </span>
                 </FormGroup>
               </Col>
             </Row>

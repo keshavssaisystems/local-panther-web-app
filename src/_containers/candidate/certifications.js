@@ -116,7 +116,7 @@ export function CertificationDetails(props) {
                     <div>
                       {certificationDetails.length > 0 ? (
                         certificationDetails.map((item, index) => (
-                          <div>
+                          <div className="mb-4">
                             <strong className="me-2 content-title">
                               {certificationDetails[index].certificationname}{" "}
                             </strong>
@@ -135,25 +135,40 @@ export function CertificationDetails(props) {
                                 }
                               />
                             </div>
-                            <p className="mb-0 card-p-text-black">
-                              Expired:{" "}
+                            <p
+                              className="mb-1 mt-1 card-p-text-black"
+                              style={{ fontWeight: "600px" }}
+                            >
+                              <strong>Expired : </strong>
                               {certificationDetails[index].isexpired
                                 ? "No"
                                 : "Yes"}
                             </p>
-                            <p className="card-p-text-black">
-                              {/* {certificationDetails[index].startdate
-                              ? formatDate(
-                                  certificationDetails[index].startdate
-                                )
-                              : ""}
-                            {" to "}
-                            {certificationDetails[index].enddate
-                              ? formatDate(certificationDetails[index].enddate)
-                              : ""} */}
-
-                              {getDate(certificationDetails[index])}
-                            </p>
+                            {certificationDetails[index].startdate &&
+                            certificationDetails[index].enddate ? (
+                              <p
+                                className="mb-1 mt-1 card-p-text-black"
+                                style={{ fontWeight: "600px" }}
+                              >
+                                <strong>Certification period : </strong>
+                                {getDate(certificationDetails[index])}
+                              </p>
+                            ) : (
+                              <div>
+                                {certificationDetails[index].startdate ||
+                                certificationDetails[index].enddate ? (
+                                  <p
+                                    className="mb-1 mt-1 card-p-text-black"
+                                    style={{ fontWeight: "600px" }}
+                                  >
+                                    <strong>Certification period : </strong>
+                                    {getDate(certificationDetails[index])}
+                                  </p>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+                            )}
                           </div>
                         ))
                       ) : (
@@ -299,7 +314,7 @@ export function CertificationDetails(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Certification/license!!
+              want to delete the Certification/License!!
             </div>
             <div>
               <Row>
