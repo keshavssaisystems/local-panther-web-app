@@ -28,7 +28,6 @@ export const CustJobFilter = (props) => {
     props.onSearchData();
   };
   const getJobStatusData = (event) => {
-    console.log(event);
     props.onJobStatusChange(event);
   };
   return (
