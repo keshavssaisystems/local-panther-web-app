@@ -11,13 +11,11 @@ export const getJobList = createAsyncThunk(
     pageSize,
     pageNumber,
     searchText,
-    jobId,
     companyId,
-    cityId,
-    skillId,
+    searchType,
     jobStatus,
   }) => {
-    const LIST_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/job?isActive=true&jobId=${jobId}&companyId=${companyId}&pageSize=${pageSize}&pageNumber=${pageNumber}&searchText=${searchText}&cityId=${cityId}&skillId=${skillId}&jobStatus=${jobStatus}`;
+    const LIST_JOB_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/job?isActive=true&companyId=${companyId}&pageSize=${pageSize}&pageNumber=${pageNumber}&searchText=${searchText}&searchType=${searchType}&jobStatus=${jobStatus}`;
     return await fetchWrapper.get(LIST_JOB_END_POINT);
   }
 );
