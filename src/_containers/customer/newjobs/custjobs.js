@@ -13,8 +13,8 @@ import { CustJobFilter } from "./custjofilter";
 
 export const CustJobList = () => {
   const [page, setPage] = useState(1);
-  const [placeHolder, setPlaceHolder] = useState("Search");
-  const [selectedOpt, setSelectedOpt] = useState("Search");
+  const [placeHolder, setPlaceHolder] = useState("Search job title");
+  const [selectedOpt, setSelectedOpt] = useState("JobTitle");
   const [searchText, setSearchText] = useState("");
   const [jobStatus, setJobStatus] = useState("");
 
@@ -55,12 +55,9 @@ export const CustJobList = () => {
     let filterOnPageChange = {
       pageSize: custListPageSize,
       pageNumber: page,
-      searchText:
-        selectedOpt === "Search" || selectedOpt === "State" ? searchText : "",
-      jobId: "",
+      searchText: searchText ?? "",
       companyId: localStorage.getItem("companyid"),
-      cityId: selectedOpt === "City" ? searchText : "",
-      skillId: selectedOpt === "Skill" ? searchText : "",
+      searchType: selectedOpt,
       jobStatus: jobStatus,
     };
     getJobList(filterOnPageChange);
@@ -116,12 +113,9 @@ export const CustJobList = () => {
     let filterOnPageChange = {
       pageSize: custListPageSize,
       pageNumber: page,
-      searchText:
-        selectedOpt === "Search" || selectedOpt === "State" ? searchText : "",
-      jobId: "",
+      searchText: searchText ?? "",
       companyId: localStorage.getItem("companyid"),
-      cityId: selectedOpt === "City" ? searchText : "",
-      skillId: selectedOpt === "Skill" ? searchText : "",
+      searchType: selectedOpt,
       jobStatus: event,
     };
     getJobList(filterOnPageChange);

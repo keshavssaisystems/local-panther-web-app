@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
   CardBody,
@@ -17,8 +17,8 @@ export const CustJobFilter = (props) => {
     props.setSelectedOpt(event.target.value);
     props.setSearchText("");
 
-    if (event.target.value === "Search") {
-      props.setPlaceHolder("Search");
+    if (event.target.value === "JobTitle") {
+      props.setPlaceHolder("Search job title");
     } else {
       props.setPlaceHolder("Search " + event.target.value.toLowerCase());
     }
@@ -28,7 +28,6 @@ export const CustJobFilter = (props) => {
     props.onSearchData();
   };
   const getJobStatusData = (event) => {
-    console.log(event);
     props.onJobStatusChange(event);
   };
   return (
@@ -47,10 +46,10 @@ export const CustJobFilter = (props) => {
                       value={props.selectedOpt}
                       onChange={(e) => getSelectData(e)}
                     >
-                      <option value={"Search"}>Search</option>
-                      {/* <option value={"State"}>State</option>
+                      <option value={"JobTitle"}>Search</option>
+                      <option value={"State"}>State</option>
                       <option value={"City"}>City</option>
-                      <option value={"Skill"}>Skill</option> */}
+                      <option value={"Skills"}>Skill</option>
                     </Input>
                     <Input
                       type="search"
