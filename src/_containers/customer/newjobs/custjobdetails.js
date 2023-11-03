@@ -244,7 +244,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                     )}
                   {jobDetail.isclosed === true && (
                     <Col md={4} lg={4} className="right-align">
-                      <div className="mb-2 me-3 mt-3 badge bg-danger">
+                      <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
                         Job closed
                       </div>
                     </Col>
