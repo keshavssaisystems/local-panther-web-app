@@ -16,6 +16,7 @@ export const CustJobFilter = (props) => {
     event.preventDefault();
     props.setSelectedOpt(event.target.value);
     props.setSearchText("");
+
     if (event.target.value === "Search") {
       props.setPlaceHolder("Search");
     } else {
@@ -26,14 +27,18 @@ export const CustJobFilter = (props) => {
     event.preventDefault();
     props.onSearchData();
   };
+  const getJobStatusData = (event) => {
+    console.log(event);
+    props.onJobStatusChange(event);
+  };
   return (
     <>
       <Col md="12">
         <Card className="main-card mb-3 card-filter">
           <CardBody>
-            <Form onSubmit={(e) => getFilterValue(e)}>
-              <Row>
-                <Col sm={6} md={6} lg={5} xl={3}>
+            <Row>
+              <Col>
+                <Form onSubmit={(e) => getFilterValue(e)}>
                   <InputGroup>
                     <Input
                       name="searchType"
@@ -55,7 +60,6 @@ export const CustJobFilter = (props) => {
                       onChange={(e) => props.setSearchText(e.target.value)}
                     />
                     <Button
-                      //   disabled={props.searchText === ""}
                       color={"primary"}
                       className="input-group-text"
                       type="submit"
@@ -63,9 +67,24 @@ export const CustJobFilter = (props) => {
                       <BsSearch />
                     </Button>
                   </InputGroup>
-                </Col>
-              </Row>
-            </Form>
+                </Form>
+              </Col>
+              <Col></Col>
+              <Col></Col>
+              <Col>
+                <Input
+                  name="jobStatus"
+                  type="select"
+                  defaultValue=""
+                  onChange={(e) => getJobStatusData(e.target.value)}
+                >
+                  <option value={""}>All jobs</option>
+                  <option value={"Publish"}>Publish jobs</option>
+                  <option value={"Draft"}>Draft jobs</option>
+                  <option value={"Closed"}>Closed jobs</option>
+                </Input>
+              </Col>
+            </Row>
           </CardBody>
         </Card>
       </Col>
