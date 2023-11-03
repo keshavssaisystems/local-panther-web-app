@@ -9,6 +9,8 @@ import moment from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import { scheduleInterviewActions } from "_store";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
+import { getTimezoneDateTime } from "_helpers/helper";
+import "./calendar.scss";
 
 export function CandidateSchedules() {
   const dispatch = useDispatch();
@@ -60,30 +62,30 @@ export function CandidateSchedules() {
   let upData = [];
   if (candidateSchedules !== undefined && candidateSchedules.length > 0) {
     candidateSchedules.forEach((upcomingInterview) => {
-      let startDate = moment(
+      let startDate = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
-          upcomingInterview.starttime
-      )
-        .tz("America/New_York")
-        .format("YYYY-MM-DD HH:mm:ss");
-      let startTime = moment(
+          upcomingInterview.starttime,
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      let startTime = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
-          upcomingInterview.starttime
-      )
-        .tz("America/New_York")
-        .format("hh:mm a");
+          upcomingInterview.starttime,
+        "hh:mm a"
+      );
       let durationArr =
         upcomingInterview.duration !== undefined
           ? upcomingInterview.duration.split(" ")
           : [];
-      let endDate = moment(startDate)
-        .add(durationArr[0], "m")
-        .format("YYYY-MM-DD HH:mm:ss");
-      let endTime = moment(startDate)
-        .add(durationArr[0], "m")
-        .format("hh:mm a");
+      let endDate = getTimezoneDateTime(
+        moment(startDate).add(durationArr[0], "m"),
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      let endTime = getTimezoneDateTime(
+        moment(startDate).add(durationArr[0], "m"),
+        "hh:mm a"
+      );
       let interviewData = {
         id: upcomingInterview.scheduleinterviewid,
         data: upcomingInterview,
@@ -192,7 +194,7 @@ export function CandidateSchedules() {
   return (
     <>
       <PageTitle heading="Calendar" icon={calendarLogo} />
-      <Container fluid className="card-schedule-interview">
+      <Container fluid className="card-schedule-interview candidate-calendar">
         <Row>
           <Col md="12">
             <Card>
@@ -213,12 +215,14 @@ export function CandidateSchedules() {
                   }}
                   onSelectEvent={(evt) => handleSelectEvent(evt)}
                   onRangeChange={handleNavigate}
-                  // components={{
-                  //   toolbar: CustomToolbar, // Use the custom toolbar component
-                  // }}
                   defaultView={Views.MONTH} // Set the default view
                   view={view} // Specify the view
                   onView={setView} // Handle view changes
+                  components={{
+                    day: {
+                      header: () => "",
+                    },
+                  }}
                 />
               </CardBody>
             </Card>

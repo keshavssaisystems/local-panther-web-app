@@ -7,14 +7,27 @@ import personIcon from "../../../assets/utils/images/person-fill.svg";
 import linkIcon from "../../../assets/utils/images/link.png";
 import copyLinkIcon from "../../../assets/utils/images/copy-link.png";
 import { BsFillTelephoneFill } from "react-icons/bs";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function ScheduleDetails({ interviewDetail }) {
   const [isCopied, setIsCopied] = useState(false);
-  let scheduled = moment(interviewDetail.scheduledate).format("MMM D, YYYY");
-  let currentDay = moment().format("YYYY-MM-DD");
-  let yesterdayDate = moment().subtract(1, "days").format("YYYY-MM-DD");
-  let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
-  let scheduledDate = moment(interviewDetail.scheduledate).format("YYYY-MM-DD");
+  let scheduled = getTimezoneDateTime(
+    interviewDetail?.scheduledate,
+    "MM/DD/YYYY"
+  );
+  let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
+  let yesterdayDate = getTimezoneDateTime(
+    moment().subtract(1, "days").format("YYYY-MM-DD"),
+    "YYYY-MM-DD"
+  );
+  let tomorrowDate = getTimezoneDateTime(
+    moment().add(1, "days").format("YYYY-MM-DD"),
+    "YYYY-MM-DD"
+  );
+  let scheduledDate = getTimezoneDateTime(
+    moment(interviewDetail?.scheduledate),
+    "YYYY-MM-DD"
+  );
   if (scheduledDate === currentDay) {
     scheduled = "Today";
   }
@@ -24,23 +37,24 @@ export function ScheduleDetails({ interviewDetail }) {
   if (scheduledDate === tomorrowDate) {
     scheduled = "Tommorow";
   }
-
-  let startTime = moment(
-    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+  let startTime = getTimezoneDateTime(
+    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
       " " +
-      interviewDetail.starttime
-  )
-    .tz("America/New_York")
-    .format("hh:mm a");
+      interviewDetail?.starttime,
+    "hh:mm a"
+  );
   let startDate =
-    moment(interviewDetail.scheduledate).format("MMM D, YYYY") +
+    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
     " " +
     startTime;
   let durationArr =
-    interviewDetail.duration !== undefined
-      ? interviewDetail.duration.split(" ")
+    interviewDetail?.duration !== undefined
+      ? interviewDetail?.duration.split(" ")
       : [];
-  let endTime = moment(startDate).add(durationArr[0], "m").format("hh:mm a");
+  let endTime = getTimezoneDateTime(
+    moment(startDate).add(durationArr[0], "m"),
+    "hh:mm a"
+  );
   const handleCopyClick = async (data) => {
     try {
       await navigator.clipboard.writeText(data);
