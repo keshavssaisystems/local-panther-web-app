@@ -342,6 +342,7 @@ export const CandidateList = (props) => {
           <ButtonGroup size="lg" className="cust-btn-tabs">
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "matched" })
@@ -354,6 +355,7 @@ export const CandidateList = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "liked" })
@@ -366,6 +368,7 @@ export const CandidateList = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition " +
                 classnames({ active: activeTab === "maybe" })
@@ -378,6 +381,7 @@ export const CandidateList = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "applied" })
@@ -390,6 +394,7 @@ export const CandidateList = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "interview" })
@@ -402,6 +407,7 @@ export const CandidateList = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "accepted" })
@@ -414,6 +420,7 @@ export const CandidateList = (props) => {
             </Button>
             <Button
               color="primary"
+              disabled={loading}
               className={
                 "border-0 btn-transition  " +
                 classnames({ active: activeTab === "rejected" })
