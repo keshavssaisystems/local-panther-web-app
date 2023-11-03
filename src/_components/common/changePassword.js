@@ -40,6 +40,8 @@ export function ChangePassword(props) {
     }
   };
 
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
   const validationSchema = Yup.object().shape({
     currentPassword: Yup.string()
       .required("Current password is required")
@@ -48,6 +50,10 @@ export function ChangePassword(props) {
     newPassword: Yup.string()
       .required("New password is required")
       .min(4, "Password must be at least 4 characters")
+      .matches(
+        passwordRegex,
+        "Password must have atleast 1 special character, 1 capital, 1 number"
+      )
       .max(30, "Password can be at most 30 characters"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("newPassword"), null], "Passwords must match")

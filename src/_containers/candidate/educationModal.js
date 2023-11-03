@@ -106,7 +106,10 @@ export function EducationModal(props) {
         enddate: "",
         isactive: false,
         fromDateValid: false,
-        fromDateReq: false,
+        fromMonthReq: false,
+        fromYearReq: false,
+        toMonthReq: false,
+        toYearReq: false,
         currentUserId: null,
         fromDateSelect: {
           month: "",
@@ -160,7 +163,10 @@ export function EducationModal(props) {
         isactive: props.selected.isactive,
         currentUserId: null,
         fromDateValid: false,
-        fromDateReq: false,
+        fromMonthReq: false,
+        fromYearReq: false,
+        toMonthReq: false,
+        toYearReq: false,
         fromDateSelect: {
           month: "",
           year: "",
@@ -330,6 +336,9 @@ export function EducationModal(props) {
       dropdown.label = data.label;
 
       new_data[index].education = dropdown;
+      if (new_data[index].education !== "") {
+        new_data[index].error = false;
+      }
     } else if (check === "studyField") {
       dropdown.value = data.value;
       dropdown.label = data.label;
@@ -392,16 +401,40 @@ export function EducationModal(props) {
     } else if (check === "fromYear") {
       if (data === "Select year") {
         new_data[index].fromDateSelect.year = "";
+
+        if (new_data[index].fromDateSelect.month === "") {
+          new_data[index].fromMonthReq = false;
+          new_data[index].fromYearReq = false;
+        } else {
+          new_data[index].fromYearReq = true;
+        }
       } else {
+        new_data[index].fromYearReq = false;
+        if (new_data[index].fromDateSelect.month === "") {
+          new_data[index].fromMonthReq = true;
+        }
+
         new_data[index].fromDateSelect.year = yearList?.find(
           (x) => x.id == Number(data)
         )?.name;
       }
+
       new_data[index].fromDateValid = checkDateValidation(new_data[index]);
     } else if (check === "toYear") {
       if (data === "Select year") {
         new_data[index].toDateSelect.year = "";
+
+        if (new_data[index].toDateSelect.month === "") {
+          new_data[index].toMonthReq = false;
+          new_data[index].toYearReq = false;
+        } else {
+          new_data[index].toYearReq = true;
+        }
       } else {
+        new_data[index].toYearReq = false;
+        if (new_data[index].toDateSelect.month === "") {
+          new_data[index].toMonthReq = true;
+        }
         new_data[index].toDateSelect.year = yearList?.find(
           (x) => x.id == Number(data)
         )?.name;
@@ -411,7 +444,19 @@ export function EducationModal(props) {
     } else if (check === "fromMonth") {
       if (data === "Select month") {
         new_data[index].fromDateSelect.month = "";
+
+        if (new_data[index].fromDateSelect.year === "") {
+          new_data[index].fromMonthReq = false;
+          new_data[index].fromYearReq = false;
+        } else {
+          new_data[index].fromMonthReq = true;
+        }
       } else {
+        new_data[index].fromMonthReq = false;
+        if (new_data[index].fromDateSelect.year === "") {
+          new_data[index].fromYearReq = true;
+        }
+
         new_data[index].fromDateSelect.month = monthList?.find(
           (x) => x.id == Number(data)
         )?.name;
@@ -421,7 +466,19 @@ export function EducationModal(props) {
     } else if (check === "toMonth") {
       if (data === "Select month") {
         new_data[index].toDateSelect.month = "";
+
+        if (new_data[index].toDateSelect.year === "") {
+          new_data[index].toMonthReq = false;
+          new_data[index].toYearReq = false;
+        } else {
+          new_data[index].toMonthReq = true;
+        }
       } else {
+        new_data[index].toMonthReq = false;
+        if (new_data[index].toDateSelect.year === "") {
+          new_data[index].toYearReq = true;
+        }
+
         new_data[index].toDateSelect.month = monthList?.find(
           (x) => x.id == Number(data)
         )?.name;
@@ -435,9 +492,18 @@ export function EducationModal(props) {
   async function onSubmit() {
     let error_data = [...formDetails];
     for (let i = 0; i < formDetails.length; i++) {
-      if (formDetails[i].education.label == "") {
+      if (formDetails[i].education.label === "") {
         error_data[i].error = true;
         setFormData(error_data);
+        return;
+      }
+
+      if (
+        formDetails[i].fromMonthReq ||
+        formDetails[i].fromYearReq ||
+        formDetails[i].toMonthReq ||
+        formDetails[i].toYearReq
+      ) {
         return;
       }
     }
@@ -668,7 +734,7 @@ export function EducationModal(props) {
                   name={"monthList"}
                   type={"select"}
                   className={`form-control ${
-                    item.fromYearReq || item.fromDateValid ? "is-invalid" : ""
+                    item.fromMonthReq || item.fromDateValid ? "is-invalid" : ""
                   }`}
                   onChange={(evt) =>
                     onHandleInputChange("fromMonth", evt.target.value, index)
@@ -691,6 +757,7 @@ export function EducationModal(props) {
                   {item.fromDateValid
                     ? "From date should be less than to date"
                     : ""}
+                  {item.fromMonthReq ? "From month is required" : ""}
                 </div>
               </FormGroup>
             </Col>
@@ -721,10 +788,13 @@ export function EducationModal(props) {
                       ))}
                   </Input>
                 </InputGroup>
+
                 <div className="filter-info-text filter-error-msg">
                   {item.fromDateValid
                     ? "From date should be less than to date"
                     : ""}
+
+                  {item.fromYearReq ? "From year is required" : ""}
                 </div>
               </FormGroup>
             </Col>
@@ -743,6 +813,9 @@ export function EducationModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("toMonth", evt.target.value, index)
                   }
+                  className={`form-control ${
+                    item.toMonthReq ? "is-invalid" : ""
+                  }`}
                 >
                   <option key={0}>Select month</option>
                   {monthList?.length > 0 &&
@@ -756,6 +829,9 @@ export function EducationModal(props) {
                       </option>
                     ))}
                 </Input>
+                <div className="filter-info-text filter-error-msg">
+                  {item.toMonthReq ? "To month is required" : ""}
+                </div>
               </FormGroup>
             </Col>
             <Col md={4}>
@@ -768,6 +844,9 @@ export function EducationModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("toYear", evt.target.value, index)
                   }
+                  className={`form-control ${
+                    item.toYearReq ? "is-invalid" : ""
+                  }`}
                 >
                   <option key={0}>Select year</option>
                   {yearList?.length > 0 &&
@@ -781,6 +860,9 @@ export function EducationModal(props) {
                       </option>
                     ))}
                 </Input>
+                <div className="filter-info-text filter-error-msg">
+                  {item.toYearReq ? "To month is required" : ""}
+                </div>
               </FormGroup>
             </Col>
           </Row>

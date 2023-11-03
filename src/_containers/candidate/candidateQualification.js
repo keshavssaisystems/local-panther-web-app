@@ -153,7 +153,7 @@ export function CandidateQualification(props) {
                   <Row>
                     {qualificationDetails?.length > 0 ? (
                       qualificationDetails.map((item) => (
-                        <div className="mb-2">
+                        <div className="mb-4">
                           <Col>
                             <strong className="me-2 content-title">
                               {item.jobtitle}{" "}
@@ -172,12 +172,12 @@ export function CandidateQualification(props) {
                             </div>
                           </Col>
 
-                          <span className="mb-0 card-p-text-black">
+                          <span className="mt-1 card-p-text-black">
                             {getText(item)}
                           </span>
 
                           {item.startdate ? (
-                            <div className="card-p-text-black">
+                            <div className="mt-1 card-p-text-black">
                               {getDate(item)}
                               {calculateExperience(
                                 item.startdate,
