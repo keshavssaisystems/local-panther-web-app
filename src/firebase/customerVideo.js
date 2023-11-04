@@ -50,6 +50,7 @@ export const CustomerVideoScreen = memo(function CustomerVideoScreen() {
   const onCreateCall = async () => {
     // Reference Firestore collections for signaling
     const callDoc = firestore.collection("calls").doc();
+    console.log(callDoc);
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
     const callInput = document.getElementById("callInput");
