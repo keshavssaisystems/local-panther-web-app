@@ -11,6 +11,7 @@ import {
   FormGroup,
 } from "reactstrap";
 import errorIcon from "../../assets/utils/images/error_icon.png";
+import "./prescreen.scss";
 
 export const RejectModal = (props) => {
   const [reason, setReason] = useState("");
@@ -33,7 +34,10 @@ export const RejectModal = (props) => {
     props.onSubmitReject(selReason, reason);
   };
   return (
-    <Modal className="modal-dialog-reject-align" isOpen={props.isRMOpen}>
+    <Modal
+      className="prescreen-modal modal-dialog-reject-align"
+      isOpen={props.isRMOpen}
+    >
       <Card>
         <CardBody>
           <div className="d-flex justify-content-center mb-3">
@@ -54,12 +58,18 @@ export const RejectModal = (props) => {
                       className="reject-modal-label"
                       for="exampleCustomSelectDisabled"
                     >
-                      Reason <span className="required-icon">*</span>
+                      Reason{" "}
+                      <span
+                        className="required-icon"
+                        style={{ color: "#ff0000" }}
+                      >
+                        *
+                      </span>
                     </Label>
                     <Input
                       className="reason-dropdown-input dropdown-placeholder"
                       style={{
-                        borderColor: reasonErr ? "red" : "#ced4da",
+                        borderColor: reasonErr ? "#ff0000" : "#ced4da",
                       }}
                       type="select"
                       id="jobType"
@@ -78,9 +88,7 @@ export const RejectModal = (props) => {
                       ))}
                     </Input>
                     {reasonErr ? (
-                      <p className="filter-info-text filter-error-msg">
-                        Reason is required
-                      </p>
+                      <p className="filter-info-text">Reason is required</p>
                     ) : (
                       <></>
                     )}
@@ -106,6 +114,9 @@ export const RejectModal = (props) => {
                     id="exampleText"
                     value={reason.value}
                   />
+                  <span className="dropdown-placeholder float-end">
+                    {reason ? reason.length : 0}/100
+                  </span>
                 </FormGroup>
               </Col>
             </Row>

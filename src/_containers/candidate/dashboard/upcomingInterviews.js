@@ -21,6 +21,7 @@ import {
   calculateEndTime,
 } from "_helpers/helper";
 import { history } from "_helpers";
+import SweetAlert from "react-bootstrap-sweetalert";
 import DataTable from "react-data-table-component";
 import scheduleIcon from "../../../assets/utils/images/upcoming-interview.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -43,17 +44,23 @@ export function UpcomingInterviews() {
   );
   const [showInterviewDetails, setDetails] = useState(false);
   const [popupData, setPopupData] = useState({});
+  const [link, setLink] = useState("");
   const loader = useSelector(
     (state) => state.candidateDashboard.schedulesLoader
   );
-
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
   let settings = {
     ...ToastContainer.defaultProps,
     transition: "bounce",
     type: "success",
     disableAutoClose: true,
   };
-
+  const [showInterview, setShowInterview] = useState(false);
   const columns = [
     {
       name: "Job title",
@@ -150,27 +157,73 @@ export function UpcomingInterviews() {
     }
   };
 
-  const checkInterview = function (data) {
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+
+  const checkInterview = function (mode, data) {
     const [year, month, day] = data.scheduledate.split("-").map(Number);
     const [hours, minutes, seconds] = data.starttime.split(":").map(Number);
 
+    let endTime = calculateEndTime(data.starttime, data.duration);
+    let end_date = year + "-" + (month - 1) + "-" + day + " " + endTime;
+
+    let endDate = new Date(end_date);
+
     // Create a Date object using the parsed values
     const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
-
+    setLink(data.videolink);
     if (targetDate === new Date()) {
-      toast.success("Interview started, Please join...");
+      if (mode === "phone") {
+        showSweetAlert({
+          title: `Interview started, please join on phone - ${data.phonenumber}`,
+          type: "success",
+        });
+      } else {
+        setShowInterview(true);
+      }
     } else if (targetDate > new Date()) {
-      toast.success("Interview is not started yet!!");
+      showSweetAlert({
+        title: "Interview not started yet!!",
+        type: "warning",
+      });
+    } else if (targetDate < new Date()) {
+      if (endDate < new Date()) {
+        showSweetAlert({
+          title: "Interview is completed !!",
+          type: "error",
+        });
+      } else {
+        if (mode === "phone") {
+          showSweetAlert({
+            title: `Interview started, please join on phone - ${data.phonenumber}`,
+            type: "success",
+          });
+        } else {
+          setShowInterview(true);
+        }
+      }
     }
   };
 
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
   const interviewMode = (row) => {
     return (
       <div className="d-block w-100 ">
         {row.format === "Video" || row.format === "In-person" ? (
           <div
             className="ellipse d-flex justify-content-center align-items-center"
-            // onClick={() => checkInterview(row)}
+            onClick={() => checkInterview("video", row)}
           >
             <img
               src={row.format === "Video" ? videoIcon : personIcon}
@@ -181,7 +234,7 @@ export function UpcomingInterviews() {
           <>
             <div className="ellipse d-flex justify-content-center align-items-center">
               <BsFillTelephoneFill
-                // onClick={() => checkInterview(row)}
+                onClick={() => checkInterview("phone", row)}
                 style={{ cursor: "pointer" }}
                 className="header-icon icon-gradient bg-amy-crisp"
               />
@@ -291,7 +344,33 @@ export function UpcomingInterviews() {
           <></>
         )}
       </>
-      <ToastContainer />
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
+
+      <div>
+        {showInterview && (
+          <SweetAlert
+            title="Interview started"
+            onCancel={() => setShowInterview(false)}
+            type="success"
+            showCancel
+            showConfirm={false}
+            showClose
+          >
+            <a href={link} target="_blank">
+              click to join{" "}
+            </a>
+          </SweetAlert>
+        )}
+      </div>
     </>
   );
 }
