@@ -70,6 +70,38 @@ export function ProfilePDF(props) {
   };
   const profile_img = localStorage.getItem("profileImage");
 
+  const getLocationText = function (data) {
+    let text = "";
+    if (data.company !== "") {
+      text = data.company;
+      if (data.cityname !== "") {
+        text += " - " + data.cityname;
+      }
+      if (data.statename !== "") {
+        text += ", " + data.statename;
+      }
+      if (data.countryname !== "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.cityname !== "") {
+      text = data.cityname;
+      if (data.statename !== "") {
+        text += ", " + data.statename;
+      }
+      if (data.countryname !== "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.statename !== "") {
+      text = data.statename;
+      if (data.countryname !== "") {
+        text += ", " + data.countryname;
+      }
+    } else if (data.countryname !== "") {
+      text += data.countryname;
+    }
+    return text;
+  };
+
   return (
     <div>
       <Card>
@@ -83,20 +115,25 @@ export function ProfilePDF(props) {
               <Row>
                 <Col className="col-8">
                   <h1>
-                    {personalInfo_temp.firstname} {personalInfo_temp.lastname}
+                    <strong>
+                      {" "}
+                      {personalInfo_temp.firstname} {personalInfo_temp.lastname}
+                    </strong>
                   </h1>
                   <p>
                     {personalInfo_temp.city}
                     {", "}
                     {personalInfo_temp.state}
-                    <br />
-                    <span style={{ fontWeight: "500" }}>
+                  </p>
+
+                  <p>
+                    <span style={{ fontWeight: "600" }}>
                       {personalInfo_temp.email}
                     </span>
                   </p>
 
                   <p>
-                    <span style={{ fontWeight: "500" }}>
+                    <span style={{ fontWeight: "600" }}>
                       Willing to relocate to: {personalInfo_temp.city} -{" "}
                       {personalInfo_temp.state}, {personalInfo_temp.country}
                     </span>
@@ -118,76 +155,117 @@ export function ProfilePDF(props) {
                 )} */}
               </Row>
             </div>
+            {qualificationInfo?.length > 0 ? (
+              <div className="mb-4 mt-3">
+                <h2 style={{ color: "#979797" }}>
+                  <strong>Work Experience</strong>
+                </h2>
+                <hr />
+                {qualificationInfo?.map((item) => (
+                  <div className="mb-3">
+                    <h3>{item.jobtitle}</h3>
+                    {item.company !== "" &&
+                    item.cityname !== "" &&
+                    item.statename !== "" &&
+                    item.countryname ? (
+                      <p style={{ color: "#979797" }}>
+                        {getLocationText(item)}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                    {item.startdate && item.enddate ? (
+                      <p style={{ color: "#979797" }}> {getDate(item)}</p>
+                    ) : (
+                      ""
+                    )}
 
-            <div className="mb-4 mt-3">
-              <h2 style={{ color: "#979797" }}>Work Experience</h2>
-              <hr />
-              {qualificationInfo?.map((item) => (
-                <div>
-                  <h3>{item.jobtitle}</h3>
-                  <p style={{ color: "#979797" }}>
-                    {item.company}-{item.statename},{item.cityname}
-                  </p>
-                  <p style={{ color: "#979797" }}> {getDate(item)}</p>
-                  {item.jobdescription != "" ? (
-                    <p className="mt-2 mb-2" style={{ fontWeight: "500" }}>
-                      {item.jobdescription}{" "}
-                    </p>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="mb-4">
-              <h2 style={{ color: "#979797" }}>Education</h2>
-              <hr />
-              {educationInfo?.map((item) => (
-                <div>
-                  <h3>{item.levelofeducation}</h3>
-                  <p style={{ color: "#979797" }}>{getEducText(item)}</p>
-                  <p style={{ color: "#979797" }}>{getDate(item)}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mb-4">
-              <h2 style={{ color: "#979797" }}>Skills</h2>
-              <hr />
-              <ul>
-                {skillsInfo?.map((item) => (
-                  <li>{item.skillname}</li>
+                    {item.jobdescription !== "" ? (
+                      <p className="" style={{ fontWeight: "500" }}>
+                        {item.jobdescription}{" "}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 ))}
-              </ul>
-            </div>
+              </div>
+            ) : (
+              ""
+            )}
+            {educationInfo?.length > 0 ? (
+              <div className="mb-4">
+                <h2 style={{ color: "#979797" }}>
+                  <strong>Education</strong>
+                </h2>
+                <hr />
+                {educationInfo?.map((item) => (
+                  <div className="mb-3">
+                    <h3>{item.levelofeducation}</h3>
+                    <p style={{ color: "#979797" }}>{getEducText(item)}</p>
+                    <p style={{ color: "#979797" }}>{getDate(item)}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
 
-            <div className="mb-4">
-              <h2 style={{ color: "#979797" }}>Certification and Licenses</h2>
-              <hr />
-              {certificationInfo?.map((item) => (
-                <p style={{ fontWeight: "500" }}>{item.certificationname}</p>
-              ))}
-            </div>
+            {skillsInfo?.length > 0 ? (
+              <div className="mb-4">
+                <h2 style={{ color: "#979797" }}>
+                  <strong>Skills</strong>
+                </h2>
+                <hr />
+                <ul>
+                  {skillsInfo?.map((item) => (
+                    <li>{item.skillname}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              ""
+            )}
 
-            <div>
-              <h2 style={{ color: "#979797" }}>Additional information</h2>
-              <hr />
-              {additionalInfo?.map((item) => (
-                <div>
-                  <ul
-                    dangerouslySetInnerHTML={{
-                      __html: convertText(item.summary),
-                    }}
-                  />
-                  <ul
-                    dangerouslySetInnerHTML={{
-                      __html: convertText(item.additionalInfo),
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
+            {certificationInfo?.length > 0 ? (
+              <div className="mb-4">
+                <h2 style={{ color: "#979797" }}>
+                  <strong>Certification and Licenses</strong>
+                </h2>
+                <hr />
+                {certificationInfo?.map((item) => (
+                  <p style={{ fontWeight: "500" }}>{item.certificationname}</p>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
+
+            {additionalInfo?.length > 0 ? (
+              <div>
+                <h2 style={{ color: "#979797" }}>
+                  <strong>Additional information</strong>
+                </h2>
+                <hr />
+                {additionalInfo?.map((item) => (
+                  <div>
+                    <ul>
+                      {item.candidateLanguageDetailsDtos?.map((lang) => (
+                        <li>
+                          {lang.language} {" - "}{" "}
+                          {lang.proficiency !== "" ? lang.proficiency : ""}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <p> {personalInfo_temp.summary}</p>
+                    <p> {personalInfo_temp.additionalInfo}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </CardBody>
         <Col>

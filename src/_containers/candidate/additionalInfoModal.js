@@ -54,7 +54,7 @@ export function AdditionalInfoModal(props) {
           props.selected.candidateadditioninformationid,
         summary: props.selected.summary,
         candidateLanguageDtos: props.selected.language,
-        additionalinformation: props.selected.additionalinformation,
+        additionalinformation: props.selected.additionalInfo,
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };

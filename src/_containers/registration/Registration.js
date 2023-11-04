@@ -117,7 +117,7 @@ export function Registration() {
       .min(4, "Password must be at least 4 characters")
       .matches(
         passwordRegex,
-        "Phone number must have atleast 1 special character,1 captial letter,1 number"
+        "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
       )
       .max(30, "Password can be at most 30 characters"),
     confirmPassword: Yup.string()
@@ -661,6 +661,7 @@ export function Registration() {
                             name="password"
                             type={showPassword ? "text" : "password"}
                             id="password"
+                            maxLength={30}
                             {...register("password")}
                             className={`form-control placeholder-name ${
                               errors.password ? "is-invalid" : ""
@@ -693,6 +694,7 @@ export function Registration() {
                             className={`form-control placeholder-name ${
                               errors.confirmPassword ? "is-invalid" : ""
                             }`}
+                            maxLength={30}
                           />
                           <InputGroupText
                             onClick={(evt) => toggleConfirmPassword()}
