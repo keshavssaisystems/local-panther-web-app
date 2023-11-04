@@ -184,7 +184,9 @@ export function TodoList(props) {
       <div>
         <Modal className="personal-information" size="md" isOpen={isOpenModal}>
           <ModalHeader toggle={() => close()} charCode="Y">
-            <strong className="card-title-text">Add/Edit todo</strong>
+            <strong className="card-title-text">
+              {check === "add" ? "Add To-do" : "Edit To-do"}
+            </strong>
           </ModalHeader>
           <ModalBody>
             <CreateToDo

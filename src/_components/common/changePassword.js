@@ -52,7 +52,7 @@ export function ChangePassword(props) {
       .min(4, "Password must be at least 4 characters")
       .matches(
         passwordRegex,
-        "Password must have atleast 1 special character, 1 capital, 1 number"
+        "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
       )
       .max(30, "Password can be at most 30 characters"),
     confirmPassword: Yup.string()
@@ -107,6 +107,7 @@ export function ChangePassword(props) {
                       className={`form-control placeholder-name ${
                         errors.currentPassword ? "is-invalid" : ""
                       }`}
+                      maxLength={30}
                     />
                     <InputGroupText
                       onClick={(evt) => togglePasswordVisibility("current")}
@@ -139,6 +140,7 @@ export function ChangePassword(props) {
                       className={`form-control placeholder-name ${
                         errors.newPassword ? "is-invalid" : ""
                       }`}
+                      maxLength={30}
                     />
                     <InputGroupText
                       onClick={(evt) => togglePasswordVisibility("new")}
@@ -170,6 +172,7 @@ export function ChangePassword(props) {
                       className={`form-control placeholder-name ${
                         errors.confirmPassword ? "is-invalid" : ""
                       }`}
+                      maxLength={30}
                     />
                     <InputGroupText
                       onClick={(evt) => togglePasswordVisibility()}

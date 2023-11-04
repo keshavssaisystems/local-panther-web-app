@@ -38,7 +38,6 @@ export function AdditionalInformation(props) {
 
   useEffect(() => {
     setDetails(additional_details);
-
     let data = [];
     additional_details.forEach((item) => {
       let obj = {
@@ -56,7 +55,7 @@ export function AdditionalInformation(props) {
 
   const edit = function (check, data) {
     let new_data;
-    if (check == "add") {
+    if (check === "add") {
       new_data = data;
       setCheck("add");
     } else {
@@ -150,7 +149,7 @@ export function AdditionalInformation(props) {
                             </div>
                             <div>
                               {item.additionalInfo ? (
-                                <div>
+                                <div className="mb-3">
                                   <Row>
                                     <Col>
                                       <strong className="content-title mb-1">
@@ -158,8 +157,8 @@ export function AdditionalInformation(props) {
                                       </strong>
                                     </Col>
                                   </Row>
-                                  <div className="card-p-text-black">
-                                    {item.summary}
+                                  <div className="mt-1 card-p-text-black">
+                                    {item.additionalInfo}
                                   </div>
                                 </div>
                               ) : (

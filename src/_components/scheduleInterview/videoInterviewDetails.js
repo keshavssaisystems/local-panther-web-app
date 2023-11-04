@@ -28,7 +28,8 @@ import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { MessageCard } from "./messageCard";
-import { getTimezoneDateTime } from "_helpers/helper";
+import { getTimezoneDateTime, getChannelId } from "_helpers/helper";
+import { NavLink } from "react-router-dom";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -41,6 +42,7 @@ export function VideoInterviewDetails({
   rejectInterview,
   interviewDetails, // Optional from customer schedule list
   fromCustList, // Optional from customer schedule list
+  toggle,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
@@ -62,6 +64,12 @@ export function VideoInterviewDetails({
   } else {
     interviewDetail = interviewDetails;
   }
+
+  let id = getChannelId(
+    interviewDetail?.candidateid,
+    interviewDetail?.candidateuserid,
+    interviewDetail?.scheduleinterviewid
+  );
 
   let scheduled = getTimezoneDateTime(
     interviewDetails?.scheduledate,
@@ -326,8 +334,10 @@ export function VideoInterviewDetails({
               interviewDetail?.format === "Video" && (
                 <div className="p-custom">
                   <p className="mb-0">
-                    <a href="/" onClick={(e) => e.preventDefault()}>
-                      Click here to join
+                    <a href="/" onClick={(e) => toggle()}>
+                      <NavLink to={`/video-screen/${id}`} exact>
+                        Click here to join
+                      </NavLink>
                     </a>{" "}
                     the in-app interview
                   </p>
