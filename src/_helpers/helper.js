@@ -430,3 +430,9 @@ export function checkDateValidation(data) {
     return false;
   }
 }
+
+export const getChannelId = (id1, id2, scheduleid) => {
+  return id1 < id2
+    ? id1 + "" + id2 + "" + scheduleid
+    : id2 + "" + id1 + "" + scheduleid;
+};
