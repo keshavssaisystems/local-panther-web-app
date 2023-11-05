@@ -292,7 +292,7 @@ export const CustomerCandidateLists = (props) => {
               name="customerJobList"
             >
               <option selected value="">
-                Select a job
+                All jobs
               </option>
               {jobList.map((data) => {
                 return (

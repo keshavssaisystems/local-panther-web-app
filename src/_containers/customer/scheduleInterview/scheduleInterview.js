@@ -507,7 +507,7 @@ export function ScheduleInterview() {
                       name="customerJobList"
                     >
                       <option key={0} value={0}>
-                        Select a job
+                        All jobs
                       </option>
                       {jobList.map((data) => {
                         return (
