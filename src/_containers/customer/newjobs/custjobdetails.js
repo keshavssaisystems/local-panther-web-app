@@ -9,10 +9,16 @@ import "../../../_components/job/job.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { useSelector } from "react-redux";
 
 export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
+  const shiftsOption = useSelector((state) => state.dropdown.shift);
+  const workScheduleOptions = useSelector(
+    (state) => state.dropdown.workSchedule
+  );
+  const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   let loading = true;
   let jobDetail = {};
   let skillArray = [];
@@ -82,6 +88,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
   };
 
   const returnJobType = () => {
+    let jobTypeString = [];
     if (
       jobDetail?.jobExperienceScheduleDtos &&
       jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos?.length > 0
@@ -89,12 +96,28 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
       return jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos
         .map((item) => item.jobtypes)
         .join(", ");
+    } else if (
+      jobDetail?.jobExperienceScheduleDtos[0]?.jobtypes !== "" &&
+      jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos?.length === 0
+    ) {
+      jobTypeOption?.forEach((element) => {
+        if (
+          jobDetail?.jobExperienceScheduleDtos[0]?.jobtypes?.includes(
+            element.id
+          )
+        ) {
+          jobTypeString.push(element.name);
+        }
+      });
+      return jobTypeString.toString();
     } else {
       return "";
     }
   };
 
   const returnShift = () => {
+    let shiftString = [];
+
     if (
       jobDetail?.jobExperienceScheduleDtos &&
       jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos?.length > 0
@@ -102,12 +125,25 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
       return jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos
         .map((item) => item.shifts)
         .join(", ");
+    } else if (
+      jobDetail?.jobExperienceScheduleDtos[0].shifts !== "" &&
+      jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos?.length === 0
+    ) {
+      shiftsOption?.forEach((element) => {
+        if (
+          jobDetail?.jobExperienceScheduleDtos[0]?.shifts?.includes(element.id)
+        ) {
+          shiftString.push(element.name);
+        }
+      });
+      return shiftString.toString();
     } else {
       return "-";
     }
   };
 
   const returnSchedule = () => {
+    let workScheduleString = [];
     if (
       jobDetail?.jobExperienceScheduleDtos &&
       jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos?.length > 0
@@ -115,6 +151,20 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
       return jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos
         .map((item) => item.workschedules)
         .join(", ");
+    } else if (
+      jobDetail?.jobExperienceScheduleDtos[0].workschedules !== "" &&
+      jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos?.length === 0
+    ) {
+      workScheduleOptions?.forEach((element) => {
+        if (
+          jobDetail?.jobExperienceScheduleDtos[0]?.workschedules?.includes(
+            element.id
+          )
+        ) {
+          workScheduleString.push(element.name);
+        }
+      });
+      return workScheduleString.toString();
     } else {
       return "-";
     }

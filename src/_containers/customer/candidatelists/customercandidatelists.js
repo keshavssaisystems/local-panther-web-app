@@ -22,7 +22,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
-import { getProfileActions } from "_store";
+import { getProfileActions, dropdownActions } from "_store";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -61,6 +61,9 @@ export const CustomerCandidateLists = (props) => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
+    dispatch(dropdownActions.getJobTypeThunk2());
+    dispatch(dropdownActions.getWorkScheduleThunk2());
+    dispatch(dropdownActions.getShiftThunk2());
     if (window?.location?.pathname?.includes("candidate-list")) {
       onGetPageList(pageNo, props.type || activeTab, "");
     }
@@ -118,7 +121,11 @@ export const CustomerCandidateLists = (props) => {
   const onSelectClick = (evt) => {
     setPageNo(1);
     setSelectedJobId(evt.target.value);
-    navigate(`/customer-candidate-${activeTab}/${parseInt(evt.target.value)}`);
+    navigate(
+      `/customer-candidate-${activeTab}/${parseInt(
+        evt.target.value === "" ? 0 : evt.target.value
+      )}`
+    );
   };
 
   const onActionClick = async (evt, type) => {
