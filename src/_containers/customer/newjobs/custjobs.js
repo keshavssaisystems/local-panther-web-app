@@ -22,7 +22,7 @@ export const CustJobList = () => {
   const getCompanyDetails = async function () {
     await dispatch(
       createjobActions.getCustomerDetailsThunk(
-        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+        JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
       )
     );
   };
