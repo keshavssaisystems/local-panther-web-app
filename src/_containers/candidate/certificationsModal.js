@@ -245,7 +245,6 @@ export function CertificationsModal(props) {
       new_data.fromDateValid = checkDateValidation(validData);
       setToDateSelect(date);
     } else if (check === "fromMonth") {
-      debugger;
       let date = { ...fromDateSelect };
       if (data === "Select month") {
         date.month = "";

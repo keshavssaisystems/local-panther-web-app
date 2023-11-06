@@ -2,6 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "_helpers";
 // create slice name
 const name = "candidateList";
+const internalUserId = JSON.parse(
+  localStorage.getItem("userDetails")
+).InternalUserId;
 
 // get recommended job list thunk
 export const getRecommendedJobList = createAsyncThunk(
@@ -103,7 +106,7 @@ export const postJobPrescreenApplication = createAsyncThunk(
 export const getCompJobPrescreenApplication = createAsyncThunk(
   `${name}/getCompJobPrescreenApplication`,
   async (jobId) => {
-    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/JobCandidatePrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}&isActive=true`;
+    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/JobCandidatePrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}&isActive=true&candidateId=${internalUserId}`;
     return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
   }
 );

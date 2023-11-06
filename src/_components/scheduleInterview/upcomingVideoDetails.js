@@ -26,7 +26,8 @@ import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
 import { Chat } from "firebase/chat/chat";
-import { getTimezoneDateTime } from "_helpers/helper";
+import { getTimezoneDateTime, getChannelId } from "_helpers/helper";
+import { NavLink } from "react-router-dom";
 
 export function UpcomingVideoDetails({
   interviewId,
@@ -58,6 +59,12 @@ export function UpcomingVideoDetails({
   let scheduled = getTimezoneDateTime(
     interviewDetails?.scheduledate,
     "MM/DD/YYYY"
+  );
+
+  let id = getChannelId(
+    interviewDetails?.candidateid,
+    interviewDetails?.candidateuserid,
+    interviewDetails?.scheduleinterviewid
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
   let yesterdayDate = getTimezoneDateTime(
@@ -316,7 +323,9 @@ export function UpcomingVideoDetails({
                   <div className="p-custom">
                     <p className="mb-0">
                       <a href="/" onClick={(e) => e.preventDefault()}>
-                        Click here to join
+                        <NavLink to={`/video-screen/${id}`} exact>
+                          Click here to join
+                        </NavLink>
                       </a>{" "}
                       the in-app interview
                     </p>

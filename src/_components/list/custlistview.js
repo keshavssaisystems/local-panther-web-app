@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,12 +13,6 @@ import {
   Button,
   ButtonGroup,
 } from "reactstrap";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-} from "react-icons/io";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
@@ -447,7 +441,9 @@ export const CustCandidateListView = (props) => {
             name: <span className="table-title">Skills</span>,
             selector: (row) => (
               <span className="table-cell" title={returnSkills(row)}>
-                {returnSkills(row)}
+                {returnSkills(row)?.length > 60
+                  ? returnSkills(row).slice(0, 60 - 1) + "…"
+                  : returnSkills(row)}
               </span>
             ),
             sortable: true,
@@ -552,11 +548,13 @@ export const CustCandidateListView = (props) => {
             name: <span className="table-title">Skills</span>,
             selector: (row) => (
               <span className="table-cell" title={returnSkills(row)}>
-                {returnSkills(row)}
+                {returnSkills(row)?.length > 50
+                  ? returnSkills(row).slice(0, 50 - 1) + "…"
+                  : returnSkills(row)}
               </span>
             ),
             sortable: true,
-            width: "30%",
+            width: "28%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -639,7 +637,7 @@ export const CustCandidateListView = (props) => {
                   : ""}
               </span>
             ),
-            width: "15%",
+            width: "17%",
           },
 
           {

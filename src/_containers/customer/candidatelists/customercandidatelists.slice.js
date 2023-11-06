@@ -82,6 +82,8 @@ function createExtraActions() {
         const recommendedStatus =
           customerRecommendedJobStatusId === 4
             ? `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
+            : customerRecommendedJobStatusId === 3
+            ? `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
             : `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
         if (jobId !== undefined) {
           return await fetchWrapper.get(

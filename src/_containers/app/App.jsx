@@ -2,9 +2,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import {
-  AdminDashboard,
-} from "_containers/dashboard/Dashboard";
+import { AdminDashboard } from "_containers/dashboard/Dashboard";
 
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
@@ -52,7 +50,7 @@ import { AdminListing } from "_containers/admin/common/adminListing";
 import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
-
+import { VideoScreen } from "firebase/video";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -126,10 +124,7 @@ export function App() {
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
           />
-          <Route
-            path="/report"
-            element={<OpenJobs title={"Open Jobs"} />}
-          />
+          <Route path="/report" element={<OpenJobs title={"Open Jobs"} />} />
           <Route
             path="/report/open-jobs"
             element={<OpenJobs title={"Open Jobs"} />}
@@ -144,7 +139,11 @@ export function App() {
           />
           <Route
             path="/report/incomplete-candidate-profile/:id"
-            element={<IncompleteCandidateProfile title={"Incomplete Candidate Profile"} />}
+            element={
+              <IncompleteCandidateProfile
+                title={"Incomplete Candidate Profile"}
+              />
+            }
           />
           <Route
             path="/report/candidate-report/:id"
@@ -152,11 +151,19 @@ export function App() {
           />
           <Route
             path="/report/jobs-without-matched-candidates/:id"
-            element={<JobsWithoutMatchedCandidates title={"Jobs Without Matched Candidate"} />}
+            element={
+              <JobsWithoutMatchedCandidates
+                title={"Jobs Without Matched Candidate"}
+              />
+            }
           />
           <Route
             path="/report/canddates-without-matched-jobs/:id"
-            element={<CandidateWithoutMatchedJobs title={"Candidate Without Matched Jobs"} />}
+            element={
+              <CandidateWithoutMatchedJobs
+                title={"Candidate Without Matched Jobs"}
+              />
+            }
           />
           <Route
             path="/report/non-published-jobs/:id"
@@ -453,6 +460,7 @@ export function App() {
                 element={<ForgotPasswordSuccess />}
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/video-screen/:id" element={<VideoScreen />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}

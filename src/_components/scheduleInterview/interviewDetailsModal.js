@@ -47,6 +47,7 @@ export function InterviewDetailsModal({
             rejectInterview={(e) => rejectInterview(e)}
             interviewDetails={interviewDetail}
             fromCustList={fromCustList}
+            toggle={toggle}
           />
         </ModalBody>
       </Modal>
