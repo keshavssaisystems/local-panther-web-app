@@ -16,7 +16,9 @@ export const getRecommendedJobList = createAsyncThunk(
     isCandidate,
   }) => {
     const jobStatusId =
-      candidateRecommendedJobStatusId === 4
+      candidateRecommendedJobStatusId === undefined
+        ? ""
+        : candidateRecommendedJobStatusId === 4
         ? `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
         : candidateRecommendedJobStatusId === 3
         ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
