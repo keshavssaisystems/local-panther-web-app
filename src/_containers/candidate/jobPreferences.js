@@ -612,7 +612,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired minimum pay</strong>
 
-                            <div>{item.pay != "" ? item.pay : "-"}</div>
+                            <div>{item.pay != "" ? "$" + item.pay : "-"}</div>
                           </Row>
                           <hr />
                           <Row>
