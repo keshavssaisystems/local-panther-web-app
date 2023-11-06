@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -47,6 +47,65 @@ export function ProfilePDF(props) {
   const additionalInfo = useSelector(
     (state) => state.getProfile.profileData.additionalInfo
   );
+  const [getData, setGetResponse] = useState([]);
+  const [desiredJobType, setDesiredJobType] = useState([
+    {
+      id: 1,
+      name: "Flexible",
+    },
+    {
+      id: 2,
+      name: "Specific Job Title",
+    },
+  ]);
+  const get_response = useSelector(
+    (state) => state.getProfile?.profileData?.jobPreferenceInfo
+  );
+
+  useEffect(() => {
+    let filtered_data = get_response?.map((rest) => {
+      return {
+        candidatejobpreferenceid: rest.candidatejobpreferenceid,
+        desiredJobTitle: desiredJobType?.find(
+          (x) => x.id == rest.desiredjobtitleid
+        )?.name,
+        specificJobTitle: rest.candidateJobtitlesDtos
+          ?.filter((item) => item.ischecked)
+          .map((item) => item.desiredjobtitlename)
+          .join(", "),
+        desiredJobTypes: rest.candidateDesiredWorkTypeDtos
+          ?.filter((item) => item.ischecked)
+          .map((item) => item.desiredworktypename)
+          .join(", "),
+        desiredWorkTypes: rest.candidateDesiredJobTypesDtos
+          ?.filter((item) => item.ischecked)
+          .map((item) => item.joblocationtype)
+          .join(", "),
+        workSchedules: rest.candidateWorkSchedulesDtos
+          ?.filter((item) => item.ischecked)
+          .map((item) => item.workschedules)
+          .join(", "),
+
+        shifts: rest.candidateShiftsDtos
+          ?.filter((item) => item.ischecked)
+          .map((item) => item.shifts)
+          .join(", "),
+        pay:
+          (rest.minimumbasepay && rest.payperiodtype) ||
+          (rest.minimumbasepay != "" && rest.payperiodtype != "")
+            ? rest.minimumbasepay + ", " + rest.payperiodtype
+            : rest.minimumbasepay
+            ? rest.minimumbasepay
+            : rest.payperiodtype
+            ? rest.payperiodtype
+            : "",
+        relocate: rest.willingtorelocate ? true : false,
+        workType: "",
+      };
+    });
+
+    setGetResponse(filtered_data);
+  }, [get_response]);
 
   const generatePDF = function () {
     const doc = new jsPDF();
@@ -139,7 +198,7 @@ export function ProfilePDF(props) {
                     </span>
                   </p>
                 </Col>
-                {/* {profile_img != "" ? (
+                {profile_img !== "" ? (
                   <Col>
                     <div className="float-end rounded-circle profile-img me-3">
                       <img
@@ -152,7 +211,7 @@ export function ProfilePDF(props) {
                   </Col>
                 ) : (
                   <></>
-                )} */}
+                )}
               </Row>
             </div>
             {qualificationInfo?.length > 0 ? (
@@ -242,7 +301,7 @@ export function ProfilePDF(props) {
             )}
 
             {additionalInfo?.length > 0 ? (
-              <div>
+              <div className="mb-4">
                 <h2 style={{ color: "#979797" }}>
                   <strong>Additional information</strong>
                 </h2>
@@ -259,12 +318,91 @@ export function ProfilePDF(props) {
                     </ul>
 
                     <p> {personalInfo_temp.summary}</p>
-                    <p> {personalInfo_temp.additionalInfo}</p>
+                    <p> {personalInfo_temp.additionalinformation}</p>
                   </div>
                 ))}
               </div>
             ) : (
               ""
+            )}
+
+            {getData?.length > 0 ? (
+              <div>
+                <h2 style={{ color: "#979797" }}>
+                  <strong>Job Preferences</strong>
+                </h2>
+                <hr />
+                {getData?.map((item) => (
+                  <div>
+                    {item.desiredJobTitle !== "" && item.desiredJobTitle ? (
+                      <p>
+                        <strong>{item.desiredJobTitle}</strong>
+
+                        <div></div>
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
+                    {item.specificJobTitle !== "" && item.specificJobTitle ? (
+                      <p>
+                        <strong>Specific job title : </strong>
+                        {item.specificJobTitle}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
+                    {item.desiredJobTypes !== "" && item.desiredJobTypes ? (
+                      <p>
+                        <strong>Desired job types : </strong>
+                        {item.desiredJobTypes}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
+                    {item.workSchedules !== "" && item.workSchedules ? (
+                      <p>
+                        <strong>Work schedules : </strong>
+                        {item.workSchedules}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
+                    {item.shifts !== "" && item.shifts ? (
+                      <p>
+                        <strong>Shifts : </strong>
+                        {item.shifts}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
+                    {item.pay !== "" && item.pay ? (
+                      <p>
+                        <strong>Desired minimum pay : </strong>
+                        {"$"}
+                        {item.pay}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+
+                    {item.desiredWorkTypes !== "" && item.desiredWorkTypes ? (
+                      <p>
+                        <strong>Work type : </strong>
+                        {item.desiredWorkTypes}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <></>
             )}
           </div>
         </CardBody>
