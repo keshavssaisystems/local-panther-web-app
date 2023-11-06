@@ -473,6 +473,12 @@ export function Registration() {
           nextInput.focus();
         }
       }
+      if (e === "") {
+        const prevInput = document.getElementById(`mobile-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }
     }
     if (check === "email") {
       new_data[index] = e;
@@ -486,6 +492,12 @@ export function Registration() {
         const nextInput = document.getElementById(`email-${index + 1}`);
         if (nextInput) {
           nextInput.focus();
+        }
+      }
+      if (e === "") {
+        const prevInput = document.getElementById(`email-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
         }
       }
     }

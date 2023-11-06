@@ -10,6 +10,8 @@ import {
   Button,
   FormGroup,
   Form,
+  InputGroup,
+  InputGroupText,
 } from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
@@ -90,7 +92,7 @@ export function JobPreferences(props) {
         candidateLocationsDtos: [],
         candidateShiftsDtos: [],
         candidateWorkSchedulesDtos: [],
-        candidateid: userDetails.InternalUserId,
+        candidateid: userDetails?.InternalUserId ?? 0,
         candidatejobpreferenceid: 0,
         desiredjobtitle: "",
         desiredjobtitleid: 0,
@@ -123,7 +125,7 @@ export function JobPreferences(props) {
           candidateShiftsDtos: get_response[0].candidateShiftsDtos,
           candidateWorkSchedulesDtos:
             get_response[0].candidateWorkSchedulesDtos,
-          candidateid: userDetails.InternalUserId,
+          candidateid: userDetails?.InternalUserId ?? 0,
           candidatejobpreferenceid: get_response[0].candidatejobpreferenceid,
           desiredjobtitle: get_response[0].desiredjobtitle,
           desiredjobtitleid: get_response[0].desiredjobtitleid,
@@ -249,7 +251,7 @@ export function JobPreferences(props) {
   const loadData = function () {
     let data = {
       candidatejobpreferenceid: 0,
-      candidateid: userDetails.InternalUserId,
+      candidateid: userDetails?.InternalUserId ?? 0,
       desiredjobtitleid: 0,
       jobtitlesids: "",
       desiredjobtypes: "",
@@ -263,7 +265,7 @@ export function JobPreferences(props) {
       locationids: "",
       desiredworktypeids: "",
       isactive: true,
-      currentUserId: userDetails.UserId,
+      currentUserId: userDetails?.UserId ?? 0,
     };
     setFormData(data);
   };
@@ -412,7 +414,7 @@ export function JobPreferences(props) {
       candidateLocationsDtos: [],
       candidateShiftsDtos: [],
       candidateWorkSchedulesDtos: [],
-      candidateid: userDetails.InternalUserId,
+      candidateid: userDetails?.InternalUserId ?? 0,
       candidatejobpreferenceid: 0,
       desiredjobtitle: "",
       desiredjobtitleid: 0,
@@ -473,7 +475,7 @@ export function JobPreferences(props) {
     let data = preferenceDetails.map((rest) => {
       return {
         candidatejobpreferenceid: rest.candidatejobpreferenceid,
-        candidateid: parseInt(userDetails.InternalUserId),
+        candidateid: parseInt(userDetails?.InternalUserId ?? 0),
         desiredjobtitleid: parseInt(rest.desiredjobtitleid),
         jobtitlesids: rest.jobtitlesids,
         desiredjobtypes: rest.desiredjobtypes,
@@ -486,7 +488,7 @@ export function JobPreferences(props) {
         locationids: rest.locationids,
         desiredworktypeids: rest.desiredworktypeids,
         isactive: rest.isactive,
-        currentUserId: parseInt(userDetails.UserId),
+        currentUserId: parseInt(userDetails?.UserId ?? 0),
       };
     });
 
@@ -889,17 +891,21 @@ export function JobPreferences(props) {
                         <Label for="zipCode" className="fw-semi-bold">
                           Minimum base pay
                         </Label>
-                        <input
-                          type="text"
-                          name="minPay"
-                          id="minPay"
-                          placeholder="Enter base pay"
-                          className="field-input placeholder-text form-control input-text"
-                          onInput={(evt) =>
-                            onHandleInputChange("basePay", evt.target.value)
-                          }
-                          value={parentItem.minimumbasepay}
-                        />
+
+                        <InputGroup>
+                          <InputGroupText>$</InputGroupText>
+                          <Input
+                            type="text"
+                            name="minPay"
+                            id="minPay"
+                            placeholder="Enter base pay"
+                            className="field-input placeholder-text form-control input-text"
+                            onInput={(evt) =>
+                              onHandleInputChange("basePay", evt.target.value)
+                            }
+                            value={parentItem.minimumbasepay}
+                          />
+                        </InputGroup>
                       </FormGroup>
                     </Col>
                   </Row>

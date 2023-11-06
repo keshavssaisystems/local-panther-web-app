@@ -14,8 +14,9 @@ import {
 } from "reactstrap";
 
 import { BsCheckCircle } from "react-icons/bs";
-
+import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid) => {
@@ -192,7 +193,7 @@ export const CandListView = (props) => {
             <Button
               // outline
               size="sm"
-              title="reject"
+              title="Reject interview"
               onClick={() =>
                 onBtnClick("rejected", row.candidaterecommendedjobid)
               }
@@ -205,7 +206,7 @@ export const CandListView = (props) => {
           <Col>
             <Button
               size="sm"
-              title="accept"
+              title="Accept interview"
               className="btn-icon"
               color="success"
               onClick={() =>
@@ -310,7 +311,7 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "12%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Title</span>,
@@ -321,7 +322,7 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "30%",
+            width: "18%",
           },
 
           {
@@ -341,7 +342,7 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "20%",
+            width: "15%",
           },
 
           {
@@ -365,9 +366,78 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
-
+          {
+            name: <span className="table-title">Scheduled</span>,
+            cell: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? getTimezoneDateTime(
+                        moment(
+                          row?.scheduledInterviewDtos[0]?.scheduledate
+                        ).format("MM/DD/YYYY") +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                            : " 00:00:00")
+                      )
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? getTimezoneDateTime(
+                      moment(
+                        row?.scheduledInterviewDtos[0]?.scheduledate
+                      ).format("MM/DD/YYYY") +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                          : " 00:00:00")
+                    )
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "17%",
+          },
+          {
+            name: <span className="table-title">Status</span>,
+            cell: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? row?.scheduledInterviewDtos[0]?.isactive === true
+                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? "Accepted"
+                        : row?.scheduledInterviewDtos[0]?.isrejected === true
+                        ? "Rejected"
+                        : "Tentative"
+                      : "Cancelled"
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? row?.scheduledInterviewDtos[0]?.isactive === true
+                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? "Accepted"
+                      : row?.scheduledInterviewDtos[0]?.isrejected === true
+                      ? "Rejected"
+                      : "Tentative"
+                    : "Cancelled"
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "11%",
+          },
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
@@ -383,7 +453,7 @@ export const CandListView = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            width: "8%",
+            width: "6%",
           },
         ]
       : [

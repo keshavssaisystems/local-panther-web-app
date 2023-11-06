@@ -25,6 +25,7 @@ import customerIcons from "assets/utils/images/customer";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -548,13 +549,13 @@ export const CustCandidateListView = (props) => {
             name: <span className="table-title">Skills</span>,
             selector: (row) => (
               <span className="table-cell" title={returnSkills(row)}>
-                {returnSkills(row)?.length > 50
-                  ? returnSkills(row).slice(0, 50 - 1) + "…"
+                {returnSkills(row)?.length > 30
+                  ? returnSkills(row).slice(0, 30 - 1) + "…"
                   : returnSkills(row)}
               </span>
             ),
             sortable: true,
-            width: "28%",
+            width: "21%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -587,7 +588,7 @@ export const CustCandidateListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "15%",
+            width: "14%",
           },
 
           {
@@ -623,21 +624,66 @@ export const CustCandidateListView = (props) => {
                 title={
                   row?.scheduledInterviewDtos &&
                   row?.scheduledInterviewDtos?.length > 0
-                    ? moment(
-                        row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY hh:mm A")
+                    ? getTimezoneDateTime(
+                        moment(
+                          row?.scheduledInterviewDtos[0]?.scheduledate
+                        ).format("MM/DD/YYYY") +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                            : " 00:00:00")
+                      )
                     : ""
                 }
               >
                 {row?.scheduledInterviewDtos &&
                 row?.scheduledInterviewDtos?.length > 0
-                  ? moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
-                      "MM/DD/YYYY hh:mm A"
+                  ? getTimezoneDateTime(
+                      moment(
+                        row?.scheduledInterviewDtos[0]?.scheduledate
+                      ).format("MM/DD/YYYY") +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                          : " 00:00:00")
                     )
                   : ""}
               </span>
             ),
             width: "17%",
+          },
+          {
+            name: <span className="table-title">Interview Status</span>,
+            sortable: true,
+            cell: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? row?.scheduledInterviewDtos[0]?.isactive === true
+                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? "Accepted"
+                        : row?.scheduledInterviewDtos[0]?.isrejected === true
+                        ? "Rejected"
+                        : "Tentative"
+                      : "Cancelled"
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? row?.scheduledInterviewDtos[0]?.isactive === true
+                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? "Accepted"
+                      : row?.scheduledInterviewDtos[0]?.isrejected === true
+                      ? "Rejected"
+                      : "Tentative"
+                    : "Cancelled"
+                  : ""}
+              </span>
+            ),
+            width: "10%",
           },
 
           {
@@ -649,7 +695,7 @@ export const CustCandidateListView = (props) => {
             ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Action</span>,
