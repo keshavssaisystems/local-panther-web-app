@@ -15,7 +15,10 @@ import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { NoDataFound } from "_components/common/nodatafound";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
 import "./candidatelist.scss";
-import { customerCandidateListsActions } from "_store";
+import {
+  customerCandidateListsActions,
+  scheduleInterviewActions,
+} from "_store";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -100,13 +103,18 @@ export const CandidateList = (props) => {
       case "rejected":
         candidateRecommendedJobStatusId = 6;
         break;
+      case "notIntrested":
+        candidateRecommendedJobStatusId = 6;
+        break;
       default:
         break;
     }
     let candidateId = JSON.parse(
       localStorage.getItem("userDetails")
     )?.InternalUserId;
+    let isCandidate = val === "notIntrested" ? true : false;
     let candObj = {
+      isCandidate,
       candidateId,
       pageNumber: pageNo ? pageNo : 1,
       pageSize: val === "matched" ? candCPSize : candLPSize,
@@ -187,6 +195,40 @@ export const CandidateList = (props) => {
     } else if (type === "accepted") {
       let res = await dispatch(
         candidateListActions.candidateAccept(candidaterecommendedjobid)
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+        toggle(activeTab, pageNo);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+    } else if (type === "acceptInterview") {
+      let res = await dispatch(
+        scheduleInterviewActions.acceptInterviewThunk({
+          scheduleinterviewid: candidaterecommendedjobid,
+        })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+        toggle(activeTab, pageNo);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+    } else if (type === "rejectInterview") {
+      let payload = {
+        rejectionreason: "",
+      };
+      let res = await dispatch(
+        scheduleInterviewActions.rejectInterviewThunk({
+          scheduleinterviewid: candidaterecommendedjobid,
+          payload: payload,
+        })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
@@ -430,6 +472,19 @@ export const CandidateList = (props) => {
               }}
             >
               Rejected
+            </Button>
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "notIntrested" })
+              }
+              onClick={() => {
+                toggle("notIntrested");
+              }}
+            >
+              Not intrested
             </Button>
           </ButtonGroup>
         </Col>
@@ -848,6 +903,67 @@ export const CandidateList = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="rejected">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateJobList?.length > 0 ? (
+                      <>
+                        <CandListView
+                          type={activeTab}
+                          data={candidateJobList}
+                          onCandidateActions={(
+                            type,
+                            candidaterecommendedjobid
+                          ) =>
+                            onCandidateCardActions(
+                              type,
+                              candidaterecommendedjobid
+                            )
+                          }
+                          showModal={(e, type) => onShowModal(e, type)}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenClickAction(type, row)
+                          }
+                        />
+                        {totalRecords > candLPSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / candLPSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateJobList.length === 0 && !loading ? (
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="notIntrested">
               <p>
                 {loading ? (
                   <>

@@ -47,7 +47,7 @@ export const CandListView = (props) => {
             <Button
               // outline
               size="sm"
-              title="reject"
+              title="Not intrested"
               //   onClick={() => onRejectClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="danger"
@@ -93,7 +93,7 @@ export const CandListView = (props) => {
             <Button
               // outline
               size="sm"
-              title="reject"
+              title="Not intrested"
               onClick={() =>
                 onBtnClick("rejected", row.candidaterecommendedjobid)
               }
@@ -150,7 +150,7 @@ export const CandListView = (props) => {
             <Button
               // outline
               size="sm"
-              title="reject"
+              title="Not intrested"
               onClick={() =>
                 onBtnClick("rejected", row.candidaterecommendedjobid)
               }
@@ -195,7 +195,10 @@ export const CandListView = (props) => {
               size="sm"
               title="Reject interview"
               onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
+                onBtnClick(
+                  "rejectInterview",
+                  row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                )
               }
               className="btn-icon"
               color="danger"
@@ -210,7 +213,10 @@ export const CandListView = (props) => {
               className="btn-icon"
               color="success"
               onClick={() =>
-                onBtnClick("accepted", row.candidaterecommendedjobid)
+                onBtnClick(
+                  "acceptInterview",
+                  row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                )
               }
             >
               <img src={customerIcons.list_accept} alt="list accept"></img>
@@ -225,7 +231,7 @@ export const CandListView = (props) => {
             <Button
               // outline
               size="sm"
-              title="reject"
+              title="Not intrested"
               onClick={() =>
                 onBtnClick("rejected", row.candidaterecommendedjobid)
               }
@@ -237,7 +243,7 @@ export const CandListView = (props) => {
           </Col>
         </Row>
       );
-    } else if (props.type === "rejected") {
+    } else if (props.type === "notIntrested") {
       return (
         <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
           <Col>
@@ -404,7 +410,7 @@ export const CandListView = (props) => {
             width: "17%",
           },
           {
-            name: <span className="table-title">Status</span>,
+            name: <span className="table-title">Interview Status</span>,
             cell: (row) => (
               <span
                 className="table-cell"
@@ -454,6 +460,105 @@ export const CandListView = (props) => {
             allowOverflow: true,
             button: true,
             width: "6%",
+          },
+        ]
+      : props.type === "rejected"
+      ? [
+          {
+            name: <span className="table-title">Job Id</span>,
+            id: "Job Id",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobid}>
+                {row.jobid}
+              </span>
+            ),
+            sortable: true,
+            width: "12%",
+          },
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobtitle}>
+                {row.jobtitle}
+              </span>
+            ),
+            sortable: true,
+            width: "35%",
+          },
+
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                <>
+                  {row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"}
+                </>
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "13%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "10%",
           },
         ]
       : [
