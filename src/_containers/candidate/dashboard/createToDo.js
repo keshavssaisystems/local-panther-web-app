@@ -13,11 +13,18 @@ import "./dashboard.scss";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { SuccessPopUp } from "_components/common/successPopUp";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CreateToDo(props) {
   const dispatch = useDispatch();
   let id = JSON.parse(localStorage.getItem("userDetails")).UserId;
   const [success, setSuccess] = useState(false);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -83,13 +90,32 @@ export function CreateToDo(props) {
     }
 
     if (!response.payload) {
-      setError(true);
-      setMessage(response.error.message);
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
     } else {
-      setSuccess(true);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
     }
   };
-
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+    props.onCallToDo();
+  };
   return (
     <>
       <div className="profile-view react-date-picker-profile">
@@ -157,21 +183,17 @@ export function CreateToDo(props) {
           <></>
         )}
       </div>
-      <Modal size="md" isOpen={success}>
-        <SuccessPopUp
-          icon={"success"}
-          message={props.check == "add" ? "New todo added" : "Updated todo"}
-          callBack={() => [setSuccess(false), props.onCallToDo()]}
-        />
-      </Modal>
 
-      <Modal size="md" isOpen={error}>
-        <SuccessPopUp
-          icon={"error"}
-          message={"Something went wrong"}
-          callBack={() => setError(false)}
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
         />
-      </Modal>
+        {showAlert.description}
+      </>
     </>
   );
 }
