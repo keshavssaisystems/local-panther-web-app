@@ -4,15 +4,14 @@
 // import "firebase/firestore";
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyAmeO6JfBFQhhTCMKWqWhsf6wDYpPSzkV8",
-  authDomain: "panther-web-rtc.firebaseapp.com",
-  projectId: "panther-web-rtc",
-  storageBucket: "panther-web-rtc.appspot.com",
-  messagingSenderId: "605186655444",
-  appId: "1:605186655444:web:ca10449cdc61daf53ca741",
-  measurementId: "G-MYWPE89SWD",
+  apiKey: "AIzaSyCwJ9XU5LfjGXkD77q6MwsPkvz5QdLUHKY",
+  authDomain: "panther-test-8cd56.firebaseapp.com",
+  projectId: "panther-test-8cd56",
+  storageBucket: "panther-test-8cd56.appspot.com",
+  messagingSenderId: "275858738478",
+  appId: "1:275858738478:web:b191ac1830f73fb7fe7ebf",
+  measurementId: "G-41FNE7FGNE",
 };
-
 // if (!firebase.apps.length) {
 //   firebase.initializeApp(firebaseConfig);
 // }
