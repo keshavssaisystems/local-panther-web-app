@@ -85,13 +85,14 @@ function createExtraActions() {
             : customerRecommendedJobStatusId === 3
             ? `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
             : `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+        const isCandidate = customerRecommendedJobStatusId === 3 ? true : false;
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=false&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=false&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true`
           );
         }
       }
