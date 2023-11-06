@@ -10,7 +10,7 @@ import AsyncSelect from "react-select/async";
 import Slider from "react-slick";
 import "./registration.scss";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
+import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
 
@@ -141,8 +141,10 @@ export function Registration() {
 
   async function onSubmit(payload) {
     if (!validated.mobile || !validated.email) {
-      setError(true);
-      setMessage("Please verify your email/mobile to create account");
+      showSweetAlert({
+        title: "Please verify your email/mobile to create account",
+        type: "warning",
+      });
       return;
     }
 
@@ -150,13 +152,21 @@ export function Registration() {
     if (!response.payload) {
       setMessage(response.error.message);
 
-      setError(true);
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
     }
   }
 
   const [mobileValidError, setMobileValidError] = useState(false);
   const [emailValidError, setEmailValidError] = useState(false);
-  const [formValid, setFormValid] = useState(false);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
   const [field, setField] = useState(false);
   const [otpDetails, setOTPDetails] = useState([]);
 
@@ -203,7 +213,12 @@ export function Registration() {
 
     if (data !== "") {
       setField(data);
-      setFormValid(true);
+
+      showSweetAlert({
+        title: "Please enter valid " + data + " to verify email/phone",
+        type: "warning",
+      });
+
       return;
     }
     let userRegistrationId = otpDetails.userregistrationid;
@@ -243,7 +258,10 @@ export function Registration() {
         setOtpForm(true);
       } else {
         setMessage(response?.error?.message);
-        setError(true);
+        showSweetAlert({
+          title: response?.error?.message,
+          type: "warning",
+        });
         setOtpForm(false);
       }
     }
@@ -269,10 +287,28 @@ export function Registration() {
         setEmailForm(true);
       } else {
         setMessage(response?.error?.message);
-        setError(true);
+        showSweetAlert({
+          title: response?.error?.message,
+          type: "warning",
+        });
         setOtpForm(false);
       }
     }
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
   };
 
   const verifyMobileOTPDetails = async function () {
@@ -290,13 +326,19 @@ export function Registration() {
         setSaveOTP([]);
         new_data.mobile = true;
         setValidated(new_data);
-        setSuccess(true);
+        showSweetAlert({
+          title: response.payload.message,
+          type: "success",
+        });
         setOtpForm(false);
         setMessage("Phone number verified");
       } else {
         otp_new.mobile = "";
         setMessage("Something went wrong");
-        setError(true);
+        showSweetAlert({
+          title: "Something went wrong, please try later!!",
+          type: "error",
+        });
       }
 
       setOtp(otp_new);
@@ -320,13 +362,19 @@ export function Registration() {
         new_data.email = true;
         setValidated(new_data);
         setSaveOTP([]);
-        setSuccess(true);
+        showSweetAlert({
+          title: response.payload.message,
+          type: "success",
+        });
         setEmailForm(false);
         setMessage("Email verified");
       } else {
         otp_new.email = "";
         setMessage("Something went wrong");
-        setError(true);
+        showSweetAlert({
+          title: "Something went wrong, please try later!!",
+          type: "error",
+        });
       }
       setOtp(otp_new);
     }
@@ -418,6 +466,13 @@ export function Registration() {
       setSaveOTP(new_data);
       otp_new.mobile = new_data.join("");
       setOtp(otp_new);
+      if (e !== "") {
+        // Automatically focus on the next input field
+        const nextInput = document.getElementById(`mobile-${index + 1}`);
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
     }
     if (check === "email") {
       new_data[index] = e;
@@ -425,6 +480,14 @@ export function Registration() {
       setSaveOTP(new_data);
       otp_new.email = new_data.join("");
       setOtp(otp_new);
+
+      if (e !== "") {
+        // Automatically focus on the next input field
+        const nextInput = document.getElementById(`email-${index + 1}`);
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
     }
   };
 
@@ -826,7 +889,7 @@ export function Registration() {
                       <Input
                         type="text"
                         name="otp"
-                        id="otp"
+                        id={`mobile-${index}`}
                         maxLength="1"
                         style={{ fontSize: "24px" }}
                         className="form-control placeholder-name text-center"
@@ -910,7 +973,7 @@ export function Registration() {
                       <Input
                         type="text"
                         name="otp"
-                        id="otp"
+                        id={`email-${index}`}
                         maxLength="1"
                         style={{ fontSize: "24px" }}
                         className="form-control placeholder-name text-center"
@@ -968,39 +1031,16 @@ export function Registration() {
         </Card>
       </Modal>
 
-      {/* <Modal className="modal-reject-align profile-view" isOpen={error}>
-        <Card>
-          <CardBody>
-            <div className="d-flex justify-content-center mb-3">
-              <img src={errorIcon} alt="success-icon" />
-            </div>
-            <div className="mb-0 mb-3 d-flex justify-content-center rejected-success-text">
-              {message}
-            </div>
-            <div>
-              <Row>
-                <Col className="d-flex justify-content-center">
-                  <Button
-                    className="me-2 accept-modal-btn"
-                    onClick={(evt) => setError(false)}
-                  >
-                    OK
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          </CardBody>
-        </Card>
-      </Modal> */}
-
-      <Modal size="md" isOpen={error}>
-        <SuccessPopUp
-          icon={"error"}
-          message={message}
-          tryAgain={false}
-          callBack={() => setError(false)}
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
         />
-      </Modal>
+        {showAlert.description}
+      </>
 
       <Modal className="modal-reject-align profile-view" isOpen={cityReqError}>
         <Card>
@@ -1029,40 +1069,6 @@ export function Registration() {
             </div>
           </CardBody>
         </Card>
-      </Modal>
-
-      <Modal className="modal-reject-align profile-view" isOpen={formValid}>
-        <Card>
-          <CardBody>
-            <div className="d-flex justify-content-center mb-3">
-              <img src={errorIcon} alt="success-icon" />
-            </div>
-            <div className="m-3 rejected-success-text">
-              Please enter valid {field} to verify email/phone
-            </div>
-
-            <div>
-              <Row>
-                <Col className="d-flex justify-content-center">
-                  <Button
-                    className="me-2 accept-modal-btn"
-                    onClick={(evt) => setFormValid(false)}
-                  >
-                    OK
-                  </Button>
-                </Col>
-              </Row>
-            </div>
-          </CardBody>
-        </Card>
-      </Modal>
-
-      <Modal size="md" isOpen={success}>
-        <SuccessPopUp
-          icon={"success"}
-          message={message}
-          callBack={() => [setSuccess(false)]}
-        />
       </Modal>
     </>
   );

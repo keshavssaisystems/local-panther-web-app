@@ -5,12 +5,19 @@ import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
-import { customerDashboardActions } from "_store";
+import { customerDashboardActions, createjobActions } from "_store";
 
 export default function CustomerDashboard() {
   const dispatch = useDispatch();
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
+  };
+  const getCompanyDetails = async function () {
+    await dispatch(
+      createjobActions.getCustomerDetailsThunk(
+        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+      )
+    );
   };
   const getDashboardGraphData = async function () {
     await dispatch(
@@ -18,6 +25,7 @@ export default function CustomerDashboard() {
     );
   };
   useEffect(() => {
+    getCompanyDetails();
     getDashboardGraphData();
     getDashboardCounts();
   }, []);

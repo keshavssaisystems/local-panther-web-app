@@ -237,6 +237,17 @@ export function VideoInterviewDetails({
       <div className="p-custom">
         <p className="mb-0">Applied for {interviewDetail?.jobtitle}</p>
       </div>
+      <div className="p-custom">
+        <h6 className="fw-bold job-heading">Status</h6>
+        <p className="mb-0">
+          {interviewDetail?.isaccepted === true &&
+          interviewDetail?.isrejected === false
+            ? "Scheduled"
+            : interviewDetail?.isrejected === true
+            ? "Rejected by candidate"
+            : "Awaiting confirmation from candidate"}
+        </p>
+      </div>
       {showInviteCard === true && (
         <div className="mt-2 mb-2">
           <InviteToInterviewCard

@@ -118,6 +118,8 @@ export function CertificationDetails(props) {
                         certificationDetails.map((item, index) => (
                           <div className="mb-4">
                             <strong className="me-2 content-title">
+                              {certificationDetails[index].certificationtype}{" "}
+                              {" - "}{" "}
                               {certificationDetails[index].certificationname}{" "}
                             </strong>
                             <div className="float-end">

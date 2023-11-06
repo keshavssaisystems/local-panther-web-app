@@ -26,6 +26,7 @@ import { formatDate } from "_helpers/helper";
 import { SuccessPopUp } from "_components/common/successPopUp";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function TodoList(props) {
   const dispatch = useDispatch();
@@ -41,12 +42,17 @@ export function TodoList(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
   const [deleteId, setDeleteId] = useState(0);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
 
   const handlePageChange = () => {
     setDeleteConfirm(false);
-    setSuccess(false);
-    setError(false);
     setModal(false);
+    closeSweetAlert();
     props.onCallBack();
   };
 
@@ -56,7 +62,7 @@ export function TodoList(props) {
   const addNotes = function (mode, data, e) {
     e.preventDefault();
     setCheck(mode);
-    if (mode == "edit") {
+    if (mode === "edit") {
       setSelectedData(data);
     } else {
       setSelectedData(null);
@@ -64,16 +70,36 @@ export function TodoList(props) {
     setModal(true);
   };
   const deleteToDo = async function () {
+    setDeleteConfirm(false);
     let id = deleteId;
     let response = await dispatch(candidateDashboardActions.deleteToDo({ id }));
 
     if (!response.payload) {
-      setError(true);
-      setMessage(response.error.message);
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
     } else {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
     }
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
   };
 
   return (
@@ -198,7 +224,7 @@ export function TodoList(props) {
         </Modal>
       </div>
 
-      <Modal
+      {/* <Modal
         className="modal-reject-align profile-view"
         isOpen={deleteConfirmation}
       >
@@ -234,22 +260,47 @@ export function TodoList(props) {
             </div>
           </CardBody>
         </Card>
-      </Modal>
-      <Modal size="md" isOpen={success}>
-        <SuccessPopUp
-          icon={"success"}
-          message={"Todo deleted"}
-          callBack={() => [setSuccess(false), handlePageChange()]}
+      </Modal> */}
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => handlePageChange()}
         />
-      </Modal>
+        {showAlert.description}
+      </>
 
-      <Modal size="md" isOpen={error}>
-        <SuccessPopUp
-          icon={"error"}
-          message={"Something went wrong"}
-          callBack={() => setError(false)}
-        />
-      </Modal>
+      <>
+        {deleteConfirmation ? (
+          <SweetAlert
+            title="Are you sure want to delete the todo!!"
+            type="warning"
+            showConfirm={false}
+          >
+            <Row>
+              <Col className="d-flex justify-content-center">
+                <Button
+                  className="me-2"
+                  style={{backgroundColor:'#2f479b'}}
+                  onClick={(evt) => deleteToDo(false)}
+                >
+                  YES
+                </Button>
+                <Button
+                  className="success-close-btn"
+                  onClick={(evt) => setDeleteConfirm(false)}
+                >
+                  NO
+                </Button>
+              </Col>
+            </Row>
+          </SweetAlert>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }
