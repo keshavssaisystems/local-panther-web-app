@@ -198,7 +198,7 @@ export function ProfilePDF(props) {
                     </span>
                   </p>
                 </Col>
-                {profile_img !== "" ? (
+                {/* {profile_img !== "" ? (
                   <Col>
                     <div className="float-end rounded-circle profile-img me-3">
                       <img
@@ -211,7 +211,7 @@ export function ProfilePDF(props) {
                   </Col>
                 ) : (
                   <></>
-                )}
+                )} */}
               </Row>
             </div>
             {qualificationInfo?.length > 0 ? (
