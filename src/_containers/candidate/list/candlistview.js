@@ -165,39 +165,41 @@ export const CandListView = (props) => {
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
           </Button>
-          {row?.scheduledInterviewDtos[0]?.isaccepted === true && (
-            <Button
-              // outline
-              size="sm"
-              title="Reject interview"
-              onClick={() =>
-                onBtnClick(
-                  "rejectInterview",
-                  row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                )
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          )}
-          {row?.scheduledInterviewDtos[0]?.isrejected === true && (
-            <Button
-              size="sm"
-              title="Accept interview"
-              className="btn-icon"
-              color="success"
-              onClick={() =>
-                onBtnClick(
-                  "acceptInterview",
-                  row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                )
-              }
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
-            </Button>
-          )}
+          {row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+            row?.scheduledInterviewDtos[0]?.isactive === true && (
+              <Button
+                // outline
+                size="sm"
+                title="Reject interview"
+                onClick={() =>
+                  onBtnClick(
+                    "rejectInterview",
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                  )
+                }
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            )}
+          {row?.scheduledInterviewDtos[0]?.isrejected === true &&
+            row?.scheduledInterviewDtos[0]?.isactive === true && (
+              <Button
+                size="sm"
+                title="Accept interview"
+                className="btn-icon"
+                color="success"
+                onClick={() =>
+                  onBtnClick(
+                    "acceptInterview",
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                  )
+                }
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+            )}
         </ButtonGroup>
       );
     } else if (props.type === "accepted") {
