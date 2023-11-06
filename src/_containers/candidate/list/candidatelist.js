@@ -376,9 +376,9 @@ export const CandidateList = (props) => {
         <Col
           xs={12}
           sm={12}
-          md={8}
-          lg={8}
-          xl={8}
+          md={10}
+          lg={10}
+          xl={10}
           className="mb-3 tab-selection-text"
         >
           <ButtonGroup size="lg" className="cust-btn-tabs">
