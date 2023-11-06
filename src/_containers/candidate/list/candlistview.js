@@ -11,6 +11,7 @@ import {
   Row,
   Col,
   Button,
+  ButtonGroup,
 } from "reactstrap";
 
 import { BsCheckCircle } from "react-icons/bs";
@@ -29,248 +30,219 @@ export const CandListView = (props) => {
   const renderButtons = (row) => {
     if (props.type === "liked") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
-          <Col>
-            <Button
-              disabled={props.type === "maybe"}
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="Not intrested"
-              //   onClick={() => onRejectClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="danger"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="apply"
-              className="btn-icon"
-              color="primary"
-              onClick={() =>
-                onBtnClick("applied", row.candidaterecommendedjobid)
-              }
-            >
-              <BsCheckCircle></BsCheckCircle>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            disabled={props.type === "maybe"}
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            //   onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            outline
+            size="sm"
+            title="apply"
+            className="btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
+          >
+            <BsCheckCircle></BsCheckCircle>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "maybe") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="Not intrested"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="apply"
-              className="btn-icon"
-              color="primary"
-              onClick={() =>
-                onBtnClick("applied", row.candidaterecommendedjobid)
-              }
-            >
-              <BsCheckCircle></BsCheckCircle>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            outline
+            size="sm"
+            title="apply"
+            className="btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
+          >
+            <BsCheckCircle></BsCheckCircle>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "applied") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="Not intrested"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "interview") {
       return (
-        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="Reject interview"
-              onClick={() =>
-                onBtnClick(
-                  "rejectInterview",
-                  row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                )
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="sm"
-              title="Accept interview"
-              className="btn-icon"
-              color="success"
-              onClick={() =>
-                onBtnClick(
-                  "acceptInterview",
-                  row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                )
-              }
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          {row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+            row?.scheduledInterviewDtos[0]?.isactive === true && (
+              <Button
+                // outline
+                size="sm"
+                title="Reject interview"
+                onClick={() =>
+                  onBtnClick(
+                    "rejectInterview",
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                  )
+                }
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            )}
+          {row?.scheduledInterviewDtos[0]?.isrejected === true &&
+            row?.scheduledInterviewDtos[0]?.isactive === true && (
+              <Button
+                size="sm"
+                title="Accept interview"
+                className="btn-icon"
+                color="success"
+                onClick={() =>
+                  onBtnClick(
+                    "acceptInterview",
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                  )
+                }
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+            )}
+        </ButtonGroup>
       );
     } else if (props.type === "accepted") {
       return (
-        <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="Not intrested"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "notIntrested") {
       return (
-        <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+        </ButtonGroup>
       );
     }
   };
