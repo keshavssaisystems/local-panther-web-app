@@ -75,7 +75,7 @@ export function ResumeDetails(props) {
       form.append("Candidateresumeid", resumeDetails.candidateresumeid);
       form.append(
         "Candidateid",
-        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+        JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
       );
       form.append("Resumepath", "");
       form.append("Resumefile", acceptedFiles[0]);
@@ -105,7 +105,7 @@ export function ResumeDetails(props) {
       const form = new FormData();
       form.append(
         "Candidateid",
-        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+        JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
       );
       form.append("Resumefile", acceptedFiles[0]);
 
