@@ -13,14 +13,23 @@ export const getRecommendedJobList = createAsyncThunk(
     pageNumber,
     candidateRecommendedJobStatusId,
     candidateId,
+    isCandidate,
   }) => {
     const jobStatusId =
-      candidateRecommendedJobStatusId === 4
+      candidateRecommendedJobStatusId === undefined
+        ? ""
+        : candidateRecommendedJobStatusId === 4
         ? `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-        : candidateRecommendedJobStatusId
+        : candidateRecommendedJobStatusId === 3
         ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-        : "";
-    const RECOMMENDED_JOB_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=true&candidateId=${candidateId}&pageSize=${pageSize}&pageNumber=${pageNumber}${jobStatusId}`;
+        : (candidateRecommendedJobStatusId === 6 ||
+            candidateRecommendedJobStatusId === 5) &&
+          isCandidate === false
+        ? `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
+        : candidateRecommendedJobStatusId === 6 && isCandidate === true
+        ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
+        : `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+    const RECOMMENDED_JOB_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&candidateId=${candidateId}&pageSize=${pageSize}&pageNumber=${pageNumber}${jobStatusId}`;
     return await fetchWrapper.get(RECOMMENDED_JOB_END_POINT);
   }
 );

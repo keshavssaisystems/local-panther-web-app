@@ -251,13 +251,13 @@ export function CandCardView({
 
                     <Button
                       outline
-                      title="reject"
+                      title="Not intrested"
                       className="btn-icon mb-1"
                       color="primary"
                       onClick={() => onBtnClick("rejected")}
                       size="sm"
                     >
-                      Reject <BsXCircle></BsXCircle>
+                      Not intrested <BsXCircle></BsXCircle>
                     </Button>
 
                     <Button
