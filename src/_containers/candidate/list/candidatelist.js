@@ -105,7 +105,7 @@ export const CandidateList = (props) => {
     }
     let candidateId = JSON.parse(
       localStorage.getItem("userDetails")
-    ).InternalUserId;
+    )?.InternalUserId;
     let candObj = {
       candidateId,
       pageNumber: pageNo ? pageNo : 1,
@@ -304,7 +304,7 @@ export const CandidateList = (props) => {
         jobprescreenapplicationid: data.jobprescreenapplicationid,
         jobid: data.jobid,
         candidateid: parseInt(
-          JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+          JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
         ),
         answer: data.answer,
         isactive: data.isactive,

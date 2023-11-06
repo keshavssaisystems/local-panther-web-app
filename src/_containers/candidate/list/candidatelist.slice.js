@@ -2,9 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "_helpers";
 // create slice name
 const name = "candidateList";
-const internalUserId = JSON.parse(
-  localStorage.getItem("userDetails")
-).InternalUserId;
+const internalUserId =
+  JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId ?? 0;
 
 // get recommended job list thunk
 export const getRecommendedJobList = createAsyncThunk(
