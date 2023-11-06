@@ -553,9 +553,13 @@ export function PersonalInformation(props) {
   //   }
   // };
   const addEditProfileImage = function (acceptedFiles) {
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
     const config = {
       headers: {
         "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
       },
     };
 
