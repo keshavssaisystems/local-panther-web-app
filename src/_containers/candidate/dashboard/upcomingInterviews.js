@@ -19,6 +19,7 @@ import {
   convertTo12HourFormat,
   getLocationText,
   calculateEndTime,
+  getTimezoneDateTime,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -35,6 +36,7 @@ import Loader from "react-loaders";
 import { customerCandidateListsActions } from "_store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import moment from "moment-timezone";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -91,11 +93,7 @@ export function UpcomingInterviews() {
     {
       name: "Time",
       selector: (row) => (
-        <span title={convertTo12HourFormat(row.starttime)}>
-          {convertTo12HourFormat(row.starttime) +
-            " to " +
-            calculateEndTime(row.starttime, row.duration)}
-        </span>
+        <span title={getStartTime(row)}>{getStartTime(row)}</span>
       ),
       sortable: false,
     },
@@ -115,6 +113,29 @@ export function UpcomingInterviews() {
       button: true,
     },
   ];
+
+  const getStartTime = function (interviewDetail) {
+    let startTime = getTimezoneDateTime(
+      moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
+        " " +
+        interviewDetail?.starttime,
+      "hh:mm a"
+    );
+    let startDate =
+      moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
+      " " +
+      startTime;
+    let durationArr =
+      interviewDetail?.duration !== undefined
+        ? interviewDetail?.duration.split(" ")
+        : [];
+    let endTime = getTimezoneDateTime(
+      moment(startDate).add(durationArr[0], "m"),
+      "hh:mm a"
+    );
+
+    return startTime + " to " + endTime;
+  };
 
   const totalRecords = useSelector(
     (state) => state.candidateDashboard?.dashboardGraphData?.length
