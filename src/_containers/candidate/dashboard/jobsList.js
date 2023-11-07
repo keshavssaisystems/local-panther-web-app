@@ -18,7 +18,7 @@ import {
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { formatDate } from "_helpers/helper";
-import { candidateListActions } from "_store";
+import { candidateListActions, custJobListActions } from "_store";
 import { useDispatch } from "react-redux";
 import jobsIcon from "../../../assets/utils/images/latest-job.svg";
 import DataTable from "react-data-table-component";
@@ -105,6 +105,7 @@ export function JobsList(props) {
   ];
 
   const handlePageChange = (page) => {
+    setSelected([]);
     setPageNo(page);
     let candObj = {
       isCandidate: true,
@@ -136,9 +137,18 @@ export function JobsList(props) {
       </div>
     );
   };
-  const navigateToJobs = function (data) {
+  const navigateToJobs = async function (data) {
     let new_data = [...selected];
-    new_data.push(data);
+    let response = await dispatch(
+      custJobListActions.getJobDetail({ jobId: data.jobid })
+    );
+
+    if (response.payload) {
+      new_data.push(response.payload.data);
+    } else {
+      new_data.push(data);
+    }
+
     setSelected(new_data);
     setOpenJob(true);
   };
@@ -164,6 +174,7 @@ export function JobsList(props) {
   };
 
   const close = function () {
+    setSelected([]);
     setOpenJob(false);
     props.onCallBack();
   };
@@ -199,6 +210,7 @@ export function JobsList(props) {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
+    setSelected([]);
   };
 
   const showSweetAlert = ({ title, type }) => {

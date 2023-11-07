@@ -222,7 +222,10 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           <DetailsHeader
             heading={jobDetail.jobtitle}
             subHeading={jobDetail.companyname}
-            location={jobDetail.locationaddress}
+            location={returnAddress()}
+            // ApplyButton={type !== "Open"}
+            // jobId={jobDetail.jobid}
+            // department={jobDetail.departmentid ?? 1}
             showApplyBtn={!isModal}
             applyBtnState={true}
             onClickApply={() => onClickApplyBtn()}
