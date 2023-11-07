@@ -747,9 +747,9 @@ export function PersonalInformation(props) {
                       </Row>
                       <Row>
                         <Col className="mb-2">
-                          {selectedCandidate.personalInfo.gender != "" ? (
+                          {selectedCandidate.personalInfo.gender !== "" ? (
                             <div>
-                              {selectedCandidate.personalInfo.gender ==
+                              {selectedCandidate.personalInfo.gender ===
                               "Female" ? (
                                 <i
                                   className="pe-7s-female personal-sec-icon me-2"
