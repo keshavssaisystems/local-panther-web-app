@@ -201,6 +201,7 @@ const getProfileSlice = createSlice({
         ];
 
         state.dropdownLists = dropdown_selected;
+        state.profileImage = localStorage.getItem("profileImage");
       })
       .addCase(getCandidate.rejected, (state, action) => {
         state.loader = false;

@@ -42,7 +42,11 @@ export function UserBox() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [isToggleOn, setIsToggleOn] = useState(false);
+  const personalInfo_temp = useSelector(
+    (state) => state.getProfile?.profileImage
+  );
 
+  const [profileImg, setProfileImg] = useState("");
   const dispatch = useDispatch();
   const logout = () => dispatch(authActions.logout());
   useEffect(() => {
@@ -51,6 +55,12 @@ export function UserBox() {
   }, []);
   const [changePwd, setChangePwd] = useState(false);
 
+  useEffect(() => {
+    if (personalInfo_temp && personalInfo_temp !== "") {
+      setProfileImg(personalInfo_temp);
+    } else {
+    }
+  }, [personalInfo_temp]);
   // only show nav when logged in
   if (!authUser) return null;
 
@@ -113,7 +123,9 @@ export function UserBox() {
                       width={42}
                       className="rounded-circle"
                       src={
-                        userDetail?.Profilephotopath?.length
+                        profileImg && profileImg !== ""
+                          ? profileImg
+                          : userDetail?.Profilephotopath?.length
                           ? userDetail?.Profilephotopath
                           : avatar1
                       }
