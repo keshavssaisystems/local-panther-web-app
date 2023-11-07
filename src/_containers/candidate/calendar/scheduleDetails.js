@@ -1,22 +1,7 @@
-import React, { useState } from "react";
-import {
-  CardHeader,
-  Col,
-  CardFooter,
-  Button,
-  DropdownItem,
-  DropdownToggle,
-  DropdownMenu,
-  UncontrolledButtonDropdown,
-  Card,
-  CardBody,
-} from "reactstrap";
+import React from "react";
+import { CardHeader, Card, CardBody } from "reactstrap";
 import "../../customer/scheduleInterview/scheduleInterview.scss";
 import moment from "moment-timezone";
-import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
-import personIcon from "../../../assets/utils/images/person-fill.svg";
-import linkIcon from "../../../assets/utils/images/link.png";
-import copyLinkIcon from "../../../assets/utils/images/copy-link.png";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
@@ -155,10 +140,10 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                       <b>Interview status -</b>{" "}
                       {interviewDetail?.isaccepted === true &&
                       interviewDetail?.isrejected === false
-                        ? "Scheduled"
+                        ? "Accepted"
                         : interviewDetail?.isrejected === true
                         ? "Rejected"
-                        : "Tentitive"}
+                        : "Tentative"}
                     </p>
                   </div>
                   <div className="p-custom">
