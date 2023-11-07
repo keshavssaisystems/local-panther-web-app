@@ -18,6 +18,7 @@ import "./candidatelist.scss";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
+  custJobListActions,
 } from "_store";
 
 export const CandidateList = (props) => {
@@ -259,7 +260,14 @@ export const CandidateList = (props) => {
 
   const onShowModal = async (row, type) => {
     if (type === "jd") {
-      setSelectedRow(row);
+      let response = await dispatch(
+        custJobListActions.getJobDetail({ jobId: row.jobid })
+      );
+      if (response.payload) {
+        setSelectedRow(response.payload.data);
+      } else {
+        setSelectedRow(row);
+      }
       setShowJDModal(true);
     } else if (type === "id") {
       let res = await dispatch(
