@@ -107,6 +107,7 @@ export function JobsList(props) {
   const handlePageChange = (page) => {
     setPageNo(page);
     let candObj = {
+      isCandidate: true,
       candidateId,
       pageNumber: page,
       pageSize: 5,
