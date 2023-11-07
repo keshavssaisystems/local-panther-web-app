@@ -21,6 +21,7 @@ export function CandidateDashboard() {
 
   const loadPage = async function () {
     let candObj = {
+      isCandidate: true,
       candidateId,
       pageNumber: 1,
       pageSize: 5,
