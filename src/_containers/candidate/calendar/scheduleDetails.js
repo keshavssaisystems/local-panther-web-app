@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Card, CardBody } from "reactstrap";
+import {
+  CardHeader,
+  Col,
+  CardFooter,
+  Button,
+  DropdownItem,
+  DropdownToggle,
+  DropdownMenu,
+  UncontrolledButtonDropdown,
+  Card,
+  CardBody,
+} from "reactstrap";
 import "../../customer/scheduleInterview/scheduleInterview.scss";
 import moment from "moment-timezone";
 import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
@@ -10,13 +21,14 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { getChannelId } from "_helpers/helper";
+import { BsPersonVideo2, BsPerson } from "react-icons/bs";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
-  const [isCopied, setIsCopied] = useState(false);
   let scheduled = getTimezoneDateTime(
     interviewDetail?.scheduledate,
     "MM/DD/YYYY"
   );
+  console.log(interviewDetail);
   let id = getChannelId(
     interviewDetail?.candidateid,
     interviewDetail?.candidateuserid,
@@ -62,23 +74,6 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     moment(startDate).add(durationArr[0], "m"),
     "hh:mm a"
   );
-  const handleCopyClick = async (data) => {
-    try {
-      await navigator.clipboard.writeText(data);
-      setIsCopied(true);
-    } catch (error) {
-      console.error("Failed to copy link:", error);
-    }
-  };
-
-  function addEllipsisAfter20Chars(inputString) {
-    if (inputString.length <= 15) {
-      return inputString; // Return the string as-is if it's 20 characters or shorter
-    } else {
-      // Use the slice method to extract the first 20 characters and add "..."
-      return inputString.slice(0, 15) + "...";
-    }
-  }
   const getText = function (data) {
     let text = "";
     if (data.companyname != "") {
@@ -111,34 +106,22 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     return text;
   };
 
-  // const onStartVideo = () => {
-  //   let id = getChannelId(
-  //     interviewDetail?.candidateid,
-  //     interviewDetail?.candidateuserid,
-  //     interviewDetail?.scheduleinterviewid
-  //   );
-
-  //   navigate(`/video-screen/${id}`);
-  //   onClose();
-  // };
-
   return (
     <>
-      <Card>
+      <Card className="scheduled-interview">
         <CardBody>
           <div className="m-1 p-1 candidate-schedule">
-            <div className="mb-3">
+            <div className="mb-3 ">
               <span className="interview-details-title">
                 {interviewDetail.jobtitle}
               </span>
 
               <span className="interview-details-label">
-                {interviewDetail.companyname != "" ||
-                interviewDetail.cityname != "" ||
-                interviewDetail.statename != "" ||
-                interviewDetail.countryname != "" ? (
+                {interviewDetail.companyname !== "" ||
+                interviewDetail.cityname !== "" ||
+                interviewDetail.statename !== "" ||
+                interviewDetail.countryname !== "" ? (
                   <div className="mt-1" style={{ fontSize: "12px" }}>
-                    {/* <BsPinMap className="personal-sec-icon me-2" /> */}
                     <i className="pe-7s-map-marker location-icon"> </i>
                     <span className="location-text">
                       {getText(interviewDetail)}
@@ -148,114 +131,113 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                   ""
                 )}
               </span>
-
-              <div className="">
-                <p className="mb-0 mt-2">
-                  {startDate} to {endTime}
-                </p>
-              </div>
             </div>
-
-            <div className="p-custom mb-3">
-              <p className="mb-0 interview-details-label">Duration </p>
-              <p>{interviewDetail.duration}</p>
-
-              <p className="mb-0 interview-details-label">Mode </p>
-              <div>
-                {interviewDetail?.format === "Video" && (
-                  // <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
-                  <img className="me-2" src={videoIcon} alt="video" />
-                )}
-                {interviewDetail?.format === "Phone" && (
-                  <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp me-2" />
-                )}
-                {interviewDetail?.format === "In-person" && (
-                  <img className="me-2" src={personIcon} alt="video" />
-                )}
-                <span style={{ verticalAlign: "middle" }}>
-                  {interviewDetail?.format} Interview
-                </span>
-              </div>
-            </div>
-            <div className="p-custom mb-3">
-              <p className="mb-0 interview-details-label">Interviewer </p>
-              <div>
-                <img className="me-2" src={personIcon} alt="personIcon" />
-                <span style={{ verticalAlign: "middle" }}>
-                  {interviewDetail.interviewername == ""
-                    ? "No interviewer added"
-                    : interviewDetail.interviewername}
-                </span>
-              </div>
-            </div>
-            {interviewDetail?.format === "Phone" && (
-              <div className="p-custom">
-                <p className="mb-0 interview-details-label">Phone no </p>
-                <span>{interviewDetail.textremaindernumbers}</span>
-              </div>
-            )}
-            {interviewDetail?.format === "In-person" && (
-              <div className="p-custom">
-                <p className="mb-0 interview-details-label">Scheduled at</p>
-                <span>{interviewDetail.interviewaddress}</span>
-              </div>
-            )}
-
-            {interviewDetail.isappvideocall === true &&
-              interviewDetail?.format === "Video" && (
-                <div className="p-custom">
-                  <p className="mb-0">
-                    <a href="/" onClick={(e) => onClose()}>
-                      <NavLink to={`/video-screen/${id}`} exact>
-                        Click here to join
-                      </NavLink>
-                    </a>{" "}
-                    the in-app interview
-                  </p>
-                </div>
-              )}
-
-            {interviewDetail?.isappvideocall === false &&
-              interviewDetail?.format === "Video" && (
-                <div>
-                  {interviewDetail.videolink ? (
-                    <div className="p-custom">
-                      <p className="mb-0 interview-details-label">Link : </p>
-                      <div>
-                        <img
-                          className="me-3 link-icon"
-                          src={linkIcon}
-                          alt="link-icon"
-                        />
-                        <a
-                          className="me-2"
-                          href={interviewDetail.videolink}
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          {addEllipsisAfter20Chars(interviewDetail.videolink)}
-                        </a>
-                        <span>
-                          <img
-                            onClick={() =>
-                              handleCopyClick(interviewDetail.videolink)
-                            }
-                            src={copyLinkIcon}
-                            className="copy-link-icon me-2"
-                            alt="copy-link"
-                          />
-                          {isCopied && (
-                            <span className="success-message">
-                              Link copied!
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <></>
+            <Card className="mt-3">
+              <CardHeader className="card-header-tab">
+                <div className="card-header-title font-size-lg text-capitalize fw-normal">
+                  {interviewDetail?.format === "Video" && (
+                    <BsPersonVideo2 className="header-icon icon-gradient bg-amy-crisp" />
                   )}
+                  {interviewDetail?.format === "Phone" && (
+                    <BsFillTelephoneFill className="header-icon icon-gradient bg-amy-crisp" />
+                  )}
+                  {interviewDetail?.format === "In-person" && (
+                    <BsPerson className="header-icon icon-gradient bg-amy-crisp" />
+                  )}
+                  {interviewDetail?.format} Interview
                 </div>
-              )}
+              </CardHeader>
+              <CardBody>
+                <div>
+                  <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end"></div>
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      <b>Interview status -</b>{" "}
+                      {interviewDetail?.isaccepted === true &&
+                      interviewDetail?.isrejected === false
+                        ? "Scheduled"
+                        : interviewDetail?.isrejected === true
+                        ? "Rejected"
+                        : "Tentitive"}
+                    </p>
+                  </div>
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      {scheduled} at {startTime} to {endTime} ({" "}
+                      {interviewDetail.duration} )
+                    </p>
+                  </div>
+                  {interviewDetail?.format === "Phone" && (
+                    <div className="p-custom">
+                      <p className="mb-0">
+                        Phone no -{" "}
+                        {interviewDetail.candidatephonenumber !== undefined
+                          ? ""
+                          : interviewDetail.candidatephonenumber}
+                      </p>
+                    </div>
+                  )}
+                  {interviewDetail?.format === "In-person" && (
+                    <div className="p-custom">
+                      <p className="mb-0">
+                        Scheduled at {interviewDetail.interviewaddress}
+                      </p>
+                    </div>
+                  )}
+
+                  {interviewDetail?.isappvideocall === false &&
+                    interviewDetail?.format === "Video" &&
+                    interviewDetail?.isactive === true &&
+                    interviewDetail?.isrejected === false && (
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          <a
+                            href={interviewDetail.videolink}
+                            target={"_blank"}
+                            rel="noreferrer"
+                          >
+                            Click here to join
+                          </a>{" "}
+                          the interview
+                        </p>
+                      </div>
+                    )}
+                  {interviewDetail.isappvideocall === true &&
+                    interviewDetail?.format === "Video" &&
+                    interviewDetail?.isactive === true &&
+                    interviewDetail?.isrejected === false && (
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          <a href="/">
+                            <NavLink to={`/video-screen/${id}`} exact>
+                              Click here to join
+                            </NavLink>
+                          </a>{" "}
+                          the in-app interview
+                        </p>
+                      </div>
+                    )}
+                  {interviewDetail.messagetocandidate !== "" && (
+                    <div className="p-custom">
+                      <p className="mb-0">
+                        <b>Note -</b>{" "}
+                        {interviewDetail.messagetocandidate === ""
+                          ? "-"
+                          : interviewDetail.messagetocandidate}
+                      </p>
+                    </div>
+                  )}
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      <b>Scheduled by -</b>{" "}
+                      {interviewDetail.interviewername === ""
+                        ? "No interviewer added"
+                        : interviewDetail.interviewername}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
           </div>
         </CardBody>
       </Card>

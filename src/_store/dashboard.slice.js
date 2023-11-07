@@ -39,6 +39,14 @@ export const getToDo = createAsyncThunk(
   }
 );
 
+export const getLatestJobs = createAsyncThunk(
+  `${name}/getLatestJobs`,
+  async ({ candidateId }) => {
+    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateDashboard/LatestJob/${candidateId}`;
+    return await fetchWrapper.get(DASHBOARD_END_POINT);
+  }
+);
+
 export const createToDo = createAsyncThunk(
   `${name}/createToDo`,
   async ({ data }) => {
@@ -70,10 +78,12 @@ const candidateDashboardSlice = createSlice({
     dashboardGraphData: [],
     toDoList: [],
     alertsList: [],
+    candidateJobList: [],
     loading: false,
     todoLoader: false,
     alertsLoader: false,
     schedulesLoader: false,
+    jobsLoader: false,
   },
   reducers: {},
 
@@ -152,6 +162,18 @@ const candidateDashboardSlice = createSlice({
       state.error = action.error;
       state.alertsLoader = false;
     },
+
+    [getLatestJobs.pending]: (state) => {
+      state.jobsLoader = true;
+    },
+    [getLatestJobs.fulfilled]: (state, action) => {
+      state.candidateJobList = action.payload.data;
+      state.jobsLoader = false;
+    },
+    [getLatestJobs.rejected]: (state, action) => {
+      state.error = action.error;
+      state.jobsLoader = false;
+    },
   },
 });
 
@@ -165,6 +187,7 @@ export const candidateDashboardActions = {
   updateToDo,
   deleteToDo,
   getAlerts,
+  getLatestJobs,
 };
 
 export const candidateDashboardReducer = candidateDashboardSlice.reducer;

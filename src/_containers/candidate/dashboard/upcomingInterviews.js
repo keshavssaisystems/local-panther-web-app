@@ -19,6 +19,8 @@ import {
   convertTo12HourFormat,
   getLocationText,
   calculateEndTime,
+  getTimezoneDateTime,
+  getChannelId,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -35,6 +37,8 @@ import Loader from "react-loaders";
 import { customerCandidateListsActions } from "_store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import moment from "moment-timezone";
+import { NavLink } from "react-router-dom";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -61,6 +65,8 @@ export function UpcomingInterviews() {
     disableAutoClose: true,
   };
   const [showInterview, setShowInterview] = useState(false);
+  const [appShowInterview, setAppShowInterview] = useState(false);
+
   const columns = [
     {
       name: "Job title",
@@ -91,11 +97,7 @@ export function UpcomingInterviews() {
     {
       name: "Time",
       selector: (row) => (
-        <span title={convertTo12HourFormat(row.starttime)}>
-          {convertTo12HourFormat(row.starttime) +
-            " to " +
-            calculateEndTime(row.starttime, row.duration)}
-        </span>
+        <span title={getStartTime(row)}>{getStartTime(row)}</span>
       ),
       sortable: false,
     },
@@ -115,6 +117,29 @@ export function UpcomingInterviews() {
       button: true,
     },
   ];
+
+  const getStartTime = function (interviewDetail) {
+    let startTime = getTimezoneDateTime(
+      moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
+        " " +
+        interviewDetail?.starttime,
+      "hh:mm a"
+    );
+    let startDate =
+      moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
+      " " +
+      startTime;
+    let durationArr =
+      interviewDetail?.duration !== undefined
+        ? interviewDetail?.duration.split(" ")
+        : [];
+    let endTime = getTimezoneDateTime(
+      moment(startDate).add(durationArr[0], "m"),
+      "hh:mm a"
+    );
+
+    return startTime + " to " + endTime;
+  };
 
   const totalRecords = useSelector(
     (state) => state.candidateDashboard?.dashboardGraphData?.length
@@ -176,7 +201,13 @@ export function UpcomingInterviews() {
 
     // Create a Date object using the parsed values
     const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
-    setLink(data.videolink);
+
+    let id = getChannelId(
+      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId,
+      JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+      data?.scheduleinterviewid
+    );
+
     if (targetDate === new Date()) {
       if (mode === "phone") {
         showSweetAlert({
@@ -184,7 +215,13 @@ export function UpcomingInterviews() {
           type: "success",
         });
       } else {
-        setShowInterview(true);
+        if (data.isappvideocall) {
+          setLink(id);
+          setAppShowInterview(true);
+        } else {
+          setLink(data.videolink);
+          setShowInterview(true);
+        }
       }
     } else if (targetDate > new Date()) {
       showSweetAlert({
@@ -204,7 +241,13 @@ export function UpcomingInterviews() {
             type: "success",
           });
         } else {
-          setShowInterview(true);
+          if (data.isappvideocall) {
+            setLink(id);
+            setAppShowInterview(true);
+          } else {
+            setLink(data.videolink);
+            setShowInterview(true);
+          }
         }
       }
     }
@@ -368,6 +411,23 @@ export function UpcomingInterviews() {
             <a href={link} target="_blank">
               click to join{" "}
             </a>
+          </SweetAlert>
+        )}
+      </div>
+
+      <div>
+        {appShowInterview && (
+          <SweetAlert
+            title="Interview started"
+            onCancel={() => setAppShowInterview(false)}
+            type="success"
+            showCancel
+            showConfirm={false}
+            showClose
+          >
+            <NavLink to={`/video-screen/${link}`} exact>
+              Click here to join
+            </NavLink>
           </SweetAlert>
         )}
       </div>

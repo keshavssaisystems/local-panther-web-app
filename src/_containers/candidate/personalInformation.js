@@ -584,11 +584,6 @@ export function PersonalInformation(props) {
             result.data.data.profilephotopath
           );
           setProfileImage(result.data.data.profilephotopath);
-          dispatch(
-            getProfileActions.updateProfileImage(
-              result.data.data.profilephotopath
-            )
-          );
         } else {
           setError(true);
         }

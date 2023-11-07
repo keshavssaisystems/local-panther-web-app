@@ -29,6 +29,7 @@ export function CandidateDashboard() {
     dispatch(candidateDashboardActions.getAlerts({ candidateId }));
     dispatch(candidateDashboardActions.getSchedules({ candidateId }));
     dispatch(candidateDashboardActions.getToDo({ userId }));
+    dispatch(candidateDashboardActions.getLatestJobs({ candidateId }));
     dispatch(candidateListActions.getRecommendedJobList(candObj));
   };
 
