@@ -289,7 +289,7 @@ export function VideoInterviewDetails({
                 <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
                   <DropdownItem onClick={(e) => editScheduledInterview(true)}>
                     <i className="dropdown-icon lnr-inbox"> </i>
-                    <span>Edit</span>
+                    <span>Reschedule</span>
                   </DropdownItem>
                   <DropdownItem onClick={(e) => setShowCancelPopup(true)}>
                     <i className="dropdown-icon lnr-file-empty"> </i>
