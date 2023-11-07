@@ -175,8 +175,15 @@ export function UpcomingInterviews() {
       customerCandidateListsActions.getScheduleIVList(scheduleInterviewId)
     );
     if (res.payload) {
-      setPopupData(res?.payload?.data?.scheduledInterviewList[0]);
-      setDetails(true);
+      if (res?.payload?.data?.scheduledInterviewList.length > 0) {
+        setPopupData(res?.payload?.data?.scheduledInterviewList[0]);
+        setDetails(true);
+      } else {
+        showSweetAlert({
+          title: "Something went wrong, please try again later",
+          type: "error",
+        });
+      }
     } else {
       //do nothing
     }
