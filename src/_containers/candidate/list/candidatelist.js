@@ -484,7 +484,7 @@ export const CandidateList = (props) => {
                 toggle("notIntrested");
               }}
             >
-              Not intrested
+              Not Interested
             </Button>
           </ButtonGroup>
         </Col>

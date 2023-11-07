@@ -45,7 +45,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not intrested"
+            title="Not Interested"
             //   onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -83,7 +83,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not intrested"
+            title="Not Interested"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -130,7 +130,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not intrested"
+            title="Not Interested"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -165,7 +165,7 @@ export const CandListView = (props) => {
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
           </Button>
-          {row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+          {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
               <Button
                 // outline
@@ -183,7 +183,7 @@ export const CandListView = (props) => {
                 <img src={customerIcons.list_reject} alt="list reject"></img>
               </Button>
             )}
-          {row?.scheduledInterviewDtos[0]?.isrejected === true &&
+          {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
               <Button
                 size="sm"
@@ -208,7 +208,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not intrested"
+            title="Not Interested"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
