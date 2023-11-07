@@ -121,7 +121,7 @@ export const CustCandidateListView = (props) => {
     let res = await dispatch(
       customerCandidateListsActions.postScheduleInterview(formData)
     );
-    if (res.payload.statusCode === 201) {
+    if (res.payload?.statusCode === 201) {
       setShowSchdIntSModal(false);
       props.showSweetAlert({ title: res.payload.message, type: "success" });
 
