@@ -186,36 +186,36 @@ export function VideoInterviewDetails({
                     {" "}
                     Message{" "}
                   </Button>
+
                   <ButtonGroup size={"sm"}>
-                    <Button
-                      name="format"
-                      color={"success"}
-                      size={"sm"}
-                      className="mb-2 btn-transition"
-                      outline
-                      onClick={(e) => setShowAcceptPopup(true)}
-                    >
-                      <BsFillCheckCircleFill className="mb-1" />
-                    </Button>
-                    {/* <Button
-                  name="format"
-                  color={"primary"}
-                  size={"sm"}
-                  className="mb-2 btn-transition"
-                  outline
-                >
-                  <BsFillQuestionCircleFill className="mb-1" />
-                </Button> */}
-                    <Button
-                      name="format"
-                      color={"danger"}
-                      size={"sm"}
-                      className="mb-2 btn-transition"
-                      outline
-                      onClick={(e) => setShowRejectPopup(true)}
-                    >
-                      <BsXCircleFill className="mb-1" />
-                    </Button>
+                    {interviewDetail?.isaccepted === false &&
+                      interviewDetail?.isactive === true && (
+                        <Button
+                          name="format"
+                          color={"success"}
+                          size={"sm"}
+                          className="mb-2 btn-transition"
+                          outline
+                          title="Accept interview"
+                          onClick={(e) => setShowAcceptPopup(true)}
+                        >
+                          <BsFillCheckCircleFill className="mb-1" />
+                        </Button>
+                      )}
+                    {interviewDetail?.isrejected === false &&
+                      interviewDetail?.isactive === true && (
+                        <Button
+                          name="format"
+                          color={"danger"}
+                          size={"sm"}
+                          className="mb-2 btn-transition"
+                          outline
+                          title="Reject interview"
+                          onClick={(e) => setShowRejectPopup(true)}
+                        >
+                          <BsXCircleFill className="mb-1" />
+                        </Button>
+                      )}
                   </ButtonGroup>
 
                   <Button

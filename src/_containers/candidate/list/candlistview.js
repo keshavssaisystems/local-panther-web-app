@@ -11,11 +11,13 @@ import {
   Row,
   Col,
   Button,
+  ButtonGroup,
 } from "reactstrap";
 
 import { BsCheckCircle } from "react-icons/bs";
-
+import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid) => {
@@ -28,242 +30,219 @@ export const CandListView = (props) => {
   const renderButtons = (row) => {
     if (props.type === "liked") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
-          <Col>
-            <Button
-              disabled={props.type === "maybe"}
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              //   onClick={() => onRejectClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="danger"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="apply"
-              className="btn-icon"
-              color="primary"
-              onClick={() =>
-                onBtnClick("applied", row.candidaterecommendedjobid)
-              }
-            >
-              <BsCheckCircle></BsCheckCircle>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            disabled={props.type === "maybe"}
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            //   onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            outline
+            size="sm"
+            title="apply"
+            className="btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
+          >
+            <BsCheckCircle></BsCheckCircle>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "maybe") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="apply"
-              className="btn-icon"
-              color="primary"
-              onClick={() =>
-                onBtnClick("applied", row.candidaterecommendedjobid)
-              }
-            >
-              <BsCheckCircle></BsCheckCircle>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            outline
+            size="sm"
+            title="apply"
+            className="btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
+          >
+            <BsCheckCircle></BsCheckCircle>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "applied") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "interview") {
       return (
-        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              size="sm"
-              title="accept"
-              className="btn-icon"
-              color="success"
-              onClick={() =>
-                onBtnClick("accepted", row.candidaterecommendedjobid)
-              }
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          {row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+            row?.scheduledInterviewDtos[0]?.isactive === true && (
+              <Button
+                // outline
+                size="sm"
+                title="Reject interview"
+                onClick={() =>
+                  onBtnClick(
+                    "rejectInterview",
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                  )
+                }
+                className="btn-icon"
+                color="danger"
+              >
+                <img src={customerIcons.list_reject} alt="list reject"></img>
+              </Button>
+            )}
+          {row?.scheduledInterviewDtos[0]?.isrejected === true &&
+            row?.scheduledInterviewDtos[0]?.isactive === true && (
+              <Button
+                size="sm"
+                title="Accept interview"
+                className="btn-icon"
+                color="success"
+                onClick={() =>
+                  onBtnClick(
+                    "acceptInterview",
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                  )
+                }
+              >
+                <img src={customerIcons.list_accept} alt="list accept"></img>
+              </Button>
+            )}
+        </ButtonGroup>
       );
     } else if (props.type === "accepted") {
       return (
-        <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() =>
-                onBtnClick("rejected", row.candidaterecommendedjobid)
-              }
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="Not intrested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+        </ButtonGroup>
       );
-    } else if (props.type === "rejected") {
+    } else if (props.type === "notIntrested") {
       return (
-        <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list like"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list like"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+        </ButtonGroup>
       );
     }
   };
@@ -310,7 +289,7 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "12%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Title</span>,
@@ -321,7 +300,7 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "30%",
+            width: "18%",
           },
 
           {
@@ -341,7 +320,163 @@ export const CandListView = (props) => {
               </span>
             ),
             sortable: true,
-            width: "20%",
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                <>
+                  {row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"}
+                </>
+              </span>
+            ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Scheduled</span>,
+            cell: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? getTimezoneDateTime(
+                        moment(
+                          row?.scheduledInterviewDtos[0]?.scheduledate
+                        ).format("MM/DD/YYYY") +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                            : " 00:00:00")
+                      )
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? getTimezoneDateTime(
+                      moment(
+                        row?.scheduledInterviewDtos[0]?.scheduledate
+                      ).format("MM/DD/YYYY") +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                          : " 00:00:00")
+                    )
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "17%",
+          },
+          {
+            name: <span className="table-title">Interview Status</span>,
+            cell: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? row?.scheduledInterviewDtos[0]?.isactive === true
+                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? "Accepted"
+                        : row?.scheduledInterviewDtos[0]?.isrejected === true
+                        ? "Rejected"
+                        : "Tentative"
+                      : "Cancelled"
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? row?.scheduledInterviewDtos[0]?.isactive === true
+                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? "Accepted"
+                      : row?.scheduledInterviewDtos[0]?.isrejected === true
+                      ? "Rejected"
+                      : "Tentative"
+                    : "Cancelled"
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "11%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "6%",
+          },
+        ]
+      : props.type === "rejected"
+      ? [
+          {
+            name: <span className="table-title">Job Id</span>,
+            id: "Job Id",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobid}>
+                {row.jobid}
+              </span>
+            ),
+            sortable: true,
+            width: "12%",
+          },
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            selector: (row) => (
+              <span className="table-cell" title={row.jobtitle}>
+                {row.jobtitle}
+              </span>
+            ),
+            sortable: true,
+            width: "35%",
+          },
+
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) => (
+              <span
+                className="table-cell"
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            sortable: true,
+            width: "15%",
           },
 
           {
@@ -367,15 +502,27 @@ export const CandListView = (props) => {
             sortable: true,
             width: "15%",
           },
-
           {
-            name: <span className="table-title">Interest</span>,
-            cell: (row) => (
-              <div className="list-btn-group">{renderButtons(row)}</div>
-            ),
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
             ignoreRowClick: true,
             button: true,
-            width: "15%",
+            width: "13%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -383,7 +530,7 @@ export const CandListView = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            width: "8%",
+            width: "10%",
           },
         ]
       : [

@@ -64,9 +64,13 @@ export function ResumeDetails(props) {
   };
 
   const addEditResume = async function (acceptedFiles) {
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
     const config = {
       headers: {
         "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
       },
     };
 
@@ -75,7 +79,7 @@ export function ResumeDetails(props) {
       form.append("Candidateresumeid", resumeDetails.candidateresumeid);
       form.append(
         "Candidateid",
-        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+        JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
       );
       form.append("Resumepath", "");
       form.append("Resumefile", acceptedFiles[0]);
@@ -105,7 +109,7 @@ export function ResumeDetails(props) {
       const form = new FormData();
       form.append(
         "Candidateid",
-        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+        JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
       );
       form.append("Resumefile", acceptedFiles[0]);
 
@@ -113,7 +117,7 @@ export function ResumeDetails(props) {
         .post(`${url}/PostResume`, form, config)
         .then((result) => {
           if (result.data) {
-            if (result.data.status == "Success") {
+            if (result.data.status === "Success") {
               setSuccess(true);
               setMessage(result.data.message);
             } else {

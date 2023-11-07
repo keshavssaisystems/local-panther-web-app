@@ -473,6 +473,12 @@ export function Registration() {
           nextInput.focus();
         }
       }
+      if (e === "") {
+        const prevInput = document.getElementById(`mobile-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }
     }
     if (check === "email") {
       new_data[index] = e;
@@ -486,6 +492,12 @@ export function Registration() {
         const nextInput = document.getElementById(`email-${index + 1}`);
         if (nextInput) {
           nextInput.focus();
+        }
+      }
+      if (e === "") {
+        const prevInput = document.getElementById(`email-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
         }
       }
     }
@@ -532,18 +544,21 @@ export function Registration() {
           >
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
               <div className="">
-                <img src={logo} width={"130px"} alt="logo" className="logo" />
+                <img
+                  src={logo}
+                  width={"130px"}
+                  alt="logo"
+                  className="logo mb-4"
+                />
               </div>
+              <Row className="login-divider" />
               <div className="app-logo mb-0" />
-              <h4>
-                <div className="title-text">Welcome,</div>
-                <span className="title-text">
-                  It only takes a{" "}
-                  <span className="title-text">few seconds</span> to create your
-                  account
-                </span>
-              </h4>
-              <div>
+              <div className="title-text">Welcome,</div>
+              <span className="title-content">
+                It only takes a few seconds to create your account
+              </span>
+
+              <div className="mt-5">
                 <Form onSubmit={handleSubmit(onSubmit)}>
                   <Row>
                     <Col md={6}>
@@ -661,7 +676,7 @@ export function Registration() {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="phoneNumber" className="input-label">
-                          <span className="text-danger">*</span> Phone number
+                          <span className="text-danger">*</span> Phone
                         </Label>
 
                         <InputGroup>
@@ -826,10 +841,15 @@ export function Registration() {
                   </Row>
 
                   <div className="mt-4 d-flex align-items-center">
-                    <h5 className="mb-0 account-text">
-                      Already have an account? <Link to="/login">Sign in</Link>
+                    <h5 className="mb-0 account-text ms-auto me-4">
+                      <Link
+                        to="/login"
+                        style={{ borderBottom: "1px solid #545cd8" }}
+                      >
+                        Already a member?Sign in
+                      </Link>
                     </h5>
-                    <div className="ms-auto">
+                    <div>
                       <Button color="primary" className=" btn-text" size="lg">
                         Register
                       </Button>

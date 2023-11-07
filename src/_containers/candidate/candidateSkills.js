@@ -199,7 +199,7 @@ export function CandidateSkills(props) {
       setMustHaveValidation(true);
     } else {
       setMustHaveValidation(false);
-      let id = JSON.parse(localStorage.getItem("userDetails")).InternalUserId;
+      let id = JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId;
       let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
 
       let payload = selectedSkillData.map((rest) => {
