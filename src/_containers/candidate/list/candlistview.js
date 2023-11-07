@@ -46,7 +46,6 @@ export const CandListView = (props) => {
             // outline
             size="sm"
             title="Not Interested"
-            //   onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
             onClick={() =>
