@@ -51,6 +51,7 @@ import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
+import { ZoomVideoScreen } from "zoom/zoom-video";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -461,6 +462,7 @@ export function App() {
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/video-screen/:id" element={<VideoScreen />} />
+              <Route path="/video/:id" element={<ZoomVideoScreen />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}
