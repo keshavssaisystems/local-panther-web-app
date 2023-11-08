@@ -28,7 +28,7 @@ import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { MessageCard } from "./messageCard";
-import { getTimezoneDateTime, getChannelId } from "_helpers/helper";
+import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 
 export function VideoInterviewDetails({
@@ -65,9 +65,9 @@ export function VideoInterviewDetails({
     interviewDetail = interviewDetails;
   }
 
-  let id = getChannelId(
-    interviewDetail?.candidateid,
-    interviewDetail?.candidateuserid,
+  let id = getVideoChannelId(
+    interviewDetail?.jobtitle,
+    interviewDetail?.jobid,
     interviewDetail?.scheduleinterviewid
   );
 

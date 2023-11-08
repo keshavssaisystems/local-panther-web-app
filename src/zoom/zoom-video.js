@@ -3,16 +3,17 @@ import uitoolkit from "@zoom/videosdk-ui-toolkit";
 import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 import { generateSignature } from "./jwt";
 import { ZOOM_APP_KEY, ZOOM_APP_SECRET } from "./config";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export const ZoomVideoScreen = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   let config = {
     videoSDKJWT: "",
-    sessionName: "SessionA",
+    sessionName: "panther-12345",
     userName: Math.random().toString(),
     sessionPasscode: "",
-    features: ["video", "audio", "settings", "users", "chat"],
+    features: ["video", "audio", "settings", "users", "chat", "share"],
   };
   let token = generateSignature(
     ZOOM_APP_KEY,
@@ -30,12 +31,17 @@ export const ZoomVideoScreen = () => {
     // uitoolkit.openPreview(previewContainer);
     if (id && token) {
       config.videoSDKJWT = token;
-      uitoolkit.joinSession(sessionContainer, config);
+      let res = uitoolkit.joinSession(sessionContainer, config);
     }
+
+    uitoolkit.onSessionJoined(sessionJoined);
+    uitoolkit.onSessionClosed(sessionClosed);
 
     return () => {
       // uitoolkit.closePreview(previewContainer);
       uitoolkit.closeSession(sessionContainer);
+      uitoolkit.offSessionJoined(sessionJoined);
+      uitoolkit.offSessionClosed(sessionClosed);
     };
   }, [id, token]);
 
@@ -44,7 +50,7 @@ export const ZoomVideoScreen = () => {
   };
 
   const sessionClosed = () => {
-    console.log("session closed");
+    navigate(`/`);
   };
 
   return (

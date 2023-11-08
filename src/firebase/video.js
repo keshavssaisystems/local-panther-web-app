@@ -64,7 +64,7 @@ export const VideoScreen = () => {
   // 2. Create an offer
   const onCreateCall = async () => {
     // Reference Firestore collections for signaling
-    const callDoc = firestore.collection("room").doc(id);
+    const callDoc = firestore.collection("channels").doc(id);
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
 
@@ -104,7 +104,7 @@ export const VideoScreen = () => {
   };
 
   const onAnswerClick = async () => {
-    const callDoc = firestore.collection("room").doc(id);
+    const callDoc = firestore.collection("channels").doc(id);
     const answerCandidates = callDoc.collection("answerCandidates");
     const offerCandidates = callDoc.collection("offerCandidates");
 
@@ -140,7 +140,7 @@ export const VideoScreen = () => {
 
   const JoinCall = async () => {
     // Reference Firestore collections for signaling
-    const callDoc = firestore.collection("rooms").doc(id);
+    const callDoc = firestore.collection("channels").doc(id);
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
 
@@ -223,7 +223,7 @@ export const VideoScreen = () => {
     if (pc) {
       pc.close();
     }
-    const roomRef = firestore.collection("rooms").doc(id);
+    const roomRef = firestore.collection("channels").doc(id);
     const calleeCandidates = await roomRef.collection("answerCandidates").get();
     calleeCandidates.forEach(async (candidate) => {
       await candidate.ref.delete();
