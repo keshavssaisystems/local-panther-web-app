@@ -51,7 +51,7 @@ export function DashboardCounts() {
                           style={{
                             cursor:
                               counts.matchedcandidate === 0
-                                ? "block"
+                                ? "not-allowed"
                                 : "pointer",
                           }}
                         >
@@ -98,7 +98,7 @@ export function DashboardCounts() {
                           style={{
                             cursor:
                               counts.interveiwSchedule === 0
-                                ? "block"
+                                ? "not-allowed"
                                 : "pointer",
                           }}
                         >
@@ -143,7 +143,7 @@ export function DashboardCounts() {
                           style={{
                             cursor:
                               counts.acceptedbycandidate === 0
-                                ? "block"
+                                ? "not-allowed"
                                 : "pointer",
                           }}
                         >
@@ -188,7 +188,7 @@ export function DashboardCounts() {
                           style={{
                             cursor:
                               counts.rejectedbycandidate === 0
-                                ? "block"
+                                ? "not-allowed"
                                 : "pointer",
                           }}
                         >
