@@ -461,8 +461,10 @@ export function App() {
                 element={<ForgotPasswordSuccess />}
               />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/video-screen/:id" element={<VideoScreen />} />
-              <Route path="/video/:id" element={<ZoomVideoScreen />} />
+              {/* for firebase */}
+              {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
+              {/* for zoom */}
+              <Route path="/video-screen/*" element={<ZoomVideoScreen />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}

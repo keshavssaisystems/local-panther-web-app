@@ -6,19 +6,24 @@ import { ZOOM_APP_KEY, ZOOM_APP_SECRET } from "./config";
 import { useParams, useNavigate } from "react-router-dom";
 
 export const ZoomVideoScreen = () => {
-  const { id } = useParams();
+  const { ...rest } = useParams();
+  let id = rest["*"] ? rest["*"] : "";
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  let name = userDetails
+    ? userDetails.FirstName + " " + userDetails.LastName
+    : "";
   const navigate = useNavigate();
   let config = {
     videoSDKJWT: "",
-    sessionName: "panther-12345",
-    userName: Math.random().toString(),
+    sessionName: id,
+    userName: name,
     sessionPasscode: "",
     features: ["video", "audio", "settings", "users", "chat", "share"],
   };
   let token = generateSignature(
     ZOOM_APP_KEY,
     ZOOM_APP_SECRET,
-    config.sessionName,
+    id,
     1,
     id,
     config.userName
@@ -26,19 +31,16 @@ export const ZoomVideoScreen = () => {
 
   useEffect(() => {
     var sessionContainer = document.getElementById("sessionContainer");
-    // let previewContainer = document.getElementById("previewContainer");
 
-    // uitoolkit.openPreview(previewContainer);
     if (id && token) {
       config.videoSDKJWT = token;
-      let res = uitoolkit.joinSession(sessionContainer, config);
+      uitoolkit.joinSession(sessionContainer, config);
     }
 
     uitoolkit.onSessionJoined(sessionJoined);
     uitoolkit.onSessionClosed(sessionClosed);
 
     return () => {
-      // uitoolkit.closePreview(previewContainer);
       uitoolkit.closeSession(sessionContainer);
       uitoolkit.offSessionJoined(sessionJoined);
       uitoolkit.offSessionClosed(sessionClosed);

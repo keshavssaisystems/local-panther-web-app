@@ -7,7 +7,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./video.scss";
 
 export const VideoScreen = () => {
-  const { id } = useParams();
+  const { ...rest } = useParams();
+  let id = rest["*"] ? rest["*"] : "";
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  let name = userDetails
+    ? userDetails.FirstName + " " + userDetails.LastName
+    : "";
   const navigate = useNavigate();
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
