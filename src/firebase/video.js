@@ -3,11 +3,12 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { firebaseConfig, servers } from "../firebase/index";
 import { Row, Col } from "reactstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./video.scss";
 
 export const VideoScreen = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
@@ -233,6 +234,7 @@ export const VideoScreen = () => {
       await candidate.ref.delete();
     });
     await roomRef.delete();
+    navigate("/");
   };
 
   return (
