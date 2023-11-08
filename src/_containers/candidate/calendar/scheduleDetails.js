@@ -5,7 +5,7 @@ import moment from "moment-timezone";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
-import { getChannelId } from "_helpers/helper";
+import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
@@ -13,10 +13,10 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     interviewDetail?.scheduledate,
     "MM/DD/YYYY"
   );
-  console.log(interviewDetail);
-  let id = getChannelId(
-    interviewDetail?.candidateid,
-    interviewDetail?.candidateuserid,
+
+  let id = getVideoChannelId(
+    interviewDetail?.jobtitle,
+    interviewDetail?.jobid,
     interviewDetail?.scheduleinterviewid
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
