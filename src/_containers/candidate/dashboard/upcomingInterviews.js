@@ -20,6 +20,7 @@ import {
   getLocationText,
   calculateEndTime,
   getTimezoneDateTime,
+  getChannelId,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -37,6 +38,7 @@ import { customerCandidateListsActions } from "_store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
+import { NavLink } from "react-router-dom";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -63,6 +65,8 @@ export function UpcomingInterviews() {
     disableAutoClose: true,
   };
   const [showInterview, setShowInterview] = useState(false);
+  const [appShowInterview, setAppShowInterview] = useState(false);
+
   const columns = [
     {
       name: "Job title",
@@ -171,8 +175,15 @@ export function UpcomingInterviews() {
       customerCandidateListsActions.getScheduleIVList(scheduleInterviewId)
     );
     if (res.payload) {
-      setPopupData(res?.payload?.data?.scheduledInterviewList[0]);
-      setDetails(true);
+      if (res?.payload?.data?.scheduledInterviewList.length > 0) {
+        setPopupData(res?.payload?.data?.scheduledInterviewList[0]);
+        setDetails(true);
+      } else {
+        showSweetAlert({
+          title: "Something went wrong, please try again later",
+          type: "error",
+        });
+      }
     } else {
       //do nothing
     }
@@ -197,7 +208,13 @@ export function UpcomingInterviews() {
 
     // Create a Date object using the parsed values
     const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
-    setLink(data.videolink);
+
+    let id = getChannelId(
+      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId,
+      JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+      data?.scheduleinterviewid
+    );
+
     if (targetDate === new Date()) {
       if (mode === "phone") {
         showSweetAlert({
@@ -205,7 +222,13 @@ export function UpcomingInterviews() {
           type: "success",
         });
       } else {
-        setShowInterview(true);
+        if (data.isappvideocall) {
+          setLink(id);
+          setAppShowInterview(true);
+        } else {
+          setLink(data.videolink);
+          setShowInterview(true);
+        }
       }
     } else if (targetDate > new Date()) {
       showSweetAlert({
@@ -225,7 +248,13 @@ export function UpcomingInterviews() {
             type: "success",
           });
         } else {
-          setShowInterview(true);
+          if (data.isappvideocall) {
+            setLink(id);
+            setAppShowInterview(true);
+          } else {
+            setLink(data.videolink);
+            setShowInterview(true);
+          }
         }
       }
     }
@@ -389,6 +418,23 @@ export function UpcomingInterviews() {
             <a href={link} target="_blank">
               click to join{" "}
             </a>
+          </SweetAlert>
+        )}
+      </div>
+
+      <div>
+        {appShowInterview && (
+          <SweetAlert
+            title="Interview started"
+            onCancel={() => setAppShowInterview(false)}
+            type="success"
+            showCancel
+            showConfirm={false}
+            showClose
+          >
+            <NavLink to={`/video-screen/${link}`} exact>
+              Click here to join
+            </NavLink>
           </SweetAlert>
         )}
       </div>

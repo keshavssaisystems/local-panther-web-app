@@ -96,41 +96,10 @@ export function UpdateScheduleInterviewModal({
     event.target.elements.duration.value === ""
       ? setDurationValidation(true)
       : setDurationValidation(false);
-    formatButton === 1 &&
-    event.target.elements.videoMode.value === "third-party-video" &&
-    event.target.elements.videoLink.value === ""
-      ? setVideoLinkValidation(true)
-      : setVideoLinkValidation(false);
-    formatButton === 3 && event.target.elements.interviewAddress.value === ""
-      ? setInterviewAddressValidation(true)
-      : setInterviewAddressValidation(false);
     if (
       event.target.elements.scheduleDate.value !== "" &&
       event.target.elements.scheduleStartTime.value !== "" &&
-      event.target.elements.duration.value !== "" &&
-      formatButton === 1 &&
-      ((event.target.elements.videoMode.value === "third-party-video" &&
-        event.target.elements.videoLink.value !== "") ||
-        event.target.elements.videoMode.value === "in-app-video")
-    ) {
-      getFormData(event);
-    }
-
-    if (
-      event.target.elements.scheduleDate.value !== "" &&
-      event.target.elements.scheduleStartTime.value !== "" &&
-      event.target.elements.duration.value !== "" &&
-      formatButton === 3 &&
-      event.target.elements.interviewAddress.value !== ""
-    ) {
-      getFormData(event);
-    }
-
-    if (
-      event.target.elements.scheduleDate.value !== "" &&
-      event.target.elements.scheduleStartTime.value !== "" &&
-      event.target.elements.duration.value !== "" &&
-      formatButton === 2
+      event.target.elements.duration.value !== ""
     ) {
       getFormData(event);
     }
@@ -152,37 +121,23 @@ export function UpdateScheduleInterviewModal({
       .tz("Etc/UTC")
       .format("HH:mm:ss");
     let data = {
-      scheduleinterviewid: interviewData.scheduleinterviewid,
-      jobid: interviewData.jobid,
-      candidateid: interviewData.candidateid,
+      scheduleinterviewid: interviewData?.scheduleinterviewid,
+      jobid: interviewData?.jobid,
+      candidateid: interviewData?.candidateid,
       scheduledate: scheduleDateUTC,
       starttime: scheduleTimeUTC,
       durationid: Number(event.target.elements.duration.value),
-      format:
-        formatButton === 1
-          ? "Video"
-          : formatButton === 2
-          ? "Phone"
-          : "In-person",
-      isappvideocall:
-        formatButton === 1
-          ? event.target.elements.videoMode.value === "third-party-video"
-            ? false
-            : true
-          : false,
-      videolink:
-        formatButton === 1 &&
-        event.target.elements.videoMode.value === "third-party-video"
-          ? event.target.elements.videoLink.value
-          : "",
-      interviewAddress:
-        formatButton === 3 ? event.target.elements.interviewAddress.value : "",
-      messagetocandidate: event.target.elements.message.value,
-      intervieweremailids: event.target.elements.hmEmails.value,
-      textremaindernumbers: event.target.elements.phoneNo.value,
+      format: interviewData?.format,
+      isappvideocall: interviewData?.isappvideocall,
+      videolink: interviewData?.videolink,
+      interviewAddress: interviewData?.interviewaddress,
+      messagetocandidate: interviewData?.messagetocandidate,
+      intervieweremailids: interviewData?.intervieweremailids,
+      textremaindernumbers: interviewData?.textremaindernumbers,
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
     };
+    // console.log(data);
     postData(data);
     onClose();
   };
@@ -191,7 +146,7 @@ export function UpdateScheduleInterviewModal({
       <Modal
         isOpen={isOpen}
         fullscreen={"lg"}
-        size="xl"
+        size="lg"
         backdrop={"static"}
         toggle={toggle}
         className="schedule-modal"
@@ -199,7 +154,7 @@ export function UpdateScheduleInterviewModal({
       >
         <ModalHeader toggle={() => onClose()}>
           {" "}
-          Update scheduled interview
+          Reschedule Interview
         </ModalHeader>
         <ModalBody className="pt-4">
           <Form onSubmit={(e) => getFormValidation(e)}>
@@ -314,158 +269,69 @@ export function UpdateScheduleInterviewModal({
                   </FormGroup>
                 </Col>
               </Row>
-              <FormGroup>
-                <Label for="exampleAddress" className="fw-semi-bold">
-                  Format <span className="required-star">* </span>
-                </Label>
-                <div>
-                  <ButtonGroup>
-                    <Button
-                      name="format"
-                      color={formatButton === 1 ? "success" : "primary"}
-                      value={"Video"}
-                      onClick={() => onRadioBtnClick(1)}
-                      active={formatButton === 1}
-                    >
-                      Video
-                    </Button>
-                    <Button
-                      name="format"
-                      color={formatButton === 2 ? "success" : "primary"}
-                      value={"Phone"}
-                      onClick={() => onRadioBtnClick(2)}
-                      active={formatButton === 2}
-                    >
-                      Phone
-                    </Button>
-                    <Button
-                      name="format"
-                      color={formatButton === 3 ? "success" : "primary"}
-                      value={"In-person"}
-                      onClick={() => onRadioBtnClick(3)}
-                      active={formatButton === 3}
-                    >
-                      In-person
-                    </Button>
-                  </ButtonGroup>
+              <div className="detail-padding">
+                <h6 className="mb-0 heading-custom">Format</h6>
+                <p className="mb-0 mt-1 mr-1">
+                  {interviewData?.format === "" ? "-" : interviewData?.format}
+                </p>
+              </div>
+              {interviewData?.format === "Video" && (
+                <div className="detail-padding">
+                  <h6 className="mb-0 heading-custom">Mode</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {interviewData?.isappvideocall === true
+                      ? "App video call"
+                      : "Third-party video conferencing"}
+                  </p>
                 </div>
-              </FormGroup>
-              {formatButton === 1 && (
-                <FormGroup>
-                  <Row>
-                    <Col md={6}>
-                      <Input
-                        type="radio"
-                        name="videoMode"
-                        id="appVideoCall"
-                        value={"in-app-video"}
-                        onClick={() => onVideoModeChange(0)}
-                      />{" "}
-                      <Label for="appVideoCall" className="fw-semi-bold">
-                        App video call
-                      </Label>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={6}>
-                      <Input
-                        type="radio"
-                        name="videoMode"
-                        id="thirdPartyVideo"
-                        value={"third-party-video"}
-                        defaultChecked
-                        onClick={() => onVideoModeChange(1)}
-                        onChange={() => onVideoModeChange(1)}
-                      />{" "}
-                      <Label for="thirdPartyVideo" className="fw-semi-bold">
-                        Third-party video conferencing
-                      </Label>
-                    </Col>
-                  </Row>
-                </FormGroup>
               )}
-              {formatButton === 1 && videoModeCheck === 1 && (
-                <FormGroup>
-                  <Label for="videoLink" className="fw-semi-bold">
-                    Paste video link <span className="required-star">* </span>
-                  </Label>
-                  <Input
-                    type="text"
-                    name="videoLink"
-                    id="videoLink"
-                    placeholder="Enter video link"
-                    invalid={videoLinkValidation}
-                    defaultValue={interviewData?.videolink}
-                    onChange={() => setVideoLinkValidation(false)}
-                  />
-                  {videoLinkValidation === true && (
-                    <FormText color="danger">Please enter video link</FormText>
-                  )}
-                </FormGroup>
+              {interviewData?.format === "Video" &&
+                interviewData?.isappvideocall === false && (
+                  <div className="detail-padding">
+                    <h6 className="mb-0 heading-custom">Video Link</h6>
+                    <p className="mb-0 mt-1 mr-1">
+                      {interviewData?.videolink === ""
+                        ? "-"
+                        : interviewData?.videolink}
+                    </p>
+                  </div>
+                )}
+              {interviewData?.format === "In-person" && (
+                <div className="detail-padding">
+                  <h6 className="mb-0 heading-custom">Interview address</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {interviewData?.interviewaddress === ""
+                      ? "-"
+                      : interviewData?.interviewaddress}
+                  </p>
+                </div>
               )}
-              {formatButton === 3 && (
-                <FormGroup>
-                  <Label for="interviewAddress" className="fw-semi-bold">
-                    Interview address <span className="required-star">* </span>
-                  </Label>
-                  <Input
-                    type="text"
-                    name="interviewAddress"
-                    id="interviewAddress"
-                    placeholder="Enter interview address"
-                    invalid={interviewAddressValidation}
-                    defaultValue={interviewData?.interviewaddress}
-                    onChange={() => setInterviewAddressValidation(false)}
-                  />
-                  {interviewAddressValidation === true && (
-                    <FormText color="danger">
-                      Please enter interview address
-                    </FormText>
-                  )}
-                </FormGroup>
-              )}
-              <FormGroup>
-                <Label for="message" className="fw-semi-bold">
-                  Message to candidate
-                </Label>
-                <Input
-                  type="textarea"
-                  name="message"
-                  id="message"
-                  defaultValue={interviewData?.messagetocandidate}
-                  placeholder="Enter message to candidate"
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="hmEmails" className="fw-semi-bold">
-                  Add Interviewers
-                </Label>
-                <Input
-                  type="textarea"
-                  name="hmEmails"
-                  id="hmEmails"
-                  defaultValue={interviewData?.intervieweremailids}
-                  placeholder="Add hiring managers or other interviewers - enter emails seperated by comma"
-                />
-              </FormGroup>
-              <Row>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="phoneNo" className="fw-semi-bold">
-                      Get text reminder for interviews
-                    </Label>
-                    <InputMask
-                      className="form-control"
-                      mask="(999)-999-9999"
-                      maskChar={null}
-                      name="phoneNo"
-                      defaultValue={interviewData?.textremaindernumbers}
-                      id="phoneNo"
-                      placeholder="Eg: (987)-654-3210"
-                    />
-                  </FormGroup>
-                </Col>
-              </Row>
+              <div className="detail-padding">
+                <h6 className="mb-0 heading-custom">Message to candidate</h6>
+                <p className="mb-0 mt-1 mr-1">
+                  {interviewData?.messagetocandidate === ""
+                    ? "-"
+                    : interviewData?.messagetocandidate}
+                </p>
+              </div>
+              <div className="detail-padding">
+                <h6 className="mb-0 heading-custom">Interviewers</h6>
+                <p className="mb-0 mt-1 mr-1">
+                  {interviewData?.intervieweremailids === ""
+                    ? "-"
+                    : interviewData?.intervieweremailids}
+                </p>
+              </div>
+              <div className="detail-padding">
+                <h6 className="mb-0 heading-custom">
+                  Get text reminder for interviews
+                </h6>
+                <p className="mb-0 mt-1 mr-1">
+                  {interviewData?.textremaindernumbers === ""
+                    ? "-"
+                    : interviewData?.textremaindernumbers}
+                </p>
+              </div>
             </Col>
             <div className="divider" />
             <div className="d-block text-center">

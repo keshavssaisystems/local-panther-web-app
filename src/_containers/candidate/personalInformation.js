@@ -584,11 +584,6 @@ export function PersonalInformation(props) {
             result.data.data.profilephotopath
           );
           setProfileImage(result.data.data.profilephotopath);
-          dispatch(
-            getProfileActions.updateProfileImage(
-              result.data.data.profilephotopath
-            )
-          );
         } else {
           setError(true);
         }
@@ -752,9 +747,9 @@ export function PersonalInformation(props) {
                       </Row>
                       <Row>
                         <Col className="mb-2">
-                          {selectedCandidate.personalInfo.gender != "" ? (
+                          {selectedCandidate.personalInfo.gender !== "" ? (
                             <div>
-                              {selectedCandidate.personalInfo.gender ==
+                              {selectedCandidate.personalInfo.gender ===
                               "Female" ? (
                                 <i
                                   className="pe-7s-female personal-sec-icon me-2"

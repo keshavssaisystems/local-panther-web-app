@@ -2,23 +2,22 @@ import React from "react";
 import { Card, Col, Row } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
-import { ButtonWithCount } from "../../../_components/jobDetailComponents/ButtonWithCount";
 import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsHeader";
-import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
+import { useSelector } from "react-redux";
 
 export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
   let jobDetail = {};
   let skillArray = [];
   let skillsData = "-";
-
+  const shiftsOption = useSelector((state) => state.dropdown.shift);
+  const workScheduleOptions = useSelector(
+    (state) => state.dropdown.workSchedule
+  );
+  const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   if (jobDetails.length > 0) {
     jobDetail = jobDetails[0];
-    // jobDetail?.jobKeyQualificationDtos !== undefined &&
-    //   jobDetail?.jobKeyQualificationDtos.map((skills) =>
-    //     skillArray.push(skills.skillname)
-    //   );
     if (
       jobDetail?.jobKeyQualificationDtos &&
       jobDetail?.jobKeyQualificationDtos?.length > 0
@@ -76,6 +75,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
   };
 
   const returnJobType = () => {
+    let jobTypeString = [];
     if (
       jobDetail?.jobExperienceScheduleDtos &&
       jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos?.length > 0
@@ -83,12 +83,27 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
       return jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos
         .map((item) => item.jobtypes)
         .join(", ");
+    } else if (
+      jobDetail?.jobExperienceScheduleDtos[0]?.jobtypes !== "" &&
+      jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos?.length === 0
+    ) {
+      jobTypeOption?.forEach((element) => {
+        if (
+          jobDetail?.jobExperienceScheduleDtos[0]?.jobtypes?.includes(
+            element.id
+          )
+        ) {
+          jobTypeString.push(element.name);
+        }
+      });
+      return jobTypeString.toString();
     } else {
       return "-";
     }
   };
 
   const returnShift = () => {
+    let shiftString = [];
     if (
       jobDetail?.jobExperienceScheduleDtos &&
       jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos?.length > 0
@@ -96,12 +111,25 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
       return jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos
         .map((item) => item.shifts)
         .join(", ");
+    } else if (
+      jobDetail?.jobExperienceScheduleDtos[0].shifts !== "" &&
+      jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos?.length === 0
+    ) {
+      shiftsOption?.forEach((element) => {
+        if (
+          jobDetail?.jobExperienceScheduleDtos[0]?.shifts?.includes(element.id)
+        ) {
+          shiftString.push(element.name);
+        }
+      });
+      return shiftString.toString();
     } else {
       return "-";
     }
   };
 
   const returnSchedule = () => {
+    let workScheduleString = [];
     if (
       jobDetail?.jobExperienceScheduleDtos &&
       jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos?.length > 0
@@ -109,6 +137,20 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
       return jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos
         .map((item) => item.workschedules)
         .join(", ");
+    } else if (
+      jobDetail?.jobExperienceScheduleDtos[0].workschedules !== "" &&
+      jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos?.length === 0
+    ) {
+      workScheduleOptions?.forEach((element) => {
+        if (
+          jobDetail?.jobExperienceScheduleDtos[0]?.workschedules?.includes(
+            element.id
+          )
+        ) {
+          workScheduleString.push(element.name);
+        }
+      });
+      return workScheduleString.toString();
     } else {
       return "-";
     }
@@ -180,7 +222,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           <DetailsHeader
             heading={jobDetail.jobtitle}
             subHeading={jobDetail.companyname}
-            location={jobDetail.locationaddress}
+            location={returnAddress()}
             // ApplyButton={type !== "Open"}
             // jobId={jobDetail.jobid}
             // department={jobDetail.departmentid ?? 1}
@@ -191,11 +233,6 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           <div className="heading-title">
             <h6 className="job-main-heading mb-0">Job details</h6>
           </div>
-          {/* <HeadingAndDetailWithDiv
-              heading={"Job Role:"}
-              detail={jobDetail.jobrole}
-              iconId={1}
-            /> */}
           <HeadingAndDetailWithDiv
             heading={"Job Type"}
             detail={returnJobType()}
