@@ -30,7 +30,7 @@ export const ZoomVideoScreen = () => {
   );
 
   useEffect(() => {
-    var sessionContainer = document.getElementById("sessionContainer");
+    let sessionContainer = document.getElementById("sessionContainer");
 
     if (id && token) {
       config.videoSDKJWT = token;
