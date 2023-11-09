@@ -45,9 +45,11 @@ export const ZoomVideoScreen = () => {
     }
 
     return () => {
-      uitoolkit.closeSession(sessionContainer);
-      uitoolkit.offSessionJoined(sessionJoined);
-      uitoolkit.offSessionClosed(sessionClosed);
+      if (sessionContainer) {
+        uitoolkit.closeSession(sessionContainer);
+        uitoolkit.offSessionJoined(sessionJoined);
+        uitoolkit.offSessionClosed(sessionClosed);
+      }
     };
   }, [id, token, uitoolkit]);
 
