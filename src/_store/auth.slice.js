@@ -58,6 +58,15 @@ export const userRegisterThunkNew = createAsyncThunk(
   }
 );
 
+// generate zoom token thunk
+export const generateToken = createAsyncThunk(
+  `${name}/generateToken`,
+  async ({ sessionName, role, sessionKey, userIdentity }) => {
+    const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/GetZoomToken?sessionName=${sessionName}&role=${role}&sessionKey=${sessionKey}&userIdentity=${userIdentity}`;
+    return await fetchWrapper.get(TOKEN_END_POINT);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -168,6 +177,13 @@ const authSlice = createSlice({
     [userRegisterThunkNew.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [generateToken.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [generateToken.fulfilled]: (state, { payload = {} }) => {},
+    [generateToken.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -180,6 +196,7 @@ export const authActions = {
   userRegisterThunk,
   verifyOTPThunk,
   userRegisterThunkNew,
+  generateToken,
 };
 
 export const authReducer = authSlice.reducer;
