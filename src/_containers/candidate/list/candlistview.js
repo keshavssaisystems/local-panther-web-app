@@ -143,7 +143,7 @@ export const CandListView = (props) => {
     } else if (props.type === "interview") {
       return (
         <ButtonGroup>
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="liked"
@@ -163,7 +163,7 @@ export const CandListView = (props) => {
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
             <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
           {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
               <Button

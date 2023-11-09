@@ -47,7 +47,10 @@ export const CustCandidateListView = (props) => {
     );
 
     if (res.payload.statusCode === 204) {
-      props.showSweetAlert({ title: res.payload.message, type: "success" });
+      props.showSweetAlert({
+        title: "Candidate status updated successfully!!!",
+        type: "success",
+      });
       props.updateList();
     } else {
       props.showSweetAlert({
@@ -100,7 +103,10 @@ export const CustCandidateListView = (props) => {
 
     setShowReModal(false);
     if (res.payload.statusCode === 204) {
-      setShowRejSModal(true);
+      props.showSweetAlert({
+        title: "Candidate status updated successfully!!!",
+        type: "success",
+      });
     } else {
       props.showSweetAlert({
         title: res.payload.message || res.payload.status,
@@ -373,7 +379,8 @@ export const CustCandidateListView = (props) => {
             </DropdownItem>
             {row?.scheduledInterviewDtos &&
             row?.scheduledInterviewDtos?.length > 0 &&
-            row?.scheduledInterviewDtos[0]?.scheduledate ? (
+            row?.scheduledInterviewDtos[0]?.scheduledate &&
+            row?.scheduledInterviewDtos[0]?.isactive ? (
               <DropdownItem onClick={() => onInterviewDetails(row)}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
