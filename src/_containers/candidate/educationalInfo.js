@@ -159,7 +159,7 @@ export function CandidateEducation(props) {
                         )}
                         {item.iscurrentlystudying ? (
                           <p className="mt-1 card-p-text-black">
-                            Curretly Studying{" "}
+                            Curretly attending{" "}
                           </p>
                         ) : (
                           <div>

@@ -61,31 +61,31 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
   );
   const getText = function (data) {
     let text = "";
-    if (data.companyname != "") {
+    if (data.companyname !== "") {
       text = data.companyname;
-      if (data.cityname != "") {
+      if (data.cityname !== "") {
         text += ", " + data.cityname;
       }
-      if (data.statename != "") {
+      if (data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.cityname != "") {
+    } else if (data.cityname !== "") {
       text = data.cityname;
-      if (data.statename != "") {
+      if (data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.statename != "") {
+    } else if (data.statename !== "") {
       text = data.statename;
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.countryname != "") {
+    } else if (data.countryname !== "") {
       text = data.countryname;
     }
     return text;
