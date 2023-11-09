@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Label, Input } from "reactstrap";
 import { yearActions, monthActions } from "_store";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Collapse,
-  CardHeader,
-  Button,
-  FormGroup,
-  Container,
-} from "reactstrap";
+import { Row, Col } from "reactstrap";
 import Loader from "react-loaders";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
-import { CSSTransition } from "react-transition-group";
 import { ResumeDetails } from "./resumeDetails";
 import { CandidateQualification } from "./candidateQualification";
 import { CandidateEducation } from "./educationalInfo";

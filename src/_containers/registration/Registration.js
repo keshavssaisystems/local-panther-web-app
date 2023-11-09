@@ -27,16 +27,12 @@ import {
   CardBody,
   InputGroup,
   InputGroupText,
-  CardHeader,
-  FormText,
   CardFooter,
   Input,
 } from "reactstrap";
 
 import { history } from "_helpers";
-import successIcon from "../../assets/utils/images/success_icon.svg";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { SuccessPopUp } from "_components/common/successPopUp";
 import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
@@ -63,8 +59,6 @@ export function Registration() {
   const [showConfirm, setShowConfirm] = useState(false);
   const dispatch = useDispatch();
   const authUser = useSelector((x) => x?.auth?.token);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
   const [message, setMessage] = useState("");
   const [countryList, setCountryList] = useState([]);
   const [cityReqError, setCityReqError] = useState(false);

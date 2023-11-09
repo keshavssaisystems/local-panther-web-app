@@ -24,6 +24,7 @@ import {
 } from "_helpers/helper";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
 
 export function ProfilePDF(props) {
   const componentRef = useRef();
@@ -92,7 +93,7 @@ export function ProfilePDF(props) {
           .join(", "),
         pay:
           (rest.minimumbasepay && rest.payperiodtype) ||
-          (rest.minimumbasepay != "" && rest.payperiodtype != "")
+          (rest.minimumbasepay !== "" && rest.payperiodtype !== "")
             ? rest.minimumbasepay + ", " + rest.payperiodtype
             : rest.minimumbasepay
             ? rest.minimumbasepay
@@ -108,24 +109,18 @@ export function ProfilePDF(props) {
   }, [get_response]);
 
   const generatePDF = function () {
-    const doc = new jsPDF();
     const content = componentRef.current;
 
-    html2canvas(content).then((canvas) => {
-      // Convert the canvas to an image
-      const imgData = canvas.toDataURL("image/jpeg");
+    if (content) {
+      const pdfOptions = {
+        margin: 10,
+        filename: "document.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
 
-      var pdf = new jsPDF("p", "mm", "a4");
-      pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
-
-      // Open the PDF in a new tab with download option
-      var pdfDataUri = pdf.output("datauristring");
-      var pdfWindow = window.open();
-      pdfWindow.document.open();
-      pdfWindow.document.write(
-        '<iframe width="100%" height="100%" src="' + pdfDataUri + '"></iframe>'
-      );
-    });
+      html2pdf().from(content).set(pdfOptions).save();
+    }
   };
   const profile_img = localStorage.getItem("profileImage");
 
@@ -190,13 +185,16 @@ export function ProfilePDF(props) {
                       {personalInfo_temp.email}
                     </span>
                   </p>
-
-                  <p>
-                    <span style={{ fontWeight: "600" }}>
-                      Willing to relocate to: {personalInfo_temp.city} -{" "}
-                      {personalInfo_temp.state}, {personalInfo_temp.country}
-                    </span>
-                  </p>
+                  {getData?.length > 0 ? (
+                    <p>
+                      <span style={{ fontWeight: "600" }}>
+                        Willing to relocate to:{" "}
+                        {getData[0].willingtorelocate ? "Yes" : "No"}
+                      </span>
+                    </p>
+                  ) : (
+                    ""
+                  )}
                 </Col>
                 {/* {profile_img !== "" ? (
                   <Col>
@@ -293,7 +291,19 @@ export function ProfilePDF(props) {
                 </h2>
                 <hr />
                 {certificationInfo?.map((item) => (
-                  <p style={{ fontWeight: "500" }}>{item.certificationname}</p>
+                  <div className="mb-2">
+                    <p style={{ fontWeight: "500" }}>
+                      {item.certificationtype} - {item.certificationname}
+                    </p>
+                    {item.description !== "" ? (
+                      <p style={{ fontWeight: "500" }}>
+                        <strong>Description - </strong>
+                        {item.description}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
@@ -316,9 +326,21 @@ export function ProfilePDF(props) {
                         </li>
                       ))}
                     </ul>
-
-                    <p> {personalInfo_temp.summary}</p>
-                    <p> {personalInfo_temp.additionalinformation}</p>
+                    {personalInfo_temp.summary !== "" ? (
+                      <p>
+                        <strong>Summary - </strong> {personalInfo_temp.summary}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                    {personalInfo_temp.additionalinformation !== "" ? (
+                      <p>
+                        <strong>Additional Information - </strong>{" "}
+                        {personalInfo_temp.additionalinformation}
+                      </p>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 ))}
               </div>
@@ -336,9 +358,10 @@ export function ProfilePDF(props) {
                   <div>
                     {item.desiredJobTitle !== "" && item.desiredJobTitle ? (
                       <p>
-                        <strong>{item.desiredJobTitle}</strong>
-
-                        <div></div>
+                        <p>
+                          <strong>Desired job title : </strong>
+                          {item.desiredJobTitle}
+                        </p>
                       </p>
                     ) : (
                       ""
