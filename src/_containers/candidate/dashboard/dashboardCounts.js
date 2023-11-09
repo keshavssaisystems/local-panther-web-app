@@ -32,7 +32,10 @@ export function DashboardCounts() {
                 <Col md="4">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-alternate"} />
-                    <i className={"lnr-graduation-hat text-alternate"} />
+                    <i
+                      className={"lnr-graduation-hat text-alternate"}
+                      style={{ fontSize: "2rem" }}
+                    />
                   </div>
                 </Col>
                 <Col>

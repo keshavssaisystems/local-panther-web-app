@@ -4,17 +4,8 @@ import Slider from "react-slick";
 
 import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 
-import {
-  Col,
-  Row,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  FormFeedback,
-} from "reactstrap";
+import { Col, Row } from "reactstrap";
 
-import { history } from "_helpers";
 import "./registrationsuccess.scss";
 
 import logo from "../../assets/utils/images/panther-logo.png";

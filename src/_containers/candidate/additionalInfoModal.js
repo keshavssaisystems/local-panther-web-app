@@ -30,7 +30,7 @@ export function AdditionalInfoModal(props) {
   const loadData = function () {
     let data;
 
-    if (!props.selected || props.selected?.summary == "") {
+    if (!props.selected || props.selected?.summary === "") {
       data = {
         candidateadditioninformationid: 0,
         candidateid: userDetails.InternalUserId,
@@ -104,7 +104,7 @@ export function AdditionalInfoModal(props) {
 
   const onHandleInputChange = function (check, data, index) {
     let new_data = { ...formDetails };
-    if (check == "language") {
+    if (check === "language") {
       // let language_details = [...new_data.candidateLanguageDtos];
       // language_details[index].language = data;
       // new_data.candidateLanguageDtos = language_details;
@@ -115,21 +115,21 @@ export function AdditionalInfoModal(props) {
 
       temp_array[index].language = data;
       new_data.candidateLanguageDtos = temp_array;
-    } else if (check == "proficiency") {
+    } else if (check === "proficiency") {
       let temp_array = new_data.candidateLanguageDtos.map((item) => ({
         ...item,
       }));
 
       temp_array[index].proficiencyid = data;
       new_data.candidateLanguageDtos = temp_array;
-    } else if (check == "summary") {
+    } else if (check === "summary") {
       new_data.summary = data;
-      if (data != "") {
+      if (data !== "") {
         setFormError(false);
       } else {
         setFormError(true);
       }
-    } else if (check == "additionalInfo") {
+    } else if (check === "additionalInfo") {
       new_data.additionalinformation = data;
     }
     setFormData(new_data);
@@ -138,7 +138,7 @@ export function AdditionalInfoModal(props) {
 
   const onSubmit = async function (e) {
     e.preventDefault();
-    if (formDetails.summary == "") {
+    if (formDetails.summary === "") {
       setFormError(true);
       return;
     } else {

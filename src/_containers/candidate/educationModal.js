@@ -717,7 +717,7 @@ export function EducationModal(props) {
                   }
                 />{" "}
                 <Label check className="fw-semi-bold">
-                  Currently Studying
+                  Currently attending
                 </Label>
               </FormGroup>
             </Col>
