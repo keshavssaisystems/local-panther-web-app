@@ -83,7 +83,7 @@ export function UpcomingInterviewTable({ tableData }) {
       sortable: true,
     },
     {
-      name: "mode",
+      name: "Mode",
       cell: (row) => (
         <>
           <div className="d-block w-100 ">
@@ -141,49 +141,49 @@ export function UpcomingInterviewTable({ tableData }) {
       data?.jobid,
       data?.scheduleinterviewid
     );
-    if (targetDate === new Date()) {
-      if (mode === "phone") {
-        showSweetAlert({
-          title: `Interview started, please join on phone - ${data.phonenumber}`,
-          type: "success",
-        });
-      } else {
-        if (data.isappvideocall) {
-          setLink(id);
-          setAppShowInterview(true);
-        } else {
-          setLink(data.videolink);
-          setShowInterview(true);
-        }
-      }
-    } else if (targetDate > new Date()) {
+    // if (targetDate === new Date()) {
+    //   if (mode === "phone") {
+    //     showSweetAlert({
+    //       title: `Interview started, please join on phone - ${data.phonenumber}`,
+    //       type: "success",
+    //     });
+    //   } else {
+    //     if (data.isappvideocall) {
+    //       setLink(id);
+    //       setAppShowInterview(true);
+    //     } else {
+    //       setLink(data.videolink);
+    //       setShowInterview(true);
+    //     }
+    //   }
+    // } else if (targetDate > new Date()) {
+    //   showSweetAlert({
+    //     title: "Interview not started yet!!",
+    //     type: "warning",
+    //   });
+    // } else if (targetDate < new Date()) {
+    //   if (endDate < new Date()) {
+    //     showSweetAlert({
+    //       title: "Interview is completed !!",
+    //       type: "error",
+    //     });
+    //   } else {
+    if (mode === "phone") {
       showSweetAlert({
-        title: "Interview not started yet!!",
-        type: "warning",
+        title: `Interview started, please join on phone - ${data.phonenumber}`,
+        type: "success",
       });
-    } else if (targetDate < new Date()) {
-      if (endDate < new Date()) {
-        showSweetAlert({
-          title: "Interview is completed !!",
-          type: "error",
-        });
+    } else {
+      if (data.isappvideocall) {
+        setLink(id);
+        setAppShowInterview(true);
       } else {
-        if (mode === "phone") {
-          showSweetAlert({
-            title: `Interview started, please join on phone - ${data.phonenumber}`,
-            type: "success",
-          });
-        } else {
-          if (data.isappvideocall) {
-            setLink(id);
-            setAppShowInterview(true);
-          } else {
-            setLink(data.videolink);
-            setShowInterview(true);
-          }
-        }
+        setLink(data.videolink);
+        setShowInterview(true);
       }
     }
+    //   }
+    // }
   };
   const closeSweetAlert = () => {
     let data = { ...showAlert };
