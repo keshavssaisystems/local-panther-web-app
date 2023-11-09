@@ -55,14 +55,14 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
           <Button
-            outline
+            // outline
             size="sm"
             title="apply"
             className="btn-icon"
-            color="primary"
+            color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <BsCheckCircle></BsCheckCircle>
+            <img src={customerIcons?.list_schedule} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
@@ -92,14 +92,14 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
           <Button
-            outline
+            // outline
             size="sm"
             title="apply"
             className="btn-icon"
-            color="primary"
+            color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <BsCheckCircle></BsCheckCircle>
+            <img src={customerIcons?.list_schedule} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
@@ -418,9 +418,7 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">
-                {customerIcons.length > 0 ? renderButtons(row) : ""}
-              </div>
+              <div className="list-btn-group">{renderButtons(row)}</div>
             ),
             ignoreRowClick: true,
             button: true,
@@ -627,9 +625,7 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">
-                {customerIcons.length > 0 ? renderButtons(row) : ""}
-              </div>
+              <div className="list-btn-group">{renderButtons(row)}</div>
             ),
             ignoreRowClick: true,
             button: true,
