@@ -51,6 +51,7 @@ import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
+import { CustomerList } from "_containers/admin/customer/customerList";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -76,7 +77,7 @@ export function App() {
             path="/customers"
             element={
               <PrivateRoute>
-                <AdminListing entity="customers" />
+                <CustomerList />
               </PrivateRoute>
             }
           />
