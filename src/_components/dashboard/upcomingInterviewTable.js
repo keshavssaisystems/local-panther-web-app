@@ -170,7 +170,7 @@ export function UpcomingInterviewTable({ tableData }) {
     //   } else {
     if (mode === "phone") {
       showSweetAlert({
-        title: `Interview started, please join on phone - ${data.phonenumber}`,
+        title: `Please join the interview on phone - ${data.phonenumber}`,
         type: "success",
       });
     } else {
