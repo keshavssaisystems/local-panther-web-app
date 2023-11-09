@@ -1,18 +1,15 @@
 import React, { useState } from "react";
-import { Card, CardBody, CardHeader, NavLink } from "reactstrap";
+import { Card, CardBody, CardHeader, Button } from "reactstrap";
 import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
 import "./dashboard.scss";
-import {
-  getTimezoneDateTime,
-  calculateEndTime,
-  getVideoChannelId,
-} from "_helpers/helper";
+import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
 import videoIcon from "assets/utils/images/camera-video-fill.svg";
 import personIcon from "assets/utils/images/person-fill.svg";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { useNavigate } from "react-router-dom";
 
 export function UpcomingInterviewTable({ tableData }) {
   const [showAlert, SetShowAlert] = useState({
@@ -125,22 +122,25 @@ export function UpcomingInterviewTable({ tableData }) {
     SetShowAlert(data);
   };
   const checkInterview = function (mode, data) {
-    const [year, month, day] = data.scheduledate.split("-").map(Number);
-    const [hours, minutes, seconds] = data.starttime.split(":").map(Number);
+    let startDate = getTimezoneDateTime(
+      moment(data.scheduledate).format("YYYY-MM-DD") + "T" + data.starttime,
+      "MM/DD/YYYY HH:mm:ss"
+    );
+    let durationArr =
+      data?.duration !== undefined ? data?.duration.split(" ") : [];
+    let endDateTime = getTimezoneDateTime(
+      moment(startDate).add(durationArr[0], "m"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
 
-    let endTime = calculateEndTime(data.starttime, data.duration);
-    let end_date = year + "-" + (month - 1) + "-" + day + " " + endTime;
-
-    let endDate = new Date(end_date);
-
+    let endDate = new Date(endDateTime);
     // Create a Date object using the parsed values
-    const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
+    const targetDate = new Date(startDate);
     let id = getVideoChannelId(
       data?.jobtitle,
       data?.jobid,
       data?.scheduleinterviewid
     );
-
     if (targetDate === new Date()) {
       if (mode === "phone") {
         showSweetAlert({
@@ -185,6 +185,20 @@ export function UpcomingInterviewTable({ tableData }) {
       }
     }
   };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+  const navigate = useNavigate();
+  const navigateTo = (link) => {
+    navigate(`/video-screen/${link}`);
+  };
+  const navigateToThirdPartyLink = (link) => {
+    window.open(`${link}`, "_blank", "rel=noopener noreferrer");
+  };
   return (
     <>
       <Card className="mb-3 chart-fixed-height">
@@ -213,13 +227,15 @@ export function UpcomingInterviewTable({ tableData }) {
             title="Interview started"
             onCancel={() => setAppShowInterview(false)}
             type="success"
+            showConfirm
+            onConfirm={(e) => navigateTo(link)}
             showCancel
-            showConfirm={false}
-            showClose
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <NavLink to={`/video-screen/${link}`} exact>
-              Click here to join
-            </NavLink>
+            Click join interview button to proceed with in app interview
           </SweetAlert>
         )}
       </div>
@@ -229,16 +245,25 @@ export function UpcomingInterviewTable({ tableData }) {
             title="Interview started"
             onCancel={() => setShowInterview(false)}
             type="success"
+            showConfirm
+            onConfirm={(e) => navigateToThirdPartyLink(link)}
             showCancel
-            showConfirm={false}
-            showClose
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <a href={link} target="_blank">
-              click to join{" "}
-            </a>
+            Click join interview button to proceed with third party link
           </SweetAlert>
         )}
       </div>
+      <SweetAlert
+        title={showAlert.title}
+        show={showAlert.show}
+        type={showAlert.type}
+        onConfirm={() => closeSweetAlert()}
+      />
+      {showAlert.description}
     </>
   );
 }
