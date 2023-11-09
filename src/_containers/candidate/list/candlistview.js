@@ -62,7 +62,7 @@ export const CandListView = (props) => {
             color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons?.list_schedule} alt="list apply"></img>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
@@ -99,7 +99,7 @@ export const CandListView = (props) => {
             color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons?.list_schedule} alt="list apply"></img>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
