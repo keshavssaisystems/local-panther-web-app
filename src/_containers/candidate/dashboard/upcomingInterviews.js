@@ -20,7 +20,7 @@ import {
   getLocationText,
   calculateEndTime,
   getTimezoneDateTime,
-  getChannelId,
+  getVideoChannelId,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -208,10 +208,9 @@ export function UpcomingInterviews() {
 
     // Create a Date object using the parsed values
     const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
-
-    let id = getChannelId(
-      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId,
-      JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+    let id = getVideoChannelId(
+      data?.jobtitle,
+      data?.jobid,
       data?.scheduleinterviewid
     );
 

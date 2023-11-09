@@ -40,7 +40,7 @@ export const CandListView = (props) => {
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
           </Button>
           <Button
             // outline
@@ -52,7 +52,7 @@ export const CandListView = (props) => {
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
           >
-            <img src={customerIcons.list_reject} alt="list reject"></img>
+            <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
           <Button
             outline
@@ -77,7 +77,7 @@ export const CandListView = (props) => {
             color="primary"
             onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_liked} alt="list like"></img>
+            <img src={customerIcons?.list_liked} alt="list like"></img>
           </Button>
           <Button
             // outline
@@ -89,7 +89,7 @@ export const CandListView = (props) => {
             className="btn-icon"
             color="danger"
           >
-            <img src={customerIcons.list_reject} alt="list reject"></img>
+            <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
           <Button
             outline
@@ -114,7 +114,7 @@ export const CandListView = (props) => {
             color="primary"
             onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_liked} alt="list like"></img>
+            <img src={customerIcons?.list_liked} alt="list like"></img>
           </Button>
           <Button
             // outline
@@ -124,7 +124,7 @@ export const CandListView = (props) => {
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
           </Button>
           <Button
             // outline
@@ -136,7 +136,7 @@ export const CandListView = (props) => {
             className="btn-icon"
             color="danger"
           >
-            <img src={customerIcons.list_reject} alt="list reject"></img>
+            <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
         </ButtonGroup>
       );
@@ -151,7 +151,7 @@ export const CandListView = (props) => {
             color="primary"
             onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_liked} alt="list like"></img>
+            <img src={customerIcons?.list_liked} alt="list like"></img>
           </Button>
 
           <Button
@@ -162,7 +162,7 @@ export const CandListView = (props) => {
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
           </Button>
           {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
@@ -179,7 +179,7 @@ export const CandListView = (props) => {
                 className="btn-icon"
                 color="danger"
               >
-                <img src={customerIcons.list_reject} alt="list reject"></img>
+                <img src={customerIcons?.list_reject} alt="list reject"></img>
               </Button>
             )}
           {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
@@ -196,7 +196,7 @@ export const CandListView = (props) => {
                   )
                 }
               >
-                <img src={customerIcons.list_accept} alt="list accept"></img>
+                <img src={customerIcons?.list_accept} alt="list accept"></img>
               </Button>
             )}
         </ButtonGroup>
@@ -214,7 +214,7 @@ export const CandListView = (props) => {
             className="btn-icon"
             color="danger"
           >
-            <img src={customerIcons.list_reject} alt="list reject"></img>
+            <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
         </ButtonGroup>
       );
@@ -229,7 +229,7 @@ export const CandListView = (props) => {
             color="primary"
             onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_liked} alt="list like"></img>
+            <img src={customerIcons?.list_liked} alt="list like"></img>
           </Button>
           <Button
             // outline
@@ -239,7 +239,7 @@ export const CandListView = (props) => {
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
           </Button>
         </ButtonGroup>
       );
@@ -418,7 +418,9 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">{renderButtons(row)}</div>
+              <div className="list-btn-group">
+                {customerIcons.length > 0 ? renderButtons(row) : ""}
+              </div>
             ),
             ignoreRowClick: true,
             button: true,
@@ -625,7 +627,9 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">{renderButtons(row)}</div>
+              <div className="list-btn-group">
+                {customerIcons.length > 0 ? renderButtons(row) : ""}
+              </div>
             ),
             ignoreRowClick: true,
             button: true,

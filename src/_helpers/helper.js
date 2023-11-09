@@ -436,3 +436,9 @@ export const getChannelId = (id1, id2, scheduleid) => {
     ? id1 + "" + id2 + "" + scheduleid
     : id2 + "" + id1 + "" + scheduleid;
 };
+
+export const getVideoChannelId = (jobtitle, jobid, scheduleinterviewid) => {
+  return (
+    jobtitle.replace(/\s+/g, "-") + "-" + jobid + "-" + scheduleinterviewid
+  );
+};
