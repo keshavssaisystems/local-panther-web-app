@@ -127,14 +127,14 @@ export const CustomerCandidateLists = (props) => {
       )}`
     );
   };
-
+  let successMessage = "Candidate status updated successfully!!!";
   const onActionClick = async (evt, type) => {
     if (type === "like") {
       let res = await dispatch(
         customerCandidateListsActions.putLikedCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
         showSweetAlert({
@@ -147,7 +147,7 @@ export const CustomerCandidateLists = (props) => {
         customerCandidateListsActions.putMayBeCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
         showSweetAlert({
