@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { certificateDetailsSlice } from "_store";
-import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
+import {
+  Row,
+  Col,
+  Modal,
+  Card,
+  CardBody,
+  Button,
+  CardHeader,
+} from "reactstrap";
 import {
   formatDate,
   endDateValidation,
@@ -96,9 +104,20 @@ export function CertificationDetails(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
+          <CardHeader className="card-title-text  text-capitalize ">
+            Certifications and licenses
+            <div className="ms-auto me-2">
+              <Label
+                className="link-text"
+                onClick={(evt) => setPersonalModal(true)}
+              >
+                Add
+              </Label>
+            </div>
+          </CardHeader>
           <CardBody className="scroll-area-lg">
             <PerfectScrollbar>
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <strong className="card-title-text">
                   Certifications and licenses
                 </strong>
@@ -109,7 +128,7 @@ export function CertificationDetails(props) {
                 >
                   Add
                 </Label>
-              </div>
+              </div> */}
               {!loader ? (
                 <Row>
                   {certificationDetails ? (

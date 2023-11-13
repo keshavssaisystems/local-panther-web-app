@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Label, ModalHeader, ModalBody } from "reactstrap";
 import { additionalInfoDetailsSlice } from "_store";
-import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
+import {
+  Row,
+  Col,
+  Modal,
+  Card,
+  CardBody,
+  Button,
+  CardHeader,
+} from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
@@ -105,8 +113,16 @@ export function AdditionalInformation(props) {
       {/* {selectedCandidate ? ( */}
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
+          <CardHeader className="card-title-text  text-capitalize ">
+            Additional information
+            <div className="ms-auto me-2">
+              <Label className="link-text" onClick={(evt) => edit("add")}>
+                Add
+              </Label>
+            </div>
+          </CardHeader>
           <CardBody className="scroll-area-lg">
-            <div className=" mb-3">
+            {/* <div className=" mb-3">
               <strong className="card-title-text">
                 Additional information
               </strong>
@@ -116,7 +132,7 @@ export function AdditionalInformation(props) {
               >
                 Add
               </Label>
-            </div>
+            </div> */}
 
             {!loader ? (
               <div>

@@ -10,7 +10,15 @@ import {
   Button,
   FormGroup,
   CardTitle,
+  TabContent,
+  TabPane,
+  Nav,
+  NavItem,
+  NavLink,
+  ListGroup,
+  ListGroupItem,
 } from "reactstrap";
+import classnames from "classnames";
 import { formatDate } from "_helpers/helper";
 import { profileActions } from "_store";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +28,7 @@ import "./profile.scss";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDropzone } from "react-dropzone";
 import Loader from "react-loaders";
+import Dropzone from "react-dropzone";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 
 import { ProfilePDF } from "./profilePDF";
@@ -45,6 +54,8 @@ export function ResumeDetails(props) {
   const [isModal, setModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const [buildModal, setBuildModal] = useState(false);
+  const [activeTab, setActiveTab] = useState("1");
+  const [selectedFile, setSelectedFile] = useState();
 
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
 
@@ -156,7 +167,9 @@ export function ResumeDetails(props) {
 
       return;
     }
+    let name = acceptedFiles[0].name.replace(/^.*[\\\/]/, "");
 
+    setFileName(name);
     addEditResume(acceptedFiles);
   };
 
@@ -164,6 +177,9 @@ export function ResumeDetails(props) {
     onDrop,
     accept: ".pdf, .docx, .rtf",
   });
+  const onCancel = (acceptedFiles) => {
+    setSelectedFile(null);
+  };
 
   const getFileName = function () {
     let name = "";
@@ -181,168 +197,244 @@ export function ResumeDetails(props) {
   };
   const handleChange = function (data) {};
 
+  const toggle = function (data) {
+    setActiveTab(data);
+  };
+
   return (
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <CardBody className="scroll-area-lg">
-            <div className="mb-3">
-              <strong className="card-title-text">Resume</strong>
-            </div>
-
-            {!loading ? (
-              <div>
-                <Row>
-                  <Label className="card-p-text mb-3">
-                    The recommendation is to utilize the build resume option for
-                    improved job matching
+          <CardHeader className="card-title-text  text-capitalize ">
+            <Nav>
+              {/* <NavItem>
+                  <NavLink
+                    href="#"
+                    className={classnames({
+                      active: activeTab === "1",
+                    })}
+                    onClick={() => {
+                      toggle("1");
+                    }}
+                  >
+                    Template
+                  </NavLink>
+              </NavItem> */}
+              <NavItem>
+                <NavLink
+                  href="#"
+                  className={classnames({
+                    active: activeTab === "1",
+                  })}
+                  onClick={() => {
+                    toggle("1");
+                  }}
+                >
+                  Upload resume
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink
+                  href="#"
+                  className={classnames({
+                    active: activeTab === "2",
+                  })}
+                  onClick={() => {
+                    toggle("2");
+                  }}
+                >
+                  Build resume
+                </NavLink>
+              </NavItem>
+            </Nav>
+          </CardHeader>
+          <CardBody className="scroll-area-md">
+            <TabContent activeTab={activeTab}>
+              {/* <TabPane tabId="1">
+                <p>
+                  <BsDownload />
+                  <a
+                    href={resumeTemplate?.[0]?.name}
+                    download="Resume_Template.docx"
+                    className="card-p-text-black"
+                    style={{ color: "#2F479B", marginLeft: "2px" }}
+                  >
+                    Click here{" "}
+                  </a>
+                  <Label className="card-p-text-black">
+                    to download standard template
                   </Label>
-                </Row>
-
-                {resumeDetails ? (
-                  <Row className="mb-3">
-                    {resumeDetails.resumepath ? (
-                      <div>
-                        <strong className="content-title">
-                          <span className="me-2">{fileName}</span>{" "}
-                          <div className="float-end">
-                            <a
-                              target="blank"
-                              href={resumeDetails.resumepath}
-                              download={fileName}
-                              className="me-2"
-                            >
-                              <BsDownload />
-                            </a>
-                            <BsTrash3 onClick={() => setDeleteConfirm(true)} />
-                          </div>
-                        </strong>
-                        <div className="card-p-text mt-1 mb-1">
-                          Uploaded on {formatDate(resumeDetails.uploadeddate)}
-                        </div>
+                </p>
+              </TabPane> */}
+              <TabPane tabId="1">
+                {resumeDetails?.resumepath ? (
+                  <div className="mb-2">
+                    <strong className="content-title">
+                      <span className="me-2">{fileName}</span>{" "}
+                      <div className="float-end">
+                        <a
+                          target="blank"
+                          href={resumeDetails?.resumepath}
+                          download={fileName}
+                          className="me-3"
+                        >
+                          <BsDownload />
+                        </a>
+                        <BsTrash3
+                          style={{ color: "#545cd8" }}
+                          onClick={() => setDeleteConfirm(true)}
+                        />
                       </div>
-                    ) : (
-                      <></>
-                    )}
-                  </Row>
+                    </strong>
+                    <div className="card-p-text mt-1 mb-2">
+                      Uploaded on {formatDate(resumeDetails?.uploadeddate)}
+                    </div>
+                  </div>
                 ) : (
                   <></>
                 )}
-
                 <Row>
-                  <p>
-                    <BsDownload />
-                    <a
-                      href={resumeTemplate?.[0]?.name}
-                      download="Resume_Template.docx"
-                      className="card-p-text-black"
-                      style={{ color: "#2F479B", marginLeft: "2px" }}
-                    >
-                      Click here{" "}
-                    </a>
-                    <Label className="card-p-text-black">
-                      to download standard template
-                    </Label>
-                  </p>
+                  <Col>
+                    <div className="dropzone-wrapper dropzone-wrapper-sm">
+                      <Dropzone
+                        onDrop={(e) => onDrop(e)}
+                        onFileDialogCancel={onCancel}
+                      >
+                        {({ getRootProps, getInputProps }) => (
+                          <div {...getRootProps()}>
+                            <input {...getInputProps()} />
+                            <div className="dropzone-content">
+                              <p>Upload your own resume</p>
+                              <p>
+                                Try dropping some files here, or click to select
+                                files to upload.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </Dropzone>
+                    </div>
+                  </Col>
                 </Row>
                 <Row>
-                  <Col className="col-12 mb-2">
-                    <div className=" div-box">
-                      <div className=" mb-2 card-p-text-black">
-                        Upload your resume here
+                  <div className="file-info mt-2">
+                    Support formats: doc, docx, pdf, upto 5 MB
+                  </div>
+                </Row>
+                <Row>
+                  <Col className="divider me-2" />
+
+                  <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                    or
+                  </Col>
+                  <Col className="divider" />
+                </Row>
+                <p>
+                  <BsDownload />
+                  <a
+                    href={resumeTemplate?.[0]?.name}
+                    download="Resume_Template.docx"
+                    className="card-p-text-black"
+                    style={{ color: "#2F479B", marginLeft: "2px" }}
+                  >
+                    Click here{" "}
+                  </a>
+                  <Label className="card-p-text-black">
+                    to download standard template
+                  </Label>
+                </p>
+                {/* <Row>
+                  <Col className="col-4">
+                    <b className="mb-2 d-block mt-2">Dropped Files</b>
+                    <ListGroup>
+                      <ListGroupItem key={fileName}>{fileName}</ListGroupItem>
+                    </ListGroup>
+                  </Col>
+                </Row> */}
+                {/* <div className=" div-box">
+                  <div className=" mb-2 card-p-text-black">
+                    Upload your resume here
+                  </div>
+                  <Row>
+                    <label>
+                      <div
+                        className="dropZone"
+                        id="dragbox"
+                        onChange={handleChange}
+                      >
+                        <input {...getInputProps()} />
+                        <Button
+                          style={{
+                            width: "auto",
+                            backgroundColor: "#2F2E2E",
+                            borderColor: "#2F2E2E",
+                            float: "left",
+                            marginRight: "15px",
+                          }}
+                          {...getRootProps()}
+                          className="mb-2 mt-0 btn-icon btn-pill btn-text dropzone"
+                          color="primary"
+                        >
+                          <span className="me-2">
+                            <BsUpload />
+                          </span>
+
+                          <span className="me-2">Upload</span>
+                        </Button>
                       </div>
-                      <Row>
+                      <div className="file-info" style={{ paddingTop: "10px" }}>
+                        Support formats: doc, docx, pdf, upto 5 MB
+                      </div>
+                    </label>
+                  </Row>
+                </div> */}
+              </TabPane>
+              <TabPane tabId="2">
+                <div className="div-box build-resume-box">
+                  <div className="mb-2 card-p-text-black">
+                    Build your own resume
+                  </div>
+
+                  <div className="file-info">
+                    <div className="mb-2">
+                      The system generates a standard resume format by
+                      incorporating all necessary information from the candidate
+                      profile page, including demographics, work experience,
+                      education, skills, certifications, licenses, languages,
+                      and summary.
+                    </div>
+                    <span>
+                      <FormGroup>
                         <Row>
-                          <label>
-                            <div
-                              className="dropZone"
-                              id="dragbox"
-                              onChange={handleChange}
-                            >
-                              <input {...getInputProps()} />
-                              <Button
-                                style={{
-                                  width: "auto",
-                                  backgroundColor: "#2F2E2E",
-                                  borderColor: "#2F2E2E",
-                                  float: "left",
-                                  marginRight: "15px",
-                                }}
-                                {...getRootProps()}
-                                className="mb-2 mt-0 btn-icon btn-pill btn-text dropzone"
-                                color="primary"
-                              >
-                                <span className="me-2">
-                                  <BsUpload />
-                                </span>
-
-                                <span className="me-2">Upload</span>
-                              </Button>
-                            </div>
-                            <div
-                              className="file-info"
-                              style={{ paddingTop: "10px" }}
-                            >
-                              Support formats: doc, docx, pdf, upto 5 MB
-                            </div>
-                          </label>
+                          <Col className="col-5">
+                            After submitting all necessary data
+                          </Col>
                         </Row>
-                      </Row>
-                    </div>
-                  </Col>
+                        <Row className="mt-2">
+                          <Col>
+                            <Button
+                              style={{
+                                width: "auto",
+                                backgroundColor: "#2F479B",
+                              }}
+                              className="me-2 btn-icon btn-pill btn-text"
+                              color="primary"
+                              onClick={() => handlePrint()}
+                            >
+                              <span className="me-2">
+                                <BsUpload />
+                              </span>
 
-                  <Col className="col-12">
-                    <div className="div-box build-resume-box">
-                      <div className="mb-2 card-p-text-black">
-                        Build your own resume
-                      </div>
-
-                      <div className="file-info">
-                        <div className="mb-2">
-                          The system generates a standard resume format by
-                          incorporating all necessary information from the
-                          candidate profile page, including demographics, work
-                          experience, education, skills, certifications,
-                          licenses, languages, and summary.
-                        </div>
-                        <span>
-                          <FormGroup>
-                            <Row>
-                              <Col className="col-5">
-                                After submitting all necessary data
-                              </Col>
-                            </Row>
-                            <Row className="mt-2">
-                              <Col>
-                                <Button
-                                  style={{
-                                    width: "auto",
-                                    backgroundColor: "#2F479B",
-                                  }}
-                                  className="me-2 btn-icon btn-pill btn-text"
-                                  color="primary"
-                                  onClick={() => handlePrint()}
-                                >
-                                  <span className="me-2">
-                                    <BsUpload />
-                                  </span>
-
-                                  <span className="me-2">Build</span>
-                                </Button>
-                              </Col>
-                            </Row>
-                          </FormGroup>
-                        </span>
-                      </div>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
-            ) : (
-              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                <Loader active={loading} type="line-scale-pulse-out-rapid" />
-              </div>
-            )}
+                              <span className="me-2">Build</span>
+                            </Button>
+                          </Col>
+                        </Row>
+                      </FormGroup>
+                    </span>
+                  </div>
+                </div>
+              </TabPane>
+            </TabContent>
           </CardBody>
         </Card>
       </div>
