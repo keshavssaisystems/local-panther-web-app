@@ -233,10 +233,10 @@ export function UpcomingVideoDetails({
           <h6 className="fw-bold mb-0 job-heading">Status</h6>
           {interviewDetails?.isaccepted === true &&
           interviewDetails?.isrejected === false
-            ? "Scheduled"
+            ? "Accepted"
             : interviewDetails?.isrejected === true
             ? "Rejected"
-            : "Awaiting confirmation"}
+            : "No response"}
         </div>
         {showInviteCard === true && (
           <div className="mt-2 mb-2">

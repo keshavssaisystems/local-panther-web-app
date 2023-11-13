@@ -6,12 +6,16 @@ import { ButtonWithCount } from "../../../_components/jobDetailComponents/Button
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
+import "./newjobs.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
+  console.log(jobDetails);
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
@@ -224,7 +228,71 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
       return "";
     }
   };
-
+  const steps = [
+    {
+      name: "Published",
+      count: getTimezoneDateTime(
+        moment(jobDetail.jobcreatedatetime).format("YYYY-MM-DD"),
+        "MM/DD/YYYY"
+      ),
+    },
+    {
+      name: "Matched",
+      count:
+        jobDetail.totalRecommendedCandidates === null
+          ? 0
+          : jobDetail.totalRecommendedCandidates,
+    },
+    {
+      name: "Maybe",
+      count: 0,
+    },
+    {
+      name: "Liked",
+      count:
+        jobDetail.totalLikedCandidates === null
+          ? 0
+          : jobDetail.totalLikedCandidates,
+    },
+    {
+      name: "Applied",
+      count:
+        jobDetail.totalAppliedCandidates === null
+          ? 0
+          : jobDetail.totalAppliedCandidates,
+    },
+    {
+      name: "Scheduled",
+      count: 0,
+    },
+    {
+      name: "Offers",
+      count: 0,
+    },
+    {
+      name: "Accepted",
+      count:
+        jobDetail.totalAcceptedCandidates === null
+          ? 0
+          : jobDetail.totalAcceptedCandidates,
+    },
+    {
+      name: "Rejected",
+      count:
+        jobDetail.totalRejectedCandidates === null
+          ? 0
+          : jobDetail.totalRejectedCandidates,
+    },
+  ];
+  const renderSteps = () => {
+    return steps.map((s, i) => (
+      <li className="form-wizard-step-done" key={i} value={i}>
+        <span>{steps[i].count}</span>
+        <em></em>
+        <span>{steps[i].name}</span>
+      </li>
+    ));
+  };
   const navigate = useNavigate();
   return (
     <>
@@ -301,6 +369,9 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   )}
                 </Row>
               </div>
+            </div>
+            <div className="forms-wizard-alt ms-3 me-3">
+              <ol className="forms-wizard">{renderSteps()}</ol>
             </div>
             {type === "Open" && jobDetail.isdraft === false && (
               <div className="p-3 mt-2 align-left">

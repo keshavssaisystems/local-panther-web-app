@@ -545,6 +545,14 @@ export function ScheduleInterview() {
             {toggleVar === "availabilty" && (
               <Card>
                 <CardBody className="scheduled-calender">
+                  <div className="text-end">
+                    <div className="mb-3 me-1 badge badge-color-white">Pri</div>
+                    Avaialable{" "}
+                    <div className="ms-3 mb-3 me-0 badge badge-color-blue">
+                      Pri
+                    </div>{" "}
+                    Not avaialable
+                  </div>
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
@@ -609,6 +617,20 @@ export function ScheduleInterview() {
             {toggleVar === "calendar" && (
               <Card>
                 <CardBody className="scheduled-calender">
+                  <div className="text-end">
+                    <div className="mb-3 me-0 badge badge-color-yellow">
+                      Pri
+                    </div>{" "}
+                    No response
+                    <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                      Pri
+                    </div>
+                    Accepted interview{" "}
+                    <div className="ms-3 mb-3 me-0 badge badge-color-red">
+                      Pri
+                    </div>{" "}
+                    Rejected interview
+                  </div>
                   <Calendar
                     localizer={localizer}
                     events={upData}

@@ -1,4 +1,18 @@
 .cand-list-cont {
+  .tab-info {
+    background: rgba(253,253,253, 0.7);
+    font-family: 'capitana', sans-serif;
+    color: #979797;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 400;
+    img {
+      float: left;
+      height: 45px;
+      width: 45px;
+      margin-right: 10px;
+    }
+  }
   .cust-btn-tabs {
     .active {
       background-color: #61d097 !important;

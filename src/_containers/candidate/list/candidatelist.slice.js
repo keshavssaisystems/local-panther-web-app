@@ -15,20 +15,32 @@ export const getRecommendedJobList = createAsyncThunk(
     candidateId,
     isCandidate,
   }) => {
-    const jobStatusId =
-      candidateRecommendedJobStatusId === undefined
-        ? ""
-        : candidateRecommendedJobStatusId === 4
-        ? `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-        : candidateRecommendedJobStatusId === 3
-        ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-        : (candidateRecommendedJobStatusId === 6 ||
-            candidateRecommendedJobStatusId === 5) &&
-          isCandidate === false
-        ? `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-        : candidateRecommendedJobStatusId === 6 && isCandidate === true
-        ? `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`
-        : `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+    let jobStatusId = "";
+    switch (candidateRecommendedJobStatusId) {
+      case undefined:
+        jobStatusId = "";
+        break;
+      case 4:
+        jobStatusId = `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        break;
+      case 3:
+        jobStatusId = `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        break;
+      case 6:
+        isCandidate = true;
+        jobStatusId = `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        break;
+      case 5:
+        jobStatusId = `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        break;
+      case 7:
+        isCandidate = false;
+        jobStatusId = `&customerRecommendedJobStatusId=5`;
+        break;
+      default:
+        jobStatusId = `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        break;
+    }
     const RECOMMENDED_JOB_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&candidateId=${candidateId}&pageSize=${pageSize}&pageNumber=${pageNumber}${jobStatusId}`;
     return await fetchWrapper.get(RECOMMENDED_JOB_END_POINT);
   }
