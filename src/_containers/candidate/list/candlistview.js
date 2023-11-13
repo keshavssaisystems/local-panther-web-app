@@ -55,14 +55,14 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
           <Button
-            outline
+            // outline
             size="sm"
             title="apply"
             className="btn-icon"
-            color="primary"
+            color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <BsCheckCircle></BsCheckCircle>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
@@ -92,14 +92,14 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
           <Button
-            outline
+            // outline
             size="sm"
             title="apply"
             className="btn-icon"
-            color="primary"
+            color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <BsCheckCircle></BsCheckCircle>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
@@ -143,7 +143,7 @@ export const CandListView = (props) => {
     } else if (props.type === "interview") {
       return (
         <ButtonGroup>
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="liked"
@@ -163,7 +163,7 @@ export const CandListView = (props) => {
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
             <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
           {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
               <Button
@@ -418,9 +418,7 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">
-                {customerIcons.length > 0 ? renderButtons(row) : ""}
-              </div>
+              <div className="list-btn-group">{renderButtons(row)}</div>
             ),
             ignoreRowClick: true,
             button: true,
@@ -627,9 +625,7 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
-              <div className="list-btn-group">
-                {customerIcons.length > 0 ? renderButtons(row) : ""}
-              </div>
+              <div className="list-btn-group">{renderButtons(row)}</div>
             ),
             ignoreRowClick: true,
             button: true,

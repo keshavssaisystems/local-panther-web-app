@@ -10,12 +10,11 @@ import {
   Label,
   Input,
   Button,
-  ButtonGroup,
   FormText,
 } from "reactstrap";
 import "./scheduledInterview.scss";
-import InputMask from "react-input-mask";
 import moment from "moment-timezone";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function UpdateScheduleInterviewModal({
   interviewData,
@@ -24,32 +23,13 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  let formatedData =
-    interviewData?.format === "In-person"
-      ? 3
-      : interviewData?.format === "Phone"
-      ? 2
-      : 1;
-  const [videoModeCheck, setVideoModeCheck] = useState(
-    interviewData?.isappvideocall === true ? 0 : 1
-  );
   const [timeOption, setTimeOption] = useState([]);
   const [modal, setModal] = useState(false);
   const [scheduleDateValidation, setScheduleDateValidation] = useState(false);
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
   const [durationValidation, setDurationValidation] = useState(false);
-  const [videoLinkValidation, setVideoLinkValidation] = useState(false);
-  const [interviewAddressValidation, setInterviewAddressValidation] =
-    useState(false);
-  const [formatButton, setFormatButton] = useState(formatedData);
   const toggle = () => {
     setModal(!modal);
-  };
-  const onRadioBtnClick = (term) => {
-    setFormatButton(term);
-  };
-  const onVideoModeChange = (term) => {
-    setVideoModeCheck(term);
   };
   useEffect(() => {
     getTimeArray();
@@ -137,7 +117,6 @@ export function UpdateScheduleInterviewModal({
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
     };
-    // console.log(data);
     postData(data);
     onClose();
   };
@@ -190,7 +169,10 @@ export function UpdateScheduleInterviewModal({
                       id="scheduleDate"
                       placeholder="Enter date"
                       invalid={scheduleDateValidation}
-                      defaultValue={moment(interviewData?.scheduledate).format(
+                      defaultValue={getTimezoneDateTime(
+                        moment(interviewData?.scheduledate).format(
+                          "YYYY-MM-DD"
+                        ),
                         "YYYY-MM-DD"
                       )}
                       onChange={() => setScheduleDateValidation(false)}
@@ -220,9 +202,21 @@ export function UpdateScheduleInterviewModal({
                           <option
                             key={options}
                             value={options}
-                            selected={moment(interviewData?.starttime).format(
-                              "hh:mm A"
-                            )}
+                            selected={
+                              String(options) ===
+                              String(
+                                getTimezoneDateTime(
+                                  moment(
+                                    moment(interviewData?.scheduledate).format(
+                                      "YYYY-MM-DD"
+                                    ) +
+                                      " " +
+                                      interviewData?.starttime
+                                  ).format("YYYY-MM-DD hh:mm A"),
+                                  "hh:mm A"
+                                )
+                              )
+                            }
                           >
                             {options}{" "}
                           </option>
@@ -256,7 +250,9 @@ export function UpdateScheduleInterviewModal({
                             <option
                               value={data.id}
                               key={data.id}
-                              selected={Number(interviewData?.durationid)}
+                              selected={
+                                data.id === Number(interviewData?.durationid)
+                              }
                             >
                               {data.name}
                             </option>
