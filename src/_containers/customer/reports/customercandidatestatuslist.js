@@ -5,7 +5,6 @@ import {
   Col,
   Row,
   FormGroup,
-  InputGroup,
   Button,
   Card,
   CardBody,
@@ -14,7 +13,6 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  ButtonGroup,
 } from "reactstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,6 +32,7 @@ import Loader from "react-loaders";
 import { updateMonthstoYears, USPhoneNumber } from "_helpers/helper";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import "./customerreport.scss";
 
 const columns = [
   // {
@@ -42,34 +41,63 @@ const columns = [
   //   sortable: true,
   // },
   {
-    name: "Name",
-    selector: (row) => row.candidatename,
+    name: <span className="table-title">Name</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.candidatename}>
+        {row.candidatename}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Email",
-    selector: (row) => row.email,
+    name: <span className="table-title">Email</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.email}>
+        {row.email}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Phone",
-    selector: (row) => (row.phone ? USPhoneNumber(row.phone) : ""),
+    name: <span className="table-title">Phone</span>,
+    selector: (row) => (
+      <span
+        className="table-cell"
+        title={row.phone ? USPhoneNumber(row.phone) : ""}
+      >
+        {row.phone ? USPhoneNumber(row.phone) : ""}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Skills",
-    selector: (row) => row.skill,
+    name: <span className="table-title">Skills</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row?.skill}>
+        {row?.skill}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Education",
-    selector: (row) => row.education,
+    name: <span className="table-title">Education</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.education}>
+        {row.education}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Experience",
-    selector: (row) =>
-      row.experience > 0 ? updateMonthstoYears(row.experience) : "",
+    name: <span className="table-title">Experience</span>,
+    selector: (row) => (
+      <span
+        className="table-cell"
+        title={row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
+      >
+        {row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
+      </span>
+    ),
     sortable: true,
   },
   // {
@@ -78,7 +106,7 @@ const columns = [
   //   sortable: true,
   // },
   {
-    name: "Certifications",
+    name: <span className="table-title">Certifications</span>,
     selector: (row) => row.certifications,
     sortable: true,
   },
@@ -183,10 +211,6 @@ export function CustomerReportCandidateStatus() {
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
-                    </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
@@ -224,28 +248,23 @@ export function CustomerReportCandidateStatus() {
                 </Col>
 
                 <Col lg="3" md="3" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <ButtonGroup>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary me-4"
-                          type="button"
-                          onClick={() => onSubmitHandler()}
-                        >
-                          <FontAwesomeIcon icon={faSearch} /> Search
-                        </Button>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary"
-                          type="button"
-                          onClick={() => onSubmitClear()}
-                        >
-                          Clear
-                        </Button>
-                      </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup>
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="me-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
                 </Col>
               </Row>
               <Row className="mt-1">
@@ -264,6 +283,7 @@ export function CustomerReportCandidateStatus() {
                         data={candidateStatusList}
                         fixedHeader
                         pagination
+                        className="cust-rep-list-view"
                       />
                     ) : (
                       <Row className="center-align">

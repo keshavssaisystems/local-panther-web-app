@@ -13,7 +13,6 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  ButtonGroup,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,59 +31,107 @@ import { NoDataFound } from "_components/common/nodatafound";
 import "./customerreport.scss";
 const columns = [
   {
-    name: "Job Code",
-    selector: (row) => row.jobid,
+    name: <span className="table-title">Job Code</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobid}>
+        {row.jobid}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Title",
-    selector: (row) => row.jobtitle,
+    name: <span className="table-title">Title</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobtitle}>
+        {row.jobtitle}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Status",
-    selector: (row) => row.jobstatus,
+    name: <span className="table-title">Status</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobstatus}>
+        {row.jobstatus}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Positions",
-    selector: (row) => row.noofopenposition,
+    name: <span className="table-title">No. of Positions</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.noofopenposition}>
+        {row.noofopenposition}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Posted date",
-    selector: (row) =>
-      row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : "",
+    name: <span className="table-title">Posted date</span>,
+    selector: (row) => (
+      <span
+        className="table-cell"
+        title={
+          row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
+        }
+      >
+        {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Matched",
-    selector: (row) => row.matchedcandidates,
+    name: <span className="table-title">No. of Matched</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.matchedcandidates}>
+        {row.matchedcandidates}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Liked",
-    selector: (row) => row.likedcandidates,
+    name: <span className="table-title">No. of Liked</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.likedcandidates}>
+        {row.likedcandidates}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Maybe",
-    selector: (row) => row.maybecandidates,
+    name: <span className="table-title">No. of Maybe</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.maybecandidates}>
+        {row.maybecandidates}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Accepted",
-    selector: (row) => row.acceptedcandidates,
+    name: <span className="table-title">No. of Accepted</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.acceptedcandidates}>
+        {row.acceptedcandidates}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Rejected",
-    selector: (row) => row.rejectedcandidates,
+    name: <span className="table-title">No. of Rejected</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.rejectedcandidates}>
+        {row.rejectedcandidates}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Interviews Scheduled",
-    selector: (row) => row.scheduledinterviews,
+    name: <span className="table-title">No. of Interviews Scheduled</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.scheduledinterviews}>
+        {row.scheduledinterviews}
+      </span>
+    ),
     sortable: true,
   },
 ];
@@ -183,10 +230,6 @@ export function CustomerReportJobList() {
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
-                    </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
@@ -236,28 +279,25 @@ export function CustomerReportJobList() {
                   </FormGroup>
                 </Col>
                 <Col lg="3" md="3" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <ButtonGroup>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary me-4"
-                          type="button"
-                          onClick={() => onSubmitHandler()}
-                        >
-                          <FontAwesomeIcon icon={faSearch} /> Search
-                        </Button>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary"
-                          type="button"
-                          onClick={() => onSubmitClear()}
-                        >
-                          Clear
-                        </Button>
-                      </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup>
+                  {/* <ButtonGroup> */}
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="me-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
+                  {/* </ButtonGroup> */}
                 </Col>
               </Row>
               <Row className="mt-1">
@@ -276,6 +316,7 @@ export function CustomerReportJobList() {
                         data={jobList}
                         fixedHeader
                         pagination
+                        className="cust-rep-list-view"
                       />
                     ) : (
                       <Row className="center-align ">
