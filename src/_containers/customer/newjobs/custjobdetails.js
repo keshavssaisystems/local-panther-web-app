@@ -8,6 +8,14 @@ import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import "./newjobs.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
+import {
+  FaUsers,
+  FaUserClock,
+  FaUserCheck,
+  FaUserTimes,
+  FaLeanpub,
+  FaUserTie,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
@@ -15,7 +23,6 @@ import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
-  console.log(jobDetails);
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
@@ -235,6 +242,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         moment(jobDetail.jobcreatedatetime).format("YYYY-MM-DD"),
         "MM/DD/YYYY"
       ),
+      icon: <FaLeanpub className="img-fluid " size={"35px"} />,
     },
     {
       name: "Matched",
@@ -243,11 +251,13 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalRecommendedCandidates,
       action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
     },
     {
       name: "Maybe",
       count: 0,
       action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
     },
     {
       name: "Liked",
@@ -256,6 +266,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalLikedCandidates,
       action: `/customer-candidate-liked/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
     },
     {
       name: "Applied",
@@ -264,16 +275,19 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalAppliedCandidates,
       action: `/customer-candidate-applied/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
     },
     {
       name: "Scheduled",
       count: 0,
       action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
+      icon: <FaUserClock className="img-fluid " size={"35px"} />,
     },
     {
       name: "Offers",
       count: 0,
       action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
+      icon: <FaUserCheck className="img-fluid " size={"35px"} />,
     },
     {
       name: "Accepted",
@@ -282,6 +296,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalAcceptedCandidates,
       action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}`,
+      icon: <FaUserTie className="img-fluid " size={"35px"} />,
     },
     {
       name: "Rejected",
@@ -290,17 +305,19 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalRejectedCandidates,
       action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}`,
+      icon: <FaUserTimes className="img-fluid " size={"35px"} />,
     },
   ];
 
   const renderSteps = () => {
     return steps.map((s, i) => (
       <li className="form-wizard-step-done" key={i} value={i}>
-        <span>{steps[i].count}</span>
+        <span className="count-details">{steps[i].count}</span>
         <em></em>
         <span onClick={(e) => navigateTo(steps[i].action)}>
           {steps[i].name}
         </span>
+        {/* <div className="">{steps[i].icon}</div> */}
       </li>
     ));
   };

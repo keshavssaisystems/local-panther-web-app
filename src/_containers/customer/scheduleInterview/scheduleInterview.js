@@ -83,6 +83,7 @@ export function ScheduleInterview() {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(scheduleInterviewActions.getDurationThunk());
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
         start: moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
@@ -435,6 +436,16 @@ export function ScheduleInterview() {
     );
     onCloseIdModal();
   };
+  const postFeedbackData = async (event) => {
+    let scheduleinterviewid = event.scheduleinterviewid;
+    let payload = event;
+    await dispatch(
+      scheduleInterviewActions.interviewFeedbackThunk({
+        scheduleinterviewid,
+        payload,
+      })
+    );
+  };
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -610,6 +621,7 @@ export function ScheduleInterview() {
                     acceptInterview={(e) => acceptScheduleData(e)}
                     rejectInterview={(e) => rejectScheduleData(e)}
                     getUpdatedFormData={(e) => getFormData(e)}
+                    postFeedbackData={(e) => postFeedbackData(e)}
                   />
                 </Col>
               </Row>

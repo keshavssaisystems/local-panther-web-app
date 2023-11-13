@@ -28,6 +28,7 @@ import { UpdateScheduleInterviewModal } from "./updateScheduleInterviewModal";
 import { Chat } from "firebase/chat/chat";
 import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
+import { InterviewFeedback } from "./interviewFeedback";
 
 export function UpcomingVideoDetails({
   interviewId,
@@ -37,12 +38,14 @@ export function UpcomingVideoDetails({
   acceptInterview,
   rejectInterview,
   getUpdatedFormData,
+  postFeedbackData,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
   const [showRejectPopup, setShowRejectPopup] = useState(false);
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [feedbackModal, setFeedbackModal] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
@@ -372,6 +375,16 @@ export function UpcomingVideoDetails({
               {" "}
               Chat{" "}
             </Button>
+            <Button
+              outline={!feedbackModal}
+              className="mb-2 mr-2 btn-transition"
+              color="primary"
+              size={"sm"}
+              onClick={(e) => setFeedbackModal(!feedbackModal)}
+            >
+              {" "}
+              Interview feedback{" "}
+            </Button>
           </CardFooter>
         </Card>
         {showNotes === true && (
@@ -380,6 +393,17 @@ export function UpcomingVideoDetails({
               interviewNotes={interviewDetails.interviewnotes}
               interviewId={interviewDetails.scheduleinterviewid}
               postNotesData={(e) => postNotesData(e)}
+            />
+          </div>
+        )}
+        {feedbackModal === true && (
+          <div className="mt-2 mb-2">
+            <InterviewFeedback
+              interviewId={interviewDetails.scheduleinterviewid}
+              postFeedbackData={(e) => {
+                postFeedbackData(e);
+                setFeedbackModal(false);
+              }}
             />
           </div>
         )}

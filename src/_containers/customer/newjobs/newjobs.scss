@@ -14,12 +14,15 @@
         margin: 0px auto 0;
     }
     .forms-wizard li.form-wizard-step-done::after, .forms-wizard li.form-wizard-step-done::before {
-        margin: -2px;
+        margin-top: -2px;
         background: #2f479b;
     }
     .forms-wizard li.form-wizard-step-done em {
         font-family: "Linearicons-Free";
         background: #2f479b;
         overflow: hidden;
+    }
+    .count-details{
+        font-size: 13px;
     }
 }
