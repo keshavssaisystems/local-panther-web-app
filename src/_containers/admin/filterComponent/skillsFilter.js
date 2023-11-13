@@ -7,27 +7,41 @@ export function SkillsFilter({
   placeholder,
   onChange,
   isMulti = false,
+  value,
 }) {
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
-    const { data = [] } = await getSkillsFilter(inputValue);
+      const { data = [] } = await getSkillsFilter(inputValue);
 
-    return data.map(({ skillid: value, ...rest }) => {
+      return data.map(({ skillid: value, ...rest }) => {
         return {
-        value,
-        label: `${rest.skillname}`,
+          value,
+          label: `${rest.skillname}`,
         };
-    });
+      });
     }
   };
 
   return (
-    <AsyncSelect
-      name={name}
-      placeholder={placeholder}
-      loadOptions={loadOptions}
-      onChange={(e) => onChange(name, e.value)}
-      isMulti={isMulti}
-    />
+    <>
+      {value ? (
+        <AsyncSelect
+          name={name}
+          placeholder={placeholder}
+          loadOptions={loadOptions}
+          onChange={(e) => onChange(name, e.value, e)}
+          isMulti={isMulti}
+          value={value}
+        />
+      ) : (
+        <AsyncSelect
+          name={name}
+          placeholder={placeholder}
+          loadOptions={loadOptions}
+          onChange={(e) => onChange(name, e.value)}
+          isMulti={isMulti}
+        />
+      )}
+    </>
   );
 }

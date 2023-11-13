@@ -5,7 +5,6 @@ import {
   Col,
   Row,
   FormGroup,
-  InputGroup,
   Button,
   Card,
   CardBody,
@@ -14,7 +13,6 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  ButtonGroup,
 } from "reactstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,30 +31,52 @@ import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import "./customerreport.scss";
+
 const columns = [
   {
-    name: "Job Code",
-    selector: (row) => row.jobid,
+    name: <span className="table-title">Job Code</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobid}>
+        {row.jobid}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Title",
-    selector: (row) => row.jobtitle,
+    name: <span className="table-title">Title</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobtitle}>
+        {row.jobtitle}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Status",
-    selector: (row) => row.jobstatus,
+    name: <span className="table-title">Status</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobstatus}>
+        {row.jobstatus}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "No. of Days",
-    selector: (row) => row.noofdays,
+    name: <span className="table-title">No. of Days</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.noofdays}>
+        {row.noofdays}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Aging group",
-    selector: (row) => row.aginggroup,
+    name: <span className="table-title">Aging group</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.aginggroup}>
+        {row.aginggroup}
+      </span>
+    ),
     sortable: true,
   },
 ];
@@ -152,10 +172,6 @@ export function CustomerReportJobAging() {
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
                     </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
-                    </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
@@ -190,28 +206,23 @@ export function CustomerReportJobAging() {
                 </Col>
 
                 <Col lg="3" md="3" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <ButtonGroup>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary me-4"
-                          type="button"
-                          onClick={() => onSubmitHandler()}
-                        >
-                          <FontAwesomeIcon icon={faSearch} /> Search
-                        </Button>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary"
-                          type="button"
-                          onClick={() => onSubmitClear()}
-                        >
-                          Clear
-                        </Button>
-                      </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup>
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="me-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
                 </Col>
               </Row>
               <Row className="mt-1">
@@ -230,6 +241,7 @@ export function CustomerReportJobAging() {
                         data={jobAgingList}
                         fixedHeader
                         pagination
+                        className="cust-rep-list-view"
                       />
                     ) : (
                       <Row className="center-align ">

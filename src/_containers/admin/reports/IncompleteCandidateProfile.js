@@ -4,22 +4,23 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import Loader from "react-loaders";
 
-import { 
-  Col, 
-  Row, 
-  FormGroup, 
-  InputGroup, 
-  Button, 
-  Card, 
-  CardBody, 
-  CardHeader, 
-  UncontrolledButtonDropdown, 
-  DropdownToggle, 
-  DropdownMenu, 
-  DropdownItem } from "reactstrap";
+import {
+  Col,
+  Row,
+  FormGroup,
+  InputGroup,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  UncontrolledButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 
 import { SkillsFilter, LocationFilter } from "../filterComponent";
-import { Table } from "_widgets";
+
 import { getReportDataThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
@@ -28,26 +29,33 @@ import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
+import { exportToExcel } from "react-json-to-excel";
+import DataTable from "react-data-table-component";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./adminreports.scss";
 
 const initFilter = {
-  '@startdate': null,
-  '@enddate': null,
-  '@skillid': null,
-  '@cityid': null
+  "@startdate": null,
+  "@enddate": null,
+  "@skillid": null,
+  "@cityid": null,
 };
 
 export function IncompleteCandidateProfile({ title }) {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   let { id: reportId } = useParams();
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
   let [filter, setFilter] = useState(initFilter);
+  let [skill, setSkill] = useState([]);
+  let [location, setLocation] = useState([]);
 
-  const { 
-    reportData: data = [],
-    loading = false 
-  } = useSelector((state) => state?.adminReportReducer ?? {});
+  const [excelData, setExcelData] = useState([]);
+
+  const { reportData: data = [], loading = false } = useSelector(
+    (state) => state?.adminReportReducer ?? {}
+  );
 
   const getReportData = (isClearAll) => {
     if (isClearAll) {
@@ -56,76 +64,141 @@ export function IncompleteCandidateProfile({ title }) {
     let parameter = "";
     for (const key in filter) {
       if (Object.hasOwnProperty.call(filter, key)) {
-        parameter += key + '=' + filter[key]+',';
+        if (
+          (key.indexOf("startdate") !== -1 || key.indexOf("enddate") !== -1) &&
+          filter[key] !== null
+        ) {
+          parameter += key + "='" + filter[key] + "',";
+        } else {
+          parameter += key + "=" + filter[key] + ",";
+        }
       }
     }
     parameter = parameter.replace(/,\s*$/, "");
-    dispatch(getReportDataThunk({reportId, parameter}))
-  }
-  
+    dispatch(getReportDataThunk({ reportId, parameter }));
+  };
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      let filteredData = data.map((rec) => {
+        return {
+          Candidate: rec?.candidatename,
+
+          Experience: rec?.experience,
+          Skills: rec?.skills,
+          Location: rec?.location,
+
+          Created: rec.createddate
+            ? moment(data.createddate).format("MM/DD/YYYY")
+            : "",
+        };
+      });
+      setExcelData(filteredData);
+    }
+  }, [data]);
+
   useEffect(() => {
     getReportData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (name, value) => {
     setFilter({
       ...filter,
-      [name]: value
-    })
-  }
-  
+      [name]: value,
+    });
+  };
+
   const handleDateChange = (name, value) => {
     setFilter({
       ...filter,
-      [name]: moment(value).format('YYYY-MM-DD')
-    })
-  }
+      [name]: moment(value).format("YYYY-MM-DD"),
+    });
+  };
 
   const applyFilter = () => {
     getReportData();
-  }
-  
+  };
+
   const clearFilter = () => {
     setFilter(initFilter);
-    setStartDate(null)
-    setEndDate(null)
+    setStartDate(null);
+    setEndDate(null);
+    setSkill([]);
+    setLocation([]);
     getReportData(true);
-  }
+  };
 
   const columns = [
     {
-        name: 'Candidate',
-        selector: row => row?.candidatename,
-        sortable: true,
-        wrap: true,
-        width: '150px'
-    },
-    {
-        name: 'Experience',
-        selector: row => row?.experience,
-        sortable: true,
-        wrap: true,
-        width: '150px'
-    },
-    {
-        name: 'Skills',
-        selector: row => typeof row?.skills === 'string' && row?.skills,
-        wrap: true,
-    },
-    {
-      name: 'Location',
-      selector: row => row?.location,
+      name: <span className="table-title">Candidate</span>,
+      selector: (row) => (
+        <span className="table-cell" title={row?.candidatename}>
+          {row?.candidatename}
+        </span>
+      ),
       sortable: true,
-      wrap: true,
-      width: '300px'
+      // wrap: true,
+      // width: "150px",
     },
     {
-        name: 'Created',
-        selector: row => row?.createddate,
-        format: (row) => moment(row?.createddate).format('MM/DD/YYYY'),
-        wrap: true,
-        width: '150px'
+      name: <span className="table-title">Experience</span>,
+      selector: (row) => (
+        <span className="table-cell" title={row?.experience}>
+          {row?.experience}
+        </span>
+      ),
+      sortable: true,
+      // wrap: true,
+      // width: "150px",
+    },
+    {
+      name: <span className="table-title">Skills</span>,
+      selector: (row) => (
+        <span
+          className="table-cell"
+          title={typeof row?.skills === "string" && row?.skills}
+        >
+          {typeof row?.skills === "string" && row?.skills}
+        </span>
+      ),
+      // wrap: true,
+      // width: "400px",
+      sortable: true,
+      maxWidth: "600px",
+      minWidth: "400px",
+    },
+    {
+      name: <span className="table-title">Location</span>,
+      selector: (row) => (
+        <span className="table-cell" title={row?.location}>
+          {row?.location}
+        </span>
+      ),
+      sortable: true,
+      // wrap: true,
+      // width: "300px",
+    },
+    {
+      name: <span className="table-title">Created</span>,
+      selector: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row?.createddate
+              ? moment(row?.createddate).format("MM/DD/YYYY")
+              : ""
+          }
+        >
+          {row?.createddate
+            ? moment(row?.createddate).format("MM/DD/YYYY")
+            : ""}
+        </span>
+      ),
+      // format: (row) => moment(row?.createddate).format('MM/DD/YYYY'),
+      // wrap: true,
+      // width: "150px",
+      sortable: true,
     },
   ];
 
@@ -141,30 +214,52 @@ export function IncompleteCandidateProfile({ title }) {
               </div>
               <div className="btn-actions-pane-right actions-icon-btn">
                 <UncontrolledButtonDropdown>
-                  <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                  <DropdownToggle
+                    className="btn-icon btn-icon-only"
+                    color="link"
+                  >
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(
+                          excelData,
+                          "adminIncompleteCandidateReport"
+                        )
+                      }
+                    >
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{zIndex: 9, position: 'relative'}}>
+              <Row style={{ zIndex: 9, position: "relative" }}>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <SkillsFilter name={"@skillid"} placeholder={"Select Skills"} onChange={handleChange}/>
+                  <SkillsFilter
+                    name={"@skillid"}
+                    placeholder={"Select Skills"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setSkill(e);
+                    }}
+                    value={skill}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <LocationFilter name={"@cityid"} placeholder={"Select Location"} onChange={handleChange}/>
+                  <LocationFilter
+                    name={"@cityid"}
+                    placeholder={"Select Location"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setLocation(e);
+                    }}
+                    value={location}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
@@ -173,14 +268,14 @@ export function IncompleteCandidateProfile({ title }) {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
+                        dateFormat={"yyyy-MM-dd"}
                         name="@startdate"
                         placeholderText="From"
                         className="form-control"
                         selected={startDate}
                         onChange={(date) => {
-                          handleDateChange("@startdate", date)
-                          setStartDate(date)
+                          handleDateChange("@startdate", date);
+                          setStartDate(date);
                         }}
                       />
                     </InputGroup>
@@ -193,14 +288,14 @@ export function IncompleteCandidateProfile({ title }) {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
+                        dateFormat={"yyyy-MM-dd"}
                         name="@enddate"
                         placeholderText="To"
                         className="form-control"
                         selected={endDate}
                         onChange={(date) => {
-                          handleDateChange("@enddate", date)
-                          setEndDate(date)
+                          handleDateChange("@enddate", date);
+                          setEndDate(date);
                         }}
                       />
                     </InputGroup>
@@ -208,32 +303,63 @@ export function IncompleteCandidateProfile({ title }) {
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                    style={{background: 'rgb(47 71 155)'}}
-                    className="btn-square btn btn-primary"
+                    style={{ background: "rgb(47 71 155)" }}
+                    color="primary"
                     type="button"
                     onClick={() => applyFilter()}
-                  >  Search
+                  >
+                    {" "}
+                    Search
                   </Button>
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                      className="btn-square btn btn-primary"
-                      type="button"
-                      onClick={() => clearFilter()}
-                    > Clear
+                    color="link"
+                    type="button"
+                    onClick={() => clearFilter()}
+                  >
+                    {" "}
+                    Clear
                   </Button>
                 </Col>
               </Row>
 
-              <Table 
+              {/* <Table
                 progressPending={loading}
-                progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
+                progressComponent={
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                }
                 columns={columns}
                 data={data}
                 // onRowClicked={handleRowClicked}
                 fixedHeader
                 fixedHeaderScrollHeight="400px"
-              />
+              /> */}
+              {loading ? (
+                <Loader
+                  type="line-scale-pulse-out-rapid"
+                  className="d-flex justify-content-center"
+                />
+              ) : (
+                <>
+                  {data.length > 0 ? (
+                    <DataTable
+                      columns={columns}
+                      data={data}
+                      fixedHeader
+                      pagination
+                      className="admin-list-view"
+                    />
+                  ) : (
+                    <Row className="center-align ">
+                      <NoDataFound></NoDataFound>
+                    </Row>
+                  )}
+                </>
+              )}
             </CardBody>
           </Card>
         </Col>
