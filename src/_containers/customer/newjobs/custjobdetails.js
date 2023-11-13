@@ -242,10 +242,12 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         jobDetail.totalRecommendedCandidates === null
           ? 0
           : jobDetail.totalRecommendedCandidates,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Maybe",
       count: 0,
+      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Liked",
@@ -253,6 +255,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         jobDetail.totalLikedCandidates === null
           ? 0
           : jobDetail.totalLikedCandidates,
+      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Applied",
@@ -260,14 +263,17 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         jobDetail.totalAppliedCandidates === null
           ? 0
           : jobDetail.totalAppliedCandidates,
+      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Scheduled",
       count: 0,
+      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Offers",
       count: 0,
+      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Accepted",
@@ -275,6 +281,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         jobDetail.totalAcceptedCandidates === null
           ? 0
           : jobDetail.totalAcceptedCandidates,
+      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}`,
     },
     {
       name: "Rejected",
@@ -282,18 +289,25 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         jobDetail.totalRejectedCandidates === null
           ? 0
           : jobDetail.totalRejectedCandidates,
+      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}`,
     },
   ];
+
   const renderSteps = () => {
     return steps.map((s, i) => (
       <li className="form-wizard-step-done" key={i} value={i}>
         <span>{steps[i].count}</span>
         <em></em>
-        <span>{steps[i].name}</span>
+        <span onClick={(e) => navigateTo(steps[i].action)}>
+          {steps[i].name}
+        </span>
       </li>
     ));
   };
   const navigate = useNavigate();
+  const navigateTo = (action) => {
+    navigate(action);
+  };
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -370,10 +384,12 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                 </Row>
               </div>
             </div>
-            <div className="forms-wizard-alt ms-3 me-3">
-              <ol className="forms-wizard">{renderSteps()}</ol>
-            </div>
             {type === "Open" && jobDetail.isdraft === false && (
+              <div className="forms-wizard-alt ms-3 me-3">
+                <ol className="forms-wizard">{renderSteps()}</ol>
+              </div>
+            )}
+            {/* {type === "Open" && jobDetail.isdraft === false && (
               <div className="p-3 mt-2 align-left">
                 <ButtonWithCount
                   buttonName={"Applied"}
@@ -405,7 +421,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   }
                   action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
                 />
-                {/* <ButtonWithCount
+                <ButtonWithCount
                   buttonName={"Maybe"}
                   color={"primary"}
                   count={
@@ -414,8 +430,8 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       : jobDetail.totalLikedCandidates
                   }
                   action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
-                /> */}
-                {/* <ButtonWithCount
+                />
+                <ButtonWithCount
                   buttonName={"Scheduled"}
                   color={"primary"}
                   count={
@@ -424,7 +440,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       : jobDetail.totalLikedCandidates
                   }
                   action={`/customer-candidate-scheduled/${jobDetails[0]?.jobid}`}
-                /> */}
+                />
                 <ButtonWithCount
                   buttonName={"Accepted"}
                   color={"success"}
@@ -446,7 +462,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
                 />
               </div>
-            )}
+            )} */}
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
             </div>
