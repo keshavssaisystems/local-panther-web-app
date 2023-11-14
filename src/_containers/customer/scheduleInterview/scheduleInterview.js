@@ -547,7 +547,14 @@ export function ScheduleInterview() {
                   className="mb-3 right-align"
                 >
                   <div>
-                    <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                    <Row>
+                      <Col md={8} className="mt-1 right-align">
+                        <span className="right-align">Connect calendar</span>
+                      </Col>
+                      <Col md={4}>
+                        <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                      </Col>
+                    </Row>
                   </div>
                 </Col>
               )}
