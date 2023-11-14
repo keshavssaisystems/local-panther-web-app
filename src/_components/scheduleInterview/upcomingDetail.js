@@ -11,6 +11,7 @@ export function UpcomingDetail({
   acceptInterview,
   rejectInterview,
   getUpdatedFormData,
+  postFeedbackData,
 }) {
   return (
     <>
@@ -24,6 +25,7 @@ export function UpcomingDetail({
             acceptInterview={(e) => acceptInterview(e)}
             rejectInterview={(e) => rejectInterview(e)}
             getUpdatedFormData={(e) => getUpdatedFormData(e)}
+            postFeedbackData={(e) => postFeedbackData(e)}
           />
         </Card>
       )}

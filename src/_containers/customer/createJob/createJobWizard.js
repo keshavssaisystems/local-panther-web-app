@@ -337,7 +337,7 @@ export function CreateJobWizard({ type }) {
                             {compState === 2
                               ? type === "edit"
                                 ? "Confirm & update"
-                                : "Confirm & create"
+                                : "Confirm & Save as a Draft"
                               : "Continue"}
                           </Button>
                         )}

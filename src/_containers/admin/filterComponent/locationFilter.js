@@ -6,7 +6,8 @@ export function LocationFilter({
   name,
   placeholder,
   onChange,
-  isMulti = false
+  isMulti = false,
+  value,
 }) {
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
@@ -25,8 +26,9 @@ export function LocationFilter({
       name={name}
       placeholder={placeholder}
       loadOptions={loadOptions}
-      onChange={(e) => onChange(name, e.value)}
+      onChange={(e) => onChange(name, e.value, e)}
       isMulti={isMulti}
+      value={value}
     />
   );
 }

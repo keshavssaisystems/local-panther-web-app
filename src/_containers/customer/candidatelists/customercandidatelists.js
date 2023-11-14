@@ -23,6 +23,7 @@ import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { getProfileActions, dropdownActions } from "_store";
+import infoIcon from "assets/utils/images/info-circle-fill.svg";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -213,19 +214,6 @@ export const CustomerCandidateLists = (props) => {
               color="primary"
               disabled={loading}
               className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "liked" })
-              }
-              onClick={() => {
-                toggle("liked");
-              }}
-            >
-              Liked
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
                 "border-0 btn-transition " +
                 classnames({ active: activeTab === "maybe" })
               }
@@ -240,6 +228,20 @@ export const CustomerCandidateLists = (props) => {
               disabled={loading}
               className={
                 "border-0 btn-transition  " +
+                classnames({ active: activeTab === "liked" })
+              }
+              onClick={() => {
+                toggle("liked");
+              }}
+            >
+              Liked
+            </Button>
+
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
                 classnames({ active: activeTab === "applied" })
               }
               onClick={() => {
@@ -248,6 +250,7 @@ export const CustomerCandidateLists = (props) => {
             >
               Applied
             </Button>
+
             <Button
               color="primary"
               disabled={loading}
@@ -260,6 +263,19 @@ export const CustomerCandidateLists = (props) => {
               }}
             >
               Scheduled
+            </Button>
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "offers" })
+              }
+              onClick={() => {
+                toggle("offers");
+              }}
+            >
+              Offers
             </Button>
             <Button
               color="primary"
@@ -402,6 +418,18 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />
+                              Liked jobs are jobs saved for later review or
+                              comparison by clicking a button or icon on a job
+                              record. They will be stored in a separate section
+                              of the profile, allowing users to easily access
+                              them and decide whether to apply or not.
+                            </div>
+                          </div>
+                        </div>
                         <CustCandidateListView
                           type={props.type || activeTab}
                           data={candidateList}
@@ -458,6 +486,19 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />A job record may be
+                              marked with questions or doubts, indicating
+                              uncertain applications due to a lack of
+                              information, qualifications, and locations. These
+                              jobs may also be saved in a separate section of
+                              the user profile, allowing the user to review and
+                              change their decisions later.
+                            </div>
+                          </div>
+                        </div>
                         <CustCandidateListView
                           type={props.type || activeTab}
                           data={candidateList}
@@ -514,6 +555,18 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />
+                              Applied jobs are those that users submit
+                              applications for through the platform. They are
+                              marked as applied and are stored in a separate
+                              section of the profile. The user can track the
+                              status and withdraw the application.
+                            </div>
+                          </div>
+                        </div>
                         <CustCandidateListView
                           type={props.type || activeTab}
                           data={candidateList}
@@ -570,6 +623,17 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />A scheduled interview
+                              is an appointment with a customer to discuss
+                              qualifications for a job, typically in person, by
+                              phone, or video, after the initial screening
+                              process.
+                            </div>
+                          </div>
+                        </div>
                         <CustCandidateListView
                           type={props.type || activeTab}
                           data={candidateList}
@@ -626,6 +690,17 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />
+                              An accepted job is when candidates agree to the
+                              terms of the offer and confirm their intention to
+                              work for the customer, securing the job and
+                              preparing to start working.
+                            </div>
+                          </div>
+                        </div>
                         <CustCandidateListView
                           type={props.type || activeTab}
                           data={candidateList}
@@ -682,6 +757,17 @@ export const CustomerCandidateLists = (props) => {
                   <>
                     {candidateList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />A rejected job refers
+                              to a decision to decline an offer or a customer
+                              rescinding it, indicating that the individual has
+                              decided not to work for the customer or has
+                              changed their hiring decision.
+                            </div>
+                          </div>
+                        </div>
                         <CustCandidateListView
                           type={props.type || activeTab}
                           data={candidateList}

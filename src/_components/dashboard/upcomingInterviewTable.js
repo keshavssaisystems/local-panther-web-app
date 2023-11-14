@@ -32,6 +32,10 @@ export function UpcomingInterviewTable({ tableData }) {
         "&:not(:last-of-type)": {
           borderRightWidth: "0px",
         },
+        color: "#2F479B",
+        fontFamily: "Capitana",
+        fontSize: "14px",
+        fontWeight: "500",
       },
     },
     cells: {

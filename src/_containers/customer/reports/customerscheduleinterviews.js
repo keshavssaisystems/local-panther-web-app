@@ -14,7 +14,6 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  ButtonGroup,
 } from "reactstrap";
 
 import DatePicker from "react-datepicker";
@@ -39,39 +38,71 @@ import { NoDataFound } from "_components/common/nodatafound";
 import "./customerreport.scss";
 const columns = [
   {
-    name: "Job Code",
-    selector: (row) => row.jobid,
+    name: <span className="table-title">Job Code</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobid}>
+        {row.jobid}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Title",
-    selector: (row) => row.jobtitle,
+    name: <span className="table-title">Title</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobtitle}>
+        {row.jobtitle}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Status",
-    selector: (row) => row.jobstatus,
+    name: <span className="table-title">Status</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.jobstatus}>
+        {row.jobstatus}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Candidate Name",
-    selector: (row) => row.candidatename,
+    name: <span className="table-title">Candidate Name</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.candidatename}>
+        {row.candidatename}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Scheduled date",
-    selector: (row) =>
-      row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : "",
+    name: <span className="table-title">Scheduled date</span>,
+    selector: (row) => (
+      <span
+        className="table-cell"
+        title={
+          row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : ""
+        }
+      >
+        {row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : ""}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Interviewers",
-    selector: (row) => row.intervieweremailids,
+    name: <span className="table-title">Interviewers</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.intervieweremailids}>
+        {row.intervieweremailids}
+      </span>
+    ),
     sortable: true,
   },
   {
-    name: "Meeting Status",
-    selector: (row) => row.meetingstatus,
+    name: <span className="table-title">Meeting Status</span>,
+    selector: (row) => (
+      <span className="table-cell" title={row.meetingstatus}>
+        {row.meetingstatus}
+      </span>
+    ),
     sortable: true,
   },
 ];
@@ -191,10 +222,6 @@ export function CustomerReportScheduledInterviews() {
                     >
                       <i className="dropdown-icon lnr-arrow-down-circle"> </i>
                       <span>Excel</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
@@ -322,28 +349,23 @@ export function CustomerReportScheduledInterviews() {
                   </FormGroup>
                 </Col>
                 <Col lg="3" md="3" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <ButtonGroup>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary me-4"
-                          type="button"
-                          onClick={() => onSubmitHandler()}
-                        >
-                          <FontAwesomeIcon icon={faSearch} /> Search
-                        </Button>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary"
-                          type="button"
-                          onClick={() => onSubmitClear()}
-                        >
-                          Clear
-                        </Button>
-                      </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup>
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="me-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
                 </Col>
               </Row>
               <Row className="mt-1">
@@ -362,6 +384,7 @@ export function CustomerReportScheduledInterviews() {
                         data={schdInterviewList}
                         fixedHeader
                         pagination
+                        className="cust-rep-list-view"
                       />
                     ) : (
                       <Row className="center-align ">

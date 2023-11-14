@@ -132,6 +132,24 @@ export const getPreScreenQuestionsThunk = createAsyncThunk(
   }
 );
 
+// getInterviewStatusDropDownThunk thunk
+export const getInterviewStatusDropDownThunk = createAsyncThunk(
+  `${name}/getInterviewStatusDropDownThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=interviewstatus`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
+// interviewFeedbackThunk thunk
+export const interviewFeedbackThunk = createAsyncThunk(
+  `${name}/interviewFeedbackThunk`,
+  async ({ scheduleinterviewid, payload }) => {
+    const FEEDBACK_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/AddInterviewFeedback/${scheduleinterviewid}`;
+    return await fetchWrapper.put(FEEDBACK_INTERVIEWER_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const scheduleInterviewSlice = createSlice({
   name,
@@ -143,6 +161,7 @@ const scheduleInterviewSlice = createSlice({
     allInterview: [],
     candidateSchedules: [],
     prescreenQuestions: [],
+    interviewStatus: [],
     loading: false,
   },
   reducers: {},
@@ -297,6 +316,28 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getInterviewStatusDropDownThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getInterviewStatusDropDownThunk.fulfilled]: (state, action) => {
+      state.interviewStatus = action.payload.data;
+      state.loading = false;
+    },
+    [getInterviewStatusDropDownThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [interviewFeedbackThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [interviewFeedbackThunk.fulfilled]: (state, action) => {
+      state.error = null;
+      state.loading = false;
+    },
+    [interviewFeedbackThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -317,6 +358,8 @@ export const scheduleInterviewActions = {
   acceptInterviewThunk,
   rejectInterviewThunk,
   getPreScreenQuestionsThunk,
+  getInterviewStatusDropDownThunk,
+  interviewFeedbackThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

@@ -58,15 +58,14 @@ export function ScheduleInterviewList({
       name: "Candidate",
       selector: (row) => row.candidatename,
       sortable: true,
-      width: "200px",
+      width: "17%",
     },
     {
-      name: "Skills",
-      id: "skills",
-      selector: (row) =>
-        row.candidateskills === "" ? "-" : row.candidateskills,
+      name: "Job title",
+      id: "jobtitle",
+      selector: (row) => (row.jobtitle === "" ? "-" : row.jobtitle),
       sortable: true,
-      width: "270px",
+      width: "30%",
     },
     {
       name: "Scheduled time",
@@ -76,16 +75,19 @@ export function ScheduleInterviewList({
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
           "MM/DD/YYYY h:mm a"
         ),
+      width: "20%",
     },
     {
       name: "Duration",
       selector: (row) => (row.duration === "" ? "-" : row.duration),
       sortable: true,
+      width: "10%",
     },
     {
       name: "Interview mode",
       selector: (row) => (row.format === "" ? "-" : row.format),
       sortable: true,
+      width: "15%",
     },
     {
       name: "Action",
@@ -115,6 +117,7 @@ export function ScheduleInterviewList({
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+      width: "8%",
     },
   ];
 
