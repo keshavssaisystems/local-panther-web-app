@@ -62,7 +62,7 @@ export function UpcomingCard({
                       interview.isrejected === false && (
                         <Col md="5">
                           <div className="mb-2 me-2 badge bg-success float-end badge-custom">
-                            Scheduled
+                            Accepted
                           </div>
                         </Col>
                       )}
@@ -70,7 +70,7 @@ export function UpcomingCard({
                       interview.isrejected === false && (
                         <Col md="5">
                           <div className="mb-2 me-2 badge bg-warning float-end badge-custom">
-                            Awaiting confirmation
+                            No response
                           </div>
                         </Col>
                       )}

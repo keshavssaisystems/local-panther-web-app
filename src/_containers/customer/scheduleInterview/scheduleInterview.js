@@ -83,6 +83,7 @@ export function ScheduleInterview() {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(scheduleInterviewActions.getDurationThunk());
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     dispatch(
       scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
         start: moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
@@ -435,6 +436,16 @@ export function ScheduleInterview() {
     );
     onCloseIdModal();
   };
+  const postFeedbackData = async (event) => {
+    let scheduleinterviewid = event.scheduleinterviewid;
+    let payload = event;
+    await dispatch(
+      scheduleInterviewActions.interviewFeedbackThunk({
+        scheduleinterviewid,
+        payload,
+      })
+    );
+  };
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -536,7 +547,14 @@ export function ScheduleInterview() {
                   className="mb-3 right-align"
                 >
                   <div>
-                    <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                    <Row>
+                      <Col md={8} className="mt-1 right-align">
+                        <span className="right-align">Connect calendar</span>
+                      </Col>
+                      <Col md={4}>
+                        <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                      </Col>
+                    </Row>
                   </div>
                 </Col>
               )}
@@ -545,6 +563,14 @@ export function ScheduleInterview() {
             {toggleVar === "availabilty" && (
               <Card>
                 <CardBody className="scheduled-calender">
+                  <div className="text-end">
+                    <div className="mb-3 me-1 badge badge-color-white">Pri</div>
+                    Avaialable{" "}
+                    <div className="ms-3 mb-3 me-0 badge badge-color-blue">
+                      Pri
+                    </div>{" "}
+                    Not avaialable
+                  </div>
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
@@ -602,6 +628,7 @@ export function ScheduleInterview() {
                     acceptInterview={(e) => acceptScheduleData(e)}
                     rejectInterview={(e) => rejectScheduleData(e)}
                     getUpdatedFormData={(e) => getFormData(e)}
+                    postFeedbackData={(e) => postFeedbackData(e)}
                   />
                 </Col>
               </Row>
@@ -609,6 +636,20 @@ export function ScheduleInterview() {
             {toggleVar === "calendar" && (
               <Card>
                 <CardBody className="scheduled-calender">
+                  <div className="text-end">
+                    <div className="mb-3 me-0 badge badge-color-yellow">
+                      Pri
+                    </div>{" "}
+                    No response
+                    <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                      Pri
+                    </div>
+                    Accepted interview{" "}
+                    <div className="ms-3 mb-3 me-0 badge badge-color-red">
+                      Pri
+                    </div>{" "}
+                    Rejected interview
+                  </div>
                   <Calendar
                     localizer={localizer}
                     events={upData}

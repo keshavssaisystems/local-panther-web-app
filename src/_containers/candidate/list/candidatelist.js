@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
+import {
+  TabContent,
+  TabPane,
+  ButtonGroup,
+  Button,
+  Row,
+  Col,
+  Card,
+  CardBody,
+} from "reactstrap";
 import classnames from "classnames";
 import { CardPagination } from "_components/common/cardpagination";
 import { useSelector, useDispatch } from "react-redux";
@@ -20,6 +29,7 @@ import {
   scheduleInterviewActions,
   custJobListActions,
 } from "_store";
+import infoIcon from "assets/utils/images/info-circle-fill.svg";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -104,8 +114,8 @@ export const CandidateList = (props) => {
       case "rejected":
         candidateRecommendedJobStatusId = 6;
         break;
-      case "notIntrested":
-        candidateRecommendedJobStatusId = 6;
+      case "offers":
+        candidateRecommendedJobStatusId = 7; // added for offers
         break;
       default:
         break;
@@ -410,19 +420,6 @@ export const CandidateList = (props) => {
               color="primary"
               disabled={loading}
               className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "liked" })
-              }
-              onClick={() => {
-                toggle("liked");
-              }}
-            >
-              Liked
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
                 "border-0 btn-transition " +
                 classnames({ active: activeTab === "maybe" })
               }
@@ -463,6 +460,19 @@ export const CandidateList = (props) => {
               disabled={loading}
               className={
                 "border-0 btn-transition  " +
+                classnames({ active: activeTab === "offers" })
+              }
+              onClick={() => {
+                toggle("offers");
+              }}
+            >
+              Offers
+            </Button>
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
                 classnames({ active: activeTab === "accepted" })
               }
               onClick={() => {
@@ -483,19 +493,6 @@ export const CandidateList = (props) => {
               }}
             >
               Rejected
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "notIntrested" })
-              }
-              onClick={() => {
-                toggle("notIntrested");
-              }}
-            >
-              Not Interested
             </Button>
           </ButtonGroup>
         </Col>
@@ -608,67 +605,6 @@ export const CandidateList = (props) => {
                 </>
               )}
             </TabPane>
-            <TabPane tabId="liked">
-              <p>
-                {loading ? (
-                  <>
-                    <Loader
-                      type="line-scale-pulse-out-rapid"
-                      className="d-flex justify-content-center"
-                    />
-                  </>
-                ) : (
-                  <>
-                    {candidateJobList?.length > 0 ? (
-                      <>
-                        <CandListView
-                          type={activeTab}
-                          data={candidateJobList}
-                          onCandidateActions={(
-                            type,
-                            candidaterecommendedjobid
-                          ) =>
-                            onCandidateCardActions(
-                              type,
-                              candidaterecommendedjobid
-                            )
-                          }
-                          showModal={(e, type) => onShowModal(e, type)}
-                          onPrescreenClick={(type, row) =>
-                            onPrescreenClickAction(type, row)
-                          }
-                        />
-                        {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
-                        ) : (
-                          <></>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {candidateJobList.length === 0 && !loading ? (
-                          <Row
-                            style={{ textAlign: "center" }}
-                            className="center-middle-align"
-                          >
-                            <Col>
-                              {" "}
-                              <NoDataFound></NoDataFound>
-                            </Col>
-                          </Row>
-                        ) : (
-                          ""
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
-              </p>
-            </TabPane>
             <TabPane tabId="maybe">
               <p>
                 {loading ? (
@@ -682,6 +618,19 @@ export const CandidateList = (props) => {
                   <>
                     {candidateJobList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-12">
+                              <img src={infoIcon} alt="" />
+                              Candidates are individuals unsure about being
+                              invited to apply, often marked with a question or
+                              doubt. They may also be saved in a separate
+                              section of the user account, allowing users to
+                              review and change decisions later. This helps make
+                              informed decisions about potential candidates.
+                            </div>
+                          </div>
+                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -743,6 +692,18 @@ export const CandidateList = (props) => {
                   <>
                     {candidateJobList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-12">
+                              <img src={infoIcon} alt="" />
+                              Applied candidates are those who have submitted
+                              their application for a job through the platform.
+                              They are stored in a separate section of the user
+                              account, allowing users to track their application
+                              status, contact them, or reject them.
+                            </div>
+                          </div>
+                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -804,6 +765,21 @@ export const CandidateList = (props) => {
                   <>
                     {candidateJobList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-12">
+                              <img src={infoIcon} alt="" />
+                              Scheduled interview candidates are selected for an
+                              interview and have a scheduled date and time. They
+                              move to the next stage of the hiring process,
+                              where skills are evaluated. These candidates are
+                              stored in a separate section of the user account,
+                              where users can view their interview details and
+                              prepare for the meeting. access them and decide
+                              whether to apply or not.
+                            </div>
+                          </div>
+                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -865,6 +841,20 @@ export const CandidateList = (props) => {
                   <>
                     {candidateJobList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-12">
+                              <img src={infoIcon} alt="" />
+                              Accepted candidates are those who have accepted a
+                              job offer, either verbally or in writing,
+                              indicating that you have successfully hired them
+                              and agreed on their employment terms. They are
+                              typically stored in a separate section of the user
+                              account, providing information on their start
+                              date, contract details, and onboarding tasks.
+                            </div>
+                          </div>
+                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -926,6 +916,21 @@ export const CandidateList = (props) => {
                   <>
                     {candidateJobList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-12">
+                              <img src={infoIcon} alt="" />
+                              Rejected candidates are those who have been
+                              rejected during the hiring process due to
+                              non-compliance with requirements, withdrawal of
+                              application, or refusal of offer. They are stored
+                              in a separate section of the account, where the
+                              reason for rejection can be viewed, feedback can
+                              be provided, or the candidate may be reconsidered
+                              for future opportunities.
+                            </div>
+                          </div>
+                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -974,7 +979,7 @@ export const CandidateList = (props) => {
                 )}
               </p>
             </TabPane>
-            <TabPane tabId="notIntrested">
+            <TabPane tabId="offers">
               <p>
                 {loading ? (
                   <>
@@ -987,6 +992,22 @@ export const CandidateList = (props) => {
                   <>
                     {candidateJobList?.length > 0 ? (
                       <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-12">
+                              <img src={infoIcon} alt="" />
+                              Offers candidates are candidates who have decided
+                              to offer a job after interviewing and assessing
+                              their qualifications. This means the customer has
+                              made a final decision on who to hire and
+                              communicated the offer to the candidate, either
+                              verbally or in writing. They are typically stored
+                              in a separate section of the account, allowing
+                              users to track the offer's status, negotiate
+                              terms, or withdraw it if needed.
+                            </div>
+                          </div>
+                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}

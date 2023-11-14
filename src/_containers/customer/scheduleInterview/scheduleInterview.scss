@@ -5,6 +5,16 @@
     background-color: #2f479b;
     border-color: #2f479b;
   }
+  .badge-color-blue{
+    color: #2f479b;
+    background-color: #2f479b;
+    border: 1px solid #2f479b;
+  }
+  .badge-color-white{
+    color: #fff;
+    background-color: #fff;
+    border: 1px solid #2f479b;
+  }
   .rbc-toolbar button {
     color: #fff;
     display: inline-block;
@@ -67,5 +77,20 @@
 .scheduled-calender {
   .rbc-time-header {
     margin-left: 77px !important;
+  }
+  .badge-color-yellow{
+    color: rgb(247, 185, 36);
+    background-color: rgb(247, 185, 36);
+    border-color: rgb(247, 185, 36);
+  }
+  .badge-color-green{
+    color: green;
+    background-color: green;
+    border-color: green;
+  }
+  .badge-color-red{
+    color: #d92550;
+    background-color: #d92550;
+    border-color: #d92550;
   }
 }

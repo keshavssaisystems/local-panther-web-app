@@ -72,16 +72,6 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
-          <Button
-            // outline
-            size="sm"
             title="Not Interested"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
@@ -106,16 +96,6 @@ export const CandListView = (props) => {
     } else if (props.type === "applied") {
       return (
         <ButtonGroup>
-          <Button
-            // outline
-            size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
           <Button
             // outline
             size="sm"
@@ -218,19 +198,9 @@ export const CandListView = (props) => {
           </Button>
         </ButtonGroup>
       );
-    } else if (props.type === "notIntrested") {
+    } else if (props.type === "offers") {
       return (
         <ButtonGroup>
-          <Button
-            // outline
-            size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
           <Button
             // outline
             size="sm"
@@ -262,7 +232,8 @@ export const CandListView = (props) => {
               <span>Job details</span>
             </DropdownItem>
 
-            {props.type === "interview" ? (
+            {props.type === "interview" &&
+            row?.scheduledInterviewDtos[0]?.isactive ? (
               <DropdownItem onClick={() => onShowModal(row, "id")}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
@@ -282,136 +253,69 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Job Id</span>,
             id: "Job Id",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobid}>
-                {row.jobid}
-              </span>
-            ),
+            selector: (row) => row.jobid,
             sortable: true,
             width: "8%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobtitle}>
-                {row.jobtitle}
-              </span>
-            ),
+            selector: (row) => row.jobtitle,
             sortable: true,
             width: "18%",
           },
 
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row.cityname && row.statename
-                    ? row.cityname + ", " + row.statename
-                    : ""
-                }
-              >
-                {row.cityname && row.statename
-                  ? row.cityname + ", " + row.statename
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
-                }
-              >
-                <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"}
-                </>
-              </span>
-            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
             sortable: true,
             width: "10%",
           },
           {
             name: <span className="table-title">Scheduled</span>,
-            cell: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.scheduledInterviewDtos &&
-                  row?.scheduledInterviewDtos?.length > 0
-                    ? getTimezoneDateTime(
-                        moment(
-                          row?.scheduledInterviewDtos[0]?.scheduledate
-                        ).format("MM/DD/YYYY") +
-                          (row?.scheduledInterviewDtos[0]?.starttime !== null
-                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                            : " 00:00:00")
-                      )
-                    : ""
-                }
-              >
-                {row?.scheduledInterviewDtos &&
-                row?.scheduledInterviewDtos?.length > 0
-                  ? getTimezoneDateTime(
-                      moment(
-                        row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY") +
-                        (row?.scheduledInterviewDtos[0]?.starttime !== null
-                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                          : " 00:00:00")
-                    )
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
+                ? getTimezoneDateTime(
+                    moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
+                      "MM/DD/YYYY"
+                    ) +
+                      (row?.scheduledInterviewDtos[0]?.starttime !== null
+                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                        : " 00:00:00")
+                  )
+                : "",
             sortable: true,
             width: "17%",
           },
           {
             name: <span className="table-title">Interview Status</span>,
-            cell: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.scheduledInterviewDtos &&
-                  row?.scheduledInterviewDtos?.length > 0
-                    ? row?.scheduledInterviewDtos[0]?.isactive === true
-                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                        row?.scheduledInterviewDtos[0]?.isrejected === false
-                        ? "Accepted"
-                        : row?.scheduledInterviewDtos[0]?.isrejected === true
-                        ? "Rejected"
-                        : "Tentative"
-                      : "Cancelled"
-                    : ""
-                }
-              >
-                {row?.scheduledInterviewDtos &&
-                row?.scheduledInterviewDtos?.length > 0
-                  ? row?.scheduledInterviewDtos[0]?.isactive === true
-                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                      row?.scheduledInterviewDtos[0]?.isrejected === false
-                      ? "Accepted"
-                      : row?.scheduledInterviewDtos[0]?.isrejected === true
-                      ? "Rejected"
-                      : "Tentative"
-                    : "Cancelled"
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
+                ? row?.scheduledInterviewDtos[0]?.isactive === true
+                  ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                    row?.scheduledInterviewDtos[0]?.isrejected === false
+                    ? "Accepted"
+                    : row?.scheduledInterviewDtos[0]?.isrejected === true
+                    ? "Rejected"
+                    : "No response"
+                  : "Cancelled"
+                : "",
             sortable: true,
             width: "11%",
           },
@@ -438,66 +342,35 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Job Id</span>,
             id: "Job Id",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobid}>
-                {row.jobid}
-              </span>
-            ),
+            selector: (row) => row.jobid,
             sortable: true,
             width: "12%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobtitle}>
-                {row.jobtitle}
-              </span>
-            ),
+            selector: (row) => row.jobtitle,
             sortable: true,
             width: "35%",
           },
 
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row.cityname && row.statename
-                    ? row.cityname + ", " + row.statename
-                    : ""
-                }
-              >
-                {row.cityname && row.statename
-                  ? row.cityname + ", " + row.statename
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
-                }
-              >
-                <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"}
-                </>
-              </span>
-            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
             sortable: true,
             width: "15%",
           },
@@ -524,6 +397,17 @@ export const CandListView = (props) => {
             width: "13%",
           },
           {
+            name: <span className="table-title">Stauts</span>,
+            selector: (row) =>
+              row?.customerrecommendedjobstatusid === 6
+                ? "Rejected"
+                : row?.candidaterecommendedjobstatusid === 6
+                ? "Not interested"
+                : "Wrong Section",
+            sortable: true,
+            width: "15%",
+          },
+          {
             name: <span className="table-title">Action</span>,
             cell: (row) => <>{renderMenu(row)}</>,
             ignoreRowClick: true,
@@ -536,68 +420,37 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Job Id</span>,
             id: "Job Id",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobid}>
-                {row.jobid}
-              </span>
-            ),
+            selector: (row) => row.jobid,
             sortable: true,
-            width: "12%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobtitle}>
-                {row.jobtitle}
-              </span>
-            ),
+            selector: (row) => row.jobtitle,
             sortable: true,
-            width: "25%",
+            width: "34%",
           },
 
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row.cityname && row.statename
-                    ? row.cityname + ", " + row.statename
-                    : ""
-                }
-              >
-                {row.cityname && row.statename
-                  ? row.cityname + ", " + row.statename
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
-                }
-              >
-                <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"}
-                </>
-              </span>
-            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Pre-screen</span>,

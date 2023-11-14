@@ -15,6 +15,7 @@ import {
 import "./scheduledInterview.scss";
 import moment from "moment-timezone";
 import { getTimezoneDateTime } from "_helpers/helper";
+import DatePicker from "react-datepicker";
 
 export function UpdateScheduleInterviewModal({
   interviewData,
@@ -167,7 +168,7 @@ export function UpdateScheduleInterviewModal({
                       type="date"
                       name="scheduleDate"
                       id="scheduleDate"
-                      placeholder="Enter date"
+                      placeholder="Eg. MM/DD/YYYY"
                       invalid={scheduleDateValidation}
                       defaultValue={getTimezoneDateTime(
                         moment(interviewData?.scheduledate).format(

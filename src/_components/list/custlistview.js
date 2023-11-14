@@ -400,84 +400,41 @@ export const CustCandidateListView = (props) => {
           {
             name: <span className="table-title">Candidate</span>,
             id: "Candidate",
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={row.firstname + " " + row.lastname}
-              >
-                {row.firstname + " " + row.lastname}
-              </span>
-            ),
+            selector: (row) => row.firstname + " " + row.lastname,
             sortable: true,
             wrap: true,
-            width: "15%",
+            width: "20%",
           },
           {
-            name: <span className="table-title">Skills</span>,
-            selector: (row) => (
-              <span className="table-cell" title={returnSkills(row)}>
-                {returnSkills(row)?.length > 60
-                  ? returnSkills(row).slice(0, 60 - 1) + "…"
-                  : returnSkills(row)}
-              </span>
-            ),
+            name: <span className="table-title">Job title</span>,
+            selector: (row) => row?.jobtitle,
             sortable: true,
-            width: "35%",
+            width: "30%",
           },
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList?.length > 0
-                    ? (row?.recommendedationCandidateShortList[0].cityname
-                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                        : "") +
-                      "" +
-                      (row.recommendedationCandidateShortList[0].statename
-                        ? row.recommendedationCandidateShortList[0].statename
-                        : "")
-                    : ""
-                }
-              >
-                {row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList?.length > 0
-                  ? (row?.recommendedationCandidateShortList[0].cityname
-                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                      : "") +
-                    "" +
-                    (row.recommendedationCandidateShortList[0].statename
-                      ? row.recommendedationCandidateShortList[0].statename
-                      : "")
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row?.recommendedationCandidateShortList &&
+              row.recommendedationCandidateShortList?.length > 0
+                ? (row?.recommendedationCandidateShortList[0].cityname
+                    ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                    : "") +
+                  "" +
+                  (row.recommendedationCandidateShortList[0].statename
+                    ? row.recommendedationCandidateShortList[0].statename
+                    : "")
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"
-                }
-              >
-                <>
-                  {row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"}
-                </>
-              </span>
-            ),
+            selector: (row) =>
+              row?.recommendedationCandidateShortList &&
+              row?.recommendedationCandidateShortList.length > 0
+                ? row?.recommendedationCandidateShortList[0]?.experience
+                : "-",
             sortable: true,
             width: "15%",
           },
@@ -508,83 +465,40 @@ export const CustCandidateListView = (props) => {
           {
             name: <span className="table-title">Candidate</span>,
             id: "Candidate",
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={row.firstname + " " + row.lastname}
-              >
-                {row.firstname + " " + row.lastname}
-              </span>
-            ),
+            selector: (row) => row.firstname + " " + row.lastname,
             sortable: true,
-            width: "15%",
+            width: "18%",
           },
           {
-            name: <span className="table-title">Skills</span>,
-            selector: (row) => (
-              <span className="table-cell" title={returnSkills(row)}>
-                {returnSkills(row)?.length > 30
-                  ? returnSkills(row).slice(0, 30 - 1) + "…"
-                  : returnSkills(row)}
-              </span>
-            ),
+            name: <span className="table-title">Job title</span>,
+            selector: (row) => row?.jobtitle,
             sortable: true,
-            width: "21%",
+            width: "18%",
           },
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList?.length > 0
-                    ? (row?.recommendedationCandidateShortList[0].cityname
-                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                        : "") +
-                      "" +
-                      (row?.recommendedationCandidateShortList[0]?.statename
-                        ? row.recommendedationCandidateShortList[0].statename
-                        : "")
-                    : ""
-                }
-              >
-                {row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList?.length > 0
-                  ? (row?.recommendedationCandidateShortList[0].cityname
-                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                      : "") +
-                    "" +
-                    (row.recommendedationCandidateShortList[0].statename
-                      ? row.recommendedationCandidateShortList[0].statename
-                      : "")
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row?.recommendedationCandidateShortList &&
+              row.recommendedationCandidateShortList?.length > 0
+                ? (row?.recommendedationCandidateShortList[0].cityname
+                    ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                    : "") +
+                  "" +
+                  (row.recommendedationCandidateShortList[0].statename
+                    ? row.recommendedationCandidateShortList[0].statename
+                    : "")
+                : "",
             sortable: true,
             width: "14%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"
-                }
-              >
-                <>
-                  {row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"}
-                </>
-              </span>
-            ),
+            selector: (row) =>
+              row?.recommendedationCandidateShortList &&
+              row?.recommendedationCandidateShortList.length > 0
+                ? row?.recommendedationCandidateShortList[0]?.experience
+                : "-",
             sortable: true,
             width: "10%",
           },
@@ -592,71 +506,32 @@ export const CustCandidateListView = (props) => {
           {
             name: <span className="table-title">Scheduled</span>,
             sortable: true,
-            cell: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.scheduledInterviewDtos &&
-                  row?.scheduledInterviewDtos?.length > 0
-                    ? getTimezoneDateTime(
-                        moment(
-                          row?.scheduledInterviewDtos[0]?.scheduledate
-                        ).format("MM/DD/YYYY") +
-                          (row?.scheduledInterviewDtos[0]?.starttime !== null
-                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                            : " 00:00:00")
-                      )
-                    : ""
-                }
-              >
-                {row?.scheduledInterviewDtos &&
-                row?.scheduledInterviewDtos?.length > 0
-                  ? getTimezoneDateTime(
-                      moment(
-                        row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY") +
-                        (row?.scheduledInterviewDtos[0]?.starttime !== null
-                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                          : " 00:00:00")
-                    )
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              getTimezoneDateTime(
+                moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
+                  "MM/DD/YYYY"
+                ) +
+                  (row?.scheduledInterviewDtos[0]?.starttime !== null
+                    ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                    : " 00:00:00")
+              ),
             width: "17%",
           },
           {
             name: <span className="table-title">Interview Status</span>,
             sortable: true,
-            cell: (row) => (
-              <span
-                className="table-cell"
-                title={
-                  row?.scheduledInterviewDtos &&
-                  row?.scheduledInterviewDtos?.length > 0
-                    ? row?.scheduledInterviewDtos[0]?.isactive === true
-                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                        row?.scheduledInterviewDtos[0]?.isrejected === false
-                        ? "Accepted"
-                        : row?.scheduledInterviewDtos[0]?.isrejected === true
-                        ? "Rejected"
-                        : "Tentative"
-                      : "Cancelled"
-                    : ""
-                }
-              >
-                {row?.scheduledInterviewDtos &&
-                row?.scheduledInterviewDtos?.length > 0
-                  ? row?.scheduledInterviewDtos[0]?.isactive === true
-                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                      row?.scheduledInterviewDtos[0]?.isrejected === false
-                      ? "Accepted"
-                      : row?.scheduledInterviewDtos[0]?.isrejected === true
-                      ? "Rejected"
-                      : "Tentative"
-                    : "Cancelled"
-                  : ""}
-              </span>
-            ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
+                ? row?.scheduledInterviewDtos[0]?.isactive === true
+                  ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                    row?.scheduledInterviewDtos[0]?.isrejected === false
+                    ? "Accepted"
+                    : row?.scheduledInterviewDtos[0]?.isrejected === true
+                    ? "Rejected"
+                    : "No response"
+                  : "Cancelled"
+                : "",
             width: "10%",
           },
 
