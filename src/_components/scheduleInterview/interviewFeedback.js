@@ -23,7 +23,7 @@ export function InterviewFeedback({ interviewId, postFeedbackData }) {
     let data = {
       scheduleinterviewid: interviewId,
       interviewfeedback: event.target.elements.interviewFeedback.value,
-      interviewstatusid: Number(event.target.elements.interviewStatus.value),
+      interviewstatusid: Number(1),
     };
     postFeedbackData(data);
     setShowSuccessMessage(true);

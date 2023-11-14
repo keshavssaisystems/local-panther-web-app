@@ -2,8 +2,17 @@
   padding-left: 0px !important;
   .btn-primary {
     color: #fff;
+    font-weight: 500 !important;
+    font-size: 15px !important;
     background-color: #2f479b;
     border-color: #2f479b;
+  }
+  .btn-success {
+    color: #fff;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+    background-color: #3ac47d;
+    border-color: #3ac47d;
   }
   .badge-color-blue{
     color: #2f479b;
@@ -92,5 +101,15 @@
     color: #d92550;
     background-color: #d92550;
     border-color: #d92550;
+  }
+  .badge-color-skyblue{
+    color: #30b1ff;
+    background-color: #30b1ff;
+    border-color: #30b1ff;
+  }
+  .badge-color-grey{
+    color: #6c757d;
+    background-color: #6c757d;
+    border-color: #6c757d;
   }
 }

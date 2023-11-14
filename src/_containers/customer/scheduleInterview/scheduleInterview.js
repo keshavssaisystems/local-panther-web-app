@@ -155,8 +155,12 @@ export function ScheduleInterview() {
         start: new Date(startDate),
         end: new Date(endDate),
         color:
-          upcomingInterview.isaccepted === true &&
-          upcomingInterview.isrejected === false
+          upcomingInterview?.interviewstatusid !== 0
+            ? upcomingInterview?.interviewstatusid === 1
+              ? "#30b1ff"
+              : "#6c757d"
+            : upcomingInterview.isaccepted === true &&
+              upcomingInterview.isrejected === false
             ? "green"
             : upcomingInterview.isrejected === true
             ? "red"
@@ -548,11 +552,17 @@ export function ScheduleInterview() {
                 >
                   <div>
                     <Row>
-                      <Col md={8} className="mt-1 right-align">
-                        <span className="right-align">Connect calendar</span>
+                      <Col md={10} className="mt-1 right-align">
+                        <span className="right-align">
+                          Connect microsoft calendar using
+                        </span>
                       </Col>
-                      <Col md={4}>
-                        <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                      <Col md={1}>
+                        <a target="_blank">
+                          <Login
+                            loginCompleted={(e) => setMsLogin(true)}
+                          ></Login>
+                        </a>
                       </Col>
                     </Row>
                   </div>
@@ -564,10 +574,10 @@ export function ScheduleInterview() {
               <Card>
                 <CardBody className="scheduled-calender">
                   <div className="text-end">
-                    <div className="mb-3 me-1 badge badge-color-white">Pri</div>
+                    <div className="mb-3 me-1 badge badge-color-white">P</div>
                     Avaialable{" "}
                     <div className="ms-3 mb-3 me-0 badge badge-color-blue">
-                      Pri
+                      P
                     </div>{" "}
                     Not avaialable
                   </div>
@@ -637,18 +647,24 @@ export function ScheduleInterview() {
               <Card>
                 <CardBody className="scheduled-calender">
                   <div className="text-end">
-                    <div className="mb-3 me-0 badge badge-color-yellow">
-                      Pri
-                    </div>{" "}
+                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
                     No response
                     <div className="ms-3 mb-3 me-1 badge badge-color-green">
-                      Pri
+                      P
                     </div>
                     Accepted interview{" "}
                     <div className="ms-3 mb-3 me-0 badge badge-color-red">
-                      Pri
+                      P
                     </div>{" "}
                     Rejected interview
+                    <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                      P
+                    </div>{" "}
+                    Interview completed
+                    <div className="ms-3 mb-3 me-0 badge badge-color-grey">
+                      P
+                    </div>{" "}
+                    Candidate not joined
                   </div>
                   <Calendar
                     localizer={localizer}

@@ -58,7 +58,8 @@ export function UpcomingCard({
                         Applied for {interview.jobtitle}
                       </div>
                     </Col>
-                    {interview.isaccepted === true &&
+                    {interview?.interviewstatusid === 0 &&
+                      interview.isaccepted === true &&
                       interview.isrejected === false && (
                         <Col md="5">
                           <div className="mb-2 me-2 badge bg-success float-end badge-custom">
@@ -66,7 +67,8 @@ export function UpcomingCard({
                           </div>
                         </Col>
                       )}
-                    {interview.isaccepted === false &&
+                    {interview?.interviewstatusid === 0 &&
+                      interview.isaccepted === false &&
                       interview.isrejected === false && (
                         <Col md="5">
                           <div className="mb-2 me-2 badge bg-warning float-end badge-custom">
@@ -74,12 +76,27 @@ export function UpcomingCard({
                           </div>
                         </Col>
                       )}
-                    {((interview.isrejected === true &&
+                    {((interview?.interviewstatusid === 0 &&
+                      interview.isrejected === true &&
                       interview.isaccepted === true) ||
                       interview.isrejected === true) && (
                       <Col md="5">
                         <div className="mb-2 me-2 badge bg-danger float-end badge-custom">
                           Rejected
+                        </div>
+                      </Col>
+                    )}
+                    {interview?.interviewstatusid === 1 && (
+                      <Col md="5">
+                        <div className="mb-2 me-2 badge bg-info float-end badge-custom">
+                          Completed
+                        </div>
+                      </Col>
+                    )}
+                    {interview?.interviewstatusid === 2 && (
+                      <Col md="5">
+                        <div className="mb-2 me-2 badge bg-secondary float-end badge-custom">
+                          Candidate not joined
                         </div>
                       </Col>
                     )}
