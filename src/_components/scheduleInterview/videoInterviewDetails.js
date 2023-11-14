@@ -245,7 +245,7 @@ export function VideoInterviewDetails({
             ? "Scheduled"
             : interviewDetail?.isrejected === true
             ? "Rejected by candidate"
-            : "no response from candidate"}
+            : "No response from candidate"}
         </p>
       </div>
       {showInviteCard === true && (
