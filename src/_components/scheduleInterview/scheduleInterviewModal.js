@@ -219,14 +219,6 @@ export function ScheduleInterviewModal({
                     <Label for="scheduleDate" className="fw-semi-bold">
                       Date <span className="required-star">*</span>
                     </Label>
-                    <Input
-                      type="date"
-                      name="scheduleDate"
-                      id="scheduleDate"
-                      placeholder="Enter date"
-                      invalid={scheduleDateValidation}
-                      onChange={() => setScheduleDateValidation(false)}
-                    />
                     <DatePicker
                       className="form-control"
                       selected={scheduledDate}
