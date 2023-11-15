@@ -14,6 +14,7 @@ export function ChatInterface() {
     }
     if (userRole === 3) {
       getCustomerList();
+      dispatch(chatActions.getCompletedCustomerListThunk());
     }
   }, []);
   const getCandidateList = async function () {

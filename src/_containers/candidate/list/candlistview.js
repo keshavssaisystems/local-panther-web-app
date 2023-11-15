@@ -346,12 +346,20 @@ export const CandListView = (props) => {
               row?.scheduledInterviewDtos &&
               row?.scheduledInterviewDtos?.length > 0
                 ? row?.scheduledInterviewDtos[0]?.isactive === true
-                  ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                    row?.scheduledInterviewDtos[0]?.isrejected === false
-                    ? "Accepted"
-                    : row?.scheduledInterviewDtos[0]?.isrejected === true
-                    ? "Rejected"
-                    : "No response"
+                  ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
+                    row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                      undefined
+                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? "Accepted"
+                      : row?.scheduledInterviewDtos[0]?.isrejected === true
+                      ? "Rejected"
+                      : "No response"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                    ? "Completed"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
+                    ? "Not joined"
+                    : ""
                   : "Cancelled"
                 : "",
             sortable: true,
