@@ -123,7 +123,7 @@ export const CandidateList = (props) => {
     let candidateId = JSON.parse(
       localStorage.getItem("userDetails")
     )?.InternalUserId;
-    let isCandidate = val === "rejected" || val === "accepted" ? false : true;
+    let isCandidate = val === "rejected" ? false : true;
     let candObj = {
       isCandidate,
       candidateId,

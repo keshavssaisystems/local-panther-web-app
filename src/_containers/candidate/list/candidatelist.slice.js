@@ -28,10 +28,10 @@ export const getRecommendedJobList = createAsyncThunk(
         break;
       case 6:
         isCandidate = true;
-        jobStatusId = `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        jobStatusId = `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
         break;
       case 5:
-        jobStatusId = `&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
+        jobStatusId = `&customerRecommendedJobStatusId=${candidateRecommendedJobStatusId}&candidateRecommendedJobStatusId=${candidateRecommendedJobStatusId}`;
         break;
       case 7:
         isCandidate = false;

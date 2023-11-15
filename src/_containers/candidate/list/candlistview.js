@@ -84,9 +84,9 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="apply"
+            title="Apply"
             className="btn-icon"
-            color="success"
+            color="info"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
             <img src={customerIcons?.list_accept} alt="list apply"></img>
@@ -123,27 +123,6 @@ export const CandListView = (props) => {
     } else if (props.type === "interview") {
       return (
         <ButtonGroup>
-          {/* <Button
-            // outline
-            size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
-
-          <Button
-            // outline
-            size="sm"
-            title="maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button> */}
           {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
               <Button
@@ -198,18 +177,77 @@ export const CandListView = (props) => {
           </Button>
         </ButtonGroup>
       );
+    } else if (props.type === "rejected") {
+      return (
+        <ButtonGroup>
+          {row?.customerrecommendedjobstatusid === 5 && (
+            <Button
+              size="sm"
+              title="Accept"
+              className="btn-icon"
+              color="success"
+              onClick={() =>
+                onBtnClick("accepted", row.candidaterecommendedjobid)
+              }
+            >
+              <img src={customerIcons?.list_accept} alt="list apply"></img>
+            </Button>
+          )}
+          {row?.customerrecommendedjobstatusid !== 5 &&
+            row?.customerrecommendedjobstatusid !== 6 && (
+              <>
+                <Button
+                  size="sm"
+                  title="maybe"
+                  className=" btn-icon"
+                  color="warning"
+                  onClick={() =>
+                    onBtnClick("maybe", row.candidaterecommendedjobid)
+                  }
+                >
+                  <img src={customerIcons?.list_maybe} alt="list maybe"></img>
+                </Button>
+                <Button
+                  size="sm"
+                  title="Apply"
+                  className="btn-icon"
+                  color="info"
+                  onClick={() =>
+                    onBtnClick("applied", row.candidaterecommendedjobid)
+                  }
+                >
+                  <img src={customerIcons?.list_accept} alt="list apply"></img>
+                </Button>
+              </>
+            )}
+        </ButtonGroup>
+      );
     } else if (props.type === "offers") {
       return (
         <ButtonGroup>
           <Button
             // outline
             size="sm"
-            title="maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+            title="Accept"
+            className="btn-icon"
+            color="success"
+            onClick={() =>
+              onBtnClick("accepted", row.candidaterecommendedjobid)
+            }
           >
-            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Not Interested"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
         </ButtonGroup>
       );
@@ -344,14 +382,14 @@ export const CandListView = (props) => {
             id: "Job Id",
             selector: (row) => row.jobid,
             sortable: true,
-            width: "12%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "35%",
+            width: "25%",
           },
 
           {
@@ -372,7 +410,7 @@ export const CandListView = (props) => {
                 ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
                 : "-",
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Pre-screen</span>,
@@ -394,18 +432,27 @@ export const CandListView = (props) => {
               ),
             ignoreRowClick: true,
             button: true,
-            width: "13%",
+            width: "10%",
           },
           {
-            name: <span className="table-title">Stauts</span>,
+            name: <span className="table-title">Status</span>,
             selector: (row) =>
               row?.customerrecommendedjobstatusid === 6
                 ? "Rejected"
                 : row?.candidaterecommendedjobstatusid === 6
                 ? "Not interested"
-                : "Wrong Section",
+                : "-",
             sortable: true,
-            width: "15%",
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "12%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -413,7 +460,7 @@ export const CandListView = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            width: "10%",
+            width: "8%",
           },
         ]
       : [

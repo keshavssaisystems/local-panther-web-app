@@ -164,7 +164,70 @@ const scheduleInterviewSlice = createSlice({
     interviewStatus: [],
     loading: false,
   },
-  reducers: {},
+  reducers: {
+    feedback: (state, action) => {
+      let modifyScheduled = [];
+      let modifyUpcoming = [];
+      let modifyAllInterview = [];
+      action?.payload?.scheduleInterviewList.forEach((element) => {
+        let elementObject = {};
+        if (
+          element.scheduleinterviewid === action?.payload?.scheduleinterviewid
+        ) {
+          elementObject = element;
+          let interviewstatusid = {
+            interviewstatusid: action?.payload?.interviewstatusid,
+          };
+          elementObject = {
+            ...elementObject,
+            ...interviewstatusid,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifyScheduled?.push(elementObject);
+      });
+      action?.payload?.upcomingInterviewList?.forEach((element) => {
+        let elementObject = {};
+        if (
+          element.scheduleinterviewid === action?.payload?.scheduleinterviewid
+        ) {
+          elementObject = element;
+          let interviewstatusid = {
+            interviewstatusid: action?.payload?.interviewstatusid,
+          };
+          elementObject = {
+            ...elementObject,
+            ...interviewstatusid,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifyUpcoming?.push(elementObject);
+      });
+      action?.payload?.allInterviewList.forEach((element) => {
+        let elementObject = {};
+        if (
+          element.scheduleinterviewid === action?.payload?.scheduleinterviewid
+        ) {
+          elementObject = element;
+          let interviewstatusid = {
+            interviewstatusid: action?.payload?.interviewstatusid,
+          };
+          elementObject = {
+            ...elementObject,
+            ...interviewstatusid,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifyAllInterview?.push(elementObject);
+      });
+      state.scheduleInterview.scheduledInterviewList = modifyScheduled;
+      state.upcomingInterview.scheduledInterviewList = modifyUpcoming;
+      state.allInterview.scheduledInterviewList = modifyAllInterview;
+    },
+  },
 
   extraReducers: {
     [getDurationThunk.pending]: (state) => {

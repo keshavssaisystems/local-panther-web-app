@@ -87,6 +87,8 @@ export const CustomerCandidateLists = (props) => {
       return 5;
     } else if (type === "rejected") {
       return 6;
+    } else if (type === "offers") {
+      return 7;
     } else {
       return "";
     }
@@ -631,6 +633,73 @@ export const CustomerCandidateLists = (props) => {
                               qualifications for a job, typically in person, by
                               phone, or video, after the initial screening
                               process.
+                            </div>
+                          </div>
+                        </div>
+                        <CustCandidateListView
+                          type={props.type || activeTab}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
+                        />
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="offers">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <div className="p-3 tab-info">
+                          <div className="row">
+                            <div className="col-8">
+                              <img src={infoIcon} alt="" />
+                              An offer is a formal proposal from a customer,
+                              detailing job details, salary, benefits, start
+                              date, and work hours, indicating successful
+                              completion of the interview process.
                             </div>
                           </div>
                         </div>

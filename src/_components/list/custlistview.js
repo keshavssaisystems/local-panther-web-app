@@ -286,6 +286,21 @@ export const CustCandidateListView = (props) => {
           </Button>
         </ButtonGroup>
       );
+    } else if (props.type === "offers") {
+      return (
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="reject"
+            onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+        </ButtonGroup>
+      );
     } else if (props.type === "accepted") {
       return (
         <ButtonGroup>
@@ -299,7 +314,7 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_reject} alt="list reject"></img>
           </Button>
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="schedule"
@@ -308,7 +323,7 @@ export const CustCandidateListView = (props) => {
             onClick={() => onScheduleClick(row)}
           >
             <img src={customerIcons.list_schedule} alt="list maybe"></img>
-          </Button>
+          </Button> */}
         </ButtonGroup>
       );
     } else if (props.type === "rejected") {

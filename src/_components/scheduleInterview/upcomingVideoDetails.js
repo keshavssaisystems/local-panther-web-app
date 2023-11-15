@@ -50,7 +50,7 @@ export function UpcomingVideoDetails({
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
-  let selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
+  let selectedJobDetails = upcomingInterviews?.scheduledInterviewList?.filter(
     (element) => {
       return element.scheduleinterviewid === interviewId;
     }
@@ -153,67 +153,52 @@ export function UpcomingVideoDetails({
                   {interviewDetails?.candidatename}
                 </h6>
               </Col>
-              <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button
-                  outline={!showInviteCard}
-                  size="sm"
-                  className="mb-2 mr-2 btn-transition"
-                  color="primary"
-                  onClick={() => setShowInviteCard(!showInviteCard)}
-                >
-                  {" "}
-                  Invite to interview{" "}
-                </Button>
-                <Button
-                  outline
-                  size="sm"
-                  className="mb-2 mr-2 btn-transition"
-                  color="primary"
-                >
-                  {" "}
-                  Message{" "}
-                </Button>
-                {/* <ButtonGroup size={"sm"}>
+              {interviewDetails?.interviewstatusid === 0 ? (
+                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
-                    name="format"
-                    color={"success"}
-                    size={"sm"}
-                    className="mb-2 btn-transition"
-                    outline
+                    outline={!showInviteCard}
+                    size="sm"
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    onClick={() => setShowInviteCard(!showInviteCard)}
                   >
-                    <BsFillCheckCircleFill className="mb-1" />
-                  </Button> */}
-                {/* <Button
-                    name="format"
-                    color={"primary"}
-                    size={"sm"}
-                    className="mb-2 btn-transition"
-                    outline
-                  >
-                    <BsFillQuestionCircleFill className="mb-1" />
-                  </Button> */}
-                {/* <Button
-                    name="format"
-                    color={"danger"}
-                    size={"sm"}
-                    className="mb-2 btn-transition"
-                    outline
-                  >
-                    <BsXCircleFill className="mb-1" />
+                    {" "}
+                    Invite to interview{" "}
                   </Button>
-                </ButtonGroup> */}
+                  <Button
+                    outline
+                    size="sm"
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                  >
+                    {" "}
+                    Message{" "}
+                  </Button>
 
-                <Button
-                  outline
-                  size="sm"
-                  className="mb-2 ms-1 btn-transition"
-                  color="danger"
-                  title="Cancel"
-                  onClick={(e) => setShowCancelPopup(true)}
-                >
-                  <ImBin className="mb-1" />
-                </Button>
-              </Col>
+                  <Button
+                    outline
+                    size="sm"
+                    className="mb-2 ms-1 btn-transition"
+                    color="danger"
+                    title="Cancel"
+                    onClick={(e) => setShowCancelPopup(true)}
+                  >
+                    <ImBin className="mb-1" />
+                  </Button>
+                </Col>
+              ) : (
+                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button
+                    outline
+                    size="sm"
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                  >
+                    {" "}
+                    Message{" "}
+                  </Button>
+                </Col>
+              )}
             </div>
           </div>
         </div>
@@ -234,8 +219,10 @@ export function UpcomingVideoDetails({
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Status</h6>
-          {interviewDetails?.isaccepted === true &&
-          interviewDetails?.isrejected === false
+          {interviewDetails?.interviewstatusid !== 0
+            ? "Completed"
+            : interviewDetails?.isaccepted === true &&
+              interviewDetails?.isrejected === false
             ? "Accepted"
             : interviewDetails?.isrejected === true
             ? "Rejected"
@@ -266,28 +253,30 @@ export function UpcomingVideoDetails({
           </CardHeader>
           <CardBody>
             <div>
-              <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
-                <UncontrolledButtonDropdown>
-                  <DropdownToggle
-                    className="btn-icon btn-icon-only"
-                    color="link"
-                  >
-                    <FaEllipsisV />
-                  </DropdownToggle>
-                  <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem
-                      onClick={(e) => setShowEditScheduleModal(true)}
+              {interviewDetails?.interviewstatusid === 0 && (
+                <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
+                  <UncontrolledButtonDropdown>
+                    <DropdownToggle
+                      className="btn-icon btn-icon-only"
+                      color="link"
                     >
-                      <i className="dropdown-icon lnr-inbox"> </i>
-                      <span>Reschedule</span>
-                    </DropdownItem>
-                    <DropdownItem onClick={(e) => setShowCancelPopup(true)}>
-                      <i className="dropdown-icon lnr-file-empty"> </i>
-                      <span>Cancel</span>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledButtonDropdown>
-              </div>
+                      <FaEllipsisV />
+                    </DropdownToggle>
+                    <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
+                      <DropdownItem
+                        onClick={(e) => setShowEditScheduleModal(true)}
+                      >
+                        <i className="dropdown-icon lnr-inbox"> </i>
+                        <span>Reschedule</span>
+                      </DropdownItem>
+                      <DropdownItem onClick={(e) => setShowCancelPopup(true)}>
+                        <i className="dropdown-icon lnr-file-empty"> </i>
+                        <span>Cancel</span>
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </UncontrolledButtonDropdown>
+                </div>
+              )}
               <div className="p-custom">
                 <p className="mb-0">
                   {scheduled} at {startTime} to {endTime} ({" "}
@@ -373,18 +362,22 @@ export function UpcomingVideoDetails({
               onClick={(e) => setModal(true)}
             >
               {" "}
-              Chat{" "}
+              Chat with {interviewDetails?.candidatename}{" "}
             </Button>
-            <Button
-              outline={!feedbackModal}
-              className="mb-2 mr-2 btn-transition"
-              color="primary"
-              size={"sm"}
-              onClick={(e) => setFeedbackModal(!feedbackModal)}
-            >
-              {" "}
-              Interview feedback{" "}
-            </Button>
+            {interviewDetails?.interviewstatusid === 0 && (
+              <>
+                <Button
+                  outline={!feedbackModal}
+                  className="mb-2 mr-2 btn-transition"
+                  color="primary"
+                  size={"sm"}
+                  onClick={(e) => setFeedbackModal(!feedbackModal)}
+                >
+                  {" "}
+                  Interview feedback{" "}
+                </Button>
+              </>
+            )}
           </CardFooter>
         </Card>
         {showNotes === true && (
