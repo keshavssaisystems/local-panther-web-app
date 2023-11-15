@@ -522,14 +522,16 @@ export const CustCandidateListView = (props) => {
             name: <span className="table-title">Scheduled</span>,
             sortable: true,
             selector: (row) =>
-              getTimezoneDateTime(
-                moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
-                  "MM/DD/YYYY"
-                ) +
-                  (row?.scheduledInterviewDtos[0]?.starttime !== null
-                    ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                    : " 00:00:00")
-              ),
+              row?.scheduledInterviewDtos != null
+                ? getTimezoneDateTime(
+                    moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
+                      "MM/DD/YYYY"
+                    ) +
+                      (row?.scheduledInterviewDtos[0]?.starttime !== null
+                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                        : " 00:00:00")
+                  )
+                : "",
             width: "17%",
           },
           {
@@ -539,12 +541,20 @@ export const CustCandidateListView = (props) => {
               row?.scheduledInterviewDtos &&
               row?.scheduledInterviewDtos?.length > 0
                 ? row?.scheduledInterviewDtos[0]?.isactive === true
-                  ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                    row?.scheduledInterviewDtos[0]?.isrejected === false
-                    ? "Accepted"
-                    : row?.scheduledInterviewDtos[0]?.isrejected === true
-                    ? "Rejected"
-                    : "No response"
+                  ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
+                    row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                      undefined
+                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? "Accepted"
+                      : row?.scheduledInterviewDtos[0]?.isrejected === true
+                      ? "Rejected"
+                      : "No response"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                    ? "Completed"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
+                    ? "Candidate not joined"
+                    : ""
                   : "Cancelled"
                 : "",
             width: "10%",
