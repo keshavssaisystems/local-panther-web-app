@@ -238,6 +238,11 @@ export function App() {
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
+          <Route
+            path="/customer-candidate-offers/:id"
+            element={<CustomerCandidateLists type={"offers"} />}
+          />
+
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
           <Route
             path="/calendar-poc"

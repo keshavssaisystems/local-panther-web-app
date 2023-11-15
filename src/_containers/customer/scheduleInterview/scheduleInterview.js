@@ -529,12 +529,12 @@ export function ScheduleInterview() {
                 >
                   <div>
                     <Row>
-                      <Col md={10} className="mt-1 right-align">
+                      <Col md={8} className="mt-1 right-align">
                         <span className="right-align">
                           Connect microsoft calendar using
                         </span>
                       </Col>
-                      <Col md={1}>
+                      <Col md={4}>
                         <Login loginCompleted={(e) => setMsLogin(true)}></Login>
                       </Col>
                     </Row>
