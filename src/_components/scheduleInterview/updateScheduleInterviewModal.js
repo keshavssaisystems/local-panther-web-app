@@ -24,11 +24,19 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
+  const newdate = new Date(
+    getTimezoneDateTime(
+      moment(interviewData?.scheduledate),
+      "YYYY-MM-DD HH:mm:ss"
+    )
+  );
   const [timeOption, setTimeOption] = useState([]);
   const [modal, setModal] = useState(false);
   const [scheduleDateValidation, setScheduleDateValidation] = useState(false);
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
   const [durationValidation, setDurationValidation] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState(newdate);
+  const [dateChange, setDateChange] = useState(false);
   const toggle = () => {
     setModal(!modal);
   };
@@ -120,6 +128,7 @@ export function UpdateScheduleInterviewModal({
     };
     postData(data);
     onClose();
+    setDateChange(false);
   };
   return (
     <>
@@ -130,9 +139,17 @@ export function UpdateScheduleInterviewModal({
         backdrop={"static"}
         toggle={toggle}
         className="schedule-modal"
-        onClosed={() => onClose()}
+        onClosed={() => {
+          onClose();
+          setDateChange(false);
+        }}
       >
-        <ModalHeader toggle={() => onClose()}>
+        <ModalHeader
+          toggle={() => {
+            onClose();
+            setDateChange(false);
+          }}
+        >
           {" "}
           Reschedule Interview
         </ModalHeader>
@@ -164,20 +181,36 @@ export function UpdateScheduleInterviewModal({
                     <Label for="scheduleDate" className="fw-semi-bold">
                       Date <span className="required-star">*</span>
                     </Label>
-                    <Input
+                    <DatePicker
+                      className="form-control"
+                      selected={
+                        dateChange === false
+                          ? new Date(
+                              getTimezoneDateTime(
+                                moment(interviewData?.scheduledate),
+                                "YYYY-MM-DD HH:mm:ss"
+                              )
+                            )
+                          : scheduledDate
+                      }
+                      onChange={(date) => {
+                        setScheduledDate(date);
+                        setDateChange(true);
+                        setScheduleDateValidation(false);
+                      }}
+                      dateFormat="MM/dd/yyyy"
+                      placeholderText="Eg. MM/DD/YYYY"
+                      name={"scheduleDate"}
+                    />
+                    {/* <Input
                       type="date"
                       name="scheduleDate"
                       id="scheduleDate"
                       placeholder="Eg. MM/DD/YYYY"
                       invalid={scheduleDateValidation}
-                      defaultValue={getTimezoneDateTime(
-                        moment(interviewData?.scheduledate).format(
-                          "YYYY-MM-DD"
-                        ),
-                        "YYYY-MM-DD"
-                      )}
-                      onChange={() => setScheduleDateValidation(false)}
-                    />
+                      defaultValue={}
+                      onChange={}
+                    /> */}
                     {scheduleDateValidation === true && (
                       <FormText color="danger">Please enter date</FormText>
                     )}

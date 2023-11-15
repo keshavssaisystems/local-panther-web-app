@@ -30,6 +30,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { MessageCard } from "./messageCard";
 import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
+import { InterviewFeedback } from "./interviewFeedback";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -43,6 +44,7 @@ export function VideoInterviewDetails({
   interviewDetails, // Optional from customer schedule list
   fromCustList, // Optional from customer schedule list
   toggle,
+  postFeedbackData,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
@@ -50,6 +52,8 @@ export function VideoInterviewDetails({
   const [showNotes, setShowNotes] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
+  const [feedbackModal, setFeedbackModal] = useState(false);
+
   let interviewDetail = [];
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
@@ -64,7 +68,9 @@ export function VideoInterviewDetails({
   } else {
     interviewDetail = interviewDetails;
   }
-
+  const [refreshData, setRefreshData] = useState(
+    interviewDetail?.interviewstatusid === 0 ? false : true
+  );
   let id = getVideoChannelId(
     interviewDetail?.jobtitle,
     interviewDetail?.jobid,
@@ -164,7 +170,7 @@ export function VideoInterviewDetails({
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               {fromCustList ? (
                 <></>
-              ) : interviewDetail?.interviewstatusid === 0 ? (
+              ) : refreshData === false ? (
                 <>
                   <Button
                     outline={!showInviteCard}
@@ -252,7 +258,9 @@ export function VideoInterviewDetails({
         <h6 className="fw-bold job-heading">Status</h6>
         <p className="mb-0">
           {interviewDetail?.interviewstatusid !== 0
-            ? "Completed"
+            ? interviewDetail?.interviewstatusid === 2
+              ? "Completed but candidate not joined"
+              : "Completed"
             : interviewDetail?.isaccepted === true &&
               interviewDetail?.isrejected === false
             ? "Scheduled"
@@ -405,6 +413,22 @@ export function VideoInterviewDetails({
                 {" "}
                 Add interview guide{" "}
               </Button>
+              {refreshData === false && (
+                <>
+                  <Button
+                    outline={!feedbackModal}
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    size={"sm"}
+                    onClick={(e) => {
+                      setFeedbackModal(!feedbackModal);
+                    }}
+                  >
+                    {" "}
+                    Interview feedback{" "}
+                  </Button>
+                </>
+              )}
             </>
           )}
         </CardFooter>
@@ -415,6 +439,18 @@ export function VideoInterviewDetails({
             interviewNotes={interviewDetail?.interviewnotes}
             interviewId={interviewDetail?.scheduleinterviewid}
             postNotesData={(e) => postNotesData(e)}
+          />
+        </div>
+      )}
+      {feedbackModal === true && (
+        <div className="mt-2 mb-2">
+          <InterviewFeedback
+            interviewId={interviewDetails.scheduleinterviewid}
+            postFeedbackData={(e) => {
+              postFeedbackData(e);
+              setFeedbackModal(false);
+              setRefreshData(true);
+            }}
           />
         </div>
       )}

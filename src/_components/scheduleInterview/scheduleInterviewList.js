@@ -25,6 +25,7 @@ export function ScheduleInterviewList({
   acceptInterview,
   rejectInterview,
   getUpdatedFormData,
+  postFeedbackData,
 }) {
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
@@ -163,6 +164,7 @@ export function ScheduleInterviewList({
           setShowEditScheduleModal(true);
           onCloseIdModal();
         }}
+        postFeedbackData={(e) => postFeedbackData(e)}
       />
       <UpdateScheduleInterviewModal
         interviewData={selectedJobDetails}

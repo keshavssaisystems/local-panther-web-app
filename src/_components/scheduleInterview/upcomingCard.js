@@ -96,7 +96,7 @@ export function UpcomingCard({
                     {interview?.interviewstatusid === 2 && (
                       <Col md="5">
                         <div className="mb-2 me-2 badge bg-secondary float-end badge-custom">
-                          Candidate not joined
+                          Not joined
                         </div>
                       </Col>
                     )}
