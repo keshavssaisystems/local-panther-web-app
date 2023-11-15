@@ -50,7 +50,7 @@ export function UpcomingVideoDetails({
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
-  let selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
+  let selectedJobDetails = upcomingInterviews?.scheduledInterviewList?.filter(
     (element) => {
       return element.scheduleinterviewid === interviewId;
     }
@@ -354,18 +354,18 @@ export function UpcomingVideoDetails({
               {" "}
               Add interview guide{" "}
             </Button>
+            <Button
+              outline
+              className="mb-2 mr-2 btn-transition"
+              color="primary"
+              size={"sm"}
+              onClick={(e) => setModal(true)}
+            >
+              {" "}
+              Chat with {interviewDetails?.candidatename}{" "}
+            </Button>
             {interviewDetails?.interviewstatusid === 0 && (
               <>
-                <Button
-                  outline
-                  className="mb-2 mr-2 btn-transition"
-                  color="primary"
-                  size={"sm"}
-                  onClick={(e) => setModal(true)}
-                >
-                  {" "}
-                  Chat{" "}
-                </Button>
                 <Button
                   outline={!feedbackModal}
                   className="mb-2 mr-2 btn-transition"

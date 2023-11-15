@@ -164,7 +164,7 @@ export function VideoInterviewDetails({
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               {fromCustList ? (
                 <></>
-              ) : (
+              ) : interviewDetail?.interviewstatusid === 0 ? (
                 <>
                   <Button
                     outline={!showInviteCard}
@@ -229,6 +229,17 @@ export function VideoInterviewDetails({
                     <ImBin className="mb-1" />
                   </Button>
                 </>
+              ) : (
+                <Button
+                  outline
+                  size="sm"
+                  className="mb-2 mr-2 btn-transition"
+                  color="primary"
+                  onClick={() => setShowMessage(!showMessage)}
+                >
+                  {" "}
+                  Message{" "}
+                </Button>
               )}
             </Col>
           </div>
@@ -240,8 +251,10 @@ export function VideoInterviewDetails({
       <div className="p-custom">
         <h6 className="fw-bold job-heading">Status</h6>
         <p className="mb-0">
-          {interviewDetail?.isaccepted === true &&
-          interviewDetail?.isrejected === false
+          {interviewDetail?.interviewstatusid !== 0
+            ? "Completed"
+            : interviewDetail?.isaccepted === true &&
+              interviewDetail?.isrejected === false
             ? "Scheduled"
             : interviewDetail?.isrejected === true
             ? "Rejected by candidate"
@@ -284,7 +297,11 @@ export function VideoInterviewDetails({
             <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
               <UncontrolledButtonDropdown>
                 <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                  {fromCustList ? <></> : <FaEllipsisV />}
+                  {fromCustList || interviewDetail?.interviewstatusid !== 0 ? (
+                    <></>
+                  ) : (
+                    <FaEllipsisV />
+                  )}
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
                   <DropdownItem onClick={(e) => editScheduledInterview(true)}>

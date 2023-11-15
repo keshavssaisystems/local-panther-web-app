@@ -79,13 +79,30 @@ function createExtraActions() {
         customerRecommendedJobStatusId,
         jobId,
       }) => {
-        const recommendedStatus =
-          customerRecommendedJobStatusId === 4
-            ? `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
-            : customerRecommendedJobStatusId === 3
-            ? `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`
-            : `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
-        const isCandidate = customerRecommendedJobStatusId === 3 ? true : false;
+        let recommendedStatus = "";
+        let isCandidate = "";
+        switch (customerRecommendedJobStatusId) {
+          case 4:
+            isCandidate = false;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            break;
+          case 3:
+            isCandidate = true;
+            recommendedStatus = `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            break;
+          case 5:
+            isCandidate = true;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            break;
+          case 7:
+            isCandidate = false;
+            recommendedStatus = `&customerRecommendedJobStatusId=5`;
+            break;
+          default:
+            isCandidate = false;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            break;
+        }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
             `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
