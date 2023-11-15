@@ -209,7 +209,7 @@ export const CustJobList = () => {
         </Row>
         <Row>
           <Col md={4} lg={4}>
-            {jobList?.length > 0 ? (
+            {!loading && jobList?.length > 0 ? (
               <>
                 <CardPagination
                   totalPages={current}

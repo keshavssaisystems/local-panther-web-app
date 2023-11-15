@@ -175,6 +175,7 @@ export function ScheduleInterview() {
       })
     );
     setUpdateSuccess(true);
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
   };
   const [toggleVar, setToggleVar] = useState("availabilty");
   const toggle = (tab) => {
@@ -240,6 +241,17 @@ export function ScheduleInterview() {
         notesdata,
       })
     );
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
   };
 
   const postInviteData = (inviteData) => {
@@ -254,6 +266,17 @@ export function ScheduleInterview() {
         scheduleinterviewid,
         invitedata,
       })
+    );
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
 
@@ -274,6 +297,17 @@ export function ScheduleInterview() {
       })
     );
     onCloseIdModal();
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
   };
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const editScheduledInterview = (editStatus) => {
@@ -529,13 +563,17 @@ export function ScheduleInterview() {
                 >
                   <div>
                     <Row>
-                      <Col className="mt-1 right-align">
+                      <Col md={7} className="mt-1 right-align">
                         <span className="right-align">
                           Connect microsoft calendar using
                         </span>
                       </Col>
-                      <Col>
-                        <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                      <Col md={5}>
+                        <div className="text-start">
+                          <Login
+                            loginCompleted={(e) => setMsLogin(true)}
+                          ></Login>
+                        </div>
                       </Col>
                     </Row>
                   </div>
@@ -637,7 +675,7 @@ export function ScheduleInterview() {
                     <div className="ms-3 mb-3 me-0 badge badge-color-grey">
                       P
                     </div>{" "}
-                    Candidate not joined
+                    Not joined
                   </div>
                   <Calendar
                     localizer={localizer}
@@ -669,6 +707,7 @@ export function ScheduleInterview() {
                       acceptInterview={(e) => acceptScheduleData(e)}
                       rejectInterview={(e) => rejectScheduleData(e)}
                       getUpdatedFormData={(e) => getFormData(e)}
+                      postFeedbackData={(e) => postFeedbackData(e)}
                     />
                   </CardBody>
                 </Card>
@@ -688,6 +727,7 @@ export function ScheduleInterview() {
           postMessageData={(e) => postMessageData(e)}
           acceptInterview={(e) => acceptScheduleData(e)}
           rejectInterview={(e) => rejectScheduleData(e)}
+          postFeedbackData={(e) => postFeedbackData(e)}
         />
         <UpdateScheduleInterviewModal
           interviewData={popupData}

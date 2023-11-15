@@ -239,7 +239,11 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
     {
       name: "Published",
       count: getTimezoneDateTime(
-        moment(jobDetail.jobcreatedatetime).format("YYYY-MM-DD"),
+        moment(
+          jobDetail?.publisheddate === null
+            ? jobDetail?.jobcreatedatetime
+            : jobDetail?.publisheddate
+        ).format("YYYY-MM-DD"),
         "MM/DD/YYYY"
       ),
       icon: <FaLeanpub className="img-fluid " size={"35px"} />,

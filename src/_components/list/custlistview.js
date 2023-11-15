@@ -553,7 +553,7 @@ export const CustCandidateListView = (props) => {
                     : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
                     ? "Completed"
                     : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
-                    ? "Candidate not joined"
+                    ? "Not joined"
                     : ""
                   : "Cancelled"
                 : "",
