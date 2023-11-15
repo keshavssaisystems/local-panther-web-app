@@ -16,6 +16,7 @@ import {
 import "./scheduledInterview.scss";
 import InputMask from "react-input-mask";
 import moment from "moment-timezone";
+import DatePicker from "react-datepicker";
 
 export function ScheduleInterviewModal({
   candidateData,
@@ -34,7 +35,7 @@ export function ScheduleInterviewModal({
   const [videoLinkValidation, setVideoLinkValidation] = useState(false);
   const [interviewAddressValidation, setInterviewAddressValidation] =
     useState(false);
-
+  const [scheduledDate, setScheduledDate] = useState();
   const toggle = () => {
     setModal(!modal);
   };
@@ -225,6 +226,17 @@ export function ScheduleInterviewModal({
                       placeholder="Enter date"
                       invalid={scheduleDateValidation}
                       onChange={() => setScheduleDateValidation(false)}
+                    />
+                    <DatePicker
+                      className="form-control"
+                      selected={scheduledDate}
+                      onChange={(date) => {
+                        setScheduledDate(date);
+                        setScheduleDateValidation(false);
+                      }}
+                      dateFormat="MM/dd/yyyy"
+                      placeholderText="Eg. mm/dd/yyyy"
+                      name={"scheduleDate"}
                     />
                     {scheduleDateValidation === true && (
                       <FormText color="danger">Please enter date</FormText>
