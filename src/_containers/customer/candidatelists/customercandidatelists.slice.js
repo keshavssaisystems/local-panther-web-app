@@ -98,6 +98,10 @@ function createExtraActions() {
             isCandidate = false;
             recommendedStatus = `&customerRecommendedJobStatusId=5`;
             break;
+          case 6:
+            isCandidate = false;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            break;
           default:
             isCandidate = false;
             recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
