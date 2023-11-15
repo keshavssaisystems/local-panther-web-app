@@ -227,7 +227,7 @@ export function CandCardView({
 
                 <Row noGutters className="mt-2">
                   <ButtonGroup className="card-btn-grp" size="sm">
-                    <Button
+                    {/* <Button
                       outline
                       title="liked"
                       className="btn-icon mb-1"
@@ -236,7 +236,7 @@ export function CandCardView({
                       onClick={() => onBtnClick("liked")}
                     >
                       Like <BsHandThumbsUp></BsHandThumbsUp>
-                    </Button>
+                    </Button> */}
 
                     <Button
                       outline
