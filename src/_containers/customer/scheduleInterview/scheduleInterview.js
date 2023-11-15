@@ -33,7 +33,7 @@ import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
 
 Providers.globalProvider = new Msal2Provider({
-  clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
+  clientId: process.env.REACT_APP_API_KEY,
   scopes: ["Calendars.Read"],
 });
 
