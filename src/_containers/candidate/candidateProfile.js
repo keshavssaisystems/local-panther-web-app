@@ -107,6 +107,7 @@ export function CandidateProfile() {
     await dispatch(ethnicityActions.getEthnicity());
     await dispatch(certificationTypeActions.certificationType());
     await dispatch(ProficiencyActions.Proficiency());
+    await dispatch(ProficiencyActions.getLanguage());
     let reponse = await dispatch(educationActions.getEducation());
     await dispatch(workScheduleActions.getWorkScheduleThunk());
     await dispatch(jobTypeActions.getJobTypeThunk());

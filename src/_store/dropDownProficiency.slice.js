@@ -6,6 +6,8 @@ const initialState = {
   user: {
     data: [],
     Proficiency: [], // Initialize with an empty array
+
+    languageList: [],
   },
   error: null,
 };
@@ -17,6 +19,18 @@ export const Proficiency = createAsyncThunk(
     const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Common/GetCommonDropdown?searchText=proficiency`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
+export const getLanguage = createAsyncThunk(
+  "additionalInfo/getLanguage",
+  async () => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=language`
     );
 
     return response.data; // Assuming your API response has a "data" property
@@ -45,6 +59,15 @@ const ProficiencySlice = createSlice({
       })
       .addCase(Proficiency.rejected, (state, action) => {
         state.error = action.error;
+      })
+      .addCase(getLanguage.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(getLanguage.fulfilled, (state, action) => {
+        state.languageList = action.payload;
+      })
+      .addCase(getLanguage.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -53,5 +76,6 @@ const ProficiencySlice = createSlice({
 export const ProficiencyActions = {
   ...ProficiencySlice.actions,
   Proficiency, // Export the async action
+  getLanguage,
 };
 export const ProficiencyReducer = ProficiencySlice.reducer;

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Label, Input, ModalHeader, ModalBody, FormText } from "reactstrap";
+import {
+  Label,
+  Input,
+  ModalHeader,
+  ModalBody,
+  FormText,
+  CardFooter,
+  CardHeader,
+} from "reactstrap";
 import AsyncSelect from "react-select/async";
 import {
   Row,
@@ -104,15 +112,16 @@ export function CandidateSkills(props) {
   );
   useEffect(() => {
     if (skills_data) {
-      setSkills(skills_data);
+      const result = skills_data.filter(
+        (item1) => !selectedSkillData.find((item2) => item1.value === item2.id)
+      );
+      setSkills(result);
     }
   }, [skills_data]);
 
-  const [skillsTemp, setSkillsTemp] = useState([]);
-
   const removeSkills = function (data) {
-    let filter_data = skills?.find((x) => x.value == data.value);
-    if (data) {
+    let filter_data = skills_data?.find((x) => x.value === data.value);
+    if (filter_data) {
       let new_array = [...skills];
       new_array.push(data);
       setSkills(new_array);
@@ -178,6 +187,10 @@ export function CandidateSkills(props) {
     new_data.push(skill_data);
 
     setSelectedSkillData(new_data);
+    let new_popular = [...skills];
+    let index = skills.findIndex((x) => x.value === data.value);
+    new_popular.splice(index, 1);
+    setSkills(new_popular);
   };
   // form validation rules
   const getStringData = (data) => {
@@ -266,8 +279,20 @@ export function CandidateSkills(props) {
     <div>
       <div className="profile-view">
         <Card className="main-card mb-3">
-          <CardBody className="scroll-area-lg">
-            <div className="mb-3">
+          <CardHeader className="card-title-text  text-capitalize ">
+            Skills
+            <div className="ms-auto me-2">
+              <Label
+                className="link-text"
+                onClick={(evt) => setPersonalModal(true)}
+              >
+                Add
+              </Label>
+            </div>
+          </CardHeader>
+
+          <CardBody className="scroll-area-md">
+            {/* <div className="mb-3">
               <strong className="card-title-text">Skills</strong>
               <Label
                 className="float-end  link-text"
@@ -275,7 +300,7 @@ export function CandidateSkills(props) {
               >
                 Add
               </Label>
-            </div>
+            </div> */}
 
             {!loader ? (
               <div>
