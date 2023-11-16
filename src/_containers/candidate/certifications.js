@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { certificateDetailsSlice } from "_store";
-import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
+import {
+  Row,
+  Col,
+  Modal,
+  Card,
+  CardBody,
+  Button,
+  CardHeader,
+} from "reactstrap";
 import {
   formatDate,
   endDateValidation,
@@ -96,107 +104,108 @@ export function CertificationDetails(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
+          <CardHeader className="card-title-text  text-capitalize ">
+            Certifications and licenses
+            <div className="ms-auto me-2">
+              <Label
+                className="link-text"
+                onClick={(evt) => setPersonalModal(true)}
+              >
+                Add
+              </Label>
+            </div>
+          </CardHeader>
           <CardBody className="scroll-area-lg">
-            <PerfectScrollbar>
-              <div className="mb-3">
-                <strong className="card-title-text">
-                  Certifications and licenses
-                </strong>
-
-                <Label
-                  className="float-end link-text"
-                  onClick={(evt) => setPersonalModal(true)}
-                >
-                  Add
-                </Label>
-              </div>
-              {!loader ? (
-                <Row>
-                  {certificationDetails ? (
-                    <div>
-                      {certificationDetails.length > 0 ? (
-                        certificationDetails.map((item, index) => (
-                          <div className="mb-4">
-                            <strong className="me-2 content-title">
-                              {certificationDetails[index].certificationtype}{" "}
-                              {" - "}{" "}
-                              {certificationDetails[index].certificationname}{" "}
-                            </strong>
-                            <div className="float-end">
-                              <BsPencil
-                                className="icons"
-                                onClick={() => edit(item)}
-                              />{" "}
-                              <BsTrash3
-                                className="icons"
-                                onClick={() =>
-                                  deleteModal(
-                                    certificationDetails[index]
-                                      .candidatecertificationid
-                                  )
-                                }
-                              />
-                            </div>
-                            <p
-                              className="mb-1 mt-1 card-p-text-black"
-                              style={{ fontWeight: "600px" }}
-                            >
-                              <strong>Expired : </strong>
-                              {certificationDetails[index].isexpired
-                                ? "No"
-                                : "Yes"}
-                            </p>
-                            {certificationDetails[index].startdate &&
-                            certificationDetails[index].enddate ? (
+            {!loader ? (
+              <div>
+                <PerfectScrollbar>
+                  <Row>
+                    {certificationDetails ? (
+                      <div>
+                        {certificationDetails.length > 0 ? (
+                          certificationDetails.map((item, index) => (
+                            <div className="mb-4">
+                              <strong className="me-2 content-title">
+                                {certificationDetails[index].certificationtype}{" "}
+                                {" - "}{" "}
+                                {certificationDetails[index].certificationname}{" "}
+                              </strong>
+                              <div className="float-end">
+                                <BsPencil
+                                  className="icons"
+                                  onClick={() => edit(item)}
+                                />{" "}
+                                <BsTrash3
+                                  className="icons"
+                                  onClick={() =>
+                                    deleteModal(
+                                      certificationDetails[index]
+                                        .candidatecertificationid
+                                    )
+                                  }
+                                />
+                              </div>
                               <p
                                 className="mb-1 mt-1 card-p-text-black"
                                 style={{ fontWeight: "600px" }}
                               >
-                                <strong>Certification period : </strong>
-                                {getDate(certificationDetails[index])}
+                                <strong>Expired : </strong>
+                                {certificationDetails[index].isexpired
+                                  ? "No"
+                                  : "Yes"}
                               </p>
-                            ) : (
-                              <div>
-                                {certificationDetails[index].startdate ||
-                                certificationDetails[index].enddate ? (
-                                  <p
-                                    className="mb-1 mt-1 card-p-text-black"
-                                    style={{ fontWeight: "600px" }}
-                                  >
-                                    <strong>Certification period : </strong>
-                                    {getDate(certificationDetails[index])}
-                                  </p>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <Row style={{ textAlign: "center" }}>
-                          <Col>
-                            {" "}
-                            <NoDataFound imageSize={"25px"} />
-                          </Col>
-                        </Row>
-                      )}
-                    </div>
-                  ) : (
-                    <Row style={{ textAlign: "center" }}>
-                      <Col>
-                        {" "}
-                        <NoDataFound imageSize={"25px"} />
-                      </Col>
-                    </Row>
-                  )}
-                </Row>
-              ) : (
-                <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
-                  <Loader active={loader} type="line-scale-pulse-out-rapid" />
-                </div>
-              )}
-            </PerfectScrollbar>
+                              {certificationDetails[index].startdate &&
+                              certificationDetails[index].enddate ? (
+                                <p
+                                  className="mb-1 mt-1 card-p-text-black"
+                                  style={{ fontWeight: "600px" }}
+                                >
+                                  <strong>Certification period : </strong>
+                                  {getDate(certificationDetails[index])}
+                                </p>
+                              ) : (
+                                <div>
+                                  {certificationDetails[index].startdate ||
+                                  certificationDetails[index].enddate ? (
+                                    <p
+                                      className="mb-1 mt-1 card-p-text-black"
+                                      style={{ fontWeight: "600px" }}
+                                    >
+                                      <strong>Certification period : </strong>
+                                      {getDate(certificationDetails[index])}
+                                    </p>
+                                  ) : (
+                                    ""
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        ) : (
+                          <Row style={{ textAlign: "center" }}>
+                            <Col>
+                              {" "}
+                              <NoDataFound imageSize={"25px"} />
+                            </Col>
+                          </Row>
+                        )}
+                      </div>
+                    ) : (
+                      <Row style={{ textAlign: "center" }}>
+                        <Col>
+                          {" "}
+                          <NoDataFound imageSize={"25px"} />
+                        </Col>
+                      </Row>
+                    )}
+                  </Row>
+                </PerfectScrollbar>
+              </div>
+            ) : (
+              <div className="loader-wrapper d-flex justify-content-center align-items-center loader">
+                <Loader active={loader} type="line-scale-pulse-out-rapid" />
+              </div>
+            )}
           </CardBody>
         </Card>
       </div>

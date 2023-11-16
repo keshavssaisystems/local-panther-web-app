@@ -223,6 +223,7 @@ export function NewCandidate({ title }) {
                         placeholderText="From"
                         className="form-control"
                         selected={startDate}
+                        maxDate={endDate}
                         onChange={(date) => {
                           handleDateChange("startDate", date);
                           setStartDate(date);
@@ -243,6 +244,7 @@ export function NewCandidate({ title }) {
                         placeholderText="To"
                         className="form-control"
                         selected={endDate}
+                        minDate={startDate}
                         onChange={(date) => {
                           handleDateChange("endDate", date);
                           setEndDate(date);
