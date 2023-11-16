@@ -270,6 +270,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                         placeholderText="From"
                         className="form-control"
                         selected={startDate}
+                        maxDate={endDate}
                         onChange={(date) => {
                           handleDateChange("@startdate", date);
                           setStartDate(date);
@@ -290,6 +291,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                         placeholderText="To"
                         className="form-control"
                         selected={endDate}
+                        minDate={startDate}
                         onChange={(date) => {
                           handleDateChange("@enddate", date);
                           setEndDate(date);
