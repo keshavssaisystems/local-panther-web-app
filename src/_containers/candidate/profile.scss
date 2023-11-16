@@ -355,11 +355,26 @@
     letter-spacing: -0.01em;
     text-align: left;
   }
-
+  .divider {
+    width: 350px;
+    height: 1px;
+    background: #ced4da;
+  }
   .required-icon {
     color: #ff0000;
   }
+  .async-border-red {
+    .css-13cymwt-control {
+      border-color: #d92550 !important;
+    }
+  }
 
+  .async-error-text {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #d92550;
+  }
   .field-input {
     height: 35px;
     align-items: flex-start;
