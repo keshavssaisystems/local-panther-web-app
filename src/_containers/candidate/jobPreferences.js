@@ -23,6 +23,8 @@ import "./profile.scss";
 import { getLocationFilter } from "_store";
 import Loader from "react-loaders";
 import { NoDataFound } from "_components/common/nodatafound";
+import InputMask from "react-input-mask";
+import { getBasePayMask } from "_helpers/helper";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -207,7 +209,7 @@ export function JobPreferences(props) {
             pay:
               (rest.minimumbasepay && rest.payperiodtype) ||
               (rest.minimumbasepay != "" && rest.payperiodtype != "")
-                ? rest.minimumbasepay + ", " + rest.payperiodtype
+                ? rest.minimumbasepay + "  " + rest.payperiodtype
                 : rest.minimumbasepay
                 ? rest.minimumbasepay
                 : rest.payperiodtype
@@ -373,7 +375,9 @@ export function JobPreferences(props) {
 
       new_data[0].payperiodtypeid = data.value;
     } else if (check == "basePay") {
-      new_data[0].minimumbasepay = data;
+      new_data[0].minimumbasepay = new Intl.NumberFormat("en-US").format(
+        data.replace(/,/g, "")
+      );
     } else if (check == "relocate") {
       new_data[0].willingtorelocate = data == "on" ? true : false;
     } else if (check == "anyWhere") {
@@ -534,6 +538,7 @@ export function JobPreferences(props) {
   const close = function () {
     setPersonalModal(false);
   };
+  const [basePayValue, setBasePayValue] = useState("");
   return (
     <div>
       <div className="profile-view">
@@ -894,15 +899,21 @@ export function JobPreferences(props) {
 
                         <InputGroup>
                           <InputGroupText>$</InputGroupText>
-                          <Input
-                            type="text"
+                          <InputMask
+                            className="field-input placeholder-text form-control input-text"
+                            mask={getBasePayMask(
+                              basePayValue === ""
+                                ? parentItem.minimumbasepay
+                                : basePayValue
+                            )}
+                            maskChar={null}
                             name="minPay"
                             id="minPay"
                             placeholder="Enter base pay"
-                            className="field-input placeholder-text form-control input-text"
-                            onInput={(evt) =>
-                              onHandleInputChange("basePay", evt.target.value)
-                            }
+                            onInput={(evt) => {
+                              onHandleInputChange("basePay", evt.target.value);
+                              setBasePayValue(evt.target.value);
+                            }}
                             value={parentItem.minimumbasepay}
                           />
                         </InputGroup>
