@@ -35,7 +35,7 @@ export const CandListView = (props) => {
             disabled={props.type === "maybe"}
             // outline
             size="sm"
-            title="maybe"
+            title="Maybe"
             className=" btn-icon"
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
@@ -45,7 +45,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             className="btn-icon"
             color="danger"
             onClick={() =>
@@ -57,7 +57,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="apply"
+            title="Apply"
             className="btn-icon"
             color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
@@ -72,7 +72,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -99,7 +99,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="maybe"
+            title="Maybe"
             className=" btn-icon"
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
@@ -109,7 +109,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -166,7 +166,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -198,7 +198,7 @@ export const CandListView = (props) => {
               <>
                 <Button
                   size="sm"
-                  title="maybe"
+                  title="Maybe"
                   className=" btn-icon"
                   color="warning"
                   onClick={() =>
@@ -240,7 +240,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -423,7 +423,9 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Pre-screen</span>,
             cell: (row) =>
-              row.candidateprescreenstatus === "Pending" ? (
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
                 <Button
                   onClick={() => onPrescreenClick("pending", row)}
                   color="link"
@@ -510,7 +512,9 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Pre-screen</span>,
             cell: (row) =>
-              row.candidateprescreenstatus === "Pending" ? (
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
                 <Button
                   onClick={() => onPrescreenClick("pending", row)}
                   color="link"

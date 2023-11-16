@@ -538,12 +538,7 @@ export function Registration() {
           >
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
               <div className="">
-                <img
-                  src={logo}
-                  width={"130px"}
-                  alt="logo"
-                  className="logo mb-4"
-                />
+                <img src={logo} alt="logo" className="logo mb-2" />
               </div>
               <Row className="login-divider" />
               <div className="app-logo mb-0" />

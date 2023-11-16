@@ -442,3 +442,28 @@ export const getVideoChannelId = (jobtitle, jobid, scheduleinterviewid) => {
     jobtitle.replace(/\s+/g, "-") + "-" + jobid + "-" + scheduleinterviewid
   );
 };
+
+export const getBasePayMask = (basePayValue) => {
+  let removeCommas = basePayValue.replace(/,/g, "");
+  if (removeCommas.length < 3) {
+    return "999";
+  }
+  if (removeCommas.length === 4) {
+    return "9,999";
+  }
+  if (removeCommas.length === 5) {
+    return "99,999";
+  }
+  if (removeCommas.length === 6) {
+    return "999,999";
+  }
+  if (removeCommas.length === 7) {
+    return "9,999,999";
+  }
+  if (removeCommas.length === 8) {
+    return "99,999,999";
+  }
+  if (removeCommas.length === 9) {
+    return "999,999,999";
+  }
+};

@@ -94,7 +94,7 @@ export function ProfilePDF(props) {
         pay:
           (rest.minimumbasepay && rest.payperiodtype) ||
           (rest.minimumbasepay !== "" && rest.payperiodtype !== "")
-            ? rest.minimumbasepay + ", " + rest.payperiodtype
+            ? rest.minimumbasepay + " " + rest.payperiodtype
             : rest.minimumbasepay
             ? rest.minimumbasepay
             : rest.payperiodtype
