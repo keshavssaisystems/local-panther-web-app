@@ -47,7 +47,10 @@ export const CustCandidateListView = (props) => {
     );
 
     if (res.payload.statusCode === 204) {
-      props.showSweetAlert({ title: res.payload.message, type: "success" });
+      props.showSweetAlert({
+        title: "Candidate status updated successfully!!!",
+        type: "success",
+      });
       props.updateList();
     } else {
       props.showSweetAlert({
@@ -100,7 +103,10 @@ export const CustCandidateListView = (props) => {
 
     setShowReModal(false);
     if (res.payload.statusCode === 204) {
-      setShowRejSModal(true);
+      props.showSweetAlert({
+        title: "Candidate status updated successfully!!!",
+        type: "success",
+      });
     } else {
       props.showSweetAlert({
         title: res.payload.message || res.payload.status,
@@ -146,245 +152,212 @@ export const CustCandidateListView = (props) => {
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
-        <Row xs={3} sm={3} md={3} lg={3} xl={3} noGutters>
+        <ButtonGroup>
           {props.type !== "liked" ? (
-            <Col>
-              <Button
-                disabled={props.type === "liked"}
-                // outline
-                size="sm"
-                title="liked"
-                className=" btn-icon"
-                color="primary"
-                onClick={() => onActionClick("like", candidaterecommendedjobid)}
-              >
-                <img src={customerIcons.list_liked} alt="list liked"></img>
-              </Button>
-            </Col>
+            <Button
+              disabled={props.type === "liked"}
+              // outline
+              size="sm"
+              title="liked"
+              className=" btn-icon"
+              color="primary"
+              onClick={() => onActionClick("like", candidaterecommendedjobid)}
+            >
+              <img src={customerIcons.list_liked} alt="list liked"></img>
+            </Button>
           ) : (
             <></>
           )}
           {props.type !== "maybe" ? (
-            <Col>
-              <Button
-                disabled={props.type === "maybe"}
-                // outline
-                size="sm"
-                title="maybe"
-                className=" btn-icon"
-                color="warning"
-                onClick={() =>
-                  onActionClick("maybe", candidaterecommendedjobid)
-                }
-              >
-                <img src={customerIcons.list_maybe} alt="list maybe"></img>
-              </Button>
-            </Col>
+            <Button
+              disabled={props.type === "maybe"}
+              // outline
+              size="sm"
+              title="maybe"
+              className=" btn-icon"
+              color="warning"
+              onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
+            >
+              <img src={customerIcons.list_maybe} alt="list maybe"></img>
+            </Button>
           ) : (
             <></>
           )}
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() => onRejectClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="schedule"
-              className="btn-icon"
-              color="primary"
-              onClick={() => onScheduleClick(row)}
-            >
-              <BsClock></BsClock>
-            </Button>
-          </Col>
-        </Row>
+          <Button
+            // outline
+            size="sm"
+            title="reject"
+            onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="schedule"
+            className="btn-icon"
+            color="alternate"
+            onClick={() => onScheduleClick(row)}
+          >
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "applied") {
       return (
-        <Row xs={5} sm={5} md={5} lg={5} xl={5} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="accept"
-              onClick={() => onAcceptClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="success"
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onActionClick("like", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list liked"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() => onRejectClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="schedule"
-              className="btn-icon"
-              color="primary"
-              onClick={() => onScheduleClick(row)}
-            >
-              <BsClock></BsClock>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="accept"
+            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="success"
+          >
+            <img src={customerIcons.list_accept} alt="list accept"></img>
+          </Button>
+
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onActionClick("like", candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list liked"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="reject"
+            onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="schedule"
+            className="btn-icon"
+            color="alternate"
+            onClick={() => onScheduleClick(row)}
+          >
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "scheduled") {
       return (
-        <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="accept"
-              onClick={() => onAcceptClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="success"
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() => onRejectClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="accept"
+            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="success"
+          >
+            <img src={customerIcons.list_accept} alt="list accept"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="reject"
+            onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "accepted") {
       return (
-        <Row xs={2} sm={2} md={2} lg={2} xl={2} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="reject"
-              onClick={() => onRejectClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="danger"
-            >
-              <img src={customerIcons.list_reject} alt="list reject"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="schedule"
-              className="btn-icon"
-              color="primary"
-              onClick={() => onScheduleClick(row)}
-            >
-              <BsClock></BsClock>
-            </Button>
-          </Col>
-        </Row>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="reject"
+            onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="schedule"
+            className="btn-icon"
+            color="alternate"
+            onClick={() => onScheduleClick(row)}
+          >
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>
+        </ButtonGroup>
       );
     } else if (props.type === "rejected") {
       return (
-        <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="accept"
-              onClick={() => onAcceptClick(candidaterecommendedjobid)}
-              className="btn-icon"
-              color="success"
-            >
-              <img src={customerIcons.list_accept} alt="list accept"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="liked"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onActionClick("like", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list liked"></img>
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              // outline
-              size="sm"
-              title="maybe"
-              className=" btn-icon"
-              color="warning"
-              onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_maybe} alt="list maybe"></img>
-            </Button>
-          </Col>
+        <ButtonGroup>
+          <Button
+            // outline
+            size="sm"
+            title="accept"
+            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="success"
+          >
+            <img src={customerIcons.list_accept} alt="list accept"></img>
+          </Button>
 
-          <Col>
-            <Button
-              outline
-              size="sm"
-              title="schedule"
-              className="btn-icon"
-              color="primary"
-              onClick={() => onScheduleClick(row)}
-            >
-              <BsClock></BsClock>
-            </Button>
-          </Col>
-        </Row>
+          <Button
+            // outline
+            size="sm"
+            title="liked"
+            className=" btn-icon"
+            color="primary"
+            onClick={() => onActionClick("like", candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_liked} alt="list liked"></img>
+          </Button>
+
+          <Button
+            // outline
+            size="sm"
+            title="maybe"
+            className=" btn-icon"
+            color="warning"
+            onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
+          >
+            <img src={customerIcons.list_maybe} alt="list maybe"></img>
+          </Button>
+
+          <Button
+            // outline
+            size="sm"
+            title="schedule"
+            className="btn-icon"
+            color="alternate"
+            onClick={() => onScheduleClick(row)}
+          >
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>
+        </ButtonGroup>
       );
     }
   };
@@ -406,7 +379,8 @@ export const CustCandidateListView = (props) => {
             </DropdownItem>
             {row?.scheduledInterviewDtos &&
             row?.scheduledInterviewDtos?.length > 0 &&
-            row?.scheduledInterviewDtos[0]?.scheduledate ? (
+            row?.scheduledInterviewDtos[0]?.scheduledate &&
+            row?.scheduledInterviewDtos[0]?.isactive ? (
               <DropdownItem onClick={() => onInterviewDetails(row)}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>

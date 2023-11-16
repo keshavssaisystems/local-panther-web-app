@@ -6,7 +6,11 @@ import { UpcomingInterviews } from "./upcomingInterviews";
 import { Alerts } from "./alerts";
 import { JobsList } from "./jobsList";
 import { useDispatch } from "react-redux";
-import { candidateDashboardActions, candidateListActions } from "_store";
+import {
+  candidateDashboardActions,
+  candidateListActions,
+  dropdownActions,
+} from "_store";
 
 export function CandidateDashboard() {
   const dispatch = useDispatch();
@@ -32,6 +36,9 @@ export function CandidateDashboard() {
     dispatch(candidateDashboardActions.getToDo({ userId }));
     dispatch(candidateDashboardActions.getLatestJobs({ candidateId }));
     dispatch(candidateListActions.getRecommendedJobList(candObj));
+    dispatch(dropdownActions.getJobTypeThunk2());
+    dispatch(dropdownActions.getWorkScheduleThunk2());
+    dispatch(dropdownActions.getShiftThunk2());
   };
 
   return (

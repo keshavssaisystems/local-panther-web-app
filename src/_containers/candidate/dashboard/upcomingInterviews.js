@@ -20,7 +20,7 @@ import {
   getLocationText,
   calculateEndTime,
   getTimezoneDateTime,
-  getChannelId,
+  getVideoChannelId,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -198,65 +198,31 @@ export function UpcomingInterviews() {
   };
 
   const checkInterview = function (mode, data) {
-    const [year, month, day] = data.scheduledate.split("-").map(Number);
-    const [hours, minutes, seconds] = data.starttime.split(":").map(Number);
-
-    let endTime = calculateEndTime(data.starttime, data.duration);
-    let end_date = year + "-" + (month - 1) + "-" + day + " " + endTime;
-
-    let endDate = new Date(end_date);
-
-    // Create a Date object using the parsed values
-    const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
-
-    let id = getChannelId(
-      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId,
-      JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+    let id = getVideoChannelId(
+      data?.jobtitle,
+      data?.jobid,
       data?.scheduleinterviewid
     );
-
-    if (targetDate === new Date()) {
-      if (mode === "phone") {
-        showSweetAlert({
-          title: `Interview started, please join on phone - ${data.phonenumber}`,
-          type: "success",
-        });
-      } else {
-        if (data.isappvideocall) {
-          setLink(id);
-          setAppShowInterview(true);
-        } else {
-          setLink(data.videolink);
-          setShowInterview(true);
-        }
-      }
-    } else if (targetDate > new Date()) {
+    if (mode === "phone") {
       showSweetAlert({
-        title: "Interview not started yet!!",
-        type: "warning",
+        title: `Please join the interview on phone - ${data.phonenumber}`,
+        type: "success",
       });
-    } else if (targetDate < new Date()) {
-      if (endDate < new Date()) {
-        showSweetAlert({
-          title: "Interview is completed !!",
-          type: "error",
-        });
+    } else if (mode === "Video") {
+      if (data.isappvideocall) {
+        setLink(id);
+        setAppShowInterview(true);
       } else {
-        if (mode === "phone") {
-          showSweetAlert({
-            title: `Interview started, please join on phone - ${data.phonenumber}`,
-            type: "success",
-          });
-        } else {
-          if (data.isappvideocall) {
-            setLink(id);
-            setAppShowInterview(true);
-          } else {
-            setLink(data.videolink);
-            setShowInterview(true);
-          }
-        }
+        setLink(data.videolink);
+        setShowInterview(true);
       }
+    } else if (mode === "In-person") {
+      showSweetAlert({
+        title: `Scheduled at - ${
+          (data.companyname, data.cityname, data.statename, data.countryname)
+        }`,
+        type: "success",
+      });
     }
   };
 
@@ -273,7 +239,7 @@ export function UpcomingInterviews() {
         {row.format === "Video" || row.format === "In-person" ? (
           <div
             className="ellipse d-flex justify-content-center align-items-center"
-            onClick={() => checkInterview("video", row)}
+            onClick={() => checkInterview(row.format, row)}
           >
             <img
               src={row.format === "Video" ? videoIcon : personIcon}
@@ -408,12 +374,10 @@ export function UpcomingInterviews() {
       <div>
         {showInterview && (
           <SweetAlert
-            title="Interview started"
+            title="Join Interview!!"
             onCancel={() => setShowInterview(false)}
             type="success"
-            showCancel
-            showConfirm={false}
-            showClose
+            onConfirm={() => setShowInterview(false)}
           >
             <a href={link} target="_blank">
               click to join{" "}
@@ -425,12 +389,10 @@ export function UpcomingInterviews() {
       <div>
         {appShowInterview && (
           <SweetAlert
-            title="Interview started"
+            title="Join Interview!!"
             onCancel={() => setAppShowInterview(false)}
             type="success"
-            showCancel
-            showConfirm={false}
-            showClose
+            onConfirm={() => setAppShowInterview(false)}
           >
             <NavLink to={`/video-screen/${link}`} exact>
               Click here to join

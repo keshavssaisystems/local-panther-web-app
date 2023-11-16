@@ -540,7 +540,7 @@ export function JobPreferences(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardBody>
             <div className="mb-3">
-              <strong className="card-title-text">Job Preferences</strong>
+              <strong className="card-title-text">Job preferences</strong>
               <div className="float-end">
                 <BsPencil
                   className="icons me-2"
@@ -567,7 +567,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired job titles</strong>
                             <div>
-                              {item.desiredJobTitle != "" &&
+                              {item.desiredJobTitle !== "" &&
                               item.desiredJobTitle
                                 ? item.desiredJobTitle
                                 : "-"}
@@ -577,7 +577,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Specific job title</strong>
                             <div>
-                              {item.specificJobTitle != ""
+                              {item.specificJobTitle !== ""
                                 ? item.specificJobTitle
                                 : "-"}
                             </div>
@@ -586,7 +586,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired job types</strong>
                             <div>
-                              {item.desiredJobTypes != ""
+                              {item.desiredJobTypes !== ""
                                 ? item.desiredJobTypes
                                 : "-"}
                             </div>
@@ -595,7 +595,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Work schedules</strong>
                             <div>
-                              {item.workSchedules != ""
+                              {item.workSchedules !== ""
                                 ? item.workSchedules
                                 : "-"}
                             </div>
@@ -603,7 +603,7 @@ export function JobPreferences(props) {
                           <hr />
                           <Row>
                             <strong>Shifts</strong>
-                            <div>{item.shifts != "" ? item.shifts : "-"}</div>
+                            <div>{item.shifts !== "" ? item.shifts : "-"}</div>
                           </Row>
                           <hr />
                         </Col>
@@ -612,7 +612,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired minimum pay</strong>
 
-                            <div>{item.pay != "" ? "$" + item.pay : "-"}</div>
+                            <div>{item.pay !== "" ? "$" + item.pay : "-"}</div>
                           </Row>
                           <hr />
                           <Row>
@@ -623,7 +623,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Work type</strong>
                             <div>
-                              {item.desiredWorkTypes != ""
+                              {item.desiredWorkTypes !== ""
                                 ? item.desiredWorkTypes
                                 : "-"}
                             </div>

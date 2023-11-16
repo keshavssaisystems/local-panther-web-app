@@ -1,26 +1,11 @@
-import React, { useState } from "react";
-import {
-  CardHeader,
-  Col,
-  CardFooter,
-  Button,
-  DropdownItem,
-  DropdownToggle,
-  DropdownMenu,
-  UncontrolledButtonDropdown,
-  Card,
-  CardBody,
-} from "reactstrap";
+import React from "react";
+import { CardHeader, Card, CardBody } from "reactstrap";
 import "../../customer/scheduleInterview/scheduleInterview.scss";
 import moment from "moment-timezone";
-import videoIcon from "../../../assets/utils/images/camera-video-fill.svg";
-import personIcon from "../../../assets/utils/images/person-fill.svg";
-import linkIcon from "../../../assets/utils/images/link.png";
-import copyLinkIcon from "../../../assets/utils/images/copy-link.png";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
-import { getChannelId } from "_helpers/helper";
+import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
@@ -28,10 +13,10 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     interviewDetail?.scheduledate,
     "MM/DD/YYYY"
   );
-  console.log(interviewDetail);
-  let id = getChannelId(
-    interviewDetail?.candidateid,
-    interviewDetail?.candidateuserid,
+
+  let id = getVideoChannelId(
+    interviewDetail?.jobtitle,
+    interviewDetail?.jobid,
     interviewDetail?.scheduleinterviewid
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
@@ -76,31 +61,31 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
   );
   const getText = function (data) {
     let text = "";
-    if (data.companyname != "") {
+    if (data.companyname !== "") {
       text = data.companyname;
-      if (data.cityname != "") {
+      if (data.cityname !== "") {
         text += ", " + data.cityname;
       }
-      if (data.statename != "") {
+      if (data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.cityname != "") {
+    } else if (data.cityname !== "") {
       text = data.cityname;
-      if (data.statename != "") {
+      if (data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.statename != "") {
+    } else if (data.statename !== "") {
       text = data.statename;
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.countryname != "") {
+    } else if (data.countryname !== "") {
       text = data.countryname;
     }
     return text;
@@ -155,10 +140,10 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                       <b>Interview status -</b>{" "}
                       {interviewDetail?.isaccepted === true &&
                       interviewDetail?.isrejected === false
-                        ? "Scheduled"
+                        ? "Accepted"
                         : interviewDetail?.isrejected === true
                         ? "Rejected"
-                        : "Tentitive"}
+                        : "Tentative"}
                     </p>
                   </div>
                   <div className="p-custom">

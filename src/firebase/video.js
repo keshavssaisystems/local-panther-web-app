@@ -3,11 +3,17 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { firebaseConfig, servers } from "../firebase/index";
 import { Row, Col } from "reactstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./video.scss";
 
 export const VideoScreen = () => {
-  const { id } = useParams();
+  const { ...rest } = useParams();
+  let id = rest["*"] ? rest["*"] : "";
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  let name = userDetails
+    ? userDetails.FirstName + " " + userDetails.LastName
+    : "";
+  const navigate = useNavigate();
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
@@ -64,7 +70,7 @@ export const VideoScreen = () => {
   // 2. Create an offer
   const onCreateCall = async () => {
     // Reference Firestore collections for signaling
-    const callDoc = firestore.collection("room").doc(id);
+    const callDoc = firestore.collection("channels").doc(id);
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
 
@@ -104,7 +110,7 @@ export const VideoScreen = () => {
   };
 
   const onAnswerClick = async () => {
-    const callDoc = firestore.collection("room").doc(id);
+    const callDoc = firestore.collection("channels").doc(id);
     const answerCandidates = callDoc.collection("answerCandidates");
     const offerCandidates = callDoc.collection("offerCandidates");
 
@@ -140,7 +146,7 @@ export const VideoScreen = () => {
 
   const JoinCall = async () => {
     // Reference Firestore collections for signaling
-    const callDoc = firestore.collection("rooms").doc(id);
+    const callDoc = firestore.collection("channels").doc(id);
     const offerCandidates = callDoc.collection("offerCandidates");
     const answerCandidates = callDoc.collection("answerCandidates");
 
@@ -223,7 +229,7 @@ export const VideoScreen = () => {
     if (pc) {
       pc.close();
     }
-    const roomRef = firestore.collection("rooms").doc(id);
+    const roomRef = firestore.collection("channels").doc(id);
     const calleeCandidates = await roomRef.collection("answerCandidates").get();
     calleeCandidates.forEach(async (candidate) => {
       await candidate.ref.delete();
@@ -233,6 +239,7 @@ export const VideoScreen = () => {
       await candidate.ref.delete();
     });
     await roomRef.delete();
+    navigate("/");
   };
 
   return (

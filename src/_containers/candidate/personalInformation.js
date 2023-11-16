@@ -680,50 +680,59 @@ export function PersonalInformation(props) {
                     </div>
                   </Col>
 
-                  <Col sm="12" md="12" xl="3" className="">
-                    <Row className="mt-4">
-                      <Col className="mb-2 mt-2">
-                        <BsTelephone className="personal-sec-icon me-2" />
-                        <span className="content-text mt-3">
-                          {maskPhoneNumber(
-                            selectedCandidate.personalInfo.phonenumber
-                          )}
-                        </span>
-                      </Col>
-                    </Row>
+                  <Col sm="12" md="12" xl="6" className="">
+                    <div className="m-3 float-end">
+                      <BsPencil
+                        className="edit-icon"
+                        onClick={(evt) => setContactModal(true)}
+                      />
+                    </div>
                     <Row>
-                      <Col className="mb-2">
-                        <BsEnvelope className="personal-sec-icon me-2" />
-                        <span className="content-text">
-                          {selectedCandidate.personalInfo.email}
-                        </span>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col className="mb-2">
-                        {selectedCandidate.personalInfo.city != "" ||
-                        selectedCandidate.personalInfo.country != "" ? (
-                          <div>
-                            <BsPinMap className="personal-sec-icon me-2" />
-                            <span className="content-text">
-                              {selectedCandidate.personalInfo.city
-                                ? selectedCandidate.personalInfo.city +
-                                  ", " +
-                                  selectedCandidate.personalInfo.state
-                                : ""}
+                      <Row className="mt-4">
+                        <Col className="mb-2 mt-2">
+                          <BsTelephone className="personal-sec-icon me-2" />
+                          <span className="content-text mt-3">
+                            {maskPhoneNumber(
+                              selectedCandidate.personalInfo.phonenumber
+                            )}
+                          </span>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="mb-2">
+                          <BsEnvelope className="personal-sec-icon me-2" />
+                          <span className="content-text">
+                            {selectedCandidate.personalInfo.email}
+                          </span>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="mb-2">
+                          {selectedCandidate.personalInfo.city !== "" ||
+                          selectedCandidate.personalInfo.country !== "" ? (
+                            <div>
+                              <BsPinMap className="personal-sec-icon me-2" />
+                              <span className="content-text">
+                                {selectedCandidate.personalInfo.city
+                                  ? selectedCandidate.personalInfo.city +
+                                    ", " +
+                                    selectedCandidate.personalInfo.state
+                                  : ""}
 
-                              {selectedCandidate.personalInfo.country
-                                ? ", " + selectedCandidate.personalInfo.country
-                                : ""}
-                            </span>
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </Col>
+                                {selectedCandidate.personalInfo.country
+                                  ? ", " +
+                                    selectedCandidate.personalInfo.country
+                                  : ""}
+                              </span>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </Col>
+                      </Row>
                     </Row>
                   </Col>
-                  <Col sm="12" md="12" xl="3" className="mt-3">
+                  {/* <Col sm="12" md="12" xl="3" className="mt-3">
                     <div className="me-3 float-end">
                       <BsPencil
                         className="edit-icon"
@@ -747,9 +756,9 @@ export function PersonalInformation(props) {
                       </Row>
                       <Row>
                         <Col className="mb-2">
-                          {selectedCandidate.personalInfo.gender != "" ? (
+                          {selectedCandidate.personalInfo.gender !== "" ? (
                             <div>
-                              {selectedCandidate.personalInfo.gender ==
+                              {selectedCandidate.personalInfo.gender ===
                               "Female" ? (
                                 <i
                                   className="pe-7s-female personal-sec-icon me-2"
@@ -789,7 +798,7 @@ export function PersonalInformation(props) {
                         </Col>
                       </Row>
                     </Row>
-                  </Col>
+                  </Col> */}
                 </Row>
               ) : (
                 <></>

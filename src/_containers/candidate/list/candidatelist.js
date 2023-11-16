@@ -18,6 +18,7 @@ import "./candidatelist.scss";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
+  custJobListActions,
 } from "_store";
 
 export const CandidateList = (props) => {
@@ -138,14 +139,17 @@ export const CandidateList = (props) => {
       onCandidateCardActions("applied", rec?.candidaterecommendedjobid);
     }
   };
-
+  let successMessage = "Job status updated successfully!!!";
   const onCandidateCardActions = async (type, candidaterecommendedjobid) => {
     if (type === "liked") {
       let res = await dispatch(
         candidateListActions.candidateLike(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({
+          title: successMessage,
+          type: "success",
+        });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -158,7 +162,7 @@ export const CandidateList = (props) => {
         candidateListActions.candidateReject(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -171,7 +175,7 @@ export const CandidateList = (props) => {
         candidateListActions.candidateMayBe(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -184,7 +188,7 @@ export const CandidateList = (props) => {
         candidateListActions.candidateApply(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -197,7 +201,7 @@ export const CandidateList = (props) => {
         candidateListActions.candidateAccept(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -259,7 +263,14 @@ export const CandidateList = (props) => {
 
   const onShowModal = async (row, type) => {
     if (type === "jd") {
-      setSelectedRow(row);
+      let response = await dispatch(
+        custJobListActions.getJobDetail({ jobId: row.jobid })
+      );
+      if (response.payload) {
+        setSelectedRow(response.payload.data);
+      } else {
+        setSelectedRow(row);
+      }
       setShowJDModal(true);
     } else if (type === "id") {
       let res = await dispatch(

@@ -142,7 +142,10 @@ export const PrescreenModal = (props) => {
                         <b className="modal-title">{data.prescreenquestion}</b>
                       </Label>
                       <Label>
-                        <div className="mb-2 me-2 badge bg-light modal-badge">
+                        <div
+                          className="mb-2 me-2 badge bg-light modal-badge"
+                          style={{ textTransform: "unset" }}
+                        >
                           {data.answer}
                         </div>
                       </Label>

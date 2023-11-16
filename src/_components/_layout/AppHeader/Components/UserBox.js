@@ -56,9 +56,10 @@ export function UserBox() {
   const [changePwd, setChangePwd] = useState(false);
 
   useEffect(() => {
-    if (personalInfo_temp && personalInfo_temp !== "") {
+    if (personalInfo_temp || personalInfo_temp === "") {
       setProfileImg(personalInfo_temp);
     } else {
+      setProfileImg(userDetail?.Profilephotopath);
     }
   }, [personalInfo_temp]);
   // only show nav when logged in
@@ -122,13 +123,7 @@ export function UserBox() {
                     <img
                       width={42}
                       className="rounded-circle"
-                      src={
-                        profileImg && profileImg !== ""
-                          ? profileImg
-                          : userDetail?.Profilephotopath?.length
-                          ? userDetail?.Profilephotopath
-                          : avatar1
-                      }
+                      src={profileImg ? profileImg : avatar1}
                       alt=""
                     />
                     <FontAwesomeIcon
@@ -152,7 +147,7 @@ export function UserBox() {
                                 <img
                                   width={42}
                                   className="rounded-circle"
-                                  src={avatar1}
+                                  src={profileImg ? profileImg : avatar1}
                                   alt=""
                                 />
                               </div>
