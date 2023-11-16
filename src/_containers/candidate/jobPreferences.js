@@ -468,7 +468,6 @@ export function JobPreferences(props) {
       setDetails(new_data);
       return;
     }
-    debugger;
     if (
       new_data[0].anywhereonlynear === 2 &&
       (!new_data[0].locationids || new_data[0].locationids === "")
@@ -561,24 +560,6 @@ export function JobPreferences(props) {
             </div>
           </CardHeader>
           <CardBody>
-            {/* <div className="mb-3">
-              <strong className="card-title-text">Job preferences</strong>
-              <div className="float-end">
-                <BsPencil
-                  className="icons me-2"
-                  onClick={() => setPersonalModal(true)}
-                />
-                {getData?.length > 0 ? (
-                  <BsTrash3
-                    className="me-2 icons"
-                    onClick={() => deleteModal()}
-                  />
-                ) : (
-                  ""
-                )}
-              </div>
-            </div> */}
-
             {!loader ? (
               <div>
                 {getData?.length > 0 ? (
@@ -893,7 +874,7 @@ export function JobPreferences(props) {
                     <Col md={4}>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Pay type
+                          Pay period type
                         </Label>
                         <AsyncSelect
                           name="jobTitle"

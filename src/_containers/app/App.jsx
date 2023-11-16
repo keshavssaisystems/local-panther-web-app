@@ -98,7 +98,7 @@ export function App() {
             }
           />
           <Route
-            path="/users"
+            path="acl/users"
             element={
               <PrivateRoute>
                 <AdminListing entity="users" />
@@ -106,7 +106,7 @@ export function App() {
             }
           />
           <Route
-            path="/roles"
+            path="acl/roles"
             element={
               <PrivateRoute>
                 <AdminListing entity="roles" />

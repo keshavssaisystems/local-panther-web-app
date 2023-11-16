@@ -69,6 +69,10 @@ export function AdditionalInfoModal(props) {
   const [proficiencyList, setProficiencyList] = useState(
     useSelector((state) => state.ProficiencyList.user.data)
   );
+  const languageList = useSelector(
+    (state) => state.ProficiencyList.languageList
+  );
+
   const closeModal = function () {
     props.onCallAdditionalInfo();
   };
@@ -112,8 +116,11 @@ export function AdditionalInfoModal(props) {
       let temp_array = new_data.candidateLanguageDtos.map((item) => ({
         ...item,
       }));
-
-      temp_array[index].language = data;
+      debugger;
+      temp_array[index].languageid = data;
+      temp_array[index].language = languageList.find(
+        (x) => x.id === parseInt(data)
+      )?.name;
       new_data.candidateLanguageDtos = temp_array;
     } else if (check === "proficiency") {
       let temp_array = new_data.candidateLanguageDtos.map((item) => ({
@@ -170,7 +177,7 @@ export function AdditionalInfoModal(props) {
                     <Label for="language" className="fw-semi-bold">
                       Language
                     </Label>
-                    <input
+                    {/* <input
                       placeholder="Enter language"
                       name="language"
                       type="text"
@@ -181,7 +188,40 @@ export function AdditionalInfoModal(props) {
                         onHandleInputChange("language", evt.target.value, index)
                       }
                       className="field-input placeholder-text form-control"
-                    />
+                    /> */}
+
+                    <Input
+                      className="placeholder-text"
+                      style={{
+                        fontSize: "14px",
+                      }}
+                      type="select"
+                      id="language"
+                      name="language"
+                      onChange={(evt) =>
+                        onHandleInputChange("language", evt.target.value, index)
+                      }
+                      placeholderText="Select proficiency"
+                    >
+                      <option
+                        className="placeholder-text"
+                        style={{
+                          fontSize: "14px",
+                        }}
+                        key={0}
+                      >
+                        Select language
+                      </option>
+                      {languageList?.map((col) => (
+                        <option
+                          selected={col.id == item.languageid}
+                          key={col.id}
+                          value={col.id}
+                        >
+                          {col.name}
+                        </option>
+                      ))}
+                    </Input>
                   </FormGroup>
                 </Col>
                 <Col md={4}>
@@ -192,8 +232,6 @@ export function AdditionalInfoModal(props) {
                     <Input
                       className="placeholder-text"
                       style={{
-                        height: "35px",
-                        color: "#afaba5",
                         fontSize: "14px",
                       }}
                       type="select"
@@ -211,7 +249,6 @@ export function AdditionalInfoModal(props) {
                       <option
                         className="placeholder-text"
                         style={{
-                          color: "#afaba5 !important",
                           fontSize: "14px",
                         }}
                         key={0}
@@ -368,11 +405,7 @@ export function AdditionalInfoModal(props) {
           </Card>
         </Modal>
 
-        <Modal
-          centered
-          className=" modal-reject-align profile-view"
-          isOpen={error}
-        >
+        <Modal className=" modal-reject-align profile-view" isOpen={error}>
           <Card>
             <CardBody>
               <div className="d-flex justify-content-center mb-3">

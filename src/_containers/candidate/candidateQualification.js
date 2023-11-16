@@ -158,15 +158,6 @@ export function CandidateQualification(props) {
           </CardHeader>
 
           <CardBody className="scroll-area-md">
-            {/* <div className="mb-3">
-              <strong className="card-title-text">Qualifications</strong>
-              <Label
-                className="float-end link-text"
-                onClick={(evt) => setPersonalModal(true)}
-              >
-                Add
-              </Label>
-            </div> */}
             {!loading ? (
               <div>
                 <PerfectScrollbar>

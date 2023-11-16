@@ -115,25 +115,17 @@ export function AdditionalInformation(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Additional information
-            <div className="ms-auto me-2">
-              <Label className="link-text" onClick={(evt) => edit("add")}>
-                Add
-              </Label>
-            </div>
+            {getResponse?.[0]?.summary === "" ? (
+              <div className="ms-auto me-2">
+                <Label className="link-text" onClick={(evt) => edit("add")}>
+                  Add
+                </Label>
+              </div>
+            ) : (
+              ""
+            )}
           </CardHeader>
           <CardBody className="scroll-area-lg">
-            {/* <div className=" mb-3">
-              <strong className="card-title-text">
-                Additional information
-              </strong>
-              <Label
-                className="float-end link-text"
-                onClick={(evt) => edit("add")}
-              >
-                Add
-              </Label>
-            </div> */}
-
             {!loader ? (
               <div>
                 {getResponse?.length > 0 ? (
