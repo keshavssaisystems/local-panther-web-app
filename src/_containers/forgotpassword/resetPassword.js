@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from "react";
+import React, { Fragment } from "react";
 
 import Slider from "react-slick";
 import { useState, useEffect } from "react";
@@ -79,7 +79,7 @@ export function ResetPassword() {
             <Col lg="6" md="8" sm="12">
               <img
                 src={logo}
-                className="logo mb-4"
+                className="logo mb-2"
                 width={"200px"}
                 alt="logo"
               />

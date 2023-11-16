@@ -262,7 +262,7 @@ export function CandCardView({
 
                     <Button
                       outline
-                      title="schedule"
+                      title="apply"
                       className="btn-icon mb-1"
                       color="primary"
                       size="sm"

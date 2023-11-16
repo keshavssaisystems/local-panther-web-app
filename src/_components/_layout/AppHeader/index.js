@@ -27,7 +27,7 @@ export function AppHeader({
           })}
         >
           <div className="app-header-left">
-            <img src={logo} width={"130px"} height={"48px"} alt="logo" />
+            <img src={logo} width={"200px"} height={"48px"} alt="logo" />
           </div>
           <div className="user-title">
             <h4>
