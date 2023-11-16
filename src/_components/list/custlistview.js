@@ -129,7 +129,10 @@ export const CustCandidateListView = (props) => {
     );
     if (res.payload?.statusCode === 201) {
       setShowSchdIntSModal(false);
-      props.showSweetAlert({ title: res.payload.message, type: "success" });
+      props.showSweetAlert({
+        title: "Interview scheduled successfully!!!",
+        type: "success",
+      });
 
       props.updateList();
     } else {
