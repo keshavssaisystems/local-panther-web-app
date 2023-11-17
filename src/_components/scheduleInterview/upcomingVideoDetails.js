@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardHeader,
   Col,
@@ -29,7 +29,7 @@ import { Chat } from "firebase/chat/chat";
 import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
-
+import { USPhoneNumber } from "_helpers/helper";
 export function UpcomingVideoDetails({
   interviewId,
   cancelScheduleData,
@@ -46,7 +46,13 @@ export function UpcomingVideoDetails({
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [feedbackModal, setFeedbackModal] = useState(false);
+  const [oldInterviewId, setOldInterviewId] = useState("");
   const [showInviteCard, setShowInviteCard] = useState(false);
+  useEffect(() => {
+    if (oldInterviewId !== interviewId) {
+      setFeedbackModal(false);
+    }
+  }, [interviewId]);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
@@ -285,7 +291,14 @@ export function UpcomingVideoDetails({
               </div>
               {interviewDetails?.format === "Phone" && (
                 <div className="p-custom">
-                  <p className="mb-0">Phone no - </p>
+                  <p className="mb-0">
+                    Phone no -{" "}
+                    {interviewDetails.candidatephonenumber === undefined
+                      ? ""
+                      : USPhoneNumber(
+                          interviewDetails.candidatephonenumber
+                        )}{" "}
+                  </p>
                 </div>
               )}
               {interviewDetails?.format === "In-person" && (
@@ -371,7 +384,10 @@ export function UpcomingVideoDetails({
                   className="mb-2 mr-2 btn-transition"
                   color="primary"
                   size={"sm"}
-                  onClick={(e) => setFeedbackModal(!feedbackModal)}
+                  onClick={(e) => {
+                    setFeedbackModal(!feedbackModal);
+                    setOldInterviewId(interviewDetails.scheduleinterviewid);
+                  }}
                 >
                   {" "}
                   Interview feedback{" "}
@@ -396,6 +412,7 @@ export function UpcomingVideoDetails({
               postFeedbackData={(e) => {
                 postFeedbackData(e);
                 setFeedbackModal(false);
+                setOldInterviewId(interviewDetails.scheduleinterviewid);
               }}
             />
           </div>

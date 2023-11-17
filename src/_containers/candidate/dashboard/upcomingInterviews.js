@@ -39,6 +39,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
 import { NavLink } from "react-router-dom";
+import { USPhoneNumber } from "_helpers/helper";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -205,7 +206,9 @@ export function UpcomingInterviews() {
     );
     if (mode === "phone") {
       showSweetAlert({
-        title: `Please join the interview on phone - ${data.phonenumber}`,
+        title: `Please wait, Interviewer will call you on phone - ${USPhoneNumber(
+          data.phonenumber
+        )}`,
         type: "success",
       });
     } else if (mode === "Video") {
@@ -219,7 +222,10 @@ export function UpcomingInterviews() {
     } else if (mode === "In-person") {
       showSweetAlert({
         title: `Scheduled at - ${
-          (data.companyname, data.cityname, data.statename, data.countryname)
+          data?.interviewaaddress === undefined ||
+          data?.interviewaaddress === ""
+            ? "No address provided"
+            : data?.interviewaaddress
         }`,
         type: "success",
       });

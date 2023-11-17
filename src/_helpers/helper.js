@@ -354,7 +354,7 @@ export const USPhoneNumber = function (inputValue) {
     let USNumber = inputValue.match(/(\d{3})(\d{3})(\d{4})/);
     return "(" + USNumber[1] + ")-" + USNumber[2] + "-" + USNumber[3];
   } else {
-    return "Invalid phone no";
+    return inputValue;
   }
 };
 
