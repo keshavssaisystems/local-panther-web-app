@@ -18,7 +18,11 @@ import {
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarAlt,
+  faSearch,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -220,7 +224,7 @@ export function CustomerReportScheduledInterviews() {
                         )
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>

@@ -442,18 +442,22 @@ export const CandListView = (props) => {
               ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Status</span>,
             selector: (row) =>
-              row?.customerrecommendedjobstatusid === 6
-                ? "Rejected"
-                : row?.candidaterecommendedjobstatusid === 6
-                ? "Not interested"
+              row?.customerrecommendedjobstatusid === 5 &&
+              row?.candidaterecommendedjobstatusid === 6
+                ? "Offer rejected"
+                : row?.candidaterecommendedjobstatusid === 6 &&
+                  row?.customerrecommendedjobstatusid !== 5
+                ? "Rejected by candidate"
+                : row?.customerrecommendedjobstatusid === 6
+                ? "Rejected by customer"
                 : "-",
             sortable: true,
-            width: "10%",
+            width: "14%",
           },
           {
             name: <span className="table-title">Interest</span>,
@@ -462,7 +466,7 @@ export const CandListView = (props) => {
             ),
             ignoreRowClick: true,
             button: true,
-            width: "12%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Action</span>,
