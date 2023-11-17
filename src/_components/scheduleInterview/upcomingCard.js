@@ -112,7 +112,11 @@ export function UpcomingCard({
                   </p>
                   <p className="job-details">
                     <BsListStars className="icon-settings" /> Mode-{" "}
-                    {interview.format}
+                    {interview.format}{" "}
+                    {interview.format === "Video" &&
+                    interview.isappvideocall === false
+                      ? "(Third-party)"
+                      : ""}
                   </p>
                   <p className="job-details">
                     <BsClock className="icon-settings" /> Request sent on{" "}

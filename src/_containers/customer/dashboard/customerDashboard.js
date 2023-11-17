@@ -5,7 +5,11 @@ import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
-import { customerDashboardActions, createjobActions } from "_store";
+import {
+  customerDashboardActions,
+  createjobActions,
+  scheduleInterviewActions,
+} from "_store";
 
 export default function CustomerDashboard() {
   const dispatch = useDispatch();
@@ -28,6 +32,7 @@ export default function CustomerDashboard() {
     getCompanyDetails();
     getDashboardGraphData();
     getDashboardCounts();
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
