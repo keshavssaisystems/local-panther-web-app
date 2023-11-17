@@ -22,7 +22,7 @@ import { SkillsFilter, LocationFilter } from "../filterComponent";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -180,7 +180,7 @@ export function NewCandidate({ title }) {
                         exportToExcel(excelData, "adminNewCandidateReport")
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
