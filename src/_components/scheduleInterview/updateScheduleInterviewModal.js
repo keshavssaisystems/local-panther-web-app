@@ -35,7 +35,9 @@ export function UpdateScheduleInterviewModal({
   const [scheduleDateValidation, setScheduleDateValidation] = useState(false);
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
   const [durationValidation, setDurationValidation] = useState(false);
+  const [videoLinkValidation, setVideoLinkValidation] = useState(false);
   const [scheduledDate, setScheduledDate] = useState(newdate);
+
   const [dateChange, setDateChange] = useState(false);
   const toggle = () => {
     setModal(!modal);
@@ -118,7 +120,10 @@ export function UpdateScheduleInterviewModal({
       durationid: Number(event.target.elements.duration.value),
       format: interviewData?.format,
       isappvideocall: interviewData?.isappvideocall,
-      videolink: interviewData?.videolink,
+      videolink:
+        event?.target?.elements?.videoLink?.value === undefined
+          ? ""
+          : event?.target?.elements?.videoLink?.value,
       interviewAddress: interviewData?.interviewaddress,
       messagetocandidate: interviewData?.messagetocandidate,
       intervieweremailids: interviewData?.intervieweremailids,
@@ -317,14 +322,25 @@ export function UpdateScheduleInterviewModal({
               )}
               {interviewData?.format === "Video" &&
                 interviewData?.isappvideocall === false && (
-                  <div className="detail-padding">
-                    <h6 className="mb-0 heading-custom">Video Link</h6>
-                    <p className="mb-0 mt-1 mr-1">
-                      {interviewData?.videolink === ""
-                        ? "-"
-                        : interviewData?.videolink}
-                    </p>
-                  </div>
+                  <FormGroup>
+                    <Label for="videoLink" className="fw-semi-bold">
+                      Paste video link <span className="required-star">* </span>
+                    </Label>
+                    <Input
+                      type="text"
+                      name="videoLink"
+                      id="videoLink"
+                      placeholder="Enter video link"
+                      defaultValue={interviewData?.videolink}
+                      invalid={videoLinkValidation}
+                      onChange={() => setVideoLinkValidation(false)}
+                    />
+                    {videoLinkValidation === true && (
+                      <FormText color="danger">
+                        Please enter video link
+                      </FormText>
+                    )}
+                  </FormGroup>
                 )}
               {interviewData?.format === "In-person" && (
                 <div className="detail-padding">
