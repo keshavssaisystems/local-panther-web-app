@@ -28,7 +28,11 @@ import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { MessageCard } from "./messageCard";
-import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
+import {
+  getTimezoneDateTime,
+  getVideoChannelId,
+  USPhoneNumber,
+} from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
 
@@ -129,9 +133,6 @@ export function VideoInterviewDetails({
     };
     cancelScheduleData(cancelData);
   };
-  let USNumber = interviewDetail?.candidatephonenumber
-    ? interviewDetail?.candidatephonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
-    : null;
   const acceptSchedule = () => {
     acceptInterview(interviewId);
   };
@@ -333,14 +334,9 @@ export function VideoInterviewDetails({
               <div className="p-custom">
                 <p className="mb-0">
                   Phone no -{" "}
-                  {interviewDetail.candidatephonenumber !== undefined
+                  {interviewDetail.candidatephonenumber === undefined
                     ? ""
-                    : "(" +
-                      USNumber[1] +
-                      ")-" +
-                      USNumber[2] +
-                      "-" +
-                      USNumber[3]}
+                    : USPhoneNumber(interviewDetail.candidatephonenumber)}
                 </p>
               </div>
             )}

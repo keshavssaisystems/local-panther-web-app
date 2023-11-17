@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardBody, CardHeader, Button } from "reactstrap";
+import { Card, CardBody, CardHeader } from "reactstrap";
 import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
@@ -10,6 +10,7 @@ import personIcon from "assets/utils/images/person-fill.svg";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useNavigate } from "react-router-dom";
+import { USPhoneNumber } from "_helpers/helper";
 
 export function UpcomingInterviewTable({ tableData }) {
   const [showAlert, SetShowAlert] = useState({
@@ -91,16 +92,22 @@ export function UpcomingInterviewTable({ tableData }) {
       cell: (row) => (
         <>
           <div className="d-block w-100 ">
-            {row.format === "Video" || row.format === "In-person" ? (
+            {row.format === "Video" ? (
               <div
                 className="ellipse d-flex justify-content-center align-items-center"
                 onClick={() => checkInterview("video", row)}
               >
-                <img
-                  src={row.format === "Video" ? videoIcon : personIcon}
-                  alt="interview-icon"
-                />
+                <img src={videoIcon} alt="interview-icon" />
               </div>
+            ) : row.format === "In-person" ? (
+              <>
+                <div
+                  className="ellipse d-flex justify-content-center align-items-center"
+                  onClick={() => checkInterview("in-person", row)}
+                >
+                  <img src={personIcon} alt="interview-icon" />
+                </div>
+              </>
             ) : (
               <>
                 <div className="ellipse d-flex justify-content-center align-items-center">
@@ -174,10 +181,24 @@ export function UpcomingInterviewTable({ tableData }) {
     //   } else {
     if (mode === "phone") {
       showSweetAlert({
-        title: `Please join the interview on phone - ${data.phonenumber}`,
+        title: `Please join the interview on phone - ${USPhoneNumber(
+          data.phonenumber
+        )}`,
         type: "success",
       });
-    } else {
+    }
+    if (mode === "in-person") {
+      showSweetAlert({
+        title: `Scheduled at - ${
+          data?.interviewaaddress === undefined ||
+          data?.interviewaaddress === ""
+            ? "No address provided"
+            : data?.interviewaaddress
+        }`,
+        type: "success",
+      });
+    }
+    if (mode === "video") {
       if (data.isappvideocall) {
         setLink(id);
         setAppShowInterview(true);

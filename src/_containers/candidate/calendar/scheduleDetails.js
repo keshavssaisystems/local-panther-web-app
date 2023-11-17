@@ -7,6 +7,7 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
+import { USPhoneNumber } from "_helpers/helper";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
   let scheduled = getTimezoneDateTime(
@@ -156,9 +157,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                     <div className="p-custom">
                       <p className="mb-0">
                         Phone no -{" "}
-                        {interviewDetail.candidatephonenumber !== undefined
+                        {interviewDetail.candidatephonenumber === undefined
                           ? ""
-                          : interviewDetail.candidatephonenumber}
+                          : USPhoneNumber(interviewDetail.candidatephonenumber)}
                       </p>
                     </div>
                   )}
