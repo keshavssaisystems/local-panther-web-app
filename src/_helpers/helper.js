@@ -438,9 +438,13 @@ export const getChannelId = (id1, id2, scheduleid) => {
 };
 
 export const getVideoChannelId = (jobtitle, jobid, scheduleinterviewid) => {
-  return (
-    jobtitle.replace(/\s+/g, "-") + "-" + jobid + "-" + scheduleinterviewid
-  );
+  if (jobtitle !== undefined) {
+    return (
+      jobtitle.replace(/\s+/g, "-") + "-" + jobid + "-" + scheduleinterviewid
+    );
+  } else {
+    return jobid + "-" + scheduleinterviewid;
+  }
 };
 
 export const getBasePayMask = (basePayValue) => {
