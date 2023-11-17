@@ -1,6 +1,32 @@
-.admin-list{
-    .btn-primary{
-        background-color: #2F479B;
-        border-color: #2F479B;
-    }
+.admin-list {
+  .btn-primary {
+    background-color: #2f479b;
+    border-color: #2f479b;
+  }
+}
+.child-check {
+  margin-left: 15px;
+  display: none;
+}
+
+.child-check.active {
+  display: block;
+}
+.form-check-label {
+  position: relative;
+}
+
+.arrow {
+  position: absolute;
+  left: -26px;
+  top: -17%;
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  font-size: 30px;
+  font-weight: bold !important;
+}
+.disabled-col {
+  pointer-events: none;
+  opacity: 0.6;
 }

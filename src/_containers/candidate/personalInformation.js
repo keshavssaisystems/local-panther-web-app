@@ -847,7 +847,7 @@ export function PersonalInformation(props) {
                             onHandleInputChange("firstname", evt.target.value)
                           }
                           className={`field-input placeholder-text form-control ${
-                            getResponse.firstname == ""
+                            getResponse.firstname === ""
                               ? "is-invalid error-text"
                               : ""
                           }`}

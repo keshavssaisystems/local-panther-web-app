@@ -116,7 +116,6 @@ export function AdditionalInfoModal(props) {
       let temp_array = new_data.candidateLanguageDtos.map((item) => ({
         ...item,
       }));
-      debugger;
       temp_array[index].languageid = data;
       temp_array[index].language = languageList.find(
         (x) => x.id === parseInt(data)
@@ -177,19 +176,6 @@ export function AdditionalInfoModal(props) {
                     <Label for="language" className="fw-semi-bold">
                       Language
                     </Label>
-                    {/* <input
-                      placeholder="Enter language"
-                      name="language"
-                      type="text"
-                      id="language"
-                      maxLength={50}
-                      value={item.language}
-                      onInput={(evt) =>
-                        onHandleInputChange("language", evt.target.value, index)
-                      }
-                      className="field-input placeholder-text form-control"
-                    /> */}
-
                     <Input
                       className="placeholder-text"
                       style={{

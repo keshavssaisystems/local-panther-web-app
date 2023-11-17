@@ -15,6 +15,7 @@ import {
 
 import { Form, FormGroup, Label, Row, Col, FormText, Button } from "reactstrap";
 import { async } from "q";
+import InputMask from "react-input-mask";
 
 export const AddEditUser = (props) => {
   const { entity, isAddMode, data } = props;
@@ -251,7 +252,9 @@ export const AddEditUser = (props) => {
           <Row>
             <Col md={4}>
               <FormGroup>
-                <Label for="role">User role</Label>
+                <Label for="role" className="fw-semi-bold">
+                  User role
+                </Label>
                 <select
                   name="role"
                   placeholder="role"
@@ -288,14 +291,14 @@ export const AddEditUser = (props) => {
           <Row>
             <Col>
               <FormGroup>
-                <Label for="prefix">
+                <Label for="prefix" className="fw-semi-bold">
                   Prefix <span style={{ color: "red" }}>* </span>
                 </Label>
                 <input
                   type="text"
                   name="prefix"
                   {...register("prefix")}
-                  placeholder="Prefix"
+                  placeholder="Enter prefix"
                   className={`field-input placeholder-text form-control ${
                     errors?.prefix ? "is-invalid error-text" : "input-text"
                   }`}
@@ -314,7 +317,7 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="firstname"
                   {...register("firstname")}
-                  placeholder="First name"
+                  placeholder="Enter first name"
                   className={`field-input placeholder-text form-control ${
                     errors?.firstname ? "is-invalid error-text" : "input-text"
                   }`}
@@ -332,7 +335,7 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="middlename"
                   {...register("middlename")}
-                  placeholder="Middle name"
+                  placeholder="Enter middle name"
                   className={`field-input placeholder-text form-control`}
                 />
               </FormGroup>
@@ -349,7 +352,7 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="lastname"
                   {...register("lastname")}
-                  placeholder="Last name"
+                  placeholder="Enter last name"
                   className={`field-input placeholder-text form-control ${
                     errors?.lastname ? "is-invalid error-text" : "input-text"
                   }`}
@@ -369,7 +372,7 @@ export const AddEditUser = (props) => {
                   type="email"
                   name="email"
                   {...register("email")}
-                  placeholder="Email"
+                  placeholder="Enter email"
                   className={`field-input placeholder-text form-control ${
                     errors?.email ? "is-invalid error-text" : "input-text"
                   }`}
@@ -380,15 +383,18 @@ export const AddEditUser = (props) => {
             <Col>
               <FormGroup>
                 <Label for="phonenumber">Phone Number</Label>
-                <input
+
+                <InputMask
+                  mask="(999)-999-9999"
                   type="text"
                   name="phonenumber"
                   {...register("phonenumber")}
-                  placeholder="phonenumber"
+                  placeholder="Enter phonenumber"
                   className={`field-input placeholder-text form-control ${
                     errors?.phonenumber ? "is-invalid error-text" : "input-text"
                   }`}
                 />
+
                 <div className="invalid-feedback">
                   {errors?.phonenumber?.message}
                 </div>
@@ -406,7 +412,7 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="username"
                   {...register("username")}
-                  placeholder="User name"
+                  placeholder="Enter user name"
                   className={`field-input placeholder-text form-control ${
                     errors?.username ? "is-invalid error-text" : "input-text"
                   }`}
@@ -425,7 +431,7 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="password"
                   {...register("password")}
-                  placeholder="Password"
+                  placeholder="Enter password"
                   className={`field-input placeholder-text form-control ${
                     errors?.password ? "is-invalid error-text" : "input-text"
                   }`}
@@ -444,7 +450,7 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="address"
                   {...register("address")}
-                  placeholder="Address"
+                  placeholder="Enter address"
                   className={`field-input placeholder-text form-control ${
                     errors?.address ? "is-invalid error-text" : "input-text"
                   }`}

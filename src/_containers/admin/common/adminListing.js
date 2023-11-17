@@ -22,7 +22,8 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
-import Switch from "react-switch";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +35,7 @@ import {
   getRoles,
   getMenuMappings,
   deleteUser,
+  deleteRole,
   getRolesList,
 } from "_containers/admin/_redux/adminListing.slice";
 import { addCustomer } from "_containers/admin/_redux/addCustomer.slice";
@@ -52,6 +54,8 @@ import cx from "classnames";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { async } from "q";
 import { AddEditRole } from "./addEditRole";
+import { FiPlus } from "react-icons/fi";
+import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
@@ -77,6 +81,8 @@ export const AdminListing = ({ entity }) => {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
+  const [viewMode, setViewMode] = useState(false);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
@@ -185,11 +191,11 @@ export const AdminListing = ({ entity }) => {
               <BsPencil
                 style={{ fontSize: "18px" }}
                 className="edit-icon me-2"
-                onClick={(evt) => handleRowClick(row)}
+                onClick={(evt) => handleRowClick(row, "edit")}
               />
               <BsTrash3
                 style={{ fontSize: "18px" }}
-                onClick={() => deleteConfirm(row)}
+                onClick={() => deleteConfirm(row, "user")}
               />
             </div>
           ),
@@ -221,10 +227,16 @@ export const AdminListing = ({ entity }) => {
           id: "isactive",
           cell: (row) => (
             <div className="d-block w-100">
+              <FaEye
+                style={{ fontSize: "18px" }}
+                className="edit-icon me-2"
+                onClick={(evt) => handleRowClick(row, "view")}
+              />
+
               <BsPencil
                 style={{ fontSize: "18px" }}
                 className="edit-icon me-2"
-                onClick={(evt) => handleRowClick(row)}
+                onClick={(evt) => handleRowClick(row, "edit")}
               />
               <BsTrash3
                 style={{ fontSize: "18px" }}
@@ -232,7 +244,6 @@ export const AdminListing = ({ entity }) => {
               />
             </div>
           ),
-          sortable: true,
         },
       ];
       searchFilter = roles.searchFilter;
@@ -252,7 +263,6 @@ export const AdminListing = ({ entity }) => {
   }
 
   const urlParams = {
-    pageSize: 50,
     pageNumber: 0,
   };
 
@@ -264,8 +274,13 @@ export const AdminListing = ({ entity }) => {
     if (entity === "company") {
       dispatch(getCompanies(urlParams));
     } else if (entity === "customers") {
+      let payload = {
+        isActive: true,
+        pageNumber: 1,
+      };
+
       dispatch(getIndustries(urlParams));
-      dispatch(getCustomers(urlParams));
+      dispatch(getCustomers(payload));
     } else if (entity === "users") {
       dispatch(getUsers(urlParams));
       dispatch(getRoles());
@@ -288,19 +303,30 @@ export const AdminListing = ({ entity }) => {
     },
   };
 
-  const handleRowClick = (row) => {
+  const handleRowClick = async (row, check) => {
+    let id = row.userroleid;
+    await dispatch(getMenuMappings({ id }));
     setSelectedRowData(row);
-    setIsAddMode(false); // Open the modal
+    if (check === "view") {
+      setViewMode(true);
+    } else {
+      setIsAddMode(false);
+      setViewMode(false);
+    }
+
     setOpenModal(true);
   };
   const [check, setCheck] = useState();
   const deleteConfirm = (row, check) => {
+    debugger;
+    setCheck(check);
     setSelectedRowData(row);
     setIsDelete(true);
   };
 
   const onAddClick = () => {
     setIsAddMode(true); // Open the modal
+    setViewMode(false);
     setOpenModal(true);
   };
 
@@ -310,6 +336,7 @@ export const AdminListing = ({ entity }) => {
 
   const close = () => {
     setIsAddMode(false);
+    setViewMode(false);
     setOpenModal(false);
     setSuccess(false);
     setEditingData(null); // Reset editing data
@@ -395,8 +422,14 @@ export const AdminListing = ({ entity }) => {
   };
 
   const deleteUserData = async function () {
-    let id = selectedRowData.userId;
-    let response = await dispatch(deleteUser(id));
+    let response;
+    if (check === "user") {
+      let id = selectedRowData.userId;
+      response = await dispatch(deleteUser(id));
+    } else if (check === "role") {
+      let id = selectedRowData.userroleid;
+      response = await dispatch(deleteRole(id));
+    }
     if (response.payload) {
       setIsDelete(false);
       showSweetAlert({
@@ -435,10 +468,21 @@ export const AdminListing = ({ entity }) => {
   const getUsersList = function () {
     let urlParams = {
       searchText: searchData,
-      pageSize: 50,
-      pageNumber: 1,
+      pageNumber: 0,
     };
-    dispatch(getUsers(urlParams));
+    if (entity === "company") {
+      dispatch(getCompanies(urlParams));
+    } else if (entity === "customers") {
+      dispatch(getIndustries());
+      dispatch(getCustomers(urlParams));
+    } else if (entity === "users") {
+      dispatch(getUsers(urlParams));
+      dispatch(getRoles());
+    } else if (entity === "roles") {
+      dispatch(getRolesList(urlParams));
+    } else if (entity === "menuMapping") {
+      dispatch(getMenuMappings(urlParams));
+    }
   };
 
   const cardButtons = buttonsList.map((item) => (
@@ -465,77 +509,142 @@ export const AdminListing = ({ entity }) => {
         <Col md="12">
           <PageTitle heading={title} icon={icon} />
         </Col>
+
+        {entity === "customers" && (
+          <Col md="12">
+            <Card className="mb-4">
+              <Row className="m-1 mt-4">
+                <Col lg="2" md="2" sm="12" sx="12">
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      // value={jobId}
+                      name="jobid"
+                      id="jobid"
+                      placeholder="Job Id"
+                      // onChange={(e) => {
+                      //   handleChange("jobid", e.target.value);
+                      //   setJobId(e.target.value);
+                      // }}
+                    >
+                      <option value={""}>Select company</option>
+                      {/* {jobDropDownList?.length > 0 ? (
+                        jobDropDownList.map((data) => (
+                          <option value={data.jobid} key={data.jobid}>
+                            {data.jobtitle}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )} */}
+                    </Input>
+                  </FormGroup>
+                </Col>
+
+                <Col lg="3" md="3" sm="12" sx="12">
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="me-4"
+                    color="primary"
+                    type="button"
+                    // onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    // onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
+                  {/* </ButtonGroup>
+                    </InputGroup>
+                  </FormGroup> */}
+                </Col>
+
+                <Col>
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="float-end"
+                    color="primary"
+                    type="button"
+                    onClick={() => onAddClick()}
+                  >
+                    Add New Customer
+                  </Button>
+
+                  {/* </ButtonGroup>
+                    </InputGroup>
+                  </FormGroup> */}
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        )}
+
         <Col md="12">
           <Card className="mb-3">
-            {/* <CardHeader className="card-header-tab">
-              <div className="card-header-title font-size-lg text-capitalize fw-normal">
-                <i className="header-icon lnr-laptop-phone me-3 text-muted opacity-6">
-                  {" "}
-                </i>
-                {listingTitle}
-              </div>
-            </CardHeader> */}
             <CardBody>
-              <Row className="mb-3">
-                <Col md={11} sm={12} lg={11}>
-                  <div
-                    className={cx(
-                      "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-                      {
-                        active: true,
-                      }
-                    )}
-                  >
-                    <div className="input-holder float-end">
-                      <input
-                        type="text"
-                        className="search-input search-placeholder"
-                        id="search-input"
-                        value={searchData}
-                        onInput={(evt) => setSearchText(evt.target.value)}
-                        placeholder="Search.."
-                      />
-                      <button
-                        className="btn-close"
-                        onClick={(evt) => onClearSearch()}
-                      />
-                      <button
-                        onClick={(evt) => getUsersList()}
-                        className="search-icon"
+              {entity !== "customers" ? (
+                <Row className="mb-3">
+                  <Col className="col">
+                    {entity !== "roles" ? (
+                      <Button
+                        style={{
+                          background: "#545cd8",
+                          borderColor: "#545cd8",
+                        }}
+                        className="float-end me-3 mt-1"
+                        onClick={() => onAddClick()}
                       >
-                        <span />
-                      </button>
-                    </div>
-                  </div>
-                </Col>
-                {entity !== "roles" ? (
-                  <Col
-                    md={1}
-                    sm={12}
-                    lg={1}
-                    className="d-flex justify-content-center align-items-center"
-                  >
-                    <Button
-                      style={{
-                        background: "#545cd8",
-                        borderColor: "#545cd8",
-                      }}
-                      onClick={() => onAddClick()}
+                        <FiPlus className="mb-1" /> Add user
+                      </Button>
+                    ) : (
+                      ""
+                    )}
+                    <div
+                      className={cx(
+                        "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+                        {
+                          active: true,
+                        }
+                      )}
                     >
-                      + Add
-                    </Button>
+                      <div className="input-holder float-end">
+                        <input
+                          type="text"
+                          className="search-input search-placeholder"
+                          id="search-input"
+                          value={searchData}
+                          onInput={(evt) => setSearchText(evt.target.value)}
+                          placeholder="Search.."
+                        />
+                        <button
+                          className="btn-close"
+                          onClick={(evt) => onClearSearch()}
+                        />
+                        <button
+                          onClick={(evt) => getUsersList()}
+                          className="search-icon"
+                        >
+                          <span />
+                        </button>
+                      </div>
+                    </div>
                   </Col>
-                ) : (
-                  ""
-                )}
-              </Row>
+                </Row>
+              ) : (
+                ""
+              )}
 
               <DataTable
                 data={data}
                 columns={columns}
                 pagination
                 fixedHeader
-                fixedHeaderScrollHeight="400px"
+                // fixedHeaderScrollHeight="400px"
                 customStyles={customStyles}
                 onRowClicked={handleRowClick}
               />
@@ -657,6 +766,7 @@ export const AdminListing = ({ entity }) => {
                   isAddMode={isAddMode}
                   setIsAddMode={setIsAddMode}
                   data={selectedRowData}
+                  isView={viewMode}
                   // data={newCustData}
                   entity={entity}
                   // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
@@ -684,7 +794,7 @@ export const AdminListing = ({ entity }) => {
       <div>
         {isDelete && (
           <SweetAlert
-            title="Are you sure want to delete the User!!"
+            title={"Are you sure want to delete the " + { check } + "!!"}
             type="warning"
             showConfirm={false}
           >

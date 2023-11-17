@@ -4,10 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
-import axios from "axios";
+import MetisMenu from "react-metismenu";
 import {
   addRole,
-  updateRole,
+  updateMenuMapping,
 } from "_containers/admin/_redux/adminListing.slice";
 // import { getState } from '_store/dropdownstate.slice'
 
@@ -21,11 +21,15 @@ import {
   Button,
   Input,
   Collapse,
+  CardFooter,
+  ModalFooter,
 } from "reactstrap";
-import { async } from "q";
+
+import TreeView from "react-treeview";
 
 export const AddEditRole = (props) => {
-  const { entity, isAddMode, data } = props;
+  debugger;
+  const { entity, isAddMode, data, isView } = props;
   const userId = data?.userId;
   const [roleId, setRoleId] = useState(0);
   const [menuId, setMenuId] = useState(0);
@@ -34,7 +38,51 @@ export const AddEditRole = (props) => {
     (state) => state?.addCustomer ?? {}
   );
   const rolesList = useSelector((state) => state.adminListing.rolesList);
-  const menuList = useSelector((state) => state.adminListing.menuList);
+  const menuList_temp = useSelector((state) => state.adminListing.menuList);
+  const [menuList, setMenuList] = useState([]);
+  useEffect(() => {
+    if (menuList_temp) {
+      let filtered_data = menuList_temp?.roleMenuMappingList.map(
+        ({ ...rest }) => {
+          return {
+            userrolemenuid: rest.userrolemenuid,
+            userroleid: rest.userroleid,
+            userrolename: rest.userrolename,
+            menuid: rest.menuid,
+            menuname: rest.menuname,
+            submenuid: rest.submenuid,
+            submenuname: rest.submenuname,
+            isview: rest.isview,
+            isadd: rest.isadd,
+            isedit: rest.isedit,
+            isdelete: rest.isdelete,
+            isactive: rest.isactive,
+            currentUserId: JSON.parse(localStorage.getItem("userDetails"))
+              ?.UserId,
+            collapsed: rest.subMenuList?.length > 0 ? true : false,
+
+            subMenuList: rest.subMenuList.map(({ ...item }) => {
+              return {
+                collapsed: true,
+                submenuid: item.submenuid,
+                submenuname: item.submenuname,
+                description: item.description,
+                menuicon: item.menuicon,
+                modulename: item.modulename,
+                path: item.path,
+                menuid: item.menuid,
+                isactive: item.isactive,
+                currentUserId: JSON.parse(localStorage.getItem("userDetails"))
+                  ?.UserId,
+              };
+            }),
+          };
+        }
+      );
+
+      setMenuList(filtered_data);
+    }
+  }, [menuList_temp]);
 
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -51,8 +99,7 @@ export const AddEditRole = (props) => {
 
   const validationSchema = Yup.object().shape({
     // description: Yup.string().required("Description is required").max(500),
-    menuid: Yup.string().required("Menu is required"),
-    roleid: Yup.string().required("User role is required"),
+    roleid: Yup.string(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -60,23 +107,44 @@ export const AddEditRole = (props) => {
     useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
-  const createEntity = async (payload) => {
-    let rolesData = {
-      userroleid: payload.roleid,
-      rolename: rolesList?.find(
-        (x) => x.userroleid === parseInt(payload.roleid)
-      )?.rolename,
-      description: payload.description,
-      isactive: true,
-      currentUserId: JSON.parse(localStorage.getItem("userDetails"))?.UserId,
-    };
+  const createEntity = async (e) => {
+    e.preventDefault();
+    debugger;
+    let rolesData = menuList?.map(({ ...rest }) => {
+      return {
+        userrolemenuid: rest.userrolemenuid,
+        userroleid: rest.userroleid,
+        menuid: rest.menuid,
+        isview: true,
+        isadd: true,
+        isedit: true,
+        isdelete: true,
+        isactive: rest.isactive,
+        currentUserId: parseInt(
+          JSON.parse(localStorage.getItem("userDetails"))?.UserId
+        ),
+
+        subMenuList:
+          rest.subMenuList.length > 0
+            ? rest.subMenuList.map(({ ...subMenuItem }) => {
+                return {
+                  submenuid: subMenuItem.submenuid,
+                  menuid: subMenuItem.menuid,
+                  isactive: subMenuItem.isactive,
+                  currentUserId: parseInt(
+                    JSON.parse(localStorage.getItem("userDetails"))?.UserId
+                  ),
+                };
+              })
+            : [],
+      };
+    });
+    debugger;
     let response;
-    if (isAddMode) {
-      response = await dispatch(addRole(rolesData));
-    } else {
-      let id = rolesData.userroleid;
-      response = await dispatch(updateRole({ rolesData, id }));
-    }
+
+    let id = rolesData[0].userroleid;
+    response = await dispatch(updateMenuMapping({ rolesData, id }));
+
     if (response.payload) {
       showSweetAlert({
         title: response.payload.message,
@@ -129,14 +197,51 @@ export const AddEditRole = (props) => {
     setMenuId(data);
   };
 
-  const onCheckboxChange = (data) => {};
+  const toggleCustom = (index) => {
+    debugger;
+    let menuData = [...menuList];
+    menuData[index].collapsed = !menuData[index].collapsed;
+    setMenuList(menuData);
+  };
+
+  const handleMenuSelect = (check, index, menuIndex) => {
+    debugger;
+    let menuData = [...menuList];
+    if (check === "menu") {
+      menuData[index].isactive = !menuData[index].isactive;
+      if (menuData[index].isactive) {
+        menuData[index].subMenuList.map(
+          (item, childIndex) => (item.isactive = true)
+        );
+      } else {
+        menuData[index].subMenuList.map(
+          (item, childIndex) => (item.isactive = false)
+        );
+      }
+    } else {
+      menuData[menuIndex].subMenuList[index].isactive =
+        !menuData[menuIndex].subMenuList[index].isactive;
+
+      const keyToCheck = "isactive";
+
+      const isKeyTrueForAll = menuData[menuIndex].subMenuList.some(
+        (item) => item[keyToCheck] === true
+      );
+      if (isKeyTrueForAll) {
+        menuData[menuIndex].isactive = true;
+      } else {
+        menuData[menuIndex].isactive = false;
+      }
+    }
+    setMenuList(menuData);
+  };
 
   return (
     <>
       <Row>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form>
           <Row>
-            <Col md={4}>
+            <Col>
               <FormGroup>
                 <Label for="role">
                   User role <span style={{ color: "red" }}>* </span>
@@ -172,7 +277,7 @@ export const AddEditRole = (props) => {
                 </div>
               </FormGroup>
             </Col>
-            <Col md={4}>
+            {/* <Col md={4}>
               <FormGroup>
                 <Label for="role">
                   Menu <span style={{ color: "red" }}>* </span>
@@ -207,70 +312,78 @@ export const AddEditRole = (props) => {
                   {errors?.menuid && menuId === 0?.message}
                 </div>
               </FormGroup>
-            </Col>
+            </Col> */}
           </Row>
-          {/* <Row>
-            <div>
-              {menuList?.lenght >
-                0?.map((item, index) => (
-                  <div>
-                    <Input
-                      type="checkbox"
-                      id={item.menuid}
-                      label={item.menuname}
-                      checked={item.checked}
-                      onChange={() => onCheckboxChange(item.menuid)}
-                    />
+          <Row>
+            <Col className={isView ? "disabled-col" : ""}>
+              <Label for="role">
+                Menus <span style={{ color: "red" }}>* </span>
+              </Label>
+              {menuList?.length > 0 ? (
+                <div>
+                  {menuList.map((item, index) => (
+                    <div>
+                      <div>
+                        <label
+                          class="form-check-label form-label"
+                          for="checkbox2"
+                          style={{ marginLeft: "20px" }}
+                        >
+                          <i
+                            className={
+                              !item.collapsed
+                                ? "pe-7s-angle-right arrow"
+                                : "pe-7s-angle-down arrow"
+                            }
+                            onClick={() => toggleCustom(index)}
+                          />
+                          <input
+                            type="checkbox"
+                            class="form-check-input me-1"
+                            checked={item.isactive}
+                            onClick={() => handleMenuSelect("menu", index, "")}
+                          />{" "}
+                          {item.menuname}
+                        </label>
+                      </div>
 
-                    <button onClick={() => toggleCollapse()}>
-                      {isOpen ? "Collapse" : "Expand"}
-                    </button>
-                    <Collapse isOpen={isOpen}>
-                      {item.submenu.map((childNode) => (
-                        <Input
-                          type="checkbox"
-                          id={childNode.menuid}
-                          label={childNode.menuname}
-                          checked={childNode.checked}
-                          onChange={() => onCheckboxChange(childNode.menuid)}
-                        />
-                      ))}
-                    </Collapse>
-                  </div>
-                ))}
-            </div>
-          </Row> */}
-          {/* <Row>
-            <Col>
-              <FormGroup>
-                <Label for="prefix">
-                  Description <span style={{ color: "red" }}>* </span>
-                </Label>
-                <Input
-                  style={{ height: "100px" }}
-                  placeholder="Enter description"
-                  name="description"
-                  type="textarea"
-                  id="description"
-                  maxLength={500}
-                  className="field-input placeholder-text form-control"
-                  {...register("description")}
-                  onInput={(e) => handleInputChange(e.target.value)}
-                />
-                <span className="dropdown-placeholder float-end">
-                  {getValues("description")
-                    ? getValues("description").length
-                    : 0}
-                  /500
-                </span>
-                <div className="invalid-feedback">
-                  {errors?.description?.message}
+                      <Collapse
+                        isOpen={item.collapsed}
+                        data-parent="#exampleAccordion"
+                        id="exampleAccordion1"
+                      >
+                        {item.subMenuList.map((child, childIndex) => (
+                          <div style={{ paddingLeft: "20px" }}>
+                            <Input
+                              type="checkbox"
+                              className="m-2"
+                              checked={child.isactive}
+                              onClick={() =>
+                                handleMenuSelect("submenu", childIndex, index)
+                              }
+                            >
+                              {" "}
+                            </Input>
+                            <Label className="mt-1">{child.submenuname}</Label>
+                            <br />
+                          </div>
+                        ))}
+                      </Collapse>
+                    </div>
+                  ))}
                 </div>
-              </FormGroup>
+              ) : (
+                <></>
+              )}
             </Col>
-          </Row> */}
 
-          <Button type="submit" color="primary">
+            {/* <CheckboxTree nodes={menuList} /> */}
+          </Row>
+          <Button
+            type="button"
+            color="primary"
+            onClick={(e) => createEntity(e)}
+          >
             {/* disabled={formState.isSubmitting} */}
             {isAddMode ? "Submit" : "Update"}
           </Button>

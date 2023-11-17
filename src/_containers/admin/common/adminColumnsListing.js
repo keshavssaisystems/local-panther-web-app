@@ -4,17 +4,12 @@ export const customers = {
   listingTitle: "Customer Listings",
   columns: [
     {
-      name: "First name",
+      name: "Name",
       id: "firstname",
-      selector: (row) => row.firstname,
+      selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
-    {
-      name: "Last name",
-      id: "lastname",
-      selector: (row) => row.lastname,
-      sortable: true,
-    },
+
     {
       name: "Company",
       id: "companyname",
