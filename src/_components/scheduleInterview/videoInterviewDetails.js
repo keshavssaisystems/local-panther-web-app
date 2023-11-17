@@ -264,9 +264,9 @@ export function VideoInterviewDetails({
               : "Completed"
             : interviewDetail?.isaccepted === true &&
               interviewDetail?.isrejected === false
-            ? "Scheduled"
+            ? "Accepted"
             : interviewDetail?.isrejected === true
-            ? "Rejected by candidate"
+            ? "Rejected"
             : "No response from candidate"}
         </p>
       </div>
@@ -352,9 +352,10 @@ export function VideoInterviewDetails({
                 <div className="p-custom">
                   <p className="mb-0">
                     <a
-                      href={interviewDetail.videolink}
+                      href={"https://" + interviewDetail.videolink}
                       target={"_blank"}
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
+                      exact
                     >
                       Click here to join
                     </a>{" "}

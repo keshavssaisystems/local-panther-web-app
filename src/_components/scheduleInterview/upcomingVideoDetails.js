@@ -226,7 +226,9 @@ export function UpcomingVideoDetails({
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Status</h6>
           {interviewDetails?.interviewstatusid !== 0
-            ? "Completed"
+            ? interviewDetails?.interviewstatusid === 1
+              ? "Completed"
+              : "Candidate not joined"
             : interviewDetails?.isaccepted === true &&
               interviewDetails?.isrejected === false
             ? "Accepted"
@@ -313,9 +315,10 @@ export function UpcomingVideoDetails({
                   <div className="p-custom">
                     <p className="mb-0">
                       <a
-                        href={interviewDetails?.videolink}
+                        href={"https://" + interviewDetails.videolink}
                         target={"_blank"}
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
+                        exact
                       >
                         Click here to join
                       </a>{" "}
