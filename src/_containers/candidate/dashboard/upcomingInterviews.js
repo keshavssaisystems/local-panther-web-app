@@ -88,11 +88,11 @@ export function UpcomingInterviews() {
     },
     {
       name: "Scheduled date",
-      selector: (row) => (
-        <span title={formatDate(row.scheduledate)}>
-          {formatDate(row.scheduledate)}
-        </span>
-      ),
+      selector: (row) =>
+        getTimezoneDateTime(
+          moment(row?.scheduledate).format("YYYY-MM-DD") + " " + row?.starttime,
+          "MM/DD/YYYY"
+        ),
       sortable: false,
     },
     {

@@ -104,7 +104,7 @@ export function UpcomingCard({
                   <p className="job-details">
                     <BsCalendar2Date className="icon-settings" /> Scheduled for{" "}
                     {getTimezoneDateTime(
-                      moment(interview.scheduledate).format("MMM D, YYYY") +
+                      moment(interview.scheduledate).format("YYYY-MM-DD") +
                         " " +
                         interview.starttime,
                       "MM/DD/YYYY, hh:mm a"
