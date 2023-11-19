@@ -110,6 +110,8 @@ export default function CreateJob({
           companyDetail: previousData.companydetails,
           jobLoactionOptions: jobLocationOptions,
           customquestionanswertype: previousData.customquestionanswertype,
+          authorizedtoworkinus: previousData.authorizedtoworkinus,
+          sponsorshiprequiured: previousData.sponsorshiprequiured,
         },
         experienceSchedule: {
           jobType:

@@ -30,6 +30,8 @@ export default function PublishJobStep({
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
       customquestionanswertype: reqData.preCustomScreen,
+      authorizedtoworkinus: reqData.basicInformation.authorizedtoworkinus,
+      sponsorshiprequiured: reqData.basicInformation.sponsorshiprequiured,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,
