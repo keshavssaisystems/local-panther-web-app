@@ -43,43 +43,51 @@ import "./customerreport.scss";
 const columns = [
   {
     name: <span className="table-title">Job Code</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobid}>
         {row.jobid}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobid,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">Title</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobtitle}>
         {row.jobtitle}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobtitle,
+    minWidth: "300px",
   },
   {
     name: <span className="table-title">Status</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobstatus}>
         {row.jobstatus}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobstatus,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">Candidate Name</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.candidatename}>
         {row.candidatename}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.candidatename,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Scheduled date</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span
         className="table-cell"
         title={
@@ -90,24 +98,30 @@ const columns = [
       </span>
     ),
     sortable: true,
+    selector: (row) => row.scheduledate,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Interviewers</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.intervieweremailids}>
         {row.intervieweremailids}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.intervieweremailids,
+    minWidth: "350px",
   },
   {
     name: <span className="table-title">Meeting Status</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.meetingstatus}>
         {row.meetingstatus}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.meetingstatus,
+    minWidth: "150px",
   },
 ];
 
@@ -154,7 +168,12 @@ export function CustomerReportScheduledInterviews() {
           "Meeting Status": data.meetingstatus,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "ScheduleInterviews",
+          details: filteredData,
+        },
+      ]);
     }
   }, [schdInterviewList]);
 
@@ -220,7 +239,8 @@ export function CustomerReportScheduledInterviews() {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "customerScheduledInterviewReport"
+                          "customerScheduledInterviewReport",
+                          true
                         )
                       }
                     >
