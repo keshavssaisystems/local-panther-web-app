@@ -412,7 +412,7 @@ export function VideoInterviewDetails({
                 size={"sm"}
               >
                 {" "}
-                Add interview guide{" "}
+                Download interview guide{" "}
               </Button>
               {refreshData === false && (
                 <>

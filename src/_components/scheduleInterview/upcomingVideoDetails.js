@@ -372,7 +372,7 @@ export function UpcomingVideoDetails({
               size={"sm"}
             >
               {" "}
-              Add interview guide{" "}
+              Download interview guide{" "}
             </Button>
             <Button
               outline

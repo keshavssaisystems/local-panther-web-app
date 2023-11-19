@@ -94,12 +94,16 @@ export function CandidateSchedules() {
         start: new Date(startDate),
         end: new Date(endDate),
         color:
-          upcomingInterview.isaccepted === true &&
-          upcomingInterview.isrejected === false
-            ? "#14BD66"
+          upcomingInterview?.interviewstatusid !== 0
+            ? upcomingInterview?.interviewstatusid === 1
+              ? "#30b1ff"
+              : "#6c757d"
+            : upcomingInterview.isaccepted === true &&
+              upcomingInterview.isrejected === false
+            ? "green"
             : upcomingInterview.isrejected === true
-            ? "#FF406D"
-            : "#F7B924",
+            ? "red"
+            : "#f7b924",
       };
       upData.push(interviewData);
     });
@@ -199,6 +203,24 @@ export function CandidateSchedules() {
           <Col md="12">
             <Card>
               <CardBody className="scheduled-calender">
+                <div className="text-end">
+                  <div className="mb-3 me-0 badge badge-color-yellow">P</div> No
+                  response
+                  <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                    P
+                  </div>
+                  Accepted interview{" "}
+                  <div className="ms-3 mb-3 me-0 badge badge-color-red">P</div>{" "}
+                  Rejected interview
+                  <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                    P
+                  </div>{" "}
+                  Interview completed
+                  <div className="ms-3 mb-3 me-0 badge badge-color-grey">
+                    P
+                  </div>{" "}
+                  Not joined
+                </div>
                 <Calendar
                   localizer={localizer}
                   events={upData}

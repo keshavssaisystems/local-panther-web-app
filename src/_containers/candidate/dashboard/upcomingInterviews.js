@@ -40,6 +40,7 @@ import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
 import { NavLink } from "react-router-dom";
 import { USPhoneNumber } from "_helpers/helper";
+import { useNavigate } from "react-router-dom";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -289,7 +290,13 @@ export function UpcomingInterviews() {
       </div>
     );
   };
-
+  const navigate = useNavigate();
+  const navigateTo = (link) => {
+    navigate(`/video-screen/${link}`);
+  };
+  const navigateToThirdPartyLink = (link) => {
+    window.open(`${link}`, "_blank", "rel=noopener noreferrer");
+  };
   return (
     <>
       <Card className="card-hover-shadow-2x mb-3">
@@ -380,14 +387,18 @@ export function UpcomingInterviews() {
       <div>
         {showInterview && (
           <SweetAlert
-            title="Join Interview!!"
+            title="Interview started"
             onCancel={() => setShowInterview(false)}
             type="success"
-            onConfirm={() => setShowInterview(false)}
+            showConfirm
+            onConfirm={(e) => navigateToThirdPartyLink(link)}
+            showCancel
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <a href={link} target="_blank">
-              click to join{" "}
-            </a>
+            Click join interview button to proceed with third party link
           </SweetAlert>
         )}
       </div>
@@ -395,14 +406,18 @@ export function UpcomingInterviews() {
       <div>
         {appShowInterview && (
           <SweetAlert
-            title="Join Interview!!"
+            title="Interview started"
             onCancel={() => setAppShowInterview(false)}
             type="success"
-            onConfirm={() => setAppShowInterview(false)}
+            showConfirm
+            onConfirm={(e) => navigateTo(link)}
+            showCancel
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <NavLink to={`/video-screen/${link}`} exact>
-              Click here to join
-            </NavLink>
+            Click join interview button to proceed with in app interview
           </SweetAlert>
         )}
       </div>
