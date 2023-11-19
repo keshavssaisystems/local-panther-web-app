@@ -36,45 +36,52 @@ import "./adminreports.scss";
 const columns = [
   {
     name: <span className="table-title">Name</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.candidatename}>
         {row.candidatename}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.candidatename,
+    minWidth: "250px",
   },
   {
     name: <span className="table-title">Skills</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.skills}>
         {row.skills}
       </span>
     ),
     sortable: true,
 
-    width: "400px",
+    selector: (row) => row.skills,
+    minWidth: "350px",
   },
   {
     name: <span className="table-title">Experience</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.experience}>
         {row.experience}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.experience,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Location</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.location}>
         {row.location}{" "}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.location,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Created</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span
         className="table-cell"
         title={
@@ -85,7 +92,8 @@ const columns = [
       </span>
     ),
     sortable: true,
-    // format: (row) => moment(row.jobposteddate).format("MM/DD/YYYY"),
+    selector: (row) => row.jobposteddate,
+    minWidth: "180px",
   },
 ];
 
@@ -124,7 +132,7 @@ export function NewCandidate({ title }) {
             : "",
         };
       });
-      setExcelData(filteredData);
+      setExcelData([{ sheetName: "NewCandidates", details: filteredData }]);
     }
   }, [data]);
 
@@ -177,7 +185,11 @@ export function NewCandidate({ title }) {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "adminNewCandidateReport")
+                        exportToExcel(
+                          excelData,
+                          "adminNewCandidateReport",
+                          true
+                        )
                       }
                     >
                       <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
@@ -192,7 +204,7 @@ export function NewCandidate({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"skillId"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skill"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -203,7 +215,7 @@ export function NewCandidate({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <LocationFilter
                     name={"cityId"}
-                    placeholder={"Select Location"}
+                    placeholder={"Search Location"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setLocation(e);

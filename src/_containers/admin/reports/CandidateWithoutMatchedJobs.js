@@ -32,6 +32,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
+import { updateMonthstoYears } from "_helpers/helper";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -90,7 +91,9 @@ export function CandidateWithoutMatchedJobs({ title }) {
         return {
           Candidate: rec?.candidatename,
 
-          Experience: rec?.experience,
+          Experience: rec?.experience
+            ? updateMonthstoYears(parseInt(rec?.experience))
+            : "",
           Skills: typeof rec?.skill === "string" && rec?.skill,
           Education: rec.education,
 
@@ -98,7 +101,12 @@ export function CandidateWithoutMatchedJobs({ title }) {
           Address: rec.address,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "CandidateWithoutMatchedJobs",
+          details: filteredData,
+        },
+      ]);
     }
   }, [data]);
 
@@ -132,29 +140,38 @@ export function CandidateWithoutMatchedJobs({ title }) {
   const columns = [
     {
       name: <span className="table-title">Candidate</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.candidatename}>
           {row?.candidatename}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "15%",
+      selector: (row) => row.candidatename,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Experience</span>,
-      selector: (row) => (
-        <span className="table-cell" title={row?.experience}>
-          {row?.experience}
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row?.experience
+              ? updateMonthstoYears(parseInt(row?.experience))
+              : ""
+          }
+        >
+          {row?.experience
+            ? updateMonthstoYears(parseInt(row?.experience))
+            : ""}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "10%",
+      selector: (row) => row.experience,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Skills</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={typeof row?.skill === "string" && row?.skill}
@@ -162,40 +179,44 @@ export function CandidateWithoutMatchedJobs({ title }) {
           {typeof row?.skill === "string" && row?.skill}
         </span>
       ),
-      // wrap: true,
+      selector: (row) => row.skill,
+      minWidth: "400px",
+      sortable: true,
     },
     {
       name: <span className="table-title">Education</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.education}>
           {row?.education}
         </span>
       ),
-      // wrap: true,
+
       sortable: true,
-      width: "15%",
+      selector: (row) => row.education,
+      minWidth: "350px",
     },
     {
       name: <span className="table-title">Certification</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.certification}>
           {row?.certification}
         </span>
       ),
-      // wrap: true,
+
       sortable: true,
-      width: "10%",
+      selector: (row) => row.certification,
+      minWidth: "350px",
     },
     {
       name: <span className="table-title">Address</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.address}>
           {row?.address}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "10%",
+      selector: (row) => row.address,
+      minWidth: "250px",
     },
   ];
 
@@ -223,7 +244,8 @@ export function CandidateWithoutMatchedJobs({ title }) {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "adminCandidateWithoutMatchedJobsReport"
+                          "adminCandidateWithoutMatchedJobsReport",
+                          true
                         )
                       }
                     >
@@ -239,7 +261,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"@skillid"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skills"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -250,7 +272,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <LocationFilter
                     name={"@cityid"}
-                    placeholder={"Select Location"}
+                    placeholder={"Search Location"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setLocation(e);

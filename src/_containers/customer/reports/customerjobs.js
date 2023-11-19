@@ -36,43 +36,51 @@ import "./customerreport.scss";
 const columns = [
   {
     name: <span className="table-title">Job Code</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobid}>
         {row.jobid}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobid,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">Title</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobtitle}>
         {row.jobtitle}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobtitle,
+    minWidth: "400px",
   },
   {
     name: <span className="table-title">Status</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobstatus}>
         {row.jobstatus}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobstatus,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">No. of Positions</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.noofopenposition}>
         {row.noofopenposition}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.noofopenposition,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">Posted date</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span
         className="table-cell"
         title={
@@ -83,60 +91,74 @@ const columns = [
       </span>
     ),
     sortable: true,
+    selector: (row) => row.createddate,
+    minWidth: "180px",
   },
   {
     name: <span className="table-title">No. of Matched</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.matchedcandidates}>
         {row.matchedcandidates}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.matchedcandidates,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">No. of Liked</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.likedcandidates}>
         {row.likedcandidates}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.likedcandidates,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">No. of Maybe</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.maybecandidates}>
         {row.maybecandidates}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.maybecandidates,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">No. of Accepted</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.acceptedcandidates}>
         {row.acceptedcandidates}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.acceptedcandidates,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">No. of Rejected</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.rejectedcandidates}>
         {row.rejectedcandidates}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.rejectedcandidates,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">No. of Interviews Scheduled</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.scheduledinterviews}>
         {row.scheduledinterviews}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.scheduledinterviews,
+    minWidth: "150px",
   },
 ];
 
@@ -176,7 +198,12 @@ export function CustomerReportJobList() {
           "No. of Interviews Scheduled": data.scheduledinterviews,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "CustoemerJobList",
+          details: filteredData,
+        },
+      ]);
     }
   }, [jobList]);
 
@@ -228,7 +255,7 @@ export function CustomerReportJobList() {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "customerJobsReport")
+                        exportToExcel(excelData, "customerJobsReport", true)
                       }
                     >
                       <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
