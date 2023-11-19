@@ -1,15 +1,18 @@
 import React, { useEffect } from "react";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Card, CardBody, CardHeader } from "reactstrap";
 import { DonutChart } from "_components/dashboard/donutChart";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
+import Slider from "react-slick";
 import {
   customerDashboardActions,
   createjobActions,
   scheduleInterviewActions,
 } from "_store";
+import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
+import { CustomerSlider } from "_components/dashboard/customerSlider";
 
 export default function CustomerDashboard() {
   const dispatch = useDispatch();
@@ -48,13 +51,7 @@ export default function CustomerDashboard() {
       icon: "lnr-graduation-hat",
     },
     {
-      title: "Upcoming interviews",
-      count: dashboardCounts.upcominginterviewcount,
-      className: "alternate",
-      icon: "lnr-calendar-full",
-    },
-    {
-      title: "Pending interviews",
+      title: "Pending interview schedules",
       count: dashboardCounts.pendinginterviewschedulescount,
       className: "warning",
       icon: "lnr-calendar-full",
@@ -66,35 +63,29 @@ export default function CustomerDashboard() {
       icon: "lnr-thumbs-up",
     },
     {
-      title: "Matched candidates",
+      title: "Matched candidate pending to review",
       count: dashboardCounts.matchedcandidatereviewpendingcount,
       className: "danger",
       icon: "lnr-user",
     },
   ];
+
   return (
     <>
       <div>
         <Row>
-          {cardOptions.map((options) => (
-            <Col>
-              <WidgetCard
-                classType={options.className}
-                title={options.title}
-                count={options.count}
-                icon={options.icon}
-              />
-            </Col>
-          ))}
-        </Row>
-        <Row>
-          <Col sm="12" md="7" lg="7">
-            <UpcomingInterviewTable
-              tableData={dashboardGraphData.upcomingInterveiwDtos}
+          <Col sm="12" md="6" lg="6">
+            <WidgetCard cardOptions={cardOptions} />
+          </Col>
+          <Col sm="12" md="6" lg="6">
+            <HorizonatalBarGraph
+              graphData={dashboardGraphData.scheduledInterveiwDtos}
             />
           </Col>
-          <Col sm="12" md="5" lg="5">
-            <DonutChart graphData={dashboardGraphData.scheduledInterveiwDtos} />
+        </Row>
+        <Row>
+          <Col>
+            <CustomerSlider data={dashboardGraphData.upcomingInterveiwDtos} />
           </Col>
         </Row>
         <StackBarChart

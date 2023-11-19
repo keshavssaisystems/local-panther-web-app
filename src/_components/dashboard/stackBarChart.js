@@ -58,8 +58,8 @@ export function StackBarChart({ graphData }) {
       type: "bar",
       height: 380,
       width: "80%",
-      stacked: true,
-      stackType: "100%",
+      // stacked: true,
+      // stackType: "100%",
       toolbar: {
         show: false,
       },

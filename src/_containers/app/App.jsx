@@ -2,7 +2,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard } from "_containers/dashboard/Dashboard";
+import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
 
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
