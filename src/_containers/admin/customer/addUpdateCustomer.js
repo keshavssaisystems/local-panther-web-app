@@ -16,16 +16,17 @@ import {
 } from "reactstrap";
 import AsyncSelect from "react-select/async";
 import { getLocation } from "_store";
+import "./customer.scss";
 
 export const AddUpdateCustomer = ({
   openModal,
   onClose,
   postData,
   isEdit,
-  editData,
+  data,
   putData,
 }) => {
-  console.log(editData);
+  const [editData, setEditData] = useState(data);
   const [modal, setModal] = useState(false);
   const [companyValidation, setCompanyValidation] = useState(false);
   const [firstNameValidation, setFirstNameValidation] = useState(false);
@@ -33,6 +34,8 @@ export const AddUpdateCustomer = ({
   const [emailValidation, setEmailValidation] = useState(false);
   const [locationValidation, setLocationValidation] = useState(false);
   const companiesList = useSelector((state) => state.dropdown.companyList);
+  const [save, setSave] = useState(false);
+
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
       const { data = [] } = await getLocation(inputValue);
@@ -44,12 +47,79 @@ export const AddUpdateCustomer = ({
       });
     }
   };
+
   const toggle = () => {
+    setSave(false);
+    let obj = {
+      companyid: 0,
+      firstname: "",
+      lastname: "",
+      address: "",
+      zipcode: "",
+      phone: "",
+      email: "",
+      cityid: 0,
+      stateid: 0,
+      cityname: "",
+      statename: "",
+    };
+    setEditData(obj);
     setModal(!modal);
   };
+
+  const handleInputChange = (event, check) => {
+    let data = { ...editData };
+    if (check === "company") {
+      data.company = parseInt(event.target.value);
+      if (data.company === 0) {
+        setCompanyValidation(true);
+      } else {
+        setCompanyValidation(false);
+      }
+    } else if (check === "firstname") {
+      data.firstname = event.target.value;
+
+      if (data.firstname === "") {
+        setFirstNameValidation(true);
+      } else {
+        setFirstNameValidation(false);
+      }
+    } else if (check === "lastname") {
+      data.lastname = event.target.value;
+      if (data.lastname === "") {
+        setLastNameValidation(true);
+      } else {
+        setLastNameValidation(false);
+      }
+    } else if (check === "email") {
+      data.email = event.target.value;
+      if (data.email === "") {
+        setEmailValidation(true);
+      } else {
+        setEmailValidation(false);
+      }
+    } else if (check === "phonenumber") {
+      data.phonenumber = event.target.value;
+    } else if (check === "location") {
+      data.cityid = parseInt(event);
+
+      if (data.cityid === 0) {
+        setLocationValidation(true);
+      } else {
+        setLocationValidation(false);
+      }
+    } else if (check === "address") {
+      data.address = event.target.value;
+    } else if (check === "zip") {
+      data.zip = event.target.value;
+    }
+    setEditData(data);
+  };
+
   const getValidation = (event) => {
     event.preventDefault();
-    event.target.elements.companyname.value === 0
+    setSave(true);
+    parseInt(event.target.elements.companyname.value) === 0
       ? setCompanyValidation(true)
       : setCompanyValidation(false);
     event.target.elements.firstname.value === ""
@@ -71,8 +141,16 @@ export const AddUpdateCustomer = ({
       event.target.elements.email.value !== "" &&
       event.target.elements.location.value !== ""
     ) {
+      setSave(false);
       getSubmitForm(event);
     }
+  };
+  const checkCityValid = function () {
+    // if (cityList?.length === 0) {
+    //   setCityReqError(true);
+    // } else {
+    //   setCityReqError(false);
+    // }
   };
   const getLocationData = (data) => {
     let slicedData = data.split(", ");
@@ -88,11 +166,12 @@ export const AddUpdateCustomer = ({
       .replace("-", "")
       .replace("-", "");
   };
+
   const getSubmitForm = (event) => {
     let locationData = getLocationData(event.target.elements.location.value);
     let phoneData = getValidPhoneNo(event.target.elements.phonenumber.value);
     let data = {
-      customerid: isEdit === true ? editData.customerid : 0,
+      customerid: isEdit === true ? editData?.customerid : 0,
       companyid: Number(event.target.elements.companyname.value),
       userid: 0,
       userroleid: 2,
@@ -112,13 +191,14 @@ export const AddUpdateCustomer = ({
     };
     isEdit === true ? putData(data) : postData(data);
   };
+
   return (
     <Modal
       isOpen={openModal}
       fullscreen={"lg"}
       size="lg"
       backdrop={"static"}
-      toggle={toggle}
+      toggle={() => toggle()}
       onClosed={() => onClose()}
     >
       <ModalHeader toggle={() => onClose()}>
@@ -139,6 +219,10 @@ export const AddUpdateCustomer = ({
                     type="select"
                     name="companyname"
                     placeholder="company..."
+                    className={`form-control placeholder-name ${
+                      companyValidation ? "is-invalid" : ""
+                    }`}
+                    onChange={(e) => handleInputChange(e, "company")}
                   >
                     <option key={0} value={0}>
                       Select company
@@ -151,14 +235,14 @@ export const AddUpdateCustomer = ({
                           selected={
                             isEdit === false
                               ? options.companyid === 0
-                              : options.companyid === editData.companyid
+                              : options.companyid === editData?.companyid
                           }
                         >
                           {options.companyname}
                         </option>
                       ))}
                   </Input>
-                  {companyValidation && (
+                  {companyValidation && save && (
                     <FormText color="danger">Please select company</FormText>
                   )}
                 </FormGroup>
@@ -173,9 +257,13 @@ export const AddUpdateCustomer = ({
                     type="text"
                     name="firstname"
                     placeholder="First name..."
-                    defaultValue={isEdit === false ? "" : editData.firstname}
+                    defaultValue={editData?.firstname}
+                    onInput={(e) => handleInputChange(e, "firstname")}
+                    className={`form-control placeholder-name ${
+                      firstNameValidation ? "is-invalid" : ""
+                    }`}
                   />
-                  {firstNameValidation && (
+                  {firstNameValidation && save && (
                     <FormText color="danger">Please enter first name</FormText>
                   )}
                 </FormGroup>
@@ -189,9 +277,13 @@ export const AddUpdateCustomer = ({
                     type="text"
                     name="lastname"
                     placeholder="Last name..."
-                    defaultValue={isEdit === false ? "" : editData.lastname}
+                    defaultValue={editData?.lastname}
+                    className={`form-control placeholder-name ${
+                      lastNameValidation ? "is-invalid" : ""
+                    }`}
+                    onInput={(e) => handleInputChange(e, "lastname")}
                   />
-                  {lastNameValidation && (
+                  {lastNameValidation && save && (
                     <FormText color="danger">Please enter last name</FormText>
                   )}
                 </FormGroup>
@@ -205,9 +297,13 @@ export const AddUpdateCustomer = ({
                     type="email"
                     name="email"
                     placeholder="Email..."
-                    defaultValue={isEdit === false ? "" : editData.email}
+                    defaultValue={editData?.email}
+                    className={`form-control placeholder-name ${
+                      emailValidation ? "is-invalid" : ""
+                    }`}
+                    onInput={(e) => handleInputChange(e, "email")}
                   />
-                  {emailValidation && (
+                  {emailValidation && save && (
                     <FormText color="danger">Please enter valid email</FormText>
                   )}
                 </FormGroup>
@@ -222,7 +318,8 @@ export const AddUpdateCustomer = ({
                     name="phonenumber"
                     id="phonenumber"
                     placeholder="Eg: (987)-654-3210"
-                    defaultValue={isEdit === false ? "" : editData.phonenumber}
+                    onInput={(e) => handleInputChange(e, "phonenumber")}
+                    defaultValue={editData?.phonenumber}
                   />
                 </FormGroup>
               </Col>
@@ -232,8 +329,9 @@ export const AddUpdateCustomer = ({
                   <Input
                     type="textarea"
                     name="address"
+                    onInput={(e) => handleInputChange(e, "address")}
                     placeholder="address..."
-                    defaultValue={isEdit === false ? "" : editData.address}
+                    defaultValue={editData?.address}
                   />
                 </FormGroup>
               </Col>
@@ -249,24 +347,28 @@ export const AddUpdateCustomer = ({
                     loadOptions={loadOptions}
                     isMulti={false}
                     // styles={customStyles}
+                    onChange={(e) => handleInputChange(e, "location")}
+                    className={`placeholder-name ${
+                      locationValidation ? "async-border-red" : ""
+                    }`}
                     defaultValue={
                       isEdit === false
-                        ? {}
+                        ? []
                         : {
                             value:
-                              editData.cityid +
+                              editData?.cityid +
                               ", " +
-                              editData.stateid +
+                              editData?.stateid +
                               ", " +
-                              editData.cityname +
+                              editData?.cityname +
                               ", " +
-                              editData.statename,
+                              editData?.statename,
                             label:
-                              editData.cityname + ", " + editData.statename,
+                              editData?.cityname + ", " + editData?.statename,
                           }
                     }
                   />
-                  {locationValidation && (
+                  {locationValidation && save && (
                     <FormText color="danger">
                       Please select city, state
                     </FormText>
@@ -280,13 +382,37 @@ export const AddUpdateCustomer = ({
                     className="form-control"
                     mask="99999"
                     maskChar={null}
+                    onInput={(e) => handleInputChange(e, "zipcode")}
                     name="zipcode"
                     id="zipcode"
                     placeholder="Zipcode"
-                    defaultValue={isEdit === false ? "" : editData.zipcode}
+                    defaultValue={editData?.zipcode}
                   />
                 </FormGroup>
               </Col>
+
+              {/* <Col md={6}>
+                <FormGroup>
+                  <Label for="country" className="fw-semi-bold">
+                    <span className="text-danger">* </span>Country
+                  </Label>
+                  <AsyncSelect
+                    name="country"
+                    placeholder="Select country"
+                    placeholderText="search"
+                    isMulti={false}
+                    className={`placeholder-name ${
+                      countryValue === 0 ? "async-border-red" : ""
+                    }`}
+                    defaultOptions={countryList}
+                    onChange={(e) => onSelectCountryDropdown(e)}
+                    onMenuOpen={() => checkCityValid()}
+                  />
+                  <div className="async-error-text">
+                    {countryValue === 0 ? "Country is required" : ""}
+                  </div>
+                </FormGroup>
+              </Col> */}
             </Row>
             <Col></Col>
             <Button

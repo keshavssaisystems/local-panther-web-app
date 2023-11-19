@@ -20,6 +20,7 @@ import { dropdownActions, addCustomerActions } from "_store";
 import { USPhoneNumber } from "_helpers/helper";
 import { AddUpdateCustomer } from "./addUpdateCustomer";
 import SweetAlert from "react-bootstrap-sweetalert";
+import "./customer.scss";
 
 export const CustomerList = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -33,6 +34,12 @@ export const CustomerList = () => {
   const [errorMessage, setErrorMessage] = useState(
     "Customer added successfully!!!"
   );
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
@@ -56,6 +63,7 @@ export const CustomerList = () => {
       id: "name",
       cell: (row) => (
         <div
+          className="editrow"
           onClick={(e) => {
             setEditData(row);
             setOpenModal(true);
@@ -115,6 +123,25 @@ export const CustomerList = () => {
       },
     },
   };
+
+  const addModal = () => {
+    let obj = {
+      companyid: 0,
+      firstname: "",
+      lastname: "",
+      address: "",
+      zipcode: "",
+      phone: "",
+      email: "",
+      cityid: 0,
+      stateid: 0,
+      cityname: "",
+      statename: "",
+    };
+    setEditData(obj);
+    setOpenModal(true);
+  };
+
   const getFilterValue = (event) => {
     event.preventDefault();
     dispatch(
@@ -126,16 +153,41 @@ export const CustomerList = () => {
       })
     );
   };
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
   const postData = async (data) => {
     let res = await dispatch(addCustomerActions.addCustomer(data));
-
     setOpenModal(false);
-    if (res.payload.statusCode === 204) {
-      setSuccessMessage("Customer added successfully");
-      setUpdateSuccess(true);
+    if (res.payload) {
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({
+          title: res.payload.message,
+          type: "success",
+        });
+      } else {
+        showSweetAlert({
+          title: res.payload.message,
+          type: "error",
+        });
+      }
     } else {
-      setErrorMessage(res.payload.message);
-      setErrorPopup(true);
+      showSweetAlert({
+        title: res.error.message,
+        type: "error",
+      });
     }
   };
   const putData = async (data) => {
@@ -148,12 +200,23 @@ export const CustomerList = () => {
     );
     setEditData({});
     setOpenModal(false);
-    if (res.payload.statusCode === 204) {
-      setSuccessMessage("Customer added successfully");
-      setUpdateSuccess(true);
+    if (res.payload) {
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({
+          title: res.payload.message,
+          type: "success",
+        });
+      } else {
+        showSweetAlert({
+          title: res.payload.message,
+          type: "error",
+        });
+      }
     } else {
-      setErrorMessage(res.payload.message);
-      setErrorPopup(true);
+      showSweetAlert({
+        title: res.error.message,
+        type: "error",
+      });
     }
   };
   return (
@@ -215,7 +278,7 @@ export const CustomerList = () => {
                     color={"primary"}
                     className="input-group-text float-end"
                     type="submit"
-                    onClick={(e) => setOpenModal(true)}
+                    onClick={(e) => addModal()}
                   >
                     Add Customer
                   </Button>
@@ -233,21 +296,30 @@ export const CustomerList = () => {
           </Card>
         </Col>
       </Row>
-      <AddUpdateCustomer
-        openModal={openModal}
-        onClose={() => setOpenModal(false)}
-        postData={(e) => postData(e)}
-        isEdit={isEdit}
-        editData={editData}
-        putData={(e) => putData(e)}
-      />
-      {updateSuccessPopup === true && (
-        <SweetAlert
-          success
-          title={successMessage}
-          onConfirm={(e) => setUpdateSuccess(false)}
-        ></SweetAlert>
+
+      {openModal ? (
+        <AddUpdateCustomer
+          openModal={openModal}
+          onClose={() => setOpenModal(false)}
+          postData={(e) => postData(e)}
+          isEdit={isEdit}
+          data={editData}
+          putData={(e) => putData(e)}
+        />
+      ) : (
+        <></>
       )}
+
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 };
