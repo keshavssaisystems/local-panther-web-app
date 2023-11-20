@@ -8,6 +8,7 @@ import { ScheduleInterview } from "_containers/customer/scheduleInterview/schedu
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
+import { CustomerRegistration } from "_containers/registration/customerRegistration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
@@ -105,8 +106,17 @@ export function App() {
               </PrivateRoute>
             }
           />
+
           <Route
-            path="acl/roles"
+            path="acl"
+            element={
+              <PrivateRoute>
+                <AdminListing entity="users" />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="acl/roles-function/3"
             element={
               <PrivateRoute>
                 <AdminListing entity="roles" />
@@ -457,6 +467,10 @@ export function App() {
               />
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
+              <Route
+                path="/customer-registration"
+                element={<CustomerRegistration />}
+              />
               <Route
                 path="/registration-success"
                 element={<RegistrationSuccess />}
