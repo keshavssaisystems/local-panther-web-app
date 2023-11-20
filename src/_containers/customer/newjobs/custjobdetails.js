@@ -543,6 +543,16 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
               detail={returnAddress()}
               iconId={10}
             />
+            <HeadingAndDetailWithDiv
+              heading={"Authorized to work in United States"}
+              detail={jobDetail.authorizedtoworkinus === true ? "Yes" : "No"}
+              iconId={9}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Sponsorship is required"}
+              detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
+              iconId={9}
+            />
             <HeadingAndDetailWithoutIcon
               heading={"Job Description"}
               detail={jobDetail.description}

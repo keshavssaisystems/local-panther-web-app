@@ -82,7 +82,9 @@ export function VideoInterviewDetails({
   );
 
   let scheduled = getTimezoneDateTime(
-    interviewDetails?.scheduledate,
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "MM/DD/YYYY"
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
@@ -95,7 +97,9 @@ export function VideoInterviewDetails({
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetails?.scheduledate),
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -408,7 +412,7 @@ export function VideoInterviewDetails({
                 size={"sm"}
               >
                 {" "}
-                Add interview guide{" "}
+                Download interview guide{" "}
               </Button>
               {refreshData === false && (
                 <>

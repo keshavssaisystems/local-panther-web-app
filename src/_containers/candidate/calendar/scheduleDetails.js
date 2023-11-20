@@ -11,7 +11,9 @@ import { USPhoneNumber } from "_helpers/helper";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
   let scheduled = getTimezoneDateTime(
-    interviewDetail?.scheduledate,
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "MM/DD/YYYY"
   );
 
@@ -30,7 +32,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate),
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {

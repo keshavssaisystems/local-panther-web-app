@@ -33,6 +33,7 @@ export default function SelectJobType({
         type: event.target.value,
         jobId: "",
       });
+      readyForNextStep(false);
     }
   };
 

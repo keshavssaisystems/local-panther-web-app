@@ -44,43 +44,51 @@ import "./customerreport.scss";
 const columns = [
   {
     name: <span className="table-title">Job Code</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobid}>
         {row.jobid}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobid,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">Title</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobtitle}>
         {row.jobtitle}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobtitle,
+    minWidth: "350px",
   },
   {
     name: <span className="table-title">Status</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.jobstatus}>
         {row.jobstatus}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.jobstatus,
+    minWidth: "150px",
   },
   {
     name: <span className="table-title">Candidate Name</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.candidatename}>
         {row.candidatename}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.candidatename,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Interviewed date</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span
         className="table-cell"
         title={
@@ -91,24 +99,30 @@ const columns = [
       </span>
     ),
     sortable: true,
+    selector: (row) => row.scheduledate,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Interviewers</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.intervieweremailids}>
         {row.intervieweremailids}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.intervieweremailids,
+    minWidth: "300px",
   },
   {
     name: <span className="table-title">Comments/Notes</span>,
-    selector: (row) => (
+    cell: (row) => (
       <span className="table-cell" title={row.interviewnotes}>
         {row.interviewnotes}
       </span>
     ),
     sortable: true,
+    selector: (row) => row.interviewnotes,
+    minWidth: "300px",
   },
 ];
 
@@ -148,7 +162,12 @@ export function CustomerReportInterviewedCandidates() {
           "Comments/Notes": data.interviewnotes,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "InterviewedCandidates",
+          details: filteredData,
+        },
+      ]);
     }
   }, [interviewedCandidateList]);
   useEffect(() => {
@@ -220,7 +239,8 @@ export function CustomerReportInterviewedCandidates() {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "customerInterviewedCandidatesReport"
+                          "customerInterviewedCandidatesReport",
+                          true
                         )
                       }
                     >
