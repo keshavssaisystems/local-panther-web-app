@@ -3,7 +3,7 @@ import { Card, CardBody } from "reactstrap";
 import Chart from "react-apexcharts";
 import "./dashboard.scss";
 
-export function OpenJobsGraph({ graphData }) {
+export function OpenJobsGraph({ openJobsCount, graphData }) {
   let options = {
     chart: {
       fontFamily: "Capitana",
@@ -43,7 +43,7 @@ export function OpenJobsGraph({ graphData }) {
       <Card className="mb-3 chart-fixed-height open-jobs-graph">
         <CardBody className="p-0">
           <div className="mt-3 ms-4 open-jobs-count">
-            234
+            {openJobsCount}
             <span className="mt-1 ms-2 open-jobs-title">Open Jobs</span>
           </div>
 

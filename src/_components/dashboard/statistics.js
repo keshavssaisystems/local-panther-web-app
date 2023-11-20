@@ -1,9 +1,20 @@
 import React from "react";
-import { Card, CardBody, Row, Col } from "reactstrap";
+import { Card, CardBody } from "reactstrap";
 import Chart from "react-apexcharts";
 import "./dashboard.scss";
+import moment from "moment";
 
 export function Statistics({ graphData }) {
+  let jobsArray = [];
+  let interviewArray = [];
+  let candidateArray = [];
+  let monthArray = [];
+  graphData.forEach((element) => {
+    jobsArray?.push(element?.jobs);
+    interviewArray?.push(element?.interviews);
+    candidateArray?.push(element?.candidates);
+    monthArray?.push(moment(element?.startdate).format("MMM"));
+  });
   let options = {
     chart: {
       fontFamily: "Capitana",
@@ -34,20 +45,20 @@ export function Statistics({ graphData }) {
     },
     colors: ["#2B80FD", "#14BD66", "#FF406D"],
     xaxis: {
-      categories: ["Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+      categories: monthArray,
     },
     series: [
       {
         name: "New jobs",
-        data: [10, 41, 35, 10, 49, 62],
+        data: jobsArray,
       },
       {
         name: "New candidates",
-        data: [10, 91, 35, 51, 49, 91],
+        data: candidateArray,
       },
       {
         name: "Interviews",
-        data: [10, 41, 81, 51, 43, 1],
+        data: interviewArray,
       },
     ],
     legend: {
