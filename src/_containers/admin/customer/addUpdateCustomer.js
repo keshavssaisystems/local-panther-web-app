@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import InputMask from "react-input-mask";
 import {
   Form,
@@ -17,6 +17,8 @@ import {
 import AsyncSelect from "react-select/async";
 import { getLocation } from "_store";
 import "./customer.scss";
+import { AddEditCompany } from "../common/addEditCompany";
+import { dropdownActions } from "_store";
 
 export const AddUpdateCustomer = ({
   openModal,
@@ -26,6 +28,7 @@ export const AddUpdateCustomer = ({
   data,
   putData,
 }) => {
+  const dispatch = useDispatch();
   const [editData, setEditData] = useState(data);
   const [modal, setModal] = useState(false);
   const [companyValidation, setCompanyValidation] = useState(false);
@@ -35,6 +38,7 @@ export const AddUpdateCustomer = ({
   const [locationValidation, setLocationValidation] = useState(false);
   const companiesList = useSelector((state) => state.dropdown.companyList);
   const [save, setSave] = useState(false);
+  const [companyModal, setCompanyModal] = useState(false);
 
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
@@ -192,6 +196,10 @@ export const AddUpdateCustomer = ({
     isEdit === true ? putData(data) : postData(data);
   };
 
+  const closeCompanyModal = () => {
+    dispatch(dropdownActions.getCompanyListThunk());
+    setCompanyModal(false);
+  };
   return (
     <Modal
       isOpen={openModal}
@@ -247,7 +255,16 @@ export const AddUpdateCustomer = ({
                   )}
                 </FormGroup>
               </Col>
-              <Col md={4}></Col>
+              <Col md={4}>
+                <a
+                  className="float-end"
+                  href="javascript:void(0)"
+                  onClick={() => setCompanyModal(true)}
+                >
+                  {" "}
+                  +Add company
+                </a>
+              </Col>
               <Col md={6}>
                 <FormGroup>
                   <Label for="firstname">
@@ -416,6 +433,7 @@ export const AddUpdateCustomer = ({
             </Row>
             <Col></Col>
             <Button
+              className="mt-3 float-end"
               type="submit"
               color="primary"
               //   disabled={formState.isSubmitting}
@@ -425,6 +443,15 @@ export const AddUpdateCustomer = ({
           </Form>
         </Row>
       </ModalBody>
+
+      {companyModal ? (
+        <AddEditCompany
+          openModal={openModal}
+          onClose={() => closeCompanyModal(false)}
+        />
+      ) : (
+        <></>
+      )}
     </Modal>
   );
 };

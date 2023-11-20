@@ -43,6 +43,7 @@ export const CustomerList = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
+    dispatch(dropdownActions.getEmployeeCountThunk());
     dispatch(dropdownActions.getStateListThunk());
     dispatch(
       getCustomers({
@@ -53,6 +54,9 @@ export const CustomerList = () => {
       })
     );
   }, []);
+
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   let title = "Customers";
@@ -172,18 +176,21 @@ export const CustomerList = () => {
     let res = await dispatch(addCustomerActions.addCustomer(data));
     setOpenModal(false);
     if (res.payload) {
-      if (res.payload.statusCode === 204) {
+      if (res.payload.statusCode === 201) {
+        setSuccess(true);
         showSweetAlert({
-          title: res.payload.message,
+          title: res.payload.data.statusMessage,
           type: "success",
         });
       } else {
+        setError(true);
         showSweetAlert({
           title: res.payload.message,
           type: "error",
         });
       }
     } else {
+      setError(true);
       showSweetAlert({
         title: res.error.message,
         type: "error",
@@ -201,18 +208,29 @@ export const CustomerList = () => {
     setEditData({});
     setOpenModal(false);
     if (res.payload) {
-      if (res.payload.statusCode === 204) {
+      dispatch(
+        getCustomers({
+          isActive: true,
+          pageSize: 1000,
+          pageNumber: 1,
+          companyId: 0,
+        })
+      );
+      if (res.payload.statusCode === 201) {
+        setSuccess(true);
         showSweetAlert({
-          title: res.payload.message,
+          title: res.payload.data.statusMessage,
           type: "success",
         });
       } else {
+        setError(true);
         showSweetAlert({
           title: res.payload.message,
           type: "error",
         });
       }
     } else {
+      setError(true);
       showSweetAlert({
         title: res.error.message,
         type: "error",
@@ -310,16 +328,31 @@ export const CustomerList = () => {
         <></>
       )}
 
-      <>
-        {" "}
-        <SweetAlert
-          title={showAlert.title}
-          show={showAlert.show}
-          type={showAlert.type}
-          onConfirm={() => closeSweetAlert()}
-        />
-        {showAlert.description}
-      </>
+      {success && (
+        <>
+          {" "}
+          <SweetAlert
+            title={showAlert.title}
+            show={showAlert.show}
+            type={showAlert.type}
+            onConfirm={() => closeSweetAlert()}
+          />
+          {showAlert.description}
+        </>
+      )}
+
+      {error && (
+        <>
+          {" "}
+          <SweetAlert
+            title={showAlert.title}
+            show={showAlert.show}
+            type={showAlert.type}
+            onConfirm={() => setError(false)}
+          />
+          {showAlert.description}
+        </>
+      )}
     </>
   );
 };

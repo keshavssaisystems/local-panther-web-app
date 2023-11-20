@@ -85,6 +85,14 @@ export const getCompanyListThunk = createAsyncThunk(
   }
 );
 
+export const getEmployeeCountThunk = createAsyncThunk(
+  `${name}/getEmployeeCountThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=noofemployees`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // getStateListThunk thunk
 export const getStateListThunk = createAsyncThunk(
   `${name}/getStateListThunk`,
@@ -107,6 +115,7 @@ const dropdownSlice = createSlice({
     shift: [],
     workSchedule: [],
     companyList: [],
+    employeeList: [],
     stateList: [],
     loading: false,
   },
@@ -212,6 +221,19 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+
+    [getEmployeeCountThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getEmployeeCountThunk.fulfilled]: (state, action) => {
+      state.employeeList = action.payload.data;
+      state.loading = false;
+    },
+    [getEmployeeCountThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+
     [getStateListThunk.pending]: (state) => {
       state.loading = true;
     },
@@ -239,6 +261,7 @@ export const dropdownActions = {
   getWorkScheduleThunk2,
   getCompanyListThunk,
   getStateListThunk,
+  getEmployeeCountThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

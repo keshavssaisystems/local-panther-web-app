@@ -26,7 +26,7 @@ import {
 
 export const AddEditCustomer = (props) => {
   const { entity, isAddMode, data } = props;
-  const customerId = data?.customerid;
+  // const customerId = data?.customerid;
   const dispatch = useDispatch();
   const { companyDropdownData } = useSelector(
     (state) => state?.addCustomer ?? {}
@@ -113,7 +113,7 @@ export const AddEditCustomer = (props) => {
   }
 
   const onSubmit = (data) => {
-    return isAddMode ? createEntity(data) : updateEntity(customerId, data);
+    return isAddMode ? createEntity(data) : updateEntity(0, data);
   };
 
   useEffect(() => {
