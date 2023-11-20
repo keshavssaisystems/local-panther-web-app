@@ -25,8 +25,6 @@ import {
   ModalFooter,
 } from "reactstrap";
 
-import TreeView from "react-treeview";
-
 export const AddEditRole = (props) => {
   const { entity, isAddMode, data, isView } = props;
   const userId = data?.userId;
