@@ -199,7 +199,7 @@ export const AdminListing = ({ entity }) => {
               />
             </div>
           ),
-          sortable: true,
+          sortable: false,
         },
       ];
       // searchFilter = users.searchFilter;
@@ -238,10 +238,10 @@ export const AdminListing = ({ entity }) => {
                 className="edit-icon me-2"
                 onClick={(evt) => handleRowClick(row, "edit")}
               />
-              <BsTrash3
+              {/* <BsTrash3
                 style={{ fontSize: "18px" }}
                 onClick={() => deleteConfirm(row, "role")}
-              />
+              /> */}
             </div>
           ),
         },
@@ -481,7 +481,8 @@ export const AdminListing = ({ entity }) => {
     } else if (entity === "roles") {
       dispatch(getRolesList(urlParams));
     } else if (entity === "menuMapping") {
-      dispatch(getMenuMappings(urlParams));
+      dispatch(getRolesList(urlParams));
+      // dispatch(getMenuMappings(urlParams));
     }
   };
 
@@ -507,82 +508,11 @@ export const AdminListing = ({ entity }) => {
     <>
       <Row>
         <Col md="12">
-          <PageTitle heading={title} icon={icon} />
+          <PageTitle
+            heading={entity === "roles" ? "Menu mapping" : title}
+            icon={icon}
+          />
         </Col>
-
-        {entity === "customers" && (
-          <Col md="12">
-            <Card className="mb-4">
-              <Row className="m-1 mt-4">
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <FormGroup>
-                    <Input
-                      type="select"
-                      // value={jobId}
-                      name="jobid"
-                      id="jobid"
-                      placeholder="Job Id"
-                      // onChange={(e) => {
-                      //   handleChange("jobid", e.target.value);
-                      //   setJobId(e.target.value);
-                      // }}
-                    >
-                      <option value={""}>Select company</option>
-                      {/* {jobDropDownList?.length > 0 ? (
-                        jobDropDownList.map((data) => (
-                          <option value={data.jobid} key={data.jobid}>
-                            {data.jobtitle}
-                          </option>
-                        ))
-                      ) : (
-                        <></>
-                      )} */}
-                    </Input>
-                  </FormGroup>
-                </Col>
-
-                <Col lg="3" md="3" sm="12" sx="12">
-                  <Button
-                    style={{ background: "rgb(47 71 155)" }}
-                    className="me-4"
-                    color="primary"
-                    type="button"
-                    // onClick={() => onSubmitHandler()}
-                  >
-                    <FontAwesomeIcon icon={faSearch} /> Search
-                  </Button>
-                  <Button
-                    // style={{ background: "rgb(47 71 155)" }}
-                    color="link"
-                    type="button"
-                    // onClick={() => onSubmitClear()}
-                  >
-                    Clear
-                  </Button>
-                  {/* </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup> */}
-                </Col>
-
-                <Col>
-                  <Button
-                    style={{ background: "rgb(47 71 155)" }}
-                    className="float-end"
-                    color="primary"
-                    type="button"
-                    onClick={() => onAddClick()}
-                  >
-                    Add New Customer
-                  </Button>
-
-                  {/* </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup> */}
-                </Col>
-              </Row>
-            </Card>
-          </Col>
-        )}
 
         <Col md="12">
           <Card className="mb-3">
@@ -708,7 +638,9 @@ export const AdminListing = ({ entity }) => {
             <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 {!isAddMode
-                  ? `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
+                  ? entity === "roles"
+                    ? "Edit menu mapping"
+                    : `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
                   : `Add New ${
                       entity.charAt(0).toUpperCase() + entity.slice(1)
                     }`}
@@ -794,7 +726,7 @@ export const AdminListing = ({ entity }) => {
       <div>
         {isDelete && (
           <SweetAlert
-            title={"Are you sure want to delete the " + { check } + "!!"}
+            title={"Are you sure want to delete the user!!"}
             type="warning"
             showConfirm={false}
           >
@@ -802,6 +734,7 @@ export const AdminListing = ({ entity }) => {
               <Row>
                 <Col className="d-flex justify-content-center">
                   <Button
+                    style={{ background: "#545CD8" }}
                     className="me-2 accept-modal-btn"
                     onClick={(evt) => deleteUserData()}
                   >

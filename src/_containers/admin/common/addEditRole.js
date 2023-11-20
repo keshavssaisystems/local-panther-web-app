@@ -28,7 +28,6 @@ import {
 import TreeView from "react-treeview";
 
 export const AddEditRole = (props) => {
-  debugger;
   const { entity, isAddMode, data, isView } = props;
   const userId = data?.userId;
   const [roleId, setRoleId] = useState(0);
@@ -381,6 +380,7 @@ export const AddEditRole = (props) => {
           </Row>
           <Button
             type="button"
+            className="mt-3 float-end"
             color="primary"
             onClick={(e) => createEntity(e)}
           >

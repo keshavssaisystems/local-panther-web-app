@@ -462,7 +462,7 @@ export const AddEditUser = (props) => {
             </Col>
           </Row>
           <Col></Col>
-          <Button type="submit" color="primary">
+          <Button type="submit" color="primary" className="mt-3 float-end">
             {/* disabled={formState.isSubmitting} */}
             {isAddMode ? "Submit" : "Update"}
           </Button>
