@@ -36,48 +36,58 @@ import "./customerreport.scss";
 const columns = [
   {
     name: <span className="table-title">Job Code</span>,
-    selector: (row) => (
+    selector: (row) => row.jobid,
+    cell: (row) => (
       <span className="table-cell" title={row.jobid}>
         {row.jobid}
       </span>
     ),
     sortable: true,
+    minWidth: "120px",
   },
   {
     name: <span className="table-title">Title</span>,
-    selector: (row) => (
+    selector: (row) => row.jobtitle,
+    cell: (row) => (
       <span className="table-cell" title={row.jobtitle}>
         {row.jobtitle}
       </span>
     ),
     sortable: true,
+    minWidth: "350px",
   },
   {
     name: <span className="table-title">Status</span>,
-    selector: (row) => (
+    selector: (row) => row.jobstatus,
+    cell: (row) => (
       <span className="table-cell" title={row.jobstatus}>
         {row.jobstatus}
       </span>
     ),
     sortable: true,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">No. of Days</span>,
-    selector: (row) => (
+    selector: (row) => row.noofdays,
+    cell: (row) => (
       <span className="table-cell" title={row.noofdays}>
         {row.noofdays}
       </span>
     ),
     sortable: true,
+    minWidth: "120px",
   },
   {
     name: <span className="table-title">Aging group</span>,
-    selector: (row) => (
+    selector: (row) => row.aginggroup,
+    cell: (row) => (
       <span className="table-cell" title={row.aginggroup}>
         {row.aginggroup}
       </span>
     ),
     sortable: true,
+    minWidth: "350px",
   },
 ];
 
@@ -115,7 +125,12 @@ export function CustomerReportJobAging() {
           "Aging group": data.aginggroup,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "JobAging",
+          details: filteredData,
+        },
+      ]);
     }
   }, [jobAgingList]);
 
@@ -166,7 +181,7 @@ export function CustomerReportJobAging() {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "customerJobAgingReport")
+                        exportToExcel(excelData, "customerJobAgingReport", true)
                       }
                     >
                       <FontAwesomeIcon className="pe-2" icon={faFileExcel} />

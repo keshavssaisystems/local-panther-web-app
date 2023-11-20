@@ -106,7 +106,12 @@ export function JobsWithoutMatchedCandidates({ title }) {
           Address: rec.address,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "JobsWithoutMatchedCandidate",
+          details: filteredData,
+        },
+      ]);
     }
   }, [data]);
 
@@ -141,29 +146,29 @@ export function JobsWithoutMatchedCandidates({ title }) {
   const columns = [
     {
       name: <span className="table-title">Company</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.companyname}>
           {row?.companyname}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "15%",
+      selector: (row) => row.companyname,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Job Title</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.jobtitle}>
           {row?.jobtitle}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "10%",
+      selector: (row) => row.jobtitle,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Skills</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={typeof row?.musthaveskills === "string" && row?.musthaveskills}
@@ -171,12 +176,13 @@ export function JobsWithoutMatchedCandidates({ title }) {
           {typeof row?.musthaveskills === "string" && row?.musthaveskills}
         </span>
       ),
-      // wrap: true,
+      selector: (row) => row.musthaveskills,
+      minWidth: "350px",
       sortable: true,
     },
     {
       name: <span className="table-title">Nice to have</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={
@@ -186,29 +192,31 @@ export function JobsWithoutMatchedCandidates({ title }) {
           {typeof row?.nicetohaveskills === "string" && row?.nicetohaveskills}
         </span>
       ),
-      // wrap: true,
-      width: "12%",
+      selector: (row) => row.nicetohaveskills,
+      minWidth: "350px",
+      sortable: true,
     },
     {
       name: <span className="table-title">Open position</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.noofopenposition}>
           {row?.noofopenposition}
         </span>
       ),
-      // wrap: true,
-      width: "8%",
+      selector: (row) => row.noofopenposition,
+      minWidth: "150px",
+      sortable: true,
     },
     {
       name: <span className="table-title">Address</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.address}>
           {row?.address}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "10%",
+      selector: (row) => row.address,
+      minWidth: "250px",
     },
   ];
 
@@ -236,7 +244,8 @@ export function JobsWithoutMatchedCandidates({ title }) {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "adminJobsWithoutMatchedCandidateReport"
+                          "adminJobsWithoutMatchedCandidateReport",
+                          true
                         )
                       }
                     >
@@ -249,10 +258,10 @@ export function JobsWithoutMatchedCandidates({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="2" sm="12" sx="12" className="pe-1">
                   <CompanyFilter
                     name={"@companyid"}
-                    placeholder={"Select Company"}
+                    placeholder={"Search Company"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
@@ -263,7 +272,7 @@ export function JobsWithoutMatchedCandidates({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"@skillid"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skills"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -274,7 +283,7 @@ export function JobsWithoutMatchedCandidates({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <LocationFilter
                     name={"@cityid"}
-                    placeholder={"Select Location"}
+                    placeholder={"Search Location"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setLocation(e);

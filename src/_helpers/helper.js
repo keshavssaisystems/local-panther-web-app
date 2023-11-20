@@ -359,7 +359,13 @@ export const USPhoneNumber = function (inputValue) {
 };
 
 export const updateMonthstoYears = (months) => {
-  return ((months / 12) | 0) + " years and " + (months % 12) + " months";
+  if (months === 0) {
+    return " ";
+  } else {
+    return months % 12 === 0
+      ? ((months / 12) | 0) + (months / 12 === 1 ? " year" : " years")
+      : ((months / 12) | 0) + " years and " + (months % 12) + " months";
+  }
 };
 
 export const getTimezoneDateTime = (

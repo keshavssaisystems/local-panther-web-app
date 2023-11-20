@@ -107,6 +107,7 @@ export const CustCandidateListView = (props) => {
         title: "Candidate status updated successfully!!!",
         type: "success",
       });
+      props.updateList();
     } else {
       props.showSweetAlert({
         title: res.payload.message || res.payload.status,

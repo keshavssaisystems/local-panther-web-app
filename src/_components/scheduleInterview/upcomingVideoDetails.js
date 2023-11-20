@@ -66,7 +66,9 @@ export function UpcomingVideoDetails({
   );
   const interviewDetails = selectedJobDetails[0];
   let scheduled = getTimezoneDateTime(
-    interviewDetails?.scheduledate,
+    moment(interviewDetails?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetails?.starttime,
     "MM/DD/YYYY"
   );
 
@@ -85,7 +87,9 @@ export function UpcomingVideoDetails({
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetails?.scheduledate),
+    moment(interviewDetails?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetails?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -368,7 +372,7 @@ export function UpcomingVideoDetails({
               size={"sm"}
             >
               {" "}
-              Add interview guide{" "}
+              Download interview guide{" "}
             </Button>
             <Button
               outline

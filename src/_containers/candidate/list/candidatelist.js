@@ -509,6 +509,21 @@ export const CandidateList = (props) => {
                 </>
               ) : (
                 <>
+                  <div className="p-3 tab-info">
+                    <div className="row">
+                      <div className="col-9">
+                        <img src={infoIcon} alt="" />
+                        Our advanced AI matching system efficiently reviews
+                        candidate profiles and job requirements to connect
+                        candidates with the best job opportunities. By using
+                        this system, we streamline the application process and
+                        ensure a fair evaluation for all applicants. However,
+                        it's important to note that the AI system may not
+                        capture every detail or subtlety of a candidate's
+                        profile or job description.
+                      </div>
+                    </div>
+                  </div>
                   <Row>
                     <p className="mb-1 row-count">
                       {totalRecords > 0 ? `${totalRecords} jobs` : ""}{" "}
@@ -616,21 +631,21 @@ export const CandidateList = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />
+                          Candidates are individuals unsure about being invited
+                          to apply, often marked with a question or doubt. They
+                          may also be saved in a separate section of the user
+                          account, allowing users to review and change decisions
+                          later. This helps make informed decisions about
+                          potential candidates.
+                        </div>
+                      </div>
+                    </div>
                     {candidateJobList?.length > 0 ? (
                       <>
-                        <div className="p-3 tab-info">
-                          <div className="row">
-                            <div className="col-12">
-                              <img src={infoIcon} alt="" />
-                              Candidates are individuals unsure about being
-                              invited to apply, often marked with a question or
-                              doubt. They may also be saved in a separate
-                              section of the user account, allowing users to
-                              review and change decisions later. This helps make
-                              informed decisions about potential candidates.
-                            </div>
-                          </div>
-                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -690,20 +705,20 @@ export const CandidateList = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />
+                          Applied candidates are those who have submitted their
+                          application for a job through the platform. They are
+                          stored in a separate section of the user account,
+                          allowing users to track their application status,
+                          contact them, or reject them.
+                        </div>
+                      </div>
+                    </div>
                     {candidateJobList?.length > 0 ? (
                       <>
-                        <div className="p-3 tab-info">
-                          <div className="row">
-                            <div className="col-12">
-                              <img src={infoIcon} alt="" />
-                              Applied candidates are those who have submitted
-                              their application for a job through the platform.
-                              They are stored in a separate section of the user
-                              account, allowing users to track their application
-                              status, contact them, or reject them.
-                            </div>
-                          </div>
-                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -763,23 +778,23 @@ export const CandidateList = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-9">
+                          <img src={infoIcon} alt="" />
+                          Scheduled interview candidates are selected for an
+                          interview and have a scheduled date and time. They
+                          move to the next stage of the hiring process, where
+                          skills are evaluated. These candidates are stored in a
+                          separate section of the user account, where users can
+                          view their interview details and prepare for the
+                          meeting. access them and decide whether to apply or
+                          not.
+                        </div>
+                      </div>
+                    </div>
                     {candidateJobList?.length > 0 ? (
                       <>
-                        <div className="p-3 tab-info">
-                          <div className="row">
-                            <div className="col-12">
-                              <img src={infoIcon} alt="" />
-                              Scheduled interview candidates are selected for an
-                              interview and have a scheduled date and time. They
-                              move to the next stage of the hiring process,
-                              where skills are evaluated. These candidates are
-                              stored in a separate section of the user account,
-                              where users can view their interview details and
-                              prepare for the meeting. access them and decide
-                              whether to apply or not.
-                            </div>
-                          </div>
-                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -839,22 +854,22 @@ export const CandidateList = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-9">
+                          <img src={infoIcon} alt="" />
+                          Accepted candidates are those who have accepted a job
+                          offer, either verbally or in writing, indicating that
+                          you have successfully hired them and agreed on their
+                          employment terms. They are typically stored in a
+                          separate section of the user account, providing
+                          information on their start date, contract details, and
+                          onboarding tasks.
+                        </div>
+                      </div>
+                    </div>
                     {candidateJobList?.length > 0 ? (
                       <>
-                        <div className="p-3 tab-info">
-                          <div className="row">
-                            <div className="col-12">
-                              <img src={infoIcon} alt="" />
-                              Accepted candidates are those who have accepted a
-                              job offer, either verbally or in writing,
-                              indicating that you have successfully hired them
-                              and agreed on their employment terms. They are
-                              typically stored in a separate section of the user
-                              account, providing information on their start
-                              date, contract details, and onboarding tasks.
-                            </div>
-                          </div>
-                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -914,23 +929,22 @@ export const CandidateList = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-9">
+                          <img src={infoIcon} alt="" />
+                          Rejected candidates are those who have been rejected
+                          during the hiring process due to non-compliance with
+                          requirements, withdrawal of application, or refusal of
+                          offer. They are stored in a separate section of the
+                          account, where the reason for rejection can be viewed,
+                          feedback can be provided, or the candidate may be
+                          reconsidered for future opportunities.
+                        </div>
+                      </div>
+                    </div>
                     {candidateJobList?.length > 0 ? (
                       <>
-                        <div className="p-3 tab-info">
-                          <div className="row">
-                            <div className="col-12">
-                              <img src={infoIcon} alt="" />
-                              Rejected candidates are those who have been
-                              rejected during the hiring process due to
-                              non-compliance with requirements, withdrawal of
-                              application, or refusal of offer. They are stored
-                              in a separate section of the account, where the
-                              reason for rejection can be viewed, feedback can
-                              be provided, or the candidate may be reconsidered
-                              for future opportunities.
-                            </div>
-                          </div>
-                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
@@ -990,24 +1004,23 @@ export const CandidateList = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-10">
+                          <img src={infoIcon} alt="" />
+                          Offers candidates are candidates who have decided to
+                          offer a job after interviewing and assessing their
+                          qualifications. This means the customer has made a
+                          final decision on who to hire and communicated the
+                          offer to the candidate, either verbally or in writing.
+                          They are typically stored in a separate section of the
+                          account, allowing users to track the offer's status,
+                          negotiate terms, or withdraw it if needed.
+                        </div>
+                      </div>
+                    </div>
                     {candidateJobList?.length > 0 ? (
                       <>
-                        <div className="p-3 tab-info">
-                          <div className="row">
-                            <div className="col-12">
-                              <img src={infoIcon} alt="" />
-                              Offers candidates are candidates who have decided
-                              to offer a job after interviewing and assessing
-                              their qualifications. This means the customer has
-                              made a final decision on who to hire and
-                              communicated the offer to the candidate, either
-                              verbally or in writing. They are typically stored
-                              in a separate section of the account, allowing
-                              users to track the offer's status, negotiate
-                              terms, or withdraw it if needed.
-                            </div>
-                          </div>
-                        </div>
                         <CandListView
                           type={activeTab}
                           data={candidateJobList}
