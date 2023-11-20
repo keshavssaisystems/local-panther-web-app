@@ -104,9 +104,10 @@ export const updateMenuMapping = createAsyncThunk(
 // ** https://panther-api-dev.azurewebsites.net/api/Menus?isActive=true&pageSize=500&pageNumber=0
 export const getMenuMappings = createAsyncThunk(
   `${name}/getMenuMappings`,
-  async ({ id }) => {
-    const GET_MENUMAPPING_STATS = `${baseUrl}/Menus/GetMappedMenusByRole/${id}`;
-    return await fetchWrapper.get(GET_MENUMAPPING_STATS);
+  async (payload = {}) => {
+    const GET_MENUMAPPING_STATS = `${baseUrl}/Menus?${new URLSearchParams(
+      payload
+    )}`;
   }
 );
 
@@ -145,7 +146,7 @@ const adminListingSlice = createSlice({
         return {
           ...item,
           contactphonenumber: newContact
-            ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3]
+            ? "(" + newContact[1] + ")-" + newContact[2] + "-" + newContact[3]
             : null,
         };
       });
@@ -180,15 +181,7 @@ const adminListingSlice = createSlice({
     [getCustomers.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data?.customerDetailsList?.map((item) => {
-        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/);
-        return {
-          ...item,
-          phonenumber: newContact
-            ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3]
-            : null,
-        };
-      });
+      state.data = data?.customerDetailsList;
     },
     [getCustomers.rejected]: (state, action) => {
       state.loading = false;
@@ -292,7 +285,6 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
-
     [deleteUser.pending]: (state) => {
       state.loading = true;
       state.error = null;

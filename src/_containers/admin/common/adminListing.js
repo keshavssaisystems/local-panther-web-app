@@ -474,7 +474,10 @@ export const AdminListing = ({ entity }) => {
       dispatch(getCompanies(urlParams));
     } else if (entity === "customers") {
       dispatch(getIndustries());
-      dispatch(getCustomers(urlParams));
+      let payload = {
+        pageNumber: 1,
+      };
+      dispatch(getCustomers(payload));
     } else if (entity === "users") {
       dispatch(getUsers(urlParams));
       dispatch(getRoles());

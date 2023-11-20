@@ -4,6 +4,17 @@
     border-color: #2f479b;
   }
 }
+.async-border-red {
+  .css-13cymwt-control {
+    border-color: #d92550 !important;
+  }
+}
+.async-error-text {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: #d92550;
+}
 .child-check {
   margin-left: 15px;
   display: none;

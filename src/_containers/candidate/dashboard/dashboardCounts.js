@@ -115,6 +115,53 @@ export function DashboardCounts() {
             </div>
           </Card>
         </Col>
+
+        <Col>
+          <Card
+            className={
+              "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
+              "info border-info"
+            }
+          >
+            <div className="widget-chat-wrapper-outer">
+              <Row>
+                <Col md="4">
+                  <div className="icon-wrapper rounded-circle mt-1">
+                    <div className={"icon-wrapper-bg bg-info"} />
+                    <i className={"lnr-bullhorn text-info"} />
+                  </div>
+                </Col>
+                <Col>
+                  <div className="widget-chart-content">
+                    <div className="widget-title opacity-5 ">Offers</div>
+                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                      <div className="widget-chart-flex align-items-center">
+                        <div
+                          onClick={(e) =>
+                            navigateToJobsPage(
+                              e,
+                              counts.offersforcandidate,
+                              "offers"
+                            )
+                          }
+                          style={{
+                            cursor:
+                              counts.offersforcandidate === 0
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
+                        >
+                          {counts ? counts.offersforcandidate : 0}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </Card>
+        </Col>
+
         <Col>
           <Card
             className={

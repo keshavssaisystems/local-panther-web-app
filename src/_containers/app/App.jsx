@@ -52,6 +52,7 @@ import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
+import { CustomerList } from "_containers/admin/customer/customerList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -78,7 +79,7 @@ export function App() {
             path="/customers"
             element={
               <PrivateRoute>
-                <AdminListing entity="customers" />
+                <CustomerList />
               </PrivateRoute>
             }
           />
@@ -360,6 +361,11 @@ export function App() {
           <Route
             path="/job-list-accepted"
             element={<CandidateList type={"accepted"} />}
+          />
+
+          <Route
+            path="/job-list-offers"
+            element={<CandidateList type={"offers"} />}
           />
           <Route
             path="/job-list-rejected"
