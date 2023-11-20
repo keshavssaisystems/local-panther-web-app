@@ -622,6 +622,7 @@ export function PersonalInformation(props) {
                       <div className="icon-wrapper rounded-circle profile-img">
                         <img
                           width={100}
+                          height={100}
                           className="rounded-circle"
                           src={
                             isHovered
