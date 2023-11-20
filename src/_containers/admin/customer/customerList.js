@@ -142,6 +142,7 @@ export const CustomerList = () => {
       cityname: "",
       statename: "",
     };
+    setIsEdit(false);
     setEditData(obj);
     setOpenModal(true);
   };
@@ -207,6 +208,7 @@ export const CustomerList = () => {
     );
     setEditData({});
     setOpenModal(false);
+    setIsEdit(false);
     if (res.payload) {
       dispatch(
         getCustomers({

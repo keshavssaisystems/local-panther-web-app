@@ -255,16 +255,18 @@ export const AddUpdateCustomer = ({
                   )}
                 </FormGroup>
               </Col>
-              <Col md={4}>
-                <a
-                  className="float-end"
-                  href="javascript:void(0)"
-                  onClick={() => setCompanyModal(true)}
-                >
-                  {" "}
-                  +Add company
-                </a>
-              </Col>
+              {!isEdit && (
+                <Col md={4}>
+                  <a
+                    className="float-end"
+                    href="javascript:void(0)"
+                    onClick={() => setCompanyModal(true)}
+                  >
+                    {" "}
+                    +Add company
+                  </a>
+                </Col>
+              )}
               <Col md={6}>
                 <FormGroup>
                   <Label for="firstname">
