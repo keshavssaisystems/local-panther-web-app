@@ -362,6 +362,11 @@ export function App() {
             path="/job-list-accepted"
             element={<CandidateList type={"accepted"} />}
           />
+
+          <Route
+            path="/job-list-offers"
+            element={<CandidateList type={"offers"} />}
+          />
           <Route
             path="/job-list-rejected"
             element={<CandidateList type={"rejected"} />}

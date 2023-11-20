@@ -107,7 +107,8 @@ export const CustomerList = () => {
     {
       name: "Phone",
       id: "phonenumber",
-      selector: (row) => USPhoneNumber(row.phonenumber),
+      selector: (row) =>
+        row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
       sortable: true,
     },
     {

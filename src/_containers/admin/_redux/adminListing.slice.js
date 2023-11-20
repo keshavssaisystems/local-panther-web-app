@@ -108,6 +108,7 @@ export const getMenuMappings = createAsyncThunk(
     const GET_MENUMAPPING_STATS = `${baseUrl}/Menus?${new URLSearchParams(
       payload
     )}`;
+  }
 );
 
 // Create the slice

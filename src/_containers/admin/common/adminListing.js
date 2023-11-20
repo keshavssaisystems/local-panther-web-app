@@ -22,6 +22,8 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +34,9 @@ import {
   getUsers,
   getRoles,
   getMenuMappings,
+  deleteUser,
+  deleteRole,
+  getRolesList,
 } from "_containers/admin/_redux/adminListing.slice";
 import { addCustomer } from "_containers/admin/_redux/addCustomer.slice";
 
@@ -72,9 +77,12 @@ export const AdminListing = ({ entity }) => {
     searchFilter = [],
     buttonsList = [];
   const [error, setError] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
+  const [viewMode, setViewMode] = useState(false);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
@@ -255,9 +263,7 @@ export const AdminListing = ({ entity }) => {
   }
 
   const urlParams = {
-    isActive: true,
-    pageSize: 50,
-    pageNumber: 1,
+    pageNumber: 0,
   };
 
   useEffect(() => {
@@ -268,16 +274,24 @@ export const AdminListing = ({ entity }) => {
     if (entity === "company") {
       dispatch(getCompanies(urlParams));
     } else if (entity === "customers") {
+      let payload = {
+        isActive: true,
+        pageNumber: 1,
+      };
+
       dispatch(getIndustries(urlParams));
-      dispatch(getCustomers(urlParams));
+      dispatch(getCustomers(payload));
     } else if (entity === "users") {
       dispatch(getUsers(urlParams));
+      dispatch(getRoles());
     } else if (entity === "roles") {
-      dispatch(getRoles(urlParams));
+      dispatch(getRoles());
+      dispatch(getRolesList(urlParams));
+      dispatch(getMenuMappings());
     } else if (entity === "menuMapping") {
       dispatch(getMenuMappings(urlParams));
     }
-  }, [entity]);
+  };
   const customStyles = {
     headCells: {
       style: {
@@ -307,12 +321,12 @@ export const AdminListing = ({ entity }) => {
     debugger;
     setCheck(check);
     setSelectedRowData(row);
-    setIsAddMode(false); // Open the modal
-    setOpenModal(true);
+    setIsDelete(true);
   };
 
   const onAddClick = () => {
     setIsAddMode(true); // Open the modal
+    setViewMode(false);
     setOpenModal(true);
   };
 
@@ -321,10 +335,16 @@ export const AdminListing = ({ entity }) => {
   };
 
   const close = () => {
-    console.log("hello");
     setIsAddMode(false);
+    setViewMode(false);
+    setOpenModal(false);
     setSuccess(false);
     setEditingData(null); // Reset editing data
+    setSelectedRowData(null);
+  };
+  const CloseModal = () => {
+    close();
+    loadData();
   };
   const onUpdateNewComp = (evt, formType) => {
     // const newData = { ...formType === 'company' ? newCompData : newCustData };
@@ -379,6 +399,96 @@ export const AdminListing = ({ entity }) => {
       </Input>
     </Col>
   ));
+
+  const toggleNotification = async function (value, row) {
+    let id = row.userId;
+    let data = {
+      userId: id,
+      isactive: value,
+    };
+
+    let response = await dispatch(settingsActions.deactivateUser({ id, data }));
+    if (response.payload) {
+      showSweetAlert({
+        title: `${response.payload.message}`,
+        type: "success",
+      });
+    } else {
+      showSweetAlert({
+        title: `${response.error.message}`,
+        type: "error",
+      });
+    }
+  };
+
+  const deleteUserData = async function () {
+    let response;
+    if (check === "user") {
+      let id = selectedRowData.userId;
+      response = await dispatch(deleteUser(id));
+    } else if (check === "role") {
+      let id = selectedRowData.userroleid;
+      response = await dispatch(deleteRole(id));
+    }
+    if (response.payload) {
+      setIsDelete(false);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    } else {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+    CloseModal();
+  };
+
+  const onClearSearch = function () {
+    setSearchText("");
+  };
+
+  const getUsersList = function () {
+    let urlParams = {
+      searchText: searchData,
+      pageNumber: 0,
+    };
+    if (entity === "company") {
+      dispatch(getCompanies(urlParams));
+    } else if (entity === "customers") {
+      dispatch(getIndustries());
+      let payload = {
+        pageNumber: 1,
+      };
+      dispatch(getCustomers(payload));
+    } else if (entity === "users") {
+      dispatch(getUsers(urlParams));
+      dispatch(getRoles());
+    } else if (entity === "roles") {
+      dispatch(getRolesList(urlParams));
+    } else if (entity === "menuMapping") {
+      dispatch(getRolesList(urlParams));
+      // dispatch(getMenuMappings(urlParams));
+    }
+  };
+
   const cardButtons = buttonsList.map((item) => (
     <Col lg="3" md="2" sm="12" sx="12">
       <FormGroup>
@@ -410,15 +520,64 @@ export const AdminListing = ({ entity }) => {
         <Col md="12">
           <Card className="mb-3">
             <CardBody>
-              <Row>
-                {cardFilters}
-                {cardButtons}
-              </Row>
+              {entity !== "customers" ? (
+                <Row className="mb-3">
+                  <Col className="col">
+                    {entity !== "roles" ? (
+                      <Button
+                        style={{
+                          background: "#545cd8",
+                          borderColor: "#545cd8",
+                        }}
+                        className="float-end me-3 mt-1"
+                        onClick={() => onAddClick()}
+                      >
+                        <FiPlus className="mb-1" /> Add user
+                      </Button>
+                    ) : (
+                      ""
+                    )}
+                    <div
+                      className={cx(
+                        "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+                        {
+                          active: true,
+                        }
+                      )}
+                    >
+                      <div className="input-holder float-end">
+                        <input
+                          type="text"
+                          className="search-input search-placeholder"
+                          id="search-input"
+                          value={searchData}
+                          onInput={(evt) => setSearchText(evt.target.value)}
+                          placeholder="Search.."
+                        />
+                        <button
+                          className="btn-close"
+                          onClick={(evt) => onClearSearch()}
+                        />
+                        <button
+                          onClick={(evt) => getUsersList()}
+                          className="search-icon"
+                        >
+                          <span />
+                        </button>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              ) : (
+                ""
+              )}
+
               <DataTable
                 data={data}
                 columns={columns}
                 pagination
                 fixedHeader
+                // fixedHeaderScrollHeight="400px"
                 customStyles={customStyles}
                 onRowClicked={handleRowClick}
               />
@@ -522,12 +681,80 @@ export const AdminListing = ({ entity }) => {
                   // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
                 />
               )}
+
+              {entity === "users" && (
+                <AddEditUser
+                  editingData={editingData}
+                  isAddMode={isAddMode}
+                  setIsAddMode={setIsAddMode}
+                  data={selectedRowData}
+                  // data={newCustData}
+                  entity={entity}
+                  // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
+                  callBack={() => CloseModal()}
+                />
+              )}
+
+              {entity === "roles" && (
+                <AddEditRole
+                  editingData={editingData}
+                  isAddMode={isAddMode}
+                  setIsAddMode={setIsAddMode}
+                  data={selectedRowData}
+                  isView={viewMode}
+                  // data={newCustData}
+                  entity={entity}
+                  // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
+                  callBack={() => CloseModal()}
+                />
+              )}
             </ModalBody>
           </Modal>
         </div>
       ) : (
         <></>
       )}
+
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
+
+      <div>
+        {isDelete && (
+          <SweetAlert
+            title={"Are you sure want to delete the user!!"}
+            type="warning"
+            showConfirm={false}
+          >
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    style={{ background: "#545CD8" }}
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => deleteUserData()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    className="success-close-btn"
+                    onClick={(evt) => setIsDelete(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </SweetAlert>
+        )}
+      </div>
     </>
   );
 };
