@@ -7,10 +7,13 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
+import { USPhoneNumber } from "_helpers/helper";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
   let scheduled = getTimezoneDateTime(
-    interviewDetail?.scheduledate,
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "MM/DD/YYYY"
   );
 
@@ -29,7 +32,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate),
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -156,9 +161,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                     <div className="p-custom">
                       <p className="mb-0">
                         Phone no -{" "}
-                        {interviewDetail.candidatephonenumber !== undefined
+                        {interviewDetail.candidatephonenumber === undefined
                           ? ""
-                          : interviewDetail.candidatephonenumber}
+                          : USPhoneNumber(interviewDetail.candidatephonenumber)}
                       </p>
                     </div>
                   )}

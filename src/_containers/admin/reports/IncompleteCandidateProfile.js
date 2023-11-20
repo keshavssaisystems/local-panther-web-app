@@ -25,13 +25,14 @@ import { getReportDataThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
+import { updateMonthstoYears } from "_helpers/helper";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -83,17 +84,22 @@ export function IncompleteCandidateProfile({ title }) {
       let filteredData = data.map((rec) => {
         return {
           Candidate: rec?.candidatename,
-
-          Experience: rec?.experience,
+          Experience: rec?.experience
+            ? updateMonthstoYears(parseInt(rec?.experience))
+            : "",
           Skills: rec?.skills,
           Location: rec?.location,
-
           Created: rec.createddate
             ? moment(data.createddate).format("MM/DD/YYYY")
             : "",
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "IncompleteCandidateProfile",
+          details: filteredData,
+        },
+      ]);
     }
   }, [data]);
 
@@ -132,29 +138,38 @@ export function IncompleteCandidateProfile({ title }) {
   const columns = [
     {
       name: <span className="table-title">Candidate</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.candidatename}>
           {row?.candidatename}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      // width: "150px",
+      selector: (row) => row.candidatename,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Experience</span>,
-      selector: (row) => (
-        <span className="table-cell" title={row?.experience}>
-          {row?.experience}
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row?.experience
+              ? updateMonthstoYears(parseInt(row?.experience))
+              : ""
+          }
+        >
+          {row?.experience
+            ? updateMonthstoYears(parseInt(row?.experience))
+            : ""}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      // width: "150px",
+      selector: (row) => row.experience,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Skills</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={typeof row?.skills === "string" && row?.skills}
@@ -162,26 +177,24 @@ export function IncompleteCandidateProfile({ title }) {
           {typeof row?.skills === "string" && row?.skills}
         </span>
       ),
-      // wrap: true,
-      // width: "400px",
+      selector: (row) => row.skills,
+      minWidth: "350px",
       sortable: true,
-      maxWidth: "600px",
-      minWidth: "400px",
     },
     {
       name: <span className="table-title">Location</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row?.location}>
           {row?.location}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      // width: "300px",
+      selector: (row) => row.location,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Created</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={
@@ -195,9 +208,8 @@ export function IncompleteCandidateProfile({ title }) {
             : ""}
         </span>
       ),
-      // format: (row) => moment(row?.createddate).format('MM/DD/YYYY'),
-      // wrap: true,
-      // width: "150px",
+      selector: (row) => row.createddate,
+      minWidth: "200px",
       sortable: true,
     },
   ];
@@ -226,11 +238,12 @@ export function IncompleteCandidateProfile({ title }) {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "adminIncompleteCandidateReport"
+                          "adminIncompleteCandidateReport",
+                          true
                         )
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -242,7 +255,7 @@ export function IncompleteCandidateProfile({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"@skillid"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skill"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -253,7 +266,7 @@ export function IncompleteCandidateProfile({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <LocationFilter
                     name={"@cityid"}
-                    placeholder={"Select Location"}
+                    placeholder={"Search Location"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setLocation(e);

@@ -39,6 +39,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
 import { NavLink } from "react-router-dom";
+import { USPhoneNumber } from "_helpers/helper";
+import { useNavigate } from "react-router-dom";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -87,11 +89,11 @@ export function UpcomingInterviews() {
     },
     {
       name: "Scheduled date",
-      selector: (row) => (
-        <span title={formatDate(row.scheduledate)}>
-          {formatDate(row.scheduledate)}
-        </span>
-      ),
+      selector: (row) =>
+        getTimezoneDateTime(
+          moment(row?.scheduledate).format("YYYY-MM-DD") + " " + row?.starttime,
+          "MM/DD/YYYY"
+        ),
       sortable: false,
     },
     {
@@ -205,7 +207,9 @@ export function UpcomingInterviews() {
     );
     if (mode === "phone") {
       showSweetAlert({
-        title: `Please join the interview on phone - ${data.phonenumber}`,
+        title: `Please wait, Interviewer will call you on phone - ${USPhoneNumber(
+          data.phonenumber
+        )}`,
         type: "success",
       });
     } else if (mode === "Video") {
@@ -219,7 +223,10 @@ export function UpcomingInterviews() {
     } else if (mode === "In-person") {
       showSweetAlert({
         title: `Scheduled at - ${
-          (data.companyname, data.cityname, data.statename, data.countryname)
+          data?.interviewaaddress === undefined ||
+          data?.interviewaaddress === ""
+            ? "No address provided"
+            : data?.interviewaaddress
         }`,
         type: "success",
       });
@@ -283,7 +290,13 @@ export function UpcomingInterviews() {
       </div>
     );
   };
-
+  const navigate = useNavigate();
+  const navigateTo = (link) => {
+    navigate(`/video-screen/${link}`);
+  };
+  const navigateToThirdPartyLink = (link) => {
+    window.open(`${link}`, "_blank", "rel=noopener noreferrer");
+  };
   return (
     <>
       <Card className="card-hover-shadow-2x mb-3">
@@ -374,14 +387,18 @@ export function UpcomingInterviews() {
       <div>
         {showInterview && (
           <SweetAlert
-            title="Join Interview!!"
+            title="Interview started"
             onCancel={() => setShowInterview(false)}
             type="success"
-            onConfirm={() => setShowInterview(false)}
+            showConfirm
+            onConfirm={(e) => navigateToThirdPartyLink(link)}
+            showCancel
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <a href={link} target="_blank">
-              click to join{" "}
-            </a>
+            Click join interview button to proceed with third party link
           </SweetAlert>
         )}
       </div>
@@ -389,14 +406,18 @@ export function UpcomingInterviews() {
       <div>
         {appShowInterview && (
           <SweetAlert
-            title="Join Interview!!"
+            title="Interview started"
             onCancel={() => setAppShowInterview(false)}
             type="success"
-            onConfirm={() => setAppShowInterview(false)}
+            showConfirm
+            onConfirm={(e) => navigateTo(link)}
+            showCancel
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <NavLink to={`/video-screen/${link}`} exact>
-              Click here to join
-            </NavLink>
+            Click join interview button to proceed with in app interview
           </SweetAlert>
         )}
       </div>

@@ -11,6 +11,7 @@ import {
   candidateListActions,
   dropdownActions,
 } from "_store";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CandidateDashboard() {
   const dispatch = useDispatch();
@@ -18,6 +19,13 @@ export function CandidateDashboard() {
     localStorage.getItem("userDetails")
   ).InternalUserId;
   let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
+
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
 
   useEffect(() => {
     loadPage();
@@ -41,6 +49,41 @@ export function CandidateDashboard() {
     dispatch(dropdownActions.getShiftThunk2());
   };
 
+  const onDeleteNotification = async (id) => {
+    let res = await dispatch(
+      candidateDashboardActions.deleteNotifications({ id })
+    );
+    if (res?.payload?.statusCode === 200) {
+      showSweetAlert({
+        title: "Deleted notification successfully.",
+        type: "success",
+      });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+  const onReadNotification = (id) => {
+    dispatch(candidateDashboardActions.readNotification({ id }));
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+
   return (
     <>
       <Row>
@@ -53,7 +96,10 @@ export function CandidateDashboard() {
           <TodoList onCallBack={() => loadPage()} />
         </Col>
         <Col>
-          <Alerts />
+          <Alerts
+            onDeleteNotification={(id) => onDeleteNotification(id)}
+            onReadNotification={(id) => onReadNotification(id)}
+          />
         </Col>
       </Row>
 
@@ -68,6 +114,15 @@ export function CandidateDashboard() {
           <JobsList onCallBack={() => loadPage()} />
         </Col>
       </Row>
+      <>
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 }

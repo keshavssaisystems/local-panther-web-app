@@ -40,7 +40,7 @@ import { getLocationFilter } from "_store";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
-export function Registration() {
+export function CustomerRegistration() {
   let settings = {
     dots: true,
     infinite: true,
@@ -83,12 +83,6 @@ export function Registration() {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    jobprofile: Yup.string()
-      .required("Job profile is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
-      .min(3, "Job profile must be at least 3 characters")
-      .max(30, "Job profile must be at most 30 characters"),
-
     firstName: Yup.string()
       .required("First name is required")
       .matches(/^[A-Za-z ]*$/, "Please enter valid name")
@@ -119,10 +113,6 @@ export function Registration() {
       .required("Confirm Password is required")
       .min(4, "Confirm Password must be at least 4 characters")
       .max(30, "Confirm Password can be at most 30 characters"),
-
-    cityid: Yup.string().required("City, State is required"),
-    stateid: Yup.string(),
-    countryid: Yup.string().required("Country is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
 
@@ -168,12 +158,7 @@ export function Registration() {
     let formDetails = getValues();
     let data = { ...field };
     data = "";
-    if (
-      formDetails.jobprofile === "" ||
-      !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
-    ) {
-      data = "job profile";
-    }
+
     if (
       formDetails.firstName === "" ||
       !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
@@ -198,12 +183,6 @@ export function Registration() {
     ) {
       data = data !== "" ? data + ", phone number" : "phone number";
     }
-    if (cityValue === 0) {
-      data = data !== "" ? data + ", city, state" : "city, state";
-    }
-    if (countryValue === 0) {
-      data = data !== "" ? data + ", country" : "country";
-    }
 
     if (data !== "") {
       setField(data);
@@ -222,9 +201,6 @@ export function Registration() {
       lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       email: getValues("email"),
-      countryid: countryValue,
-      stateid: parseInt(getValues("stateid")),
-      cityid: cityValue,
       phoneotp: null,
       phoneotpgeneratedate: new Date().toISOString(),
       isphonenumberverify: false,
@@ -538,7 +514,12 @@ export function Registration() {
           >
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
               <div className="">
-                <img src={logo} alt="logo" className="logo mb-2" />
+                <img
+                  src={logo}
+                  width={"130px"}
+                  alt="logo"
+                  className="logo mb-4"
+                />
               </div>
               <Row className="login-divider" />
               <div className="app-logo mb-0" />
@@ -549,29 +530,6 @@ export function Registration() {
 
               <div className="mt-5">
                 <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="jobprofile" className="input-label">
-                          <span className="text-danger">*</span> Job Profile
-                        </Label>
-                        <input
-                          type="text"
-                          name="jobprofile"
-                          id="jobprofile"
-                          placeholder="Enter job profile"
-                          {...register("jobprofile")}
-                          className={`form-control placeholder-name ${
-                            errors.jobprofile ? "is-invalid" : ""
-                          }`}
-                        />
-                        <FormFeedback>
-                          {errors.jobprofile?.message}
-                        </FormFeedback>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-
                   <Row>
                     <Col md={6}>
                       <FormGroup>
@@ -772,59 +730,6 @@ export function Registration() {
                             {errors.confirmPassword?.message}
                           </FormFeedback>
                         </InputGroup>
-                      </FormGroup>
-                    </Col>
-                    <Col>
-                      <FormGroup>
-                        <Label for="city" className="fw-semi-bold">
-                          <span className="text-danger">* </span>City, State
-                        </Label>
-                        <AsyncSelect
-                          name="city"
-                          placeholder="Search to select"
-                          placeholderText="search"
-                          loadOptions={loadOptions}
-                          isMulti={false}
-                          className={`placeholder-name ${
-                            errors.cityid && cityValue === 0
-                              ? "async-border-red"
-                              : "async-no-error"
-                          }`}
-                          {...register("cityid")}
-                          onChange={(e) => setAsyncSelectValue(e)}
-                        />
-                        <div className="async-error-text">
-                          {errors.cityid && cityValue === 0
-                            ? "City, State is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col>
-                      <FormGroup>
-                        <Label for="country" className="fw-semi-bold">
-                          <span className="text-danger">* </span>Country
-                        </Label>
-                        <AsyncSelect
-                          name="country"
-                          placeholder="Select country"
-                          placeholderText="search"
-                          isMulti={false}
-                          className={`placeholder-name ${
-                            errors.countryid && countryValue === 0
-                              ? "async-border-red"
-                              : ""
-                          }`}
-                          {...register("countryid")}
-                          defaultOptions={countryList}
-                          onChange={(e) => onSelectCountryDropdown(e)}
-                          onMenuOpen={() => checkCityValid()}
-                        />
-                        <div className="async-error-text">
-                          {errors.countryid && countryValue === 0
-                            ? "Country is required"
-                            : ""}
-                        </div>
                       </FormGroup>
                     </Col>
                   </Row>

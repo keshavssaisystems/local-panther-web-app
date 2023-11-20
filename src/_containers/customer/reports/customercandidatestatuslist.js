@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -42,25 +42,31 @@ const columns = [
   // },
   {
     name: <span className="table-title">Name</span>,
-    selector: (row) => (
+
+    selector: (row) => row.candidatename,
+    cell: (row) => (
       <span className="table-cell" title={row.candidatename}>
         {row.candidatename}
       </span>
     ),
     sortable: true,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Email</span>,
-    selector: (row) => (
+    selector: (row) => row.email,
+    cell: (row) => (
       <span className="table-cell" title={row.email}>
         {row.email}
       </span>
     ),
     sortable: true,
+    minWidth: "200px",
   },
   {
     name: <span className="table-title">Phone</span>,
-    selector: (row) => (
+    selector: (row) => row.phone,
+    cell: (row) => (
       <span
         className="table-cell"
         title={row.phone ? USPhoneNumber(row.phone) : ""}
@@ -69,28 +75,34 @@ const columns = [
       </span>
     ),
     sortable: true,
+    minWidth: "180px",
   },
   {
     name: <span className="table-title">Skills</span>,
-    selector: (row) => (
+    selector: (row) => row.skill,
+    cell: (row) => (
       <span className="table-cell" title={row?.skill}>
         {row?.skill}
       </span>
     ),
     sortable: true,
+    minWidth: "400px",
   },
   {
     name: <span className="table-title">Education</span>,
-    selector: (row) => (
+    selector: (row) => row.education,
+    cell: (row) => (
       <span className="table-cell" title={row.education}>
         {row.education}
       </span>
     ),
     sortable: true,
+    minWidth: "400px",
   },
   {
     name: <span className="table-title">Experience</span>,
-    selector: (row) => (
+    selector: (row) => row.experience,
+    cell: (row) => (
       <span
         className="table-cell"
         title={row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
@@ -99,6 +111,7 @@ const columns = [
       </span>
     ),
     sortable: true,
+    minWidth: "200px",
   },
   // {
   //   name: "Location",
@@ -108,7 +121,9 @@ const columns = [
   {
     name: <span className="table-title">Certifications</span>,
     selector: (row) => row.certifications,
+    cell: (row) => row.certifications,
     sortable: true,
+    minWidth: "200px",
   },
 ];
 
@@ -142,7 +157,12 @@ export function CustomerReportCandidateStatus() {
           Certifications: data.certification,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "CandidateListByStatus",
+          details: filteredData,
+        },
+      ]);
     }
   }, [candidateStatusList]);
   useEffect(() => {
@@ -204,11 +224,12 @@ export function CustomerReportCandidateStatus() {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "customerCandidateStatusListReport"
+                          "customerCandidateStatusListReport",
+                          true
                         )
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -284,6 +305,7 @@ export function CustomerReportCandidateStatus() {
                         fixedHeader
                         pagination
                         className="cust-rep-list-view"
+                        sortable
                       />
                     ) : (
                       <Row className="center-align">

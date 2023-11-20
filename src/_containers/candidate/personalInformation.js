@@ -622,6 +622,7 @@ export function PersonalInformation(props) {
                       <div className="icon-wrapper rounded-circle profile-img">
                         <img
                           width={100}
+                          height={100}
                           className="rounded-circle"
                           src={
                             isHovered
@@ -847,7 +848,7 @@ export function PersonalInformation(props) {
                             onHandleInputChange("firstname", evt.target.value)
                           }
                           className={`field-input placeholder-text form-control ${
-                            getResponse.firstname == ""
+                            getResponse.firstname === ""
                               ? "is-invalid error-text"
                               : ""
                           }`}

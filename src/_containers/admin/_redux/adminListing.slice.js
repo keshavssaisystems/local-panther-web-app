@@ -59,14 +59,45 @@ export const getUsers = createAsyncThunk(
   }
 );
 
+export const deleteUser = createAsyncThunk(`${name}/deleteUser`, async (id) => {
+  const DELETE_USER = `${baseUrl}/User/${id}`;
+  return await fetchWrapper.delete(DELETE_USER);
+});
+
+export const deleteRole = createAsyncThunk(`${name}/deleteRole`, async (id) => {
+  const DELETE_ROLE = `${baseUrl}/UserRoles/${id}`;
+  return await fetchWrapper.delete(DELETE_ROLE);
+});
+
 //  https://panther-api-dev.azurewebsites.net/api/UserRoles?pageSize=500
-export const getRoles = createAsyncThunk(
-  `${name}/getRoles`,
+export const getRoles = createAsyncThunk(`${name}/getRoles`, async () => {
+  const GET_ROLES_STATS = `${baseUrl}/UserRoles/GetUserRolesDropdown`;
+  return await fetchWrapper.get(GET_ROLES_STATS);
+});
+
+export const getRolesList = createAsyncThunk(
+  `${name}/getRolesList`,
   async (payload = {}) => {
     const GET_ROLES_STATS = `${baseUrl}/UserRoles?${new URLSearchParams(
       payload
     )}`;
     return await fetchWrapper.get(GET_ROLES_STATS);
+  }
+);
+
+export const addRole = createAsyncThunk(
+  `${name}/addRole`,
+  async (payload = {}) => {
+    const GET_ROLES_STATS = `${baseUrl}/UserRoles`;
+    return await fetchWrapper.post(GET_ROLES_STATS, payload);
+  }
+);
+
+export const updateMenuMapping = createAsyncThunk(
+  `${name}/updateMenuMapping`,
+  async ({ rolesData, id }) => {
+    const GET_ROLES_STATS = `${baseUrl}/Menus/UpdateMenusPerRole/${id}`;
+    return await fetchWrapper.put(GET_ROLES_STATS, rolesData);
   }
 );
 
@@ -77,8 +108,6 @@ export const getMenuMappings = createAsyncThunk(
     const GET_MENUMAPPING_STATS = `${baseUrl}/Menus?${new URLSearchParams(
       payload
     )}`;
-    return await fetchWrapper.get(GET_MENUMAPPING_STATS);
-  }
 );
 
 // Create the slice
@@ -91,6 +120,8 @@ const adminListingSlice = createSlice({
     data: [],
     industyList: [],
     industryCompanyMapping: [],
+    rolesList: [],
+    menuList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -182,14 +213,64 @@ const adminListingSlice = createSlice({
       state.error = null;
     },
     [getRoles.fulfilled]: (state, { payload = {} }) => {
-      const { data } = payload;
       state.loading = false;
-      state.data = data?.userRoleList;
+      state.rolesList = payload ? payload : [];
     },
     [getRoles.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
+
+    [getRolesList.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getRolesList.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.data = data?.userRoleList;
+    },
+    [getRolesList.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [addRole.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [addRole.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [addRole.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [updateMenuMapping.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateMenuMapping.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateMenuMapping.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [deleteRole.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [deleteRole.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [deleteRole.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
     [getMenuMappings.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -197,9 +278,20 @@ const adminListingSlice = createSlice({
     [getMenuMappings.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data;
+      state.menuList = data;
     },
     [getMenuMappings.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [deleteUser.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [deleteUser.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [deleteUser.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
@@ -214,7 +306,12 @@ export const adminListingActions = {
   getCustomers,
   getUsers,
   getRoles,
-  getMenuMappings, // Export the async get companies action
+  getMenuMappings,
+  deleteUser, // Export the async get companies action
+  getRolesList,
+  addRole,
+  updateMenuMapping,
+  deleteRole,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

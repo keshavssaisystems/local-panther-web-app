@@ -23,6 +23,7 @@ import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { getProfileActions, dropdownActions } from "_store";
+import infoIcon from "assets/utils/images/info-circle-fill.svg";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -86,6 +87,8 @@ export const CustomerCandidateLists = (props) => {
       return 5;
     } else if (type === "rejected") {
       return 6;
+    } else if (type === "offers") {
+      return 7;
     } else {
       return "";
     }
@@ -213,19 +216,6 @@ export const CustomerCandidateLists = (props) => {
               color="primary"
               disabled={loading}
               className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "liked" })
-              }
-              onClick={() => {
-                toggle("liked");
-              }}
-            >
-              Liked
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
                 "border-0 btn-transition " +
                 classnames({ active: activeTab === "maybe" })
               }
@@ -240,6 +230,20 @@ export const CustomerCandidateLists = (props) => {
               disabled={loading}
               className={
                 "border-0 btn-transition  " +
+                classnames({ active: activeTab === "liked" })
+              }
+              onClick={() => {
+                toggle("liked");
+              }}
+            >
+              Liked
+            </Button>
+
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
                 classnames({ active: activeTab === "applied" })
               }
               onClick={() => {
@@ -248,6 +252,7 @@ export const CustomerCandidateLists = (props) => {
             >
               Applied
             </Button>
+
             <Button
               color="primary"
               disabled={loading}
@@ -260,6 +265,19 @@ export const CustomerCandidateLists = (props) => {
               }}
             >
               Scheduled
+            </Button>
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "offers" })
+              }
+              onClick={() => {
+                toggle("offers");
+              }}
+            >
+              Offers
             </Button>
             <Button
               color="primary"
@@ -332,6 +350,21 @@ export const CustomerCandidateLists = (props) => {
                 </>
               ) : (
                 <>
+                  <div className="p-3 tab-info">
+                    <div className="row">
+                      <div className="col-8">
+                        <img src={infoIcon} alt="" />
+                        Our advanced AI matching system efficiently reviews
+                        candidate profiles and job requirements to connect
+                        candidates with the best job opportunities. By using
+                        this system, we streamline the application process and
+                        ensure a fair evaluation for all applicants. However,
+                        it's important to note that the AI system may not
+                        capture every detail or subtlety of a candidate's
+                        profile or job description.
+                      </div>
+                    </div>
+                  </div>
                   {candidateList?.length > 0 ? (
                     <>
                       <Row xs={1} sm={1} md={2} lg={3} xl={3}>
@@ -400,6 +433,18 @@ export const CustomerCandidateLists = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />
+                          Liked jobs are jobs saved for later review or
+                          comparison by clicking a button or icon on a job
+                          record. They will be stored in a separate section of
+                          the profile, allowing users to easily access them and
+                          decide whether to apply or not.
+                        </div>
+                      </div>
+                    </div>
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
@@ -456,6 +501,19 @@ export const CustomerCandidateLists = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />A job record may be
+                          marked with questions or doubts, indicating uncertain
+                          applications due to a lack of information,
+                          qualifications, and locations. These jobs may also be
+                          saved in a separate section of the user profile,
+                          allowing the user to review and change their decisions
+                          later.
+                        </div>
+                      </div>
+                    </div>
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
@@ -512,6 +570,18 @@ export const CustomerCandidateLists = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />
+                          Applied jobs are those that users submit applications
+                          for through the platform. They are marked as applied
+                          and are stored in a separate section of the profile.
+                          The user can track the status and withdraw the
+                          application.
+                        </div>
+                      </div>
+                    </div>
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
@@ -568,6 +638,83 @@ export const CustomerCandidateLists = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />A scheduled interview is
+                          an appointment with a customer to discuss
+                          qualifications for a job, typically in person, by
+                          phone, or video, after the initial screening process.
+                        </div>
+                      </div>
+                    </div>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CustCandidateListView
+                          type={props.type || activeTab}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
+                        />
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="offers">
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />
+                          An offer is a formal proposal from a customer,
+                          detailing job details, salary, benefits, start date,
+                          and work hours, indicating successful completion of
+                          the interview process.
+                        </div>
+                      </div>
+                    </div>
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
@@ -624,6 +771,17 @@ export const CustomerCandidateLists = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />
+                          An accepted job is when candidates agree to the terms
+                          of the offer and confirm their intention to work for
+                          the customer, securing the job and preparing to start
+                          working.
+                        </div>
+                      </div>
+                    </div>
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView
@@ -680,6 +838,17 @@ export const CustomerCandidateLists = (props) => {
                   </>
                 ) : (
                   <>
+                    <div className="p-3 tab-info">
+                      <div className="row">
+                        <div className="col-8">
+                          <img src={infoIcon} alt="" />A rejected job refers to
+                          a decision to decline an offer or a customer
+                          rescinding it, indicating that the individual has
+                          decided not to work for the customer or has changed
+                          their hiring decision.
+                        </div>
+                      </div>
+                    </div>
                     {candidateList?.length > 0 ? (
                       <>
                         <CustCandidateListView

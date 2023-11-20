@@ -63,7 +63,7 @@ export function PreScreenApplicant({
     event.preventDefault();
     let questionArr = [];
     let customAnswer =
-      event.target.elements.applicantsRecordAnswer.value === undefined
+      event?.target?.elements?.applicantsRecordAnswer?.value === undefined
         ? ""
         : event.target.elements.applicantsRecordAnswer.value;
     if (event.target.elements.question.length > 0) {
@@ -100,7 +100,8 @@ export function PreScreenApplicant({
     }
     if (
       event.target.elements.custom_question !== undefined &&
-      event.target.elements.custom_question.length === undefined
+      event.target.elements.custom_question.length === undefined &&
+      event.target.elements.custom_question.value !== ""
     ) {
       let obj = {
         jobprescreenapplicationid: 0,
@@ -112,7 +113,10 @@ export function PreScreenApplicant({
       };
       questionArr.push(obj);
     }
-    postData({ questionArr: questionArr, customAnserType: customAnswer });
+    postData({
+      questionArr: questionArr,
+      customAnserType: customAnswer === "" ? "Audio" : customAnswer,
+    });
     setSuccessMessage(true);
   };
 

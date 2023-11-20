@@ -25,13 +25,14 @@ import { getReportDataThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
+import { updateMonthstoYears } from "_helpers/helper";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -93,7 +94,9 @@ export function CandidateReport({ title }) {
       let filteredData = data.map((rec) => {
         return {
           Candidate: rec?.candidatename,
-          Experience: rec.experience,
+          Experience: rec.experience
+            ? updateMonthstoYears(parseInt(rec.experience))
+            : "",
           Skills: typeof rec?.skill === "string" && rec?.skill,
           Education: rec?.education,
           Certification: rec?.certification,
@@ -101,7 +104,12 @@ export function CandidateReport({ title }) {
           Address: rec.address,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "CandidateReport",
+          details: filteredData,
+        },
+      ]);
     }
   }, [data]);
 
@@ -135,29 +143,34 @@ export function CandidateReport({ title }) {
   const columns = [
     {
       name: <span className="table-title">Candidate</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.candidatename}>
           {row.candidatename}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "12%",
+      selector: (row) => row.candidatename,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Experience</span>,
-      selector: (row) => (
-        <span className="table-cell" title={row.experience}>
-          {row.experience}
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row.experience ? updateMonthstoYears(parseInt(row.experience)) : ""
+          }
+        >
+          {row.experience ? updateMonthstoYears(parseInt(row.experience)) : ""}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "8%",
+      selector: (row) => row.experience,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Skills</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={typeof row?.skill === "string" && row?.skill}
@@ -165,49 +178,49 @@ export function CandidateReport({ title }) {
           {typeof row?.skill === "string" && row?.skill}
         </span>
       ),
-      // wrap: true,
-      width: "30%",
+      selector: (row) => row.skill,
+      minWidth: "350px",
     },
     {
       name: <span className="table-title">Education</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.education}>
           {row.education}
         </span>
       ),
-      // wrap: true,
-      width: "15%",
+      selector: (row) => row.education,
+      minWidth: "350px",
     },
     {
       name: <span className="table-title">Certification</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.certification}>
           {row.certification}
         </span>
       ),
-      // wrap: true,
-      width: "15%",
+      selector: (row) => row.certification,
+      minWidth: "350px",
     },
     {
       name: <span className="table-title">Matched Jobs</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.matchedjobs}>
           {row.matchedjobs}
         </span>
       ),
-      // wrap: true,
-      width: "8%",
+      selector: (row) => row.matchedjobs,
+      minWidth: "150px",
     },
     {
       name: <span className="table-title">Address</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.address}>
           {row.address}
         </span>
       ),
       sortable: true,
-      // wrap: true,
-      width: "12%",
+      selector: (row) => row.address,
+      minWidth: "350px",
     },
   ];
 
@@ -233,10 +246,10 @@ export function CandidateReport({ title }) {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "adminCandidateReport")
+                        exportToExcel(excelData, "adminCandidateReport", true)
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -248,7 +261,7 @@ export function CandidateReport({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"@skillid"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skills"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -259,7 +272,7 @@ export function CandidateReport({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <LocationFilter
                     name={"@cityid"}
-                    placeholder={"Select Location"}
+                    placeholder={"Search Location"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setLocation(e);

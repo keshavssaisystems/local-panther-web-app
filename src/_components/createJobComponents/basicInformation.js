@@ -68,6 +68,14 @@ export function BasicInformation({
       data === undefined || data.companyDetail === undefined
         ? ""
         : data.companyDetail,
+    authorizedtoworkinus:
+      data === undefined || data.authorizedtoworkinus === undefined
+        ? ""
+        : data.authorizedtoworkinus,
+    sponsorshiprequiured:
+      data === undefined || data.sponsorshiprequiured === undefined
+        ? ""
+        : data.sponsorshiprequiured,
   });
   const [previousValue, setPreviousValue] = useState({
     companyId: "",
@@ -115,6 +123,20 @@ export function BasicInformation({
       previousData === undefined || previousData.companydetails === undefined
         ? ""
         : previousData.companydetails,
+    authorizedtoworkinus:
+      previousData === undefined ||
+      previousData.authorizedtoworkinus === undefined
+        ? ""
+        : previousData.authorizedtoworkinus,
+    sponsorshiprequiured:
+      previousData === undefined ||
+      previousData.sponsorshiprequiured === undefined
+        ? ""
+        : previousData.sponsorshiprequiured,
+    countryName:
+      previousData === undefined || previousData.statename === undefined
+        ? ""
+        : "US",
   });
   const [descriptionData, setDescriptionData] = useState(
     prevStep === 3 && preValue.description !== ""
@@ -128,7 +150,9 @@ export function BasicInformation({
   const [openPositionValidation, setOpenPositionValidation] = useState(false);
   const [cityValidation, setCityValidation] = useState(false);
   const [stateOnchange, setStateOnChange] = useState(false);
+  const [countryOnchange, setCountryOnChange] = useState(false);
   const [descriptionValidation, setDescriptionValidation] = useState(false);
+  const [zipCodeValidation, setZipCodeValidation] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -144,6 +168,9 @@ export function BasicInformation({
     "undefined, undefined, undefined, undefined"
       ? setCityValidation(true)
       : setCityValidation(false);
+    event.target.elements.zipCode.value === ""
+      ? setZipCodeValidation(true)
+      : setZipCodeValidation(false);
     descriptionData === ""
       ? setDescriptionValidation(true)
       : setDescriptionValidation(false);
@@ -151,6 +178,7 @@ export function BasicInformation({
       event.target.elements.companyName.value !== "" &&
       event.target.elements.jobTitle.value !== "" &&
       event.target.elements.openPositions.value !== "" &&
+      event.target.elements.zipCode.value !== "" &&
       event.target.elements.city.value !==
         "undefined, undefined, undefined, undefined" &&
       descriptionData !== ""
@@ -190,6 +218,10 @@ export function BasicInformation({
           : descriptionData,
       companyDetail: eventData.target.elements.companyDetails.value,
       jobLoactionOptions: jobLocationOptions,
+      authorizedtoworkinus:
+        eventData.target.elements.authorizedtoworkinus.checked,
+      sponsorshiprequiured:
+        eventData.target.elements.sponsorshiprequiured.checked,
     };
     postData(data);
     setPreValue(data);
@@ -211,6 +243,7 @@ export function BasicInformation({
     setCityValidation(false);
     let locationSplit = event.value.split(", ");
     setStateOnChange(true);
+    setCountryOnChange(true);
     setStateData({
       cityId: locationSplit[0],
       stateId: locationSplit[1],
@@ -400,11 +433,34 @@ export function BasicInformation({
           </Col>
           <Col>
             <FormGroup>
+              <Label for="country" className="fw-semi-bold">
+                Country
+              </Label>
+              <Input
+                id={"country"}
+                name={"country"}
+                type={"text"}
+                readOnly
+                value={
+                  countryOnchange === false ? previousValue.countryName : "US"
+                }
+                placeholder="Select country"
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <FormGroup>
               <Label for="zipCode" className="fw-semi-bold">
-                Zip code
+                Zip code<span style={{ color: "red" }}>* </span>
               </Label>
               <InputMask
-                className="form-control"
+                className={
+                  zipCodeValidation === true
+                    ? "is-invalid form-control"
+                    : "form-control "
+                }
                 id={"zipCode"}
                 name={"zipCode"}
                 mask={"99999"}
@@ -414,8 +470,48 @@ export function BasicInformation({
                 }
                 placeholder="Enter zip code"
               />
+              {zipCodeValidation === true && (
+                <FormText color="danger">Please enter zip code</FormText>
+              )}
             </FormGroup>
           </Col>
+          <Col>
+            <FormGroup className="mt-4">
+              <Input
+                id={"authorizedtoworkinus"}
+                name={"authorizedtoworkinus"}
+                type={"checkbox"}
+                defaultChecked={
+                  prevStep === 3
+                    ? preValue.authorizedtoworkinus
+                    : previousValue.authorizedtoworkinus
+                }
+              />
+              {"  "}
+              <Label for="authorizedtoworkinus" className="fw-semi-bold">
+                Authorized to work in United States
+              </Label>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup className="mt-4">
+              <Input
+                id={"sponsorshiprequiured"}
+                name={"sponsorshiprequiured"}
+                type={"checkbox"}
+                defaultChecked={
+                  prevStep === 3
+                    ? preValue.sponsorshiprequiured
+                    : previousValue.sponsorshiprequiured
+                }
+              />{" "}
+              {"  "}
+              <Label for="sponsorshiprequiured" className="fw-semi-bold">
+                Sponsorship is required
+              </Label>
+            </FormGroup>
+          </Col>
+          <Col></Col>
         </Row>
         <Row>
           <Col>

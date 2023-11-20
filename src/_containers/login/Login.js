@@ -117,7 +117,7 @@ export function Login() {
               <Col lg="9" md="10" sm="12">
                 <img
                   src={logo}
-                  className="logo mb-4"
+                  className="logo mb-2"
                   width={"200px"}
                   alt="logo"
                 />

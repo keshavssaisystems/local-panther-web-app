@@ -227,7 +227,7 @@ export function CandCardView({
 
                 <Row noGutters className="mt-2">
                   <ButtonGroup className="card-btn-grp" size="sm">
-                    <Button
+                    {/* <Button
                       outline
                       title="liked"
                       className="btn-icon mb-1"
@@ -236,11 +236,11 @@ export function CandCardView({
                       onClick={() => onBtnClick("liked")}
                     >
                       Like <BsHandThumbsUp></BsHandThumbsUp>
-                    </Button>
+                    </Button> */}
 
                     <Button
                       outline
-                      title="maybe"
+                      title="Maybe"
                       className="btn-icon mb-1"
                       color="primary"
                       size="sm"
@@ -251,18 +251,18 @@ export function CandCardView({
 
                     <Button
                       outline
-                      title="Not Interested"
+                      title="Reject"
                       className="btn-icon mb-1"
                       color="primary"
                       onClick={() => onBtnClick("rejected")}
                       size="sm"
                     >
-                      Not Interested <BsXCircle></BsXCircle>
+                      Reject <BsXCircle></BsXCircle>
                     </Button>
 
                     <Button
                       outline
-                      title="schedule"
+                      title="Apply"
                       className="btn-icon mb-1"
                       color="primary"
                       size="sm"

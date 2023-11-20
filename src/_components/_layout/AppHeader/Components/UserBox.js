@@ -122,6 +122,7 @@ export function UserBox() {
                   <DropdownToggle color="link" className="p-0">
                     <img
                       width={42}
+                      height={42}
                       className="rounded-circle"
                       src={profileImg ? profileImg : avatar1}
                       alt=""
@@ -146,6 +147,7 @@ export function UserBox() {
                               <div className="widget-content-left me-3">
                                 <img
                                   width={42}
+                                  height={42}
                                   className="rounded-circle"
                                   src={profileImg ? profileImg : avatar1}
                                   alt=""

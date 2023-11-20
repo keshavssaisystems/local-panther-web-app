@@ -31,7 +31,7 @@ import {
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -86,7 +86,7 @@ export function OpenJobs({ title }) {
           Rejected: rec.reject,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([{ sheetName: "OpenJobs", details: filteredData }]);
     }
   }, [data]);
 
@@ -137,7 +137,8 @@ export function OpenJobs({ title }) {
         </span>
       ),
       sortable: true,
-      // width: "150px",
+      selector: (row) => row.companyname,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Title</span>,
@@ -147,42 +148,45 @@ export function OpenJobs({ title }) {
         </span>
       ),
       sortable: true,
-      // width: "150px",
+      selector: (row) => row.jobtitle,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Location</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.address}>
           {row.address}
         </span>
       ),
       sortable: true,
-      // width: "150px",
+      selector: (row) => row.address,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Experience</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.experiencelevel}>
           {row.experiencelevel}
         </span>
       ),
       sortable: true,
-      // width: "120px",
+      selector: (row) => row.experiencelevel,
+      minWidth: "200px",
     },
     {
       name: <span className="table-title">Skills</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.musthaveskills}>
           {row.musthaveskills}
         </span>
       ),
-
       sortable: true,
-      width: "15%",
+      selector: (row) => row.musthaveskills,
+      minWidth: "300px",
     },
     {
       name: <span className="table-title">Posted</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span
           className="table-cell"
           title={
@@ -198,67 +202,73 @@ export function OpenJobs({ title }) {
       ),
       // format: (row) => moment(row.jobposteddate).format("MM/DD/YYYY"),
       sortable: true,
-      width: "120px",
+      selector: (row) => row.jobposteddate,
+      minWidth: "150px",
     },
     {
       name: <span className="table-title">Position</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.noofopenposition}>
           {row.noofopenposition}
         </span>
       ),
       sortable: true,
-      width: "100px",
+      selector: (row) => row.noofopenposition,
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Hired</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.hired}>
           {row.hired}
         </span>
       ),
       sortable: true,
-      width: "100px",
+      selector: (row) => row.hired,
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Matched</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.matched}>
           {row.matched}
         </span>
       ),
       sortable: true,
-      width: "120px",
+      selector: (row) => row.matched,
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Liked</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.like}>
           {row.like}
         </span>
       ),
       sortable: true,
-      width: "100px",
+      selector: (row) => row.like,
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Applied</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.applied}>
           {" "}
           {row.applied}
         </span>
       ),
       sortable: true,
-      width: "100px",
+      selector: (row) => row.applied,
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Scheduled</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.scheduled}>
           {row.scheduled}
         </span>
       ),
-      cell: (row) =>
+      selector: (row) =>
         // <Button
         //   color="primary"
         //   onClick={() => handleSheduleClick(row.jobid)}
@@ -267,31 +277,30 @@ export function OpenJobs({ title }) {
         //   {row.scheduled}
         // </Button>
         row.scheduled,
-
       sortable: true,
-      width: "120px",
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Accepted</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.accept}>
           {row.accept}
         </span>
       ),
-
       sortable: true,
-      width: "120px",
+      selector: (row) => row.accept,
+      minWidth: "120px",
     },
     {
       name: <span className="table-title">Rejected</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.reject}>
           {row.reject}
         </span>
       ),
-
       sortable: true,
-      width: "120px",
+      selector: (row) => row.reject,
+      minWidth: "120px",
     },
   ];
   const scheduledListColumns = [
@@ -412,10 +421,10 @@ export function OpenJobs({ title }) {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "adminOpenJobsReport")
+                        exportToExcel(excelData, "adminOpenJobsReport", true)
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -424,10 +433,10 @@ export function OpenJobs({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="2" sm="12" sx="12" className="pe-1">
                   <CompanyFilter
                     name={"companyId"}
-                    placeholder={"Select Company"}
+                    placeholder={"Search Company"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
@@ -438,7 +447,7 @@ export function OpenJobs({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"skillId"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skill"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -449,7 +458,7 @@ export function OpenJobs({ title }) {
                 <Col lg="2" md="2" sm="12" sx="12">
                   <LocationFilter
                     name={"cityId"}
-                    placeholder={"Select Location"}
+                    placeholder={"Search Location"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setLocation(e);

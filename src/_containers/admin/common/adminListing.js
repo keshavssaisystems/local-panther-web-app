@@ -41,8 +41,16 @@ import successIcon from "assets/utils/images/success_icon.svg";
 import { NewCustomer } from "_components/common/addCustomer";
 import AsyncSelect from "react-select/async";
 import { AddEditCustomer } from "./addEditCustomer";
+import { AddEditUser } from "./addEditUser";
 import { AddEditCompany } from "./addEditCompany";
-import { createEntityAdapter } from "@reduxjs/toolkit";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { settingsActions } from "_store";
+import cx from "classnames";
+import { BsPencil, BsTrash3 } from "react-icons/bs";
+import { async } from "q";
+import { AddEditRole } from "./addEditRole";
+import { FiPlus } from "react-icons/fi";
+import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
@@ -70,6 +78,13 @@ export const AdminListing = ({ entity }) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+  const [searchData, setSearchText] = useState("");
   const [newCompData, setNewCompData] = useState({
     // ... other fields
     newCompName: { value: "", error: false },
@@ -105,15 +120,124 @@ export const AdminListing = ({ entity }) => {
     case "users":
       title = users.title;
       icon = companyLogo;
-      columns = users.columns;
-      searchFilter = users.searchFilter;
-      buttonsList = users.buttonsList;
+      columns = [
+        {
+          name: "User role",
+          id: "rolename",
+          selector: (row) => row.rolename,
+          sortable: true,
+        },
+        {
+          name: "First name",
+          id: "firstName",
+          selector: (row) => row.firstname,
+          sortable: true,
+        },
+        {
+          name: "Last name",
+          selector: (row) => row.lastname,
+          sortable: true,
+        },
+        {
+          name: "User name",
+          selector: (row) => row.username,
+          sortable: true,
+        },
+        {
+          name: "Email",
+          id: "email",
+          selector: (row) => row.email,
+          sortable: true,
+        },
+        {
+          name: "Phone number",
+          id: "phonenumber",
+          selector: (row) => row.phonenumber,
+          sortable: true,
+        },
+        {
+          name: "Action",
+          id: "isactive",
+          cell: (row) => (
+            <div className="d-block w-100">
+              <div
+                className="switch has-switch has-switch-sm me-2"
+                data-on-label="ON"
+                data-off-label="OFF"
+                onClick={() => toggleNotification(!row.isactive, row)}
+                style={{ verticalAlign: "bottom" }}
+              >
+                <div
+                  className={cx("switch-animate", {
+                    "switch-on": row.isactive,
+                    "switch-off": !row.isactive,
+                  })}
+                >
+                  <input type="checkbox" />
+                  <span className="switch-left">ON</span>
+                  <label>&nbsp;</label>
+                  <span className="switch-right">OFF</span>
+                </div>
+              </div>
+
+              <BsPencil
+                style={{ fontSize: "18px" }}
+                className="edit-icon me-2"
+                onClick={(evt) => handleRowClick(row, "edit")}
+              />
+              <BsTrash3
+                style={{ fontSize: "18px" }}
+                onClick={() => deleteConfirm(row, "user")}
+              />
+            </div>
+          ),
+          sortable: false,
+        },
+      ];
+      // searchFilter = users.searchFilter;
+      // buttonsList = users.buttonsList;
       listingTitle = users.listingTitle;
       break;
     case "roles":
       title = roles.title;
       icon = companyLogo;
-      columns = roles.columns;
+      columns = [
+        {
+          name: "Role",
+          id: "rolename",
+          selector: (row) => row.rolename,
+          sortable: true,
+        },
+        {
+          name: "Description",
+          id: "description",
+          selector: (row) => row.description,
+          sortable: true,
+        },
+        {
+          name: "Action",
+          id: "isactive",
+          cell: (row) => (
+            <div className="d-block w-100">
+              <FaEye
+                style={{ fontSize: "18px" }}
+                className="edit-icon me-2"
+                onClick={(evt) => handleRowClick(row, "view")}
+              />
+
+              <BsPencil
+                style={{ fontSize: "18px" }}
+                className="edit-icon me-2"
+                onClick={(evt) => handleRowClick(row, "edit")}
+              />
+              {/* <BsTrash3
+                style={{ fontSize: "18px" }}
+                onClick={() => deleteConfirm(row, "role")}
+              /> */}
+            </div>
+          ),
+        },
+      ];
       searchFilter = roles.searchFilter;
       buttonsList = roles.buttonsList;
       listingTitle = roles.listingTitle;
@@ -137,6 +261,10 @@ export const AdminListing = ({ entity }) => {
   };
 
   useEffect(() => {
+    loadData();
+  }, [entity]);
+
+  const loadData = () => {
     if (entity === "company") {
       dispatch(getCompanies(urlParams));
     } else if (entity === "customers") {
@@ -150,7 +278,6 @@ export const AdminListing = ({ entity }) => {
       dispatch(getMenuMappings(urlParams));
     }
   }, [entity]);
-
   const customStyles = {
     headCells: {
       style: {
@@ -162,7 +289,23 @@ export const AdminListing = ({ entity }) => {
     },
   };
 
-  const handleRowClick = (row) => {
+  const handleRowClick = async (row, check) => {
+    let id = row.userroleid;
+    await dispatch(getMenuMappings({ id }));
+    setSelectedRowData(row);
+    if (check === "view") {
+      setViewMode(true);
+    } else {
+      setIsAddMode(false);
+      setViewMode(false);
+    }
+
+    setOpenModal(true);
+  };
+  const [check, setCheck] = useState();
+  const deleteConfirm = (row, check) => {
+    debugger;
+    setCheck(check);
     setSelectedRowData(row);
     setIsAddMode(false); // Open the modal
     setOpenModal(true);
@@ -183,7 +326,6 @@ export const AdminListing = ({ entity }) => {
     setSuccess(false);
     setEditingData(null); // Reset editing data
   };
-
   const onUpdateNewComp = (evt, formType) => {
     // const newData = { ...formType === 'company' ? newCompData : newCustData };
     // newData[evt.target.name] = { value: evt.target.value, error: false };
@@ -237,7 +379,6 @@ export const AdminListing = ({ entity }) => {
       </Input>
     </Col>
   ));
-
   const cardButtons = buttonsList.map((item) => (
     <Col lg="3" md="2" sm="12" sx="12">
       <FormGroup>
@@ -260,8 +401,12 @@ export const AdminListing = ({ entity }) => {
     <>
       <Row>
         <Col md="12">
-          <PageTitle heading={title} icon={icon} />
+          <PageTitle
+            heading={entity === "roles" ? "Menu mapping" : title}
+            icon={icon}
+          />
         </Col>
+
         <Col md="12">
           <Card className="mb-3">
             <CardBody>
@@ -333,18 +478,13 @@ export const AdminListing = ({ entity }) => {
       </Modal>
       {openModal ? (
         <div>
-          <Modal
-            isOpen={openModal}
-            fullscreen={"lg"}
-            size="lg"
-            backdrop={"static"}
-            toggle={() => close()}
-            onClosed={() => close()}
-          >
+          <Modal isOpen={openModal} size={entity === "roles" ? "md" : "lg"}>
             <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 {!isAddMode
-                  ? `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
+                  ? entity === "roles"
+                    ? "Edit menu mapping"
+                    : `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
                   : `Add New ${
                       entity.charAt(0).toUpperCase() + entity.slice(1)
                     }`}

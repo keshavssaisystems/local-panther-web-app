@@ -50,7 +50,6 @@ export const customers = {
       sortable: true,
     },
   ],
-
   searchFilter: [
     {
       name: "Company",

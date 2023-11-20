@@ -29,7 +29,7 @@ import { getReportDataThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -101,7 +101,12 @@ export function HiringManager({ title }) {
           Address: rec?.address,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "HiringManager",
+          details: filteredData,
+        },
+      ]);
     }
   }, [data]);
 
@@ -136,37 +141,43 @@ export function HiringManager({ title }) {
   const columns = [
     {
       name: "Company",
-      selector: (row) => row?.companyname,
+      cell: (row) => row?.companyname,
       sortable: true,
       wrap: true,
-      width: "250px",
+      selector: (row) => row.companyname,
+      minWidth: "250px",
     },
     {
       name: "Customer",
-      selector: (row) => row?.customername,
+      cell: (row) => row?.customername,
       sortable: true,
       wrap: true,
-      width: "250px",
+      selector: (row) => row.customername,
+      minWidth: "200px",
     },
     {
       name: "Email",
-      selector: (row) => row?.email,
+      cell: (row) => row?.email,
       wrap: true,
-      width: "250px",
+      sortable: true,
+      selector: (row) => row.email,
+      minWidth: "250px",
     },
     {
       name: "Phone",
-      selector: (row) =>
-        row?.phonenumber ? USPhoneNumber(row.phonenumber) : "",
+      cell: (row) => (row?.phonenumber ? USPhoneNumber(row.phonenumber) : ""),
       sortable: true,
       wrap: true,
-      width: "150px",
+      selector: (row) => row.phonenumber,
+      minWidth: "200px",
     },
     {
       name: "Address",
-      selector: (row) => row?.address,
+      cell: (row) => row?.address,
       sortable: true,
       wrap: true,
+      selector: (row) => row.address,
+      minWidth: "350px",
     },
   ];
 
@@ -192,10 +203,14 @@ export function HiringManager({ title }) {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "adminHiringManagerReport")
+                        exportToExcel(
+                          excelData,
+                          "adminHiringManagerReport",
+                          true
+                        )
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -204,10 +219,10 @@ export function HiringManager({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="2" sm="12" sx="12" className="pe-1">
                   <CompanyFilter
                     name={"@companyid"}
-                    placeholder={"Select Company"}
+                    placeholder={"Search Company"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
@@ -215,10 +230,10 @@ export function HiringManager({ title }) {
                     value={company}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                {/* <Col lg="2" md="2" sm="12" sx="12">
                   <SkillsFilter
                     name={"@skillid"}
-                    placeholder={"Select Skills"}
+                    placeholder={"Search Skill"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setSkill(e);
@@ -278,7 +293,7 @@ export function HiringManager({ title }) {
                       />
                     </InputGroup>
                   </FormGroup>
-                </Col>
+                </Col> */}
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
