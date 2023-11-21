@@ -55,11 +55,11 @@ export function StackBarChart({ graphData }) {
   }
   let baroptions = {
     chart: {
-      type: "bar",
+      type: "line",
       height: 380,
       width: "80%",
-      stacked: true,
-      stackType: "100%",
+      // stacked: true,
+      // stackType: "100%",
       toolbar: {
         show: false,
       },
@@ -68,6 +68,10 @@ export function StackBarChart({ graphData }) {
       bar: {
         columnWidth: "30%",
       },
+    },
+    stroke: {
+      curve: "smooth",
+      width: 3,
     },
     colors: [
       "#008FFB",
