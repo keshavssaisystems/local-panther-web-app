@@ -33,13 +33,13 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
 
   const returnAddress = () => {
     if (jobDetail.cityname && jobDetail.statename && jobDetail.countryname) {
-      return `${jobDetail.cityname} ,${jobDetail.statename}, ${jobDetail.countryname}`;
+      return `${jobDetail.cityname}, ${jobDetail.statename}, ${jobDetail.countryname}`;
     } else if (jobDetail.cityname && jobDetail.statename) {
-      return `${jobDetail.cityname} ,${jobDetail.statename}`;
+      return `${jobDetail.cityname}, ${jobDetail.statename}`;
     } else if (jobDetail.statename && jobDetail.countryname) {
       return `${jobDetail.statename}, ${jobDetail.countryname}`;
     } else if (jobDetail.cityname && jobDetail.countryname) {
-      return `${jobDetail.cityname} , ${jobDetail.countryname}`;
+      return `${jobDetail.cityname}, ${jobDetail.countryname}`;
     } else {
       return "";
     }

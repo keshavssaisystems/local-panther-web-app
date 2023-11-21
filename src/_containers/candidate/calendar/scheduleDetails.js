@@ -7,10 +7,17 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
+import { USPhoneNumber } from "_helpers/helper";
+import { useSelector } from "react-redux";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
+  const interviewGuideLink = useSelector(
+    (state) => state.scheduleInterview?.interviewGuideList
+  );
   let scheduled = getTimezoneDateTime(
-    interviewDetail?.scheduledate,
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "MM/DD/YYYY"
   );
 
@@ -29,7 +36,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate),
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -61,31 +70,31 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
   );
   const getText = function (data) {
     let text = "";
-    if (data.companyname != "") {
+    if (data.companyname !== "") {
       text = data.companyname;
-      if (data.cityname != "") {
+      if (data.cityname !== "") {
         text += ", " + data.cityname;
       }
-      if (data.statename != "") {
+      if (data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.cityname != "") {
+    } else if (data.cityname !== "") {
       text = data.cityname;
-      if (data.statename != "") {
+      if (data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.statename != "") {
+    } else if (data.statename !== "") {
       text = data.statename;
-      if (data.countryname != "") {
+      if (data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.countryname != "") {
+    } else if (data.countryname !== "") {
       text = data.countryname;
     }
     return text;
@@ -156,9 +165,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                     <div className="p-custom">
                       <p className="mb-0">
                         Phone no -{" "}
-                        {interviewDetail.candidatephonenumber !== undefined
+                        {interviewDetail.candidatephonenumber === undefined
                           ? ""
-                          : interviewDetail.candidatephonenumber}
+                          : USPhoneNumber(interviewDetail.candidatephonenumber)}
                       </p>
                     </div>
                   )}
@@ -218,6 +227,18 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                       {interviewDetail.interviewername === ""
                         ? "No interviewer added"
                         : interviewDetail.interviewername}
+                    </p>
+                  </div>
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      <a
+                        href={interviewGuideLink[0].name}
+                        target={"_blank"}
+                        rel="noreferrer"
+                      >
+                        Click here
+                      </a>{" "}
+                      to downlaod the interview guide.
                     </p>
                   </div>
                 </div>

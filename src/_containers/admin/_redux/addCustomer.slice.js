@@ -4,13 +4,13 @@ import { fetchWrapper } from "_helpers";
 // https://panther-api-dev.azurewebsites.net/api/Customer/AddCustomer
 
 // create slice name
-const name = 'addCustomer';
+const name = "addCustomer";
 const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
 
-const urlParams= {
-  isActive : true,
-  pageSize : 500,
-  pageNumber:1
+const urlParams = {
+  isActive: true,
+  pageSize: 500,
+  pageNumber: 1,
 };
 
 /*
@@ -20,8 +20,20 @@ industry
 */
 export const getCompaniesList = createAsyncThunk(
   `${name}/getCompaniesList`,
-  async (payload = {}) => { 
-    const GET_COMPANIES_STATS = `${baseUrl}/Company/GetCompanyDropdown?${new URLSearchParams(payload)}`;
+  async (payload = {}) => {
+    const GET_COMPANIES_STATS = `${baseUrl}/Company/GetCompanyDropdown?${new URLSearchParams(
+      payload
+    )}`;
+    return await fetchWrapper.get(GET_COMPANIES_STATS);
+  }
+);
+
+export const getCompanyAdmin = createAsyncThunk(
+  `${name}/getCompanyAdmin`,
+  async (payload = {}) => {
+    const GET_COMPANIES_STATS = `${baseUrl}/Company/Get?${new URLSearchParams(
+      payload
+    )}`;
     return await fetchWrapper.get(GET_COMPANIES_STATS);
   }
 );
@@ -41,18 +53,29 @@ export const getCitiesList = createAsyncThunk(`${name}/getCities`, async () => {
 });
 
 // Get Countries list
-export const getCountriesList = createAsyncThunk(`${name}/getCountries`, async () => {
-  return await fetchWrapper.get(
-    `${baseUrl}/Common/GetCommonDropdown?searchText=country`
-  );
-});
+export const getCountriesList = createAsyncThunk(
+  `${name}/getCountries`,
+  async () => {
+    return await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=country`
+    );
+  }
+);
 
 // https://panther-api-dev.azurewebsites.net/api/Customer/AddCustomer
-export const addCustomer = createAsyncThunk( 
+export const addCustomer = createAsyncThunk(
   `${name}/addCustomer`,
   async (payload = {}) => {
     const ADD_CUSTOMER = `${baseUrl}/Customer/AddCustomer`;
     return await fetchWrapper.post(ADD_CUSTOMER, payload);
+  }
+);
+
+export const updateCustomer = createAsyncThunk(
+  `${name}/updateCustomer`,
+  async ({ customerId, payload }) => {
+    const EDIT_CUSTOMER = `${baseUrl}/Customer/${customerId}`;
+    return await fetchWrapper.put(EDIT_CUSTOMER, payload);
   }
 );
 
@@ -74,6 +97,7 @@ const addCustomerSlice = createSlice({
     error: null,
     data: [],
     companiesList: [],
+    companiesDetails: [],
     statesList: [],
     citiesList: [],
     countriesList: [],
@@ -85,7 +109,7 @@ const addCustomerSlice = createSlice({
   },
 
   extraReducers: {
-    // Companies Stats for Admin Listing  
+    // Companies Stats for Admin Listing
     [getCompaniesList.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -94,13 +118,28 @@ const addCustomerSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.companiesList = data?.map((item) => {
-        return ({ id: item.companyid, name: item.companyname })
-      })
+        return { id: item.companyid, name: item.companyname };
+      });
     },
     [getCompaniesList.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
+
+    [getCompanyAdmin.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getCompanyAdmin.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.companiesDetails = data;
+    },
+    [getCompanyAdmin.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
     [getStatesList.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -135,7 +174,7 @@ const addCustomerSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.countriesList = data;
-      console.log("NG data country", data)
+      console.log("NG data country", data);
     },
     [getCountriesList.rejected]: (state, action) => {
       state.loading = false;
@@ -149,9 +188,14 @@ const addCustomerSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.data = data?.customerDetailsList?.map((item) => {
-        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
-        return ({ ...item, phonenumber: newContact ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3] : null })
-      })
+        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/);
+        return {
+          ...item,
+          phonenumber: newContact
+            ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3]
+            : null,
+        };
+      });
     },
     [addCustomer.rejected]: (state, action) => {
       state.loading = false;
@@ -165,15 +209,40 @@ const addCustomerSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.data = data?.customerDetailsList?.map((item) => {
-        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
-        return ({ ...item, phonenumber: newContact ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3] : null })
-      })
+        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/);
+        return {
+          ...item,
+          phonenumber: newContact
+            ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3]
+            : null,
+        };
+      });
     },
     [addCompany.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
-
+    [updateCustomer.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateCustomer.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.data = data?.customerDetailsList?.map((item) => {
+        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/);
+        return {
+          ...item,
+          phonenumber: newContact
+            ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3]
+            : null,
+        };
+      });
+    },
+    [updateCustomer.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -181,11 +250,13 @@ const addCustomerSlice = createSlice({
 export const addCustomerActions = {
   ...addCustomerSlice.actions,
   getCompaniesList,
+  getCompanyAdmin,
   addCustomer,
   getStatesList,
   getCitiesList,
   getCountriesList,
   addCompany,
+  updateCustomer,
 };
 
 export const addCustomerReducer = addCustomerSlice.reducer;

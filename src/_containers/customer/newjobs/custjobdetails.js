@@ -6,10 +6,21 @@ import { ButtonWithCount } from "../../../_components/jobDetailComponents/Button
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
+import "./newjobs.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
+import {
+  FaUsers,
+  FaUserClock,
+  FaUserCheck,
+  FaUserTimes,
+  FaLeanpub,
+  FaUserTie,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
   const [publishSuccess, setPublishSuccess] = useState(false);
@@ -224,8 +235,100 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
       return "";
     }
   };
+  const steps = [
+    {
+      name: "Published",
+      count: getTimezoneDateTime(
+        moment(
+          jobDetail?.publisheddate === null
+            ? jobDetail?.jobcreatedatetime
+            : jobDetail?.publisheddate
+        ).format("YYYY-MM-DD"),
+        "MM/DD/YYYY"
+      ),
+      icon: <FaLeanpub className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Matched",
+      count:
+        jobDetail.totalRecommendedCandidates === null
+          ? 0
+          : jobDetail.totalRecommendedCandidates,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Maybe",
+      count: 0,
+      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Liked",
+      count:
+        jobDetail.totalLikedCandidates === null
+          ? 0
+          : jobDetail.totalLikedCandidates,
+      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Applied",
+      count:
+        jobDetail.totalAppliedCandidates === null
+          ? 0
+          : jobDetail.totalAppliedCandidates,
+      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}`,
+      icon: <FaUsers className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Scheduled",
+      count: 0,
+      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
+      icon: <FaUserClock className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Offers",
+      count: 0,
+      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
+      icon: <FaUserCheck className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Accepted",
+      count:
+        jobDetail.totalAcceptedCandidates === null
+          ? 0
+          : jobDetail.totalAcceptedCandidates,
+      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}`,
+      icon: <FaUserTie className="img-fluid " size={"35px"} />,
+    },
+    {
+      name: "Rejected",
+      count:
+        jobDetail.totalRejectedCandidates === null
+          ? 0
+          : jobDetail.totalRejectedCandidates,
+      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}`,
+      icon: <FaUserTimes className="img-fluid " size={"35px"} />,
+    },
+  ];
 
+  const renderSteps = () => {
+    return steps.map((s, i) => (
+      <li className="form-wizard-step-done" key={i} value={i}>
+        <span className="count-details">{steps[i].count}</span>
+        <em></em>
+        <span onClick={(e) => navigateTo(steps[i].action)}>
+          {steps[i].name}
+        </span>
+        {/* <div className="">{steps[i].icon}</div> */}
+      </li>
+    ));
+  };
   const navigate = useNavigate();
+  const navigateTo = (action) => {
+    navigate(action);
+  };
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -303,6 +406,11 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
               </div>
             </div>
             {type === "Open" && jobDetail.isdraft === false && (
+              <div className="forms-wizard-alt ms-3 me-3">
+                <ol className="forms-wizard">{renderSteps()}</ol>
+              </div>
+            )}
+            {/* {type === "Open" && jobDetail.isdraft === false && (
               <div className="p-3 mt-2 align-left">
                 <ButtonWithCount
                   buttonName={"Applied"}
@@ -334,7 +442,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   }
                   action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
                 />
-                {/* <ButtonWithCount
+                <ButtonWithCount
                   buttonName={"Maybe"}
                   color={"primary"}
                   count={
@@ -343,8 +451,8 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       : jobDetail.totalLikedCandidates
                   }
                   action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
-                /> */}
-                {/* <ButtonWithCount
+                />
+                <ButtonWithCount
                   buttonName={"Scheduled"}
                   color={"primary"}
                   count={
@@ -353,7 +461,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       : jobDetail.totalLikedCandidates
                   }
                   action={`/customer-candidate-scheduled/${jobDetails[0]?.jobid}`}
-                /> */}
+                />
                 <ButtonWithCount
                   buttonName={"Accepted"}
                   color={"success"}
@@ -375,7 +483,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
                 />
               </div>
-            )}
+            )} */}
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
             </div>
@@ -434,6 +542,16 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
               heading={"Address"}
               detail={returnAddress()}
               iconId={10}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Authorized to work in United States"}
+              detail={jobDetail.authorizedtoworkinus === true ? "Yes" : "No"}
+              iconId={9}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Sponsorship is required"}
+              detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
+              iconId={9}
             />
             <HeadingAndDetailWithoutIcon
               heading={"Job Description"}

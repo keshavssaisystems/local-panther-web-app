@@ -27,15 +27,15 @@ export function AppHeader({
           })}
         >
           <div className="app-header-left">
-            <img src={logo} width={"130px"} height={"48px"} alt="logo" />
+            <img src={logo} width={"200px"} height={"48px"} alt="logo" />
           </div>
           <div className="user-title">
             <h4>
               {userroleid === 1
-                ? "OpenWrox - Admin"
+                ? "OpenWorx - Admin"
                 : userroleid === 2
-                ? "OpenWrox - Customer"
-                : "OpenWrox - Candidate"}
+                ? "OpenWorx - Customer"
+                : "OpenWorx - Candidate"}
             </h4>
           </div>
           <div className="app-header-right">

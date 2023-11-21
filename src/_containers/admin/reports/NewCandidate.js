@@ -3,109 +3,165 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import Loader from "react-loaders";
 
-import { 
-  Col, 
-  Row, 
-  FormGroup, 
-  InputGroup, 
-  Button, 
-  Card, 
-  CardBody, 
-  CardHeader, 
-  UncontrolledButtonDropdown, 
-  DropdownToggle, 
-  DropdownMenu, 
-  DropdownItem } from "reactstrap";
-  
-import { SkillsFilter, LocationFilter } from "../filterComponent";
-import { Table } from "_widgets";
+import {
+  Col,
+  Row,
+  FormGroup,
+  InputGroup,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  UncontrolledButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 
+import { SkillsFilter, LocationFilter } from "../filterComponent";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import { newCandidateThunk } from "../_redux/report.slice";
+import { exportToExcel } from "react-json-to-excel";
+import DataTable from "react-data-table-component";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./adminreports.scss";
 
 const columns = [
   {
-      name: 'Name',
-      selector: row => row.candidatename,
-      sortable: true,
-      wrap: true,
-  },
-  {
-    name: 'Skills',
-    selector: row => row.skills,
+    name: <span className="table-title">Name</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.candidatename}>
+        {row.candidatename}
+      </span>
+    ),
     sortable: true,
-    wrap: true,
-    width: '400px'
+    selector: (row) => row.candidatename,
+    minWidth: "250px",
   },
   {
-      name: 'Experience',
-      selector: row => row.experience,
-      sortable: true,
-      wrap: true,
-  },
-  {
-    name: 'Location',
-    selector: row => row.location,
+    name: <span className="table-title">Skills</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.skills}>
+        {row.skills}
+      </span>
+    ),
     sortable: true,
-    wrap: true,
+
+    selector: (row) => row.skills,
+    minWidth: "350px",
   },
   {
-      name: 'Created',
-      selector: row => row.createddate,
-      sortable: true,
-      wrap: true,
-      format: (row) => moment(row.jobposteddate).format('MM/DD/YYYY'),
+    name: <span className="table-title">Experience</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.experience}>
+        {row.experience}
+      </span>
+    ),
+    sortable: true,
+    selector: (row) => row.experience,
+    minWidth: "200px",
+  },
+  {
+    name: <span className="table-title">Location</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.location}>
+        {row.location}{" "}
+      </span>
+    ),
+    sortable: true,
+    selector: (row) => row.location,
+    minWidth: "200px",
+  },
+  {
+    name: <span className="table-title">Created</span>,
+    cell: (row) => (
+      <span
+        className="table-cell"
+        title={
+          row.createddate ? moment(row.jobposteddate).format("MM/DD/YYYY") : ""
+        }
+      >
+        {row.createddate ? moment(row.jobposteddate).format("MM/DD/YYYY") : ""}
+      </span>
+    ),
+    sortable: true,
+    selector: (row) => row.jobposteddate,
+    minWidth: "180px",
   },
 ];
-
 
 export function NewCandidate({ title }) {
   const dispatch = useDispatch();
 
-  const { newCandidate: data = [], loading = false } = useSelector((state) => state?.adminReportReducer ?? {});
+  const { newCandidate: data = [], loading = false } = useSelector(
+    (state) => state?.adminReportReducer ?? {}
+  );
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
   let [filter, setFilter] = useState({});
 
+  const [excelData, setExcelData] = useState([]);
+  let [skill, setSkill] = useState([]);
+  let [location, setLocation] = useState([]);
+
   useEffect(() => {
-    dispatch(newCandidateThunk())
-    
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch(newCandidateThunk());
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      let filteredData = data.map((rec) => {
+        return {
+          Name: rec?.candidatename,
+          Skills: rec?.skills,
+          Experience: rec?.experience,
+          Location: rec?.location,
+
+          Created: rec.createddate
+            ? moment(data.createddate).format("MM/DD/YYYY")
+            : "",
+        };
+      });
+      setExcelData([{ sheetName: "NewCandidates", details: filteredData }]);
+    }
+  }, [data]);
 
   const handleChange = (name, value) => {
     setFilter({
       ...filter,
-      [name]: value
-    })
-  }
-  
-  const handleDateChange = (name, value) => {
+      [name]: value,
+    });
+  };
 
+  const handleDateChange = (name, value) => {
     setFilter({
       ...filter,
-      [name]: moment(value).format('YYYY-MM-DD')
-    })
-  }
+      [name]: moment(value).format("YYYY-MM-DD"),
+    });
+  };
 
   const applyFilter = () => {
-    dispatch(newCandidateThunk(filter))
-  }
-  
+    dispatch(newCandidateThunk(filter));
+  };
+
   const clearFilter = () => {
-    setFilter({})
-    setStartDate(null)
-    setEndDate(null)
-    dispatch(newCandidateThunk())
-  }
+    setFilter({});
+    setStartDate(null);
+    setEndDate(null);
+    setSkill([]);
+    setLocation([]);
+    dispatch(newCandidateThunk());
+  };
 
   return (
     <>
@@ -119,30 +175,53 @@ export function NewCandidate({ title }) {
               </div>
               <div className="btn-actions-pane-right actions-icon-btn">
                 <UncontrolledButtonDropdown>
-                  <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                  <DropdownToggle
+                    className="btn-icon btn-icon-only"
+                    color="link"
+                  >
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(
+                          excelData,
+                          "adminNewCandidateReport",
+                          true
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{zIndex: 9, position: 'relative'}}>
+              <Row style={{ zIndex: 9, position: "relative" }}>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <SkillsFilter name={"skillId"} placeholder={"Select Skills"} onChange={handleChange}/>
+                  <SkillsFilter
+                    name={"skillId"}
+                    placeholder={"Search Skill"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setSkill(e);
+                    }}
+                    value={skill}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <LocationFilter name={"cityId"} placeholder={"Select Location"} onChange={handleChange}/>
+                  <LocationFilter
+                    name={"cityId"}
+                    placeholder={"Search Location"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setLocation(e);
+                    }}
+                    value={location}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
@@ -151,14 +230,15 @@ export function NewCandidate({ title }) {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
+                        dateFormat={"yyyy-MM-dd"}
                         name="startDate"
                         placeholderText="From"
                         className="form-control"
                         selected={startDate}
+                        maxDate={endDate}
                         onChange={(date) => {
-                          handleDateChange("startDate", date)
-                          setStartDate(date)
+                          handleDateChange("startDate", date);
+                          setStartDate(date);
                         }}
                       />
                     </InputGroup>
@@ -171,14 +251,15 @@ export function NewCandidate({ title }) {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
+                        dateFormat={"yyyy-MM-dd"}
                         name="endDate"
                         placeholderText="To"
                         className="form-control"
                         selected={endDate}
+                        minDate={startDate}
                         onChange={(date) => {
-                          handleDateChange("endDate", date)
-                          setEndDate(date)
+                          handleDateChange("endDate", date);
+                          setEndDate(date);
                         }}
                       />
                     </InputGroup>
@@ -186,31 +267,62 @@ export function NewCandidate({ title }) {
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                    style={{background: 'rgb(47 71 155)'}}
-                    className="btn-square btn btn-primary"
+                    style={{ background: "rgb(47 71 155)" }}
+                    color="primary"
                     type="button"
                     onClick={() => applyFilter()}
-                  >  Search
+                  >
+                    {" "}
+                    Search
                   </Button>
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                      className="btn-square btn btn-primary"
-                      type="button"
-                      onClick={() => clearFilter()}
-                    > Clear
+                    color="link"
+                    type="button"
+                    onClick={() => clearFilter()}
+                  >
+                    {" "}
+                    Clear
                   </Button>
                 </Col>
               </Row>
 
-              <Table                 
+              {/* <Table
                 progressPending={loading}
-                progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
+                progressComponent={
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                }
                 columns={columns}
                 data={data}
                 fixedHeader
                 fixedHeaderScrollHeight="400px"
-              />
+              /> */}
+              {loading ? (
+                <Loader
+                  type="line-scale-pulse-out-rapid"
+                  className="d-flex justify-content-center"
+                />
+              ) : (
+                <>
+                  {data.length > 0 ? (
+                    <DataTable
+                      columns={columns}
+                      data={data}
+                      fixedHeader
+                      pagination
+                      className="admin-list-view"
+                    />
+                  ) : (
+                    <Row className="center-align ">
+                      <NoDataFound></NoDataFound>
+                    </Row>
+                  )}
+                </>
+              )}
             </CardBody>
           </Card>
         </Col>

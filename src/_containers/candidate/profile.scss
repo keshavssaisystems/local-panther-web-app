@@ -355,18 +355,32 @@
     letter-spacing: -0.01em;
     text-align: left;
   }
-
+  .divider {
+    width: 350px;
+    height: 1px;
+    background: #ced4da;
+  }
   .required-icon {
     color: #ff0000;
   }
+  .async-border-red {
+    .css-13cymwt-control {
+      border-color: #d92550 !important;
+    }
+  }
 
+  .async-error-text {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #d92550;
+  }
   .field-input {
     height: 35px;
     align-items: flex-start;
     border-radius: 2px;
     border: 1px solid #ced4da;
     background: #fff;
-    color: #afaba5;
   }
   .save-btn {
     border-radius: 4px;
@@ -381,7 +395,6 @@
     border-radius: 4px;
   }
   .placeholder-text {
-    color: #afaba5;
     font-family: Capitana;
     font-size: 14px;
     font-style: normal;
@@ -389,7 +402,6 @@
     line-height: 16px;
     /* 114.286% */
     letter-spacing: -0.14px;
-    color: #afaba5;
   }
 }
 .resume-details {

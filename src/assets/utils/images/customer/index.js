@@ -13,6 +13,7 @@ const customerIcons = {
   list_liked: require("./list/liked.svg").default,
   list_reject: require("./list/reject.svg").default,
   list_maybe: require("./list/maybe.svg").default,
+  list_schedule: require("./list/schedule.svg").default,
   view_cv_text: require("./view_cv_text.svg").default,
   view_cv_icon: require("./view_cv_icon.svg").default,
 };

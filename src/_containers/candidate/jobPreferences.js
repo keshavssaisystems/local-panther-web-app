@@ -12,6 +12,7 @@ import {
   Form,
   InputGroup,
   InputGroupText,
+  CardHeader,
 } from "reactstrap";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +24,8 @@ import "./profile.scss";
 import { getLocationFilter } from "_store";
 import Loader from "react-loaders";
 import { NoDataFound } from "_components/common/nodatafound";
+import InputMask from "react-input-mask";
+import { getBasePayMask } from "_helpers/helper";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -207,7 +210,7 @@ export function JobPreferences(props) {
             pay:
               (rest.minimumbasepay && rest.payperiodtype) ||
               (rest.minimumbasepay != "" && rest.payperiodtype != "")
-                ? rest.minimumbasepay + ", " + rest.payperiodtype
+                ? rest.minimumbasepay + "  " + rest.payperiodtype
                 : rest.minimumbasepay
                 ? rest.minimumbasepay
                 : rest.payperiodtype
@@ -284,19 +287,19 @@ export function JobPreferences(props) {
 
   const onHandleInputChange = function (check, data, status) {
     let new_data = [...preferenceDetails];
-    if (check == "desiredJobType") {
+    if (check === "desiredJobType") {
       new_data[0].desiredjobtitleid = data;
-    } else if (check == "jobTitle") {
+    } else if (check === "jobTitle") {
       let title_data = data.map((item) => item.value).join(", ");
 
       let select = [...selectedTitle];
       select = data;
       setSelectedTitle(select);
       new_data[0].jobtitlesids = title_data;
-    } else if (check == "jobType") {
+    } else if (check === "jobType") {
       let type_data = [...jobTypes];
       type_data =
-        new_data[0].desiredworktypeids != ""
+        new_data[0].desiredworktypeids !== ""
           ? new_data[0].desiredworktypeids.split(",")
           : [];
       let i = type_data.indexOf(data);
@@ -311,12 +314,12 @@ export function JobPreferences(props) {
       setJobTypes(type_data);
 
       new_data[0].desiredworktypeids = type_data.join(",");
-      if (new_data[0].desiredworktypeids == "") {
+      if (new_data[0].desiredworktypeids === "") {
         new_data[0].error = true;
       } else {
         new_data[0].error = false;
       }
-    } else if (check == "workType") {
+    } else if (check === "workType") {
       let type_data = [...workType];
       type_data =
         new_data[0].desiredjobtypes != ""
@@ -334,10 +337,10 @@ export function JobPreferences(props) {
       setWorkType(type_data);
 
       new_data[0].desiredjobtypes = type_data.join(",");
-    } else if (check == "schedules") {
+    } else if (check === "schedules") {
       let schedule_data = [...workSchedules];
       schedule_data =
-        new_data[0].workschedules != ""
+        new_data[0].workschedules !== ""
           ? new_data[0].workschedules.split(",")
           : [];
       let i = schedule_data.indexOf(data);
@@ -351,10 +354,10 @@ export function JobPreferences(props) {
       setWorkSchedules(schedule_data);
 
       new_data[0].workschedules = schedule_data.join(",");
-    } else if (check == "shifts") {
+    } else if (check === "shifts") {
       let shift_data = [...shifts];
       shift_data =
-        new_data[0].shifts != "" ? new_data[0].shifts.split(",") : [];
+        new_data[0].shifts !== "" ? new_data[0].shifts.split(",") : [];
       let i = shift_data.indexOf(data);
       if (i == -1) {
         shift_data.push(data);
@@ -364,7 +367,7 @@ export function JobPreferences(props) {
       }
       setShiftsData(shift_data);
       new_data[0].shifts = shift_data.join(",");
-    } else if (check == "payType") {
+    } else if (check === "payType") {
       let payType = [...selectedPayType];
       let new_array = [];
       new_array.push(data);
@@ -372,15 +375,17 @@ export function JobPreferences(props) {
       setSelectedPayType(payType);
 
       new_data[0].payperiodtypeid = data.value;
-    } else if (check == "basePay") {
-      new_data[0].minimumbasepay = data;
-    } else if (check == "relocate") {
+    } else if (check === "basePay") {
+      new_data[0].minimumbasepay = new Intl.NumberFormat("en-US").format(
+        data.replace(/,/g, "")
+      );
+    } else if (check === "relocate") {
       new_data[0].willingtorelocate = data == "on" ? true : false;
-    } else if (check == "anyWhere") {
+    } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
-    } else if (check == "near") {
+    } else if (check === "near") {
       new_data[0].anywhereonlynear = 2;
-    } else if (check == "location") {
+    } else if (check === "location") {
       let new_array = [...selectedLocation];
       new_array = data;
       setSelectedLocation(new_array);
@@ -454,14 +459,12 @@ export function JobPreferences(props) {
   async function onSubmit(e) {
     e.preventDefault();
     const keyToCheck = "desiredworktypeids";
-
+    let new_data = [...preferenceDetails];
     const emptyKeyIndexes = preferenceDetails
-      .map((item, index) => (item[keyToCheck] == "" ? index : null))
+      .map((item, index) => (item[keyToCheck] === "" ? index : null))
       .filter((index) => index !== null);
 
     if (emptyKeyIndexes.length > 0) {
-      let new_data = [...preferenceDetails];
-
       for (let i = 0; i < emptyKeyIndexes.length; i++) {
         new_data[emptyKeyIndexes[i]].error = true;
       }
@@ -469,7 +472,12 @@ export function JobPreferences(props) {
       setDetails(new_data);
       return;
     }
-
+    if (
+      new_data[0].anywhereonlynear === 2 &&
+      (!new_data[0].locationids || new_data[0].locationids === "")
+    ) {
+      return;
+    }
     let response;
 
     let data = preferenceDetails.map((rest) => {
@@ -534,29 +542,29 @@ export function JobPreferences(props) {
   const close = function () {
     setPersonalModal(false);
   };
+  const [basePayValue, setBasePayValue] = useState("");
   return (
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <CardBody>
-            <div className="mb-3">
-              <strong className="card-title-text">Job Preferences</strong>
-              <div className="float-end">
-                <BsPencil
-                  className="icons me-2"
-                  onClick={() => setPersonalModal(true)}
+          <CardHeader className="card-title-text  text-capitalize ">
+            Job preferences
+            <div className="ms-auto me-2">
+              <BsPencil
+                className="icons me-2"
+                onClick={() => setPersonalModal(true)}
+              />
+              {getData?.length > 0 ? (
+                <BsTrash3
+                  className="me-2 icons"
+                  onClick={() => deleteModal()}
                 />
-                {getData?.length > 0 ? (
-                  <BsTrash3
-                    className="me-2 icons"
-                    onClick={() => deleteModal()}
-                  />
-                ) : (
-                  ""
-                )}
-              </div>
+              ) : (
+                ""
+              )}
             </div>
-
+          </CardHeader>
+          <CardBody>
             {!loader ? (
               <div>
                 {getData?.length > 0 ? (
@@ -567,7 +575,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired job titles</strong>
                             <div>
-                              {item.desiredJobTitle != "" &&
+                              {item.desiredJobTitle !== "" &&
                               item.desiredJobTitle
                                 ? item.desiredJobTitle
                                 : "-"}
@@ -577,7 +585,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Specific job title</strong>
                             <div>
-                              {item.specificJobTitle != ""
+                              {item.specificJobTitle !== ""
                                 ? item.specificJobTitle
                                 : "-"}
                             </div>
@@ -586,7 +594,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired job types</strong>
                             <div>
-                              {item.desiredJobTypes != ""
+                              {item.desiredJobTypes !== ""
                                 ? item.desiredJobTypes
                                 : "-"}
                             </div>
@@ -595,7 +603,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Work schedules</strong>
                             <div>
-                              {item.workSchedules != ""
+                              {item.workSchedules !== ""
                                 ? item.workSchedules
                                 : "-"}
                             </div>
@@ -603,7 +611,7 @@ export function JobPreferences(props) {
                           <hr />
                           <Row>
                             <strong>Shifts</strong>
-                            <div>{item.shifts != "" ? item.shifts : "-"}</div>
+                            <div>{item.shifts !== "" ? item.shifts : "-"}</div>
                           </Row>
                           <hr />
                         </Col>
@@ -612,7 +620,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Desired minimum pay</strong>
 
-                            <div>{item.pay != "" ? "$" + item.pay : "-"}</div>
+                            <div>{item.pay !== "" ? "$" + item.pay : "-"}</div>
                           </Row>
                           <hr />
                           <Row>
@@ -623,7 +631,7 @@ export function JobPreferences(props) {
                           <Row>
                             <strong>Work type</strong>
                             <div>
-                              {item.desiredWorkTypes != ""
+                              {item.desiredWorkTypes !== ""
                                 ? item.desiredWorkTypes
                                 : "-"}
                             </div>
@@ -691,7 +699,7 @@ export function JobPreferences(props) {
                     ))}
                   </Row>
 
-                  <Row>
+                  <Row className="mt-3">
                     <div className="mb-1 fw-bold">Add job title</div>
                     <hr />
                   </Row>
@@ -871,7 +879,7 @@ export function JobPreferences(props) {
                     <Col md={4}>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Pay type
+                          Pay period type
                         </Label>
                         <AsyncSelect
                           name="jobTitle"
@@ -894,15 +902,21 @@ export function JobPreferences(props) {
 
                         <InputGroup>
                           <InputGroupText>$</InputGroupText>
-                          <Input
-                            type="text"
+                          <InputMask
+                            className="field-input placeholder-text form-control input-text"
+                            mask={getBasePayMask(
+                              basePayValue === ""
+                                ? parentItem.minimumbasepay
+                                : basePayValue
+                            )}
+                            maskChar={null}
                             name="minPay"
                             id="minPay"
                             placeholder="Enter base pay"
-                            className="field-input placeholder-text form-control input-text"
-                            onInput={(evt) =>
-                              onHandleInputChange("basePay", evt.target.value)
-                            }
+                            onInput={(evt) => {
+                              onHandleInputChange("basePay", evt.target.value);
+                              setBasePayValue(evt.target.value);
+                            }}
                             value={parentItem.minimumbasepay}
                           />
                         </InputGroup>
@@ -972,6 +986,11 @@ export function JobPreferences(props) {
                       <FormGroup>
                         <Label for="city" className="fw-semi-bold">
                           Location
+                          {parentItem.anywhereonlynear == 2 ? (
+                            <span className="required-icon"> *</span>
+                          ) : (
+                            ""
+                          )}
                         </Label>
                         <AsyncSelect
                           name="location"
@@ -982,7 +1001,20 @@ export function JobPreferences(props) {
                           onChange={(evt) =>
                             onHandleInputChange("location", evt)
                           }
+                          className={`placeholder-name ${
+                            parentItem.anywhereonlynear == 2 &&
+                            selectedLocation.length === 0
+                              ? "async-border-red"
+                              : ""
+                          }`}
                         />
+
+                        <div className="async-error-text">
+                          {parentItem.anywhereonlynear == 2 &&
+                          selectedLocation.length === 0
+                            ? "Location is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>

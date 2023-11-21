@@ -10,12 +10,12 @@ import {
   Label,
   Input,
   Button,
-  ButtonGroup,
   FormText,
 } from "reactstrap";
 import "./scheduledInterview.scss";
-import InputMask from "react-input-mask";
 import moment from "moment-timezone";
+import { getTimezoneDateTime } from "_helpers/helper";
+import DatePicker from "react-datepicker";
 
 export function UpdateScheduleInterviewModal({
   interviewData,
@@ -24,14 +24,11 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  let formatedData =
-    interviewData?.format === "In-person"
-      ? 3
-      : interviewData?.format === "Phone"
-      ? 2
-      : 1;
-  const [videoModeCheck, setVideoModeCheck] = useState(
-    interviewData?.isappvideocall === true ? 0 : 1
+  const newdate = new Date(
+    getTimezoneDateTime(
+      moment(interviewData?.scheduledate),
+      "YYYY-MM-DD HH:mm:ss"
+    )
   );
   const [timeOption, setTimeOption] = useState([]);
   const [modal, setModal] = useState(false);
@@ -39,17 +36,11 @@ export function UpdateScheduleInterviewModal({
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
   const [durationValidation, setDurationValidation] = useState(false);
   const [videoLinkValidation, setVideoLinkValidation] = useState(false);
-  const [interviewAddressValidation, setInterviewAddressValidation] =
-    useState(false);
-  const [formatButton, setFormatButton] = useState(formatedData);
+  const [scheduledDate, setScheduledDate] = useState(newdate);
+
+  const [dateChange, setDateChange] = useState(false);
   const toggle = () => {
     setModal(!modal);
-  };
-  const onRadioBtnClick = (term) => {
-    setFormatButton(term);
-  };
-  const onVideoModeChange = (term) => {
-    setVideoModeCheck(term);
   };
   useEffect(() => {
     getTimeArray();
@@ -129,7 +120,10 @@ export function UpdateScheduleInterviewModal({
       durationid: Number(event.target.elements.duration.value),
       format: interviewData?.format,
       isappvideocall: interviewData?.isappvideocall,
-      videolink: interviewData?.videolink,
+      videolink:
+        event?.target?.elements?.videoLink?.value === undefined
+          ? ""
+          : event?.target?.elements?.videoLink?.value,
       interviewAddress: interviewData?.interviewaddress,
       messagetocandidate: interviewData?.messagetocandidate,
       intervieweremailids: interviewData?.intervieweremailids,
@@ -137,9 +131,9 @@ export function UpdateScheduleInterviewModal({
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
     };
-    // console.log(data);
     postData(data);
     onClose();
+    setDateChange(false);
   };
   return (
     <>
@@ -150,9 +144,17 @@ export function UpdateScheduleInterviewModal({
         backdrop={"static"}
         toggle={toggle}
         className="schedule-modal"
-        onClosed={() => onClose()}
+        onClosed={() => {
+          onClose();
+          setDateChange(false);
+        }}
       >
-        <ModalHeader toggle={() => onClose()}>
+        <ModalHeader
+          toggle={() => {
+            onClose();
+            setDateChange(false);
+          }}
+        >
           {" "}
           Reschedule Interview
         </ModalHeader>
@@ -184,17 +186,36 @@ export function UpdateScheduleInterviewModal({
                     <Label for="scheduleDate" className="fw-semi-bold">
                       Date <span className="required-star">*</span>
                     </Label>
-                    <Input
+                    <DatePicker
+                      className="form-control"
+                      selected={
+                        dateChange === false
+                          ? new Date(
+                              getTimezoneDateTime(
+                                moment(interviewData?.scheduledate),
+                                "YYYY-MM-DD HH:mm:ss"
+                              )
+                            )
+                          : scheduledDate
+                      }
+                      onChange={(date) => {
+                        setScheduledDate(date);
+                        setDateChange(true);
+                        setScheduleDateValidation(false);
+                      }}
+                      dateFormat="MM/dd/yyyy"
+                      placeholderText="Eg. MM/DD/YYYY"
+                      name={"scheduleDate"}
+                    />
+                    {/* <Input
                       type="date"
                       name="scheduleDate"
                       id="scheduleDate"
-                      placeholder="Enter date"
+                      placeholder="Eg. MM/DD/YYYY"
                       invalid={scheduleDateValidation}
-                      defaultValue={moment(interviewData?.scheduledate).format(
-                        "YYYY-MM-DD"
-                      )}
-                      onChange={() => setScheduleDateValidation(false)}
-                    />
+                      defaultValue={}
+                      onChange={}
+                    /> */}
                     {scheduleDateValidation === true && (
                       <FormText color="danger">Please enter date</FormText>
                     )}
@@ -220,9 +241,21 @@ export function UpdateScheduleInterviewModal({
                           <option
                             key={options}
                             value={options}
-                            selected={moment(interviewData?.starttime).format(
-                              "hh:mm A"
-                            )}
+                            selected={
+                              String(options) ===
+                              String(
+                                getTimezoneDateTime(
+                                  moment(
+                                    moment(interviewData?.scheduledate).format(
+                                      "YYYY-MM-DD"
+                                    ) +
+                                      " " +
+                                      interviewData?.starttime
+                                  ).format("YYYY-MM-DD hh:mm A"),
+                                  "hh:mm A"
+                                )
+                              )
+                            }
                           >
                             {options}{" "}
                           </option>
@@ -256,7 +289,9 @@ export function UpdateScheduleInterviewModal({
                             <option
                               value={data.id}
                               key={data.id}
-                              selected={Number(interviewData?.durationid)}
+                              selected={
+                                data.id === Number(interviewData?.durationid)
+                              }
                             >
                               {data.name}
                             </option>
@@ -287,14 +322,25 @@ export function UpdateScheduleInterviewModal({
               )}
               {interviewData?.format === "Video" &&
                 interviewData?.isappvideocall === false && (
-                  <div className="detail-padding">
-                    <h6 className="mb-0 heading-custom">Video Link</h6>
-                    <p className="mb-0 mt-1 mr-1">
-                      {interviewData?.videolink === ""
-                        ? "-"
-                        : interviewData?.videolink}
-                    </p>
-                  </div>
+                  <FormGroup>
+                    <Label for="videoLink" className="fw-semi-bold">
+                      Paste video link <span className="required-star">* </span>
+                    </Label>
+                    <Input
+                      type="text"
+                      name="videoLink"
+                      id="videoLink"
+                      placeholder="Enter video link"
+                      defaultValue={interviewData?.videolink}
+                      invalid={videoLinkValidation}
+                      onChange={() => setVideoLinkValidation(false)}
+                    />
+                    {videoLinkValidation === true && (
+                      <FormText color="danger">
+                        Please enter video link
+                      </FormText>
+                    )}
+                  </FormGroup>
                 )}
               {interviewData?.format === "In-person" && (
                 <div className="detail-padding">

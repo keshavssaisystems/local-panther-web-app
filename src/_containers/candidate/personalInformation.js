@@ -622,6 +622,7 @@ export function PersonalInformation(props) {
                       <div className="icon-wrapper rounded-circle profile-img">
                         <img
                           width={100}
+                          height={100}
                           className="rounded-circle"
                           src={
                             isHovered
@@ -680,50 +681,59 @@ export function PersonalInformation(props) {
                     </div>
                   </Col>
 
-                  <Col sm="12" md="12" xl="3" className="">
-                    <Row className="mt-4">
-                      <Col className="mb-2 mt-2">
-                        <BsTelephone className="personal-sec-icon me-2" />
-                        <span className="content-text mt-3">
-                          {maskPhoneNumber(
-                            selectedCandidate.personalInfo.phonenumber
-                          )}
-                        </span>
-                      </Col>
-                    </Row>
+                  <Col sm="12" md="12" xl="6" className="">
+                    <div className="m-3 float-end">
+                      <BsPencil
+                        className="edit-icon"
+                        onClick={(evt) => setContactModal(true)}
+                      />
+                    </div>
                     <Row>
-                      <Col className="mb-2">
-                        <BsEnvelope className="personal-sec-icon me-2" />
-                        <span className="content-text">
-                          {selectedCandidate.personalInfo.email}
-                        </span>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col className="mb-2">
-                        {selectedCandidate.personalInfo.city != "" ||
-                        selectedCandidate.personalInfo.country != "" ? (
-                          <div>
-                            <BsPinMap className="personal-sec-icon me-2" />
-                            <span className="content-text">
-                              {selectedCandidate.personalInfo.city
-                                ? selectedCandidate.personalInfo.city +
-                                  ", " +
-                                  selectedCandidate.personalInfo.state
-                                : ""}
+                      <Row className="mt-4">
+                        <Col className="mb-2 mt-2">
+                          <BsTelephone className="personal-sec-icon me-2" />
+                          <span className="content-text mt-3">
+                            {maskPhoneNumber(
+                              selectedCandidate.personalInfo.phonenumber
+                            )}
+                          </span>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="mb-2">
+                          <BsEnvelope className="personal-sec-icon me-2" />
+                          <span className="content-text">
+                            {selectedCandidate.personalInfo.email}
+                          </span>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="mb-2">
+                          {selectedCandidate.personalInfo.city !== "" ||
+                          selectedCandidate.personalInfo.country !== "" ? (
+                            <div>
+                              <BsPinMap className="personal-sec-icon me-2" />
+                              <span className="content-text">
+                                {selectedCandidate.personalInfo.city
+                                  ? selectedCandidate.personalInfo.city +
+                                    ", " +
+                                    selectedCandidate.personalInfo.state
+                                  : ""}
 
-                              {selectedCandidate.personalInfo.country
-                                ? ", " + selectedCandidate.personalInfo.country
-                                : ""}
-                            </span>
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </Col>
+                                {selectedCandidate.personalInfo.country
+                                  ? ", " +
+                                    selectedCandidate.personalInfo.country
+                                  : ""}
+                              </span>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </Col>
+                      </Row>
                     </Row>
                   </Col>
-                  <Col sm="12" md="12" xl="3" className="mt-3">
+                  {/* <Col sm="12" md="12" xl="3" className="mt-3">
                     <div className="me-3 float-end">
                       <BsPencil
                         className="edit-icon"
@@ -789,7 +799,7 @@ export function PersonalInformation(props) {
                         </Col>
                       </Row>
                     </Row>
-                  </Col>
+                  </Col> */}
                 </Row>
               ) : (
                 <></>
@@ -838,7 +848,7 @@ export function PersonalInformation(props) {
                             onHandleInputChange("firstname", evt.target.value)
                           }
                           className={`field-input placeholder-text form-control ${
-                            getResponse.firstname == ""
+                            getResponse.firstname === ""
                               ? "is-invalid error-text"
                               : ""
                           }`}

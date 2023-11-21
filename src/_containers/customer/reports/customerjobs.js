@@ -13,11 +13,14 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  ButtonGroup,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarAlt,
+  faSearch,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
@@ -32,60 +35,130 @@ import { NoDataFound } from "_components/common/nodatafound";
 import "./customerreport.scss";
 const columns = [
   {
-    name: "Job Code",
+    name: <span className="table-title">Job Code</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.jobid}>
+        {row.jobid}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.jobid,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "Title",
+    name: <span className="table-title">Title</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.jobtitle}>
+        {row.jobtitle}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.jobtitle,
-    sortable: true,
+    minWidth: "400px",
   },
   {
-    name: "Status",
+    name: <span className="table-title">Status</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.jobstatus}>
+        {row.jobstatus}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.jobstatus,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "No. of Positions",
+    name: <span className="table-title">No. of Positions</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.noofopenposition}>
+        {row.noofopenposition}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.noofopenposition,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "Posted date",
-    selector: (row) =>
-      row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : "",
+    name: <span className="table-title">Posted date</span>,
+    cell: (row) => (
+      <span
+        className="table-cell"
+        title={
+          row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
+        }
+      >
+        {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
+      </span>
+    ),
     sortable: true,
+    selector: (row) => row.createddate,
+    minWidth: "180px",
   },
   {
-    name: "No. of Matched",
+    name: <span className="table-title">No. of Matched</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.matchedcandidates}>
+        {row.matchedcandidates}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.matchedcandidates,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "No. of Liked",
+    name: <span className="table-title">No. of Liked</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.likedcandidates}>
+        {row.likedcandidates}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.likedcandidates,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "No. of Maybe",
+    name: <span className="table-title">No. of Maybe</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.maybecandidates}>
+        {row.maybecandidates}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.maybecandidates,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "No. of Accepted",
+    name: <span className="table-title">No. of Accepted</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.acceptedcandidates}>
+        {row.acceptedcandidates}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.acceptedcandidates,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "No. of Rejected",
+    name: <span className="table-title">No. of Rejected</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.rejectedcandidates}>
+        {row.rejectedcandidates}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.rejectedcandidates,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "No. of Interviews Scheduled",
-    selector: (row) => row.scheduledinterviews,
+    name: <span className="table-title">No. of Interviews Scheduled</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.scheduledinterviews}>
+        {row.scheduledinterviews}
+      </span>
+    ),
     sortable: true,
+    selector: (row) => row.scheduledinterviews,
+    minWidth: "150px",
   },
 ];
 
@@ -125,7 +198,12 @@ export function CustomerReportJobList() {
           "No. of Interviews Scheduled": data.scheduledinterviews,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "CustoemerJobList",
+          details: filteredData,
+        },
+      ]);
     }
   }, [jobList]);
 
@@ -177,15 +255,11 @@ export function CustomerReportJobList() {
                     <DropdownItem header>Download Report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
-                        exportToExcel(excelData, "customerJobsReport")
+                        exportToExcel(excelData, "customerJobsReport", true)
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
@@ -236,28 +310,25 @@ export function CustomerReportJobList() {
                   </FormGroup>
                 </Col>
                 <Col lg="3" md="3" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <ButtonGroup>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary me-4"
-                          type="button"
-                          onClick={() => onSubmitHandler()}
-                        >
-                          <FontAwesomeIcon icon={faSearch} /> Search
-                        </Button>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary"
-                          type="button"
-                          onClick={() => onSubmitClear()}
-                        >
-                          Clear
-                        </Button>
-                      </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup>
+                  {/* <ButtonGroup> */}
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className="me-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
+                  {/* </ButtonGroup> */}
                 </Col>
               </Row>
               <Row className="mt-1">
@@ -276,6 +347,7 @@ export function CustomerReportJobList() {
                         data={jobList}
                         fixedHeader
                         pagination
+                        className="cust-rep-list-view"
                       />
                     ) : (
                       <Row className="center-align ">

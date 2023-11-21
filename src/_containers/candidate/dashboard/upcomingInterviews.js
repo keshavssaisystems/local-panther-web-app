@@ -20,7 +20,7 @@ import {
   getLocationText,
   calculateEndTime,
   getTimezoneDateTime,
-  getChannelId,
+  getVideoChannelId,
 } from "_helpers/helper";
 import { history } from "_helpers";
 import SweetAlert from "react-bootstrap-sweetalert";
@@ -39,6 +39,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
 import { NavLink } from "react-router-dom";
+import { USPhoneNumber } from "_helpers/helper";
+import { useNavigate } from "react-router-dom";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -87,11 +89,11 @@ export function UpcomingInterviews() {
     },
     {
       name: "Scheduled date",
-      selector: (row) => (
-        <span title={formatDate(row.scheduledate)}>
-          {formatDate(row.scheduledate)}
-        </span>
-      ),
+      selector: (row) =>
+        getTimezoneDateTime(
+          moment(row?.scheduledate).format("YYYY-MM-DD") + " " + row?.starttime,
+          "MM/DD/YYYY"
+        ),
       sortable: false,
     },
     {
@@ -198,65 +200,36 @@ export function UpcomingInterviews() {
   };
 
   const checkInterview = function (mode, data) {
-    const [year, month, day] = data.scheduledate.split("-").map(Number);
-    const [hours, minutes, seconds] = data.starttime.split(":").map(Number);
-
-    let endTime = calculateEndTime(data.starttime, data.duration);
-    let end_date = year + "-" + (month - 1) + "-" + day + " " + endTime;
-
-    let endDate = new Date(end_date);
-
-    // Create a Date object using the parsed values
-    const targetDate = new Date(year, month - 1, day, hours, minutes, seconds); // Note: Months are 0-based (0 = January, 1 = February, etc.)
-
-    let id = getChannelId(
-      JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId,
-      JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+    let id = getVideoChannelId(
+      data?.jobtitle,
+      data?.jobid,
       data?.scheduleinterviewid
     );
-
-    if (targetDate === new Date()) {
-      if (mode === "phone") {
-        showSweetAlert({
-          title: `Interview started, please join on phone - ${data.phonenumber}`,
-          type: "success",
-        });
-      } else {
-        if (data.isappvideocall) {
-          setLink(id);
-          setAppShowInterview(true);
-        } else {
-          setLink(data.videolink);
-          setShowInterview(true);
-        }
-      }
-    } else if (targetDate > new Date()) {
+    if (mode === "phone") {
       showSweetAlert({
-        title: "Interview not started yet!!",
-        type: "warning",
+        title: `Please wait, Interviewer will call you on phone - ${USPhoneNumber(
+          data.phonenumber
+        )}`,
+        type: "success",
       });
-    } else if (targetDate < new Date()) {
-      if (endDate < new Date()) {
-        showSweetAlert({
-          title: "Interview is completed !!",
-          type: "error",
-        });
+    } else if (mode === "Video") {
+      if (data.isappvideocall) {
+        setLink(id);
+        setAppShowInterview(true);
       } else {
-        if (mode === "phone") {
-          showSweetAlert({
-            title: `Interview started, please join on phone - ${data.phonenumber}`,
-            type: "success",
-          });
-        } else {
-          if (data.isappvideocall) {
-            setLink(id);
-            setAppShowInterview(true);
-          } else {
-            setLink(data.videolink);
-            setShowInterview(true);
-          }
-        }
+        setLink(data.videolink);
+        setShowInterview(true);
       }
+    } else if (mode === "In-person") {
+      showSweetAlert({
+        title: `Scheduled at - ${
+          data?.interviewaaddress === undefined ||
+          data?.interviewaaddress === ""
+            ? "No address provided"
+            : data?.interviewaaddress
+        }`,
+        type: "success",
+      });
     }
   };
 
@@ -273,7 +246,7 @@ export function UpcomingInterviews() {
         {row.format === "Video" || row.format === "In-person" ? (
           <div
             className="ellipse d-flex justify-content-center align-items-center"
-            onClick={() => checkInterview("video", row)}
+            onClick={() => checkInterview(row.format, row)}
           >
             <img
               src={row.format === "Video" ? videoIcon : personIcon}
@@ -317,7 +290,13 @@ export function UpcomingInterviews() {
       </div>
     );
   };
-
+  const navigate = useNavigate();
+  const navigateTo = (link) => {
+    navigate(`/video-screen/${link}`);
+  };
+  const navigateToThirdPartyLink = (link) => {
+    window.open(`${link}`, "_blank", "rel=noopener noreferrer");
+  };
   return (
     <>
       <Card className="card-hover-shadow-2x mb-3">
@@ -411,13 +390,15 @@ export function UpcomingInterviews() {
             title="Interview started"
             onCancel={() => setShowInterview(false)}
             type="success"
+            showConfirm
+            onConfirm={(e) => navigateToThirdPartyLink(link)}
             showCancel
-            showConfirm={false}
-            showClose
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <a href={link} target="_blank">
-              click to join{" "}
-            </a>
+            Click join interview button to proceed with third party link
           </SweetAlert>
         )}
       </div>
@@ -428,13 +409,15 @@ export function UpcomingInterviews() {
             title="Interview started"
             onCancel={() => setAppShowInterview(false)}
             type="success"
+            showConfirm
+            onConfirm={(e) => navigateTo(link)}
             showCancel
-            showConfirm={false}
-            showClose
+            confirmBtnBsStyle="success"
+            cancelBtnBsStyle="danger"
+            cancelBtnText="Cancel"
+            confirmBtnText="Join interview"
           >
-            <NavLink to={`/video-screen/${link}`} exact>
-              Click here to join
-            </NavLink>
+            Click join interview button to proceed with in app interview
           </SweetAlert>
         )}
       </div>

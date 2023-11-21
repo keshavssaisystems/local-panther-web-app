@@ -4,50 +4,62 @@ import { useParams } from "react-router-dom";
 import moment from "moment";
 import Loader from "react-loaders";
 
-import { 
-  Col, 
-  Row, 
-  FormGroup, 
-  InputGroup, 
-  Button, 
-  Card, 
-  CardBody, 
-  CardHeader, 
-  UncontrolledButtonDropdown, 
-  DropdownToggle, 
-  DropdownMenu, 
-  DropdownItem } from "reactstrap";
+import {
+  Col,
+  Row,
+  FormGroup,
+  InputGroup,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  UncontrolledButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 
-import { SkillsFilter, LocationFilter, CompanyFilter } from "../filterComponent";
-import { Table } from "_widgets";
+import {
+  SkillsFilter,
+  LocationFilter,
+  CompanyFilter,
+} from "../filterComponent";
+
 import { getReportDataThunk } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
+import { exportToExcel } from "react-json-to-excel";
+import DataTable from "react-data-table-component";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./adminreports.scss";
 
 const initFilter = {
-  '@startdate': null,
-  '@enddate': null,
-  '@companyid': null,
-  '@skillid': null,
-  '@cityid': null
-}
+  "@startdate": null,
+  "@enddate": null,
+  "@companyid": null,
+  "@skillid": null,
+  "@cityid": null,
+};
 export function NonPublishedJobs({ title }) {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   let { id: reportId } = useParams();
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
+  let [company, setCompany] = useState([]);
+  let [skill, setSkill] = useState([]);
+  let [location, setLocation] = useState([]);
   let [filter, setFilter] = useState(initFilter);
+  const [excelData, setExcelData] = useState([]);
 
-  const { 
-    reportData: data = [],
-    loading = false 
-  } = useSelector((state) => state?.adminReportReducer ?? {});
+  const { reportData: data = [], loading = false } = useSelector(
+    (state) => state?.adminReportReducer ?? {}
+  );
 
   const getReportData = (isClearAll) => {
     if (isClearAll) {
@@ -56,82 +68,143 @@ export function NonPublishedJobs({ title }) {
     let parameter = "";
     for (const key in filter) {
       if (Object.hasOwnProperty.call(filter, key)) {
-        parameter += key + '=' + filter[key]+',';
+        if (
+          (key.indexOf("startdate") !== -1 || key.indexOf("enddate") !== -1) &&
+          filter[key] !== null
+        ) {
+          parameter += key + "='" + filter[key] + "',";
+        } else {
+          parameter += key + "=" + filter[key] + ",";
+        }
       }
     }
     parameter = parameter.replace(/,\s*$/, "");
-    dispatch(getReportDataThunk({reportId, parameter}))
-  }
-  
+    dispatch(getReportDataThunk({ reportId, parameter }));
+  };
+
   useEffect(() => {
     getReportData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (data?.length > 0) {
+      let filteredData = data.map((rec) => {
+        return {
+          Company: rec?.companyname,
+          "Job Title": rec?.jobtitle,
+          Skills: rec?.musthaveskills,
+          "Nice to have":
+            typeof rec?.nicetohaveskills === "string" && rec?.nicetohaveskills,
+          "Open position": rec?.noofopenposition,
+          Address: rec.address,
+        };
+      });
+      setExcelData([{ sheetName: "NonPublishedJobs", details: filteredData }]);
+    }
+  }, [data]);
 
   const handleChange = (name, value) => {
     setFilter({
       ...filter,
-      [name]: value
-    })
-  }
-  
+      [name]: value,
+    });
+  };
+
   const handleDateChange = (name, value) => {
     setFilter({
       ...filter,
-      [name]: moment(value).format('YYYY-MM-DD')
-    })
-  }
+      [name]: moment(value).format("YYYY-MM-DD"),
+    });
+  };
 
   const applyFilter = () => {
     getReportData();
-  }
-  
+  };
+
   const clearFilter = () => {
     setFilter(initFilter);
-    setStartDate(null)
-    setEndDate(null)
+    setStartDate(null);
+    setEndDate(null);
+    setCompany([]);
+    setSkill([]);
+    setLocation([]);
     getReportData(true);
-  }
+  };
 
   const columns = [
     {
-        name: 'Company',
-        selector: row => row?.companyname,
-        sortable: true,
-        wrap: true,
-        width: '150px'
-    },
-    {
-        name: 'Job Title',
-        selector: row => row?.jobtitle,
-        sortable: true,
-        wrap: true,
-        width: '100px'
-    },
-    {
-        name: 'Skills',
-        selector: row => row?.musthaveskills,
-        sortable: true,
-        wrap: true
-    },
-    {
-        name: 'Nice to have',
-        selector: row => typeof row?.nicetohaveskills === 'string' && row?.nicetohaveskills,
-        wrap: true,
-    },
-    {
-        name: 'Open position',
-        selector: row => row?.noofopenposition,
-        wrap: true,
-        width: '100px'
-    },
-    {
-      name: 'Address',
-      selector: row => row?.address,
+      name: <span className="table-title">Company</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.companyname}>
+          {row?.companyname}
+        </span>
+      ),
       sortable: true,
       wrap: true,
-      width: '300px'
-    }
+      selector: (row) => row.companyname,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Job Title</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.jobtitle}>
+          {row?.jobtitle}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobtitle,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Skills</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.musthaveskills}>
+          {row?.musthaveskills}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.musthaveskills,
+      minWidth: "350px",
+    },
+    {
+      name: <span className="table-title">Nice to have</span>,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            typeof row?.nicetohaveskills === "string" && row?.nicetohaveskills
+          }
+        >
+          {typeof row?.nicetohaveskills === "string" && row?.nicetohaveskills}
+        </span>
+      ),
+      selector: (row) => row.nicetohaveskills,
+      minWidth: "350px",
+      sortable: true,
+    },
+    {
+      name: <span className="table-title">Open position</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.noofopenposition}>
+          {row?.noofopenposition}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.noofopenposition,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">Address</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.address}>
+          {row?.address}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.address,
+      minWidth: "250px",
+    },
   ];
 
   return (
@@ -146,33 +219,64 @@ export function NonPublishedJobs({ title }) {
               </div>
               <div className="btn-actions-pane-right actions-icon-btn">
                 <UncontrolledButtonDropdown>
-                  <DropdownToggle className="btn-icon btn-icon-only" color="link">
+                  <DropdownToggle
+                    className="btn-icon btn-icon-only"
+                    color="link"
+                  >
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
                     <DropdownItem header>Download Report</DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                    <DropdownItem
+                      onClick={() =>
+                        exportToExcel(
+                          excelData,
+                          "adminNonPublishedJobsReport",
+                          true
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{zIndex: 9, position: 'relative'}}>
-                <Col lg="2" md="2" sm="12" sx="12">
-                  <CompanyFilter name={"@companyid"} placeholder={"Select Company"} onChange={handleChange}/>
+              <Row style={{ zIndex: 9, position: "relative" }}>
+                <Col lg="2" md="2" sm="12" sx="12" className="pe-1">
+                  <CompanyFilter
+                    name={"@companyid"}
+                    placeholder={"Search Company"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setCompany(e);
+                    }}
+                    value={company}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <SkillsFilter name={"@skillid"} placeholder={"Select Skills"} onChange={handleChange}/>
+                  <SkillsFilter
+                    name={"@skillid"}
+                    placeholder={"Search Skills"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setSkill(e);
+                    }}
+                    value={skill}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
-                  <LocationFilter name={"@cityid"} placeholder={"Select Location"} onChange={handleChange}/>
+                  <LocationFilter
+                    name={"@cityid"}
+                    placeholder={"Search Location"}
+                    onChange={(name, value, e) => {
+                      handleChange(name, value);
+                      setLocation(e);
+                    }}
+                    value={location}
+                  />
                 </Col>
                 <Col lg="2" md="2" sm="12" sx="12">
                   <FormGroup>
@@ -181,14 +285,15 @@ export function NonPublishedJobs({ title }) {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
+                        dateFormat={"yyyy-MM-dd"}
                         name="@startdate"
                         placeholderText="From"
                         className="form-control"
                         selected={startDate}
+                        maxDate={endDate}
                         onChange={(date) => {
-                          handleDateChange("@startdate", date)
-                          setStartDate(date)
+                          handleDateChange("@startdate", date);
+                          setStartDate(date);
                         }}
                       />
                     </InputGroup>
@@ -201,14 +306,15 @@ export function NonPublishedJobs({ title }) {
                         <FontAwesomeIcon icon={faCalendarAlt} />
                       </div>
                       <DatePicker
-                        dateFormat={'yyyy-MM-dd'}
+                        dateFormat={"yyyy-MM-dd"}
                         name="@enddate"
                         placeholderText="To"
                         className="form-control"
                         selected={endDate}
+                        minDate={startDate}
                         onChange={(date) => {
-                          handleDateChange("@enddate", date)
-                          setEndDate(date)
+                          handleDateChange("@enddate", date);
+                          setEndDate(date);
                         }}
                       />
                     </InputGroup>
@@ -216,32 +322,63 @@ export function NonPublishedJobs({ title }) {
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                    style={{background: 'rgb(47 71 155)'}}
-                    className="btn-square btn btn-primary"
+                    style={{ background: "rgb(47 71 155)" }}
+                    color="primary"
                     type="button"
                     onClick={() => applyFilter()}
-                  >  Search
+                  >
+                    {" "}
+                    Search
                   </Button>
                 </Col>
                 <Col lg="1" md="2" sm="12" sx="12">
                   <Button
-                      className="btn-square btn btn-primary"
-                      type="button"
-                      onClick={() => clearFilter()}
-                    > Clear
+                    color="link"
+                    type="button"
+                    onClick={() => clearFilter()}
+                  >
+                    {" "}
+                    Clear
                   </Button>
                 </Col>
               </Row>
 
-              <Table 
+              {/* <Table
                 progressPending={loading}
-                progressComponent={<Loader type="line-scale-pulse-out-rapid" className="d-flex justify-content-center" />}
+                progressComponent={
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                }
                 columns={columns}
                 data={data}
                 // onRowClicked={handleRowClicked}
                 fixedHeader
                 fixedHeaderScrollHeight="400px"
-              />
+              /> */}
+              {loading ? (
+                <Loader
+                  type="line-scale-pulse-out-rapid"
+                  className="d-flex justify-content-center"
+                />
+              ) : (
+                <>
+                  {data.length > 0 ? (
+                    <DataTable
+                      columns={columns}
+                      data={data}
+                      fixedHeader
+                      pagination
+                      className="admin-list-view"
+                    />
+                  ) : (
+                    <Row className="center-align ">
+                      <NoDataFound></NoDataFound>
+                    </Row>
+                  )}
+                </>
+              )}
             </CardBody>
           </Card>
         </Col>

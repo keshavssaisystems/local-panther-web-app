@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
-import { Row, Col, Card, CardBody, Button } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Button,
+  UncontrolledTooltip,
+} from "reactstrap";
 import SelectJobType from "../../../_components/createJobComponents/selectJobType";
 import CreateJob from "../../../_components/createJobComponents/createJobForm";
 import JobPreview from "../../../_components/createJobComponents/jobPreview";
@@ -10,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createjobActions, dropdownActions } from "_store";
 import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 import { useParams } from "react-router-dom";
+import "./CreateJob.scss";
 
 export function CreateJobWizard({ type }) {
   const dispatch = useDispatch();
@@ -145,7 +153,7 @@ export function CreateJobWizard({ type }) {
   const publishNewJob = async function () {
     let jobId = newJobDetails.jobid;
     let payload = {
-      currentUserId: 81,
+      currentUserId: Number(localStorage.getItem("userId")),
     };
     await dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
     setShowPopupWithNextStep(!showPopupWithNextStep);
@@ -337,21 +345,53 @@ export function CreateJobWizard({ type }) {
                             {compState === 2
                               ? type === "edit"
                                 ? "Confirm & update"
-                                : "Confirm & create"
+                                : "Confirm & Save as a Draft"
                               : "Continue"}
                           </Button>
                         )}
-                        {compState === 1 && jobType === "new_template" && (
-                          <Button
-                            color="primary"
-                            className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
-                            style={nextBtn ? {} : { display: "none" }}
-                            onClick={next}
-                            disabled={BIStatus === false || ESStatus === false}
-                          >
-                            Continue
-                          </Button>
-                        )}
+                        {compState === 1 &&
+                          jobType === "new_template" &&
+                          (BIStatus === false || ESStatus === false) && (
+                            <>
+                              <Button
+                                color="primary"
+                                className="btn-shadow btn-wide float-end btn-pill btn-hover-shine btn-mute"
+                                id="Tooltip-1"
+                                style={nextBtn ? {} : { display: "none" }}
+                              >
+                                Continue
+                              </Button>
+                              <UncontrolledTooltip
+                                placement="top"
+                                target={"Tooltip-1"}
+                              >
+                                Please fill and save{" "}
+                                {BIStatus === false ? "Basic information " : ""}
+                                {BIStatus === false && ESStatus === false
+                                  ? "&"
+                                  : ""}{" "}
+                                {ESStatus === false
+                                  ? "Experience & schedules "
+                                  : ""}
+                                Section
+                              </UncontrolledTooltip>
+                            </>
+                          )}
+                        {compState === 1 &&
+                          jobType === "new_template" &&
+                          BIStatus === true &&
+                          ESStatus === true && (
+                            <>
+                              <Button
+                                color="primary"
+                                className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
+                                style={nextBtn ? {} : { display: "none" }}
+                                onClick={next}
+                              >
+                                Continue
+                              </Button>
+                            </>
+                          )}
                       </div>
                     </div>
                   </>

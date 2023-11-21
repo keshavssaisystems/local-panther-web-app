@@ -14,6 +14,7 @@ import {
 } from "reactstrap";
 
 import Slider from "react-slick";
+import { messaging } from "../../firebase";
 
 import { BsLinkedin, BsGoogle, BsApple } from "react-icons/bs";
 
@@ -80,8 +81,25 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit(payload) {
-    dispatch(authActions.loginThunk(payload));
+    firebasemessaging(payload);
   }
+  const firebasemessaging = async (payload) => {
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      // Generate Token
+      const token = await messaging.getToken(messaging, {
+        vapidKey:
+          "BHDRlNANNHYy5hL-T7sh4uQ3gJCWKxUhXJTRHc85d4mwj51Wo_27e7XHP-W6Ix1zlqvzU9hsiSz6kGXejwG406A",
+      });
+      payload.firebasetoken = token;
+      dispatch(authActions.loginThunk(payload));
+      console.log("Token Gen", token);
+      // Send this token  to server ( db)
+    } else if (permission === "denied") {
+      console.log("You denied for the notification");
+      dispatch(authActions.loginThunk(payload));
+    }
+  };
 
   return (
     <>
@@ -117,7 +135,7 @@ export function Login() {
               <Col lg="9" md="10" sm="12">
                 <img
                   src={logo}
-                  className="logo mb-4"
+                  className="logo mb-2"
                   width={"200px"}
                   alt="logo"
                 />

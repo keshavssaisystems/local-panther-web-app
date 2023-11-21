@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 
-import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
+import {
+  Row,
+  Col,
+  Modal,
+  Card,
+  CardBody,
+  Button,
+  CardHeader,
+} from "reactstrap";
 import { profileActions } from "_store";
 import {
   formatDate,
@@ -137,16 +145,19 @@ export function CandidateQualification(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
-          <CardBody className="scroll-area-md">
-            <div className="mb-3">
-              <strong className="card-title-text">Qualifications</strong>
+          <CardHeader className="card-title-text  text-capitalize ">
+            Qualifications
+            <div className="ms-auto me-2">
               <Label
-                className="float-end link-text"
+                className="link-text"
                 onClick={(evt) => setPersonalModal(true)}
               >
                 Add
               </Label>
             </div>
+          </CardHeader>
+
+          <CardBody className="scroll-area-md">
             {!loading ? (
               <div>
                 <PerfectScrollbar>

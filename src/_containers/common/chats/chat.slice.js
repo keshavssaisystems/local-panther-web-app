@@ -22,12 +22,21 @@ export const getCandidateListThunk = createAsyncThunk(
   }
 );
 
+// getCompletedCustomerListThunk thunk
+export const getCompletedCustomerListThunk = createAsyncThunk(
+  `${name}/getCompletedCustomerListThunk`,
+  async () => {
+    const CUSTOMER_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=GetCompletedInterviewCustomerList&commonId=${userId}`;
+    return await fetchWrapper.get(CUSTOMER_LIST);
+  }
+);
 // Create the slice
 const chatSlice = createSlice({
   name,
   initialState: {
     customerList: [],
     candidateList: [],
+    completedCustomerList: [],
     loading: false,
   },
   reducers: {},
@@ -55,6 +64,17 @@ const chatSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getCompletedCustomerListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCompletedCustomerListThunk.fulfilled]: (state, action) => {
+      state.completedCustomerList = action.payload.data;
+      state.loading = false;
+    },
+    [getCompletedCustomerListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -63,6 +83,7 @@ export const chatActions = {
   ...chatSlice.actions,
   getCustomerListThunk,
   getCandidateListThunk,
+  getCompletedCustomerListThunk,
 };
 
 export const chatReducer = chatSlice.reducer;

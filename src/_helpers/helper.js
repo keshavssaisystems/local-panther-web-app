@@ -354,12 +354,18 @@ export const USPhoneNumber = function (inputValue) {
     let USNumber = inputValue.match(/(\d{3})(\d{3})(\d{4})/);
     return "(" + USNumber[1] + ")-" + USNumber[2] + "-" + USNumber[3];
   } else {
-    return "Invalid phone no";
+    return inputValue;
   }
 };
 
 export const updateMonthstoYears = (months) => {
-  return ((months / 12) | 0) + " years and " + (months % 12) + " months";
+  if (months === 0) {
+    return " ";
+  } else {
+    return months % 12 === 0
+      ? ((months / 12) | 0) + (months / 12 === 1 ? " year" : " years")
+      : ((months / 12) | 0) + " years and " + (months % 12) + " months";
+  }
 };
 
 export const getTimezoneDateTime = (
@@ -438,7 +444,36 @@ export const getChannelId = (id1, id2, scheduleid) => {
 };
 
 export const getVideoChannelId = (jobtitle, jobid, scheduleinterviewid) => {
-  return (
-    jobtitle.replace(/\s+/g, "-") + "-" + jobid + "-" + scheduleinterviewid
-  );
+  if (jobtitle !== undefined) {
+    return (
+      jobtitle.replace(/\s+/g, "-") + "-" + jobid + "-" + scheduleinterviewid
+    );
+  } else {
+    return jobid + "-" + scheduleinterviewid;
+  }
+};
+
+export const getBasePayMask = (basePayValue) => {
+  let removeCommas = basePayValue.replace(/,/g, "");
+  if (removeCommas.length < 3) {
+    return "999";
+  }
+  if (removeCommas.length === 4) {
+    return "9,999";
+  }
+  if (removeCommas.length === 5) {
+    return "99,999";
+  }
+  if (removeCommas.length === 6) {
+    return "999,999";
+  }
+  if (removeCommas.length === 7) {
+    return "9,999,999";
+  }
+  if (removeCommas.length === 8) {
+    return "99,999,999";
+  }
+  if (removeCommas.length === 9) {
+    return "999,999,999";
+  }
 };
