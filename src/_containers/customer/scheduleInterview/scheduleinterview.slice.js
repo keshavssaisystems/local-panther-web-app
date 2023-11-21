@@ -150,6 +150,15 @@ export const interviewFeedbackThunk = createAsyncThunk(
   }
 );
 
+// getInterviewGuideListThunk thunk
+export const getInterviewGuideListThunk = createAsyncThunk(
+  `${name}/getInterviewGuideListThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=Interview Guide`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // Create the slice
 const scheduleInterviewSlice = createSlice({
   name,
@@ -162,6 +171,7 @@ const scheduleInterviewSlice = createSlice({
     candidateSchedules: [],
     prescreenQuestions: [],
     interviewStatus: [],
+    interviewGuideList: [],
     loading: false,
   },
   reducers: {
@@ -401,6 +411,17 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getInterviewGuideListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getInterviewGuideListThunk.fulfilled]: (state, action) => {
+      state.interviewGuideList = action.payload.data;
+      state.loading = false;
+    },
+    [getInterviewGuideListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -423,6 +444,7 @@ export const scheduleInterviewActions = {
   getPreScreenQuestionsThunk,
   getInterviewStatusDropDownThunk,
   interviewFeedbackThunk,
+  getInterviewGuideListThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;

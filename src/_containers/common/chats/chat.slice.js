@@ -8,7 +8,7 @@ const userId = Number(localStorage.getItem("userId"));
 export const getCustomerListThunk = createAsyncThunk(
   `${name}/getCustomerListThunk`,
   async () => {
-    const CUSTOMER_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=GetCompletedInterviewCustomerList&commonId=${userId}`;
+    const CUSTOMER_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=ScheduledCustomerListByUserId&commonId=${userId}`;
     return await fetchWrapper.get(CUSTOMER_LIST);
   }
 );

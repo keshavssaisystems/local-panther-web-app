@@ -10,6 +10,7 @@ import {
   candidateDashboardActions,
   candidateListActions,
   dropdownActions,
+  scheduleInterviewActions,
 } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 
@@ -47,6 +48,7 @@ export function CandidateDashboard() {
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
+    dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
   };
 
   const onDeleteNotification = async (id) => {

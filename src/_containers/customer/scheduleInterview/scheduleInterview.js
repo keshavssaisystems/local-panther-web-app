@@ -55,6 +55,7 @@ export function ScheduleInterview() {
       getGraphData();
     }
     getUpdatedScheduleList();
+    dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
   }, []);
   const onSelectClick = (evt) => {

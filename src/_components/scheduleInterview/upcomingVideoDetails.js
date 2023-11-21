@@ -152,6 +152,12 @@ export function UpcomingVideoDetails({
   const toggle = () => {
     setModal(!modal);
   };
+  const interviewGuideLink = useSelector(
+    (state) => state.scheduleInterview?.interviewGuideList
+  );
+  const downloadInterviewGuide = () => {
+    window.open(interviewGuideLink[0].name, "_blank");
+  };
   return (
     <>
       <CardBody>
@@ -370,6 +376,7 @@ export function UpcomingVideoDetails({
               className="mb-2 mr-2 btn-transition"
               color="primary"
               size={"sm"}
+              onClick={(e) => downloadInterviewGuide(e)}
             >
               {" "}
               Download interview guide{" "}

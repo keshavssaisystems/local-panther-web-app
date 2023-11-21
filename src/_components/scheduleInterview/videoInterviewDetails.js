@@ -158,6 +158,12 @@ export function VideoInterviewDetails({
       }
     });
   }
+  const interviewGuideLink = useSelector(
+    (state) => state.scheduleInterview?.interviewGuideList
+  );
+  const downloadInterviewGuide = () => {
+    window.open(interviewGuideLink[0].name, "_blank");
+  };
   return (
     <>
       <div className="dropdown-menu-header">
@@ -410,6 +416,7 @@ export function VideoInterviewDetails({
                 className="mb-2 mr-2 btn-transition"
                 color="primary"
                 size={"sm"}
+                onClick={(e) => downloadInterviewGuide(e)}
               >
                 {" "}
                 Download interview guide{" "}
