@@ -8,8 +8,12 @@ import { NavLink } from "react-router-dom";
 import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
 import { USPhoneNumber } from "_helpers/helper";
+import { useSelector } from "react-redux";
 
 export function ScheduleDetails({ interviewDetail, onClose }) {
+  const interviewGuideLink = useSelector(
+    (state) => state.scheduleInterview?.interviewGuideList
+  );
   let scheduled = getTimezoneDateTime(
     moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
       " " +
@@ -223,6 +227,18 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                       {interviewDetail.interviewername === ""
                         ? "No interviewer added"
                         : interviewDetail.interviewername}
+                    </p>
+                  </div>
+                  <div className="p-custom">
+                    <p className="mb-0">
+                      <a
+                        href={interviewGuideLink[0].name}
+                        target={"_blank"}
+                        rel="noreferrer"
+                      >
+                        Click here
+                      </a>{" "}
+                      to downlaod the interview guide.
                     </p>
                   </div>
                 </div>
