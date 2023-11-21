@@ -45,7 +45,7 @@ export const AddEditCompany = (props) => {
   );
 
   const { openModal, entity, isAddMode, data, setIsAddMode, onClose } = props;
-  const logourl = data.logourl;
+  const logourl = data?.logourl;
   const [editData, setEditData] = useState(data);
 
   const [cityList, setCityList] = useState([]);
@@ -63,9 +63,8 @@ export const AddEditCompany = (props) => {
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
   useEffect(() => {
-    debugger;
     if (!isAddMode) {
-      let name = data.logourl.replace(/^.*[\\\/]/, "");
+      let name = data?.logourl?.replace(/^.*[\\\/]/, "");
       setSelectedFile(name);
     }
   }, []);
