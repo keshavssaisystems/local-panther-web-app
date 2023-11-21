@@ -85,6 +85,14 @@ export const getCompanyListThunk = createAsyncThunk(
   }
 );
 
+export const getCompanyListPublicThunk = createAsyncThunk(
+  `${name}/getCompanyListPublicThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Company/GetCompanyDropdown_PublicAPI`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 export const getEmployeeCountThunk = createAsyncThunk(
   `${name}/getEmployeeCountThunk`,
   async () => {
@@ -222,6 +230,18 @@ const dropdownSlice = createSlice({
       state.loading = true;
     },
 
+    [getCompanyListPublicThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCompanyListPublicThunk.fulfilled]: (state, action) => {
+      state.companyList = action.payload.data;
+      state.loading = false;
+    },
+    [getCompanyListPublicThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+
     [getEmployeeCountThunk.pending]: (state) => {
       state.loading = true;
     },
@@ -260,6 +280,7 @@ export const dropdownActions = {
   getShiftThunk2,
   getWorkScheduleThunk2,
   getCompanyListThunk,
+  getCompanyListPublicThunk,
   getStateListThunk,
   getEmployeeCountThunk,
 };
