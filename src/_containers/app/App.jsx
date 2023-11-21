@@ -2,7 +2,7 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard } from "_containers/dashboard/Dashboard";
+import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
 
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
@@ -48,11 +48,15 @@ import { CustomerReportCandidateStatus } from "_containers/customer/reports/cust
 import { CustomerVideoScreen } from "../../firebase/customerVideo";
 import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
+import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
+
 import { Chat } from "../../firebase/chat/chat";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
+
+import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -84,10 +88,19 @@ export function App() {
             }
           />
           <Route
-            path="/company"
+            path="masters/company"
             element={
               <PrivateRoute>
-                <AdminListing entity="company" />
+                <CompanyList />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="masters"
+            element={
+              <PrivateRoute>
+                <CompanyList />
               </PrivateRoute>
             }
           />
@@ -120,15 +133,15 @@ export function App() {
             path="acl/roles-function/3"
             element={
               <PrivateRoute>
-                <AdminListing entity="roles" />
+                <RoleMenuListing entity="menuMapping" />
               </PrivateRoute>
             }
           />
           <Route
-            path="/menu-mapping"
+            path="acl/roles/2"
             element={
               <PrivateRoute>
-                <AdminListing entity="menuMapping" />
+                <RoleMenuListing entity="roles" />
               </PrivateRoute>
             }
           />
