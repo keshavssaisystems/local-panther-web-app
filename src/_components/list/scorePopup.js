@@ -3,7 +3,6 @@ import { Nav, NavItem, PopoverBody } from "reactstrap";
 import "./scorePopup.scss";
 
 export function ScorePopup({ scoreJson }) {
-  console.log(scoreJson);
   let validatedJson = JSON.parse(scoreJson);
   let keys = [
     "jobtitlescore",
