@@ -36,7 +36,7 @@ export function AdminSlider({ data }) {
     slidesToShow: data?.length > 2 ? 2 : data?.length,
     speed: 500,
     dots: false,
-    rows: 2,
+    rows: data?.length > 2 ? 2 : 1,
   };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };

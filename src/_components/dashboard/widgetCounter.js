@@ -1,15 +1,12 @@
 import React from "react";
-import { Card, Col, Row } from "reactstrap";
+import { Card, Col } from "reactstrap";
 import "./dashboard.scss";
-import {
-  faAngleUp,
-  faAngleDown,
-  faQuestionCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faAngleUp, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function WidgetCounter({ cardOptions }) {
+  console.log(cardOptions);
   return (
     <>
       {cardOptions.map((options) => (
@@ -37,7 +34,9 @@ export function WidgetCounter({ cardOptions }) {
                   <div className="widget-chart-flex align-items-center">
                     <div>
                       <span className={"opacity-10 pe-2 " + options.arrowColor}>
-                        {options.arrowDirection === "faAngleUp" ? (
+                        {options.arrowDirection === "" ? (
+                          ""
+                        ) : options.arrowDirection === "faAngleUp" ? (
                           <FontAwesomeIcon icon={faAngleUp} />
                         ) : (
                           <FontAwesomeIcon icon={faAngleDown} />

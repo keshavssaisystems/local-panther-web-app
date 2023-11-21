@@ -3,42 +3,7 @@ import { fetchWrapper } from "_helpers";
 
 // create slice name
 const name = "adminDashboard";
-const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
-// const timeIntervalDefault = "month";
-// const todaysDate = new Date().toLocaleDateString("fr-CA");
-// const yesterday = new Date(
-//   new Date().setDate(new Date().getDate() - 1)
-// ).toLocaleDateString("fr-CA");
 
-// export const getScores = createAsyncThunk(`${name}/getScores`, async (date) => {
-//   const dashboardScoreURL = `${baseUrl}/AdminDashboard/DasboardCount?date=${date}`;
-//   return await fetchWrapper.get(dashboardScoreURL);
-// });
-
-// export const getCandidates = createAsyncThunk(
-//   `${name}/getCandidates`,
-//   async (payload = {}) => {
-//     const GET_CANDIDATES_STATS = `${
-//       process.env.REACT_APP_NEW_API_URL
-//     }/Report/GetNewCandidatesList?${new URLSearchParams(payload)}`;
-//     return await fetchWrapper.get(GET_CANDIDATES_STATS);
-//   }
-// );
-
-// export const getInterviewStatusThunk = createAsyncThunk(
-//   `${name}/getInterviewStatusThunk`,
-//   async (payload = {}) => {
-//     payload = {
-//       ...payload,
-//       isActive: true,
-//       isPaginationRequired: false,
-//     };
-//     const FETCH_SCHEDULED_INTERVIEW = `${
-//       process.env.REACT_APP_NEW_API_URL
-//     }/ScheduledInterview?${new URLSearchParams(payload)}`;
-//     return await fetchWrapper.get(FETCH_SCHEDULED_INTERVIEW);
-//   }
-// );
 export const getMissedInterviewThunk = createAsyncThunk(
   `${name}/getMissedInterviewThunk`,
   async (payload = {}) => {
@@ -66,6 +31,15 @@ export const getAdminChartStatisticsDataThunk = createAsyncThunk(
   }
 );
 
+// getDashboardAnalyticsCountThunk
+export const getDashboardAnalyticsCountThunk = createAsyncThunk(
+  `${name}/getDashboardAnalyticsCountThunk`,
+  async () => {
+    const FETCH_STATISTICS = `${process.env.REACT_APP_NEW_API_URL}/AdminDashboard/GetAdminChartOpenJobsBarData`;
+    return await fetchWrapper.get(FETCH_STATISTICS);
+  }
+);
+
 // Create the slice
 const adminDashboardSlice = createSlice({
   name,
@@ -79,6 +53,8 @@ const adminDashboardSlice = createSlice({
     dashboardCountDetails: [],
     statisticsLoading: false,
     statisticsData: [],
+    dashboardCountMidLoading: false,
+    dashboardCountMidDetails: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -87,56 +63,6 @@ const adminDashboardSlice = createSlice({
   },
 
   extraReducers: {
-    // Scores for Dashboard Cards
-    // [getScores.pending]: (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // },
-    // [getScores.fulfilled]: (state, { payload = {} }) => {
-    //   const { data } = payload;
-    //   state.loading = false;
-    //   state.cardStats = data;
-    //   state.totalInterviewScheduled =
-    //     data.todaysinterviewscheduledcount +
-    //     data.upcominginterviewscheduledcount +
-    //     data.pastinterviewscheduledcount;
-    //   // below are dummy data, api not available
-    //   state.cardStats.totalCandidates = 120;
-    // },
-    // [getScores.rejected]: (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.error;
-    // },
-    // // Candidates Stats for Dashboard Charts
-    // [getCandidates.pending]: (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // },
-    // [getCandidates.fulfilled]: (state, { payload = {} }) => {
-    //   const { data } = payload;
-    //   state.loading = false;
-    //   state.candidatesData = candidatesDataDummy;
-    // },
-    // [getCandidates.rejected]: (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.error;
-    // },
-
-    // // scheduled interview Status
-    // [getInterviewStatusThunk.pending]: (state) => {
-    //   state.scheduledInterviewLoading = true;
-    //   state.error = null;
-    // },
-    // [getInterviewStatusThunk.fulfilled]: (state, { payload = {} }) => {
-    //   const { data: { scheduledInterviewList = [] } = {} } = payload;
-    //   state.scheduledInterviewLoading = false;
-    //   state.scheduledInterviewList = scheduledInterviewList;
-    // },
-    // [getInterviewStatusThunk.rejected]: (state, action) => {
-    //   state.scheduledInterviewLoading = false;
-    //   state.error = action.error;
-    // },
-
     // missed interview Status
     [getMissedInterviewThunk.pending]: (state) => {
       state.missedInterviewLoading = true;
@@ -181,6 +107,21 @@ const adminDashboardSlice = createSlice({
       state.statisticsLoading = false;
       state.error = action.error;
     },
+
+    // Middle dashboard count
+    [getDashboardAnalyticsCountThunk.pending]: (state) => {
+      state.dashboardCountMidLoading = true;
+      state.error = null;
+    },
+    [getDashboardAnalyticsCountThunk.fulfilled]: (state, { payload = {} }) => {
+      const { data = {} } = payload;
+      state.dashboardCountMidLoading = false;
+      state.dashboardCountMidDetails = data;
+    },
+    [getDashboardAnalyticsCountThunk.rejected]: (state, action) => {
+      state.dashboardCountMidLoading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -190,6 +131,7 @@ export const adminDashboardSliceActions = {
   getMissedInterviewThunk,
   getDashboardCountThunk,
   getAdminChartStatisticsDataThunk,
+  getDashboardAnalyticsCountThunk,
 };
 // export const { fetchScores } = adminDashboardSlice.actions;
 export const adminDashboardReducer = adminDashboardSlice.reducer;

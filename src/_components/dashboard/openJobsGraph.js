@@ -27,7 +27,12 @@ export function OpenJobsGraph({ openJobsCount, graphData }) {
     series: [
       {
         name: "New jobs",
-        data: [10, 41, 35, 10],
+        data: [
+          graphData?.Last7daysOpenJobs,
+          graphData?.Last30daysOpenJobs,
+          graphData?.Last60daysOpenJobs,
+          graphData?.Last90daysOpenJobs,
+        ],
       },
     ],
     legend: {
