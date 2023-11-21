@@ -152,7 +152,7 @@ export function CustomerRegistration() {
     }
     let payload = {
       customerid: 0,
-      companyid: Number(formData.companyid),
+      companyid: parseInt(formData.companyid),
       userid: 0,
       userroleid: 2,
       title: formData.jobprofile,
@@ -178,6 +178,8 @@ export function CustomerRegistration() {
         title: response.error.message,
         type: "error",
       });
+    } else {
+      history.navigate("/registration-success");
     }
   }
 
@@ -423,8 +425,8 @@ export function CustomerRegistration() {
   };
 
   const onSelectCompanyDropdown = (data) => {
-    setCompanyValue(data.value);
-    setValue("companyid", String(data.value));
+    setCompanyValue(data);
+    setValue("companyid", String(data));
   };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -664,6 +666,7 @@ export function CustomerRegistration() {
                   type="email"
                   name="email"
                   id="email"
+                  disabled={validated.email}
                   placeholder="Enter email id"
                   {...register("email")}
                   className={`form-control placeholder-name ${
@@ -716,6 +719,7 @@ export function CustomerRegistration() {
                   mask="(999)-999-9999"
                   name="phoneNumber"
                   id="phoneNumber"
+                  disabled={validated.mobile}
                   {...register("phoneNumber")}
                   className={`form-control placeholder-name ${
                     errors.phoneNumber ? "is-invalid" : ""
