@@ -676,6 +676,7 @@ export function Registration() {
                                 handleFormData("email", e.target.value)
                               }
                               autoComplete="off"
+                              disabled={validated.email}
                             />
                             {!validated.email ? (
                               <Button
@@ -730,6 +731,7 @@ export function Registration() {
                               onInput={(e) =>
                                 handleFormData("mobile", e.target.value)
                               }
+                              disabled={validated.mobile}
                             />
                             {!validated.mobile ? (
                               <Button
