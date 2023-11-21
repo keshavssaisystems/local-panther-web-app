@@ -4,15 +4,9 @@ export const customers = {
   listingTitle: "Customer Listings",
   columns: [
     {
-      name: "First name",
-      id: "firstname",
-      selector: (row) => row.firstname,
-      sortable: true,
-    },
-    {
-      name: "Last name",
-      id: "lastname",
-      selector: (row) => row.lastname,
+      name: "Name",
+      id: "name",
+      selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
     {
@@ -22,19 +16,16 @@ export const customers = {
       sortable: true,
     },
     {
-      name: "City",
+      name: "City, State",
       id: "cityname",
-      selector: (row) => row.cityname,
-      sortable: true,
-    },
-    {
-      name: "State",
-      selector: (row) => row.statename,
-      sortable: true,
-    },
-    {
-      name: "Country",
-      selector: (row) => row.countryname,
+      selector: (row) =>
+        row.cityname === "" && row.statename === ""
+          ? "-"
+          : row.cityname === "" && row.statename !== ""
+          ? row.statename
+          : row.cityname !== "" && row.statename === ""
+          ? row.cityname
+          : row.cityname + ", " + row.statename,
       sortable: true,
     },
     {
@@ -53,16 +44,20 @@ export const customers = {
       selector: (row) => row.email,
       sortable: true,
     },
+    {
+      name: "Action",
+      selector: (row) => row.email,
+      sortable: true,
+    },
   ],
-
   searchFilter: [
     {
       name: "Company",
       id: "company",
     },
     {
-      name: "Industry",
-      id: "industry",
+      name: "Active",
+      id: "active",
     },
   ],
   buttonsList: [
@@ -152,7 +147,7 @@ export const users = {
     },
     {
       name: "Last name",
-      selector: (row) => row.lastname,
+      selector: (row) => row.lastName,
       sortable: true,
     },
     {
@@ -167,15 +162,26 @@ export const users = {
       sortable: true,
     },
     {
-      name: "Phone number",
+      name: "Phone",
       id: "phonenumber",
       selector: (row) => row.phonenumber,
+      sortable: true,
+    },
+    {
+      name: "Status",
+      id: "isactive",
+      selector: (row) => row.isactive,
       sortable: true,
     },
   ],
   searchFilter: [
     {
       name: "User role",
+      id: "role",
+    },
+    {
+      name: "City",
+      id: "city",
     },
   ],
   buttonsList: [

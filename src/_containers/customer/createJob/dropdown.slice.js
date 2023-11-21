@@ -76,6 +76,32 @@ export const getWorkScheduleThunk2 = createAsyncThunk(
   }
 );
 
+// getCompanyListThunk thunk
+export const getCompanyListThunk = createAsyncThunk(
+  `${name}/getCompanyListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Company/GetCompanyDropdown`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
+
+export const getEmployeeCountThunk = createAsyncThunk(
+  `${name}/getEmployeeCountThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=noofemployees`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
+// getStateListThunk thunk
+export const getStateListThunk = createAsyncThunk(
+  `${name}/getStateListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=State`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const dropdownSlice = createSlice({
   name,
@@ -88,6 +114,9 @@ const dropdownSlice = createSlice({
     preScreenQuestion: [],
     shift: [],
     workSchedule: [],
+    companyList: [],
+    employeeList: [],
+    stateList: [],
     loading: false,
   },
   reducers: {},
@@ -181,6 +210,41 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getCompanyListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCompanyListThunk.fulfilled]: (state, action) => {
+      state.companyList = action.payload.data;
+      state.loading = false;
+    },
+    [getCompanyListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+
+    [getEmployeeCountThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getEmployeeCountThunk.fulfilled]: (state, action) => {
+      state.employeeList = action.payload.data;
+      state.loading = false;
+    },
+    [getEmployeeCountThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+
+    [getStateListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getStateListThunk.fulfilled]: (state, action) => {
+      state.stateList = action.payload.data;
+      state.loading = false;
+    },
+    [getStateListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -195,6 +259,9 @@ export const dropdownActions = {
   getPreScreenQuestionThunk,
   getShiftThunk2,
   getWorkScheduleThunk2,
+  getCompanyListThunk,
+  getStateListThunk,
+  getEmployeeCountThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

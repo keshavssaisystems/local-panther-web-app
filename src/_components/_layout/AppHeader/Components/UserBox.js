@@ -42,10 +42,10 @@ export function UserBox() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [isToggleOn, setIsToggleOn] = useState(false);
-  const personalInfo_temp = useSelector(
-    (state) => state.getProfile?.profileImage
-  );
-
+  // const personalInfo_temp = useSelector(
+  //   (state) => state.getProfile?.profileImage
+  // );
+  const personalInfo_temp = localStorage.getItem("profileImage");
   const [profileImg, setProfileImg] = useState("");
   const dispatch = useDispatch();
   const logout = () => dispatch(authActions.logout());
@@ -56,11 +56,7 @@ export function UserBox() {
   const [changePwd, setChangePwd] = useState(false);
 
   useEffect(() => {
-    if (personalInfo_temp || personalInfo_temp === "") {
-      setProfileImg(personalInfo_temp);
-    } else {
-      setProfileImg(userDetail?.Profilephotopath);
-    }
+    setProfileImg(personalInfo_temp);
   }, [personalInfo_temp]);
   // only show nav when logged in
   if (!authUser) return null;
@@ -122,6 +118,7 @@ export function UserBox() {
                   <DropdownToggle color="link" className="p-0">
                     <img
                       width={42}
+                      height={42}
                       className="rounded-circle"
                       src={profileImg ? profileImg : avatar1}
                       alt=""
@@ -146,6 +143,7 @@ export function UserBox() {
                               <div className="widget-content-left me-3">
                                 <img
                                   width={42}
+                                  height={42}
                                   className="rounded-circle"
                                   src={profileImg ? profileImg : avatar1}
                                   alt=""
