@@ -798,8 +798,8 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="confirmPassword" className="input-label">
-                            Confirm <span className="text-danger">*</span>
-                            Password
+                            Confirm Password{" "}
+                            <span className="text-danger">*</span>
                           </Label>
                           <InputGroup>
                             <input
