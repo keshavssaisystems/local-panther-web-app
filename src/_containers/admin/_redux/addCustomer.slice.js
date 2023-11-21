@@ -28,6 +28,16 @@ export const getCompaniesList = createAsyncThunk(
   }
 );
 
+export const getCompanyAdmin = createAsyncThunk(
+  `${name}/getCompanyAdmin`,
+  async (payload = {}) => {
+    const GET_COMPANIES_STATS = `${baseUrl}/Company/Get?${new URLSearchParams(
+      payload
+    )}`;
+    return await fetchWrapper.get(GET_COMPANIES_STATS);
+  }
+);
+
 // Get states list
 export const getStatesList = createAsyncThunk(`${name}/getStates`, async () => {
   return await fetchWrapper.get(
@@ -87,6 +97,7 @@ const addCustomerSlice = createSlice({
     error: null,
     data: [],
     companiesList: [],
+    companiesDetails: [],
     statesList: [],
     citiesList: [],
     countriesList: [],
@@ -114,6 +125,21 @@ const addCustomerSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    [getCompanyAdmin.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getCompanyAdmin.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.companiesDetails = data;
+    },
+    [getCompanyAdmin.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
     [getStatesList.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -224,6 +250,7 @@ const addCustomerSlice = createSlice({
 export const addCustomerActions = {
   ...addCustomerSlice.actions,
   getCompaniesList,
+  getCompanyAdmin,
   addCustomer,
   getStatesList,
   getCitiesList,

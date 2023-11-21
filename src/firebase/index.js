@@ -1,7 +1,8 @@
 // import "./style.css";
 
-// import firebase from "firebase/app";
-// import "firebase/firestore";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/messaging";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCwJ9XU5LfjGXkD77q6MwsPkvz5QdLUHKY",
@@ -12,10 +13,8 @@ export const firebaseConfig = {
   appId: "1:275858738478:web:b191ac1830f73fb7fe7ebf",
   measurementId: "G-41FNE7FGNE",
 };
-// if (!firebase.apps.length) {
-//   firebase.initializeApp(firebaseConfig);
-// }
-// const firestore = firebase.firestore();
+const initApp = firebase.initializeApp(firebaseConfig);
+export const messaging = firebase.messaging();
 
 export const servers = {
   iceServers: [

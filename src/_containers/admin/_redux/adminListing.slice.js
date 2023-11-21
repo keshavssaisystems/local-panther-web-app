@@ -93,6 +93,14 @@ export const addRole = createAsyncThunk(
   }
 );
 
+export const updateRole = createAsyncThunk(
+  `${name}/updateRole`,
+  async ({ rolesData, roleId }) => {
+    const GET_ROLES_STATS = `${baseUrl}/UserRoles/${roleId}`;
+    return await fetchWrapper.put(GET_ROLES_STATS, rolesData);
+  }
+);
+
 export const updateMenuMapping = createAsyncThunk(
   `${name}/updateMenuMapping`,
   async ({ rolesData, id }) => {
@@ -104,10 +112,9 @@ export const updateMenuMapping = createAsyncThunk(
 // ** https://panther-api-dev.azurewebsites.net/api/Menus?isActive=true&pageSize=500&pageNumber=0
 export const getMenuMappings = createAsyncThunk(
   `${name}/getMenuMappings`,
-  async (payload = {}) => {
-    const GET_MENUMAPPING_STATS = `${baseUrl}/Menus?${new URLSearchParams(
-      payload
-    )}`;
+  async (id) => {
+    const GET_MENUMAPPING_STATS = `${baseUrl}/Menus/GetMappedMenusByRole/${id}`;
+    return await fetchWrapper.get(GET_MENUMAPPING_STATS);
   }
 );
 
@@ -248,6 +255,18 @@ const adminListingSlice = createSlice({
       state.error = action.error;
     },
 
+    [updateRole.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateRole.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateRole.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
     [updateMenuMapping.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -313,6 +332,7 @@ export const adminListingActions = {
   addRole,
   updateMenuMapping,
   deleteRole,
+  updateRole,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

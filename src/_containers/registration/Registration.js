@@ -33,9 +33,10 @@ import {
 
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { authActions } from "_store";
+import { authActions, dropdownActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
+import { CustomerRegistration } from "./customerRegistration";
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
@@ -53,11 +54,23 @@ export function Registration() {
     autoplay: true,
     adaptiveHeight: true,
   };
-
+  const dispatch = useDispatch();
+  const companyDropdown = useSelector((state) => state.dropdown.companyList);
+  const [registrationType, setRegistrationType] = useState([
+    {
+      id: 1,
+      name: "Candidate",
+    },
+    {
+      id: 2,
+      name: "Customer",
+    },
+  ]);
+  const [selected, setSelected] = useState(0);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const dispatch = useDispatch();
+
   const authUser = useSelector((x) => x?.auth?.token);
   const [message, setMessage] = useState("");
   const [countryList, setCountryList] = useState([]);
@@ -496,6 +509,9 @@ export function Registration() {
       }
     }
   };
+  const onHandleInputChange = (data) => {
+    setSelected(data);
+  };
 
   const handleFormData = function (check, data) {
     console.log(getValues("email"));
@@ -546,305 +562,340 @@ export function Registration() {
               <span className="title-content">
                 It only takes a few seconds to create your account
               </span>
+              <div className="mt-5 mb-3">
+                <Row>
+                  <Label className="input-label">
+                    Please select your role{" "}
+                    <span className="text-danger">*</span>
+                  </Label>
 
+                  {registrationType.map((item, index) => (
+                    <Col md={2}>
+                      <FormGroup check style={{ marginLeft: "5px" }}>
+                        <Input
+                          style={{ fontSize: "18px" }}
+                          name="desiredJobType"
+                          type="radio"
+                          onChange={(evt) => onHandleInputChange(item.id)}
+                        />{" "}
+                        <Label
+                          check
+                          className="fw-semi-bold"
+                          style={{ fontSize: "18px", fontWeight: "600" }}
+                        >
+                          {item.name}
+                        </Label>
+                      </FormGroup>
+                    </Col>
+                  ))}
+                </Row>
+              </div>
               <div className="mt-5">
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="jobprofile" className="input-label">
-                          <span className="text-danger">*</span> Job Profile
-                        </Label>
-                        <input
-                          type="text"
-                          name="jobprofile"
-                          id="jobprofile"
-                          placeholder="Enter job profile"
-                          {...register("jobprofile")}
-                          className={`form-control placeholder-name ${
-                            errors.jobprofile ? "is-invalid" : ""
-                          }`}
-                        />
-                        <FormFeedback>
-                          {errors.jobprofile?.message}
-                        </FormFeedback>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="firstName" className="input-label">
-                          <span className="text-danger">*</span> First name
-                        </Label>
-                        <input
-                          type="text"
-                          name="firstName"
-                          id="firstName"
-                          placeholder="Enter first name"
-                          {...register("firstName")}
-                          className={`form-control placeholder-name ${
-                            errors.firstName ? "is-invalid" : ""
-                          }`}
-                        />
-                        <FormFeedback>{errors.firstName?.message}</FormFeedback>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="lastName" className="input-label">
-                          <span className="text-danger">*</span> Last name
-                        </Label>
-                        <input
-                          type="text"
-                          name="lastName"
-                          id="lastName"
-                          placeholder="Enter last name"
-                          {...register("lastName")}
-                          className={`form-control placeholder-name ${
-                            errors.lastName ? "is-invalid" : ""
-                          }`}
-                        />
-                        <FormFeedback>{errors.lastName?.message}</FormFeedback>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="email" className="input-label">
-                          <span className="text-danger">*</span> Email
-                        </Label>
-                        <InputGroup>
+                {selected === 1 && (
+                  <Form onSubmit={handleSubmit(onSubmit)}>
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="jobprofile" className="input-label">
+                            Job Profile <span className="text-danger">*</span>
+                          </Label>
                           <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="Enter email id"
-                            {...register("email")}
-                            className={`form-control placeholder-name ${
-                              errors.email ? "is-invalid" : ""
-                            }`}
-                            onClick={(e) =>
-                              handleFormData("email", e.target.value)
-                            }
-                            autoComplete="off"
-                          />
-                          {!validated.email ? (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              onClick={() => validateOTP("email", errors)}
-                            >
-                              Verify
-                            </Button>
-                          ) : (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              style={{
-                                cursor: validated.email
-                                  ? "not-allowed"
-                                  : "pointer",
-                                border: "1px solid #ced4da",
-                              }}
-                              disabled={validated.email}
-                            >
-                              <img src={validIcon} alt="valid-icon" />
-                            </Button>
-                          )}{" "}
-                          <FormFeedback>{errors.email?.message}</FormFeedback>
-                        </InputGroup>
-
-                        <div className="async-error-text">
-                          {!errors.email && emailValidError
-                            ? "Please enter valid email to verify"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="phoneNumber" className="input-label">
-                          <span className="text-danger">*</span> Phone
-                        </Label>
-
-                        <InputGroup>
-                          <InputMask
-                            placeholder="Enter phone number"
                             type="text"
-                            mask="(999)-999-9999"
-                            name="phoneNumber"
-                            id="phoneNumber"
-                            {...register("phoneNumber")}
+                            name="jobprofile"
+                            id="jobprofile"
+                            placeholder="Enter job profile"
+                            {...register("jobprofile")}
                             className={`form-control placeholder-name ${
-                              errors.phoneNumber ? "is-invalid" : ""
-                            }`}
-                            onInput={(e) =>
-                              handleFormData("mobile", e.target.value)
-                            }
-                          />
-                          {!validated.mobile ? (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              onClick={() => validateOTP("phone", errors)}
-                            >
-                              Verify
-                            </Button>
-                          ) : (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              style={{
-                                cursor: validated.email
-                                  ? "not-allowed"
-                                  : "pointer",
-                                border: "1px solid #ced4da",
-                              }}
-                              disabled={validated.mobile}
-                            >
-                              <img src={validIcon} alt="valid-icon" />
-                            </Button>
-                          )}{" "}
-                          <FormFeedback>
-                            {errors.phoneNumber?.message}
-                          </FormFeedback>
-                        </InputGroup>
-                        <div className="async-error-text">
-                          {mobileValidError && !errors.phoneNumber
-                            ? "Please enter valid phone number to verify"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="password" className="input-label">
-                          <span className="text-danger">*</span> Password
-                        </Label>
-                        <InputGroup>
-                          <input
-                            placeholder="Enter password"
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            maxLength={30}
-                            {...register("password")}
-                            className={`form-control placeholder-name ${
-                              errors.password ? "is-invalid" : ""
+                              errors.jobprofile ? "is-invalid" : ""
                             }`}
                           />
-                          <InputGroupText
-                            onClick={(evt) => togglePasswordVisibility()}
-                          >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
-                          </InputGroupText>
                           <FormFeedback>
-                            {errors.password?.message}
+                            {errors.jobprofile?.message}
                           </FormFeedback>
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="confirmPassword" className="input-label">
-                          <span className="text-danger">*</span> Confirm
-                          Password
-                        </Label>
-                        <InputGroup>
-                          <input
-                            type={showConfirm ? "text" : "password"}
-                            placeholder="Enter confirm password"
-                            name="confirmPassword"
-                            id="confirmPassword"
-                            {...register("confirmPassword")}
-                            className={`form-control placeholder-name ${
-                              errors.confirmPassword ? "is-invalid" : ""
-                            }`}
-                            maxLength={30}
-                          />
-                          <InputGroupText
-                            onClick={(evt) => toggleConfirmPassword()}
-                          >
-                            {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                          </InputGroupText>
-                          <FormFeedback>
-                            {errors.confirmPassword?.message}
-                          </FormFeedback>
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                    <Col>
-                      <FormGroup>
-                        <Label for="city" className="fw-semi-bold">
-                          <span className="text-danger">* </span>City, State
-                        </Label>
-                        <AsyncSelect
-                          name="city"
-                          placeholder="Search to select"
-                          placeholderText="search"
-                          loadOptions={loadOptions}
-                          isMulti={false}
-                          className={`placeholder-name ${
-                            errors.cityid && cityValue === 0
-                              ? "async-border-red"
-                              : "async-no-error"
-                          }`}
-                          {...register("cityid")}
-                          onChange={(e) => setAsyncSelectValue(e)}
-                        />
-                        <div className="async-error-text">
-                          {errors.cityid && cityValue === 0
-                            ? "City, State is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col>
-                      <FormGroup>
-                        <Label for="country" className="fw-semi-bold">
-                          <span className="text-danger">* </span>Country
-                        </Label>
-                        <AsyncSelect
-                          name="country"
-                          placeholder="Select country"
-                          placeholderText="search"
-                          isMulti={false}
-                          className={`placeholder-name ${
-                            errors.countryid && countryValue === 0
-                              ? "async-border-red"
-                              : ""
-                          }`}
-                          {...register("countryid")}
-                          defaultOptions={countryList}
-                          onChange={(e) => onSelectCountryDropdown(e)}
-                          onMenuOpen={() => checkCityValid()}
-                        />
-                        <div className="async-error-text">
-                          {errors.countryid && countryValue === 0
-                            ? "Country is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                  </Row>
+                        </FormGroup>
+                      </Col>
+                    </Row>
 
-                  <div className="mt-4 d-flex align-items-center">
-                    <h5 className="mb-0 account-text ms-auto me-4">
-                      <Link
-                        to="/login"
-                        style={{ borderBottom: "1px solid #545cd8" }}
-                      >
-                        Already a member?Sign in
-                      </Link>
-                    </h5>
-                    <div>
-                      <Button color="primary" className=" btn-text" size="lg">
-                        Register
-                      </Button>
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="firstName" className="input-label">
+                            First name <span className="text-danger">*</span>
+                          </Label>
+                          <input
+                            type="text"
+                            name="firstName"
+                            id="firstName"
+                            placeholder="Enter first name"
+                            {...register("firstName")}
+                            className={`form-control placeholder-name ${
+                              errors.firstName ? "is-invalid" : ""
+                            }`}
+                          />
+                          <FormFeedback>
+                            {errors.firstName?.message}
+                          </FormFeedback>
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="lastName" className="input-label">
+                            Last name <span className="text-danger">*</span>
+                          </Label>
+                          <input
+                            type="text"
+                            name="lastName"
+                            id="lastName"
+                            placeholder="Enter last name"
+                            {...register("lastName")}
+                            className={`form-control placeholder-name ${
+                              errors.lastName ? "is-invalid" : ""
+                            }`}
+                          />
+                          <FormFeedback>
+                            {errors.lastName?.message}
+                          </FormFeedback>
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="email" className="input-label">
+                            Email <span className="text-danger">*</span>
+                          </Label>
+                          <InputGroup>
+                            <input
+                              type="email"
+                              name="email"
+                              id="email"
+                              placeholder="Enter email id"
+                              {...register("email")}
+                              className={`form-control placeholder-name ${
+                                errors.email ? "is-invalid" : ""
+                              }`}
+                              onClick={(e) =>
+                                handleFormData("email", e.target.value)
+                              }
+                              autoComplete="off"
+                              disabled={validated.email}
+                            />
+                            {!validated.email ? (
+                              <Button
+                                className="grp-btn"
+                                color="light"
+                                onClick={() => validateOTP("email", errors)}
+                              >
+                                Verify
+                              </Button>
+                            ) : (
+                              <Button
+                                className="grp-btn"
+                                color="light"
+                                style={{
+                                  cursor: validated.email
+                                    ? "not-allowed"
+                                    : "pointer",
+                                  border: "1px solid #ced4da",
+                                }}
+                                disabled={validated.email}
+                              >
+                                <img src={validIcon} alt="valid-icon" />
+                              </Button>
+                            )}{" "}
+                            <FormFeedback>{errors.email?.message}</FormFeedback>
+                          </InputGroup>
+
+                          <div className="async-error-text">
+                            {!errors.email && emailValidError
+                              ? "Please enter valid email to verify"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="phoneNumber" className="input-label">
+                            Phone <span className="text-danger">*</span>
+                          </Label>
+
+                          <InputGroup>
+                            <InputMask
+                              placeholder="Enter phone number"
+                              type="text"
+                              mask="(999)-999-9999"
+                              name="phoneNumber"
+                              id="phoneNumber"
+                              {...register("phoneNumber")}
+                              className={`form-control placeholder-name ${
+                                errors.phoneNumber ? "is-invalid" : ""
+                              }`}
+                              onInput={(e) =>
+                                handleFormData("mobile", e.target.value)
+                              }
+                              disabled={validated.mobile}
+                            />
+                            {!validated.mobile ? (
+                              <Button
+                                className="grp-btn"
+                                color="light"
+                                onClick={() => validateOTP("phone", errors)}
+                              >
+                                Verify
+                              </Button>
+                            ) : (
+                              <Button
+                                className="grp-btn"
+                                color="light"
+                                style={{
+                                  cursor: validated.email
+                                    ? "not-allowed"
+                                    : "pointer",
+                                  border: "1px solid #ced4da",
+                                }}
+                                disabled={validated.mobile}
+                              >
+                                <img src={validIcon} alt="valid-icon" />
+                              </Button>
+                            )}{" "}
+                            <FormFeedback>
+                              {errors.phoneNumber?.message}
+                            </FormFeedback>
+                          </InputGroup>
+                          <div className="async-error-text">
+                            {mobileValidError && !errors.phoneNumber
+                              ? "Please enter valid phone number to verify"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="password" className="input-label">
+                            Password <span className="text-danger">*</span>
+                          </Label>
+                          <InputGroup>
+                            <input
+                              placeholder="Enter password"
+                              name="password"
+                              type={showPassword ? "text" : "password"}
+                              id="password"
+                              maxLength={30}
+                              {...register("password")}
+                              className={`form-control placeholder-name ${
+                                errors.password ? "is-invalid" : ""
+                              }`}
+                            />
+                            <InputGroupText
+                              onClick={(evt) => togglePasswordVisibility()}
+                            >
+                              {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </InputGroupText>
+                            <FormFeedback>
+                              {errors.password?.message}
+                            </FormFeedback>
+                          </InputGroup>
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="confirmPassword" className="input-label">
+                            Confirm <span className="text-danger">*</span>
+                            Password
+                          </Label>
+                          <InputGroup>
+                            <input
+                              type={showConfirm ? "text" : "password"}
+                              placeholder="Enter confirm password"
+                              name="confirmPassword"
+                              id="confirmPassword"
+                              {...register("confirmPassword")}
+                              className={`form-control placeholder-name ${
+                                errors.confirmPassword ? "is-invalid" : ""
+                              }`}
+                              maxLength={30}
+                            />
+                            <InputGroupText
+                              onClick={(evt) => toggleConfirmPassword()}
+                            >
+                              {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                            </InputGroupText>
+                            <FormFeedback>
+                              {errors.confirmPassword?.message}
+                            </FormFeedback>
+                          </InputGroup>
+                        </FormGroup>
+                      </Col>
+                      <Col>
+                        <FormGroup>
+                          <Label for="city" className="fw-semi-bold">
+                            City, State <span className="text-danger">* </span>
+                          </Label>
+                          <AsyncSelect
+                            name="city"
+                            placeholder="Search to select"
+                            placeholderText="search"
+                            loadOptions={loadOptions}
+                            isMulti={false}
+                            className={`placeholder-name ${
+                              errors.cityid && cityValue === 0
+                                ? "async-border-red"
+                                : "async-no-error"
+                            }`}
+                            {...register("cityid")}
+                            onChange={(e) => setAsyncSelectValue(e)}
+                          />
+                          <div className="async-error-text">
+                            {errors.cityid && cityValue === 0
+                              ? "City, State is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      <Col>
+                        <FormGroup>
+                          <Label for="country" className="fw-semi-bold">
+                            Country <span className="text-danger">* </span>
+                          </Label>
+                          <AsyncSelect
+                            name="country"
+                            placeholder="Select country"
+                            placeholderText="search"
+                            isMulti={false}
+                            className={`placeholder-name ${
+                              errors.countryid && countryValue === 0
+                                ? "async-border-red"
+                                : ""
+                            }`}
+                            {...register("countryid")}
+                            defaultOptions={countryList}
+                            onChange={(e) => onSelectCountryDropdown(e)}
+                            onMenuOpen={() => checkCityValid()}
+                          />
+                          <div className="async-error-text">
+                            {errors.countryid && countryValue === 0
+                              ? "Country is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <div className="mt-4 d-flex align-items-center">
+                      <h5 className="mb-0 account-text ms-auto me-4">
+                        <Link
+                          to="/login"
+                          style={{ borderBottom: "1px solid #545cd8" }}
+                        >
+                          Already a member?Sign in
+                        </Link>
+                      </h5>
+                      <div>
+                        <Button color="primary" className=" btn-text" size="lg">
+                          Register
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </Form>
+                  </Form>
+                )}
+                {selected === 2 && <CustomerRegistration />}
               </div>
             </Col>
           </Col>

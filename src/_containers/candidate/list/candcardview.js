@@ -129,10 +129,9 @@ export function CandCardView({
                           </DropdownToggle>
                           <DropdownMenu>
                             <ScorePopup
-                              scoreJson={additionalData?.scorejson?.replace(
-                                /'/g,
-                                '"'
-                              )}
+                              scoreJson={additionalData?.scorejson
+                                ?.replace(/'/g, '"')
+                                .replace(/candidate"s/g, "candidate's")}
                             />
                           </DropdownMenu>
                         </Dropdown>

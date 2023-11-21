@@ -153,7 +153,7 @@ export function CreateJobWizard({ type }) {
   const publishNewJob = async function () {
     let jobId = newJobDetails.jobid;
     let payload = {
-      currentUserId: 81,
+      currentUserId: Number(localStorage.getItem("userId")),
     };
     await dispatch(createjobActions.getPublishJobThunk({ jobId, payload }));
     setShowPopupWithNextStep(!showPopupWithNextStep);

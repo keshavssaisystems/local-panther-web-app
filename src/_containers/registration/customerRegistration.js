@@ -33,7 +33,7 @@ import {
 
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { authActions } from "_store";
+import { authActions, dropdownActions, addCustomerActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
 
@@ -41,6 +41,7 @@ const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
 export function CustomerRegistration() {
+  const dispatch = useDispatch();
   let settings = {
     dots: true,
     infinite: true,
@@ -54,10 +55,16 @@ export function CustomerRegistration() {
     adaptiveHeight: true,
   };
 
+  useEffect(() => {
+    dispatch(dropdownActions.getCompanyListPublicThunk());
+  }, []);
+
+  const companyDropdown = useSelector((state) => state.dropdown.companyList);
+
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const dispatch = useDispatch();
+
   const authUser = useSelector((x) => x?.auth?.token);
   const [message, setMessage] = useState("");
   const [countryList, setCountryList] = useState([]);
@@ -73,6 +80,7 @@ export function CustomerRegistration() {
   const [timer, setTimer] = useState(0);
   const [showOtpForm, setOtpForm] = useState(false);
   const [showEmailOtp, setEmailForm] = useState(false);
+  const [companyValue, setCompanyValue] = useState(1);
 
   useEffect(() => {
     // redirect to home if already logged in
@@ -83,6 +91,13 @@ export function CustomerRegistration() {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
+    companyid: Yup.string().required("Company is required"),
+    jobprofile: Yup.string()
+      .required("Title is required")
+      .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
+      .min(3, "Title must be at least 3 characters")
+      .max(30, "Title must be at most 30 characters"),
+
     firstName: Yup.string()
       .required("First name is required")
       .matches(/^[A-Za-z ]*$/, "Please enter valid name")
@@ -113,6 +128,10 @@ export function CustomerRegistration() {
       .required("Confirm Password is required")
       .min(4, "Confirm Password must be at least 4 characters")
       .max(30, "Confirm Password can be at most 30 characters"),
+
+    cityid: Yup.string().required("City, State is required"),
+    stateid: Yup.string(),
+    countryid: Yup.string().required("Country is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
 
@@ -123,7 +142,7 @@ export function CustomerRegistration() {
   const [cityList, setCityList] = useState([]);
   const [postData, setPostData] = useState({});
 
-  async function onSubmit(payload) {
+  async function onSubmit(formData) {
     if (!validated.mobile || !validated.email) {
       showSweetAlert({
         title: "Please verify your email/mobile to create account",
@@ -131,8 +150,27 @@ export function CustomerRegistration() {
       });
       return;
     }
+    let payload = {
+      customerid: 0,
+      companyid: parseInt(formData.companyid),
+      userid: 0,
+      userroleid: 2,
+      title: formData.jobprofile,
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      phonenumber: formData.phoneNumber,
+      address: "",
+      zipcode: "",
+      cityid: Number(formData.cityid),
+      stateid: Number(formData.stateid),
+      countryid: 1,
+      isactive: true,
+      currentUserId: 0,
+    };
 
-    let response = await dispatch(authActions.registerThunk(payload));
+    let response = await dispatch(addCustomerActions.addCustomer(payload));
     if (!response.payload) {
       setMessage(response.error.message);
 
@@ -140,6 +178,8 @@ export function CustomerRegistration() {
         title: response.error.message,
         type: "error",
       });
+    } else {
+      history.navigate("/registration-success");
     }
   }
 
@@ -159,6 +199,16 @@ export function CustomerRegistration() {
     let data = { ...field };
     data = "";
 
+    if (companyValue === 0) {
+      data = "company";
+    }
+
+    if (
+      formDetails.jobprofile === "" ||
+      !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
+    ) {
+      data = data !== "" ? data + ", title" : "title";
+    }
     if (
       formDetails.firstName === "" ||
       !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
@@ -183,6 +233,12 @@ export function CustomerRegistration() {
     ) {
       data = data !== "" ? data + ", phone number" : "phone number";
     }
+    if (cityValue === 0) {
+      data = data !== "" ? data + ", city, state" : "city, state";
+    }
+    if (countryValue === 0) {
+      data = data !== "" ? data + ", country" : "country";
+    }
 
     if (data !== "") {
       setField(data);
@@ -201,6 +257,9 @@ export function CustomerRegistration() {
       lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       email: getValues("email"),
+      countryid: countryValue,
+      stateid: parseInt(getValues("stateid")),
+      cityid: cityValue,
       phoneotp: null,
       phoneotpgeneratedate: new Date().toISOString(),
       isphonenumberverify: false,
@@ -365,6 +424,10 @@ export function CustomerRegistration() {
     setValue("countryid", String(data.value));
   };
 
+  const onSelectCompanyDropdown = (data) => {
+    setCompanyValue(data);
+    setValue("companyid", String(data));
+  };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -505,277 +568,310 @@ export function CustomerRegistration() {
 
   return (
     <>
-      <div className=" registration-container h-100">
-        <Row className="h-100 g-0">
-          <Col
-            lg="7"
-            md="12"
-            className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
-          >
-            <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
-              <div className="">
-                <img
-                  src={logo}
-                  width={"130px"}
-                  alt="logo"
-                  className="logo mb-4"
-                />
-              </div>
-              <Row className="login-divider" />
-              <div className="app-logo mb-0" />
-              <div className="title-text">Welcome,</div>
-              <span className="title-content">
-                It only takes a few seconds to create your account
-              </span>
-
-              <div className="mt-5">
-                <Form onSubmit={handleSubmit(onSubmit)}>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="firstName" className="input-label">
-                          <span className="text-danger">*</span> First name
-                        </Label>
-                        <input
-                          type="text"
-                          name="firstName"
-                          id="firstName"
-                          placeholder="Enter first name"
-                          {...register("firstName")}
-                          className={`form-control placeholder-name ${
-                            errors.firstName ? "is-invalid" : ""
-                          }`}
-                        />
-                        <FormFeedback>{errors.firstName?.message}</FormFeedback>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="lastName" className="input-label">
-                          <span className="text-danger">*</span> Last name
-                        </Label>
-                        <input
-                          type="text"
-                          name="lastName"
-                          id="lastName"
-                          placeholder="Enter last name"
-                          {...register("lastName")}
-                          className={`form-control placeholder-name ${
-                            errors.lastName ? "is-invalid" : ""
-                          }`}
-                        />
-                        <FormFeedback>{errors.lastName?.message}</FormFeedback>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="email" className="input-label">
-                          <span className="text-danger">*</span> Email
-                        </Label>
-                        <InputGroup>
-                          <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="Enter email id"
-                            {...register("email")}
-                            className={`form-control placeholder-name ${
-                              errors.email ? "is-invalid" : ""
-                            }`}
-                            onClick={(e) =>
-                              handleFormData("email", e.target.value)
-                            }
-                            autoComplete="off"
-                          />
-                          {!validated.email ? (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              onClick={() => validateOTP("email", errors)}
-                            >
-                              Verify
-                            </Button>
-                          ) : (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              style={{
-                                cursor: validated.email
-                                  ? "not-allowed"
-                                  : "pointer",
-                                border: "1px solid #ced4da",
-                              }}
-                              disabled={validated.email}
-                            >
-                              <img src={validIcon} alt="valid-icon" />
-                            </Button>
-                          )}{" "}
-                          <FormFeedback>{errors.email?.message}</FormFeedback>
-                        </InputGroup>
-
-                        <div className="async-error-text">
-                          {!errors.email && emailValidError
-                            ? "Please enter valid email to verify"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="phoneNumber" className="input-label">
-                          <span className="text-danger">*</span> Phone
-                        </Label>
-
-                        <InputGroup>
-                          <InputMask
-                            placeholder="Enter phone number"
-                            type="text"
-                            mask="(999)-999-9999"
-                            name="phoneNumber"
-                            id="phoneNumber"
-                            {...register("phoneNumber")}
-                            className={`form-control placeholder-name ${
-                              errors.phoneNumber ? "is-invalid" : ""
-                            }`}
-                            onInput={(e) =>
-                              handleFormData("mobile", e.target.value)
-                            }
-                          />
-                          {!validated.mobile ? (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              onClick={() => validateOTP("phone", errors)}
-                            >
-                              Verify
-                            </Button>
-                          ) : (
-                            <Button
-                              className="grp-btn"
-                              color="light"
-                              style={{
-                                cursor: validated.email
-                                  ? "not-allowed"
-                                  : "pointer",
-                                border: "1px solid #ced4da",
-                              }}
-                              disabled={validated.mobile}
-                            >
-                              <img src={validIcon} alt="valid-icon" />
-                            </Button>
-                          )}{" "}
-                          <FormFeedback>
-                            {errors.phoneNumber?.message}
-                          </FormFeedback>
-                        </InputGroup>
-                        <div className="async-error-text">
-                          {mobileValidError && !errors.phoneNumber
-                            ? "Please enter valid phone number to verify"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="password" className="input-label">
-                          <span className="text-danger">*</span> Password
-                        </Label>
-                        <InputGroup>
-                          <input
-                            placeholder="Enter password"
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            maxLength={30}
-                            {...register("password")}
-                            className={`form-control placeholder-name ${
-                              errors.password ? "is-invalid" : ""
-                            }`}
-                          />
-                          <InputGroupText
-                            onClick={(evt) => togglePasswordVisibility()}
-                          >
-                            {showPassword ? <FaEyeSlash /> : <FaEye />}
-                          </InputGroupText>
-                          <FormFeedback>
-                            {errors.password?.message}
-                          </FormFeedback>
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                    <Col md={6}>
-                      <FormGroup>
-                        <Label for="confirmPassword" className="input-label">
-                          <span className="text-danger">*</span> Confirm
-                          Password
-                        </Label>
-                        <InputGroup>
-                          <input
-                            type={showConfirm ? "text" : "password"}
-                            placeholder="Enter confirm password"
-                            name="confirmPassword"
-                            id="confirmPassword"
-                            {...register("confirmPassword")}
-                            className={`form-control placeholder-name ${
-                              errors.confirmPassword ? "is-invalid" : ""
-                            }`}
-                            maxLength={30}
-                          />
-                          <InputGroupText
-                            onClick={(evt) => toggleConfirmPassword()}
-                          >
-                            {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                          </InputGroupText>
-                          <FormFeedback>
-                            {errors.confirmPassword?.message}
-                          </FormFeedback>
-                        </InputGroup>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-
-                  <div className="mt-4 d-flex align-items-center">
-                    <h5 className="mb-0 account-text ms-auto me-4">
-                      <Link
-                        to="/login"
-                        style={{ borderBottom: "1px solid #545cd8" }}
-                      >
-                        Already a member?Sign in
-                      </Link>
-                    </h5>
-                    <div>
-                      <Button color="primary" className=" btn-text" size="lg">
-                        Register
-                      </Button>
-                    </div>
-                  </div>
-                </Form>
-              </div>
-            </Col>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Row>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="companyid" className="input-label">
+                Company <span className="text-danger">*</span>
+              </Label>
+              <Input
+                type="select"
+                name="companyid"
+                {...register("companyid")}
+                className={`form-control placeholder-name ${
+                  errors.companyid && companyValue === 0 ? "is-invalid" : ""
+                }`}
+                onChange={(e) => onSelectCompanyDropdown(e.target.value)}
+              >
+                <option value={0}>Select company</option>
+                {companyDropdown?.length > 0 &&
+                  companyDropdown?.map((options) => (
+                    <option key={options.companyid} value={options.companyid}>
+                      {" "}
+                      {options.companyname}{" "}
+                    </option>
+                  ))}
+              </Input>
+              <FormFeedback>
+                {errors.companyid && companyValue === 0?.message}
+              </FormFeedback>
+            </FormGroup>
           </Col>
-          <Col lg="5" className="d-xs-none">
-            <div className="slider-light">
-              <Slider {...settings}>
-                <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
-                    className="slide-img-bg"
-                    style={{
-                      backgroundImage: "url(" + bg1 + ")",
-                    }}
-                  />
-                  <div>
-                    <h3 className="slider-title">Experts In Human Capital</h3>
-                    <p className="m-5 slider-content">
-                      What makes The Panther Group the ideal career partner? We
-                      focus on what you want most from your career!
-                    </p>
-                  </div>
-                </div>
-              </Slider>
-            </div>
+
+          <Col md={6}>
+            <FormGroup>
+              <Label for="jobprofile" className="input-label">
+                Title <span className="text-danger">*</span>
+              </Label>
+              <input
+                type="text"
+                name="jobprofile"
+                id="jobprofile"
+                placeholder="Enter job profile"
+                {...register("jobprofile")}
+                className={`form-control placeholder-name ${
+                  errors.jobprofile ? "is-invalid" : ""
+                }`}
+              />
+              <FormFeedback>{errors.jobprofile?.message}</FormFeedback>
+            </FormGroup>
           </Col>
         </Row>
-      </div>
+
+        <Row>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="firstName" className="input-label">
+                First name <span className="text-danger">*</span>
+              </Label>
+              <input
+                type="text"
+                name="firstName"
+                id="firstName"
+                placeholder="Enter first name"
+                {...register("firstName")}
+                className={`form-control placeholder-name ${
+                  errors.firstName ? "is-invalid" : ""
+                }`}
+              />
+              <FormFeedback>{errors.firstName?.message}</FormFeedback>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="lastName" className="input-label">
+                Last name <span className="text-danger">*</span>
+              </Label>
+              <input
+                type="text"
+                name="lastName"
+                id="lastName"
+                placeholder="Enter last name"
+                {...register("lastName")}
+                className={`form-control placeholder-name ${
+                  errors.lastName ? "is-invalid" : ""
+                }`}
+              />
+              <FormFeedback>{errors.lastName?.message}</FormFeedback>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="email" className="input-label">
+                Email <span className="text-danger">*</span>
+              </Label>
+              <InputGroup>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  disabled={validated.email}
+                  placeholder="Enter email id"
+                  {...register("email")}
+                  className={`form-control placeholder-name ${
+                    errors.email ? "is-invalid" : ""
+                  }`}
+                  onClick={(e) => handleFormData("email", e.target.value)}
+                  autoComplete="off"
+                />
+                {!validated.email ? (
+                  <Button
+                    className="grp-btn"
+                    color="light"
+                    onClick={() => validateOTP("email", errors)}
+                  >
+                    Verify
+                  </Button>
+                ) : (
+                  <Button
+                    className="grp-btn"
+                    color="light"
+                    style={{
+                      cursor: validated.email ? "not-allowed" : "pointer",
+                      border: "1px solid #ced4da",
+                    }}
+                    disabled={validated.email}
+                  >
+                    <img src={validIcon} alt="valid-icon" />
+                  </Button>
+                )}{" "}
+                <FormFeedback>{errors.email?.message}</FormFeedback>
+              </InputGroup>
+
+              <div className="async-error-text">
+                {!errors.email && emailValidError
+                  ? "Please enter valid email to verify"
+                  : ""}
+              </div>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="phoneNumber" className="input-label">
+                Phone <span className="text-danger">*</span>
+              </Label>
+
+              <InputGroup>
+                <InputMask
+                  placeholder="Enter phone number"
+                  type="text"
+                  mask="(999)-999-9999"
+                  name="phoneNumber"
+                  id="phoneNumber"
+                  disabled={validated.mobile}
+                  {...register("phoneNumber")}
+                  className={`form-control placeholder-name ${
+                    errors.phoneNumber ? "is-invalid" : ""
+                  }`}
+                  onInput={(e) => handleFormData("mobile", e.target.value)}
+                />
+                {!validated.mobile ? (
+                  <Button
+                    className="grp-btn"
+                    color="light"
+                    onClick={() => validateOTP("phone", errors)}
+                  >
+                    Verify
+                  </Button>
+                ) : (
+                  <Button
+                    className="grp-btn"
+                    color="light"
+                    style={{
+                      cursor: validated.email ? "not-allowed" : "pointer",
+                      border: "1px solid #ced4da",
+                    }}
+                    disabled={validated.mobile}
+                  >
+                    <img src={validIcon} alt="valid-icon" />
+                  </Button>
+                )}{" "}
+                <FormFeedback>{errors.phoneNumber?.message}</FormFeedback>
+              </InputGroup>
+              <div className="async-error-text">
+                {mobileValidError && !errors.phoneNumber
+                  ? "Please enter valid phone number to verify"
+                  : ""}
+              </div>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="password" className="input-label">
+                Password <span className="text-danger">*</span>
+              </Label>
+              <InputGroup>
+                <input
+                  placeholder="Enter password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  maxLength={30}
+                  {...register("password")}
+                  className={`form-control placeholder-name ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
+                />
+                <InputGroupText onClick={(evt) => togglePasswordVisibility()}>
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </InputGroupText>
+                <FormFeedback>{errors.password?.message}</FormFeedback>
+              </InputGroup>
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="confirmPassword" className="input-label">
+                Confirm Password <span className="text-danger">*</span>
+              </Label>
+              <InputGroup>
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Enter confirm password"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  {...register("confirmPassword")}
+                  className={`form-control placeholder-name ${
+                    errors.confirmPassword ? "is-invalid" : ""
+                  }`}
+                  maxLength={30}
+                />
+                <InputGroupText onClick={(evt) => toggleConfirmPassword()}>
+                  {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                </InputGroupText>
+                <FormFeedback>{errors.confirmPassword?.message}</FormFeedback>
+              </InputGroup>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+              <Label for="city" className="fw-semi-bold">
+                City, State <span className="text-danger">* </span>
+              </Label>
+              <AsyncSelect
+                name="city"
+                placeholder="Search to select"
+                placeholderText="search"
+                loadOptions={loadOptions}
+                isMulti={false}
+                className={`placeholder-name ${
+                  errors.cityid && cityValue === 0
+                    ? "async-border-red"
+                    : "async-no-error"
+                }`}
+                {...register("cityid")}
+                onChange={(e) => setAsyncSelectValue(e)}
+              />
+              <div className="async-error-text">
+                {errors.cityid && cityValue === 0
+                  ? "City, State is required"
+                  : ""}
+              </div>
+            </FormGroup>
+          </Col>
+          <Col>
+            <FormGroup>
+              <Label for="country" className="fw-semi-bold">
+                Country <span className="text-danger">* </span>
+              </Label>
+              <AsyncSelect
+                name="country"
+                placeholder="Select country"
+                placeholderText="search"
+                isMulti={false}
+                className={`placeholder-name ${
+                  errors.countryid && countryValue === 0
+                    ? "async-border-red"
+                    : ""
+                }`}
+                {...register("countryid")}
+                defaultOptions={countryList}
+                onChange={(e) => onSelectCountryDropdown(e)}
+                onMenuOpen={() => checkCityValid()}
+              />
+              <div className="async-error-text">
+                {errors.countryid && countryValue === 0
+                  ? "Country is required"
+                  : ""}
+              </div>
+            </FormGroup>
+          </Col>
+        </Row>
+
+        <div className="mt-4 d-flex align-items-center">
+          <h5 className="mb-0 account-text ms-auto me-4">
+            <Link to="/login" style={{ borderBottom: "1px solid #545cd8" }}>
+              Already a member?Sign in
+            </Link>
+          </h5>
+          <div>
+            <Button color="primary" className=" btn-text" size="lg">
+              Register
+            </Button>
+          </div>
+        </div>
+      </Form>
 
       <Modal
         className="modal-reject-align registration-container"

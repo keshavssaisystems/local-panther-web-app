@@ -14,25 +14,25 @@ import {
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { getCustomers } from "_containers/admin/_redux/adminListing.slice";
 import { BsSearch } from "react-icons/bs";
 import { dropdownActions, addCustomerActions } from "_store";
+import { getCompanies } from "_containers/admin/_redux/adminListing.slice";
 import { USPhoneNumber } from "_helpers/helper";
-import { AddUpdateCustomer } from "./addUpdateCustomer";
 import SweetAlert from "react-bootstrap-sweetalert";
-import "./customer.scss";
+import { AddEditCompany } from "../common/addEditCompany";
 
-export const CustomerList = () => {
+export const CompanyList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({});
   const [updateSuccessPopup, setUpdateSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState(
-    "Customer added successfully!!!"
+    "Company added successfully!!!"
   );
   const [errorPopup, setErrorPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState(
-    "Customer added successfully!!!"
+    "Company added successfully!!!"
   );
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -42,15 +42,11 @@ export const CustomerList = () => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
-    dispatch(dropdownActions.getStateListThunk());
     dispatch(
-      getCustomers({
-        isActive: true,
+      getCompanies({
         pageSize: 1000,
         pageNumber: 1,
-        companyId: 0,
       })
     );
   }, []);
@@ -58,12 +54,11 @@ export const CustomerList = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const { data } = useSelector((state) => state?.adminListing ?? {});
-  const companyDropdown = useSelector((state) => state.dropdown.companyList);
-  let title = "Customers";
+  let title = "Companies";
   let icon = companyLogo;
   let columns = [
     {
-      name: "Name",
+      name: "Company",
       id: "name",
       cell: (row) => (
         <div
@@ -71,49 +66,38 @@ export const CustomerList = () => {
           onClick={(e) => {
             setEditData(row);
             setOpenModal(true);
+            setIsAddMode(false);
             setIsEdit(true);
           }}
         >
-          {row.firstname + " " + row.lastname}
+          {row.companyname}
         </div>
       ),
       sortable: true,
     },
+
     {
-      name: "Company",
-      id: "companyname",
-      selector: (row) => row.companyname,
-      sortable: true,
-    },
-    {
-      name: "Address",
-      id: "address",
-      selector: (row) => row.address,
-      sortable: true,
-    },
-    {
-      name: "City, State",
+      name: "City",
       id: "cityname",
-      selector: (row) =>
-        row.cityname === "" && row.statename === ""
-          ? ""
-          : row.cityname === "" && row.statename !== ""
-          ? row.statename
-          : row.cityname !== "" && row.statename === ""
-          ? row.cityname
-          : row.cityname + ", " + row.statename,
+      selector: (row) => row.cityname,
+      sortable: true,
+    },
+
+    {
+      name: "City",
+      id: "cityname",
+      selector: (row) => row.statename,
       sortable: true,
     },
     {
-      name: "Phone",
+      name: "Zipcode",
       id: "phonenumber",
-      selector: (row) =>
-        row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
+      selector: (row) => row.zipcode,
       sortable: true,
     },
     {
-      name: "Email",
-      selector: (row) => row.email,
+      name: "Industry",
+      selector: (row) => row.industry,
       sortable: true,
     },
   ];
@@ -143,19 +127,30 @@ export const CustomerList = () => {
       cityname: "",
       statename: "",
     };
+    setIsAddMode(true);
     setIsEdit(false);
     setEditData(obj);
     setOpenModal(true);
   };
 
+  const closeModal = () => {
+    setOpenModal(false);
+    dispatch(
+      getCompanies({
+        pageSize: 1000,
+        pageNumber: 1,
+      })
+    );
+  };
+
   const getFilterValue = (event) => {
     event.preventDefault();
     dispatch(
-      getCustomers({
+      getCompanies({
+        searchText: event.target.elements.search.value,
         isActive: event.target.elements.status.value,
         pageSize: 1000,
         pageNumber: 1,
-        companyId: event.target.elements.companyid.value,
       })
     );
   };
@@ -212,7 +207,7 @@ export const CustomerList = () => {
     setIsEdit(false);
     if (res.payload) {
       dispatch(
-        getCustomers({
+        addCustomerActions.getCompaniesList({
           isActive: true,
           pageSize: 1000,
           pageNumber: 1,
@@ -255,19 +250,12 @@ export const CustomerList = () => {
                     <Row>
                       <Col>
                         <FormGroup>
-                          <Input type="select" name="companyid">
-                            <option value={0}>All companies</option>
-                            {companyDropdown?.length > 0 &&
-                              companyDropdown?.map((options) => (
-                                <option
-                                  key={options.companyid}
-                                  value={options.companyid}
-                                >
-                                  {" "}
-                                  {options.companyname}{" "}
-                                </option>
-                              ))}
-                          </Input>
+                          <Input
+                            type="text"
+                            name="search"
+                            id="search"
+                            placeholder="Search.."
+                          ></Input>
                         </FormGroup>
                       </Col>
                       <Col>
@@ -301,7 +289,7 @@ export const CustomerList = () => {
                     type="submit"
                     onClick={(e) => addModal()}
                   >
-                    Add customer
+                    Add company
                   </Button>
                 </Col>
               </Row>
@@ -319,11 +307,11 @@ export const CustomerList = () => {
       </Row>
 
       {openModal ? (
-        <AddUpdateCustomer
+        <AddEditCompany
           openModal={openModal}
-          onClose={() => setOpenModal(false)}
+          onClose={() => closeModal(false)}
           postData={(e) => postData(e)}
-          isEdit={isEdit}
+          isAddMode={isAddMode}
           data={editData}
           putData={(e) => putData(e)}
         />
