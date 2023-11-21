@@ -10,27 +10,25 @@ import moment from "moment";
 
 export function AdminCalendar({ title }) {
   const dispatch = useDispatch();
-  const { scheduledInterviewList = [] } = useSelector((state) => state.adminReportReducer);
+  const { scheduledInterviewList = [] } = useSelector(
+    (state) => state.adminReportReducer
+  );
 
   useEffect(() => {
-    dispatch(scheduledInterviewListThunk())
+    dispatch(scheduledInterviewListThunk());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const events = scheduledInterviewList.map((item) => {
     const startDate = moment(
-      moment(item.scheduledate).format("MMM D, YYYY") +
-        " " +
-        item.starttime
+      moment(item.scheduledate).format("MMM D, YYYY") + " " + item.starttime
     )
       .tz("America/New_York")
       .format("YYYY-MM-DD HH:mm:ss");
 
     const [duration] =
-      item.duration !== undefined
-        ? item.duration.split(" ")
-        : [];
+      item.duration !== undefined ? item.duration.split(" ") : [];
     const endDate = moment(startDate)
       .add(duration, "m")
       .format("YYYY-MM-DD HH:mm:ss");
@@ -43,22 +41,19 @@ export function AdminCalendar({ title }) {
       start: new Date(startDate),
       end: new Date(endDate),
       color:
-        item.isaccepted === true &&
-        item.isrejected === false
+        item.isaccepted === true && item.isrejected === false
           ? "#14BD66"
           : item.isrejected === true
           ? "#FF406D"
           : "#F7B924",
     };
-  })
+  });
 
   return (
     <div>
       <PageTitle heading={title} icon={titlelogo} />
       <p>{title}</p>
-      <ReactBigCalender 
-        events={events}
-      />
+      <ReactBigCalender events={events} toolbar={true} />
     </div>
   );
 }

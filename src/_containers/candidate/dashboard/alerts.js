@@ -58,10 +58,11 @@ export function Alerts(props) {
                                 props.onReadNotification(item.queueid)
                               }
                             >
-                              <div className="widget-heading">
+                              <div className="widget-heading alert-heading">
                                 {item.notificationmessage}
                               </div>
-                              <div className="widget-subheading">
+
+                              <div className="widget-subheading alert-desc">
                                 {item.notificationdetails}
                               </div>
                             </div>
@@ -74,6 +75,7 @@ export function Alerts(props) {
                               />
                             </div>
                           </div>
+                          <hr />
                         </div>
                       </ListGroupItem>
                     </ListGroup>
