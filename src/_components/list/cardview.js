@@ -245,10 +245,9 @@ export const CandidateCardView = (props) => {
                           }
                         >
                           <ScorePopup
-                            scoreJson={props?.data?.scorejson?.replace(
-                              /'/g,
-                              '"'
-                            )}
+                            scoreJson={props?.data?.scorejson
+                              ?.replace(/'/g, '"')
+                              .replace(/candidate"s/g, "candidate's")}
                           />
                         </UncontrolledPopover>
                       </>

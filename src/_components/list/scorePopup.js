@@ -3,11 +3,11 @@ import { Nav, NavItem, PopoverBody } from "reactstrap";
 import "./scorePopup.scss";
 
 export function ScorePopup({ scoreJson }) {
+  console.log(scoreJson);
   let validatedJson = JSON.parse(scoreJson);
   let keys = [
     "jobtitlescore",
-    "cityscore",
-    "statescore",
+    "locationscore",
     "skillsscore",
     "experiencescore",
     "educationscore",
@@ -15,8 +15,7 @@ export function ScorePopup({ scoreJson }) {
   ];
   let displayName = {
     jobtitlescore: "Job title",
-    cityscore: "City",
-    statescore: "State",
+    locationscore: "Location",
     skillsscore: "Skills",
     experiencescore: "Experience",
     educationscore: "Education",
