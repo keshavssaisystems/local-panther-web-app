@@ -99,19 +99,14 @@ export function Registration() {
     jobprofile: Yup.string()
       .required("Job profile is required")
       .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
-      .min(3, "Job profile must be at least 3 characters")
-      .max(30, "Job profile must be at most 30 characters"),
+      .min(3, "Job profile must be at least 3 characters"),
 
     firstName: Yup.string()
       .required("First name is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid name")
-      .min(3, "First name must be at least 3 characters")
-      .max(30, "First name must be at most 30 characters"),
+      .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
     lastName: Yup.string()
       .required("Last name is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid name")
-      .min(3, "Last name must be at least 3 characters")
-      .max(30, "Last name must be at most 30 characters"),
+      .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
     email: Yup.string()
       .required("Email is required")
       .matches(
@@ -570,7 +565,7 @@ export function Registration() {
                   </Label>
 
                   {registrationType.map((item, index) => (
-                    <Col md={2}>
+                    <Col md={3} lg={2} sm={2}>
                       <FormGroup check style={{ marginLeft: "5px" }}>
                         <Input
                           style={{ fontSize: "18px" }}
@@ -589,6 +584,19 @@ export function Registration() {
                     </Col>
                   ))}
                 </Row>
+                {selected === 0 && (
+                  <div className="mt-3 float-end">
+                    <Link to="/login">
+                      <Button
+                        style={{ background: "#2F2E2E" }}
+                        className=" btn-text"
+                        size="lg"
+                      >
+                        Back
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
               <div className="mt-5">
                 {selected === 1 && (
@@ -608,6 +616,7 @@ export function Registration() {
                             className={`form-control placeholder-name ${
                               errors.jobprofile ? "is-invalid" : ""
                             }`}
+                            maxLength={200}
                           />
                           <FormFeedback>
                             {errors.jobprofile?.message}
@@ -631,6 +640,7 @@ export function Registration() {
                             className={`form-control placeholder-name ${
                               errors.firstName ? "is-invalid" : ""
                             }`}
+                            maxLength={50}
                           />
                           <FormFeedback>
                             {errors.firstName?.message}
@@ -651,6 +661,7 @@ export function Registration() {
                             className={`form-control placeholder-name ${
                               errors.lastName ? "is-invalid" : ""
                             }`}
+                            maxLength={50}
                           />
                           <FormFeedback>
                             {errors.lastName?.message}
@@ -675,6 +686,7 @@ export function Registration() {
                               onClick={(e) =>
                                 handleFormData("email", e.target.value)
                               }
+                              maxLength={50}
                               autoComplete="off"
                               disabled={validated.email}
                             />
@@ -728,6 +740,7 @@ export function Registration() {
                               className={`form-control placeholder-name ${
                                 errors.phoneNumber ? "is-invalid" : ""
                               }`}
+                              maxLength={20}
                               onInput={(e) =>
                                 handleFormData("mobile", e.target.value)
                               }
@@ -884,7 +897,7 @@ export function Registration() {
                           to="/login"
                           style={{ borderBottom: "1px solid #545cd8" }}
                         >
-                          Already a member?Sign in
+                          Already a member? Sign in
                         </Link>
                       </h5>
                       <div>

@@ -202,15 +202,6 @@ const adminListingSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.data = data?.userList;
-      state.data = data?.userList?.map((item) => {
-        const newContact = item?.phonenumber?.match(/(\d{3})(\d{3})(\d{4})/);
-        return {
-          ...item,
-          phonenumber: newContact
-            ? "(" + newContact[1] + ")-" + newContact[2] + newContact[3]
-            : null,
-        };
-      });
     },
     [getUsers.rejected]: (state, action) => {
       state.loading = false;

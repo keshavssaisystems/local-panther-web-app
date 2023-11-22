@@ -22,7 +22,11 @@ export const AlertModal = (props) => {
       <div className="widget-content-wrapper">
         <div className="widget-content-left">
           <UncontrolledButtonDropdown>
-            <DropdownToggle color="link" className="alert-mod">
+            <DropdownToggle
+              color="link"
+              className="alert-mod"
+              style={{ paddingLeft: "2px", paddingRight: "2px" }}
+            >
               <button
                 style={{ paddingLeft: "2px", paddingRight: "2px" }}
                 className=" btn-icon btn-icon-only btn btn-link btn-sm"
