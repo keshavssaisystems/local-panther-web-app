@@ -41,3 +41,7 @@
   pointer-events: none;
   opacity: 0.6;
 }
+.search-wrapper.active .btn-close {
+  left: 215px !important;
+  top: 18px !important;
+}

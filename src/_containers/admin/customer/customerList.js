@@ -219,10 +219,10 @@ export const CustomerList = () => {
           companyId: 0,
         })
       );
-      if (res.payload.statusCode === 201) {
+      if (res.payload.statusCode === 204) {
         setSuccess(true);
         showSweetAlert({
-          title: res.payload.data.statusMessage,
+          title: res.payload.message,
           type: "success",
         });
       } else {
@@ -240,6 +240,7 @@ export const CustomerList = () => {
       });
     }
   };
+
   return (
     <>
       <Row>
@@ -284,11 +285,12 @@ export const CustomerList = () => {
                       </Col>
                       <Col>
                         <Button
+                          style={{ background: "#2f479b" }}
                           color={"primary"}
                           className="input-group-text"
                           type="submit"
                         >
-                          <BsSearch className="mb-1" /> Search
+                          Submit
                         </Button>
                       </Col>
                     </Row>
@@ -296,6 +298,7 @@ export const CustomerList = () => {
                 </Col>
                 <Col>
                   <Button
+                    style={{ background: "#2f479b" }}
                     color={"primary"}
                     className="input-group-text float-end"
                     type="submit"
