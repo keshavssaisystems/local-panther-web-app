@@ -108,30 +108,34 @@ export function CustomerSlider({ data }) {
                 <div className="card ms-2 me-2 widget-content bg-upcoming">
                   <div className="widget-content-wrapper text-white">
                     <div className="widget-content-left">
-                      <div className="widget-heading">{options.jobtitle}</div>
+                      <div className="widget-heading">
+                        {options?.jobtitle.length > 25
+                          ? options?.jobtitle.slice(0, 25) + "..."
+                          : options?.jobtitle}
+                      </div>
                       <div className="widget-name">
-                        {options.candidatename} ({options.meetingstatus})
+                        {options?.candidatename} ({options?.meetingstatus})
                       </div>
                       <div className="widget-date">
                         <BsCalendar2WeekFill className="mb-1" /> {"  "}
                         {getTimezoneDateTime(
-                          moment(options.scheduledate).format("YYYY-MM-DD") +
+                          moment(options?.scheduledate).format("YYYY-MM-DD") +
                             "T" +
-                            options.starttime,
+                            options?.starttime,
                           "MM/DD/YYYY"
                         )}
                       </div>
                     </div>
                     <div className="widget-content-right">
                       <div>
-                        {options.format === "Video" ? (
+                        {options?.format === "Video" ? (
                           <div
                             className="ellipse d-flex justify-content-center align-items-center float-end mb-2"
                             onClick={() => checkInterview("video", options)}
                           >
                             <img src={videoIcon} alt="interview-icon" />
                           </div>
-                        ) : options.format === "In-person" ? (
+                        ) : options?.format === "In-person" ? (
                           <>
                             <div
                               className="ellipse d-flex justify-content-center align-items-center float-end mb-2"
@@ -157,9 +161,9 @@ export function CustomerSlider({ data }) {
                       <div className="widget-time float-end">
                         <BsClockFill className="mb-1" /> {"  "}
                         {getTimezoneDateTime(
-                          moment(options.scheduledate).format("YYYY-MM-DD") +
+                          moment(options?.scheduledate).format("YYYY-MM-DD") +
                             "T" +
-                            options.starttime,
+                            options?.starttime,
                           "h:mm A"
                         )}
                       </div>
