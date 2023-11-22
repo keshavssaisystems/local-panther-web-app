@@ -112,23 +112,19 @@ export const AddEditCompany = (props) => {
   });
   // form validation rules
   const validationSchema = Yup.object().shape({
-    company: Yup.string().required("Company is required").max(50),
-    industry: Yup.string().max(30),
-    city: Yup.string().required("City is required").max(30),
+    company: Yup.string().required("Company is required"),
+    industry: Yup.string(),
+    city: Yup.string().required("City is required"),
     state: Yup.string(),
     aboutCompany: Yup.string().max(50),
     numOfEmployees: Yup.string(),
-    phone: Yup.string()
-      // .required("phone is required")
-      // .matches(phoneRegExp, "phone number is not valid")
-      .max(20),
+    phone: Yup.string(),
     email: Yup.string()
       // .required("Email is required")
-      .matches(emailRegex, "Email is not valid")
-      .max(30),
-    zipcode: Yup.string().max(15),
+      .matches(emailRegex, "Email is not valid"),
+    zipcode: Yup.string(),
     countryid: Yup.string().required("Country is required"),
-    address: Yup.string().max(250),
+    address: Yup.string(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -257,11 +253,23 @@ export const AddEditCompany = (props) => {
     var form = new FormData();
 
     form.append("Companyname", editData.company);
-    form.append("Industry", editData.industry);
-    form.append("Contactemail", editData.contactemail);
-    form.append("Description", editData.description);
-    form.append("Noofemployees", editData.noofemployees);
-    form.append("Contactphonenumber", editData.contactphonenumber);
+    form.append("Industry", editData.industry ? editData.industry : "");
+    form.append(
+      "Contactemail",
+      editData.contactemail ? editData.contactemail : ""
+    );
+    form.append(
+      "Description",
+      editData.description ? editData.description : ""
+    );
+    form.append(
+      "Noofemployees",
+      editData.noofemployees ? editData.noofemployees : 0
+    );
+    form.append(
+      "Contactphonenumber",
+      editData.contactphonenumber ? editData.contactphonenumber : ""
+    );
     form.append("Cityid", editData.cityid);
     form.append("Stateid", editData.stateid);
     form.append("Countryid", editData.countryid);
@@ -271,7 +279,7 @@ export const AddEditCompany = (props) => {
     );
     form.append("Zipcode", editData.zipcode);
     form.append("Address", editData.address);
-    form.append("Logourl", logourl);
+    form.append("Logourl", logourl ? logourl : "");
     form.append("Logourlfile", logo?.[0] ? logo[0] : logo);
     if (isAddMode) {
       form.append("Companyid", 0);
@@ -373,6 +381,7 @@ export const AddEditCompany = (props) => {
                     className={`field-input placeholder-text form-control ${
                       companyValidation ? "is-invalid error-text" : "input-text"
                     }`}
+                    maxLength={50}
                   />
                   <div className="invalid-feedback">
                     {companyValidation ? "Company is required" : ""}
@@ -388,6 +397,7 @@ export const AddEditCompany = (props) => {
                     name="industry"
                     onInput={(e) => handleInputChange(e, "industry")}
                     placeholder="Enter industry"
+                    maxLength={200}
                     defaultValue={isAddMode ? "" : data?.industry}
                     className={`field-input placeholder-text form-control `}
                   />
@@ -401,6 +411,7 @@ export const AddEditCompany = (props) => {
                     type="textarea"
                     name="description"
                     id="description"
+                    maxLength={250}
                     onInput={(e) => handleInputChange(e, "description")}
                     placeholder="Enter description"
                     defaultValue={isAddMode ? "" : data?.description}
@@ -448,6 +459,7 @@ export const AddEditCompany = (props) => {
                     mask="(999)-999-9999"
                     type="text"
                     name="phone"
+                    maxLength={50}
                     onInput={(e) => handleInputChange(e, "phone")}
                     placeholder="Enter phone"
                     defaultValue={isAddMode ? "" : data?.contactphonenumber}

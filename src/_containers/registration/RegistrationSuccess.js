@@ -4,7 +4,7 @@ import Slider from "react-slick";
 
 import bg3 from "../../assets/utils/images/originals/citynights.jpg";
 
-import { Col, Row } from "reactstrap";
+import { Col, Row, Button } from "reactstrap";
 
 import "./registrationsuccess.scss";
 
@@ -35,18 +35,20 @@ export function RegistrationSuccess() {
           >
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
               <img src={logo} width={"130px"} alt="logo" className="logo" />
-              <div className="app-logo" />
+              <div className="app-logo" style={{ height: "0px" }} />
               <h6>
                 <div className="succese-text">
-                  <strong>Account created successfully!</strong>
+                  Account created successfully!
                 </div>
-                <span className="success-msg">
+                {/* <span className="success-msg">
                   Please check your register email for email verification.
-                </span>
+                </span> */}
               </h6>
               <div className="mt-4">
-                <Link to="/login" className="text-primary account-text me-3">
-                  Back to Sign in page
+                <Link to="/login">
+                  <Button color="primary" className=" btn-text" size="lg">
+                    Proceed to login
+                  </Button>
                 </Link>
               </div>
             </Col>
