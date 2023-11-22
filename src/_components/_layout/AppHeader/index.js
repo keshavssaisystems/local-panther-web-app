@@ -32,10 +32,10 @@ export function AppHeader({
           <div className="user-title">
             <h4>
               {userroleid === 1
-                ? "OpenWorx - Admin"
+                ? "Admin"
                 : userroleid === 2
-                ? "OpenWorx - Customer"
-                : "OpenWorx - Candidate"}
+                ? "Customer"
+                : "Candidate"}
             </h4>
           </div>
           <div className="app-header-right">

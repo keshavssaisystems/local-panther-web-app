@@ -122,7 +122,8 @@ export function AdminSlider({ data }) {
                       </div>
                     </div>
                     <div className="widget-content-right">
-                      <div>
+                      {/* Commented for the time being we can give join option to admin as well */}
+                      {/* <div>
                         {options.format === "Video" ? (
                           <div
                             className="ellipse d-flex justify-content-center align-items-center float-end mb-2"
@@ -152,7 +153,7 @@ export function AdminSlider({ data }) {
                             </div>
                           </>
                         )}
-                      </div>
+                      </div> */}
                       <div className="widget-time float-end">
                         <BsClockFill className="mb-1" /> {"  "}
                         {getTimezoneDateTime(

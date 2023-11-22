@@ -498,6 +498,13 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
               iconId={5}
             />
             <HeadingAndDetailWithDiv
+              heading={"Job Location"}
+              detail={
+                jobDetail?.joblocation === "" ? "-" : jobDetail?.joblocation
+              }
+              iconId={5}
+            />
+            <HeadingAndDetailWithDiv
               heading={"Shift & Schedule"}
               detail={returnShift() + ", " + returnSchedule()}
               iconId={3}

@@ -1,8 +1,13 @@
 import React from "react";
 import { Card, Col, Row } from "reactstrap";
 import "./dashboard.scss";
+import { useNavigate } from "react-router-dom";
 
 export function WidgetCard({ cardOptions }) {
+  const navigate = useNavigate();
+  const redirectPath = (link) => {
+    navigate(link);
+  };
   return (
     <>
       <Col>
@@ -11,7 +16,10 @@ export function WidgetCard({ cardOptions }) {
             <Row className="g-0">
               {cardOptions.map((options) => (
                 <Col sm="6">
-                  <div className="widget-chart widget-chart-hover">
+                  <div
+                    className="widget-chart widget-chart-hover"
+                    onClick={(e) => redirectPath(options?.path)}
+                  >
                     <div className="icon-wrapper rounded-circle">
                       <div
                         className={"icon-wrapper-bg bg-" + options.className}
