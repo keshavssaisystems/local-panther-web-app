@@ -16,8 +16,8 @@ export function MissingInterview({ cardOptions }) {
           </div>
           {cardOptions?.length > 0 && (
             <CardBody className="overflow-auto">
-              {cardOptions?.map((options) => (
-                <div className="mi-main-card">
+              {cardOptions?.map((options, index) => (
+                <div className="mi-main-card" key={index}>
                   <div className="widget-chart-content">
                     <div className="widget-content-left fsize-1">
                       <div className="widget-main-title ms-2 mt-2">

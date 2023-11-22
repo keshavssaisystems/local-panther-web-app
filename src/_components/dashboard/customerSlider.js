@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardBody } from "reactstrap";
+import { Card, CardBody, Row, Col } from "reactstrap";
 import Slider from "react-slick";
 import "./dashboard.scss";
 import videoIcon from "assets/utils/images/interview-icons/video-join-icon.svg";
@@ -14,6 +14,7 @@ import moment from "moment-timezone";
 import { BsCalendar2WeekFill, BsClockFill } from "react-icons/bs";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useNavigate } from "react-router-dom";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export function CustomerSlider({ data }) {
   const [showAlert, SetShowAlert] = useState({
@@ -99,76 +100,93 @@ export function CustomerSlider({ data }) {
       </div>
       <Card className="mb-3 customer-slider">
         <CardBody>
-          <Slider {...settings}>
-            {data?.map((options) => (
-              <div>
-                <div className="card ms-2 me-2 widget-content bg-upcoming">
-                  <div className="widget-content-wrapper text-white">
-                    <div className="widget-content-left">
-                      <div className="widget-heading" title={options.jobtitle}>
-                        {options?.jobtitle.length > 25
-                          ? options?.jobtitle.slice(0, 25) + "..."
-                          : options?.jobtitle}
+          {data?.length > 0 && (
+            <Slider {...settings}>
+              {data?.map((options) => (
+                <div>
+                  <div className="card ms-2 me-2 widget-content bg-upcoming">
+                    <div className="widget-content-wrapper text-white">
+                      <div className="widget-content-left">
+                        <div
+                          className="widget-heading"
+                          title={options.jobtitle}
+                        >
+                          {options?.jobtitle.length > 25
+                            ? options?.jobtitle.slice(0, 25) + "..."
+                            : options?.jobtitle}
+                        </div>
+                        <div className="widget-name">
+                          {options?.candidatename} ({options?.meetingstatus})
+                        </div>
+                        <div className="widget-date">
+                          <BsCalendar2WeekFill className="mb-1" /> {"  "}
+                          {getTimezoneDateTime(
+                            moment(options?.scheduledate).format("YYYY-MM-DD") +
+                              "T" +
+                              options?.starttime,
+                            "MM/DD/YYYY"
+                          )}
+                        </div>
                       </div>
-                      <div className="widget-name">
-                        {options?.candidatename} ({options?.meetingstatus})
-                      </div>
-                      <div className="widget-date">
-                        <BsCalendar2WeekFill className="mb-1" /> {"  "}
-                        {getTimezoneDateTime(
-                          moment(options?.scheduledate).format("YYYY-MM-DD") +
-                            "T" +
-                            options?.starttime,
-                          "MM/DD/YYYY"
-                        )}
-                      </div>
-                    </div>
-                    <div className="widget-content-right">
-                      <div>
-                        {options?.format === "Video" ? (
-                          <img
-                            src={videoIcon}
-                            alt="interview-icon"
-                            onClick={() => checkInterview("video", options)}
-                            className="float-end join-icon"
-                          />
-                        ) : options?.format === "In-person" ? (
-                          <>
+                      <div className="widget-content-right">
+                        <div>
+                          {options?.format === "Video" ? (
                             <img
-                              src={personIcon}
+                              src={videoIcon}
                               alt="interview-icon"
-                              onClick={() =>
-                                checkInterview("in-person", options)
-                              }
+                              onClick={() => checkInterview("video", options)}
                               className="float-end join-icon"
                             />
-                          </>
-                        ) : (
-                          <>
-                            <img
-                              src={telephoneIcon}
-                              alt="interview-icon"
-                              onClick={() => checkInterview("phone", options)}
-                              className="float-end join-icon"
-                            />
-                          </>
-                        )}
-                      </div>
-                      <div className="widget-time float-end">
-                        <BsClockFill className="mb-1" /> {"  "}
-                        {getTimezoneDateTime(
-                          moment(options?.scheduledate).format("YYYY-MM-DD") +
-                            "T" +
-                            options?.starttime,
-                          "h:mm A"
-                        )}
+                          ) : options?.format === "In-person" ? (
+                            <>
+                              <img
+                                src={personIcon}
+                                alt="interview-icon"
+                                onClick={() =>
+                                  checkInterview("in-person", options)
+                                }
+                                className="float-end join-icon"
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <img
+                                src={telephoneIcon}
+                                alt="interview-icon"
+                                onClick={() => checkInterview("phone", options)}
+                                className="float-end join-icon"
+                              />
+                            </>
+                          )}
+                        </div>
+                        <div className="widget-time float-end">
+                          <BsClockFill className="mb-1" /> {"  "}
+                          {getTimezoneDateTime(
+                            moment(options?.scheduledate).format("YYYY-MM-DD") +
+                              "T" +
+                              options?.starttime,
+                            "h:mm A"
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </Slider>
+              ))}
+            </Slider>
+          )}
+          {data?.length === 0 && (
+            <>
+              <Row
+                style={{ textAlign: "center" }}
+                className="center-middle-align"
+              >
+                <Col>
+                  <NoDataFound></NoDataFound>
+                </Col>
+              </Row>
+            </>
+          )}
         </CardBody>
       </Card>
       <div>
