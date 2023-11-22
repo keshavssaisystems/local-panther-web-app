@@ -193,7 +193,7 @@ export function VideoInterviewDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  <Button
+                  {/* <Button
                     outline
                     size="sm"
                     className="mb-2 mr-2 btn-transition"
@@ -202,7 +202,7 @@ export function VideoInterviewDetails({
                   >
                     {" "}
                     Message{" "}
-                  </Button>
+                  </Button> */}
 
                   <ButtonGroup size={"sm"}>
                     {interviewDetail?.isaccepted === false &&
@@ -247,16 +247,17 @@ export function VideoInterviewDetails({
                   </Button>
                 </>
               ) : (
-                <Button
-                  outline
-                  size="sm"
-                  className="mb-2 mr-2 btn-transition"
-                  color="primary"
-                  onClick={() => setShowMessage(!showMessage)}
-                >
-                  {" "}
-                  Message{" "}
-                </Button>
+                <></>
+                // <Button
+                //   outline
+                //   size="sm"
+                //   className="mb-2 mr-2 btn-transition"
+                //   color="primary"
+                //   onClick={() => setShowMessage(!showMessage)}
+                // >
+                //   {" "}
+                //   Message{" "}
+                // </Button>
               )}
             </Col>
           </div>
