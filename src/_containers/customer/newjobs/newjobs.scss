@@ -14,7 +14,7 @@
         margin: 0px auto 0;
     }
     .forms-wizard li.form-wizard-step-done::after, .forms-wizard li.form-wizard-step-done::before {
-        margin-top: -2px;
+        margin-top: -13px;
         background: #2f479b;
     }
     .forms-wizard li.form-wizard-step-done em {
@@ -24,5 +24,15 @@
     }
     .count-details{
         font-size: 13px;
+    }
+    span {
+        color: var(--Font-dark-grey, #2F2E2E);
+        text-align: center;
+        font-family: Capitana;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px; /* 123.077% */
+        letter-spacing: -0.13px;
     }
 }

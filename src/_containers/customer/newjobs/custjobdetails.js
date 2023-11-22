@@ -2,25 +2,25 @@ import React, { useState } from "react";
 import { Card, Col, Row, Button } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
-import { ButtonWithCount } from "../../../_components/jobDetailComponents/ButtonWithCount";
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import "./newjobs.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
-import {
-  FaUsers,
-  FaUserClock,
-  FaUserCheck,
-  FaUserTimes,
-  FaLeanpub,
-  FaUserTie,
-} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
+import publishedIcon from "assets/utils/images/job-detail-icons/published.svg";
+import matchedIcon from "assets/utils/images/job-detail-icons/matched.svg";
+import maybeIcon from "assets/utils/images/job-detail-icons/maybe.svg";
+import likedIcon from "assets/utils/images/job-detail-icons/liked.svg";
+import appliedIcon from "assets/utils/images/job-detail-icons/applied.svg";
+import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
+import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
+import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
+import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
 
 export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
   const [publishSuccess, setPublishSuccess] = useState(false);
@@ -246,7 +246,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         ).format("YYYY-MM-DD"),
         "MM/DD/YYYY"
       ),
-      icon: <FaLeanpub className="img-fluid " size={"35px"} />,
+      icon: publishedIcon,
     },
     {
       name: "Matched",
@@ -255,13 +255,13 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalRecommendedCandidates,
       action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
-      icon: <FaUsers className="img-fluid " size={"35px"} />,
+      icon: matchedIcon,
     },
     {
       name: "Maybe",
       count: 0,
       action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
-      icon: <FaUsers className="img-fluid " size={"35px"} />,
+      icon: maybeIcon,
     },
     {
       name: "Liked",
@@ -270,7 +270,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalLikedCandidates,
       action: `/customer-candidate-liked/${jobDetails[0]?.jobid}`,
-      icon: <FaUsers className="img-fluid " size={"35px"} />,
+      icon: likedIcon,
     },
     {
       name: "Applied",
@@ -279,19 +279,19 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalAppliedCandidates,
       action: `/customer-candidate-applied/${jobDetails[0]?.jobid}`,
-      icon: <FaUsers className="img-fluid " size={"35px"} />,
+      icon: appliedIcon,
     },
     {
       name: "Scheduled",
       count: 0,
       action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
-      icon: <FaUserClock className="img-fluid " size={"35px"} />,
+      icon: scheduledIcon,
     },
     {
       name: "Offers",
       count: 0,
       action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
-      icon: <FaUserCheck className="img-fluid " size={"35px"} />,
+      icon: offersIcon,
     },
     {
       name: "Accepted",
@@ -300,7 +300,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalAcceptedCandidates,
       action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}`,
-      icon: <FaUserTie className="img-fluid " size={"35px"} />,
+      icon: acceptedIcon,
     },
     {
       name: "Rejected",
@@ -309,7 +309,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
           ? 0
           : jobDetail.totalRejectedCandidates,
       action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}`,
-      icon: <FaUserTimes className="img-fluid " size={"35px"} />,
+      icon: rejectedIcon,
     },
   ];
 
@@ -321,7 +321,13 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         <span onClick={(e) => navigateTo(steps[i].action)}>
           {steps[i].name}
         </span>
-        {/* <div className="">{steps[i].icon}</div> */}
+        <div className="">
+          <img
+            src={steps[i].icon}
+            alt="interview-icon"
+            onClick={(e) => navigateTo(steps[i].action)}
+          />
+        </div>
       </li>
     ));
   };
