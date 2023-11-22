@@ -33,15 +33,15 @@ export function AppHeader({
           <div className="user-title">
             <h4>
               {userroleid === 1
-                ? "Admin"
+                ? "OpenWorx - Admin"
                 : userroleid === 2
-                ? "Customer"
-                : "Candidate"}
+                ? "OpenWorx - Customer"
+                : "OpenWorx - Candidate"}
             </h4>
           </div>
           <div className="app-header-right">
             <ChatCounter />
-            {userroleid === 2 ? (
+            {userroleid !== 3 ? (
               <NotificationCounter></NotificationCounter>
             ) : (
               <></>
