@@ -5,6 +5,15 @@
     .slick-slider {
         max-width: none;
     }
+    .join-icon{
+        cursor: pointer;
+    }
+    .center-middle-align{
+        min-height: 8vh !important;
+        display: flex;
+        justify-content: center;
+        align-items: normal !important;
+    }
     .widget-heading{
         color: var(--Font-dark-grey, #2F2E2E);
         font-size: 16px;
@@ -204,6 +213,12 @@
     max-height: 328px;
     .slick-slider {
         max-width: none;
+    }
+    .center-middle-align{
+        min-height: 8vh !important;
+        display: flex;
+        justify-content: center;
+        align-items: normal !important;
     }
     .widget-heading{
         color: var(--Font-dark-grey, #2F2E2E);

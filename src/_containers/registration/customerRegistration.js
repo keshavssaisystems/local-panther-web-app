@@ -608,7 +608,7 @@ export function CustomerRegistration() {
                 type="text"
                 name="jobprofile"
                 id="jobprofile"
-                placeholder="Enter job profile"
+                placeholder="Enter title"
                 {...register("jobprofile")}
                 className={`form-control placeholder-name ${
                   errors.jobprofile ? "is-invalid" : ""

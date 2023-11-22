@@ -6,7 +6,6 @@ import { faAngleUp, faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function WidgetCounter({ cardOptions }) {
-  console.log(cardOptions);
   return (
     <>
       {cardOptions.map((options) => (
