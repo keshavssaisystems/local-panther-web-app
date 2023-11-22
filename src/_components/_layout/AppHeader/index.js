@@ -6,6 +6,7 @@ import logo from "../../../assets/utils/images/panther-logo.png";
 import { useSelector } from "react-redux";
 import "./appheader.scss";
 import { ChatCounter } from "./Components/chatCounter";
+import { NotificationCounter } from "./Components/notificationCounter";
 export function AppHeader({
   headerBackgroundColor = "white",
   enableMobileMenuSmall = true,
@@ -40,6 +41,11 @@ export function AppHeader({
           </div>
           <div className="app-header-right">
             <ChatCounter />
+            {userroleid === 3 ? (
+              <NotificationCounter></NotificationCounter>
+            ) : (
+              <></>
+            )}
             <UserBox />
           </div>
         </div>

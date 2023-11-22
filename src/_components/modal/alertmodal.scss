@@ -1,0 +1,39 @@
+.alert-cont {
+  .viewed-alerts {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .alert-heading {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 33rem;
+    font-size: 14px;
+  }
+
+  .alert-desc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 33rem;
+    font-size: 12px;
+  }
+
+  .dropdown-menu-lg {
+    min-width: 33rem !important;
+  }
+
+  .widget-content {
+    border-bottom: 1px solid gray;
+  }
+
+  .list-group-item {
+    padding-bottom: 2px;
+  }
+
+  .todo-icons {
+    cursor: pointer;
+    font-size: 16px;
+  }
+}

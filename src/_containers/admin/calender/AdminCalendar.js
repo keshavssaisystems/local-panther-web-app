@@ -1,3 +1,4 @@
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "../../../_components/common/pagetitle";
 
@@ -7,9 +8,13 @@ import { ReactBigCalender } from "_widgets";
 import { useEffect } from "react";
 import { scheduledInterviewListThunk } from "../_redux/report.slice";
 import moment from "moment";
-
+import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
+import { Row, Col } from "reactstrap";
+import "./admincalendar.scss";
 export function AdminCalendar({ title }) {
   const dispatch = useDispatch();
+  const [openModal, setOpenModal] = useState(false);
+  const [popupData, setPopupData] = useState({});
   const { scheduledInterviewList = [] } = useSelector(
     (state) => state.adminReportReducer
   );
@@ -49,11 +54,60 @@ export function AdminCalendar({ title }) {
     };
   });
 
+  const onHandleSelectEvent = useCallback((event) => {
+    setPopupData(event.data);
+    setOpenModal(true);
+  }, []);
+
+  const onCloseIdModal = () => {
+    setOpenModal(false);
+  };
+
   return (
-    <div>
+    <div className="adm-cal-cont">
       <PageTitle heading={title} icon={titlelogo} />
-      <p>{title}</p>
-      <ReactBigCalender events={events} toolbar={true} />
+      <Row>
+        <Col sm={12} md={4} lg={4} xl={4}>
+          <p>{title}</p>
+        </Col>
+        <Col sm={12} md={8} lg={8} xl={8} className="right-align">
+          <div className="text-end">
+            <div className="mb-3 me-0 badge badge-color-yellow">P</div> No
+            response
+            <div className="ms-3 mb-3 me-1 badge badge-color-green">P</div>
+            Accepted interview{" "}
+            <div className="ms-3 mb-3 me-0 badge badge-color-red">P</div>{" "}
+            Rejected interview
+            <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+              P
+            </div>{" "}
+            Interview completed
+            <div className="ms-3 mb-3 me-0 badge badge-color-grey">P</div> Not
+            joined
+          </div>
+        </Col>
+      </Row>
+      <ReactBigCalender
+        events={events}
+        toolbar={true}
+        onHandleSelectEvent={(evt) => onHandleSelectEvent(evt)}
+      />
+      <>
+        {openModal ? (
+          <>
+            <InterViewDetailModal
+              data={popupData}
+              onClose={() => {
+                onCloseIdModal();
+              }}
+              isOpen={openModal}
+              isAdmin={true}
+            ></InterViewDetailModal>
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     </div>
   );
 }

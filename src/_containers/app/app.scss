@@ -37,4 +37,8 @@ body {
   .hand-cursor {
     cursor: pointer;
   }
+
+  .sweet-alert {
+    z-index: 999999 !important;
+  }
 }

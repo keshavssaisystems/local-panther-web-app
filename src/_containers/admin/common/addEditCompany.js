@@ -63,7 +63,6 @@ export const AddEditCompany = (props) => {
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
   useEffect(() => {
-    debugger;
     if (!isAddMode) {
       let name = data.logourl.replace(/^.*[\\\/]/, "");
       setSelectedFile(name);

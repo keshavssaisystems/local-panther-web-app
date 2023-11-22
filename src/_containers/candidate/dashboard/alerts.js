@@ -17,8 +17,10 @@ import alertsIcon from "../../../assets/utils/images/alert-reminder.svg";
 import { useSelector } from "react-redux";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
-import { BsX } from "react-icons/bs";
+import { BsTrash3 } from "react-icons/bs";
+import { formatDate } from "_helpers/helper";
 import "./dashboard.scss";
+import "../../../_components/modal/alertmodal.scss";
 
 export function Alerts(props) {
   const totalRecords = useSelector(
@@ -58,24 +60,39 @@ export function Alerts(props) {
                                 props.onReadNotification(item.queueid)
                               }
                             >
-                              <div className="widget-heading alert-heading">
+                              <div
+                                className="widget-heading alert-heading"
+                                title={item.notificationmessage}
+                              >
                                 {item.notificationmessage}
                               </div>
 
-                              <div className="widget-subheading alert-desc">
+                              <div
+                                className="widget-subheading alert-desc"
+                                title={item.notificationdetails}
+                              >
                                 {item.notificationdetails}
+                              </div>
+                              <div
+                                className="widget-subheading alert-desc"
+                                style={{ paddingBottom: "6px" }}
+                              >
+                                {formatDate(
+                                  item.modifieddate
+                                    ? item.modifieddate
+                                    : item.createddate
+                                )}
                               </div>
                             </div>
                             <div className="widget-content-right widget-content-actions todo-icons">
-                              <BsX
-                                size={"24px"}
+                              <BsTrash3
+                                size={"16px"}
                                 onClick={() => [
                                   props.onDeleteNotification(item.queueid),
                                 ]}
                               />
                             </div>
                           </div>
-                          <hr />
                         </div>
                       </ListGroupItem>
                     </ListGroup>

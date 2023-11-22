@@ -81,7 +81,8 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit(payload) {
-    firebasemessaging(payload);
+    dispatch(authActions.loginThunk(payload));
+    // firebasemessaging(payload);
   }
   const firebasemessaging = async (payload) => {
     const permission = await Notification.requestPermission();
