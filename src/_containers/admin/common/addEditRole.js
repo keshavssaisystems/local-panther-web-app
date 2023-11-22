@@ -143,6 +143,7 @@ export const AddEditRole = (props) => {
                   type="textarea"
                   name="description"
                   placeholder="Enter description"
+                  maxLength={100}
                   className={`field-input placeholder-text form-control`}
                   // className={`field-input placeholder-text form-control ${
                   //   errors?.menuid && roleId === 0

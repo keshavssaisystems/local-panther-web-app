@@ -22,8 +22,8 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { BsSearch } from "react-icons/bs";
+import { USPhoneNumber } from "_helpers/helper";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
@@ -76,6 +76,11 @@ export const AdminListing = ({ entity }) => {
     columns = [],
     searchFilter = [],
     buttonsList = [];
+  useEffect(() => {
+    dispatch(getRoles());
+  }, []);
+
+  const rolesList = useSelector((state) => state.adminListing.rolesList);
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [message, setMessage] = useState("");
@@ -93,6 +98,9 @@ export const AdminListing = ({ entity }) => {
     description: "",
   });
   const [searchData, setSearchText] = useState("");
+
+  const [roleid, setRoleId] = useState(0);
+  const [status, setStatus] = useState("All");
   const [newCompData, setNewCompData] = useState({
     // ... other fields
     newCompName: { value: "", error: false },
@@ -108,159 +116,79 @@ export const AdminListing = ({ entity }) => {
     newCompEmail: { value: "" },
     newCompPhonenum: { value: "" },
   });
-  switch (entity) {
-    case "customers":
-      title = customers.title;
-      icon = companyLogo;
-      columns = customers.columns;
-      searchFilter = customers.searchFilter;
-      buttonsList = customers.buttonsList;
-      listingTitle = customers.listingTitle;
-      break;
-    case "company":
-      title = company.title;
-      icon = companyLogo;
-      columns = company.columns;
-      searchFilter = company.searchFilter;
-      buttonsList = company.buttonsList;
-      listingTitle = company.listingTitle;
-      break;
-    case "users":
-      title = users.title;
-      icon = companyLogo;
-      columns = [
-        {
-          name: "User role",
-          id: "rolename",
-          selector: (row) => row.rolename,
-          sortable: true,
-        },
-        {
-          name: "First name",
-          id: "firstName",
-          selector: (row) => row.firstname,
-          sortable: true,
-        },
-        {
-          name: "Last name",
-          selector: (row) => row.lastname,
-          sortable: true,
-        },
-        {
-          name: "User name",
-          selector: (row) => row.username,
-          sortable: true,
-        },
-        {
-          name: "Email",
-          id: "email",
-          selector: (row) => row.email,
-          sortable: true,
-        },
-        {
-          name: "Phone number",
-          id: "phonenumber",
-          selector: (row) => row.phonenumber,
-          sortable: true,
-        },
-        {
-          name: "Action",
-          id: "isactive",
-          cell: (row) => (
-            <div className="d-block w-100">
-              <div
-                className="switch has-switch has-switch-sm me-2"
-                data-on-label="ON"
-                data-off-label="OFF"
-                onClick={() => toggleNotification(!row.isactive, row)}
-                style={{ verticalAlign: "bottom" }}
-              >
-                <div
-                  className={cx("switch-animate", {
-                    "switch-on": row.isactive,
-                    "switch-off": !row.isactive,
-                  })}
-                >
-                  <input type="checkbox" />
-                  <span className="switch-left">ON</span>
-                  <label>&nbsp;</label>
-                  <span className="switch-right">OFF</span>
-                </div>
-              </div>
+  title = users.title;
+  icon = companyLogo;
+  columns = [
+    {
+      name: "User role",
+      id: "rolename",
+      selector: (row) => row.rolename,
+      sortable: true,
+    },
+    {
+      name: "First name",
+      id: "firstName",
+      selector: (row) => row.firstname,
+      sortable: true,
+    },
+    {
+      name: "Last name",
+      selector: (row) => row.lastname,
+      sortable: true,
+    },
 
-              <BsPencil
-                style={{ fontSize: "18px" }}
-                className="edit-icon me-2"
-                onClick={(evt) => handleRowClick(row, "edit")}
-              />
-              <BsTrash3
-                style={{ fontSize: "18px" }}
-                onClick={() => deleteConfirm(row, "user")}
-              />
+    {
+      name: "Email",
+      id: "email",
+      selector: (row) => row.email,
+      sortable: true,
+    },
+    {
+      name: "Phone number",
+      id: "phonenumber",
+      selector: (row) =>
+        row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
+      sortable: true,
+    },
+    {
+      name: "Action",
+      id: "isactive",
+      cell: (row) => (
+        <div className="d-block w-100">
+          <div
+            className="switch has-switch  me-2"
+            data-on-label="ON"
+            data-off-label="OFF"
+            style={{ verticalAlign: "bottom" }}
+            onClick={() => toggleNotification(!row.isactive, row)}
+          >
+            <div
+              className={cx("switch-animate", {
+                "switch-on": row.isactive,
+                "switch-off": !row.isactive,
+              })}
+            >
+              <input type="checkbox" />
+              <span className="switch-left">ON</span>
+              <label>&nbsp;</label>
+              <span className="switch-right">OFF</span>
             </div>
-          ),
-          sortable: false,
-        },
-      ];
-      // searchFilter = users.searchFilter;
-      // buttonsList = users.buttonsList;
-      listingTitle = users.listingTitle;
-      break;
-    case "roles":
-      title = roles.title;
-      icon = companyLogo;
-      columns = [
-        {
-          name: "Role",
-          id: "rolename",
-          selector: (row) => row.rolename,
-          sortable: true,
-        },
-        {
-          name: "Description",
-          id: "description",
-          selector: (row) => row.description,
-          sortable: true,
-        },
-        {
-          name: "Action",
-          id: "isactive",
-          cell: (row) => (
-            <div className="d-block w-100">
-              <FaEye
-                style={{ fontSize: "18px" }}
-                className="edit-icon me-2"
-                onClick={(evt) => handleRowClick(row, "view")}
-              />
+          </div>
 
-              <BsPencil
-                style={{ fontSize: "18px" }}
-                className="edit-icon me-2"
-                onClick={(evt) => handleRowClick(row, "edit")}
-              />
-              {/* <BsTrash3
-                style={{ fontSize: "18px" }}
-                onClick={() => deleteConfirm(row, "role")}
-              /> */}
-            </div>
-          ),
-        },
-      ];
-      searchFilter = roles.searchFilter;
-      buttonsList = roles.buttonsList;
-      listingTitle = roles.listingTitle;
-      break;
-    case "menuMapping":
-      title = menuMapping.title;
-      icon = companyLogo;
-      columns = menuMapping.columns;
-      searchFilter = menuMapping.searchFilter;
-      buttonsList = menuMapping.buttonsList;
-      listingTitle = menuMapping.listingTitle;
-      break;
-    default:
-      break;
-  }
+          <BsPencil
+            style={{ fontSize: "21px", verticalAlign: "top" }}
+            className="edit-icon me-2"
+            onClick={(evt) => handleRowClick(row, "edit")}
+          />
+          <BsTrash3
+            style={{ fontSize: "21px", verticalAlign: "top" }}
+            onClick={() => deleteConfirm(row, "user")}
+          />
+        </div>
+      ),
+      sortable: false,
+    },
+  ];
 
   const urlParams = {
     pageNumber: 0,
@@ -271,26 +199,7 @@ export const AdminListing = ({ entity }) => {
   }, [entity]);
 
   const loadData = () => {
-    if (entity === "company") {
-      dispatch(getCompanies(urlParams));
-    } else if (entity === "customers") {
-      let payload = {
-        isActive: true,
-        pageNumber: 1,
-      };
-
-      dispatch(getIndustries(urlParams));
-      dispatch(getCustomers(payload));
-    } else if (entity === "users") {
-      dispatch(getUsers(urlParams));
-      dispatch(getRoles());
-    } else if (entity === "roles") {
-      dispatch(getRoles());
-      dispatch(getRolesList(urlParams));
-      dispatch(getMenuMappings());
-    } else if (entity === "menuMapping") {
-      dispatch(getMenuMappings(urlParams));
-    }
+    dispatch(getUsers(urlParams));
   };
   const customStyles = {
     headCells: {
@@ -304,8 +213,6 @@ export const AdminListing = ({ entity }) => {
   };
 
   const handleRowClick = async (row, check) => {
-    let id = row.userroleid;
-    await dispatch(getMenuMappings({ id }));
     setSelectedRowData(row);
     if (check === "view") {
       setViewMode(true);
@@ -318,7 +225,6 @@ export const AdminListing = ({ entity }) => {
   };
   const [check, setCheck] = useState();
   const deleteConfirm = (row, check) => {
-    debugger;
     setCheck(check);
     setSelectedRowData(row);
     setIsDelete(true);
@@ -463,49 +369,77 @@ export const AdminListing = ({ entity }) => {
 
   const onClearSearch = function () {
     setSearchText("");
+
+    let urlParams = {
+      pageNumber: 0,
+    };
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
+
+    dispatch(getUsers(urlParams));
   };
 
   const getUsersList = function () {
     let urlParams = {
-      searchText: searchData,
       pageNumber: 0,
     };
-    if (entity === "company") {
-      dispatch(getCompanies(urlParams));
-    } else if (entity === "customers") {
-      dispatch(getIndustries());
-      let payload = {
-        pageNumber: 1,
-      };
-      dispatch(getCustomers(payload));
-    } else if (entity === "users") {
-      dispatch(getUsers(urlParams));
-      dispatch(getRoles());
-    } else if (entity === "roles") {
-      dispatch(getRolesList(urlParams));
-    } else if (entity === "menuMapping") {
-      dispatch(getRolesList(urlParams));
-      // dispatch(getMenuMappings(urlParams));
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
     }
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
+
+    dispatch(getUsers(urlParams));
   };
 
-  const cardButtons = buttonsList.map((item) => (
-    <Col lg="3" md="2" sm="12" sx="12">
-      <FormGroup>
-        <InputGroup>
-          <div className="admin-list btn-actions-pane-right ">
-            <Button
-              className="mb-2 me-2  "
-              color="primary"
-              onClick={item.id === "search" ? onSearchClick : onAddClick}
-            >
-              {item.name}
-            </Button>
-          </div>
-        </InputGroup>
-      </FormGroup>
-    </Col>
-  ));
+  const onSelectRole = (roleId) => {
+    setRoleId(parseInt(roleId));
+    let urlParams = {
+      userRoleId: roleId,
+      pageNumber: 0,
+    };
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+    dispatch(getUsers(urlParams));
+  };
+
+  const onStatusSelect = (check) => {
+    let urlParams = {
+      pageNumber: 0,
+    };
+    if (check === "0") {
+      setStatus("All");
+    }
+    if (check === "1") {
+      urlParams.isActive = true;
+      setStatus(true);
+    }
+    if (check === "2") {
+      urlParams.isActive = false;
+      setStatus(false);
+    }
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+    dispatch(getUsers(urlParams));
+  };
 
   return (
     <>
@@ -520,57 +454,85 @@ export const AdminListing = ({ entity }) => {
         <Col md="12">
           <Card className="mb-3">
             <CardBody>
-              {entity !== "customers" ? (
-                <Row className="mb-3">
-                  <Col className="col">
-                    {entity !== "roles" ? (
-                      <Button
-                        style={{
-                          background: "#545cd8",
-                          borderColor: "#545cd8",
-                        }}
-                        className="float-end me-3 mt-1"
-                        onClick={() => onAddClick()}
-                      >
-                        <FiPlus className="mb-1" /> Add user
-                      </Button>
-                    ) : (
-                      ""
-                    )}
-                    <div
-                      className={cx(
-                        "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-                        {
-                          active: true,
-                        }
-                      )}
+              <Row className="mb-3">
+                <Col>
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      name="companyid"
+                      onChange={(e) => onSelectRole(e.target.value)}
                     >
-                      <div className="input-holder float-end">
-                        <input
-                          type="text"
-                          className="search-input search-placeholder"
-                          id="search-input"
-                          value={searchData}
-                          onInput={(evt) => setSearchText(evt.target.value)}
-                          placeholder="Search.."
-                        />
-                        <button
-                          className="btn-close"
-                          onClick={(evt) => onClearSearch()}
-                        />
-                        <button
-                          onClick={(evt) => getUsersList()}
-                          className="search-icon"
-                        >
-                          <span />
-                        </button>
-                      </div>
+                      <option value={0}>All roles</option>
+                      {rolesList?.length > 0 &&
+                        rolesList?.map((options) => (
+                          <option
+                            key={options.userroleid}
+                            value={options.userroleid}
+                          >
+                            {" "}
+                            {options.rolename}{" "}
+                          </option>
+                        ))}
+                    </Input>
+                  </FormGroup>
+                </Col>
+                <Col className="col-3">
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      name="status"
+                      defaultValue="Active"
+                      onChange={(e) => onStatusSelect(e.target.value)}
+                    >
+                      <option value={0}>All status</option>
+                      <option value={1}>Active</option>
+                      <option value={2}>In-active</option>
+                    </Input>
+                  </FormGroup>
+                </Col>
+                <Col className="col-1"></Col>
+                <Col className="col">
+                  <Button
+                    style={{
+                      background: "#2f479b",
+                      borderColor: "#545cd8",
+                    }}
+                    className="input-group-text float-end mt-1"
+                    onClick={() => onAddClick()}
+                  >
+                    Add user
+                  </Button>
+                  <div
+                    className={cx(
+                      "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+                      {
+                        active: true,
+                      }
+                    )}
+                  >
+                    <div className="input-holder float-end">
+                      <input
+                        type="text"
+                        className="search-input search-placeholder"
+                        id="search-input"
+                        value={searchData}
+                        onInput={(evt) => setSearchText(evt.target.value)}
+                        placeholder="Search.."
+                      />
+                      <button
+                        className="btn-close"
+                        onClick={(evt) => onClearSearch()}
+                      />
+                      <button
+                        onClick={(evt) => getUsersList()}
+                        className="search-icon"
+                      >
+                        <span />
+                      </button>
                     </div>
-                  </Col>
-                </Row>
-              ) : (
-                ""
-              )}
+                  </div>
+                </Col>
+              </Row>
 
               <DataTable
                 data={data}
@@ -579,7 +541,6 @@ export const AdminListing = ({ entity }) => {
                 fixedHeader
                 // fixedHeaderScrollHeight="400px"
                 customStyles={customStyles}
-                onRowClicked={handleRowClick}
               />
             </CardBody>
           </Card>
@@ -643,10 +604,8 @@ export const AdminListing = ({ entity }) => {
                 {!isAddMode
                   ? entity === "roles"
                     ? "Edit menu mapping"
-                    : `Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`
-                  : `Add New ${
-                      entity.charAt(0).toUpperCase() + entity.slice(1)
-                    }`}
+                    : `Edit user`
+                  : `Add new user`}
               </strong>
             </ModalHeader>
             <ModalBody>

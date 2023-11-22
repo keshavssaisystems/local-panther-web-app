@@ -12,6 +12,7 @@ import {
   Button,
 } from "reactstrap";
 import "_containers/admin/common/adminListing.scss";
+import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { BsSearch } from "react-icons/bs";
@@ -53,6 +54,9 @@ export const CompanyList = () => {
 
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
+  const [searchData, setSearchText] = useState("");
+
+  const [status, setStatus] = useState("All");
   const { data } = useSelector((state) => state?.adminListing ?? {});
   let title = "Companies";
   let icon = companyLogo;
@@ -84,9 +88,15 @@ export const CompanyList = () => {
     },
 
     {
-      name: "City",
+      name: "State",
       id: "cityname",
       selector: (row) => row.statename,
+      sortable: true,
+    },
+    {
+      name: "Address",
+      id: "address",
+      selector: (row) => row.address,
       sortable: true,
     },
     {
@@ -154,6 +164,60 @@ export const CompanyList = () => {
       })
     );
   };
+
+  const getCompanyList = function () {
+    let urlParams = {
+      pageSize: 1000,
+      pageNumber: 1,
+    };
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+
+    dispatch(getCompanies(urlParams));
+  };
+
+  const onStatusSelect = (check) => {
+    let urlParams = {
+      pageSize: 1000,
+      pageNumber: 1,
+    };
+    if (check === "0") {
+      setStatus("All");
+    }
+    if (check === "1") {
+      urlParams.isActive = true;
+      setStatus(true);
+    }
+    if (check === "2") {
+      urlParams.isActive = false;
+      setStatus(false);
+    }
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+    dispatch(getCompanies(urlParams));
+  };
+
+  const onClearSearch = function () {
+    setSearchText("");
+
+    let urlParams = {
+      pageSize: 1000,
+      pageNumber: 1,
+    };
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+
+    dispatch(getCompanies(urlParams));
+  };
+
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
     data.title = title;
@@ -235,6 +299,7 @@ export const CompanyList = () => {
       });
     }
   };
+
   return (
     <>
       <Row>
@@ -245,52 +310,63 @@ export const CompanyList = () => {
           <Card className="mb-3">
             <CardBody>
               <Row>
-                <Col md={10}>
-                  <Form onSubmit={(e) => getFilterValue(e)}>
-                    <Row>
-                      <Col>
-                        <FormGroup>
-                          <Input
-                            type="text"
-                            name="search"
-                            id="search"
-                            placeholder="Search.."
-                          ></Input>
-                        </FormGroup>
-                      </Col>
-                      <Col>
-                        <FormGroup>
-                          <Input
-                            type="select"
-                            name="status"
-                            defaultValue="Active"
-                          >
-                            <option value={true}>Active</option>
-                            <option value={false}>In-active</option>
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                      <Col>
-                        <Button
-                          color={"primary"}
-                          className="input-group-text"
-                          type="submit"
+                <Col md={12}>
+                  <Row className="mb-3">
+                    <Col md={5} lg={3} sm={12}>
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="status"
+                          defaultValue="Active"
+                          onChange={(e) => onStatusSelect(e.target.value)}
                         >
-                          <BsSearch className="mb-1" /> Search
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
-                </Col>
-                <Col>
-                  <Button
-                    color={"primary"}
-                    className="input-group-text float-end"
-                    type="submit"
-                    onClick={(e) => addModal()}
-                  >
-                    Add company
-                  </Button>
+                          <option value={0}>All status</option>
+                          <option value={1}>Active</option>
+                          <option value={2}>In-active</option>
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                    <Col className="col">
+                      <Button
+                        style={{ background: "#2f479b" }}
+                        color={"primary"}
+                        className="input-group-text float-end mt-1"
+                        type="submit"
+                        onClick={(e) => addModal()}
+                      >
+                        Add company
+                      </Button>
+                      <div
+                        className={cx(
+                          "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+                          {
+                            active: true,
+                          }
+                        )}
+                      >
+                        <div className="input-holder float-end">
+                          <input
+                            type="text"
+                            className="search-input search-placeholder"
+                            id="search-input"
+                            value={searchData}
+                            onInput={(evt) => setSearchText(evt.target.value)}
+                            placeholder="Search.."
+                          />
+                          <button
+                            className="btn-close"
+                            onClick={(evt) => onClearSearch()}
+                          />
+                          <button
+                            onClick={(evt) => getCompanyList()}
+                            className="search-icon"
+                          >
+                            <span />
+                          </button>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
               <DataTable

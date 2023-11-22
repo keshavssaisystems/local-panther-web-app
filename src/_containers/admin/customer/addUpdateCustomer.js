@@ -281,6 +281,7 @@ export const AddUpdateCustomer = ({
                     className={`form-control placeholder-name ${
                       firstNameValidation ? "is-invalid" : ""
                     }`}
+                    maxLength={50}
                   />
                   {firstNameValidation && save && (
                     <FormText color="danger">Please enter first name</FormText>
@@ -300,6 +301,7 @@ export const AddUpdateCustomer = ({
                     className={`form-control placeholder-name ${
                       lastNameValidation ? "is-invalid" : ""
                     }`}
+                    maxLength={50}
                     onInput={(e) => handleInputChange(e, "lastname")}
                   />
                   {lastNameValidation && save && (
@@ -320,6 +322,7 @@ export const AddUpdateCustomer = ({
                     className={`form-control placeholder-name ${
                       emailValidation ? "is-invalid" : ""
                     }`}
+                    maxLength={70}
                     onInput={(e) => handleInputChange(e, "email")}
                   />
                   {emailValidation && save && (
@@ -336,6 +339,7 @@ export const AddUpdateCustomer = ({
                     maskChar={null}
                     name="phonenumber"
                     id="phonenumber"
+                    maxLength={20}
                     placeholder="Eg: (987)-654-3210"
                     onInput={(e) => handleInputChange(e, "phonenumber")}
                     defaultValue={editData?.phonenumber}
@@ -351,6 +355,7 @@ export const AddUpdateCustomer = ({
                     onInput={(e) => handleInputChange(e, "address")}
                     placeholder="address..."
                     defaultValue={editData?.address}
+                    maxLength={100}
                   />
                 </FormGroup>
               </Col>
@@ -404,6 +409,7 @@ export const AddUpdateCustomer = ({
                     onInput={(e) => handleInputChange(e, "zipcode")}
                     name="zipcode"
                     id="zipcode"
+                    maxLength={50}
                     placeholder="Zipcode"
                     defaultValue={editData?.zipcode}
                   />
@@ -449,6 +455,7 @@ export const AddUpdateCustomer = ({
       {companyModal ? (
         <AddEditCompany
           openModal={openModal}
+          isAddMode={true}
           onClose={() => closeCompanyModal(false)}
         />
       ) : (

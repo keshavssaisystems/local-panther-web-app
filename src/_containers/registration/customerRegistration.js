@@ -94,20 +94,14 @@ export function CustomerRegistration() {
     companyid: Yup.string().required("Company is required"),
     jobprofile: Yup.string()
       .required("Title is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
-      .min(3, "Title must be at least 3 characters")
-      .max(30, "Title must be at most 30 characters"),
+      .matches(/^[A-Za-z ]*$/, "Please enter valid profile"),
 
     firstName: Yup.string()
       .required("First name is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid name")
-      .min(3, "First name must be at least 3 characters")
-      .max(30, "First name must be at most 30 characters"),
+      .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
     lastName: Yup.string()
       .required("Last name is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid name")
-      .min(3, "Last name must be at least 3 characters")
-      .max(30, "Last name must be at most 30 characters"),
+      .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
     email: Yup.string()
       .required("Email is required")
       .matches(
@@ -613,6 +607,7 @@ export function CustomerRegistration() {
                 className={`form-control placeholder-name ${
                   errors.jobprofile ? "is-invalid" : ""
                 }`}
+                maxLength={5}
               />
               <FormFeedback>{errors.jobprofile?.message}</FormFeedback>
             </FormGroup>
@@ -634,6 +629,7 @@ export function CustomerRegistration() {
                 className={`form-control placeholder-name ${
                   errors.firstName ? "is-invalid" : ""
                 }`}
+                maxLength={50}
               />
               <FormFeedback>{errors.firstName?.message}</FormFeedback>
             </FormGroup>
@@ -652,6 +648,7 @@ export function CustomerRegistration() {
                 className={`form-control placeholder-name ${
                   errors.lastName ? "is-invalid" : ""
                 }`}
+                maxLength={50}
               />
               <FormFeedback>{errors.lastName?.message}</FormFeedback>
             </FormGroup>
@@ -674,6 +671,7 @@ export function CustomerRegistration() {
                   }`}
                   onClick={(e) => handleFormData("email", e.target.value)}
                   autoComplete="off"
+                  maxLength={70}
                 />
                 {!validated.email ? (
                   <Button
@@ -724,6 +722,7 @@ export function CustomerRegistration() {
                   className={`form-control placeholder-name ${
                     errors.phoneNumber ? "is-invalid" : ""
                   }`}
+                  maxLength={20}
                   onInput={(e) => handleFormData("mobile", e.target.value)}
                 />
                 {!validated.mobile ? (
