@@ -57,8 +57,8 @@ export default function CustomerDashboard() {
       icon: "lnr-calendar-full",
     },
     {
-      title: "New candidate liked",
-      count: dashboardCounts.newcandidatelikedcount,
+      title: "Upcoming interviews",
+      count: dashboardCounts.upcominginterviewcount,
       className: "primary",
       icon: "lnr-thumbs-up",
     },

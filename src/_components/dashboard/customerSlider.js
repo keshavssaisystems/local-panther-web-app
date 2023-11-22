@@ -147,7 +147,7 @@ export function CustomerSlider({ data }) {
                             <div className="ellipse d-flex justify-content-center align-items-center float-end mb-2">
                               <BsFillTelephoneFill
                                 onClick={() => checkInterview("phone", options)}
-                                style={{ cursor: "pointer" }}
+                                style={{ cursor: "pointer", color: "#000000" }}
                                 className="header-icon icon-gradient bg-amy-crisp"
                               />
                             </div>

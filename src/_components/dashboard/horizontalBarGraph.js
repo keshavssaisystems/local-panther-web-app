@@ -40,7 +40,7 @@ export function HorizonatalBarGraph({ graphData }) {
       "rgba(43, 128, 253, 0.40)",
     ],
     xaxis: {
-      categories: ["Rejected ", "No response", "Accpeted"],
+      categories: ["Rejected ", "Scheduled", "Accepted"],
     },
     series: [
       {
@@ -48,11 +48,11 @@ export function HorizonatalBarGraph({ graphData }) {
         data: [graphData?.rejected, 0, 0],
       },
       {
-        name: "No response",
+        name: "Scheduled",
         data: [0, graphData?.scheduled, 0],
       },
       {
-        name: "Accpeted",
+        name: "Accepted",
         data: [0, 0, graphData?.accepted],
       },
     ],
@@ -78,7 +78,7 @@ export function HorizonatalBarGraph({ graphData }) {
                 Candidate's
               </div>
               <span className="text-muted mt-1 ms-4">
-                Accepted, No response & rejected
+                Accepted, Scheduled & rejected
               </span>
             </Col>
           </Row>
