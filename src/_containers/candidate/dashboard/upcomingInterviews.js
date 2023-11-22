@@ -223,10 +223,9 @@ export function UpcomingInterviews() {
     } else if (mode === "In-person") {
       showSweetAlert({
         title: `Scheduled at - ${
-          data?.interviewaaddress === undefined ||
-          data?.interviewaaddress === ""
+          data?.interviewaddress === undefined || data?.interviewaddress === ""
             ? "No address provided"
-            : data?.interviewaaddress
+            : data?.interviewaddress
         }`,
         type: "success",
       });

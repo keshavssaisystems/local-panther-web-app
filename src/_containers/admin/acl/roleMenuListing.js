@@ -123,27 +123,30 @@ export const RoleMenuListing = ({ entity }) => {
         <div className="d-block w-100">
           {entity === "menuMapping" ? (
             <FaEye
-              style={{ fontSize: "18px" }}
+              style={{ fontSize: "18px", cursor: "pointer" }}
               className="edit-icon me-2"
               onClick={(evt) => handleRowClick(row, "view")}
             />
           ) : (
             <></>
           )}
-
-          <BsPencil
-            style={{ fontSize: "18px" }}
-            className="edit-icon me-2"
-            onClick={(evt) => handleRowClick(row, "edit")}
-          />
           {entity === "roles" ? (
+            <BsPencil
+              style={{ fontSize: "18px", cursor: "pointer" }}
+              className="edit-icon me-2"
+              onClick={(evt) => handleRowClick(row, "edit")}
+            />
+          ) : (
+            <></>
+          )}
+          {/* {entity === "roles" ? (
             <BsTrash3
               style={{ fontSize: "18px" }}
               onClick={() => deleteConfirm(row, "role")}
             />
           ) : (
             <></>
-          )}
+          )} */}
         </div>
       ),
     },
@@ -282,6 +285,11 @@ export const RoleMenuListing = ({ entity }) => {
 
   const onClearSearch = function () {
     setSearchText("");
+    let urlParams = {
+      pageNumber: 0,
+    };
+
+    dispatch(getRolesList(urlParams));
   };
 
   const getUsersList = function () {
@@ -311,13 +319,13 @@ export const RoleMenuListing = ({ entity }) => {
                   {entity === "roles" ? (
                     <Button
                       style={{
-                        background: "#545cd8",
+                        background: "#2f479b",
                         borderColor: "#545cd8",
                       }}
                       className="float-end me-3 mt-1"
                       onClick={() => onAddClick()}
                     >
-                      <FiPlus className="mb-1" /> Add role
+                      Add role
                     </Button>
                   ) : (
                     <></>
@@ -341,6 +349,7 @@ export const RoleMenuListing = ({ entity }) => {
                       />
                       <button
                         className="btn-close"
+                        style={{ Left: "215px", top: "18px" }}
                         onClick={(evt) => onClearSearch()}
                       />
                       <button
@@ -361,7 +370,6 @@ export const RoleMenuListing = ({ entity }) => {
                 fixedHeader
                 // fixedHeaderScrollHeight="400px"
                 customStyles={customStyles}
-                onRowClicked={handleRowClick}
               />
             </CardBody>
           </Card>
@@ -425,7 +433,7 @@ export const RoleMenuListing = ({ entity }) => {
                 {!isAddMode
                   ? entity === "roles"
                     ? "Edit role"
-                    : "Edit menu mapping"
+                    : "View menu mapping"
                   : entity === "roles"
                   ? "Add new Role"
                   : `Add menu mapping`}
