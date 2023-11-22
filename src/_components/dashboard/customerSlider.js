@@ -59,10 +59,9 @@ export function CustomerSlider({ data }) {
     if (mode === "in-person") {
       showSweetAlert({
         title: `Scheduled at - ${
-          data?.interviewaaddress === undefined ||
-          data?.interviewaaddress === ""
+          data?.interviewaddress === undefined || data?.interviewaddress === ""
             ? "No address provided"
-            : data?.interviewaaddress
+            : data?.interviewaddress
         }`,
         type: "success",
       });
