@@ -174,7 +174,10 @@ export function UserBox() {
                     <div
                       className="scroll-area-md"
                       style={{
-                        height: "150px",
+                        height:
+                          Number(localStorage.getItem("userroleid")) === 1
+                            ? "100px"
+                            : "150px",
                       }}
                     >
                       <PerfectScrollbar>
@@ -187,15 +190,16 @@ export function UserBox() {
                               Change password
                             </NavLink>
                           </NavItem>
-
-                          <NavItem>
-                            <NavLink
-                              href="javascript:void(0)"
-                              onClick={() => setDeactivateConfirm(true)}
-                            >
-                              Deactivate account
-                            </NavLink>
-                          </NavItem>
+                          {Number(localStorage.getItem("userroleid")) !== 1 && (
+                            <NavItem>
+                              <NavLink
+                                href="javascript:void(0)"
+                                onClick={() => setDeactivateConfirm(true)}
+                              >
+                                Deactivate account
+                              </NavLink>
+                            </NavItem>
+                          )}
                           <NavItem>
                             <NavLink href="javascript:void(0)">
                               Notifications
