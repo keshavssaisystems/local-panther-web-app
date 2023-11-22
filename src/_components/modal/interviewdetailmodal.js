@@ -11,6 +11,7 @@ export const InterViewDetailModal = (props) => {
       <ScheduleDetails
         onClose={() => props.onClose()}
         interviewDetail={props.data}
+        isAdmin={props?.isAdmin}
       />
     </Modal>
   );

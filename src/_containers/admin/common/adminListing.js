@@ -318,7 +318,6 @@ export const AdminListing = ({ entity }) => {
   };
   const [check, setCheck] = useState();
   const deleteConfirm = (row, check) => {
-    debugger;
     setCheck(check);
     setSelectedRowData(row);
     setIsDelete(true);

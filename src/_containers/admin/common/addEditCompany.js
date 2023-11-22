@@ -45,7 +45,7 @@ export const AddEditCompany = (props) => {
   );
 
   const { openModal, entity, isAddMode, data, setIsAddMode, onClose } = props;
-  const logourl = data.logourl;
+  const logourl = data?.logourl;
   const [editData, setEditData] = useState(data);
 
   const [cityList, setCityList] = useState([]);
@@ -63,9 +63,8 @@ export const AddEditCompany = (props) => {
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
   useEffect(() => {
-    debugger;
     if (!isAddMode) {
-      let name = data.logourl.replace(/^.*[\\\/]/, "");
+      let name = data?.logourl?.replace(/^.*[\\\/]/, "");
       setSelectedFile(name);
     }
   }, []);
@@ -368,7 +367,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="text"
                     name="company"
-                    defaultValue={isAddMode ? "" : data.companyname}
+                    defaultValue={isAddMode ? "" : data?.companyname}
                     onInput={(e) => handleInputChange(e, "company")}
                     placeholder="Enter company"
                     className={`field-input placeholder-text form-control ${
@@ -389,7 +388,7 @@ export const AddEditCompany = (props) => {
                     name="industry"
                     onInput={(e) => handleInputChange(e, "industry")}
                     placeholder="Enter industry"
-                    defaultValue={isAddMode ? "" : data.industry}
+                    defaultValue={isAddMode ? "" : data?.industry}
                     className={`field-input placeholder-text form-control `}
                   />
                 </FormGroup>
@@ -404,7 +403,7 @@ export const AddEditCompany = (props) => {
                     id="description"
                     onInput={(e) => handleInputChange(e, "description")}
                     placeholder="Enter description"
-                    defaultValue={isAddMode ? "" : data.description}
+                    defaultValue={isAddMode ? "" : data?.description}
                     className={`field-input placeholder-text form-control ${
                       errors?.aboutCompany
                         ? "is-invalid error-text"
@@ -433,7 +432,7 @@ export const AddEditCompany = (props) => {
                           key={options.id}
                           value={options.id}
                           selected={
-                            isAddMode ? 0 : data.noofemployees === options.id
+                            isAddMode ? 0 : data?.noofemployees === options.id
                           }
                         >
                           {options.name}
@@ -451,7 +450,7 @@ export const AddEditCompany = (props) => {
                     name="phone"
                     onInput={(e) => handleInputChange(e, "phone")}
                     placeholder="Enter phone"
-                    defaultValue={isAddMode ? "" : data.contactphonenumber}
+                    defaultValue={isAddMode ? "" : data?.contactphonenumber}
                     className={`field-input placeholder-text form-control `}
                   />
                 </FormGroup>
@@ -463,7 +462,7 @@ export const AddEditCompany = (props) => {
                     type="email"
                     name="email"
                     onInput={(e) => handleInputChange(e, "email")}
-                    defaultValue={isAddMode ? "" : data.contactemail}
+                    defaultValue={isAddMode ? "" : data?.contactemail}
                     maxLength={50}
                     placeholder="Enter email"
                     className={`field-input placeholder-text form-control ${
@@ -554,7 +553,7 @@ export const AddEditCompany = (props) => {
                     name="zipcode"
                     onInput={(e) => handleInputChange(e, "zipcode")}
                     placeholder="Enter zipcode"
-                    defaultValue={isAddMode ? "" : data.zipcode}
+                    defaultValue={isAddMode ? "" : data?.zipcode}
                     maxLength={50}
                     className={`field-input placeholder-text form-control ${
                       errors?.zipcode ? "is-invalid error-text" : "input-text"
@@ -571,7 +570,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="text"
                     name="address"
-                    defaultValue={isAddMode ? "" : data.address}
+                    defaultValue={isAddMode ? "" : data?.address}
                     onInput={(e) => handleInputChange(e, "address")}
                     placeholder="Enter address"
                     maxLength={100}

@@ -49,24 +49,28 @@ export default function CustomerDashboard() {
       count: dashboardCounts.openjobcount,
       className: "success",
       icon: "lnr-graduation-hat",
+      path: "/job-list",
     },
     {
-      title: "Pending interview schedules",
+      title: "Pending interview",
       count: dashboardCounts.pendinginterviewschedulescount,
       className: "warning",
       icon: "lnr-calendar-full",
+      path: "/scheduled-interview",
     },
     {
-      title: "New candidate liked",
-      count: dashboardCounts.newcandidatelikedcount,
+      title: "Upcoming interviews",
+      count: dashboardCounts.upcominginterviewcount,
       className: "primary",
       icon: "lnr-thumbs-up",
+      path: "/scheduled-interview",
     },
     {
       title: "Matched candidate pending to review",
       count: dashboardCounts.matchedcandidatereviewpendingcount,
       className: "danger",
       icon: "lnr-user",
+      path: "/candidate-list",
     },
   ];
 

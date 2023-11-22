@@ -181,7 +181,7 @@ export function UpcomingVideoDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  <Button
+                  {/* <Button
                     outline
                     size="sm"
                     className="mb-2 mr-2 btn-transition"
@@ -189,7 +189,7 @@ export function UpcomingVideoDetails({
                   >
                     {" "}
                     Message{" "}
-                  </Button>
+                  </Button> */}
 
                   <Button
                     outline
@@ -203,17 +203,18 @@ export function UpcomingVideoDetails({
                   </Button>
                 </Col>
               ) : (
-                <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Button
-                    outline
-                    size="sm"
-                    className="mb-2 mr-2 btn-transition"
-                    color="primary"
-                  >
-                    {" "}
-                    Message{" "}
-                  </Button>
-                </Col>
+                <></>
+                // <Col style={{ display: "flex", justifyContent: "flex-end" }}>
+                //   <Button
+                //     outline
+                //     size="sm"
+                //     className="mb-2 mr-2 btn-transition"
+                //     color="primary"
+                //   >
+                //     {" "}
+                //     Message{" "}
+                //   </Button>
+                // </Col>
               )}
             </div>
           </div>
