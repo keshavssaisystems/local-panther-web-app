@@ -85,14 +85,14 @@ const columns = [
       <span
         className="table-cell"
         title={
-          row.createddate ? moment(row.jobposteddate).format("MM/DD/YYYY") : ""
+          row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
         }
       >
-        {row.createddate ? moment(row.jobposteddate).format("MM/DD/YYYY") : ""}
+        {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
       </span>
     ),
     sortable: true,
-    selector: (row) => row.jobposteddate,
+    selector: (row) => row.createddate,
     minWidth: "180px",
   },
 ];
@@ -128,7 +128,7 @@ export function NewCandidate({ title }) {
           Location: rec?.location,
 
           Created: rec.createddate
-            ? moment(data.createddate).format("MM/DD/YYYY")
+            ? moment(rec.createddate).format("MM/DD/YYYY")
             : "",
         };
       });

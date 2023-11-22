@@ -1,0 +1,9 @@
+.admin-calendar-cont {
+  .rbc-active,
+  button.rbc-active,
+  button:active,
+  button:focus {
+    background-color: rgb(57, 193, 123) !important;
+    border-color: rgb(57, 193, 123) !important;
+  }
+}
