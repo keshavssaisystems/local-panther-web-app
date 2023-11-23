@@ -10,6 +10,7 @@ export function ReactBigCalender({
   toolbar = false,
   events = [],
   onHandleSelectEvent,
+  onHandleNavigate,
 }) {
   const [view, setView] = useState(Views.MONTH);
   const localizer = momentLocalizer(moment, "Etc/Universal");
@@ -21,6 +22,10 @@ export function ReactBigCalender({
     console.log("event :>> ", event);
   };
 
+  const handleNavigate = (evt) => {
+    onHandleNavigate(evt);
+  };
+
   return (
     <Card className="admin-calendar-cont">
       <CardBody className="scheduled-calender">
@@ -30,7 +35,7 @@ export function ReactBigCalender({
           events={events}
           startAccessor="start"
           endAccessor="end"
-          popup={true}
+          // popup
           formats={{
             dayFormat: "dddd",
           }}
@@ -39,13 +44,19 @@ export function ReactBigCalender({
             const fontSize = "0.8rem";
             return { style: { backgroundColor, fontSize } };
           }}
-          today={true}
+          today={false}
           views={["month", "week", "day", "agenda"]}
           toolbar={toolbar}
-          // view={view} // Specify the view
-          // onView={setView} // Handle view changes
+          onRangeChange={handleNavigate}
+          view={view} // Specify the view
+          onView={setView} // Handle view changes
           onSelectEvent={handleSelectEvent}
-          onShowMore={handleSelectEvent}
+          components={{
+            day: {
+              header: () => "",
+            },
+          }}
+          // onShowMore={handleSelectEvent}
         />
       </CardBody>
     </Card>

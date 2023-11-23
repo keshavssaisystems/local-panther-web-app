@@ -587,11 +587,11 @@ export function ScheduleInterview() {
                 <CardBody className="scheduled-calender">
                   <div className="text-end">
                     <div className="mb-3 me-1 badge badge-color-white">P</div>
-                    Avaialable{" "}
+                    Available{" "}
                     <div className="ms-3 mb-3 me-0 badge badge-color-blue">
                       P
                     </div>{" "}
-                    Not avaialable
+                    Not available
                   </div>
                   <Calendar
                     defaultView="week"
