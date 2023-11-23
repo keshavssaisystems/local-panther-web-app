@@ -18,9 +18,10 @@ import { useSelector } from "react-redux";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
 import { BsTrash3 } from "react-icons/bs";
-import { formatDate } from "_helpers/helper";
+import { getTimezoneDateTimeForNow } from "_helpers/helper";
 import "./dashboard.scss";
 import "../../../_components/modal/alertmodal.scss";
+import moment from "moment";
 
 export function Alerts(props) {
   const totalRecords = useSelector(
@@ -29,7 +30,6 @@ export function Alerts(props) {
 
   const alerts = useSelector((state) => state.candidateDashboard.alertsList);
   const loader = useSelector((state) => state.candidateDashboard.alertsLoader);
-
   const colors = ["dot-danger", "dot-success", "dot-primary"];
   return (
     <>
@@ -57,7 +57,10 @@ export function Alerts(props) {
                                   : "widget-content-left hand-cursor"
                               }
                               onClick={() =>
-                                props.onReadNotification(item.queueid)
+                                props.onReadNotification(
+                                  item.queueid,
+                                  item.notificationstatusid
+                                )
                               }
                             >
                               <div
@@ -77,10 +80,13 @@ export function Alerts(props) {
                                 className="widget-subheading alert-desc"
                                 style={{ paddingBottom: "6px" }}
                               >
-                                {formatDate(
-                                  item.modifieddate
-                                    ? item.modifieddate
-                                    : item.createddate
+                                Posted{" "}
+                                {getTimezoneDateTimeForNow(
+                                  moment(
+                                    item.modifieddate
+                                      ? item.modifieddate
+                                      : item.createddate
+                                  )
                                 )}
                               </div>
                             </div>

@@ -13,7 +13,8 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BsTrash3 } from "react-icons/bs";
-import { formatDate } from "_helpers/helper";
+import { getTimezoneDateTimeForNow } from "_helpers/helper";
+import moment from "moment";
 import "./alertmodal.scss";
 
 export const AlertModal = (props) => {
@@ -70,7 +71,10 @@ export const AlertModal = (props) => {
                                       : "widget-content-left hand-cursor"
                                   }
                                   onClick={() =>
-                                    props.onReadNotification(item.queueid)
+                                    props.onReadNotification(
+                                      item.queueid,
+                                      item.notificationstatusid
+                                    )
                                   }
                                 >
                                   <div
@@ -90,10 +94,13 @@ export const AlertModal = (props) => {
                                     className="widget-subheading alert-desc"
                                     style={{ paddingBottom: "6px" }}
                                   >
-                                    {formatDate(
-                                      item.modifieddate
-                                        ? item.modifieddate
-                                        : item.createddate
+                                    Posted{" "}
+                                    {getTimezoneDateTimeForNow(
+                                      moment(
+                                        item.modifieddate
+                                          ? item.modifieddate
+                                          : item.createddate
+                                      )
                                     )}
                                   </div>
                                 </div>

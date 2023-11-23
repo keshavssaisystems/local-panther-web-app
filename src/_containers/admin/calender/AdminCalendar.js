@@ -12,6 +12,7 @@ import { InterViewDetailModal } from "../../../_components/modal/interviewdetail
 import { Row, Col } from "reactstrap";
 import "./admincalendar.scss";
 export function AdminCalendar({ title }) {
+  let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
@@ -20,10 +21,44 @@ export function AdminCalendar({ title }) {
   );
 
   useEffect(() => {
-    dispatch(scheduledInterviewListThunk());
+    // Get the current date
+    const currentDate = new Date();
+
+    // Get the first day of the current month
+    const firstDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+
+    // Get the last day of the current month
+    const lastDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+    const formattedFirstDay = formatDate(firstDayOfMonth);
+    const formattedLastDay = formatDate(lastDayOfMonth);
+
+    getUpcomingData({
+      candidateId: userDetails.InternalUserId,
+      start: formattedFirstDay,
+      end: formattedLastDay,
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getUpcomingData = async function (filterdata) {
+    await dispatch(scheduledInterviewListThunk(filterdata));
+  };
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-based
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const events = scheduledInterviewList.map((item) => {
     const startDate = moment(
@@ -63,6 +98,34 @@ export function AdminCalendar({ title }) {
     setOpenModal(false);
   };
 
+  const onHandleNavigate = (data) => {
+    let firstDayOfMonth;
+
+    let lastDayOfMonth;
+    let formattedFirstDay;
+    let formattedLastDay;
+
+    if (data.start) {
+      firstDayOfMonth = new Date(data.start);
+
+      lastDayOfMonth = new Date(data.end);
+      formattedFirstDay = formatDate(firstDayOfMonth);
+      formattedLastDay = formatDate(lastDayOfMonth);
+    } else {
+      firstDayOfMonth = new Date(data[0]);
+
+      lastDayOfMonth = new Date(data[data.length - 1]);
+      formattedFirstDay = formatDate(firstDayOfMonth);
+      formattedLastDay = formatDate(lastDayOfMonth);
+    }
+
+    getUpcomingData({
+      candidateId: userDetails.InternalUserId,
+      start: formattedFirstDay,
+      end: formattedLastDay,
+    });
+  };
+
   return (
     <div className="adm-cal-cont">
       <PageTitle heading={title} icon={titlelogo} />
@@ -91,6 +154,7 @@ export function AdminCalendar({ title }) {
         events={events}
         toolbar={true}
         onHandleSelectEvent={(evt) => onHandleSelectEvent(evt)}
+        onHandleNavigate={(evt) => onHandleNavigate(evt)}
       />
       <>
         {openModal ? (

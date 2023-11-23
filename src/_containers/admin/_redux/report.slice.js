@@ -46,6 +46,7 @@ export const scheduledInterviewListThunk = createAsyncThunk(
     payload = {
       ...payload,
       isActive: true,
+      isPaginationRequired: false,
     };
 
     const SCHEDULED_INTERVIEW_END_POINT = `${

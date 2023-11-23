@@ -81,14 +81,13 @@ export function Login() {
   const { errors, isSubmitting } = formState;
 
   function onSubmit(payload) {
-    dispatch(authActions.loginThunk(payload));
-    // firebasemessaging(payload);
+    firebasemessaging(payload);
   }
   const firebasemessaging = async (payload) => {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
       // Generate Token
-      const token = await messaging.getToken(messaging, {
+      const token = await messaging.getToken({
         vapidKey:
           "BHDRlNANNHYy5hL-T7sh4uQ3gJCWKxUhXJTRHc85d4mwj51Wo_27e7XHP-W6Ix1zlqvzU9hsiSz6kGXejwG406A",
       });
