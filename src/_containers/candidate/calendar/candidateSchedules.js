@@ -227,7 +227,7 @@ export function CandidateSchedules() {
                   startAccessor="start"
                   endAccessor="end"
                   views={["month", "week", "day", "agenda"]}
-                  popup
+                  // popup
                   eventPropGetter={(upData) => {
                     const backgroundColor = upData.color
                       ? upData.color

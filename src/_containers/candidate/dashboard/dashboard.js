@@ -28,6 +28,14 @@ export function CandidateDashboard() {
     description: "",
   });
 
+  const [confAlert, SetConfAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+    id: "",
+  });
+
   useEffect(() => {
     loadPage();
   }, []);
@@ -67,8 +75,10 @@ export function CandidateDashboard() {
       });
     }
   };
-  const onReadNotification = (id) => {
-    dispatch(candidateDashboardActions.readNotification({ id }));
+  const onReadNotification = (id, status) => {
+    if (status !== 3) {
+      dispatch(candidateDashboardActions.readNotification({ id }));
+    }
   };
 
   const showSweetAlert = ({ title, type }) => {
@@ -86,6 +96,37 @@ export function CandidateDashboard() {
     SetShowAlert(data);
   };
 
+  const onConfAlert = (id) => {
+    let data = { ...confAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    data.id = "";
+    data.description = "";
+    SetConfAlert(data);
+    onDeleteNotification(id);
+  };
+
+  const onCloseConfAlert = () => {
+    let data = { ...confAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    data.id = "";
+    data.description = "";
+    SetConfAlert(data);
+  };
+
+  const showConfAlert = (id) => {
+    let data = { ...confAlert };
+    data.title = "Delete Notification";
+    data.type = "warning";
+    data.show = true;
+    data.id = id;
+    data.description = "Are you sure want to delete this notification?";
+    SetConfAlert(data);
+  };
+
   return (
     <>
       <Row>
@@ -99,8 +140,8 @@ export function CandidateDashboard() {
         </Col>
         <Col>
           <Alerts
-            onDeleteNotification={(id) => onDeleteNotification(id)}
-            onReadNotification={(id) => onReadNotification(id)}
+            onDeleteNotification={(id) => showConfAlert(id)}
+            onReadNotification={(id, status) => onReadNotification(id, status)}
           />
         </Col>
       </Row>
@@ -122,8 +163,22 @@ export function CandidateDashboard() {
           show={showAlert.show}
           type={showAlert.type}
           onConfirm={() => closeSweetAlert()}
-        />
-        {showAlert.description}
+        >
+          {showAlert.description}
+        </SweetAlert>
+      </>
+
+      <>
+        <SweetAlert
+          title={confAlert.title}
+          show={confAlert.show}
+          type={confAlert.type}
+          onConfirm={() => onConfAlert(confAlert.id)}
+          onCancel={() => onCloseConfAlert()}
+          showCancel
+        >
+          {confAlert.description}
+        </SweetAlert>
       </>
     </>
   );
