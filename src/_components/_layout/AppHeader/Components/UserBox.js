@@ -41,7 +41,11 @@ export function UserBox() {
   const [deactivateConfirm, setDeactivateConfirm] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const [isToggleOn, setIsToggleOn] = useState(false);
+  const [isToggleOn, setIsToggleOn] = useState(
+    localStorage.getItem("pushnotification")
+      ? JSON.parse(localStorage.getItem("pushnotification"))
+      : false
+  );
   // const personalInfo_temp = useSelector(
   //   (state) => state.getProfile?.profileImage
   // );
@@ -102,6 +106,7 @@ export function UserBox() {
     let response = await dispatch(settingsActions.notifications({ id, data }));
     if (response.payload) {
       setSuccess(true);
+      localStorage.setItem("pushnotification", value);
     } else {
       setError(true);
     }
