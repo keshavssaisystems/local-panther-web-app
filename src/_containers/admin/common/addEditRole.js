@@ -10,13 +10,11 @@ import { Form, FormGroup, Label, Row, Col, Button, Input } from "reactstrap";
 
 export const AddEditRole = (props) => {
   const { entity, isAddMode, data, isView } = props;
-  const userId = data?.userId;
-  const [roleId, setRoleId] = useState(0);
+  const [role, setRole] = useState("");
   const [description, setDescription] = useState("");
   const [save, setSave] = useState(false);
   const dispatch = useDispatch();
   const rolesList = useSelector((state) => state.adminListing.rolesList);
-  useEffect(() => {}, []);
 
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -27,13 +25,13 @@ export const AddEditRole = (props) => {
 
   const createEntity = async (e) => {
     setSave(true);
-    if (roleId === 0) {
+    if (role === "") {
       return;
     }
     e.preventDefault();
     let rolesData = {
-      userroleid: roleId,
-      rolename: rolesList?.find((x) => x.userroleid === roleId)?.rolename,
+      userroleid: 0,
+      rolename: role,
       description: description,
       isactive: true,
       currentUserId: parseInt(
@@ -44,6 +42,8 @@ export const AddEditRole = (props) => {
     if (isAddMode) {
       response = await dispatch(addRole(rolesData));
     } else {
+      let roleId = data?.userroleid;
+      rolesData.userroleid = roleId;
       response = await dispatch(updateRole({ rolesData, roleId }));
     }
 
@@ -62,7 +62,7 @@ export const AddEditRole = (props) => {
 
   const handleInputChange = (data, check) => {
     if (check === "role") {
-      setRoleId(parseInt(data));
+      setRole(data);
     } else {
       setDescription(data);
     }
@@ -84,13 +84,9 @@ export const AddEditRole = (props) => {
     props.callBack();
   };
 
-  const onSubmit = (data) => {
-    return createEntity(data);
-  };
-
   useEffect(() => {
     if (!isAddMode) {
-      setRoleId(data.userroleid);
+      setRole(data.rolename);
       setDescription(data.description);
     }
   }, []);
@@ -105,7 +101,7 @@ export const AddEditRole = (props) => {
                 <Label for="role">
                   User role <span style={{ color: "red" }}>* </span>
                 </Label>
-                <select
+                {/* <select
                   name="role"
                   placeholder="role"
                   className={`field-input placeholder-text form-control ${
@@ -130,9 +126,22 @@ export const AddEditRole = (props) => {
                         {options.rolename}
                       </option>
                     ))}
-                </select>
+                </select> */}
+
+                <Input
+                  type="text"
+                  name="role"
+                  placeholder="Enter description"
+                  maxLength={50}
+                  className={`field-input placeholder-text form-control ${
+                    save && role === "" ? "is-invalid error-text" : "input-text"
+                  }`}
+                  value={role}
+                  onInput={(e) => handleInputChange(e.target.value, "role")}
+                />
+
                 <div className="invalid-feedback">
-                  {save && roleId === 0 ? "Role is required" : ""}
+                  {save && role === "" ? "Role is required" : ""}
                 </div>
               </FormGroup>
             </Col>
@@ -145,11 +154,6 @@ export const AddEditRole = (props) => {
                   placeholder="Enter description"
                   maxLength={100}
                   className={`field-input placeholder-text form-control`}
-                  // className={`field-input placeholder-text form-control ${
-                  //   errors?.menuid && roleId === 0
-                  //     ? "is-invalid error-text"
-                  //     : "input-text"
-                  // }`}
                   value={description}
                   onInput={(e) =>
                     handleInputChange(e.target.value, "description")

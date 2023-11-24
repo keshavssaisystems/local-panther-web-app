@@ -41,10 +41,8 @@ import {
 import errorIcon from "assets/utils/images/error_icon.png";
 import successIcon from "assets/utils/images/success_icon.svg";
 import SweetAlert from "react-bootstrap-sweetalert";
-import { settingsActions } from "_store";
 import cx from "classnames";
-import { BsPencil, BsTrash3 } from "react-icons/bs";
-import { FiPlus } from "react-icons/fi";
+import { BsPencil } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { AddEditMenuMapping } from "../common/addEditMenuMapping";
 import { AddEditRole } from "../common/addEditRole";
@@ -57,10 +55,6 @@ export const RoleMenuListing = ({ entity }) => {
     industryCompanyMapping,
     loading = false,
   } = useSelector((state) => state?.adminListing ?? {});
-
-  const { companyDropdownData } = useSelector(
-    (state) => state?.addCustomer ?? {}
-  );
 
   let title,
     icon,
@@ -85,23 +79,7 @@ export const RoleMenuListing = ({ entity }) => {
     description: "",
   });
   const [searchData, setSearchText] = useState("");
-  const [newCompData, setNewCompData] = useState({
-    // ... other fields
-    newCompName: { value: "", error: false },
-    newIndusName: { value: "", error: false },
-    newCompDesc: { value: "" },
-    newCompEmp: { value: "" },
-    newCompAdd: { value: "" },
-    newCompState: { value: 0 },
-    newCompCity: { value: 0 },
-    newCompCountry: { value: 0 },
-    newCompLog: { value: 0 },
-    newCompZip: { value: "" },
-    newCompEmail: { value: "" },
-    newCompPhonenum: { value: "" },
-  });
 
-  title = roles.title;
   icon = companyLogo;
   columns = [
     {
@@ -113,7 +91,7 @@ export const RoleMenuListing = ({ entity }) => {
     {
       name: "Description",
       id: "description",
-      selector: (row) => row.description,
+      selector: (row) => <span title={row.description}>{row.description}</span>,
       sortable: true,
     },
     {
@@ -130,15 +108,12 @@ export const RoleMenuListing = ({ entity }) => {
           ) : (
             <></>
           )}
-          {entity === "roles" ? (
-            <BsPencil
-              style={{ fontSize: "18px", cursor: "pointer" }}
-              className="edit-icon me-2"
-              onClick={(evt) => handleRowClick(row, "edit")}
-            />
-          ) : (
-            <></>
-          )}
+          <BsPencil
+            style={{ fontSize: "18px", cursor: "pointer" }}
+            className="edit-icon me-2"
+            onClick={(evt) => handleRowClick(row, "edit")}
+          />
+
           {/* {entity === "roles" ? (
             <BsTrash3
               style={{ fontSize: "18px" }}
@@ -151,15 +126,13 @@ export const RoleMenuListing = ({ entity }) => {
       ),
     },
   ];
-  searchFilter = roles.searchFilter;
-  buttonsList = roles.buttonsList;
-  listingTitle = roles.listingTitle;
 
   const urlParams = {
     pageNumber: 0,
   };
 
   useEffect(() => {
+    setSearchText("");
     loadData();
   }, []);
 
@@ -433,7 +406,9 @@ export const RoleMenuListing = ({ entity }) => {
                 {!isAddMode
                   ? entity === "roles"
                     ? "Edit role"
-                    : "View menu mapping"
+                    : viewMode
+                    ? "View menu mapping"
+                    : "Edit menu mapping"
                   : entity === "roles"
                   ? "Add new Role"
                   : `Add menu mapping`}
