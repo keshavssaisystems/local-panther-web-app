@@ -14,13 +14,10 @@ export const getSchedules = createAsyncThunk(
 );
 
 // getAlerts thunk
-export const getAlerts = createAsyncThunk(
-  `${name}/getAlerts`,
-  async ({ candidateId }) => {
-    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Notification/GetNotifications`;
-    return await fetchWrapper.get(DASHBOARD_END_POINT);
-  }
-);
+export const getAlerts = createAsyncThunk(`${name}/getAlerts`, async () => {
+  const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Notification/GetNotifications`;
+  return await fetchWrapper.get(DASHBOARD_END_POINT);
+});
 
 // getDashboardCount thunk
 export const getDashboardCount = createAsyncThunk(

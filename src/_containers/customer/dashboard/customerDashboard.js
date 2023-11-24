@@ -59,8 +59,8 @@ export default function CustomerDashboard() {
       path: "/scheduled-interview",
     },
     {
-      title: "Upcoming interviews",
-      count: dashboardCounts.upcominginterviewcount,
+      title: "Liked candidates",
+      count: dashboardCounts.newcandidatelikedcount,
       className: "primary",
       icon: "lnr-thumbs-up",
       path: "/scheduled-interview",

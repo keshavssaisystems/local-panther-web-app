@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
@@ -50,7 +51,7 @@ import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
 import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 
-import { Chat } from "../../firebase/chat/chat";
+import { messaging } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
@@ -58,10 +59,36 @@ import { CustomerList } from "_containers/admin/customer/customerList";
 
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
+import { ToastContainer, toast } from "react-toastify";
+import { Row } from "reactstrap";
+import { candidateDashboardActions } from "_store";
+import { useDispatch } from "react-redux";
+
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    messaging.onMessage((payload) => {
+      toast(
+        <Row>
+          <p>
+            <b>{payload.notification.title}</b>
+          </p>
+          <p>{payload.notification.body}</p>
+        </Row>,
+        {
+          position: "bottom-right",
+          autoClose: 10000,
+        }
+      );
+      updatePushNotifications();
+    });
+  }, []);
 
+  const updatePushNotifications = () => {
+    dispatch(candidateDashboardActions.getAlerts());
+  };
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
@@ -450,6 +477,7 @@ export function App() {
         {authUser && <AppSidebar />}
         <div className={authUser ? `app-main__outer` : ""}>
           <div className="app-main__inner">
+            <ToastContainer />
             <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}
               <Route

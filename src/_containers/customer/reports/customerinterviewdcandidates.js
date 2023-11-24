@@ -29,7 +29,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import {
   getCustReportIVDCandList,
-  getCandidateDropdown,
+  getScheduledCandidatesForCustomerDropdown,
   getJobDropdown,
 } from "./customerreport.slice";
 
@@ -171,8 +171,9 @@ export function CustomerReportInterviewedCandidates() {
     }
   }, [interviewedCandidateList]);
   useEffect(() => {
+    let userId = Number(localStorage.getItem("userId"));
     onGetCustReportIVDCandList({});
-    dispatch(getCandidateDropdown());
+    dispatch(getScheduledCandidatesForCustomerDropdown(userId));
     dispatch(getJobDropdown());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -270,10 +271,12 @@ export function CustomerReportInterviewedCandidates() {
                       {candidateDropDownList?.length > 0 ? (
                         candidateDropDownList.map((data) => (
                           <option
-                            value={data.candidateid}
-                            key={data.candidateid}
+                            value={data.id ? data.id : data.candidateid}
+                            key={data.id ? data.id : data.candidateid}
                           >
-                            {data.firstname + " " + data.lastname}
+                            {data.name
+                              ? data.name
+                              : data.firstname + " " + data.lastname}
                           </option>
                         ))
                       ) : (

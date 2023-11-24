@@ -91,6 +91,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userId");
       localStorage.removeItem("userDetails");
       localStorage.removeItem("userroleid");
+      localStorage.removeItem("pushnotification");
       localStorage.clear();
 
       history.navigate("/login");
@@ -127,6 +128,10 @@ const authSlice = createSlice({
           ? 2
           : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
+      localStorage.setItem(
+        "pushnotification",
+        decodedData?.Pushnotification?.toLowerCase() === "true"
+      );
 
       // get return url from location state or default to home page
       const { from } = history.location.state || {

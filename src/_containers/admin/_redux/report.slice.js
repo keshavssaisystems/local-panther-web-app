@@ -71,6 +71,24 @@ export const getReportDataThunk = createAsyncThunk(
   }
 );
 
+// get customer list
+export const getCustomerDropdownList = createAsyncThunk(
+  `${name}/getCustomerDropdownList`,
+  async () => {
+    const CUSTOMER_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Company/GetCompanyDropdown`;
+    return await fetchWrapper.get(CUSTOMER_LIST_END_POINT);
+  }
+);
+
+// get candidate list
+export const getCandidateDropdownList = createAsyncThunk(
+  `${name}/getCandidateDropdownList`,
+  async () => {
+    const CANDIDATE_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Candidate/GetCandidateDropdown`;
+    return await fetchWrapper.get(CANDIDATE_LIST_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -79,6 +97,8 @@ const adminReportSlice = createSlice({
     loading: false,
     error: null,
     reportData: [],
+    customerList: [],
+    candidateList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -153,6 +173,24 @@ const adminReportSlice = createSlice({
       state.scheduledLoading = false;
       state.error = action.error;
     },
+
+    // customer list
+    [getCustomerDropdownList.pending]: (state) => {
+      state.customerList = [];
+    },
+    [getCustomerDropdownList.fulfilled]: (state, { payload = {} }) => {
+      state.customerList = payload.data ? payload.data : [];
+    },
+    [getCustomerDropdownList.rejected]: (state, action) => {},
+
+    // cadidate list
+    [getCandidateDropdownList.pending]: (state) => {
+      state.candidateList = [];
+    },
+    [getCandidateDropdownList.fulfilled]: (state, { payload = {} }) => {
+      state.candidateList = payload.data ? payload.data : [];
+    },
+    [getCandidateDropdownList.rejected]: (state, action) => {},
   },
 });
 
@@ -162,6 +200,8 @@ export const adminReportActions = {
   openJobsThunk, // Export the async open jobs action
   newCandidateThunk, // Export the async new candidate action
   getReportDataThunk, // Export the async report data action
+  getCustomerDropdownList,
+  getCandidateDropdownList,
 };
 
 export const adminReportReducer = adminReportSlice.reducer;

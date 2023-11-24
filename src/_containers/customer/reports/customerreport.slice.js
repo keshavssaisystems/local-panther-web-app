@@ -160,6 +160,14 @@ export const getRecommendedJobStatus = createAsyncThunk(
   }
 );
 
+// get Scheduled Candidates For Customer Dropdown
+export const getScheduledCandidatesForCustomerDropdown = createAsyncThunk(
+  `${name}/getScheduledCandidatesForCustomerDropdown`,
+  async (id) => {
+    const GET_SCFC_DROPDOWN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=ScheduledCandidatesForCustomer&commonId=${id}`;
+    return await fetchWrapper.get(GET_SCFC_DROPDOWN_END_POINT);
+  }
+);
 // Create the slice
 const customerReportSlice = createSlice({
   name,
@@ -287,6 +295,15 @@ const customerReportSlice = createSlice({
       state.recommendedJobStatusList = action?.payload?.data;
     },
     [getRecommendedJobStatus.rejected]: (state, action) => {},
+
+    // scheduled candidates for customer dropdown list
+    [getScheduledCandidatesForCustomerDropdown.pending]: (state) => {
+      state.candidateDropDownList = [];
+    },
+    [getScheduledCandidatesForCustomerDropdown.fulfilled]: (state, action) => {
+      state.candidateDropDownList = action?.payload?.data;
+    },
+    [getScheduledCandidatesForCustomerDropdown.rejected]: (state, action) => {},
   },
 });
 
@@ -302,6 +319,7 @@ export const customerReportActions = {
   getCandidateDropdown,
   getJobDropdown,
   getRecommendedJobStatus,
+  getScheduledCandidatesForCustomerDropdown,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;
