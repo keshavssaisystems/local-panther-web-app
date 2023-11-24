@@ -85,6 +85,14 @@ export const getRolesList = createAsyncThunk(
   }
 );
 
+export const resetPassword = createAsyncThunk(
+  `${name}/resetPassword`,
+  async (payload = {}) => {
+    const GET_ROLES_STATS = `${baseUrl}/User/ForgotUserPassword`;
+    return await fetchWrapper.post(GET_ROLES_STATS, payload);
+  }
+);
+
 export const addRole = createAsyncThunk(
   `${name}/addRole`,
   async (payload = {}) => {
@@ -246,6 +254,18 @@ const adminListingSlice = createSlice({
       state.error = action.error;
     },
 
+    [resetPassword.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [resetPassword.fulfilled]: (state) => {
+      state.loading = false;
+    },
+    [resetPassword.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
     [updateRole.pending]: (state) => {
       state.loading = true;
       state.error = null;
@@ -324,6 +344,7 @@ export const adminListingActions = {
   updateMenuMapping,
   deleteRole,
   updateRole,
+  resetPassword,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

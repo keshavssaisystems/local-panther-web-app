@@ -33,7 +33,9 @@ export const AddUpdateCustomer = ({
   const [modal, setModal] = useState(false);
   const [companyValidation, setCompanyValidation] = useState(false);
   const [firstNameValidation, setFirstNameValidation] = useState(false);
+
   const [lastNameValidation, setLastNameValidation] = useState(false);
+  const [PrefixValidation, setPrefixValidation] = useState(false);
   const [emailValidation, setEmailValidation] = useState(false);
   const [locationValidation, setLocationValidation] = useState(false);
   const companiesList = useSelector((state) => state.dropdown.companyList);
@@ -55,6 +57,7 @@ export const AddUpdateCustomer = ({
   const toggle = () => {
     setSave(false);
     let obj = {
+      prefix: "",
       companyid: 0,
       firstname: "",
       lastname: "",
@@ -73,7 +76,14 @@ export const AddUpdateCustomer = ({
 
   const handleInputChange = (event, check) => {
     let data = { ...editData };
-    if (check === "company") {
+    if (check === "prefix") {
+      data.prefix = event.target.value;
+      if (data.prefix === "") {
+        setPrefixValidation(true);
+      } else {
+        setPrefixValidation(false);
+      }
+    } else if (check === "company") {
       data.company = parseInt(event.target.value);
       if (data.company === 0) {
         setCompanyValidation(true);
@@ -126,6 +136,11 @@ export const AddUpdateCustomer = ({
     parseInt(event.target.elements.companyname.value) === 0
       ? setCompanyValidation(true)
       : setCompanyValidation(false);
+
+    event.target.elements.prefix.value === ""
+      ? setPrefixValidation(true)
+      : setPrefixValidation(false);
+
     event.target.elements.firstname.value === ""
       ? setFirstNameValidation(true)
       : setFirstNameValidation(false);
@@ -179,7 +194,7 @@ export const AddUpdateCustomer = ({
       companyid: Number(event.target.elements.companyname.value),
       userid: 0,
       userroleid: 2,
-      title: event.target.elements.firstname.value,
+      title: event.target.elements.prefix.value,
       firstname: event.target.elements.firstname.value,
       lastname: event.target.elements.lastname.value,
       email: event.target.elements.email.value,
@@ -218,11 +233,23 @@ export const AddUpdateCustomer = ({
         <Row>
           <Form onSubmit={(e) => getValidation(e)}>
             <Row>
-              <Col md={8}>
+              <Col md={6}>
                 <FormGroup>
                   <Label for="companyname">
                     Company <span style={{ color: "red" }}>* </span>
                   </Label>
+
+                  {!isEdit && (
+                    <a
+                      className="float-end"
+                      href="javascript:void(0)"
+                      onClick={() => setCompanyModal(true)}
+                    >
+                      {" "}
+                      +Add company
+                    </a>
+                  )}
+
                   <Input
                     type="select"
                     name="companyname"
@@ -255,18 +282,30 @@ export const AddUpdateCustomer = ({
                   )}
                 </FormGroup>
               </Col>
-              {!isEdit && (
-                <Col md={4}>
-                  <a
-                    className="float-end"
-                    href="javascript:void(0)"
-                    onClick={() => setCompanyModal(true)}
-                  >
-                    {" "}
-                    +Add company
-                  </a>
-                </Col>
-              )}
+
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="prefix">
+                    Prefix <span style={{ color: "red" }}>* </span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="prefix"
+                    placeholder="Enter prefix"
+                    defaultValue={editData?.title}
+                    onInput={(e) => handleInputChange(e, "prefix")}
+                    className={`form-control placeholder-name ${
+                      PrefixValidation ? "is-invalid" : ""
+                    }`}
+                    minLength={2}
+                    maxLength={5}
+                  />
+                  {PrefixValidation && save && (
+                    <FormText color="danger">Please enter prefix</FormText>
+                  )}
+                </FormGroup>
+              </Col>
+
               <Col md={6}>
                 <FormGroup>
                   <Label for="firstname">
@@ -409,7 +448,6 @@ export const AddUpdateCustomer = ({
                     onInput={(e) => handleInputChange(e, "zipcode")}
                     name="zipcode"
                     id="zipcode"
-                    maxLength={50}
                     placeholder="Zipcode"
                     defaultValue={editData?.zipcode}
                   />

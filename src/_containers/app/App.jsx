@@ -160,7 +160,7 @@ export function App() {
             path="acl/roles-function/3"
             element={
               <PrivateRoute>
-                <RoleMenuListing entity="menuMapping" />
+                <RoleMenuListing entity="menuMapping" key={1} />
               </PrivateRoute>
             }
           />
@@ -168,7 +168,7 @@ export function App() {
             path="acl/roles/2"
             element={
               <PrivateRoute>
-                <RoleMenuListing entity="roles" />
+                <RoleMenuListing entity="roles" key={2} />
               </PrivateRoute>
             }
           />
