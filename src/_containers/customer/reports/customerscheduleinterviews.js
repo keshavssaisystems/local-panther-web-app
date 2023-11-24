@@ -29,7 +29,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import {
   getCustReportScheduleIVList,
-  getCandidateDropdown,
+  getScheduledCandidatesForCustomerDropdown,
   getJobDropdown,
 } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
@@ -146,8 +146,9 @@ export function CustomerReportScheduledInterviews() {
     (state) => state?.customerReportReducer?.candidateDropDownList
   );
   useEffect(() => {
+    let userId = Number(localStorage.getItem("userId"));
     onGetCustReportScheduleIVList({});
-    dispatch(getCandidateDropdown());
+    dispatch(getScheduledCandidatesForCustomerDropdown(userId));
     dispatch(getJobDropdown());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -281,10 +282,12 @@ export function CustomerReportScheduledInterviews() {
                       {candidateDropDownList?.length > 0 ? (
                         candidateDropDownList.map((data) => (
                           <option
-                            value={data.candidateid}
-                            key={data.candidateid}
+                            value={data.id ? data.id : data.candidateid}
+                            key={data.id ? data.id : data.candidateid}
                           >
-                            {data.firstname + " " + data.lastname}
+                            {data.name
+                              ? data.name
+                              : data.firstname + " " + data.lastname}
                           </option>
                         ))
                       ) : (

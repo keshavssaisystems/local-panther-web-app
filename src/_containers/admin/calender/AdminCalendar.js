@@ -6,10 +6,16 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import { ReactBigCalender } from "_widgets";
 import { useEffect } from "react";
-import { scheduledInterviewListThunk } from "../_redux/report.slice";
+import {
+  scheduledInterviewListThunk,
+  getCandidateDropdownList,
+  getCustomerDropdownList,
+} from "../_redux/report.slice";
 import moment from "moment";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
-import { Row, Col } from "reactstrap";
+import { Row, Col, FormGroup, Button, Input } from "reactstrap";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./admincalendar.scss";
 export function AdminCalendar({ title }) {
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
@@ -19,6 +25,21 @@ export function AdminCalendar({ title }) {
   const { scheduledInterviewList = [] } = useSelector(
     (state) => state.adminReportReducer
   );
+
+  const { customerList = [] } = useSelector(
+    (state) => state.adminReportReducer
+  );
+
+  const { candidateList = [] } = useSelector(
+    (state) => state.adminReportReducer
+  );
+
+  const [filter, setFilter] = useState({});
+  const [customerId, setCustomerId] = useState();
+  const [candidateId, setCandidateId] = useState();
+
+  const [firstDate, setFirstDate] = useState("");
+  const [lastDate, setLastDate] = useState("");
 
   useEffect(() => {
     // Get the current date
@@ -39,13 +60,15 @@ export function AdminCalendar({ title }) {
     );
     const formattedFirstDay = formatDate(firstDayOfMonth);
     const formattedLastDay = formatDate(lastDayOfMonth);
-
+    setFirstDate(formattedFirstDay);
+    setLastDate(formattedLastDay);
     getUpcomingData({
       candidateId: userDetails.InternalUserId,
       start: formattedFirstDay,
       end: formattedLastDay,
     });
-
+    dispatch(getCandidateDropdownList());
+    dispatch(getCustomerDropdownList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -118,7 +141,8 @@ export function AdminCalendar({ title }) {
       formattedFirstDay = formatDate(firstDayOfMonth);
       formattedLastDay = formatDate(lastDayOfMonth);
     }
-
+    setFirstDate(formattedFirstDay);
+    setLastDate(formattedLastDay);
     getUpcomingData({
       candidateId: userDetails.InternalUserId,
       start: formattedFirstDay,
@@ -126,14 +150,121 @@ export function AdminCalendar({ title }) {
     });
   };
 
+  const onSubmitClear = () => {
+    setFilter({});
+
+    setCandidateId("");
+    setCustomerId("");
+    getUpcomingData({
+      candidateId: userDetails.InternalUserId,
+      start: firstDate,
+      end: lastDate,
+    });
+  };
+
+  const onSubmitHandler = () => {
+    getUpcomingData({
+      candidateId: userDetails.InternalUserId,
+      start: firstDate,
+      end: lastDate,
+      companyId: customerId ? customerId : "",
+      candidateId: candidateId ? candidateId : "",
+    });
+  };
+
+  const handleChange = (name, value) => {
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
   return (
     <div className="adm-cal-cont">
       <PageTitle heading={title} icon={titlelogo} />
       <Row>
-        <Col sm={12} md={4} lg={4} xl={4}>
-          <p>{title}</p>
+        <Col sm={12} md={12} lg={12} xl={12}>
+          <Row>
+            <Col xl="5" lg="5" md="5" sm="12"></Col>
+            <Col xl="2" lg="2" md="2" sm="12">
+              <FormGroup>
+                <Input
+                  type="select"
+                  value={candidateId}
+                  name="candidateid"
+                  id="candidateid"
+                  placeholder="Candidate Id"
+                  onChange={(e) => {
+                    handleChange("candidateid", e.target.value);
+                    setCandidateId(e.target.value);
+                  }}
+                >
+                  <option value={""}>Select a Candidate</option>
+                  {candidateList?.length > 0 ? (
+                    candidateList.map((data) => (
+                      <option
+                        value={data.id ? data.id : data.candidateid}
+                        key={data.id ? data.id : data.candidateid}
+                      >
+                        {data.name
+                          ? data.name
+                          : data.firstname + " " + data.lastname}
+                      </option>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </Input>
+              </FormGroup>
+            </Col>
+            <Col xl="2" lg="2" md="2" sm="12" sx="12">
+              <FormGroup>
+                <Input
+                  type="select"
+                  value={customerId}
+                  name="customerid"
+                  id="customerid"
+                  placeholder="Customer ID"
+                  onChange={(e) => {
+                    handleChange("customerid", e.target.value);
+                    setCustomerId(e.target.value);
+                  }}
+                >
+                  <option value={""}>Select a Customer</option>
+                  {customerList?.length > 0 ? (
+                    customerList.map((data) => (
+                      <option value={data.companyid} key={data.companyid}>
+                        {data.companyname}
+                      </option>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </Input>
+              </FormGroup>
+            </Col>
+
+            <Col xl="3" lg="3" md="3" sm="12" sx="12" className="right-align">
+              <Button
+                style={{ background: "rgb(47 71 155)", width: "50%" }}
+                color="primary"
+                type="button"
+                onClick={() => onSubmitHandler()}
+              >
+                <FontAwesomeIcon icon={faSearch} /> Search
+              </Button>
+              <Button
+                style={{ width: "50%" }}
+                color="link"
+                type="button"
+                onClick={() => onSubmitClear()}
+              >
+                Clear
+              </Button>
+            </Col>
+          </Row>
         </Col>
-        <Col sm={12} md={8} lg={8} xl={8} className="right-align">
+        <Col sm={12} md={12} lg={12} xl={12} className="right-align">
           <div className="text-end">
             <div className="mb-3 me-0 badge badge-color-yellow">P</div> No
             response
