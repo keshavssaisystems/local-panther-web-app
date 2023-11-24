@@ -289,7 +289,7 @@ export const RoleMenuListing = ({ entity }) => {
             <CardBody>
               <Row className="mb-3">
                 <Col className="col">
-                  {entity === "roles" ? (
+                  {/* {entity === "roles" ? (
                     <Button
                       style={{
                         background: "#2f479b",
@@ -302,7 +302,7 @@ export const RoleMenuListing = ({ entity }) => {
                     </Button>
                   ) : (
                     <></>
-                  )}
+                  )} */}
                   <div
                     className={cx(
                       "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",

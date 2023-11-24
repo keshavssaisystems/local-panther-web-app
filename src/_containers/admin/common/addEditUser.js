@@ -422,10 +422,12 @@ export const AddEditUser = (props) => {
 
             <Col></Col>
           </Row>
-          <Button type="submit" color="primary" className="mt-3 float-end">
-            {/* disabled={formState.isSubmitting} */}
-            {isAddMode ? "Submit" : "Update"}
-          </Button>
+          {!isView && (
+            <Button type="submit" color="primary" className="mt-3 float-end">
+              {/* disabled={formState.isSubmitting} */}
+              {isAddMode ? "Submit" : "Update"}
+            </Button>
+          )}
         </Form>
       </Row>
       {success && (

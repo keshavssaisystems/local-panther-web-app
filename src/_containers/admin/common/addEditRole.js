@@ -137,6 +137,7 @@ export const AddEditRole = (props) => {
                     save && role === "" ? "is-invalid error-text" : "input-text"
                   }`}
                   value={role}
+                  disabled={true}
                   onInput={(e) => handleInputChange(e.target.value, "role")}
                 />
 

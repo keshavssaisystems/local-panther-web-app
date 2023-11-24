@@ -403,15 +403,17 @@ export const AddEditMenuMapping = (props) => {
 
             {/* <CheckboxTree nodes={menuList} /> */}
           </Row>
-          <Button
-            type="button"
-            className="mt-3 float-end"
-            color="primary"
-            onClick={(e) => createEntity(e)}
-          >
-            {/* disabled={formState.isSubmitting} */}
-            {isAddMode ? "Submit" : "Update"}
-          </Button>
+          {!isView && (
+            <Button
+              type="button"
+              className="mt-3 float-end"
+              color="primary"
+              onClick={(e) => createEntity(e)}
+            >
+              {/* disabled={formState.isSubmitting} */}
+              {isAddMode ? "Submit" : "Update"}
+            </Button>
+          )}
         </Form>
       </Row>
       <>

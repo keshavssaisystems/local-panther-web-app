@@ -427,13 +427,11 @@ export const AdminListing = ({ entity }) => {
     };
     let response = dispatch(resetPassword(payload));
     if (response?.error) {
-      setError(true);
       showSweetAlert({
         title: response?.error?.message,
         type: "error",
       });
     } else {
-      setSuccess(true);
       showSweetAlert({
         title: "Password has been sent to registered email ID",
         type: "success",
@@ -602,8 +600,8 @@ export const AdminListing = ({ entity }) => {
             <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 {!isAddMode
-                  ? entity === "roles"
-                    ? "Edit menu mapping"
+                  ? viewMode
+                    ? "View user"
                     : `Edit user`
                   : `Add new user`}
               </strong>
