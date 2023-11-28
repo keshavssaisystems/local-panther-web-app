@@ -162,7 +162,7 @@ export const CustCandidateListView = (props) => {
               disabled={props.type === "liked"}
               // outline
               size="sm"
-              title="liked"
+              title="Like"
               className=" btn-icon"
               color="primary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
@@ -177,7 +177,7 @@ export const CustCandidateListView = (props) => {
               disabled={props.type === "maybe"}
               // outline
               size="sm"
-              title="maybe"
+              title="Maybe"
               className=" btn-icon"
               color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
@@ -190,7 +190,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -200,7 +200,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="schedule"
+            title="Schedule"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}
@@ -215,7 +215,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="accept"
+            title="Raise offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -226,14 +226,14 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="liked"
+            title="Liked"
             className=" btn-icon"
             color="primary"
             onClick={() => onActionClick("like", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_liked} alt="list liked"></img>
           </Button>
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="maybe"
@@ -242,11 +242,11 @@ export const CustCandidateListView = (props) => {
             onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -256,7 +256,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="schedule"
+            title="Schedule"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}
@@ -271,7 +271,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="accept"
+            title="Raise offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -281,7 +281,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -296,7 +296,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject offer"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -311,7 +311,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -336,7 +336,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="accept"
+            title="Raise offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -344,7 +344,7 @@ export const CustCandidateListView = (props) => {
             <img src={customerIcons.list_accept} alt="list accept"></img>
           </Button>
 
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="liked"
@@ -353,9 +353,9 @@ export const CustCandidateListView = (props) => {
             onClick={() => onActionClick("like", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_liked} alt="list liked"></img>
-          </Button>
+          </Button> */}
 
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="maybe"
@@ -364,12 +364,12 @@ export const CustCandidateListView = (props) => {
             onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
 
           <Button
             // outline
             size="sm"
-            title="schedule"
+            title="Schedule"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}

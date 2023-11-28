@@ -96,7 +96,7 @@ export const CandListView = (props) => {
     } else if (props.type === "applied") {
       return (
         <ButtonGroup>
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="Maybe"
@@ -105,7 +105,7 @@ export const CandListView = (props) => {
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
             <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
           <Button
             // outline
             size="sm"
@@ -166,7 +166,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject"
+            title="Reject offer"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -183,7 +183,7 @@ export const CandListView = (props) => {
           {row?.customerrecommendedjobstatusid === 5 && (
             <Button
               size="sm"
-              title="Accept"
+              title="Accept offer"
               className="btn-icon"
               color="success"
               onClick={() =>
@@ -196,7 +196,7 @@ export const CandListView = (props) => {
           {row?.customerrecommendedjobstatusid !== 5 &&
             row?.customerrecommendedjobstatusid !== 6 && (
               <>
-                <Button
+                {/* <Button
                   size="sm"
                   title="Maybe"
                   className=" btn-icon"
@@ -206,7 +206,7 @@ export const CandListView = (props) => {
                   }
                 >
                   <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-                </Button>
+                </Button> */}
                 <Button
                   size="sm"
                   title="Apply"
@@ -228,7 +228,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Accept"
+            title="Accept offer"
             className="btn-icon"
             color="success"
             onClick={() =>
@@ -240,7 +240,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject"
+            title="Reject offer"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
