@@ -171,7 +171,6 @@ export const Skills = () => {
     },
   };
   const handlePageChange = (page) => {
-    debugger;
     setPageNo(page);
     dispatch(
       getSkills({
@@ -322,7 +321,6 @@ export const Skills = () => {
     }
 
     setOpenModal(false);
-    debugger;
     if (res.payload) {
       if (res.payload.statusCode === 204) {
         setSuccess(true);
@@ -531,12 +529,14 @@ export const Skills = () => {
                       onInput={(e) => handleInputChange(e.target.value)}
                       placeholder="Enter skill"
                       className={`field-input placeholder-text form-control ${
-                        skillValidation ? "is-invalid error-text" : "input-text"
+                        save && skillValidation
+                          ? "is-invalid error-text"
+                          : "input-text"
                       }`}
                       maxLength={50}
                     />
                     <div className="invalid-feedback">
-                      {skillValidation ? "Skill is required" : ""}
+                      {save && skillValidation ? "Skill is required" : ""}
                     </div>
                   </FormGroup>
                 </Col>
