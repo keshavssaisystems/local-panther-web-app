@@ -55,6 +55,7 @@ import CustomerDashboard from "_containers/customer/dashboard/customerDashboard"
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
+import { Skills } from "_containers/admin/masters/skills";
 
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
@@ -84,6 +85,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CustomerList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="masters/skills"
+            element={
+              <PrivateRoute>
+                <Skills />
               </PrivateRoute>
             }
           />

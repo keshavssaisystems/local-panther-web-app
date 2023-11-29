@@ -126,6 +126,40 @@ export const getMenuMappings = createAsyncThunk(
   }
 );
 
+export const getSkills = createAsyncThunk(
+  `${name}/getSkills`,
+  async (payload = {}) => {
+    const GET_SKILL_STATS = `${baseUrl}/Skill/GetSkills?type=Skill&${new URLSearchParams(
+      payload
+    )}`;
+    return await fetchWrapper.get(GET_SKILL_STATS);
+  }
+);
+
+export const addSkills = createAsyncThunk(
+  `${name}/addSkills`,
+  async (payload = {}) => {
+    const GET_SKILL_STATS = `${baseUrl}/Skill`;
+    return await fetchWrapper.post(GET_SKILL_STATS, payload);
+  }
+);
+
+export const updateSkills = createAsyncThunk(
+  `${name}/updateSkills`,
+  async ({ id, payload }) => {
+    const GET_SKILL_STATS = `${baseUrl}/Skill/${id}`;
+    return await fetchWrapper.put(GET_SKILL_STATS, payload);
+  }
+);
+
+export const deleteSkills = createAsyncThunk(
+  `${name}/deleteSkills`,
+  async (id) => {
+    const GET_SKILL_STATS = `${baseUrl}/Skill/${id}`;
+    return await fetchWrapper.delete(GET_SKILL_STATS);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -138,6 +172,7 @@ const adminListingSlice = createSlice({
     industryCompanyMapping: [],
     rolesList: [],
     menuList: [],
+    totalRecords: 0,
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -326,6 +361,57 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    [getSkills.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getSkills.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.data = data?.getSkillsList;
+      state.totalRecords = data.totalRows;
+    },
+    [getSkills.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [addSkills.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [addSkills.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [addSkills.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [updateSkills.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateSkills.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateSkills.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [deleteSkills.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [deleteSkills.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [deleteSkills.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -345,6 +431,10 @@ export const adminListingActions = {
   deleteRole,
   updateRole,
   resetPassword,
+  getSkills,
+  addSkills,
+  updateSkills,
+  deleteSkills,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;
