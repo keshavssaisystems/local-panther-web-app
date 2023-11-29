@@ -15,33 +15,27 @@ import {
   ModalBody,
   Modal,
 } from "reactstrap";
+import customerIcons from "assets/utils/images/customer";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import "_containers/admin/common/adminListing.scss";
 import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { BsSearch } from "react-icons/bs";
-import { dropdownActions, addCustomerActions } from "_store";
 import {
-  getCompanies,
   addSkills,
   updateSkills,
 } from "_containers/admin/_redux/adminListing.slice";
-import { USPhoneNumber } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
-import { AddEditCompany } from "../common/addEditCompany";
 import {
   getSkills,
   deleteSkills,
 } from "_containers/admin/_redux/adminListing.slice";
 import { CardPagination } from "_components/common/cardpagination";
 import { listPageSize } from "_helpers/constants";
-import { BsCheckCircle, BsXCircle } from "react-icons/bs";
 import { DataTableCustomPagination } from "_components/common/dataTablePagination";
 
 export const Skills = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({ skillname: "" });
   const [pageNo, setPageNo] = useState(1);
@@ -105,54 +99,54 @@ export const Skills = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div className="d-block w-100">
+        <div className="d-block w-100 list-btn-group">
           {row.userroleid === 1 && (
             <Button
-              outline
+              // outline
               size="sm"
               title="Edit skill"
+              className=" btn-icon"
+              color="info"
               onClick={(evt) => handleRowClick(row, "edit")}
-              className="btn-icon"
-              color="primary"
             >
               <BsPencil></BsPencil>
             </Button>
           )}
 
           <Button
-            outline
+            // outline
             size="sm"
-            title="Edit skill"
-            onClick={() => deleteConfirm(row, "user")}
+            title="delete skill"
             className="btn-icon"
-            color="primary"
+            color="danger"
+            onClick={() => deleteConfirm(row, "user")}
           >
             <BsTrash3></BsTrash3>
           </Button>
 
           {row.skillstatusid === 0 && (
             <Button
-              outline
+              // outline
               size="sm"
               title="Accept skill"
-              onClick={() => onApprove(row, true)}
               className="btn-icon"
-              color="primary"
+              color="success"
+              onClick={() => onApprove(row, true)}
             >
-              <BsCheckCircle></BsCheckCircle>
+              <img src={customerIcons?.list_accept} alt="list apply"></img>
             </Button>
           )}
 
           {row.skillstatusid === 0 && (
             <Button
-              outline
+              // outline
               size="sm"
               title="Reject skill"
-              onClick={() => onApprove(row, false)}
               className="btn-icon"
-              color="primary"
+              color="warning"
+              onClick={() => onApprove(row, false)}
             >
-              <BsXCircle></BsXCircle>
+              <img src={customerIcons?.list_reject} alt="list reject"></img>
             </Button>
           )}
         </div>
@@ -280,16 +274,16 @@ export const Skills = () => {
       pageNumber: 1,
     };
 
-    if (status === "Approved") {
+    if (status === 1) {
       urlParams.skillStatusId = 1;
       setStatus(1);
     }
-    if (status === "Pending") {
+    if (status === 0) {
       urlParams.skillStatusId = 0;
       setStatus(0);
     }
 
-    if (status === "Rejected") {
+    if (status === 2) {
       urlParams.skillStatusId = 2;
       setStatus(2);
     }
@@ -322,7 +316,7 @@ export const Skills = () => {
 
     setOpenModal(false);
     if (res.payload) {
-      if (res.payload.statusCode === 204) {
+      if (res.payload.statusCode === 204 || res.payload.statusCode === 201) {
         setSuccess(true);
         showSweetAlert({
           title: res.payload.message,
@@ -342,20 +336,22 @@ export const Skills = () => {
         type: "error",
       });
     }
+    getSkillsList();
   };
 
   const deleteSkillData = async function () {
     let response;
     let id = selectedRowData.skillid;
     response = await dispatch(deleteSkills(id));
-
     if (response.payload) {
       setIsDelete(false);
+      setSuccess(true);
       showSweetAlert({
         title: response.payload.message,
         type: "success",
       });
     } else {
+      setError(false);
       showSweetAlert({
         title: response.error.message,
         type: "error",
@@ -485,7 +481,7 @@ export const Skills = () => {
                 //     {...props}
                 //     totalRecords={totalRecords}
                 //     pageIndex={pageNo}
-                //     onChangePage={() => handlePageChange}
+                //     onCallBack={() => handlePageChange}
                 //   />
                 // )}
                 // paginationPerPage={10}
