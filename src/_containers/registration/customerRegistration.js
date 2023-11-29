@@ -861,7 +861,7 @@ export function CustomerRegistration() {
         <div className="mt-4 d-flex align-items-center">
           <h5 className="mb-0 account-text ms-auto me-4">
             <Link to="/login" style={{ borderBottom: "1px solid #545cd8" }}>
-              Already a member?Sign in
+              Already a member? Sign in
             </Link>
           </h5>
           <div>
