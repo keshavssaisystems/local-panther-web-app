@@ -234,7 +234,7 @@ export const Skills = () => {
     if (check) {
       payload.skillstatusid = 1;
     } else {
-      payload.skillstatusid = 1;
+      payload.skillstatusid = 2;
     }
     postData(payload, payload.skillid);
   };
