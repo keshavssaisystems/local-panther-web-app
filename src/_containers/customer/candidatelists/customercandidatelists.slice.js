@@ -25,6 +25,7 @@ function createInitialState() {
     totalRecords: 0,
     durationOptions: [],
     scheduledInterviewList: [],
+    prescreenQues: [],
   };
 }
 
@@ -42,6 +43,7 @@ function createExtraActions() {
     postScheduleInterview: postScheduleInterview(),
     getScheduleListData: getScheduleListData(),
     getScheduleIVList: getScheduleIVList(),
+    getPrescreenDetails: getPrescreenDetails(),
   };
 
   function getDrpDwnJobLists() {
@@ -210,6 +212,17 @@ function createExtraActions() {
         )
     );
   }
+
+  // get completed JobPrescreenApplication thunk
+  function getPrescreenDetails() {
+    return createAsyncThunk(
+      `${name}/getPrescreenDetails`,
+      async ({ jobId, candidateid }) => {
+        const GET_PRESCREEN_END_POINT = `${newUrl}/JobCandidatePrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}&isActive=true&candidateId=${candidateid}`;
+        return await fetchWrapper.get(GET_PRESCREEN_END_POINT);
+      }
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -225,6 +238,7 @@ function createExtraReducers() {
     postScheduleInterview();
     getScheduleListData();
     getScheduleIVList();
+    getPrescreenDetails();
 
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
@@ -403,6 +417,38 @@ function createExtraReducers() {
             ?.scheduledInterviewList
             ? action?.payload?.data?.scheduledInterviewList
             : [];
+        })
+        .addCase(rejected, (state, action) => {});
+    }
+
+    function getPrescreenDetails() {
+      let { pending, fulfilled, rejected } = extraActions.getPrescreenDetails;
+      builder
+        .addCase(pending, (state) => {
+          state.prescreenQues = [];
+        })
+        .addCase(fulfilled, (state, action) => {
+          if (
+            action?.payload?.data?.jobCandidatePrescreenApplicationList
+              ?.length > 0
+          ) {
+            let newData =
+              action?.payload?.data?.jobCandidatePrescreenApplicationList.map(
+                (data) => {
+                  return {
+                    isactive: data.isactive,
+                    iscustomquestion: data.iscustomquestion,
+                    jobid: data.jobid,
+                    jobprescreenapplicationid: data.jobprescreenapplicationid,
+                    prescreenquestion: data.prescreenquestion,
+                    prescreenquestionid: data.prescreenquestionid,
+                    error: false,
+                    answer: data.answer,
+                  };
+                }
+              );
+            state.prescreenQues = newData;
+          }
         })
         .addCase(rejected, (state, action) => {});
     }

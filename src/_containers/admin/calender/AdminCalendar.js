@@ -199,7 +199,7 @@ export function AdminCalendar({ title }) {
                     setCandidateId(e.target.value);
                   }}
                 >
-                  <option value={""}>Select a Candidate</option>
+                  <option value={""}>Select Candidate</option>
                   {candidateList?.length > 0 ? (
                     candidateList.map((data) => (
                       <option
@@ -230,7 +230,7 @@ export function AdminCalendar({ title }) {
                     setCustomerId(e.target.value);
                   }}
                 >
-                  <option value={""}>Select a Customer</option>
+                  <option value={""}>Select Company</option>
                   {customerList?.length > 0 ? (
                     customerList.map((data) => (
                       <option value={data.companyid} key={data.companyid}>
@@ -246,7 +246,7 @@ export function AdminCalendar({ title }) {
 
             <Col xl="3" lg="3" md="3" sm="12" sx="12" className="right-align">
               <Button
-                style={{ background: "rgb(47 71 155)", width: "50%" }}
+                style={{ background: "rgb(47 71 155)" }}
                 color="primary"
                 type="button"
                 onClick={() => onSubmitHandler()}
@@ -254,7 +254,6 @@ export function AdminCalendar({ title }) {
                 <FontAwesomeIcon icon={faSearch} /> Search
               </Button>
               <Button
-                style={{ width: "50%" }}
                 color="link"
                 type="button"
                 onClick={() => onSubmitClear()}

@@ -24,6 +24,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { getProfileActions, dropdownActions } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
+import { PrescreenModal } from "_components/modal/prescreenmodal";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -38,6 +39,8 @@ export const CustomerCandidateLists = (props) => {
     description: "",
   });
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showPSModal, setShowPSModal] = useState(false);
+  const [preScreenType, setPreScreenType] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -58,6 +61,11 @@ export const CustomerCandidateLists = (props) => {
   const durationOptions = useSelector(
     (state) => state.customerCandidateList.durationOptions
   );
+
+  const prescreenQues = useSelector(
+    (state) => state.customerCandidateList.prescreenQues
+  );
+
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
@@ -185,6 +193,18 @@ export const CustomerCandidateLists = (props) => {
     if (response?.payload) {
       setShowProfileModal(true);
     }
+  };
+
+  const onPrescreenActionClick = async (type, row) => {
+    await dispatch(
+      customerCandidateListsActions.getPrescreenDetails({
+        jobId: row.jobid,
+        candidateid: row.candidateid,
+      })
+    );
+
+    setPreScreenType(type);
+    setShowPSModal(true);
   };
 
   return (
@@ -345,7 +365,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Our advanced AI matching system efficiently reviews
                       candidate profiles and job requirements to connect
                       candidates with the best job opportunities. By using this
@@ -429,7 +449,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Liked jobs are jobs saved for later review or comparison
                       by clicking a button or icon on a job record. They will be
                       stored in a separate section of the profile, allowing
@@ -462,6 +482,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -499,7 +522,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A job record may be marked with questions or doubts,
                       indicating uncertain applications due to a lack of
                       information, qualifications, and locations. These jobs may
@@ -533,6 +556,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -570,7 +596,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Applied jobs are those that users submit applications for
                       through the platform. They are marked as applied and are
                       stored in a separate section of the profile. The user can
@@ -602,6 +628,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -639,7 +668,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A scheduled interview is an appointment with a customer to
                       discuss qualifications for a job, typically in person, by
                       phone, or video, after the initial screening process.
@@ -670,6 +699,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -707,7 +739,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       An offer is a formal proposal from a customer, detailing
                       job details, salary, benefits, start date, and work hours,
                       indicating successful completion of the interview process.
@@ -738,6 +770,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -775,7 +810,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       An accepted job is when candidates agree to the terms of
                       the offer and confirm their intention to work for the
                       customer, securing the job and preparing to start working.
@@ -806,6 +841,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -843,7 +881,7 @@ export const CustomerCandidateLists = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A rejected job refers to a decision to decline an offer or
                       a customer rescinding it, indicating that the individual
                       has decided not to work for the customer or has changed
@@ -875,6 +913,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -927,6 +968,23 @@ export const CustomerCandidateLists = (props) => {
               isOpen={showProfileModal}
               onClose={() => setShowProfileModal(false)}
             />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showPSModal ? (
+          <>
+            <PrescreenModal
+              isOpen={showPSModal}
+              onClose={() => {
+                setShowPSModal(false);
+              }}
+              data={prescreenQues}
+              //sendFormData={(data) => onSendPrescreenData(data)}
+              preScreenType={preScreenType}
+            ></PrescreenModal>
           </>
         ) : (
           <></>
