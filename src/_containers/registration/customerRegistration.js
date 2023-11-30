@@ -93,7 +93,8 @@ export function CustomerRegistration() {
   const validationSchema = Yup.object().shape({
     companyid: Yup.string().required("Company is required"),
     jobprofile: Yup.string()
-      .required("Title is required")
+      .required("Prefix is required")
+      .min(2, "Please enter minimum 2 characters")
       .matches(/^[A-Za-z ]*$/, "Please enter valid profile"),
 
     firstName: Yup.string()
@@ -161,10 +162,11 @@ export function CustomerRegistration() {
       stateid: Number(formData.stateid),
       countryid: 1,
       isactive: true,
+      customerstatusid: 0,
       currentUserId: 0,
     };
 
-    let response = await dispatch(addCustomerActions.addCustomer(payload));
+    let response = await dispatch(authActions.registerCustomer(payload));
     if (!response.payload) {
       setMessage(response.error.message);
 
@@ -596,13 +598,13 @@ export function CustomerRegistration() {
           <Col md={6}>
             <FormGroup>
               <Label for="jobprofile" className="input-label">
-                Title <span className="text-danger">*</span>
+                Prefix <span className="text-danger">*</span>
               </Label>
               <input
                 type="text"
                 name="jobprofile"
                 id="jobprofile"
-                placeholder="Enter title"
+                placeholder="Enter prefix"
                 {...register("jobprofile")}
                 className={`form-control placeholder-name ${
                   errors.jobprofile ? "is-invalid" : ""

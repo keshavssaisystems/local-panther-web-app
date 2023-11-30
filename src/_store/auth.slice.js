@@ -40,6 +40,14 @@ export const userRegisterThunk = createAsyncThunk(
   }
 );
 
+export const registerCustomer = createAsyncThunk(
+  `${name}/registerCustomer`,
+  async (payload) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Customer/RegisterCustomer`;
+    return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
+  }
+);
+
 // verigy otp thunk
 export const verifyOTPThunk = createAsyncThunk(
   `${name}/verifyOTPThunk`,
@@ -189,6 +197,15 @@ const authSlice = createSlice({
     [generateToken.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [registerCustomer.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [registerCustomer.fulfilled]: (state, { payload = {} }) => {
+      state.error = null;
+    },
+    [registerCustomer.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -202,6 +219,7 @@ export const authActions = {
   verifyOTPThunk,
   userRegisterThunkNew,
   generateToken,
+  registerCustomer,
 };
 
 export const authReducer = authSlice.reducer;

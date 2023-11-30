@@ -10,11 +10,15 @@ import {
   FormGroup,
   Input,
   Button,
+  ButtonGroup,
 } from "reactstrap";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { getCustomers } from "_containers/admin/_redux/adminListing.slice";
+import {
+  getCustomers,
+  verifyCustomer,
+} from "_containers/admin/_redux/adminListing.slice";
 import { settingsActions } from "_store";
 import cx from "classnames";
 import { dropdownActions, addCustomerActions } from "_store";
@@ -22,6 +26,7 @@ import { USPhoneNumber } from "_helpers/helper";
 import { AddUpdateCustomer } from "./addUpdateCustomer";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
+import customerIcons from "assets/utils/images/customer";
 import { BsPencil } from "react-icons/bs";
 
 export const CustomerList = () => {
@@ -39,7 +44,7 @@ export const CustomerList = () => {
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
-    dispatch(dropdownActions.getStateListThunk());
+    dispatch(dropdownActions.getStatusListThunk());
     dispatch(
       getCustomers({
         isActive: true,
@@ -49,11 +54,14 @@ export const CustomerList = () => {
       })
     );
   }, []);
-
+  const [customerStatus, setCustomerStatus] = useState(0);
+  const [companyId, setCompanyId] = useState(0);
+  const [status, setStatus] = useState(0);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
+  const candidateStatusList = useSelector((state) => state.dropdown.statusList);
   let title = "Customers";
   let icon = companyLogo;
   let columns = [
@@ -69,12 +77,12 @@ export const CustomerList = () => {
       selector: (row) => row.companyname,
       sortable: true,
     },
-    {
-      name: "Address",
-      id: "address",
-      selector: (row) => row.address,
-      sortable: true,
-    },
+    // {
+    //   name: "Address",
+    //   id: "address",
+    //   selector: (row) => row.address,
+    //   sortable: true,
+    // },
     {
       name: "City, State",
       id: "cityname",
@@ -101,13 +109,18 @@ export const CustomerList = () => {
       sortable: true,
     },
     {
+      name: "Customer status",
+      selector: (row) => row.customerstatus,
+      sortable: true,
+    },
+    {
       name: "Action",
       id: "isactive",
       cell: (row) => (
-        <div className="d-block w-100">
+        <div>
           <div
             title="Active/Inactive user"
-            className="switch has-switch  me-2"
+            className="switch has-switch  me-1"
             data-on-label="ON"
             data-off-label="OFF"
             style={{ verticalAlign: "bottom", cursor: "pointer" }}
@@ -125,25 +138,100 @@ export const CustomerList = () => {
               <span className="switch-right">OFF</span>
             </div>
           </div>
-          <BsPencil
+          <ButtonGroup>
+            {/* <BsPencil
             title="Edit user"
             style={{
               fontSize: "21px",
-              verticalAlign: "top",
+              verticalAlign: "middle",
               cursor: "pointer",
             }}
-            className="edit-icon me-2"
+            className="edit-icon me-1"
             onClick={(e) => {
               setEditData(row);
               setOpenModal(true);
               setIsEdit(true);
             }}
-          />
+          /> */}
+
+            <Button
+              // outline
+              size="sm"
+              title="Edit customer"
+              className="btn-icon"
+              color="warning"
+              onClick={(e) => {
+                setEditData(row);
+                setOpenModal(true);
+                setIsEdit(true);
+              }}
+            >
+              <img src={customerIcons?.list_edit} alt="list approve"></img>
+            </Button>
+
+            {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
+              <Button
+                // outline
+                size="sm"
+                title="Approve candidate"
+                className="btn-icon"
+                color="success"
+                onClick={() => onApprove(row, true)}
+              >
+                <img src={customerIcons?.list_accept} alt="list approve"></img>
+              </Button>
+            )}
+
+            {row.customerstatusid === 1 && (
+              <Button
+                // outline
+                size="sm"
+                title="Reject candidate"
+                className="btn-icon"
+                color="danger"
+                onClick={() => onApprove(row, false)}
+              >
+                <img src={customerIcons?.list_reject} alt="list reject"></img>
+              </Button>
+            )}
+          </ButtonGroup>
         </div>
       ),
       sortable: false,
     },
   ];
+
+  const onApprove = async (row, check) => {
+    let payload = {
+      userid: row.userid,
+      customerid: row.customerid,
+      companyid: row.companyid,
+      title: row.title,
+      firstname: row.firstname,
+      lastname: row.lastname,
+      email: row.email,
+      phonenumber: row.phonenumber,
+      isactive: row.isactive,
+      customerstatusid: check ? 2 : 3,
+      currentUserId: JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+    };
+    let response = await dispatch(verifyCustomer(payload));
+    if (response.payload) {
+      setSuccess(true);
+      showSweetAlert({
+        title: `${response.payload.message}`,
+        type: "success",
+      });
+    } else {
+      setError(true);
+      showSweetAlert({
+        title: `${response.error.message}`,
+        type: "error",
+      });
+    }
+
+    getCustomerDetails();
+  };
 
   const toggleNotification = async function (value, row) {
     let id = row.userid;
@@ -200,14 +288,18 @@ export const CustomerList = () => {
 
   const getFilterValue = (event) => {
     event.preventDefault();
-    dispatch(
-      getCustomers({
-        isActive: event.target.elements.status.value,
-        pageSize: 1000,
-        pageNumber: 1,
-        companyId: event.target.elements.companyid.value,
-      })
-    );
+
+    let obj = {
+      isActive: event.target.elements.status.value,
+      pageSize: 1000,
+      pageNumber: 1,
+      companyId: event.target.elements.companyid.value,
+    };
+    if (event.target.elements.customerStatus.value !== "All status") {
+      obj.customerStatusId = Number(event.target.elements.customerStatus.value);
+    }
+
+    dispatch(getCustomers(obj));
   };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
@@ -223,14 +315,7 @@ export const CustomerList = () => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
-    dispatch(
-      getCustomers({
-        isActive: true,
-        pageSize: 1000,
-        pageNumber: 1,
-        companyId: 0,
-      })
-    );
+    getCustomerDetails();
   };
   const postData = async (data) => {
     let res = await dispatch(addCustomerActions.addCustomer(data));
@@ -269,14 +354,7 @@ export const CustomerList = () => {
     setOpenModal(false);
     setIsEdit(false);
     if (res.payload) {
-      dispatch(
-        getCustomers({
-          isActive: true,
-          pageSize: 1000,
-          pageNumber: 1,
-          companyId: 0,
-        })
-      );
+      getCustomerDetails();
       if (res.payload.statusCode === 204) {
         setSuccess(true);
         showSweetAlert({
@@ -299,6 +377,36 @@ export const CustomerList = () => {
     }
   };
 
+  const handelInputChange = (data, check) => {
+    if (check === "customerStatus") {
+      if (data === "All status") {
+        setCustomerStatus(0);
+      } else {
+        setCustomerStatus(Number(data));
+      }
+    } else if (check === "status") {
+      setStatus(data);
+    } else {
+      setCompanyId(Number(data));
+    }
+  };
+  const getCustomerDetails = () => {
+    let obj = {
+      pageSize: 1000,
+      pageNumber: 1,
+    };
+    if (customerStatus !== 0) {
+      obj.customerStatusId = Number(customerStatus);
+    }
+    if (status !== 0) {
+      obj.isActive = status;
+    }
+    if (companyId !== 0) {
+      obj.companyId = companyId;
+    }
+    dispatch(getCustomers(obj));
+  };
+
   return (
     <>
       <Row>
@@ -314,7 +422,13 @@ export const CustomerList = () => {
                     <Row>
                       <Col>
                         <FormGroup>
-                          <Input type="select" name="companyid">
+                          <Input
+                            type="select"
+                            name="companyid"
+                            onChange={(e) =>
+                              handelInputChange(e.target.value, "company")
+                            }
+                          >
                             <option value={0}>All companies</option>
                             {companyDropdown?.length > 0 &&
                               companyDropdown?.map((options) => (
@@ -335,12 +449,40 @@ export const CustomerList = () => {
                             type="select"
                             name="status"
                             defaultValue="Active"
+                            onChange={(e) =>
+                              handelInputChange(e.target.value, "status")
+                            }
                           >
                             <option value={true}>Active</option>
                             <option value={false}>In-active</option>
                           </Input>
                         </FormGroup>
                       </Col>
+
+                      <Col>
+                        <FormGroup>
+                          <Input
+                            type="select"
+                            name="customerStatus"
+                            defaultValue="Active"
+                            onChange={(e) =>
+                              handelInputChange(
+                                e.target.value,
+                                "customerStatus"
+                              )
+                            }
+                          >
+                            <option key={0}>All status</option>
+                            {candidateStatusList?.length > 0 &&
+                              candidateStatusList?.map((options) => (
+                                <option key={options.id} value={options.id}>
+                                  {options.name}
+                                </option>
+                              ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
+
                       <Col>
                         <Button
                           style={{ background: "#2f479b" }}
