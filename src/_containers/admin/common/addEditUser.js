@@ -27,17 +27,15 @@ import { async } from "q";
 import InputMask from "react-input-mask";
 
 export const AddEditUser = (props) => {
-  const { entity, isAddMode, data } = props;
-  const userId = data?.userId;
+  const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
   const dispatch = useDispatch();
-  const { companyDropdownData } = useSelector(
-    (state) => state?.addCustomer ?? {}
+  const rolesList = useSelector((state) =>
+    state.adminListing.rolesList?.filter(
+      (x) => x?.userroleid !== 2 && x?.userroleid !== 3
+    )
   );
-  const rolesList = useSelector((state) => state.adminListing.rolesList);
-  // console.log("NG stateList in Add edit component", statesList)
-  // console.log("NG citiesList in Add edit component", citiesList)
-  // console.log("NG companiesList in Add edit component", companiesList)
+
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -74,26 +72,16 @@ export const AddEditUser = (props) => {
   });
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
   const validationSchema = Yup.object().shape({
     prefix: Yup.string().required("Prefix is required"),
     firstname: Yup.string().required("First name is required"),
     middlename: Yup.string(),
     lastname: Yup.string().required("Last name is required"),
-    address: Yup.string().required("Address is required"),
+    address: Yup.string(),
     phonenumber: Yup.string().required("Phone number is required"),
     email: Yup.string()
       .required("Email is required")
       .matches(emailRegex, "Email is not valid"),
-    username: Yup.string().required("Username is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(4, "Password must be at least 4 characters")
-      .matches(
-        passwordRegex,
-        "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
-      ),
     roleid: Yup.string().required("User role is required"),
   });
 
@@ -126,8 +114,6 @@ export const AddEditUser = (props) => {
     form.append("Firstname", payload.firstname);
     form.append("Middlename", payload.middlename);
     form.append("Lastname", payload.lastname);
-    form.append("Username", payload.username);
-    form.append("Password", payload.password);
     form.append("Email", payload.email);
     form.append("Phonenumber", payload.phonenumber);
     form.append("Userroleid", payload.roleid);
@@ -177,17 +163,20 @@ export const AddEditUser = (props) => {
         .then((result) => {
           if (result.data) {
             if (result.data.status === "Success") {
+              setSuccess(true);
               showSweetAlert({
                 title: `${result.data.message}`,
                 type: "success",
               });
             } else {
+              setError(true);
               showSweetAlert({
                 title: `${result.data.message}`,
                 type: "waning",
               });
             }
           } else {
+            setError(true);
             showSweetAlert({
               title: "Something went wrong, please try again later!!",
               type: "error",
@@ -235,8 +224,6 @@ export const AddEditUser = (props) => {
         "middlename",
         "lastname",
         "email",
-        "username",
-        "password",
         "address",
       ];
       formFields.forEach((field) => {
@@ -244,7 +231,7 @@ export const AddEditUser = (props) => {
         setValue(field, data[field]);
       });
       setValue("phonenumber", data["phonenumber"].replace(/[\(\)-]/g, ""));
-      setValue("role", data["userroleid"]);
+      setValue("roleid", data["userroleid"]);
       setRoleId(data["userroleid"]);
     }
   }, []);
@@ -263,12 +250,13 @@ export const AddEditUser = (props) => {
             <Col md={6}>
               <FormGroup>
                 <Label for="role" className="fw-semi-bold">
-                  User role
+                  User role <span style={{ color: "red" }}>* </span>
                 </Label>
                 <Input
                   type="select"
                   name="role"
                   placeholder="role"
+                  disabled={isView}
                   className={`field-input placeholder-text form-control ${
                     errors?.roleid && roleId === 0
                       ? "is-invalid error-text"
@@ -312,6 +300,7 @@ export const AddEditUser = (props) => {
                     errors?.prefix ? "is-invalid error-text" : "input-text"
                   }`}
                   maxLength={10}
+                  disabled={isView}
                 />
                 <div className="invalid-feedback">
                   {errors?.prefix?.message}
@@ -332,6 +321,7 @@ export const AddEditUser = (props) => {
                     errors?.firstname ? "is-invalid error-text" : "input-text"
                   }`}
                   maxLength={50}
+                  disabled={isView}
                 />
                 <div className="invalid-feedback">
                   {errors?.firstname?.message}
@@ -349,6 +339,7 @@ export const AddEditUser = (props) => {
                   placeholder="Enter middle name"
                   className={`field-input placeholder-text form-control`}
                   maxLength={50}
+                  disabled={isView}
                 />
               </FormGroup>
             </Col>
@@ -367,6 +358,7 @@ export const AddEditUser = (props) => {
                     errors?.lastname ? "is-invalid error-text" : "input-text"
                   }`}
                   maxLength={50}
+                  disabled={isView}
                 />
                 <div className="invalid-feedback">
                   {errors?.lastname?.message}
@@ -388,6 +380,7 @@ export const AddEditUser = (props) => {
                     errors?.email ? "is-invalid error-text" : "input-text"
                   }`}
                   maxLength={70}
+                  disabled={isView}
                 />
                 <div className="invalid-feedback">{errors?.email?.message}</div>
               </FormGroup>
@@ -401,85 +394,40 @@ export const AddEditUser = (props) => {
                   type="text"
                   name="phonenumber"
                   {...register("phonenumber")}
-                  placeholder="Enter phonenumber"
+                  placeholder="Enter phone number"
                   className={`field-input placeholder-text form-control ${
                     errors?.phonenumber ? "is-invalid error-text" : "input-text"
                   }`}
-                  maxLength={20}
+                  disabled={isView}
                 />
                 <div className="invalid-feedback">
                   {errors?.phonenumber?.message}
                 </div>
               </FormGroup>
             </Col>
-
             <Col md={6}>
               <FormGroup>
-                <Label for="username">
-                  User name <span style={{ color: "red" }}>* </span>
-                </Label>
-                <input
-                  type="text"
-                  name="username"
-                  {...register("username")}
-                  placeholder="Enter user name"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.username ? "is-invalid error-text" : "input-text"
-                  }`}
-                  maxLength={50}
-                />
-                <div className="invalid-feedback">
-                  {errors?.username?.message}
-                </div>
-              </FormGroup>
-            </Col>
-            <Col md={6}>
-              <FormGroup>
-                <Label for="password">
-                  Password <span style={{ color: "red" }}>* </span>
-                </Label>
-                <input
-                  type="text"
-                  name="password"
-                  {...register("password")}
-                  placeholder="Enter password"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.password ? "is-invalid error-text" : "input-text"
-                  }`}
-                  maxLength={50}
-                />
-                <div className="invalid-feedback">
-                  {errors?.password?.message}
-                </div>
-              </FormGroup>
-            </Col>
-            <Col md={6}>
-              <FormGroup>
-                <Label for="address">
-                  Address <span style={{ color: "red" }}>* </span>
-                </Label>
+                <Label for="address">Address</Label>
                 <input
                   type="text"
                   name="address"
                   {...register("address")}
                   placeholder="Enter address"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.address ? "is-invalid error-text" : "input-text"
-                  }`}
+                  className={`field-input placeholder-text form-control`}
                   maxLength={50}
+                  disabled={isView}
                 />
-                <div className="invalid-feedback">
-                  {errors?.address?.message}
-                </div>
               </FormGroup>
             </Col>
 
             <Col></Col>
           </Row>
-          <Button type="submit" color="primary" className="mt-3 float-end">
-            {/* disabled={formState.isSubmitting} */}
-            {isAddMode ? "Submit" : "Update"}
-          </Button>
+          {!isView && (
+            <Button type="submit" color="primary" className="mt-3 float-end">
+              {/* disabled={formState.isSubmitting} */}
+              {isAddMode ? "Submit" : "Update"}
+            </Button>
+          )}
         </Form>
       </Row>
       {success && (

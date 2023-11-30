@@ -28,33 +28,19 @@ import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getCompanies,
-  getIndustries,
-  getCustomers,
   getUsers,
   getRoles,
-  getMenuMappings,
   deleteUser,
   deleteRole,
-  getRolesList,
+  resetPassword,
 } from "_containers/admin/_redux/adminListing.slice";
-import { addCustomer } from "_containers/admin/_redux/addCustomer.slice";
-
-import { NewCompany } from "_components/common/newcompany";
 import errorIcon from "assets/utils/images/error_icon.png";
 import successIcon from "assets/utils/images/success_icon.svg";
-import { NewCustomer } from "_components/common/addCustomer";
-import AsyncSelect from "react-select/async";
-import { AddEditCustomer } from "./addEditCustomer";
 import { AddEditUser } from "./addEditUser";
-import { AddEditCompany } from "./addEditCompany";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { settingsActions } from "_store";
 import cx from "classnames";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
-import { async } from "q";
-import { AddEditRole } from "./addEditRole";
-import { FiPlus } from "react-icons/fi";
 import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
@@ -156,10 +142,11 @@ export const AdminListing = ({ entity }) => {
       cell: (row) => (
         <div className="d-block w-100">
           <div
+            title="Active/Inactive user"
             className="switch has-switch  me-2"
             data-on-label="ON"
             data-off-label="OFF"
-            style={{ verticalAlign: "bottom" }}
+            style={{ verticalAlign: "bottom", cursor: "pointer" }}
             onClick={() => toggleNotification(!row.isactive, row)}
           >
             <div
@@ -174,31 +161,77 @@ export const AdminListing = ({ entity }) => {
               <span className="switch-right">OFF</span>
             </div>
           </div>
+          {row.userroleid !== 2 && row.userroleid !== 3 && (
+            <BsPencil
+              title="Edit user"
+              style={{
+                fontSize: "21px",
+                verticalAlign: "top",
+                cursor: "pointer",
+              }}
+              className="edit-icon me-2"
+              onClick={(evt) => handleRowClick(row, "edit")}
+            />
+          )}
+          {row.userroleid !== 2 && row.userroleid !== 3 && (
+            <BsTrash3
+              title="Delete user"
+              className="edit-icon me-2"
+              style={{
+                fontSize: "21px",
+                verticalAlign: "top",
+                cursor: "pointer",
+              }}
+              onClick={() => deleteConfirm(row, "user")}
+            />
+          )}
 
-          <BsPencil
-            style={{ fontSize: "21px", verticalAlign: "top" }}
+          <FaEye
+            title="View Details"
+            style={{
+              fontSize: "18px",
+              cursor: "pointer",
+              verticalAlign: "baseline",
+            }}
             className="edit-icon me-2"
-            onClick={(evt) => handleRowClick(row, "edit")}
+            onClick={(evt) => handleRowClick(row, "view")}
           />
-          <BsTrash3
-            style={{ fontSize: "21px", verticalAlign: "top" }}
-            onClick={() => deleteConfirm(row, "user")}
-          />
+          <i
+            title="Reset password"
+            style={{
+              fontSize: "18px",
+              verticalAlign: "baseline",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+            className="pe-7s-refresh-2"
+            onClick={() => resetUserPassword(row)}
+          >
+            {" "}
+          </i>
         </div>
       ),
       sortable: false,
     },
   ];
 
-  const urlParams = {
-    pageNumber: 0,
-  };
-
   useEffect(() => {
     loadData();
   }, [entity]);
 
   const loadData = () => {
+    let urlParams = {
+      pageNumber: 0,
+    };
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
     dispatch(getUsers(urlParams));
   };
   const customStyles = {
@@ -236,10 +269,6 @@ export const AdminListing = ({ entity }) => {
     setOpenModal(true);
   };
 
-  const onSearchClick = () => {
-    console.log("Search is clicked");
-  };
-
   const close = () => {
     setIsAddMode(false);
     setViewMode(false);
@@ -252,59 +281,6 @@ export const AdminListing = ({ entity }) => {
     close();
     loadData();
   };
-  const onUpdateNewComp = (evt, formType) => {
-    // const newData = { ...formType === 'company' ? newCompData : newCustData };
-    // newData[evt.target.name] = { value: evt.target.value, error: false };
-    // formType === 'company' ? setNewCompData(newData) : setNewCustData(newData);
-  };
-
-  const onSaveClick = async (e) => {
-    if (isAddMode) {
-      // do something for  e.target.value in Add mode
-    } else {
-      // do something for  e.target.value in EDIT mode
-    }
-  };
-
-  const [inputValue, setValue] = useState("");
-  const [selectedValue, setSelectedValue] = useState(null);
-
-  // handle input change event
-  // onInputChange={handleInputChange}
-  const handleInputChange = (value) => {
-    // const newData = data.filter((ele)=>{
-    //   console.log("NG ")
-    // })
-    // setTableData
-    // setValue(value);
-  };
-
-  // handle selection
-  const handleChange = (e) => {
-    setSelectedValue(e.target.value);
-  };
-
-  const cardFilters = searchFilter.map((item) => (
-    <Col lg="3" md="3" sm="12" sx="12">
-      <Input name={item.id} type="select" onChange={handleChange}>
-        {
-          item.id === "industry"
-            ? industyList?.map((ele) => (
-                <option key={ele} value={ele}>
-                  {ele}
-                </option>
-              ))
-            : ""
-          // : companyDropdown?.map((ele) => (
-          //   <option key={ele} value={ele}>
-          //     {ele}
-          //   </option>
-          // ))
-        }
-        <option value="">{item.name}</option>
-      </Input>
-    </Col>
-  ));
 
   const toggleNotification = async function (value, row) {
     let id = row.userId;
@@ -439,6 +415,28 @@ export const AdminListing = ({ entity }) => {
       urlParams.searchText = searchData;
     }
     dispatch(getUsers(urlParams));
+  };
+
+  const resetUserPassword = (row) => {
+    let payload = {
+      userId: row.userId,
+      emailId: row.email,
+      loggedInUserId: parseInt(
+        JSON.parse(localStorage.getItem("userDetails"))?.UserId
+      ),
+    };
+    let response = dispatch(resetPassword(payload));
+    if (response?.error) {
+      showSweetAlert({
+        title: response?.error?.message,
+        type: "error",
+      });
+    } else {
+      showSweetAlert({
+        title: "Password has been sent to registered email ID",
+        type: "success",
+      });
+    }
   };
 
   return (
@@ -602,68 +600,21 @@ export const AdminListing = ({ entity }) => {
             <ModalHeader toggle={() => close()} charCode="Y">
               <strong className="card-title-text">
                 {!isAddMode
-                  ? entity === "roles"
-                    ? "Edit menu mapping"
+                  ? viewMode
+                    ? "View user"
                     : `Edit user`
                   : `Add new user`}
               </strong>
             </ModalHeader>
             <ModalBody>
-              {entity === "company1" && (
-                <NewCompany
-                  editingData={editingData}
-                  isAddMode={isAddMode}
-                  data={newCompData}
-                  updateVal={(evt) => onUpdateNewComp(evt, "company")}
-                />
-              )}
-              {entity === "company" && (
-                <AddEditCompany
-                  editingData={editingData}
-                  isAddMode={isAddMode}
-                  setIsAddMode={setIsAddMode}
-                  data={selectedRowData}
-                  // data={newCustData}
-                  entity={entity}
-                  // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
-                />
-              )}
-
-              {entity === "customers" && (
-                <AddEditCustomer
-                  editingData={editingData}
-                  isAddMode={isAddMode}
-                  setIsAddMode={setIsAddMode}
-                  data={selectedRowData}
-                  // data={newCustData}
-                  entity={entity}
-                  // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
-                />
-              )}
-
               {entity === "users" && (
                 <AddEditUser
                   editingData={editingData}
                   isAddMode={isAddMode}
                   setIsAddMode={setIsAddMode}
                   data={selectedRowData}
-                  // data={newCustData}
-                  entity={entity}
-                  // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
-                  callBack={() => CloseModal()}
-                />
-              )}
-
-              {entity === "roles" && (
-                <AddEditRole
-                  editingData={editingData}
-                  isAddMode={isAddMode}
-                  setIsAddMode={setIsAddMode}
-                  data={selectedRowData}
                   isView={viewMode}
-                  // data={newCustData}
                   entity={entity}
-                  // updateVal={(evt) => onUpdateNewComp(evt, 'customer')}
                   callBack={() => CloseModal()}
                 />
               )}

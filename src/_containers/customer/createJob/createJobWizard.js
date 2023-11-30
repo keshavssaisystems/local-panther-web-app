@@ -46,11 +46,13 @@ export function CreateJobWizard({ type }) {
     getRecommendedJobData({
       pageNo: page,
       searchText: searchData,
+      searchType: "JobTitle",
     });
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
       companyId: localStorage.getItem("companyid"),
+      searchType: "JobTitle",
     });
   }, []);
   const selectedJobDetailsForEdit = useSelector(
@@ -97,11 +99,13 @@ export function CreateJobWizard({ type }) {
     getRecommendedJobData({
       pageNo: 1,
       searchText: data,
+      searchType: "JobTitle",
     });
     getPreviousJobData({
       pageNo: page,
       searchText: searchData,
       companyId: localStorage.getItem("companyid"),
+      searchType: "JobTitle",
     });
   };
 

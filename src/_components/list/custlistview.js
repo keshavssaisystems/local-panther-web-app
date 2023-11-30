@@ -37,6 +37,7 @@ export const CustCandidateListView = (props) => {
   const [selectedRowData, setSelectedRowData] = useState("");
   const [selectedIDData, setSelectedIDData] = useState("");
   const [showJDModal, setShowJDModal] = useState(false);
+
   const dispatch = useDispatch();
 
   const onAcceptClick = async (candidaterecommendedjobid) => {
@@ -162,7 +163,7 @@ export const CustCandidateListView = (props) => {
               disabled={props.type === "liked"}
               // outline
               size="sm"
-              title="liked"
+              title="Like"
               className=" btn-icon"
               color="primary"
               onClick={() => onActionClick("like", candidaterecommendedjobid)}
@@ -177,7 +178,7 @@ export const CustCandidateListView = (props) => {
               disabled={props.type === "maybe"}
               // outline
               size="sm"
-              title="maybe"
+              title="Maybe"
               className=" btn-icon"
               color="warning"
               onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
@@ -190,7 +191,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -200,7 +201,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="schedule"
+            title="Schedule"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}
@@ -215,7 +216,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="accept"
+            title="Raise offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -226,14 +227,14 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="liked"
+            title="Liked"
             className=" btn-icon"
             color="primary"
             onClick={() => onActionClick("like", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_liked} alt="list liked"></img>
           </Button>
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="maybe"
@@ -242,11 +243,11 @@ export const CustCandidateListView = (props) => {
             onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -256,7 +257,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="schedule"
+            title="Schedule"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}
@@ -271,7 +272,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="accept"
+            title="Raise offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -281,7 +282,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -296,7 +297,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject offer"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -311,7 +312,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="reject"
+            title="Reject candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -336,7 +337,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="accept"
+            title="Raise offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -344,7 +345,7 @@ export const CustCandidateListView = (props) => {
             <img src={customerIcons.list_accept} alt="list accept"></img>
           </Button>
 
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="liked"
@@ -353,9 +354,9 @@ export const CustCandidateListView = (props) => {
             onClick={() => onActionClick("like", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_liked} alt="list liked"></img>
-          </Button>
+          </Button> */}
 
-          <Button
+          {/* <Button
             // outline
             size="sm"
             title="maybe"
@@ -364,12 +365,12 @@ export const CustCandidateListView = (props) => {
             onClick={() => onActionClick("maybe", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
 
           <Button
             // outline
             size="sm"
-            title="schedule"
+            title="Schedule"
             className="btn-icon"
             color="alternate"
             onClick={() => onScheduleClick(row)}
@@ -415,87 +416,303 @@ export const CustCandidateListView = (props) => {
 
   const columns = memoize((clickHandler) =>
     props.type !== "scheduled"
-      ? [
-          {
-            name: <span className="table-title">Candidate</span>,
-            id: "Candidate",
-            selector: (row) => row.firstname + " " + row.lastname,
-            sortable: true,
-            wrap: true,
-            width: "20%",
-          },
-          {
-            name: <span className="table-title">Job title</span>,
-            selector: (row) => row?.jobtitle,
-            sortable: true,
-            width: "30%",
-          },
-          {
-            name: <span className="table-title">Location</span>,
-            selector: (row) =>
-              row?.recommendedationCandidateShortList &&
-              row.recommendedationCandidateShortList?.length > 0
-                ? (row?.recommendedationCandidateShortList[0].cityname
-                    ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                    : "") +
-                  "" +
-                  (row.recommendedationCandidateShortList[0].statename
-                    ? row.recommendedationCandidateShortList[0].statename
-                    : "")
-                : "",
-            sortable: true,
-            width: "15%",
-          },
+      ? props.type === "liked" || props.type === "maybe"
+        ? [
+            {
+              name: <span className="table-title">Candidate</span>,
+              id: "Candidate",
+              cell: (row) => (
+                <span title={row.firstname + " " + row.lastname}>
+                  {row.firstname + " " + row.lastname}
+                </span>
+              ),
+              selector: (row) => row.firstname + " " + row.lastname,
+              sortable: true,
+              wrap: true,
+              width: "20%",
+            },
+            {
+              name: <span className="table-title">Job title</span>,
+              cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+              selector: (row) => row?.jobtitle,
+              sortable: true,
+              width: "30%",
+            },
+            {
+              name: <span className="table-title">Location</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row.recommendedationCandidateShortList?.length > 0
+                      ? (row?.recommendedationCandidateShortList[0].cityname
+                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                          : "") +
+                        "" +
+                        (row.recommendedationCandidateShortList[0].statename
+                          ? row.recommendedationCandidateShortList[0].statename
+                          : "")
+                      : ""
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row.recommendedationCandidateShortList[0].statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
+                    : ""}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
+                  : "",
+              sortable: true,
+              width: "15%",
+            },
 
-          {
-            name: <span className="table-title">Experience</span>,
-            selector: (row) =>
-              row?.recommendedationCandidateShortList &&
-              row?.recommendedationCandidateShortList.length > 0
-                ? row?.recommendedationCandidateShortList[0]?.experience
-                : "-",
-            sortable: true,
-            width: "15%",
-          },
+            {
+              name: <span className="table-title">Experience</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row?.recommendedationCandidateShortList.length > 0
+                      ? row?.recommendedationCandidateShortList[0]?.experience
+                      : "-"
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
+                    : "-"}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row?.recommendedationCandidateShortList.length > 0
+                  ? row?.recommendedationCandidateShortList[0]?.experience
+                  : "-",
+              sortable: true,
+              width: "15%",
+            },
 
-          {
-            name: <span className="table-title">Interest</span>,
-            cell: (row) => (
-              <div className="list-btn-group">
-                <ButtonGroup>
-                  {renderButtons(row.candidaterecommendedjobid, row)}
-                </ButtonGroup>
-              </div>
-            ),
-            ignoreRowClick: true,
-            button: true,
-            width: "15%",
-          },
-          {
-            name: <span className="table-title">Action</span>,
-            cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-            width: "5%",
-          },
-        ]
+            {
+              name: <span className="table-title">Interest</span>,
+              cell: (row) => (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>
+              ),
+              ignoreRowClick: true,
+              button: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Action</span>,
+              cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+              ignoreRowClick: true,
+              allowOverflow: true,
+              button: true,
+              width: "5%",
+            },
+          ]
+        : [
+            {
+              name: <span className="table-title">Candidate</span>,
+              id: "Candidate",
+              cell: (row) => (
+                <span title={row.firstname + " " + row.lastname}>
+                  {row.firstname + " " + row.lastname}
+                </span>
+              ),
+              selector: (row) => row.firstname + " " + row.lastname,
+              sortable: true,
+              wrap: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Job title</span>,
+              cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+              selector: (row) => row?.jobtitle,
+              sortable: true,
+              width: "25%",
+            },
+            {
+              name: <span className="table-title">Location</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row.recommendedationCandidateShortList?.length > 0
+                      ? (row?.recommendedationCandidateShortList[0].cityname
+                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                          : "") +
+                        "" +
+                        (row.recommendedationCandidateShortList[0].statename
+                          ? row.recommendedationCandidateShortList[0].statename
+                          : "")
+                      : ""
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row.recommendedationCandidateShortList[0].statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
+                    : ""}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
+                  : "",
+              sortable: true,
+              width: "15%",
+            },
+
+            {
+              name: <span className="table-title">Experience</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row?.recommendedationCandidateShortList.length > 0
+                      ? row?.recommendedationCandidateShortList[0]?.experience
+                      : "-"
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
+                    : "-"}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row?.recommendedationCandidateShortList.length > 0
+                  ? row?.recommendedationCandidateShortList[0]?.experience
+                  : "-",
+              sortable: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Pre-Screen</span>,
+              cell: (row) =>
+                row.candidateprescreenstatus === "NA" ? (
+                  "-"
+                ) : row.candidateprescreenstatus === "Pending" ? (
+                  <Button disabled color="link">
+                    <u>Pending</u>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => props.onPrescreenClick("completed", row)}
+                    color="link"
+                  >
+                    <u>Completed</u>
+                  </Button>
+                ),
+              ignoreRowClick: true,
+              button: true,
+              width: "10%",
+            },
+            {
+              name: <span className="table-title">Interest</span>,
+              cell: (row) => (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>
+              ),
+              ignoreRowClick: true,
+              button: true,
+              width: "15%",
+            },
+
+            {
+              name: <span className="table-title">Action</span>,
+              cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+              ignoreRowClick: true,
+              allowOverflow: true,
+              button: true,
+              width: "5%",
+            },
+          ]
       : [
           {
             name: <span className="table-title">Candidate</span>,
             id: "Candidate",
+            cell: (row) => (
+              <span title={row.firstname + " " + row.lastname}>
+                {row.firstname + " " + row.lastname}
+              </span>
+            ),
             selector: (row) => row.firstname + " " + row.lastname,
             sortable: true,
-            width: "18%",
+            width: "16%",
           },
           {
             name: <span className="table-title">Job title</span>,
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row?.jobtitle,
             sortable: true,
-            width: "18%",
+            width: "16%",
           },
           {
             name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row.recommendedationCandidateShortList[0].statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
+                    : ""
+                }
+              >
+                {row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
+                  : ""}
+              </span>
+            ),
             selector: (row) =>
               row?.recommendedationCandidateShortList &&
               row.recommendedationCandidateShortList?.length > 0
@@ -508,11 +725,26 @@ export const CustCandidateListView = (props) => {
                     : "")
                 : "",
             sortable: true,
-            width: "14%",
+            width: "13%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
+                    : "-"
+                }
+              >
+                {row?.recommendedationCandidateShortList &&
+                row?.recommendedationCandidateShortList.length > 0
+                  ? row?.recommendedationCandidateShortList[0]?.experience
+                  : "-"}
+              </span>
+            ),
             selector: (row) =>
               row?.recommendedationCandidateShortList &&
               row?.recommendedationCandidateShortList.length > 0
@@ -525,6 +757,33 @@ export const CustCandidateListView = (props) => {
           {
             name: <span className="table-title">Scheduled</span>,
             sortable: true,
+            cell: (row) => (
+              <span
+                title={
+                  row?.scheduledInterviewDtos != null
+                    ? getTimezoneDateTime(
+                        moment(
+                          row?.scheduledInterviewDtos[0]?.scheduledate
+                        ).format("MM/DD/YYYY") +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                            : " 00:00:00")
+                      )
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos != null
+                  ? getTimezoneDateTime(
+                      moment(
+                        row?.scheduledInterviewDtos[0]?.scheduledate
+                      ).format("MM/DD/YYYY") +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                          : " 00:00:00")
+                    )
+                  : ""}
+              </span>
+            ),
             selector: (row) =>
               row?.scheduledInterviewDtos != null
                 ? getTimezoneDateTime(
@@ -536,11 +795,60 @@ export const CustCandidateListView = (props) => {
                         : " 00:00:00")
                   )
                 : "",
-            width: "17%",
+
+            width: "14%",
           },
           {
             name: <span className="table-title">Interview Status</span>,
             sortable: true,
+            cell: (row) => (
+              <span
+                title={
+                  row?.scheduledInterviewDtos &&
+                  row?.scheduledInterviewDtos?.length > 0
+                    ? row?.scheduledInterviewDtos[0]?.isactive === true
+                      ? row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          0 ||
+                        row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          undefined
+                        ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                          ? "Accepted"
+                          : row?.scheduledInterviewDtos[0]?.isrejected === true
+                          ? "Rejected"
+                          : "No response"
+                        : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          1
+                        ? "Completed"
+                        : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          2
+                        ? "Not joined"
+                        : ""
+                      : "Cancelled"
+                    : ""
+                }
+              >
+                {row?.scheduledInterviewDtos &&
+                row?.scheduledInterviewDtos?.length > 0
+                  ? row?.scheduledInterviewDtos[0]?.isactive === true
+                    ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
+                      row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                        undefined
+                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? "Accepted"
+                        : row?.scheduledInterviewDtos[0]?.isrejected === true
+                        ? "Rejected"
+                        : "No response"
+                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                      ? "Completed"
+                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
+                      ? "Not joined"
+                      : ""
+                    : "Cancelled"
+                  : ""}
+              </span>
+            ),
             selector: (row) =>
               row?.scheduledInterviewDtos &&
               row?.scheduledInterviewDtos?.length > 0
@@ -563,7 +871,27 @@ export const CustCandidateListView = (props) => {
                 : "",
             width: "10%",
           },
-
+          {
+            name: <span className="table-title">Pre-Screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
+                <Button disabled color="link">
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => props.onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "8%",
+          },
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (

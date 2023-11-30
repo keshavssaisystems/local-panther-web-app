@@ -15,25 +15,20 @@ import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomers } from "_containers/admin/_redux/adminListing.slice";
-import { BsSearch } from "react-icons/bs";
+import { settingsActions } from "_store";
+import cx from "classnames";
 import { dropdownActions, addCustomerActions } from "_store";
 import { USPhoneNumber } from "_helpers/helper";
 import { AddUpdateCustomer } from "./addUpdateCustomer";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
+import { BsPencil } from "react-icons/bs";
 
 export const CustomerList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState({});
-  const [updateSuccessPopup, setUpdateSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(
-    "Customer added successfully!!!"
-  );
-  const [errorPopup, setErrorPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(
-    "Customer added successfully!!!"
-  );
+
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -65,18 +60,7 @@ export const CustomerList = () => {
     {
       name: "Name",
       id: "name",
-      cell: (row) => (
-        <div
-          className="editrow"
-          onClick={(e) => {
-            setEditData(row);
-            setOpenModal(true);
-            setIsEdit(true);
-          }}
-        >
-          {row.firstname + " " + row.lastname}
-        </div>
-      ),
+      cell: (row) => <div>{row.firstname + " " + row.lastname}</div>,
       sortable: true,
     },
     {
@@ -116,7 +100,73 @@ export const CustomerList = () => {
       selector: (row) => row.email,
       sortable: true,
     },
+    {
+      name: "Action",
+      id: "isactive",
+      cell: (row) => (
+        <div className="d-block w-100">
+          <div
+            title="Active/Inactive user"
+            className="switch has-switch  me-2"
+            data-on-label="ON"
+            data-off-label="OFF"
+            style={{ verticalAlign: "bottom", cursor: "pointer" }}
+            onClick={() => toggleNotification(!row.isactive, row)}
+          >
+            <div
+              className={cx("switch-animate", {
+                "switch-on": row.isactive,
+                "switch-off": !row.isactive,
+              })}
+            >
+              <input type="checkbox" />
+              <span className="switch-left">ON</span>
+              <label>&nbsp;</label>
+              <span className="switch-right">OFF</span>
+            </div>
+          </div>
+          <BsPencil
+            title="Edit user"
+            style={{
+              fontSize: "21px",
+              verticalAlign: "top",
+              cursor: "pointer",
+            }}
+            className="edit-icon me-2"
+            onClick={(e) => {
+              setEditData(row);
+              setOpenModal(true);
+              setIsEdit(true);
+            }}
+          />
+        </div>
+      ),
+      sortable: false,
+    },
   ];
+
+  const toggleNotification = async function (value, row) {
+    let id = row.userid;
+    let data = {
+      userId: id,
+      isactive: value,
+    };
+
+    let response = await dispatch(settingsActions.deactivateUser({ id, data }));
+    if (response.payload) {
+      setSuccess(true);
+      showSweetAlert({
+        title: `${response.payload.message}`,
+        type: "success",
+      });
+    } else {
+      setError(true);
+      showSweetAlert({
+        title: `${response.error.message}`,
+        type: "error",
+      });
+    }
+  };
 
   const customStyles = {
     headCells: {
@@ -173,6 +223,14 @@ export const CustomerList = () => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
+    dispatch(
+      getCustomers({
+        isActive: true,
+        pageSize: 1000,
+        pageNumber: 1,
+        companyId: 0,
+      })
+    );
   };
   const postData = async (data) => {
     let res = await dispatch(addCustomerActions.addCustomer(data));

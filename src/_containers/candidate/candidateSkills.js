@@ -44,12 +44,9 @@ export function CandidateSkills(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
   const [mustHaveValidation, setMustHaveValidation] = useState(false);
   const [skillsMultiple, setSkillsMultiple] = useState([]);
+  const [isNewSkill, setNewSkill] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-  const shiftsOption = useSelector((state) => state.shifts.shift);
-  const workScheduleOptions = useSelector(
-    (state) => state.workSchedule.workSchedule
-  );
-  const jobTypeOption = useSelector((state) => state.jobType.jobType);
   const experienceLevelOption = useSelector(
     (state) => state.experienceLevel.experienceLevel
   );
@@ -150,12 +147,18 @@ export function CandidateSkills(props) {
     new_data.splice(index, 1);
 
     setSkills(new_data);
+    let selected_data = {};
+    if (data.length > 0) {
+      selected_data.id = data[data.length - 1].value;
+      selected_data.name = data[data.length - 1].label;
+      selected_data.experience = "";
+    } else {
+      setSearchText("");
+      selected_data.id = 0;
+      selected_data.name = "";
+      selected_data.experience = "";
+    }
 
-    let selected_data = {
-      id: data[data.length - 1].value,
-      name: data[data.length - 1].label,
-      experience: "",
-    };
     let new_array = [...selectedSkillData];
     let i = selectedSkillData.findIndex(
       (x) => x.id == data[data.length - 1]?.value
@@ -219,10 +222,11 @@ export function CandidateSkills(props) {
         return {
           candidateid: Number(id),
           yearsofexperience:
-            rest.experience == "" ? 0 : parseInt(rest.experience),
+            rest.experience === "" ? 0 : parseInt(rest.experience),
           skillid: rest.id,
           currentUserId: parseInt(userId),
           isactive: true,
+          skillname: rest.name,
         };
       });
 
@@ -237,9 +241,12 @@ export function CandidateSkills(props) {
       }
     }
   };
+  const [skillsList, setSkillsList] = useState([]);
   const loadOptions = async function (inputValue) {
     if (inputValue.length > 2) {
+      setSearchText(inputValue);
       const { data = [] } = await getSkillsFilter(inputValue);
+      setSkillsList(data);
       return data.map(({ skillid: value, ...rest }) => {
         return {
           value,
@@ -275,6 +282,55 @@ export function CandidateSkills(props) {
 
     setSelectedSkillData(new_array);
   };
+
+  const addNewSkill = () => {
+    if (searchText === "") {
+      return;
+    }
+
+    let selected_data = {
+      value: 0,
+      label: searchText,
+      experience: "",
+    };
+
+    let new_array = [...skillsMultiple];
+    let i = selectedSkillData.findIndex((x) => x.name === searchText);
+    if (i > -1) {
+      new_array.splice(i, 1);
+    } else {
+      new_array.push(selected_data);
+    }
+
+    setSkillsMultiple(new_array);
+
+    let skill_data = {
+      id: 0,
+      name: searchText,
+      experience: "",
+    };
+    let new_data = [...selectedSkillData];
+    new_data.push(skill_data);
+
+    setSelectedSkillData(new_data);
+
+    setSearchText("");
+  };
+
+  const customOption = ({ innerProps, label }) => (
+    <div>
+      {/* {label} */}
+      {/* {skillsList?.length > 0 && ( */}
+      <div
+        className="float-end"
+        style={{ marginLeft: "5px", color: "blue", cursor: "pointer" }}
+      >
+        (Add)
+      </div>
+      {/* )} */}
+    </div>
+  );
+
   return (
     <div>
       <div className="profile-view">
@@ -351,7 +407,7 @@ export function CandidateSkills(props) {
       {isPersonalModal ? (
         <div className="profile-view">
           <Modal className="profile-view" size="lg" isOpen={isPersonalModal}>
-            <ModalHeader toggle={() => close()} charCode="Y">
+            <ModalHeader toggle={() => closeModal()} charCode="Y">
               <strong className="card-title-text">
                 Add/Edit Skill Details
               </strong>
@@ -370,11 +426,11 @@ export function CandidateSkills(props) {
                       <Label for={skills} className="fw-semi-bold">
                         Skills <span style={{ color: "red" }}>* </span>
                       </Label>
+
                       <AsyncSelect
                         name="skills"
                         placeholder="Search to select"
                         loadOptions={loadOptions}
-                        // className={mustHaveValidation ? "is-invalid" : ""}
                         isMulti={true}
                         value={skillsMultiple}
                         onChange={(evt) => onSelectSkillsDropdown(evt)}
@@ -384,10 +440,22 @@ export function CandidateSkills(props) {
                             : "",
                         }}
                       />
+
                       {mustHaveValidation === true && (
                         <FormText color="danger">Skills is required</FormText>
                       )}
                     </FormGroup>
+                  </Col>
+                  <Col>
+                    {skillsList?.length === 0 && searchText !== "" && (
+                      <Label
+                        style={{ marginTop: "30px" }}
+                        className="fw-semi-bold nav-link"
+                        onClick={() => addNewSkill()}
+                      >
+                        Add
+                      </Label>
+                    )}
                   </Col>
 
                   <Row className="mt-2">
@@ -497,6 +565,41 @@ export function CandidateSkills(props) {
         </div>
       ) : (
         <></>
+      )}
+
+      {isNewSkill && (
+        <Modal className="modal-reject-align profile-view" isOpen={isNewSkill}>
+          <ModalHeader>Add new skills</ModalHeader>
+          <ModalBody>
+            <Form onSubmit={(e) => addNewSkill(e)}>
+              <FormGroup>
+                <Label
+                  for={"newSkill"}
+                  className="fw-semi-bold"
+                  value={searchText}
+                >
+                  Skill
+                </Label>
+                <Input type="text" name="newSkill" id="newSkill"></Input>
+              </FormGroup>
+
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button className="me-2 accept-modal-btn" type="submit">
+                    Add
+                  </Button>
+
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setNewSkill(false)}
+                  >
+                    Close
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </ModalBody>
+        </Modal>
       )}
 
       <Modal className="modal-reject-align profile-view" isOpen={success}>

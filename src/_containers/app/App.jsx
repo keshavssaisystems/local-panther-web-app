@@ -56,6 +56,7 @@ import CustomerDashboard from "_containers/customer/dashboard/customerDashboard"
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
+import { Skills } from "_containers/admin/masters/skills";
 
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
@@ -63,28 +64,32 @@ import { ToastContainer, toast } from "react-toastify";
 import { Row } from "reactstrap";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
+import { Notifications } from "_containers/notifications/notifications";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
   const dispatch = useDispatch();
   useEffect(() => {
-    messaging.onMessage((payload) => {
-      toast(
-        <Row>
-          <p>
-            <b>{payload.notification.title}</b>
-          </p>
-          <p>{payload.notification.body}</p>
-        </Row>,
-        {
-          position: "bottom-right",
-          autoClose: 10000,
-        }
-      );
+    if (authUser) {
       updatePushNotifications();
-    });
-  }, []);
+      messaging.onMessage((payload) => {
+        toast(
+          <Row>
+            <p>
+              <b>{payload.notification.title}</b>
+            </p>
+            <p>{payload.notification.body}</p>
+          </Row>,
+          {
+            position: "bottom-right",
+            autoClose: 10000,
+          }
+        );
+        updatePushNotifications();
+      });
+    }
+  }, [authUser]);
 
   const updatePushNotifications = () => {
     dispatch(candidateDashboardActions.getAlerts());
@@ -111,6 +116,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CustomerList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="masters/skills"
+            element={
+              <PrivateRoute>
+                <Skills />
               </PrivateRoute>
             }
           />
@@ -160,7 +173,7 @@ export function App() {
             path="acl/roles-function/3"
             element={
               <PrivateRoute>
-                <RoleMenuListing entity="menuMapping" />
+                <RoleMenuListing entity="menuMapping" key={1} />
               </PrivateRoute>
             }
           />
@@ -168,7 +181,7 @@ export function App() {
             path="acl/roles/2"
             element={
               <PrivateRoute>
-                <RoleMenuListing entity="roles" />
+                <RoleMenuListing entity="roles" key={2} />
               </PrivateRoute>
             }
           />
@@ -512,6 +525,15 @@ export function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/notification"
+                element={
+                  <PrivateRoute>
+                    <Notifications />
+                  </PrivateRoute>
+                }
+              />
+
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route

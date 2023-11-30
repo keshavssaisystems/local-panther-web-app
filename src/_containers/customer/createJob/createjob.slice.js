@@ -25,16 +25,16 @@ export const getPreviousJobDetailThunk = createAsyncThunk(
 // getPreviousJobListThunk thunk
 export const getPreviousJobListThunk = createAsyncThunk(
   `${name}/getPreviousJobListThunk`,
-  async ({ pageNo, searchText, companyId }) => {
-    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}&companyId=${companyId}`;
+  async ({ pageNo, searchText, companyId, searchType }) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}&companyId=${companyId}&searchType=${searchType}`;
     return await fetchWrapper.get(PRESCREEN_END_POINT);
   }
 );
 
 export const getRecommendedListThunk = createAsyncThunk(
   `${name}/getRecommendedListThunk`,
-  async ({ pageNo, searchText }) => {
-    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}`;
+  async ({ pageNo, searchText, searchType }) => {
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}&searchType=${searchType}`;
     return await fetchWrapper.get(PRESCREEN_END_POINT);
   }
 );
