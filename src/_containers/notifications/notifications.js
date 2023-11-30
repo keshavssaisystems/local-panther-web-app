@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col } from "reactstrap";
-import { DashboardCounts } from "./dashboardCounts";
-import { TodoList } from "./todoList";
-import { UpcomingInterviews } from "./upcomingInterviews";
-import { Alerts } from "./alerts";
-import { JobsList } from "./jobsList";
+import React, { useState } from "react";
+import PageTitle from "../../_components/common/pagetitle";
+import titlelogo from "../../assets/utils/images/candidate.svg";
+import { Alerts } from "_containers/candidate/dashboard/alerts";
 import { useDispatch } from "react-redux";
-import {
-  candidateDashboardActions,
-  candidateListActions,
-  dropdownActions,
-  scheduleInterviewActions,
-} from "_store";
+import { candidateDashboardActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
-
-export function CandidateDashboard() {
+export const Notifications = () => {
   const dispatch = useDispatch();
-  let candidateId = JSON.parse(
-    localStorage.getItem("userDetails")
-  ).InternalUserId;
-  let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
-
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -35,27 +21,10 @@ export function CandidateDashboard() {
     description: "",
     id: "",
   });
-
-  useEffect(() => {
-    loadPage();
-  }, []);
-
-  const loadPage = async function () {
-    let candObj = {
-      isCandidate: true,
-      candidateId,
-      pageNumber: 1,
-      pageSize: 5,
-    };
-    dispatch(candidateDashboardActions.getDashboardCount({ candidateId }));
-    dispatch(candidateDashboardActions.getSchedules({ candidateId }));
-    dispatch(candidateDashboardActions.getToDo({ userId }));
-    dispatch(candidateDashboardActions.getLatestJobs({ candidateId }));
-    dispatch(candidateListActions.getRecommendedJobList(candObj));
-    dispatch(dropdownActions.getJobTypeThunk2());
-    dispatch(dropdownActions.getWorkScheduleThunk2());
-    dispatch(dropdownActions.getShiftThunk2());
-    dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
+  const onReadNotification = (id, status) => {
+    if (status !== 3) {
+      dispatch(candidateDashboardActions.readNotification({ id }));
+    }
   };
 
   const onDeleteNotification = async (id) => {
@@ -72,11 +41,6 @@ export function CandidateDashboard() {
         title: res.payload.message || res.payload.status,
         type: "danger",
       });
-    }
-  };
-  const onReadNotification = (id, status) => {
-    if (status !== 3) {
-      dispatch(candidateDashboardActions.readNotification({ id }));
     }
   };
 
@@ -125,37 +89,17 @@ export function CandidateDashboard() {
     data.description = "Are you sure want to delete this notification?";
     SetConfAlert(data);
   };
-
   return (
-    <>
-      <Row>
-        <Col>
-          <DashboardCounts />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <TodoList onCallBack={() => loadPage()} />
-        </Col>
-        <Col>
-          <Alerts
-            onDeleteNotification={(id) => showConfAlert(id)}
-            onReadNotification={(id, status) => onReadNotification(id, status)}
-          />
-        </Col>
-      </Row>
+    <div>
+      <PageTitle heading="Alerts & Notifications" icon={titlelogo} />
 
-      <Row>
-        <Col>
-          <UpcomingInterviews />
-        </Col>
-      </Row>
-
-      <Row>
-        <Col>
-          <JobsList onCallBack={() => loadPage()} />
-        </Col>
-      </Row>
+      <div>
+        <Alerts
+          type="view"
+          onDeleteNotification={(id) => showConfAlert(id)}
+          onReadNotification={(id, status) => onReadNotification(id, status)}
+        ></Alerts>
+      </div>
       <>
         <SweetAlert
           title={showAlert.title}
@@ -179,6 +123,6 @@ export function CandidateDashboard() {
           {confAlert.description}
         </SweetAlert>
       </>
-    </>
+    </div>
   );
-}
+};
