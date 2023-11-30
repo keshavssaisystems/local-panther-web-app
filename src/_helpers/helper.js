@@ -444,7 +444,7 @@ export const getChannelId = (id1, id2, scheduleid) => {
 };
 
 export const getVideoChannelId = (jobid, scheduleinterviewid, candidateid) => {
-  return jobid + "-" + scheduleinterviewid + "-" + candidateid;
+  return scheduleinterviewid + "-" + jobid + "-" + candidateid;
 };
 
 export const getBasePayMask = (basePayValue) => {
