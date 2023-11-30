@@ -65,6 +65,7 @@ import { Row } from "reactstrap";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
+import { ShareJobDetails } from "_containers/sharejob/sharejob";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -553,6 +554,7 @@ export function App() {
               {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
               {/* for zoom */}
               <Route path="/video-screen/*" element={<ZoomVideoScreen />} />
+              <Route path="/job-detail/:id" element={<ShareJobDetails />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}
