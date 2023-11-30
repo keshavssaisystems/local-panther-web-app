@@ -175,7 +175,7 @@ export function ResumeDetails(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".pdf, .docx, .rtf",
+    accept: ".pdf, .docx, .doc",
   });
   const onCancel = (acceptedFiles) => {
     setSelectedFile(null);
@@ -300,7 +300,7 @@ export function ResumeDetails(props) {
                         onDrop={(e) => onDrop(e)}
                         onFileDialogCancel={onCancel}
                       >
-                        {({ getRootProps, getInputProps }) => (
+                        {() => (
                           <div {...getRootProps()}>
                             <input {...getInputProps()} />
                             <div className="dropzone-content">
