@@ -56,64 +56,133 @@ export function Alerts(props) {
                 <div className="p-2">
                   {alerts?.length > 0 ? (
                     <>
-                      {alerts.slice(0, 5).map((item) => (
-                        <ListGroup className="todo-list-wrapper" flush>
-                          <ListGroupItem>
-                            <div className="widget-content p-0">
-                              <div className="widget-content-wrapper">
-                                <div
-                                  className={
-                                    item.notificationstatusid === 3
-                                      ? "widget-content-left viewed-alerts"
-                                      : "widget-content-left hand-cursor"
-                                  }
-                                  onClick={() =>
-                                    props.onReadNotification(
-                                      item.queueid,
-                                      item.notificationstatusid
-                                    )
-                                  }
-                                >
-                                  <div
-                                    className="widget-heading alert-heading"
-                                    title={item.notificationmessage}
-                                  >
-                                    {item.notificationmessage}
-                                  </div>
+                      {props.type === "view" ? (
+                        <>
+                          {alerts.map((item) => (
+                            <ListGroup className="todo-list-wrapper" flush>
+                              <ListGroupItem>
+                                <div className="widget-content p-0">
+                                  <div className="widget-content-wrapper">
+                                    <div
+                                      className={
+                                        item.notificationstatusid === 3
+                                          ? "widget-content-left viewed-alerts"
+                                          : "widget-content-left hand-cursor"
+                                      }
+                                      onClick={() =>
+                                        props.onReadNotification(
+                                          item.queueid,
+                                          item.notificationstatusid
+                                        )
+                                      }
+                                    >
+                                      <div
+                                        className="widget-heading alert-heading"
+                                        title={item.notificationmessage}
+                                      >
+                                        {item.notificationmessage}
+                                      </div>
 
-                                  <div
-                                    className="widget-subheading alert-desc"
-                                    title={item.notificationdetails}
-                                  >
-                                    {item.notificationdetails}
-                                  </div>
-                                  <div
-                                    className="widget-subheading alert-desc"
-                                    style={{ paddingBottom: "6px" }}
-                                  >
-                                    Posted{" "}
-                                    {getTimezoneDateTimeForNow(
-                                      moment(
-                                        item.modifieddate
-                                          ? item.modifieddate
-                                          : item.createddate
-                                      )
-                                    )}
+                                      <div
+                                        className="widget-subheading alert-desc"
+                                        title={item.notificationdetails}
+                                      >
+                                        {item.notificationdetails}
+                                      </div>
+                                      <div
+                                        className="widget-subheading alert-desc"
+                                        style={{ paddingBottom: "6px" }}
+                                      >
+                                        Posted{" "}
+                                        {getTimezoneDateTimeForNow(
+                                          moment(
+                                            item.modifieddate
+                                              ? item.modifieddate
+                                              : item.createddate
+                                          )
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="widget-content-right widget-content-actions todo-icons">
+                                      <BsTrash3
+                                        size={"16px"}
+                                        onClick={() => [
+                                          props.onDeleteNotification(
+                                            item.queueid
+                                          ),
+                                        ]}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
-                                <div className="widget-content-right widget-content-actions todo-icons">
-                                  <BsTrash3
-                                    size={"16px"}
-                                    onClick={() => [
-                                      props.onDeleteNotification(item.queueid),
-                                    ]}
-                                  />
+                              </ListGroupItem>
+                            </ListGroup>
+                          ))}
+                        </>
+                      ) : (
+                        <>
+                          {alerts.slice(0, 5).map((item) => (
+                            <ListGroup className="todo-list-wrapper" flush>
+                              <ListGroupItem>
+                                <div className="widget-content p-0">
+                                  <div className="widget-content-wrapper">
+                                    <div
+                                      className={
+                                        item.notificationstatusid === 3
+                                          ? "widget-content-left viewed-alerts"
+                                          : "widget-content-left hand-cursor"
+                                      }
+                                      onClick={() =>
+                                        props.onReadNotification(
+                                          item.queueid,
+                                          item.notificationstatusid
+                                        )
+                                      }
+                                    >
+                                      <div
+                                        className="widget-heading alert-heading"
+                                        title={item.notificationmessage}
+                                      >
+                                        {item.notificationmessage}
+                                      </div>
+
+                                      <div
+                                        className="widget-subheading alert-desc"
+                                        title={item.notificationdetails}
+                                      >
+                                        {item.notificationdetails}
+                                      </div>
+                                      <div
+                                        className="widget-subheading alert-desc"
+                                        style={{ paddingBottom: "6px" }}
+                                      >
+                                        Posted{" "}
+                                        {getTimezoneDateTimeForNow(
+                                          moment(
+                                            item.modifieddate
+                                              ? item.modifieddate
+                                              : item.createddate
+                                          )
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="widget-content-right widget-content-actions todo-icons">
+                                      <BsTrash3
+                                        size={"16px"}
+                                        onClick={() => [
+                                          props.onDeleteNotification(
+                                            item.queueid
+                                          ),
+                                        ]}
+                                      />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          </ListGroupItem>
-                        </ListGroup>
-                      ))}
+                              </ListGroupItem>
+                            </ListGroup>
+                          ))}
+                        </>
+                      )}
                     </>
                   ) : (
                     <Row style={{ textAlign: "center" }}>
