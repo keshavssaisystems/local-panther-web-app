@@ -200,8 +200,8 @@ export const AddUpdateCustomer = ({
       email: event.target.elements.email.value,
       password: "",
       phonenumber: phoneData,
-      address: event.target.elements.address.value,
-      zipcode: event.target.elements.zipcode.value,
+      address: "",
+      zipcode: "",
       cityid: Number(locationData.cityId),
       stateid: Number(locationData.stateId),
       countryid: 1,
@@ -385,7 +385,7 @@ export const AddUpdateCustomer = ({
                   />
                 </FormGroup>
               </Col>
-              <Col md={12}>
+              {/* <Col md={12}>
                 <FormGroup>
                   <Label for="address">Address</Label>
                   <Input
@@ -397,7 +397,7 @@ export const AddUpdateCustomer = ({
                     maxLength={100}
                   />
                 </FormGroup>
-              </Col>
+              </Col> */}
               <Col md={6}>
                 <FormGroup>
                   <Label for="state">
@@ -438,7 +438,7 @@ export const AddUpdateCustomer = ({
                   )}
                 </FormGroup>
               </Col>
-              <Col md={6}>
+              {/* <Col md={6}>
                 <FormGroup>
                   <Label for="zipcode">Zip code</Label>
                   <InputMask
@@ -452,7 +452,7 @@ export const AddUpdateCustomer = ({
                     defaultValue={editData?.zipcode}
                   />
                 </FormGroup>
-              </Col>
+              </Col> */}
 
               {/* <Col md={6}>
                 <FormGroup>

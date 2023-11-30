@@ -127,7 +127,7 @@ export const Skills = () => {
               <img src={customerIcons?.list_delete} alt="list approve"></img>
             </Button>
 
-            {row.skillstatusid === 0 && (
+            {row.skillstatusid === 0 && row.userroleid !== 1 && (
               <Button
                 // outline
                 size="sm"
@@ -140,7 +140,7 @@ export const Skills = () => {
               </Button>
             )}
 
-            {row.skillstatusid === 0 && (
+            {row.skillstatusid === 0 && row.userroleid !== 1 && (
               <Button
                 // outline
                 size="sm"
