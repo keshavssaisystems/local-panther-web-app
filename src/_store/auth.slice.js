@@ -69,8 +69,8 @@ export const userRegisterThunkNew = createAsyncThunk(
 // generate zoom token thunk
 export const generateToken = createAsyncThunk(
   `${name}/generateToken`,
-  async ({ sessionName, role, sessionKey, userIdentity }) => {
-    const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/GetZoomToken?sessionName=${sessionName}&role=${role}&sessionKey=${sessionKey}&userIdentity=${userIdentity}`;
+  async ({ scheduleInterviewId, userIdentity }) => {
+    const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/GetZoomVideoInterviewSession?scheduleInterviewId=${scheduleInterviewId}&userIdentity=${userIdentity}`;
     return await fetchWrapper.get(TOKEN_END_POINT);
   }
 );

@@ -201,9 +201,9 @@ export function UpcomingInterviews() {
 
   const checkInterview = function (mode, data) {
     let id = getVideoChannelId(
-      data?.jobtitle,
       data?.jobid,
-      data?.scheduleinterviewid
+      data?.scheduleinterviewid,
+      data?.candidateid
     );
     if (mode === "phone") {
       showSweetAlert({
