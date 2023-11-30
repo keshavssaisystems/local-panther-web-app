@@ -43,6 +43,7 @@ export default function CustomerDashboard() {
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
+
   let cardOptions = [
     {
       title: "Open jobs",

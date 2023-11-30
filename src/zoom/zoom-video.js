@@ -8,37 +8,45 @@ import { authActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 export const ZoomVideoScreen = () => {
   const { ...rest } = useParams();
-  const [token, setToken] = useState("");
+  const [sessionData, setSessionData] = useState([]);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
     title: "",
     description: "",
   });
-  let id = rest["*"] ? rest["*"] : "";
+  let urlParams = rest["*"] ? rest["*"] : "";
+  let id = urlParams.split("-").slice(0)[0];
   const dispatch = useDispatch();
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   let name = userDetails
     ? userDetails.FirstName + " " + userDetails.LastName
-    : "";
+    : "Guest";
   const navigate = useNavigate();
   let config = {
     videoSDKJWT: "",
-    sessionName: id,
-    userName: name.replace(/-+/g, " "),
+    sessionName: "",
+    userName: "",
     sessionPasscode: "",
+    role: "",
     features: ["video", "audio", "users", "chat"],
   };
 
   // let token = generateSignature(ZOOM_APP_KEY, ZOOM_APP_SECRET, id, 1, id, name);
   const sessionContainer = document.getElementById("sessionContainer");
   useEffect(() => {
-    if (token === "") {
+    if (sessionData.length === 0) {
       getToken();
     }
 
-    if (id && token && uitoolkit) {
-      config.videoSDKJWT = token;
+    if (id && sessionData.length > 0 && uitoolkit) {
+      config.videoSDKJWT = sessionData[0].zoomSessionToken;
+      config.sessionName = sessionData[0].sessionName;
+      config.userName = sessionData[0].userIdentity;
+      config.sessionPasscode = sessionData[0].sessionPassword;
+      config.role = sessionData[0].roleType;
+      config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
+
       uitoolkit.joinSession(sessionContainer, config);
       uitoolkit.onSessionJoined(sessionJoined);
       uitoolkit.onSessionClosed(sessionClosed);
@@ -51,7 +59,7 @@ export const ZoomVideoScreen = () => {
         uitoolkit.offSessionClosed(sessionClosed);
       }
     };
-  }, [id, token, uitoolkit]);
+  }, [id, sessionData, uitoolkit]);
 
   const sessionJoined = () => {
     console.log("session joined");
@@ -64,14 +72,14 @@ export const ZoomVideoScreen = () => {
   const getToken = async () => {
     let response = await dispatch(
       authActions.generateToken({
-        sessionName: id,
-        role: parseInt(localStorage.getItem("userroleid")) === 2 ? 1 : 0,
-        sessionKey: id,
+        scheduleInterviewId: id,
         userIdentity: name,
       })
     );
     if (response?.payload?.statusCode === 201) {
-      setToken(response.payload.data);
+      let data = [];
+      data.push(response.payload.data);
+      setSessionData(data);
     } else {
       showSweetAlert({
         title: "Something went wrong, please try later!!",

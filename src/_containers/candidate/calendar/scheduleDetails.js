@@ -23,9 +23,9 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
   );
 
   let id = getVideoChannelId(
-    interviewDetail?.jobtitle,
     interviewDetail?.jobid,
-    interviewDetail?.scheduleinterviewid
+    interviewDetail?.scheduleinterviewid,
+    interviewDetail?.candidateid
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
   let yesterdayDate = getTimezoneDateTime(
