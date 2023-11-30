@@ -9,12 +9,14 @@ import {
   ListGroupItem,
   Row,
   Col,
+  DropdownItem,
 } from "reactstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BsTrash3 } from "react-icons/bs";
 import { getTimezoneDateTimeForNow } from "_helpers/helper";
 import moment from "moment";
+import { Link } from "react-router-dom";
 import "./alertmodal.scss";
 
 export const AlertModal = (props) => {
@@ -59,7 +61,7 @@ export const AlertModal = (props) => {
                 <PerfectScrollbar>
                   <div>
                     {props?.data?.length > 0 ? (
-                      props.data.map((item) => (
+                      props.data.slice(0, 5).map((item) => (
                         <ListGroup className="todo-list-wrapper" flush>
                           <ListGroupItem>
                             <div className="widget-content p-0">
@@ -127,6 +129,19 @@ export const AlertModal = (props) => {
                     )}
                   </div>
                 </PerfectScrollbar>
+                {props?.data?.length > 5 ? (
+                  <div style={{ textAlign: "center" }}>
+                    {" "}
+                    <DropdownItem>
+                      <Link style={{ width: "100%" }} to={"/notification"}>
+                        {" "}
+                        View All Notifications
+                      </Link>
+                    </DropdownItem>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </ModalBody>
             </DropdownMenu>
           </UncontrolledButtonDropdown>

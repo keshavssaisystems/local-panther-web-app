@@ -167,6 +167,7 @@ const candidateDashboardSlice = createSlice({
     },
     [getAlerts.pending]: (state) => {
       state.alertsLoader = true;
+      state.alertsList = [];
     },
     [getAlerts.fulfilled]: (state, action) => {
       state.alertsList = action.payload.data;

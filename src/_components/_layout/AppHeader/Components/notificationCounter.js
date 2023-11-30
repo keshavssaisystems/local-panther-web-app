@@ -23,9 +23,6 @@ export const NotificationCounter = () => {
 
   const [notiCount, setNotiCount] = useState(0);
   const alerts = useSelector((state) => state.candidateDashboard.alertsList);
-  useEffect(() => {
-    dispatch(candidateDashboardActions.getAlerts());
-  }, []);
 
   useEffect(() => {
     if (alerts.length > 0) {

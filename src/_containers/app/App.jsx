@@ -64,28 +64,32 @@ import { ToastContainer, toast } from "react-toastify";
 import { Row } from "reactstrap";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
+import { Notifications } from "_containers/notifications/notifications";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
   const dispatch = useDispatch();
   useEffect(() => {
-    messaging.onMessage((payload) => {
-      toast(
-        <Row>
-          <p>
-            <b>{payload.notification.title}</b>
-          </p>
-          <p>{payload.notification.body}</p>
-        </Row>,
-        {
-          position: "bottom-right",
-          autoClose: 10000,
-        }
-      );
+    if (authUser) {
       updatePushNotifications();
-    });
-  }, []);
+      messaging.onMessage((payload) => {
+        toast(
+          <Row>
+            <p>
+              <b>{payload.notification.title}</b>
+            </p>
+            <p>{payload.notification.body}</p>
+          </Row>,
+          {
+            position: "bottom-right",
+            autoClose: 10000,
+          }
+        );
+        updatePushNotifications();
+      });
+    }
+  }, [authUser]);
 
   const updatePushNotifications = () => {
     dispatch(candidateDashboardActions.getAlerts());
@@ -521,6 +525,15 @@ export function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/notification"
+                element={
+                  <PrivateRoute>
+                    <Notifications />
+                  </PrivateRoute>
+                }
+              />
+
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
               <Route
