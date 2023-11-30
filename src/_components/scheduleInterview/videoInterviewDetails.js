@@ -76,9 +76,9 @@ export function VideoInterviewDetails({
     interviewDetail?.interviewstatusid === 0 ? false : true
   );
   let id = getVideoChannelId(
-    interviewDetail?.jobtitle,
     interviewDetail?.jobid,
-    interviewDetail?.scheduleinterviewid
+    interviewDetail?.scheduleinterviewid,
+    interviewDetail?.candidateid
   );
 
   let scheduled = getTimezoneDateTime(

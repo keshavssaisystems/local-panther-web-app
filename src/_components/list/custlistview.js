@@ -224,16 +224,16 @@ export const CustCandidateListView = (props) => {
             <img src={customerIcons.list_accept} alt="list accept"></img>
           </Button>
 
-          <Button
+          {/* <Button
             // outline
             size="sm"
-            title="Liked"
+            title="Like"
             className=" btn-icon"
             color="primary"
             onClick={() => onActionClick("like", candidaterecommendedjobid)}
           >
             <img src={customerIcons.list_liked} alt="list liked"></img>
-          </Button>
+          </Button> */}
           {/* <Button
             // outline
             size="sm"

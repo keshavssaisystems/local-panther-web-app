@@ -73,9 +73,9 @@ export function UpcomingVideoDetails({
   );
 
   let id = getVideoChannelId(
-    interviewDetails?.jobtitle,
     interviewDetails?.jobid,
-    interviewDetails?.scheduleinterviewid
+    interviewDetails?.scheduleinterviewid,
+    interviewDetails?.candidateid
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
   let yesterdayDate = getTimezoneDateTime(

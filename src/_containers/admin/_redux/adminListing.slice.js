@@ -160,6 +160,14 @@ export const deleteSkills = createAsyncThunk(
   }
 );
 
+export const verifyCustomer = createAsyncThunk(
+  `${name}/verifyCustomer`,
+  async (payload = {}) => {
+    const CUSTOMER = `${baseUrl}/User/VerifyCustomer`;
+    return await fetchWrapper.post(CUSTOMER, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -412,6 +420,18 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    [verifyCustomer.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [verifyCustomer.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [verifyCustomer.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -435,6 +455,7 @@ export const adminListingActions = {
   addSkills,
   updateSkills,
   deleteSkills,
+  verifyCustomer,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

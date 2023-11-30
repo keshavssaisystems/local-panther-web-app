@@ -14,6 +14,7 @@ import {
   ModalHeader,
   ModalBody,
   Modal,
+  ButtonGroup,
 } from "reactstrap";
 import customerIcons from "assets/utils/images/customer";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
@@ -100,55 +101,58 @@ export const Skills = () => {
       name: "Action",
       cell: (row) => (
         <div className="d-block w-100 list-btn-group">
-          {row.userroleid === 1 && (
+          <ButtonGroup>
+            {row.userroleid === 1 && (
+              <Button
+                // outline
+                size="sm"
+                title="Edit skill"
+                className=" btn-icon"
+                // color="info"
+                style={{ background: "#545cd8", border: "#545cd8" }}
+                onClick={(evt) => handleRowClick(row, "edit")}
+              >
+                <img src={customerIcons?.list_edit} alt="list approve"></img>
+              </Button>
+            )}
+
             <Button
               // outline
               size="sm"
-              title="Edit skill"
-              className=" btn-icon"
-              color="info"
-              onClick={(evt) => handleRowClick(row, "edit")}
-            >
-              <BsPencil></BsPencil>
-            </Button>
-          )}
-
-          <Button
-            // outline
-            size="sm"
-            title="delete skill"
-            className="btn-icon"
-            color="danger"
-            onClick={() => deleteConfirm(row, "user")}
-          >
-            <BsTrash3></BsTrash3>
-          </Button>
-
-          {row.skillstatusid === 0 && (
-            <Button
-              // outline
-              size="sm"
-              title="Accept skill"
+              title="delete skill"
               className="btn-icon"
-              color="success"
-              onClick={() => onApprove(row, true)}
+              color="danger"
+              onClick={() => deleteConfirm(row, "user")}
             >
-              <img src={customerIcons?.list_accept} alt="list apply"></img>
+              <img src={customerIcons?.list_delete} alt="list approve"></img>
             </Button>
-          )}
 
-          {row.skillstatusid === 0 && (
-            <Button
-              // outline
-              size="sm"
-              title="Reject skill"
-              className="btn-icon"
-              color="warning"
-              onClick={() => onApprove(row, false)}
-            >
-              <img src={customerIcons?.list_reject} alt="list reject"></img>
-            </Button>
-          )}
+            {row.skillstatusid === 0 && (
+              <Button
+                // outline
+                size="sm"
+                title="Accept skill"
+                className="btn-icon"
+                color="success"
+                onClick={() => onApprove(row, true)}
+              >
+                <img src={customerIcons?.list_accept} alt="list apply"></img>
+              </Button>
+            )}
+
+            {row.skillstatusid === 0 && (
+              <Button
+                // outline
+                size="sm"
+                title="Reject skill"
+                className="btn-icon"
+                color="warning"
+                onClick={() => onApprove(row, false)}
+              >
+                <img src={customerIcons?.list_reject} alt="list reject"></img>
+              </Button>
+            )}
+          </ButtonGroup>
         </div>
       ),
     },
@@ -478,13 +482,15 @@ export const Skills = () => {
                 responsive
                 // paginationComponent={(props) => (
                 //   <DataTableCustomPagination
-                //     {...props}
                 //     totalRecords={totalRecords}
                 //     pageIndex={pageNo}
-                //     onCallBack={() => handlePageChange}
+                //     rowCount={totalRecords}
+                //     rowsPerPage={10}
+                //     currentPage={pageNo}
+                //     onCallBack={handlePageChange}
+                //     paginationRowsPerPageOptions={[10, 20, 30]}
                 //   />
                 // )}
-                // paginationPerPage={10}
                 // paginationRowsPerPageOptions={[10, 20, 30]}
                 // paginationServer
                 // paginationTotalRows={totalRecords}

@@ -148,9 +148,10 @@ export function UpcomingInterviewTable({ tableData }) {
     // Create a Date object using the parsed values
     const targetDate = new Date(startDate);
     let id = getVideoChannelId(
-      data?.jobtitle,
+      
       data?.jobid,
-      data?.scheduleinterviewid
+      data?.scheduleinterviewid,
+      data?.candidateid,
     );
     // if (targetDate === new Date()) {
     //   if (mode === "phone") {
