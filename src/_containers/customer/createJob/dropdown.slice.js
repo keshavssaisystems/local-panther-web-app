@@ -85,6 +85,14 @@ export const getCompanyListThunk = createAsyncThunk(
   }
 );
 
+export const getStatusListThunk = createAsyncThunk(
+  `${name}/getStatusListThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=customerstatus`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 export const getCompanyListPublicThunk = createAsyncThunk(
   `${name}/getCompanyListPublicThunk`,
   async () => {
@@ -125,6 +133,7 @@ const dropdownSlice = createSlice({
     companyList: [],
     employeeList: [],
     stateList: [],
+    statusList: [],
     loading: false,
   },
   reducers: {},
@@ -230,6 +239,18 @@ const dropdownSlice = createSlice({
       state.loading = true;
     },
 
+    [getStatusListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getStatusListThunk.fulfilled]: (state, action) => {
+      state.statusList = action.payload.data;
+      state.loading = false;
+    },
+    [getStatusListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+
     [getCompanyListPublicThunk.pending]: (state) => {
       state.loading = true;
     },
@@ -283,6 +304,7 @@ export const dropdownActions = {
   getCompanyListPublicThunk,
   getStateListThunk,
   getEmployeeCountThunk,
+  getStatusListThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;
