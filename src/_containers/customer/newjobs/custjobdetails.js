@@ -259,7 +259,10 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
     },
     {
       name: "Maybe",
-      count: 0,
+      count:
+        jobDetail.totalMaybeCandidates === null
+          ? 0
+          : jobDetail.totalMaybeCandidates,
       action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
       icon: maybeIcon,
     },
@@ -283,13 +286,19 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
     },
     {
       name: "Scheduled",
-      count: 0,
+      count:
+        jobDetail.totalScheduledCandidates === null
+          ? 0
+          : jobDetail.totalScheduledCandidates,
       action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
       icon: scheduledIcon,
     },
     {
       name: "Offers",
-      count: 0,
+      count:
+        jobDetail.totalOfferedCandidates === null
+          ? 0
+          : jobDetail.totalOfferedCandidates,
       action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
       icon: offersIcon,
     },
