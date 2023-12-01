@@ -17,7 +17,6 @@ import {
   ButtonGroup,
 } from "reactstrap";
 import customerIcons from "assets/utils/images/customer";
-import { BsPencil, BsTrash3 } from "react-icons/bs";
 import "_containers/admin/common/adminListing.scss";
 import cx from "classnames";
 import DataTable from "react-data-table-component";
@@ -31,9 +30,6 @@ import {
   getSkills,
   deleteSkills,
 } from "_containers/admin/_redux/adminListing.slice";
-import { CardPagination } from "_components/common/cardpagination";
-import { listPageSize } from "_helpers/constants";
-import { DataTableCustomPagination } from "_components/common/dataTablePagination";
 
 export const Skills = () => {
   const [openModal, setOpenModal] = useState(false);
