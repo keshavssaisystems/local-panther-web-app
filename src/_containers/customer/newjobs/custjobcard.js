@@ -42,7 +42,7 @@ export function CustJobCard({
       let skillName = element.skillname == null ? "-" : element.skillname;
       skillsList.push(skillName);
     });
-    skillsData = skillsList.toString();
+    skillsData = skillsList.toString().replace(/,/g, ", ");
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }

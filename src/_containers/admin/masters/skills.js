@@ -17,7 +17,6 @@ import {
   ButtonGroup,
 } from "reactstrap";
 import customerIcons from "assets/utils/images/customer";
-import { BsPencil, BsTrash3 } from "react-icons/bs";
 import "_containers/admin/common/adminListing.scss";
 import cx from "classnames";
 import DataTable from "react-data-table-component";
@@ -31,9 +30,6 @@ import {
   getSkills,
   deleteSkills,
 } from "_containers/admin/_redux/adminListing.slice";
-import { CardPagination } from "_components/common/cardpagination";
-import { listPageSize } from "_helpers/constants";
-import { DataTableCustomPagination } from "_components/common/dataTablePagination";
 
 export const Skills = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -51,7 +47,7 @@ export const Skills = () => {
   useEffect(() => {
     dispatch(
       getSkills({
-        pageSize: 1000,
+        pageSize: 10,
         isActive: true,
         pageNumber: 1,
       })
@@ -65,14 +61,9 @@ export const Skills = () => {
   const [skillValidation, setskillValidation] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [save, setSave] = useState(false);
-  const paginationOptions = {
-    rowsPerPageText: "Rows per page:",
-    rangeSeparatorText: "of",
-    selectAllRowsItem: true,
-    selectAllRowsItemText: "All",
-  };
-
   const [status, setStatus] = useState("All");
+  const [loading, setLoading] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   let title = "Companies";
@@ -168,15 +159,30 @@ export const Skills = () => {
       },
     },
   };
-  const handlePageChange = (page) => {
+  const handlePageChange = async (page) => {
     setPageNo(page);
-    dispatch(
+    setLoading(true);
+    await dispatch(
       getSkills({
-        pageSize: 1000,
+        pageSize: pageSize,
         isActive: true,
         pageNumber: page,
       })
     );
+    setLoading(false);
+  };
+
+  const handlePerRowsChange = async (pagesize) => {
+    setPageSize(pagesize);
+    setLoading(true);
+    await dispatch(
+      getSkills({
+        pageSize: pagesize,
+        isActive: true,
+        pageNumber: pageNo,
+      })
+    );
+    setLoading(false);
   };
 
   const handleRowClick = async (row) => {
@@ -477,30 +483,15 @@ export const Skills = () => {
                 data={data}
                 columns={columns}
                 fixedHeader
+                progressPending={loading}
                 pagination
                 customStyles={customStyles}
                 responsive
-                // paginationComponent={(props) => (
-                //   <DataTableCustomPagination
-                //     totalRecords={totalRecords}
-                //     pageIndex={pageNo}
-                //     rowCount={totalRecords}
-                //     rowsPerPage={10}
-                //     currentPage={pageNo}
-                //     onCallBack={handlePageChange}
-                //     paginationRowsPerPageOptions={[10, 20, 30]}
-                //   />
-                // )}
-                // paginationRowsPerPageOptions={[10, 20, 30]}
-                // paginationServer
-                // paginationTotalRows={totalRecords}
-                // {...paginationOptions}
+                paginationServer
+                paginationTotalRows={totalRecords}
+                onChangeRowsPerPage={handlePerRowsChange}
+                onChangePage={handlePageChange}
               />
-              {/* <CardPagination
-                totalPages={totalRecords / listPageSize}
-                pageIndex={pageNo}
-                onCallBack={(evt) => handlePageChange(evt)}
-              ></CardPagination> */}
             </CardBody>
           </Card>
         </Col>

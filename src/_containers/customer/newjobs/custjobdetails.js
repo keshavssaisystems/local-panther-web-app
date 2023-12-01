@@ -59,15 +59,15 @@ export function CustJobDetail({
         let skillName = element.skillname == null ? "-" : element.skillname;
         skillsList.push(skillName);
       });
-      skillsData = skillsList.toString();
+      skillsData = skillsList.toString().replace(/,/g, ", ");
     }
   }
 
   const returnAddress = () => {
     if (jobDetail.cityname && jobDetail.statename && jobDetail.countryname) {
-      return `${jobDetail.cityname} ,${jobDetail.statename}, ${jobDetail.countryname}`;
+      return `${jobDetail.cityname}, ${jobDetail.statename}, ${jobDetail.countryname}`;
     } else if (jobDetail.cityname && jobDetail.statename) {
-      return `${jobDetail.cityname} ,${jobDetail.statename}`;
+      return `${jobDetail.cityname}, ${jobDetail.statename}`;
     } else if (jobDetail.statename && jobDetail.countryname) {
       return `${jobDetail.statename}, ${jobDetail.countryname}`;
     } else if (jobDetail.cityname && jobDetail.countryname) {

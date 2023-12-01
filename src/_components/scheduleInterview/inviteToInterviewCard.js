@@ -22,6 +22,7 @@ export function InviteToInterviewCard({ interviewId, postInviteData }) {
     };
     postInviteData(data);
     setShowSuccessMessage(true);
+    event.target.elements.inviteEmails.value = "";
   };
   return (
     <>
