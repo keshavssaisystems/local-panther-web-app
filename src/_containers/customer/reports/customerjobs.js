@@ -280,6 +280,8 @@ export function CustomerReportJobList() {
                         className="form-control"
                         selected={startDate}
                         maxDate={endDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("startDate", date);
                           setStartDate(date);
@@ -301,6 +303,8 @@ export function CustomerReportJobList() {
                         className="form-control"
                         selected={endDate}
                         minDate={startDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("endDate", date);
                           setEndDate(date);

@@ -219,7 +219,7 @@ export function CustomerReportScheduledInterviews() {
         heading={"Customer Scheduled Interview Report"}
         icon={titlelogo}
       />
-      <Row>
+      <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardHeader className="card-header-tab">
@@ -346,6 +346,8 @@ export function CustomerReportScheduledInterviews() {
                         className="form-control"
                         selected={startDate}
                         maxDate={endDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("startDate", date);
                           setStartDate(date);
@@ -367,6 +369,8 @@ export function CustomerReportScheduledInterviews() {
                         className="form-control"
                         selected={endDate}
                         minDate={startDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("endDate", date);
                           setEndDate(date);
