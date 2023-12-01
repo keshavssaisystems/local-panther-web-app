@@ -33,15 +33,31 @@ import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
 
 Providers.globalProvider = new Msal2Provider({
-  clientId: "48db530e-6da5-470b-8437-0f5c4f4919b2",
+  clientId: process.env.REACT_APP_API_KEY,
   scopes: ["Calendars.Read"],
 });
 
 export function ScheduleInterview() {
+  const dispatch = useDispatch();
+  const localizer = momentLocalizer(moment);
   const [msLogin, setMsLogin] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedJobId, setSelectedJobId] = useState(0);
   const [updateSuccessPopup, setUpdateSuccess] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [popupData, setPopupData] = useState({});
+  const [popupType, setPopupType] = useState("Video");
+  useEffect(() => {
+    getGraphData();
+  }, [msLogin]);
+  useEffect(() => {
+    if (msLogin === true) {
+      getGraphData();
+    }
+    getUpdatedScheduleList();
+    dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
+    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
+  }, []);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
     getCandidateList(
@@ -50,7 +66,6 @@ export function ScheduleInterview() {
       moment().add("1", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
-  const dispatch = useDispatch();
   const getCandidateList = async function (selectedJobId, startdate, enddate) {
     await dispatch(
       scheduleInterviewActions.getScheduleInterviewThunk({
@@ -61,13 +76,6 @@ export function ScheduleInterview() {
     );
   };
 
-  useEffect(() => {
-    if (msLogin === true) {
-      getGraphData();
-    }
-    getUpdatedScheduleList();
-    dispatch(customerCandidateListsActions.getDrpDwnJobLists());
-  }, []);
   const getGraphData = async function () {
     let startDate =
       moment().weekday(Number(0)).format("YYYY-MM-DD") + "T00:00:00Z";
@@ -76,19 +84,12 @@ export function ScheduleInterview() {
     await dispatch(graphActions.getgraphThunk({ startDate, endDate }));
   };
   const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
-  useEffect(() => {
-    getGraphData();
-  }, [msLogin]);
+
   const getUpdatedScheduleList = () => {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(scheduleInterviewActions.getDurationThunk());
-    dispatch(
-      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss"),
-      })
-    );
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -116,18 +117,13 @@ export function ScheduleInterview() {
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
-  const upcomingInterviewsWOPagination = useSelector(
-    (state) =>
-      state.scheduleInterview.upcomingInterviewWOPagination
-        .scheduledInterviewList
+  const allInterviews = useSelector(
+    (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
-  const localizer = momentLocalizer(moment);
+
   let upData = [];
-  if (
-    upcomingInterviewsWOPagination !== undefined &&
-    upcomingInterviewsWOPagination.length > 0
-  ) {
-    upcomingInterviewsWOPagination.forEach((upcomingInterview) => {
+  if (allInterviews !== undefined && allInterviews.length > 0) {
+    allInterviews.forEach((upcomingInterview) => {
       let startDate = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
           " " +
@@ -154,8 +150,12 @@ export function ScheduleInterview() {
         start: new Date(startDate),
         end: new Date(endDate),
         color:
-          upcomingInterview.isaccepted === true &&
-          upcomingInterview.isrejected === false
+          upcomingInterview?.interviewstatusid !== 0
+            ? upcomingInterview?.interviewstatusid === 1
+              ? "#30b1ff"
+              : "#6c757d"
+            : upcomingInterview.isaccepted === true &&
+              upcomingInterview.isrejected === false
             ? "green"
             : upcomingInterview.isrejected === true
             ? "red"
@@ -176,23 +176,7 @@ export function ScheduleInterview() {
       })
     );
     setUpdateSuccess(true);
-    getCandidateList(
-      selectedJobId,
-      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
-      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
-    );
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    getUpcomingData({
-      pageNo: 1,
-      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
-      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-    });
-    dispatch(
-      scheduleInterviewActions.getUpcomingInterviewListWOPaginationThunk({
-        start: moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
-        end: moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss"),
-      })
-    );
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
   };
   const [toggleVar, setToggleVar] = useState("availabilty");
   const toggle = (tab) => {
@@ -236,9 +220,7 @@ export function ScheduleInterview() {
     getUpcomingData(filterOnPageChange);
     setSelectedJobData([]);
   };
-  const [openModal, setOpenModal] = useState(false);
-  const [popupData, setPopupData] = useState({});
-  const [popupType, setPopupType] = useState("Video");
+
   const onCloseIdModal = () => {
     setOpenModal(false);
   };
@@ -260,6 +242,17 @@ export function ScheduleInterview() {
         notesdata,
       })
     );
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
   };
 
   const postInviteData = (inviteData) => {
@@ -274,6 +267,17 @@ export function ScheduleInterview() {
         scheduleinterviewid,
         invitedata,
       })
+    );
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
 
@@ -294,6 +298,17 @@ export function ScheduleInterview() {
       })
     );
     onCloseIdModal();
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    getUpcomingData({
+      pageNo: 1,
+      start: moment().format("YYYY-MM-DDTHH:mm:ss"),
+      end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+    });
+    getCandidateList(
+      selectedJobId,
+      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
+    );
   };
   const [showEditScheduleModal, setShowEditScheduleModal] = useState(false);
   const editScheduledInterview = (editStatus) => {
@@ -301,8 +316,17 @@ export function ScheduleInterview() {
     setShowEditScheduleModal(editStatus);
   };
 
-  const allInterview = useSelector(
-    (state) => state.scheduleInterview.allInterview.scheduledInterviewList
+  let weekfirstday = getTimezoneDateTime(
+    moment().weekday(Number(0)).format("YYYY-MM-DD"),
+    "YYYY-MM-DD"
+  );
+  let weeklastday = getTimezoneDateTime(
+    moment().weekday(Number(6)).format("YYYY-MM-DD"),
+    "YYYY-MM-DD"
+  );
+  const availableInterview = allInterviews?.filter(
+    (value) =>
+      value.scheduledate >= weekfirstday && value.scheduledate <= weeklastday
   );
   let syncData = microsoftCalenderData;
   let overallData = [];
@@ -310,21 +334,13 @@ export function ScheduleInterview() {
   let msBlockData = [];
   if (syncData?.length > 0) {
     syncData.forEach((syncDataElement) => {
-      let dynamicStartDate = getTimezoneDateTime(
-        moment().weekday(Number(0)).format("YYYY-MM-DD"),
-        "YYYY-MM-DD"
-      );
-      let dynamicEndDate = getTimezoneDateTime(
-        moment().weekday(Number(6)).format("YYYY-MM-DD"),
-        "YYYY-MM-DD"
-      );
       if (
-        dynamicStartDate <
+        weekfirstday <
           getTimezoneDateTime(
             moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
             "YYYY-MM-DD"
           ) &&
-        dynamicEndDate >
+        weeklastday >
           getTimezoneDateTime(
             moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
             "YYYY-MM-DD"
@@ -351,23 +367,15 @@ export function ScheduleInterview() {
       }
     });
   }
-  if (allInterview?.length > 0) {
-    allInterview.forEach((blockedData) => {
-      let dynamicStartDate = getTimezoneDateTime(
-        moment().weekday(Number(0)).format("YYYY-MM-DD"),
-        "YYYY-MM-DD"
-      );
-      let dynamicEndDate = getTimezoneDateTime(
-        moment().weekday(Number(6)).format("YYYY-MM-DD"),
-        "YYYY-MM-DD"
-      );
+  if (availableInterview?.length > 0) {
+    availableInterview.forEach((blockedData) => {
       if (
-        dynamicStartDate <
+        weekfirstday <
           getTimezoneDateTime(
             moment(blockedData.scheduledate).format("YYYY-MM-DD"),
             "YYYY-MM-DD"
           ) &&
-        dynamicEndDate >
+        weeklastday >
           getTimezoneDateTime(
             moment(blockedData.scheduledate).format("YYYY-MM-DD"),
             "YYYY-MM-DD"
@@ -434,6 +442,25 @@ export function ScheduleInterview() {
       })
     );
     onCloseIdModal();
+  };
+  const postFeedbackData = async (event) => {
+    let scheduleinterviewid = event.scheduleinterviewid;
+    let payload = event;
+    await dispatch(
+      scheduleInterviewActions.interviewFeedbackThunk({
+        scheduleinterviewid,
+        payload,
+      })
+    );
+    await dispatch(
+      scheduleInterviewActions.feedback({
+        scheduleInterviewList: candidateList,
+        upcomingInterviewList: upcomingInterviews?.scheduledInterviewList,
+        allInterviewList: allInterviews,
+        scheduleinterviewid: scheduleinterviewid,
+        interviewstatusid: event.interviewstatusid,
+      })
+    );
   };
   return (
     <>
@@ -536,7 +563,20 @@ export function ScheduleInterview() {
                   className="mb-3 right-align"
                 >
                   <div>
-                    <Login loginCompleted={(e) => setMsLogin(true)}></Login>
+                    <Row>
+                      <Col md={7} className="mt-1 right-align">
+                        <span className="right-align">
+                          Connect microsoft calendar using
+                        </span>
+                      </Col>
+                      <Col md={5}>
+                        <div className="text-start">
+                          <Login
+                            loginCompleted={(e) => setMsLogin(true)}
+                          ></Login>
+                        </div>
+                      </Col>
+                    </Row>
                   </div>
                 </Col>
               )}
@@ -545,6 +585,14 @@ export function ScheduleInterview() {
             {toggleVar === "availabilty" && (
               <Card>
                 <CardBody className="scheduled-calender">
+                  <div className="text-end">
+                    <div className="mb-3 me-1 badge badge-color-white">P</div>
+                    Available{" "}
+                    <div className="ms-3 mb-3 me-0 badge badge-color-blue">
+                      P
+                    </div>{" "}
+                    Not available
+                  </div>
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
@@ -602,6 +650,7 @@ export function ScheduleInterview() {
                     acceptInterview={(e) => acceptScheduleData(e)}
                     rejectInterview={(e) => rejectScheduleData(e)}
                     getUpdatedFormData={(e) => getFormData(e)}
+                    postFeedbackData={(e) => postFeedbackData(e)}
                   />
                 </Col>
               </Row>
@@ -609,6 +658,26 @@ export function ScheduleInterview() {
             {toggleVar === "calendar" && (
               <Card>
                 <CardBody className="scheduled-calender">
+                  <div className="text-end">
+                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
+                    No response
+                    <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                      P
+                    </div>
+                    Accepted interview{" "}
+                    <div className="ms-3 mb-3 me-0 badge badge-color-red">
+                      P
+                    </div>{" "}
+                    Rejected interview
+                    <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                      P
+                    </div>{" "}
+                    Interview completed
+                    <div className="ms-3 mb-3 me-0 badge badge-color-grey">
+                      P
+                    </div>{" "}
+                    Not joined
+                  </div>
                   <Calendar
                     localizer={localizer}
                     events={upData}
@@ -639,6 +708,7 @@ export function ScheduleInterview() {
                       acceptInterview={(e) => acceptScheduleData(e)}
                       rejectInterview={(e) => rejectScheduleData(e)}
                       getUpdatedFormData={(e) => getFormData(e)}
+                      postFeedbackData={(e) => postFeedbackData(e)}
                     />
                   </CardBody>
                 </Card>
@@ -658,6 +728,7 @@ export function ScheduleInterview() {
           postMessageData={(e) => postMessageData(e)}
           acceptInterview={(e) => acceptScheduleData(e)}
           rejectInterview={(e) => rejectScheduleData(e)}
+          postFeedbackData={(e) => postFeedbackData(e)}
         />
         <UpdateScheduleInterviewModal
           interviewData={popupData}

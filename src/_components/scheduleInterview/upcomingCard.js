@@ -58,23 +58,26 @@ export function UpcomingCard({
                         Applied for {interview.jobtitle}
                       </div>
                     </Col>
-                    {interview.isaccepted === true &&
+                    {interview?.interviewstatusid === 0 &&
+                      interview.isaccepted === true &&
                       interview.isrejected === false && (
                         <Col md="5">
                           <div className="mb-2 me-2 badge bg-success float-end badge-custom">
-                            Scheduled
+                            Accepted
                           </div>
                         </Col>
                       )}
-                    {interview.isaccepted === false &&
+                    {interview?.interviewstatusid === 0 &&
+                      interview.isaccepted === false &&
                       interview.isrejected === false && (
                         <Col md="5">
                           <div className="mb-2 me-2 badge bg-warning float-end badge-custom">
-                            Awaiting confirmation
+                            No response
                           </div>
                         </Col>
                       )}
-                    {((interview.isrejected === true &&
+                    {((interview?.interviewstatusid === 0 &&
+                      interview.isrejected === true &&
                       interview.isaccepted === true) ||
                       interview.isrejected === true) && (
                       <Col md="5">
@@ -83,11 +86,25 @@ export function UpcomingCard({
                         </div>
                       </Col>
                     )}
+                    {interview?.interviewstatusid === 1 && (
+                      <Col md="5">
+                        <div className="mb-2 me-2 badge bg-info float-end badge-custom">
+                          Completed
+                        </div>
+                      </Col>
+                    )}
+                    {interview?.interviewstatusid === 2 && (
+                      <Col md="5">
+                        <div className="mb-2 me-2 badge bg-secondary float-end badge-custom">
+                          Not joined
+                        </div>
+                      </Col>
+                    )}
                   </Row>
                   <p className="job-details">
                     <BsCalendar2Date className="icon-settings" /> Scheduled for{" "}
                     {getTimezoneDateTime(
-                      moment(interview.scheduledate).format("MMM D, YYYY") +
+                      moment(interview.scheduledate).format("YYYY-MM-DD") +
                         " " +
                         interview.starttime,
                       "MM/DD/YYYY, hh:mm a"
@@ -95,7 +112,11 @@ export function UpcomingCard({
                   </p>
                   <p className="job-details">
                     <BsListStars className="icon-settings" /> Mode-{" "}
-                    {interview.format}
+                    {interview.format}{" "}
+                    {interview.format === "Video" &&
+                    interview.isappvideocall === false
+                      ? "(Third-party)"
+                      : ""}
                   </p>
                   <p className="job-details">
                     <BsClock className="icon-settings" /> Request sent on{" "}

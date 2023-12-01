@@ -7,7 +7,7 @@
   }
 
   .succese-text {
-    font-family: Inter;
+    font-family: Capitana;
     font-size: 25px;
     font-weight: 600;
     line-height: 34px;
@@ -16,7 +16,7 @@
     color: #2f479b;
   }
   .success-msg {
-    font-family: Inter;
+    font-family: Capitana;
     font-size: 25px;
     font-weight: 400;
     line-height: 34px;
@@ -32,5 +32,16 @@
         rgba(47, 71, 155, 0.9) 64.95%
       ) !important;
     background-size: 100% auto !important;
+  }
+  .btn-text {
+    color: #fff;
+    font-family: Capitana;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: -0.01em;
+    text-align: left;
+    padding: 12px, 20px, 12px, 20px;
+    background: #2f479b;
   }
 }

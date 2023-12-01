@@ -1,0 +1,31 @@
+.adm-cal-cont {
+  .badge-color-yellow {
+    color: rgb(247, 185, 36);
+    background-color: rgb(247, 185, 36);
+    border-color: rgb(247, 185, 36);
+  }
+  .badge-color-green {
+    color: green;
+    background-color: green;
+    border-color: green;
+  }
+  .badge-color-red {
+    color: #d92550;
+    background-color: #d92550;
+    border-color: #d92550;
+  }
+  .badge-color-skyblue {
+    color: #30b1ff;
+    background-color: #30b1ff;
+    border-color: #30b1ff;
+  }
+  .badge-color-grey {
+    color: #6c757d;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  .rbc-agenda-event-cell {
+    cursor: pointer;
+  }
+}

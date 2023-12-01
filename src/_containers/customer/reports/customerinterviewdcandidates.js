@@ -14,19 +14,22 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  ButtonGroup,
 } from "reactstrap";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarAlt,
+  faSearch,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
 import {
   getCustReportIVDCandList,
-  getCandidateDropdown,
+  getScheduledCandidatesForCustomerDropdown,
   getJobDropdown,
 } from "./customerreport.slice";
 
@@ -36,43 +39,90 @@ import moment from "moment";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import "./customerreport.scss";
 
 const columns = [
   {
-    name: "Job Code",
+    name: <span className="table-title">Job Code</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.jobid}>
+        {row.jobid}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.jobid,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "Title",
+    name: <span className="table-title">Title</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.jobtitle}>
+        {row.jobtitle}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.jobtitle,
-    sortable: true,
+    minWidth: "350px",
   },
   {
-    name: "Status",
+    name: <span className="table-title">Status</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.jobstatus}>
+        {row.jobstatus}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.jobstatus,
-    sortable: true,
+    minWidth: "150px",
   },
   {
-    name: "Candidate Name",
+    name: <span className="table-title">Candidate Name</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.candidatename}>
+        {row.candidatename}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.candidatename,
-    sortable: true,
+    minWidth: "200px",
   },
   {
-    name: "Interviewed date",
-    selector: (row) =>
-      row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : "",
+    name: <span className="table-title">Interviewed date</span>,
+    cell: (row) => (
+      <span
+        className="table-cell"
+        title={
+          row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : ""
+        }
+      >
+        {row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : ""}
+      </span>
+    ),
     sortable: true,
+    selector: (row) => row.scheduledate,
+    minWidth: "200px",
   },
   {
-    name: "Interviewers",
+    name: <span className="table-title">Interviewers</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.intervieweremailids}>
+        {row.intervieweremailids}
+      </span>
+    ),
+    sortable: true,
     selector: (row) => row.intervieweremailids,
-    sortable: true,
+    minWidth: "300px",
   },
   {
-    name: "Comments/Notes",
-    selector: (row) => row.interviewnotes,
+    name: <span className="table-title">Comments/Notes</span>,
+    cell: (row) => (
+      <span className="table-cell" title={row.interviewnotes}>
+        {row.interviewnotes}
+      </span>
+    ),
     sortable: true,
+    selector: (row) => row.interviewnotes,
+    minWidth: "300px",
   },
 ];
 
@@ -112,12 +162,18 @@ export function CustomerReportInterviewedCandidates() {
           "Comments/Notes": data.interviewnotes,
         };
       });
-      setExcelData(filteredData);
+      setExcelData([
+        {
+          sheetName: "InterviewedCandidates",
+          details: filteredData,
+        },
+      ]);
     }
   }, [interviewedCandidateList]);
   useEffect(() => {
+    let userId = Number(localStorage.getItem("userId"));
     onGetCustReportIVDCandList({});
-    dispatch(getCandidateDropdown());
+    dispatch(getScheduledCandidatesForCustomerDropdown(userId));
     dispatch(getJobDropdown());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -163,7 +219,7 @@ export function CustomerReportInterviewedCandidates() {
         heading={"Customer Interviewed Candidates Report"}
         icon={titlelogo}
       />
-      <Row>
+      <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardHeader className="card-header-tab">
@@ -184,16 +240,13 @@ export function CustomerReportInterviewedCandidates() {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "customerInterviewedCandidatesReport"
+                          "customerInterviewedCandidatesReport",
+                          true
                         )
                       }
                     >
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
+                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
                       <span>Excel</span>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <i className="dropdown-icon lnr-arrow-down-circle"> </i>
-                      <span>pdf</span>
                     </DropdownItem>
                   </DropdownMenu>
                 </UncontrolledButtonDropdown>
@@ -218,10 +271,12 @@ export function CustomerReportInterviewedCandidates() {
                       {candidateDropDownList?.length > 0 ? (
                         candidateDropDownList.map((data) => (
                           <option
-                            value={data.candidateid}
-                            key={data.candidateid}
+                            value={data.id ? data.id : data.candidateid}
+                            key={data.id ? data.id : data.candidateid}
                           >
-                            {data.firstname + " " + data.lastname}
+                            {data.name
+                              ? data.name
+                              : data.firstname + " " + data.lastname}
                           </option>
                         ))
                       ) : (
@@ -269,6 +324,8 @@ export function CustomerReportInterviewedCandidates() {
                         className="form-control"
                         selected={startDate}
                         maxDate={endDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("startDate", date);
                           setStartDate(date);
@@ -290,6 +347,8 @@ export function CustomerReportInterviewedCandidates() {
                         className="form-control"
                         selected={endDate}
                         minDate={startDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("endDate", date);
                           setEndDate(date);
@@ -299,28 +358,23 @@ export function CustomerReportInterviewedCandidates() {
                   </FormGroup>
                 </Col>
                 <Col lg="3" md="3" sm="12" sx="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <ButtonGroup>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary me-4"
-                          type="button"
-                          onClick={() => onSubmitHandler()}
-                        >
-                          <FontAwesomeIcon icon={faSearch} /> Search
-                        </Button>
-                        <Button
-                          style={{ background: "rgb(47 71 155)" }}
-                          className="btn-square btn btn-primary"
-                          type="button"
-                          onClick={() => onSubmitClear()}
-                        >
-                          Clear
-                        </Button>
-                      </ButtonGroup>
-                    </InputGroup>
-                  </FormGroup>
+                  <Button
+                    style={{ background: "rgb(47 71 155)" }}
+                    className=" me-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => onSubmitHandler()}
+                  >
+                    <FontAwesomeIcon icon={faSearch} /> Search
+                  </Button>
+                  <Button
+                    // style={{ background: "rgb(47 71 155)" }}
+                    color="link"
+                    type="button"
+                    onClick={() => onSubmitClear()}
+                  >
+                    Clear
+                  </Button>
                 </Col>
               </Row>
               <Row className="mt-1">
@@ -339,6 +393,7 @@ export function CustomerReportInterviewedCandidates() {
                         data={interviewedCandidateList}
                         fixedHeader
                         pagination
+                        className="cust-rep-list-view"
                       />
                     ) : (
                       <Row className="center-align ">

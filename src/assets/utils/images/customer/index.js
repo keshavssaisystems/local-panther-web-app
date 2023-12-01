@@ -16,6 +16,8 @@ const customerIcons = {
   list_schedule: require("./list/schedule.svg").default,
   view_cv_text: require("./view_cv_text.svg").default,
   view_cv_icon: require("./view_cv_icon.svg").default,
+  list_delete: require("./bin-solid.svg").default,
+  list_edit: require("./pencil-soild.svg").default,
 };
 
 export default customerIcons;

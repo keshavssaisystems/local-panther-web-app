@@ -1,13 +1,15 @@
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard } from "_containers/dashboard/Dashboard";
+import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
 
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
+import { CustomerRegistration } from "_containers/registration/customerRegistration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
@@ -47,15 +49,52 @@ import { CustomerReportCandidateStatus } from "_containers/customer/reports/cust
 import { CustomerVideoScreen } from "../../firebase/customerVideo";
 import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
-import { Chat } from "../../firebase/chat/chat";
+import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
+
+import { messaging } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { VideoScreen } from "firebase/video";
+import { CustomerList } from "_containers/admin/customer/customerList";
+import { Skills } from "_containers/admin/masters/skills";
+
+import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
+import { ToastContainer, toast } from "react-toastify";
+import { Row } from "reactstrap";
+import { candidateDashboardActions } from "_store";
+import { useDispatch } from "react-redux";
+import { Notifications } from "_containers/notifications/notifications";
+import { ShareJobDetails } from "_containers/sharejob/sharejob";
+
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (authUser) {
+      updatePushNotifications();
+      messaging.onMessage((payload) => {
+        toast(
+          <Row>
+            <p>
+              <b>{payload.notification.title}</b>
+            </p>
+            <p>{payload.notification.body}</p>
+          </Row>,
+          {
+            position: "bottom-right",
+            autoClose: 10000,
+          }
+        );
+        updatePushNotifications();
+      });
+    }
+  }, [authUser]);
 
+  const updatePushNotifications = () => {
+    dispatch(candidateDashboardActions.getAlerts());
+  };
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
@@ -77,15 +116,32 @@ export function App() {
             path="/customers"
             element={
               <PrivateRoute>
-                <AdminListing entity="customers" />
+                <CustomerList />
               </PrivateRoute>
             }
           />
           <Route
-            path="/company"
+            path="masters/skills"
             element={
               <PrivateRoute>
-                <AdminListing entity="company" />
+                <Skills />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="masters/company"
+            element={
+              <PrivateRoute>
+                <CompanyList />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="masters"
+            element={
+              <PrivateRoute>
+                <CompanyList />
               </PrivateRoute>
             }
           />
@@ -98,7 +154,16 @@ export function App() {
             }
           />
           <Route
-            path="/users"
+            path="acl/users"
+            element={
+              <PrivateRoute>
+                <AdminListing entity="users" />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="acl"
             element={
               <PrivateRoute>
                 <AdminListing entity="users" />
@@ -106,18 +171,18 @@ export function App() {
             }
           />
           <Route
-            path="/roles"
+            path="acl/roles-function/3"
             element={
               <PrivateRoute>
-                <AdminListing entity="roles" />
+                <RoleMenuListing entity="menuMapping" key={1} />
               </PrivateRoute>
             }
           />
           <Route
-            path="/menu-mapping"
+            path="acl/roles/2"
             element={
               <PrivateRoute>
-                <AdminListing entity="menuMapping" />
+                <RoleMenuListing entity="roles" key={2} />
               </PrivateRoute>
             }
           />
@@ -238,6 +303,11 @@ export function App() {
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
+          <Route
+            path="/customer-candidate-offers/:id"
+            element={<CustomerCandidateLists type={"offers"} />}
+          />
+
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
           <Route
             path="/calendar-poc"
@@ -346,6 +416,11 @@ export function App() {
             path="/job-list-accepted"
             element={<CandidateList type={"accepted"} />}
           />
+
+          <Route
+            path="/job-list-offers"
+            element={<CandidateList type={"offers"} />}
+          />
           <Route
             path="/job-list-rejected"
             element={<CandidateList type={"rejected"} />}
@@ -416,6 +491,7 @@ export function App() {
         {authUser && <AppSidebar />}
         <div className={authUser ? `app-main__outer` : ""}>
           <div className="app-main__inner">
+            <ToastContainer />
             <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}
               <Route
@@ -450,8 +526,21 @@ export function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/notification"
+                element={
+                  <PrivateRoute>
+                    <Notifications />
+                  </PrivateRoute>
+                }
+              />
+
               <Route path="/login" element={<Login />} />
               <Route path="/registration" element={<Registration />} />
+              <Route
+                path="/customer-registration"
+                element={<CustomerRegistration />}
+              />
               <Route
                 path="/registration-success"
                 element={<RegistrationSuccess />}
@@ -465,6 +554,10 @@ export function App() {
               {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
               {/* for zoom */}
               <Route path="/video-screen/*" element={<ZoomVideoScreen />} />
+              <Route
+                path="/job-detail/:id"
+                element={<ShareJobDetails authUser={authUser} />}
+              />
             </Routes>
           </div>
           {authUser && <AppFooter />}

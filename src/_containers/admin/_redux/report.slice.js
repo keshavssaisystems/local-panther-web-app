@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "_helpers";
 // create slice name
-const name = 'adminReport';
+const name = "adminReport";
 
 export const getCompanyDropDown = async (searchText) => {
   const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
@@ -16,11 +16,11 @@ export const openJobsThunk = createAsyncThunk(
   async (payload = {}) => {
     payload = {
       ...payload,
-      pageNumber: 1,
-      pageSize: 10
-    }
+    };
 
-    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
+    const OPEN_JOBS_END_POINT = `${
+      process.env.REACT_APP_NEW_API_URL
+    }/Report/GetOpenJobsList?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(OPEN_JOBS_END_POINT);
   }
 );
@@ -31,26 +31,11 @@ export const newCandidateThunk = createAsyncThunk(
   async (payload) => {
     payload = {
       ...payload,
-      pageNumber: 1,
-      pageSize: 10
-    }
-    const NEW_CANDIDATE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetNewCandidatesList?${new URLSearchParams(payload)}`;
+    };
+    const NEW_CANDIDATE_END_POINT = `${
+      process.env.REACT_APP_NEW_API_URL
+    }/Report/GetNewCandidatesList?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(NEW_CANDIDATE_END_POINT);
-  }
-);
-
-// Hiring manager thunk
-export const hiringManagerThunk = createAsyncThunk(
-  `${name}/hiringManagerThunk`,
-  async (payload) => {
-    // const HIRING_MANAGER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
-    // return await fetchWrapper.post(HIRING_MANAGER_END_POINT, payload);
-    return [{
-      name: 'Ajay Chouhan',
-      location: 'New Town square',
-      email: "ajay@saisystems.tech",
-      skills: 'Node, React',
-    }]
   }
 );
 
@@ -60,10 +45,13 @@ export const scheduledInterviewListThunk = createAsyncThunk(
   async (payload = {}) => {
     payload = {
       ...payload,
-      isActive: true
-    }
-    
-    const SCHEDULED_INTERVIEW_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?${new URLSearchParams(payload)}`;
+      isActive: true,
+      isPaginationRequired: false,
+    };
+
+    const SCHEDULED_INTERVIEW_END_POINT = `${
+      process.env.REACT_APP_NEW_API_URL
+    }/ScheduledInterview?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(SCHEDULED_INTERVIEW_END_POINT);
   }
 );
@@ -73,11 +61,31 @@ export const getReportDataThunk = createAsyncThunk(
   `${name}/getReportDataThunk`,
   async (payload = {}) => {
     payload = {
-      ...payload
-    }
+      ...payload,
+    };
 
-    const OPEN_JOBS_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Report/GetReportData?${new URLSearchParams(payload)}`;
+    const OPEN_JOBS_END_POINT = `${
+      process.env.REACT_APP_NEW_API_URL
+    }/Report/GetReportData?${new URLSearchParams(payload)}`;
     return await fetchWrapper.get(OPEN_JOBS_END_POINT);
+  }
+);
+
+// get customer list
+export const getCustomerDropdownList = createAsyncThunk(
+  `${name}/getCustomerDropdownList`,
+  async () => {
+    const CUSTOMER_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Company/GetCompanyDropdown`;
+    return await fetchWrapper.get(CUSTOMER_LIST_END_POINT);
+  }
+);
+
+// get candidate list
+export const getCandidateDropdownList = createAsyncThunk(
+  `${name}/getCandidateDropdownList`,
+  async () => {
+    const CANDIDATE_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Candidate/GetCandidateDropdown`;
+    return await fetchWrapper.get(CANDIDATE_LIST_END_POINT);
   }
 );
 
@@ -88,7 +96,9 @@ const adminReportSlice = createSlice({
     // initialize state from local storage to enable user to stay logged in
     loading: false,
     error: null,
-    reportData: []
+    reportData: [],
+    customerList: [],
+    candidateList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -103,8 +113,8 @@ const adminReportSlice = createSlice({
       state.error = null;
     },
     [openJobsThunk.fulfilled]: (state, { payload = {} }) => {
-      const { data: { openJobsList = [], totalRows = 0 } = {}} = payload;
-      
+      const { data: { openJobsList = [], totalRows = 0 } = {} } = payload;
+
       state.loading = false;
       state.openJobsList = openJobsList;
       state.totalOpenJobs = totalRows;
@@ -120,31 +130,17 @@ const adminReportSlice = createSlice({
       state.error = null;
     },
     [newCandidateThunk.fulfilled]: (state, { payload = {} }) => {
-      const { data: { newCandidatesList = [], totalRows = 0 } = {}} = payload;
+      const { data: { newCandidatesList = [], totalRows = 0 } = {} } = payload;
 
       state.loading = false;
-      state.newCandidate = newCandidatesList;      
+      state.newCandidate = newCandidatesList;
       state.totalNewCandidate = totalRows;
     },
     [newCandidateThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
-    
-    // Hiring Manager
-    [hiringManagerThunk.pending]: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    [hiringManagerThunk.fulfilled]: (state, { payload = {} }) => {
-      state.loading = false;
-      state.hiringManager = payload;
-    },
-    [hiringManagerThunk.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.error;
-    },
-    
+
     // Get Report Data
     [getReportDataThunk.pending]: (state) => {
       state.loading = true;
@@ -152,7 +148,7 @@ const adminReportSlice = createSlice({
       state.error = null;
     },
     [getReportDataThunk.fulfilled]: (state, { payload = {} }) => {
-      const { data = []} = payload;
+      const { data = [] } = payload;
       state.loading = false;
       state.reportData = data;
     },
@@ -160,16 +156,17 @@ const adminReportSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
-    
+
     // scheduled interview list
     [scheduledInterviewListThunk.pending]: (state) => {
       state.scheduledLoading = true;
       state.error = null;
     },
     [scheduledInterviewListThunk.fulfilled]: (state, { payload = {} }) => {
-      const { data: { scheduledInterviewList = [], totalRows = 0 } = {}} = payload;
+      const { data: { scheduledInterviewList = [], totalRows = 0 } = {} } =
+        payload;
       state.scheduledLoading = false;
-      state.scheduledInterviewList = scheduledInterviewList;      
+      state.scheduledInterviewList = scheduledInterviewList;
       state.totalScheduledInterview = totalRows;
     },
     [scheduledInterviewListThunk.rejected]: (state, action) => {
@@ -177,6 +174,23 @@ const adminReportSlice = createSlice({
       state.error = action.error;
     },
 
+    // customer list
+    [getCustomerDropdownList.pending]: (state) => {
+      state.customerList = [];
+    },
+    [getCustomerDropdownList.fulfilled]: (state, { payload = {} }) => {
+      state.customerList = payload.data ? payload.data : [];
+    },
+    [getCustomerDropdownList.rejected]: (state, action) => {},
+
+    // cadidate list
+    [getCandidateDropdownList.pending]: (state) => {
+      state.candidateList = [];
+    },
+    [getCandidateDropdownList.fulfilled]: (state, { payload = {} }) => {
+      state.candidateList = payload.data ? payload.data : [];
+    },
+    [getCandidateDropdownList.rejected]: (state, action) => {},
   },
 });
 
@@ -185,8 +199,9 @@ export const adminReportActions = {
   ...adminReportSlice.actions,
   openJobsThunk, // Export the async open jobs action
   newCandidateThunk, // Export the async new candidate action
-  hiringManagerThunk, // Export the async hiring manager action
-  getReportDataThunk // Export the async report data action
+  getReportDataThunk, // Export the async report data action
+  getCustomerDropdownList,
+  getCandidateDropdownList,
 };
 
 export const adminReportReducer = adminReportSlice.reducer;

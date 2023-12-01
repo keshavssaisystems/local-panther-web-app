@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardBody, CardHeader, Button } from "reactstrap";
+import { Card, CardBody, CardHeader } from "reactstrap";
 import { BsFillCalendarWeekFill } from "react-icons/bs";
 import DataTable from "react-data-table-component";
 import moment from "moment-timezone";
@@ -10,6 +10,7 @@ import personIcon from "assets/utils/images/person-fill.svg";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useNavigate } from "react-router-dom";
+import { USPhoneNumber } from "_helpers/helper";
 
 export function UpcomingInterviewTable({ tableData }) {
   const [showAlert, SetShowAlert] = useState({
@@ -32,6 +33,10 @@ export function UpcomingInterviewTable({ tableData }) {
         "&:not(:last-of-type)": {
           borderRightWidth: "0px",
         },
+        color: "#2F479B",
+        fontFamily: "Capitana",
+        fontSize: "14px",
+        fontWeight: "500",
       },
     },
     cells: {
@@ -83,20 +88,26 @@ export function UpcomingInterviewTable({ tableData }) {
       sortable: true,
     },
     {
-      name: "mode",
+      name: "Mode",
       cell: (row) => (
         <>
           <div className="d-block w-100 ">
-            {row.format === "Video" || row.format === "In-person" ? (
+            {row.format === "Video" ? (
               <div
                 className="ellipse d-flex justify-content-center align-items-center"
                 onClick={() => checkInterview("video", row)}
               >
-                <img
-                  src={row.format === "Video" ? videoIcon : personIcon}
-                  alt="interview-icon"
-                />
+                <img src={videoIcon} alt="interview-icon" />
               </div>
+            ) : row.format === "In-person" ? (
+              <>
+                <div
+                  className="ellipse d-flex justify-content-center align-items-center"
+                  onClick={() => checkInterview("in-person", row)}
+                >
+                  <img src={personIcon} alt="interview-icon" />
+                </div>
+              </>
             ) : (
               <>
                 <div className="ellipse d-flex justify-content-center align-items-center">
@@ -137,53 +148,68 @@ export function UpcomingInterviewTable({ tableData }) {
     // Create a Date object using the parsed values
     const targetDate = new Date(startDate);
     let id = getVideoChannelId(
-      data?.jobtitle,
+      
       data?.jobid,
-      data?.scheduleinterviewid
+      data?.scheduleinterviewid,
+      data?.candidateid,
     );
-    if (targetDate === new Date()) {
-      if (mode === "phone") {
-        showSweetAlert({
-          title: `Interview started, please join on phone - ${data.phonenumber}`,
-          type: "success",
-        });
-      } else {
-        if (data.isappvideocall) {
-          setLink(id);
-          setAppShowInterview(true);
-        } else {
-          setLink(data.videolink);
-          setShowInterview(true);
-        }
-      }
-    } else if (targetDate > new Date()) {
+    // if (targetDate === new Date()) {
+    //   if (mode === "phone") {
+    //     showSweetAlert({
+    //       title: `Interview started, please join on phone - ${data.phonenumber}`,
+    //       type: "success",
+    //     });
+    //   } else {
+    //     if (data.isappvideocall) {
+    //       setLink(id);
+    //       setAppShowInterview(true);
+    //     } else {
+    //       setLink(data.videolink);
+    //       setShowInterview(true);
+    //     }
+    //   }
+    // } else if (targetDate > new Date()) {
+    //   showSweetAlert({
+    //     title: "Interview not started yet!!",
+    //     type: "warning",
+    //   });
+    // } else if (targetDate < new Date()) {
+    //   if (endDate < new Date()) {
+    //     showSweetAlert({
+    //       title: "Interview is completed !!",
+    //       type: "error",
+    //     });
+    //   } else {
+    if (mode === "phone") {
       showSweetAlert({
-        title: "Interview not started yet!!",
-        type: "warning",
+        title: `Please join the interview on phone - ${USPhoneNumber(
+          data.phonenumber
+        )}`,
+        type: "success",
       });
-    } else if (targetDate < new Date()) {
-      if (endDate < new Date()) {
-        showSweetAlert({
-          title: "Interview is completed !!",
-          type: "error",
-        });
+    }
+    if (mode === "in-person") {
+      showSweetAlert({
+        title: `Scheduled at - ${
+          data?.interviewaaddress === undefined ||
+          data?.interviewaaddress === ""
+            ? "No address provided"
+            : data?.interviewaaddress
+        }`,
+        type: "success",
+      });
+    }
+    if (mode === "video") {
+      if (data.isappvideocall) {
+        setLink(id);
+        setAppShowInterview(true);
       } else {
-        if (mode === "phone") {
-          showSweetAlert({
-            title: `Interview started, please join on phone - ${data.phonenumber}`,
-            type: "success",
-          });
-        } else {
-          if (data.isappvideocall) {
-            setLink(id);
-            setAppShowInterview(true);
-          } else {
-            setLink(data.videolink);
-            setShowInterview(true);
-          }
-        }
+        setLink(data.videolink);
+        setShowInterview(true);
       }
     }
+    //   }
+    // }
   };
   const closeSweetAlert = () => {
     let data = { ...showAlert };

@@ -1,17 +1,36 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Button } from "reactstrap";
+import { Card, Col, Row, Button, CardFooter } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
-import { ButtonWithCount } from "../../../_components/jobDetailComponents/ButtonWithCount";
 import Loader from "react-loaders";
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
+import "./newjobs.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
+import publishedIcon from "assets/utils/images/job-detail-icons/published.svg";
+import matchedIcon from "assets/utils/images/job-detail-icons/matched.svg";
+import maybeIcon from "assets/utils/images/job-detail-icons/maybe.svg";
+import likedIcon from "assets/utils/images/job-detail-icons/liked.svg";
+import appliedIcon from "assets/utils/images/job-detail-icons/applied.svg";
+import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
+import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
+import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
+import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
+import { ShareSocial } from "react-share-social";
 
-export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
+export function CustJobDetail({
+  jobDetails,
+  type,
+  publishJob,
+  closeJob,
+  isModal = false,
+  isShare = false,
+}) {
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
@@ -40,15 +59,15 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
         let skillName = element.skillname == null ? "-" : element.skillname;
         skillsList.push(skillName);
       });
-      skillsData = skillsList.toString();
+      skillsData = skillsList.toString().replace(/,/g, ", ");
     }
   }
 
   const returnAddress = () => {
     if (jobDetail.cityname && jobDetail.statename && jobDetail.countryname) {
-      return `${jobDetail.cityname} ,${jobDetail.statename}, ${jobDetail.countryname}`;
+      return `${jobDetail.cityname}, ${jobDetail.statename}, ${jobDetail.countryname}`;
     } else if (jobDetail.cityname && jobDetail.statename) {
-      return `${jobDetail.cityname} ,${jobDetail.statename}`;
+      return `${jobDetail.cityname}, ${jobDetail.statename}`;
     } else if (jobDetail.statename && jobDetail.countryname) {
       return `${jobDetail.statename}, ${jobDetail.countryname}`;
     } else if (jobDetail.cityname && jobDetail.countryname) {
@@ -224,8 +243,115 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
       return "";
     }
   };
+  const steps = [
+    {
+      name: "Published",
+      count: getTimezoneDateTime(
+        moment(
+          jobDetail?.publisheddate === null
+            ? jobDetail?.jobcreatedatetime
+            : jobDetail?.publisheddate
+        ).format("YYYY-MM-DD"),
+        "MM/DD/YYYY"
+      ),
+      icon: publishedIcon,
+    },
+    {
+      name: "Matched",
+      count:
+        jobDetail.totalRecommendedCandidates === null
+          ? 0
+          : jobDetail.totalRecommendedCandidates,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
+      icon: matchedIcon,
+    },
+    {
+      name: "Maybe",
+      count:
+        jobDetail.totalMaybeCandidates === null
+          ? 0
+          : jobDetail.totalMaybeCandidates,
+      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
+      icon: maybeIcon,
+    },
+    {
+      name: "Liked",
+      count:
+        jobDetail.totalLikedCandidates === null
+          ? 0
+          : jobDetail.totalLikedCandidates,
+      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}`,
+      icon: likedIcon,
+    },
+    {
+      name: "Applied",
+      count:
+        jobDetail.totalAppliedCandidates === null
+          ? 0
+          : jobDetail.totalAppliedCandidates,
+      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}`,
+      icon: appliedIcon,
+    },
+    {
+      name: "Scheduled",
+      count:
+        jobDetail.totalScheduledCandidates === null
+          ? 0
+          : jobDetail.totalScheduledCandidates,
+      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
+      icon: scheduledIcon,
+    },
+    {
+      name: "Offers",
+      count:
+        jobDetail.totalOfferedCandidates === null
+          ? 0
+          : jobDetail.totalOfferedCandidates,
+      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
+      icon: offersIcon,
+    },
+    {
+      name: "Accepted",
+      count:
+        jobDetail.totalAcceptedCandidates === null
+          ? 0
+          : jobDetail.totalAcceptedCandidates,
+      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}`,
+      icon: acceptedIcon,
+    },
+    {
+      name: "Rejected",
+      count:
+        jobDetail.totalRejectedCandidates === null
+          ? 0
+          : jobDetail.totalRejectedCandidates,
+      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}`,
+      icon: rejectedIcon,
+    },
+  ];
 
+  const renderSteps = () => {
+    return steps.map((s, i) => (
+      <li className="form-wizard-step-done" key={i} value={i}>
+        <span className="count-details">{steps[i].count}</span>
+        <em></em>
+        <span onClick={(e) => navigateTo(steps[i].action)}>
+          {steps[i].name}
+        </span>
+        <div className="">
+          <img
+            src={steps[i].icon}
+            alt="interview-icon"
+            onClick={(e) => navigateTo(steps[i].action)}
+          />
+        </div>
+      </li>
+    ));
+  };
   const navigate = useNavigate();
+  const navigateTo = (action) => {
+    navigate(action);
+  };
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -253,7 +379,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       </div>
                     </div>
                   </Col>
-                  {jobDetail.isdraft ? (
+                  {jobDetail.isdraft && !isShare ? (
                     <Col md={4} lg={4} className="right-align">
                       <Button
                         color="primary"
@@ -279,7 +405,8 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                     <></>
                   )}
                   {jobDetail.isdraft === false &&
-                    jobDetail.isclosed === false && (
+                    jobDetail.isclosed === false &&
+                    !isShare && (
                       <Col md={4} lg={4} className="right-align">
                         <Button
                           color="danger"
@@ -292,7 +419,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                         </Button>
                       </Col>
                     )}
-                  {jobDetail.isclosed === true && (
+                  {jobDetail.isclosed === true && !isShare && (
                     <Col md={4} lg={4} className="right-align">
                       <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
                         Job closed
@@ -303,6 +430,11 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
               </div>
             </div>
             {type === "Open" && jobDetail.isdraft === false && (
+              <div className="forms-wizard-alt ms-3 me-3">
+                <ol className="forms-wizard">{renderSteps()}</ol>
+              </div>
+            )}
+            {/* {type === "Open" && jobDetail.isdraft === false && (
               <div className="p-3 mt-2 align-left">
                 <ButtonWithCount
                   buttonName={"Applied"}
@@ -334,7 +466,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   }
                   action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
                 />
-                {/* <ButtonWithCount
+                <ButtonWithCount
                   buttonName={"Maybe"}
                   color={"primary"}
                   count={
@@ -343,8 +475,8 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       : jobDetail.totalLikedCandidates
                   }
                   action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
-                /> */}
-                {/* <ButtonWithCount
+                />
+                <ButtonWithCount
                   buttonName={"Scheduled"}
                   color={"primary"}
                   count={
@@ -353,7 +485,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       : jobDetail.totalLikedCandidates
                   }
                   action={`/customer-candidate-scheduled/${jobDetails[0]?.jobid}`}
-                /> */}
+                />
                 <ButtonWithCount
                   buttonName={"Accepted"}
                   color={"success"}
@@ -375,7 +507,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
                 />
               </div>
-            )}
+            )} */}
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
             </div>
@@ -387,6 +519,13 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
             <HeadingAndDetailWithDiv
               heading={"Job Type"}
               detail={returnJobType()}
+              iconId={5}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Job Location"}
+              detail={
+                jobDetail?.joblocation === "" ? "-" : jobDetail?.joblocation
+              }
               iconId={5}
             />
             <HeadingAndDetailWithDiv
@@ -435,6 +574,16 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
               detail={returnAddress()}
               iconId={10}
             />
+            <HeadingAndDetailWithDiv
+              heading={"Authorized to work in United States"}
+              detail={jobDetail.authorizedtoworkinus === true ? "Yes" : "No"}
+              iconId={9}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Sponsorship is required"}
+              detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
+              iconId={9}
+            />
             <HeadingAndDetailWithoutIcon
               heading={"Job Description"}
               detail={jobDetail.description}
@@ -482,6 +631,54 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   }
                   type={"list"}
                 />
+              </>
+            ) : (
+              <></>
+            )}
+            {!isModal ? (
+              <CardFooter>
+                Share:{" "}
+                <ShareSocial
+                  url={
+                    window.location.origin +
+                    "/job-detail/" +
+                    window.btoa(encodeURIComponent(jobDetail?.jobid))
+                  }
+                  socialTypes={["linkedin", "facebook", "twitter"]}
+                  style={{
+                    copyContainer: {
+                      display: "none",
+                    },
+                    root: {
+                      padding: "0px",
+                    },
+                    title: {
+                      padding: "0px",
+                    },
+                  }}
+                />
+              </CardFooter>
+            ) : (
+              <></>
+            )}
+            {isShare ? (
+              <>
+                <CardFooter>
+                  <div
+                    style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}
+                  >
+                    <span className="me-2"> For more details :</span>{" "}
+                    <Link to="/login">
+                      {" "}
+                      <Button color="primary" className="me-2">
+                        Sign in
+                      </Button>
+                    </Link>
+                    <Link to="/registration">
+                      <Button>register</Button>
+                    </Link>
+                  </div>
+                </CardFooter>
               </>
             ) : (
               <></>

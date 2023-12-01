@@ -40,6 +40,14 @@ export const userRegisterThunk = createAsyncThunk(
   }
 );
 
+export const registerCustomer = createAsyncThunk(
+  `${name}/registerCustomer`,
+  async (payload) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Customer/RegisterCustomer`;
+    return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
+  }
+);
+
 // verigy otp thunk
 export const verifyOTPThunk = createAsyncThunk(
   `${name}/verifyOTPThunk`,
@@ -61,9 +69,26 @@ export const userRegisterThunkNew = createAsyncThunk(
 // generate zoom token thunk
 export const generateToken = createAsyncThunk(
   `${name}/generateToken`,
-  async ({ sessionName, role, sessionKey, userIdentity }) => {
-    const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/GetZoomToken?sessionName=${sessionName}&role=${role}&sessionKey=${sessionKey}&userIdentity=${userIdentity}`;
+  async ({ scheduleInterviewId, userIdentity }) => {
+    const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/GetZoomVideoInterviewSession?scheduleInterviewId=${scheduleInterviewId}&userIdentity=${userIdentity}`;
     return await fetchWrapper.get(TOKEN_END_POINT);
+  }
+);
+
+//Get share job details
+export const getShareJobDetails = createAsyncThunk(
+  `${name}/getShareJobDetails`,
+  async (jobid) => {
+    const SHARE_JD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/GetShareJobDetails/${jobid}`;
+    return await fetchWrapper.get(SHARE_JD_END_POINT);
+  }
+);
+
+export const logoutThunk = createAsyncThunk(
+  `${name}/logoutThunk`,
+  async (userLoginInfoId) => {
+    const LOGOUT_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Logout/${userLoginInfoId}`;
+    return await fetchWrapper.put(LOGOUT_END_POINT);
   }
 );
 
@@ -80,6 +105,7 @@ const authSlice = createSlice({
       : "",
     token: localStorage.getItem("token") ? localStorage.getItem("token") : "",
     error: null,
+    shareJobDetail: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -91,6 +117,8 @@ const authSlice = createSlice({
       localStorage.removeItem("userId");
       localStorage.removeItem("userDetails");
       localStorage.removeItem("userroleid");
+      localStorage.removeItem("pushnotification");
+      localStorage.removeItem("userLoginInfoId");
       localStorage.clear();
 
       history.navigate("/login");
@@ -102,7 +130,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
-      const { token, refreshToken, menuDtoList = [] } = data;
+      const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
       state.menuList = menuDtoList;
       state.user = data;
       state.token = token;
@@ -112,6 +140,7 @@ const authSlice = createSlice({
       const decodedData = jwtDecode(token);
       localStorage.setItem("userId", decodedData.UserId);
       localStorage.setItem("profileImage", decodedData.Profilephotopath);
+      localStorage.setItem("userLoginInfoId", userLoginInfoId);
       localStorage.setItem(
         "userroleid",
         decodedData.role.toLowerCase() === "admin"
@@ -127,6 +156,10 @@ const authSlice = createSlice({
           ? 2
           : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
+      localStorage.setItem(
+        "pushnotification",
+        decodedData?.Pushnotification?.toLowerCase() === "true"
+      );
 
       // get return url from location state or default to home page
       const { from } = history.location.state || {
@@ -184,6 +217,49 @@ const authSlice = createSlice({
     [generateToken.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [registerCustomer.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [registerCustomer.fulfilled]: (state, { payload = {} }) => {
+      state.error = null;
+    },
+    [registerCustomer.rejected]: (state, action) => {
+      state.error = action.error;
+    },
+
+    [getShareJobDetails.pending]: (state, { payload }) => {
+      state.shareJobDetail = [];
+    },
+    [getShareJobDetails.fulfilled]: (state, { payload = {} }) => {
+      let data = [];
+      data.push(payload.data);
+      state.shareJobDetail = data;
+    },
+    [getShareJobDetails.rejected]: (state, action) => {
+      // do nothing
+    },
+
+    [logoutThunk.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [logoutThunk.fulfilled]: (state, { payload = {} }) => {
+      state.user = {};
+      state.token = null;
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToekn");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userDetails");
+      localStorage.removeItem("userroleid");
+      localStorage.removeItem("pushnotification");
+      localStorage.removeItem("userLoginInfoId");
+      localStorage.clear();
+
+      history.navigate("/login");
+    },
+    [logoutThunk.rejected]: (state, action) => {
+      // do nothing
+    },
   },
 });
 
@@ -197,6 +273,9 @@ export const authActions = {
   verifyOTPThunk,
   userRegisterThunkNew,
   generateToken,
+  registerCustomer,
+  getShareJobDetails,
+  logoutThunk,
 };
 
 export const authReducer = authSlice.reducer;

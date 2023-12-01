@@ -17,8 +17,18 @@ import { ChatMessage } from "./chatMessage";
 import { BsFillSendFill } from "react-icons/bs";
 import moment from "moment-timezone";
 import PerfectScrollbar from "react-perfect-scrollbar";
-
+import { useSelector } from "react-redux";
 export function Chat({ groupId, details }) {
+  const completedInterviewCustomerList = useSelector(
+    (state) => state.chat.completedCustomerList
+  );
+  let customerArray = [];
+  if (completedInterviewCustomerList?.length > 0) {
+    completedInterviewCustomerList?.map((candidateDetails) => {
+      customerArray.push(candidateDetails.id);
+    });
+  }
+
   let userRole = Number(localStorage.getItem("userroleid"));
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   let candidateId =
@@ -108,13 +118,18 @@ export function Chat({ groupId, details }) {
             <Col sm={11} md={11} lg={11}>
               <Input
                 type="text"
+                readOnly={userRole === 3 && customerArray.includes(customerId)}
                 value={formValue}
                 onChange={(e) => setFormValue(e.target.value)}
                 placeholder="Type your message here"
               />
             </Col>
             <Col sm={1} md={1} lg={1} className="custom-padding-button-col">
-              <Button type={"submit"} title="Send">
+              <Button
+                type={"submit"}
+                title="Send"
+                disabled={userRole === 3 && customerArray.includes(customerId)}
+              >
                 <BsFillSendFill />
               </Button>
             </Col>

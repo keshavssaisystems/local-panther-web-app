@@ -1,6 +1,52 @@
-.admin-list{
-    .btn-primary{
-        background-color: #2F479B;
-        border-color: #2F479B;
-    }
+.admin-list {
+  .btn-primary {
+    background-color: #2f479b;
+    border-color: #2f479b;
+  }
+}
+.async-border-red {
+  .css-13cymwt-control {
+    border-color: #d92550 !important;
+  }
+}
+.async-error-text {
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: #d92550;
+}
+.child-check {
+  margin-left: 15px;
+  display: none;
+}
+
+.child-check.active {
+  display: block;
+}
+.form-check-label {
+  position: relative;
+}
+
+.arrow {
+  position: absolute;
+  left: -26px;
+  top: -17%;
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  font-size: 30px;
+  font-weight: bold !important;
+}
+.disabled-col {
+  pointer-events: none;
+  opacity: 0.6;
+}
+.search-wrapper.active .btn-close {
+  left: 215px !important;
+  top: 18px !important;
+}
+.nav-link {
+  color: #545cd8;
+  font-weight: 400;
+  font-size: 14px;
 }

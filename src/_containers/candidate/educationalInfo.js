@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Label, CardFooter, ModalHeader, ModalBody } from "reactstrap";
 import { educationDetailsSlice } from "_store";
-import { Row, Col, Modal, Card, CardBody, Button } from "reactstrap";
+import {
+  Row,
+  Col,
+  Modal,
+  Card,
+  CardBody,
+  Button,
+  CardHeader,
+} from "reactstrap";
 import {
   formatDate,
   endDateValidation,
@@ -113,9 +121,21 @@ export function CandidateEducation(props) {
     <div>
       <div className="profile-view">
         <Card className="card-hover-shadow-2x mb-3">
+          <CardHeader className="card-title-text  text-capitalize ">
+            Education
+            <div className="ms-auto me-2">
+              <Label
+                className="link-text"
+                onClick={(evt) => setPersonalModal(true)}
+              >
+                Add
+              </Label>
+            </div>
+          </CardHeader>
+
           <CardBody className="scroll-area-md">
             <div>
-              <Col className="mb-3">
+              {/* <Col className="mb-3">
                 <strong className="card-title-text">Education</strong>
                 <Label
                   className="float-end link-text"
@@ -123,7 +143,7 @@ export function CandidateEducation(props) {
                 >
                   Add
                 </Label>
-              </Col>
+              </Col> */}
 
               {!loader ? (
                 <Row>
@@ -159,7 +179,7 @@ export function CandidateEducation(props) {
                         )}
                         {item.iscurrentlystudying ? (
                           <p className="mt-1 card-p-text-black">
-                            Curretly attending{" "}
+                            Currently attending{" "}
                           </p>
                         ) : (
                           <div>

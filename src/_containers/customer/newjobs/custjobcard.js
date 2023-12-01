@@ -1,6 +1,5 @@
 import React from "react";
 import { Row, Col, Card, CardBody, Button } from "reactstrap";
-import logo from "../../../assets/utils/images/panther-logo.png";
 import { FiMapPin } from "react-icons/fi";
 import {
   IoIosCheckmark,
@@ -43,7 +42,7 @@ export function CustJobCard({
       let skillName = element.skillname == null ? "-" : element.skillname;
       skillsList.push(skillName);
     });
-    skillsData = skillsList.toString();
+    skillsData = skillsList.toString().replace(/,/g, ", ");
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
@@ -51,7 +50,7 @@ export function CustJobCard({
   const renderStatusIcon = (data) => {
     if (data.isclosed) {
       return (
-        <div>
+        <div className="float-end">
           {" "}
           <img src={customerIcons.closed_ic} alt="closed icon"></img>{" "}
           <img src={customerIcons.closed} alt="closed text"></img>
@@ -59,7 +58,7 @@ export function CustJobCard({
       );
     } else if (data.isdraft) {
       return (
-        <div>
+        <div className="float-end">
           {" "}
           <img src={customerIcons.draft_ic} alt="draft icon"></img>{" "}
           <img src={customerIcons.draft} alt="darft text"></img>
@@ -67,7 +66,7 @@ export function CustJobCard({
       );
     } else {
       return (
-        <div>
+        <div className="float-end">
           {" "}
           <img src={customerIcons.publish_ic} alt="publish icon"></img>{" "}
           <img src={customerIcons.publish} alt="publish text"></img>
@@ -90,13 +89,7 @@ export function CustJobCard({
                   <div className="job-title">{name}</div>
                   <div className="muted-name">{customer}</div>
                 </Col>
-                <Col>
-                  <img
-                    src={logo}
-                    alt="logo"
-                    className="float-end display-logo-card"
-                  />
-                </Col>
+                <Col>{renderStatusIcon(additionalData)}</Col>
               </Row>
               <p className="job-details">
                 <FiMapPin /> {location}
@@ -142,9 +135,7 @@ export function CustJobCard({
                     Posted {getTimezoneDateTimeForNow(moment(createdDate))}
                   </div>
                 </Col>
-                <Col md={3} lg={3} className="mt-2 right-align">
-                  {renderStatusIcon(additionalData)}
-                </Col>
+                <Col md={3} lg={3} className="mt-2 right-align"></Col>
               </Row>
               {type === "Candidate" && (
                 <>

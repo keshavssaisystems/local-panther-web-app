@@ -7,17 +7,25 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
+import { USPhoneNumber } from "_helpers/helper";
+import { useSelector } from "react-redux";
 
-export function ScheduleDetails({ interviewDetail, onClose }) {
+export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
+  console.log(interviewDetail);
+  const interviewGuideLink = useSelector(
+    (state) => state.scheduleInterview?.interviewGuideList
+  );
   let scheduled = getTimezoneDateTime(
-    interviewDetail?.scheduledate,
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "MM/DD/YYYY"
   );
 
   let id = getVideoChannelId(
-    interviewDetail?.jobtitle,
     interviewDetail?.jobid,
-    interviewDetail?.scheduleinterviewid
+    interviewDetail?.scheduleinterviewid,
+    interviewDetail?.candidateid
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
   let yesterdayDate = getTimezoneDateTime(
@@ -29,7 +37,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate),
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -156,9 +166,9 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                     <div className="p-custom">
                       <p className="mb-0">
                         Phone no -{" "}
-                        {interviewDetail.candidatephonenumber !== undefined
+                        {interviewDetail.candidatephonenumber === undefined
                           ? ""
-                          : interviewDetail.candidatephonenumber}
+                          : USPhoneNumber(interviewDetail.candidatephonenumber)}
                       </p>
                     </div>
                   )}
@@ -169,39 +179,46 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                       </p>
                     </div>
                   )}
+                  {!isAdmin ? (
+                    <>
+                      {" "}
+                      {interviewDetail?.isappvideocall === false &&
+                        interviewDetail?.format === "Video" &&
+                        interviewDetail?.isactive === true &&
+                        interviewDetail?.isrejected === false && (
+                          <div className="p-custom">
+                            <p className="mb-0">
+                              <a
+                                href={interviewDetail.videolink}
+                                target={"_blank"}
+                                rel="noreferrer"
+                              >
+                                Click here to join
+                              </a>{" "}
+                              the interview
+                            </p>
+                          </div>
+                        )}
+                      {interviewDetail.isappvideocall === true &&
+                        interviewDetail?.format === "Video" &&
+                        interviewDetail?.isactive === true &&
+                        interviewDetail?.isrejected === false && (
+                          <div className="p-custom">
+                            <p className="mb-0">
+                              <a href="/">
+                                <NavLink to={`/video-screen/${id}`} exact>
+                                  Click here to join
+                                </NavLink>
+                              </a>{" "}
+                              the in-app interview
+                            </p>
+                          </div>
+                        )}
+                    </>
+                  ) : (
+                    <></>
+                  )}
 
-                  {interviewDetail?.isappvideocall === false &&
-                    interviewDetail?.format === "Video" &&
-                    interviewDetail?.isactive === true &&
-                    interviewDetail?.isrejected === false && (
-                      <div className="p-custom">
-                        <p className="mb-0">
-                          <a
-                            href={interviewDetail.videolink}
-                            target={"_blank"}
-                            rel="noreferrer"
-                          >
-                            Click here to join
-                          </a>{" "}
-                          the interview
-                        </p>
-                      </div>
-                    )}
-                  {interviewDetail.isappvideocall === true &&
-                    interviewDetail?.format === "Video" &&
-                    interviewDetail?.isactive === true &&
-                    interviewDetail?.isrejected === false && (
-                      <div className="p-custom">
-                        <p className="mb-0">
-                          <a href="/">
-                            <NavLink to={`/video-screen/${id}`} exact>
-                              Click here to join
-                            </NavLink>
-                          </a>{" "}
-                          the in-app interview
-                        </p>
-                      </div>
-                    )}
                   {interviewDetail.messagetocandidate !== "" && (
                     <div className="p-custom">
                       <p className="mb-0">
@@ -212,14 +229,47 @@ export function ScheduleDetails({ interviewDetail, onClose }) {
                       </p>
                     </div>
                   )}
-                  <div className="p-custom">
-                    <p className="mb-0">
-                      <b>Scheduled by -</b>{" "}
-                      {interviewDetail.interviewername === ""
-                        ? "No interviewer added"
-                        : interviewDetail.interviewername}
-                    </p>
-                  </div>
+                  {!isAdmin ? (
+                    <>
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          <b>Scheduled by -</b>{" "}
+                          {interviewDetail.interviewername === ""
+                            ? "No interviewer added"
+                            : interviewDetail.interviewername}
+                        </p>
+                      </div>
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          <a
+                            href={interviewGuideLink[0]?.name}
+                            target={"_blank"}
+                            rel="noreferrer"
+                          >
+                            Click here
+                          </a>{" "}
+                          to downlaod the interview guide.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          <b>Interviewer -</b>{" "}
+                          {interviewDetail.interviewername === ""
+                            ? "No interviewer added"
+                            : interviewDetail.interviewername}
+                        </p>
+                      </div>
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          <b>Candidate -</b>
+                          {" " + interviewDetail?.candidatename}
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardBody>
             </Card>

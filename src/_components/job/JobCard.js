@@ -1,10 +1,24 @@
 import "./job.scss";
 import React, { useState } from "react";
-import { Row, Col, Card, CardBody, Button, CardFooter, ButtonGroup } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Button,
+  CardFooter,
+  ButtonGroup,
+} from "reactstrap";
 import moment from "moment/moment";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useDispatch, useSelector } from "react-redux";
-import { candidateJobListTabActions, candidateAcceptThunk, candidateLikeThunk, candidateMayBeThunk, getRecommendedJobListThunk } from "_store";
+import {
+  candidateJobListTabActions,
+  candidateAcceptThunk,
+  candidateLikeThunk,
+  candidateMayBeThunk,
+  getRecommendedJobListThunk,
+} from "_store";
 import { RejectModal } from "_components/modal/rejectmodal";
 
 import logo from "../../assets/utils/images/panther-logo.png";
@@ -21,8 +35,6 @@ import {
   BsXCircle,
 } from "react-icons/bs";
 
-
-
 export function JobCard({
   name,
   minExperience,
@@ -37,20 +49,19 @@ export function JobCard({
   customer,
   additionalData,
 }) {
-
   const dispatch = useDispatch();
   const rejectDrpDwnList = useSelector(
     (state) => state.customerCandidateList.rejectDrpDwnList
   );
-  const { sweetAlert } = useSelector(state => state?.tabListReducer)
+  const { sweetAlert } = useSelector((state) => state?.tabListReducer);
   const [rejectModel, setRejectModel] = useState({ show: false, jobId: 0 });
 
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
       : additionalData.avgscore === 9 || additionalData.avgscore === 8
-        ? 2
-        : 3;
+      ? 2
+      : 3;
   const navigateToJobDetail = () => {
     getSelectedJobId(jobId);
   };
@@ -61,7 +72,7 @@ export function JobCard({
       let skillName = element.skillname == null ? "-" : element.skillname;
       skillsList.push(skillName);
     });
-    skillsData = skillsList.toString();
+    skillsData = skillsList.toString().replace(/,/g, ", ");
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
@@ -69,35 +80,37 @@ export function JobCard({
   const handleLike = (jobId) => {
     dispatch(candidateLikeThunk(jobId));
     getRecommendedJobList();
-  }
-  
+  };
+
   const handleMayBe = (jobId) => {
     dispatch(candidateMayBeThunk(jobId));
     getRecommendedJobList();
-  }
-  
+  };
+
   const handleApply = (jobId) => {
     dispatch(candidateAcceptThunk(jobId));
     getRecommendedJobList();
-  }
+  };
 
   const handleReject = (jobId) => {
-    setRejectModel({ show: true, jobId })
-  }
+    setRejectModel({ show: true, jobId });
+  };
 
   const getRecommendedJobList = () => {
     let payload = {
       pageNumber: 1,
       pageSize: 9,
     };
-    dispatch(getRecommendedJobListThunk(payload))
-  }
+    dispatch(getRecommendedJobListThunk(payload));
+  };
 
   return (
     <>
       <Card
-        style={{cursor: "pointer"}}
-        className={selectedJob === candidateid ? "mb-2 card-border-custom" : "mb-2"}
+        style={{ cursor: "pointer" }}
+        className={
+          selectedJob === candidateid ? "mb-2 card-border-custom" : "mb-2"
+        }
         onClick={() => navigateToJobDetail()}
       >
         <CardBody>
@@ -160,10 +173,9 @@ export function JobCard({
                   </p>
                 )}
               </div>
-              
             </Col>
           </Row>
-        </CardBody>        
+        </CardBody>
         {type === "Candidate" && (
           <>
             <CardFooter className="auto-margin">
@@ -221,7 +233,7 @@ export function JobCard({
 
       <RejectModal
         isRMOpen={rejectModel.show}
-        onCancelReject={() => setRejectModel({show: false})}
+        onCancelReject={() => setRejectModel({ show: false })}
         // onSubmitReject={(reason, comment) =>
         //   onSubmitRejectModal(reason, comment)
         // }

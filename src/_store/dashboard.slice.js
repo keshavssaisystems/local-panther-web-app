@@ -14,13 +14,10 @@ export const getSchedules = createAsyncThunk(
 );
 
 // getAlerts thunk
-export const getAlerts = createAsyncThunk(
-  `${name}/getAlerts`,
-  async ({ candidateId }) => {
-    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateDashboard/NotificationList/${candidateId}`;
-    return await fetchWrapper.get(DASHBOARD_END_POINT);
-  }
-);
+export const getAlerts = createAsyncThunk(`${name}/getAlerts`, async () => {
+  const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Notification/GetNotifications`;
+  return await fetchWrapper.get(DASHBOARD_END_POINT);
+});
 
 // getDashboardCount thunk
 export const getDashboardCount = createAsyncThunk(
@@ -67,6 +64,23 @@ export const deleteToDo = createAsyncThunk(
   async ({ id }) => {
     const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Todo/${id}`;
     return await fetchWrapper.delete(DASHBOARD_END_POINT);
+  }
+);
+
+export const deleteNotifications = createAsyncThunk(
+  `${name}/deleteNotifications`,
+  async ({ id }) => {
+    const DEL_NOT_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Notification/DeleteNotification/${id}`;
+    return await fetchWrapper.delete(DEL_NOT_END_POINT);
+  }
+);
+
+export const readNotification = createAsyncThunk(
+  `${name}/readNotification`,
+  async ({ id }) => {
+    const READ_NOTI_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Notification/UpdateNotification?notificationId=${id}
+    `;
+    return await fetchWrapper.post(READ_NOTI_END_POINT);
   }
 );
 
@@ -153,6 +167,7 @@ const candidateDashboardSlice = createSlice({
     },
     [getAlerts.pending]: (state) => {
       state.alertsLoader = true;
+      state.alertsList = [];
     },
     [getAlerts.fulfilled]: (state, action) => {
       state.alertsList = action.payload.data;
@@ -174,6 +189,38 @@ const candidateDashboardSlice = createSlice({
       state.error = action.error;
       state.jobsLoader = false;
     },
+    [deleteNotifications.pending]: (state) => {
+      // state.alertsLoader = true;
+    },
+    [deleteNotifications.fulfilled]: (state, action) => {
+      let data = [...state.alertsList];
+      let ind = data.findIndex((rec) => rec.queueid === action?.meta?.arg?.id);
+      if (ind !== -1) {
+        data.splice(ind, 1);
+        state.alertsList = data;
+      }
+
+      // state.alertsLoader = false;
+    },
+    [deleteNotifications.rejected]: (state, action) => {
+      // state.alertsLoader = false;
+    },
+    [readNotification.pending]: (state) => {
+      // state.alertsLoader = true;
+    },
+    [readNotification.fulfilled]: (state, action) => {
+      let data = [...state.alertsList];
+      let ind = data.findIndex((rec) => rec.queueid === action?.meta?.arg?.id);
+      if (ind !== -1) {
+        data[ind].notificationstatusid = 3;
+        state.alertsList = data;
+      }
+
+      // state.alertsLoader = false;
+    },
+    [readNotification.rejected]: (state, action) => {
+      // state.alertsLoader = false;
+    },
   },
 });
 
@@ -188,6 +235,8 @@ export const candidateDashboardActions = {
   deleteToDo,
   getAlerts,
   getLatestJobs,
+  deleteNotifications,
+  readNotification,
 };
 
 export const candidateDashboardReducer = candidateDashboardSlice.reducer;

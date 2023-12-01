@@ -1,0 +1,42 @@
+.alert-cont {
+  .viewed-alerts {
+    opacity: 0.7;
+  }
+
+  .alert-heading {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 95%;
+    font-size: 14px;
+  }
+
+  .alert-desc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 95%;
+    font-size: 12px;
+  }
+
+  .dropdown-menu-lg {
+    min-width: 33rem !important;
+  }
+
+  .widget-content {
+    border-bottom: 1px solid #20278c20;
+  }
+
+  .list-group-item {
+    padding-bottom: 2px;
+  }
+
+  .todo-icons {
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .widget-content-left {
+    width: 95%;
+  }
+}

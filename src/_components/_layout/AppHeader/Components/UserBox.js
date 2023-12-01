@@ -41,14 +41,21 @@ export function UserBox() {
   const [deactivateConfirm, setDeactivateConfirm] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
-  const [isToggleOn, setIsToggleOn] = useState(false);
-  const personalInfo_temp = useSelector(
-    (state) => state.getProfile?.profileImage
+  const [isToggleOn, setIsToggleOn] = useState(
+    localStorage.getItem("pushnotification")
+      ? JSON.parse(localStorage.getItem("pushnotification"))
+      : false
   );
-
+  // const personalInfo_temp = useSelector(
+  //   (state) => state.getProfile?.profileImage
+  // );
+  const personalInfo_temp = localStorage.getItem("profileImage");
   const [profileImg, setProfileImg] = useState("");
   const dispatch = useDispatch();
-  const logout = () => dispatch(authActions.logout());
+  const logout = () => {
+    let userLoginInfoId = localStorage.getItem("userLoginInfoId");
+    dispatch(authActions.logoutThunk(userLoginInfoId));
+  };
   useEffect(() => {
     const detail = JSON.parse(localStorage.getItem("userDetails")) || {};
     setUserDetail({ ...detail });
@@ -56,11 +63,7 @@ export function UserBox() {
   const [changePwd, setChangePwd] = useState(false);
 
   useEffect(() => {
-    if (personalInfo_temp || personalInfo_temp === "") {
-      setProfileImg(personalInfo_temp);
-    } else {
-      setProfileImg(userDetail?.Profilephotopath);
-    }
+    setProfileImg(personalInfo_temp);
   }, [personalInfo_temp]);
   // only show nav when logged in
   if (!authUser) return null;
@@ -106,6 +109,7 @@ export function UserBox() {
     let response = await dispatch(settingsActions.notifications({ id, data }));
     if (response.payload) {
       setSuccess(true);
+      localStorage.setItem("pushnotification", value);
     } else {
       setError(true);
     }
@@ -122,6 +126,7 @@ export function UserBox() {
                   <DropdownToggle color="link" className="p-0">
                     <img
                       width={42}
+                      height={42}
                       className="rounded-circle"
                       src={profileImg ? profileImg : avatar1}
                       alt=""
@@ -146,6 +151,7 @@ export function UserBox() {
                               <div className="widget-content-left me-3">
                                 <img
                                   width={42}
+                                  height={42}
                                   className="rounded-circle"
                                   src={profileImg ? profileImg : avatar1}
                                   alt=""
@@ -176,7 +182,10 @@ export function UserBox() {
                     <div
                       className="scroll-area-md"
                       style={{
-                        height: "150px",
+                        height:
+                          Number(localStorage.getItem("userroleid")) === 1
+                            ? "100px"
+                            : "150px",
                       }}
                     >
                       <PerfectScrollbar>
@@ -189,15 +198,16 @@ export function UserBox() {
                               Change password
                             </NavLink>
                           </NavItem>
-
-                          <NavItem>
-                            <NavLink
-                              href="javascript:void(0)"
-                              onClick={() => setDeactivateConfirm(true)}
-                            >
-                              Deactivate account
-                            </NavLink>
-                          </NavItem>
+                          {Number(localStorage.getItem("userroleid")) !== 1 && (
+                            <NavItem>
+                              <NavLink
+                                href="javascript:void(0)"
+                                onClick={() => setDeactivateConfirm(true)}
+                              >
+                                Deactivate account
+                              </NavLink>
+                            </NavItem>
+                          )}
                           <NavItem>
                             <NavLink href="javascript:void(0)">
                               Notifications

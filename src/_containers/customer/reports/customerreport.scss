@@ -1,2 +1,53 @@
-.cust-report-job-cont {
+.cust-rep-list-view {
+  .table-title {
+    font-family: capitana, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #212529 !important;
+  }
+
+  .table-cell {
+    font-style: capitana, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 1; /* how many lines you wanna restrict */
+    -webkit-box-orient: vertical;
+  }
+
+  .menu-ellipses {
+    .btn {
+      color: #2f2e2e;
+    }
+
+    .dropdown-menu .dropdown-item {
+      font-family: capitana, sans-serif !important;
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      color: #212529 !important;
+    }
+  }
+
+  .btn-primary,
+  .btn-outline-primary .btn-primary:hover,
+  .btn-outline-primary:hover {
+    background-color: #2f479b !important;
+  }
+}
+.cust-report-job-cont{
+  .react-datepicker {
+    .react-datepicker__current-month.react-datepicker__current-month--hasYearDropdown.react-datepicker__current-month--hasMonthDropdown  {
+      display: none;
+    }
+    .react-datepicker__aria-live{
+      display: none;
+    }
+    .react-datepicker__month-read-view{
+      font-weight: 700;
+    }
+    .react-datepicker__year-read-view{
+      font-weight: 700;
+    }
+  }
 }

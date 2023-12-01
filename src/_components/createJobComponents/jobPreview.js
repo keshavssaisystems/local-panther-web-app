@@ -187,6 +187,19 @@ export default function JobPreview({ previewData, editdata }) {
               </Col>
               <Col>
                 <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Country</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.stateName === undefined
+                      ? "US"
+                      : "US"}
+                  </p>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Zip code</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
@@ -196,6 +209,41 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
+              <Col>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">
+                    Authorized to work in United States
+                  </h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.authorizedtoworkinus ===
+                      undefined
+                      ? "-"
+                      : previewData.basicInformation.authorizedtoworkinus ===
+                        true
+                      ? "Yes"
+                      : "No"}
+                  </p>
+                </div>
+              </Col>
+              <Col>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">
+                    Sponsorship is required
+                  </h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.sponsorshiprequiured ===
+                      undefined
+                      ? "-"
+                      : previewData.basicInformation.sponsorshiprequiured ===
+                        true
+                      ? "Yes"
+                      : "No"}
+                  </p>
+                </div>
+              </Col>
+              <Col></Col>
             </Row>
             <Row>
               <Col>

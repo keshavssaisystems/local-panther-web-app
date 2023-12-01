@@ -15,14 +15,16 @@ export function JobDetail({ jobDetails, type }) {
     loading = false;
     jobDetail = jobDetails[0];
     jobDetail.jobSkillDtos !== undefined &&
-      jobDetail?.jobSkillDtos?.map((skills) => skillArray.push(skills.skillname));
+      jobDetail?.jobSkillDtos?.map((skills) =>
+        skillArray.push(skills.skillname)
+      );
     if (jobDetail?.jobSkillDtos?.length > 0) {
       let skillsList = [];
       jobDetail?.jobSkillDtos.forEach((element) => {
         let skillName = element.skillname == null ? "-" : element.skillname;
         skillsList.push(skillName);
       });
-      skillsData = skillsList.toString();
+      skillsData = skillsList.toString().replace(/,/g, ", ");
     }
   }
 

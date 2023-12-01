@@ -35,7 +35,7 @@ export const CandListView = (props) => {
             disabled={props.type === "maybe"}
             // outline
             size="sm"
-            title="maybe"
+            title="Maybe"
             className=" btn-icon"
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
@@ -45,7 +45,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             className="btn-icon"
             color="danger"
             onClick={() =>
@@ -57,12 +57,12 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="apply"
+            title="Apply"
             className="btn-icon"
             color="success"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons?.list_schedule} alt="list apply"></img>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
@@ -72,17 +72,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
-          <Button
-            // outline
-            size="sm"
-            title="Not Interested"
+            title="Reject"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -94,42 +84,32 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="apply"
+            title="Apply"
             className="btn-icon"
-            color="success"
+            color="info"
             onClick={() => onBtnClick("applied", row.candidaterecommendedjobid)}
           >
-            <img src={customerIcons?.list_schedule} alt="list apply"></img>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
         </ButtonGroup>
       );
     } else if (props.type === "applied") {
       return (
         <ButtonGroup>
-          <Button
+          {/* <Button
             // outline
             size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
-          <Button
-            // outline
-            size="sm"
-            title="maybe"
+            title="Maybe"
             className=" btn-icon"
             color="warning"
             onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
           >
             <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button>
+          </Button> */}
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -143,27 +123,6 @@ export const CandListView = (props) => {
     } else if (props.type === "interview") {
       return (
         <ButtonGroup>
-          <Button
-            // outline
-            size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
-          </Button>
-
-          <Button
-            // outline
-            size="sm"
-            title="maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button>
           {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
               <Button
@@ -207,7 +166,7 @@ export const CandListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Not Interested"
+            title="Reject offer"
             onClick={() =>
               onBtnClick("rejected", row.candidaterecommendedjobid)
             }
@@ -218,28 +177,77 @@ export const CandListView = (props) => {
           </Button>
         </ButtonGroup>
       );
-    } else if (props.type === "notIntrested") {
+    } else if (props.type === "rejected") {
+      return (
+        <ButtonGroup>
+          {row?.customerrecommendedjobstatusid === 5 && (
+            <Button
+              size="sm"
+              title="Accept offer"
+              className="btn-icon"
+              color="success"
+              onClick={() =>
+                onBtnClick("accepted", row.candidaterecommendedjobid)
+              }
+            >
+              <img src={customerIcons?.list_accept} alt="list apply"></img>
+            </Button>
+          )}
+          {row?.customerrecommendedjobstatusid !== 5 &&
+            row?.customerrecommendedjobstatusid !== 6 && (
+              <>
+                {/* <Button
+                  size="sm"
+                  title="Maybe"
+                  className=" btn-icon"
+                  color="warning"
+                  onClick={() =>
+                    onBtnClick("maybe", row.candidaterecommendedjobid)
+                  }
+                >
+                  <img src={customerIcons?.list_maybe} alt="list maybe"></img>
+                </Button> */}
+                <Button
+                  size="sm"
+                  title="Apply"
+                  className="btn-icon"
+                  color="info"
+                  onClick={() =>
+                    onBtnClick("applied", row.candidaterecommendedjobid)
+                  }
+                >
+                  <img src={customerIcons?.list_accept} alt="list apply"></img>
+                </Button>
+              </>
+            )}
+        </ButtonGroup>
+      );
+    } else if (props.type === "offers") {
       return (
         <ButtonGroup>
           <Button
             // outline
             size="sm"
-            title="liked"
-            className=" btn-icon"
-            color="primary"
-            onClick={() => onBtnClick("liked", row.candidaterecommendedjobid)}
+            title="Accept offer"
+            className="btn-icon"
+            color="success"
+            onClick={() =>
+              onBtnClick("accepted", row.candidaterecommendedjobid)
+            }
           >
-            <img src={customerIcons?.list_liked} alt="list like"></img>
+            <img src={customerIcons?.list_accept} alt="list apply"></img>
           </Button>
           <Button
             // outline
             size="sm"
-            title="maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
+            title="Reject offer"
+            onClick={() =>
+              onBtnClick("rejected", row.candidaterecommendedjobid)
+            }
+            className="btn-icon"
+            color="danger"
           >
-            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
+            <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
         </ButtonGroup>
       );
@@ -262,7 +270,8 @@ export const CandListView = (props) => {
               <span>Job details</span>
             </DropdownItem>
 
-            {props.type === "interview" ? (
+            {props.type === "interview" &&
+            row?.scheduledInterviewDtos[0]?.isactive ? (
               <DropdownItem onClick={() => onShowModal(row, "id")}>
                 <i className="dropdown-icon lnr-license"> </i>
                 <span>Interview details</span>
@@ -282,31 +291,24 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Job Id</span>,
             id: "Job Id",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobid}>
-                {row.jobid}
-              </span>
-            ),
+            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
+            selector: (row) => row.jobid,
             sortable: true,
             width: "8%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobtitle}>
-                {row.jobtitle}
-              </span>
-            ),
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
             sortable: true,
             width: "18%",
           },
 
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
+            cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row.cityname && row.statename
                     ? row.cityname + ", " + row.statename
@@ -318,15 +320,18 @@ export const CandListView = (props) => {
                   : ""}
               </span>
             ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
+            cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row?.jobExperienceScheduleDtos &&
                   row?.jobExperienceScheduleDtos[0]?.experiencelevel
@@ -334,14 +339,17 @@ export const CandListView = (props) => {
                     : "-"
                 }
               >
-                <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"}
-                </>
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
               </span>
             ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
             sortable: true,
             width: "10%",
           },
@@ -349,7 +357,6 @@ export const CandListView = (props) => {
             name: <span className="table-title">Scheduled</span>,
             cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row?.scheduledInterviewDtos &&
                   row?.scheduledInterviewDtos?.length > 0
@@ -377,6 +384,18 @@ export const CandListView = (props) => {
                   : ""}
               </span>
             ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
+                ? getTimezoneDateTime(
+                    moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
+                      "MM/DD/YYYY"
+                    ) +
+                      (row?.scheduledInterviewDtos[0]?.starttime !== null
+                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                        : " 00:00:00")
+                  )
+                : "",
             sortable: true,
             width: "17%",
           },
@@ -384,17 +403,27 @@ export const CandListView = (props) => {
             name: <span className="table-title">Interview Status</span>,
             cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row?.scheduledInterviewDtos &&
                   row?.scheduledInterviewDtos?.length > 0
                     ? row?.scheduledInterviewDtos[0]?.isactive === true
-                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                        row?.scheduledInterviewDtos[0]?.isrejected === false
-                        ? "Accepted"
-                        : row?.scheduledInterviewDtos[0]?.isrejected === true
-                        ? "Rejected"
-                        : "Tentative"
+                      ? row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          0 ||
+                        row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          undefined
+                        ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                          ? "Accepted"
+                          : row?.scheduledInterviewDtos[0]?.isrejected === true
+                          ? "Rejected"
+                          : "No response"
+                        : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          1
+                        ? "Completed"
+                        : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                          2
+                        ? "Not joined"
+                        : ""
                       : "Cancelled"
                     : ""
                 }
@@ -402,16 +431,44 @@ export const CandListView = (props) => {
                 {row?.scheduledInterviewDtos &&
                 row?.scheduledInterviewDtos?.length > 0
                   ? row?.scheduledInterviewDtos[0]?.isactive === true
+                    ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
+                      row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                        undefined
+                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? "Accepted"
+                        : row?.scheduledInterviewDtos[0]?.isrejected === true
+                        ? "Rejected"
+                        : "No response"
+                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                      ? "Completed"
+                      : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
+                      ? "Not joined"
+                      : ""
+                    : "Cancelled"
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row?.scheduledInterviewDtos &&
+              row?.scheduledInterviewDtos?.length > 0
+                ? row?.scheduledInterviewDtos[0]?.isactive === true
+                  ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
+                    row?.scheduledInterviewDtos[0]?.interviewstatusid ===
+                      undefined
                     ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
                       row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
                       ? "Rejected"
-                      : "Tentative"
-                    : "Cancelled"
-                  : ""}
-              </span>
-            ),
+                      : "No response"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
+                    ? "Completed"
+                    : row?.scheduledInterviewDtos[0]?.interviewstatusid === 2
+                    ? "Not joined"
+                    : ""
+                  : "Cancelled"
+                : "",
             sortable: true,
             width: "11%",
           },
@@ -438,31 +495,24 @@ export const CandListView = (props) => {
           {
             name: <span className="table-title">Job Id</span>,
             id: "Job Id",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobid}>
-                {row.jobid}
-              </span>
-            ),
+            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
+            selector: (row) => row.jobid,
             sortable: true,
-            width: "12%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobtitle}>
-                {row.jobtitle}
-              </span>
-            ),
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
             sortable: true,
-            width: "35%",
+            width: "25%",
           },
 
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
+            cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row.cityname && row.statename
                     ? row.cityname + ", " + row.statename
@@ -474,15 +524,18 @@ export const CandListView = (props) => {
                   : ""}
               </span>
             ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
+            cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row?.jobExperienceScheduleDtos &&
                   row?.jobExperienceScheduleDtos[0]?.experiencelevel
@@ -490,21 +543,26 @@ export const CandListView = (props) => {
                     : "-"
                 }
               >
-                <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"}
-                </>
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
               </span>
             ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Pre-screen</span>,
             cell: (row) =>
-              row.candidateprescreenstatus === "Pending" ? (
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
                 <Button
                   onClick={() => onPrescreenClick("pending", row)}
                   color="link"
@@ -521,7 +579,56 @@ export const CandListView = (props) => {
               ),
             ignoreRowClick: true,
             button: true,
-            width: "13%",
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Status</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.customerrecommendedjobstatusid === 5 &&
+                  row?.candidaterecommendedjobstatusid === 6
+                    ? "Offer rejected"
+                    : row?.candidaterecommendedjobstatusid === 6 &&
+                      row?.customerrecommendedjobstatusid !== 5
+                    ? "Rejected by candidate"
+                    : row?.customerrecommendedjobstatusid === 6
+                    ? "Rejected by customer"
+                    : "-"
+                }
+              >
+                {row?.customerrecommendedjobstatusid === 5 &&
+                row?.candidaterecommendedjobstatusid === 6
+                  ? "Offer rejected"
+                  : row?.candidaterecommendedjobstatusid === 6 &&
+                    row?.customerrecommendedjobstatusid !== 5
+                  ? "Rejected by candidate"
+                  : row?.customerrecommendedjobstatusid === 6
+                  ? "Rejected by customer"
+                  : "-"}
+              </span>
+            ),
+            selector: (row) =>
+              row?.customerrecommendedjobstatusid === 5 &&
+              row?.candidaterecommendedjobstatusid === 6
+                ? "Offer rejected"
+                : row?.candidaterecommendedjobstatusid === 6 &&
+                  row?.customerrecommendedjobstatusid !== 5
+                ? "Rejected by candidate"
+                : row?.customerrecommendedjobstatusid === 6
+                ? "Rejected by customer"
+                : "-",
+            sortable: true,
+            width: "14%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -529,38 +636,31 @@ export const CandListView = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            width: "10%",
+            width: "8%",
           },
         ]
       : [
           {
             name: <span className="table-title">Job Id</span>,
             id: "Job Id",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobid}>
-                {row.jobid}
-              </span>
-            ),
+            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
+            selector: (row) => row.jobid,
             sortable: true,
-            width: "12%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Title</span>,
             id: "Title",
-            selector: (row) => (
-              <span className="table-cell" title={row.jobtitle}>
-                {row.jobtitle}
-              </span>
-            ),
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
             sortable: true,
-            width: "25%",
+            width: "34%",
           },
 
           {
             name: <span className="table-title">Location</span>,
-            selector: (row) => (
+            cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row.cityname && row.statename
                     ? row.cityname + ", " + row.statename
@@ -572,15 +672,18 @@ export const CandListView = (props) => {
                   : ""}
               </span>
             ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
             sortable: true,
             width: "15%",
           },
 
           {
             name: <span className="table-title">Experience</span>,
-            selector: (row) => (
+            cell: (row) => (
               <span
-                className="table-cell"
                 title={
                   row?.jobExperienceScheduleDtos &&
                   row?.jobExperienceScheduleDtos[0]?.experiencelevel
@@ -588,21 +691,26 @@ export const CandListView = (props) => {
                     : "-"
                 }
               >
-                <>
-                  {row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"}
-                </>
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
               </span>
             ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Pre-screen</span>,
             cell: (row) =>
-              row.candidateprescreenstatus === "Pending" ? (
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
                 <Button
                   onClick={() => onPrescreenClick("pending", row)}
                   color="link"

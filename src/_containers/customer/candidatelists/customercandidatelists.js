@@ -23,6 +23,8 @@ import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { getProfileActions, dropdownActions } from "_store";
+import infoIcon from "assets/utils/images/info-circle-fill.svg";
+import { PrescreenModal } from "_components/modal/prescreenmodal";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -37,6 +39,8 @@ export const CustomerCandidateLists = (props) => {
     description: "",
   });
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showPSModal, setShowPSModal] = useState(false);
+  const [preScreenType, setPreScreenType] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -57,6 +61,11 @@ export const CustomerCandidateLists = (props) => {
   const durationOptions = useSelector(
     (state) => state.customerCandidateList.durationOptions
   );
+
+  const prescreenQues = useSelector(
+    (state) => state.customerCandidateList.prescreenQues
+  );
+
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
@@ -86,6 +95,8 @@ export const CustomerCandidateLists = (props) => {
       return 5;
     } else if (type === "rejected") {
       return 6;
+    } else if (type === "offers") {
+      return 7;
     } else {
       return "";
     }
@@ -127,14 +138,14 @@ export const CustomerCandidateLists = (props) => {
       )}`
     );
   };
-
+  let successMessage = "Candidate status updated successfully!!!";
   const onActionClick = async (evt, type) => {
     if (type === "like") {
       let res = await dispatch(
         customerCandidateListsActions.putLikedCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
         showSweetAlert({
@@ -147,7 +158,7 @@ export const CustomerCandidateLists = (props) => {
         customerCandidateListsActions.putMayBeCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        showSweetAlert({ title: successMessage, type: "success" });
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
         showSweetAlert({
@@ -184,6 +195,18 @@ export const CustomerCandidateLists = (props) => {
     }
   };
 
+  const onPrescreenActionClick = async (type, row) => {
+    await dispatch(
+      customerCandidateListsActions.getPrescreenDetails({
+        jobId: row.jobid,
+        candidateid: row.candidateid,
+      })
+    );
+
+    setPreScreenType(type);
+    setShowPSModal(true);
+  };
+
   return (
     <>
       <Row className="customercandidatelist">
@@ -213,19 +236,6 @@ export const CustomerCandidateLists = (props) => {
               color="primary"
               disabled={loading}
               className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "liked" })
-              }
-              onClick={() => {
-                toggle("liked");
-              }}
-            >
-              Liked
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
                 "border-0 btn-transition " +
                 classnames({ active: activeTab === "maybe" })
               }
@@ -240,6 +250,20 @@ export const CustomerCandidateLists = (props) => {
               disabled={loading}
               className={
                 "border-0 btn-transition  " +
+                classnames({ active: activeTab === "liked" })
+              }
+              onClick={() => {
+                toggle("liked");
+              }}
+            >
+              Liked
+            </Button>
+
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
                 classnames({ active: activeTab === "applied" })
               }
               onClick={() => {
@@ -248,6 +272,7 @@ export const CustomerCandidateLists = (props) => {
             >
               Applied
             </Button>
+
             <Button
               color="primary"
               disabled={loading}
@@ -260,6 +285,19 @@ export const CustomerCandidateLists = (props) => {
               }}
             >
               Scheduled
+            </Button>
+            <Button
+              color="primary"
+              disabled={loading}
+              className={
+                "border-0 btn-transition  " +
+                classnames({ active: activeTab === "offers" })
+              }
+              onClick={() => {
+                toggle("offers");
+              }}
+            >
+              Offers
             </Button>
             <Button
               color="primary"
@@ -323,6 +361,23 @@ export const CustomerCandidateLists = (props) => {
         <Col>
           <TabContent activeTab={activeTab}>
             <TabPane tabId="matched">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      Our advanced AI matching system efficiently reviews
+                      candidate profiles and job requirements to connect
+                      candidates with the best job opportunities. By using this
+                      system, we streamline the application process and ensure a
+                      fair evaluation for all applicants. However, it's
+                      important to note that the AI system may not capture every
+                      detail or subtlety of a candidate's profile or job
+                      description.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               {loading ? (
                 <>
                   <Loader
@@ -390,6 +445,20 @@ export const CustomerCandidateLists = (props) => {
               )}
             </TabPane>
             <TabPane tabId="liked">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      Liked jobs are jobs saved for later review or comparison
+                      by clicking a button or icon on a job record. They will be
+                      stored in a separate section of the profile, allowing
+                      users to easily access them and decide whether to apply or
+                      not.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               <p>
                 {loading ? (
                   <>
@@ -413,6 +482,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -446,6 +518,21 @@ export const CustomerCandidateLists = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="maybe">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      A job record may be marked with questions or doubts,
+                      indicating uncertain applications due to a lack of
+                      information, qualifications, and locations. These jobs may
+                      also be saved in a separate section of the user profile,
+                      allowing the user to review and change their decisions
+                      later.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               <p>
                 {loading ? (
                   <>
@@ -469,6 +556,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -502,6 +592,19 @@ export const CustomerCandidateLists = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="applied">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      Applied jobs are those that users submit applications for
+                      through the platform. They are marked as applied and are
+                      stored in a separate section of the profile. The user can
+                      track the status and withdraw the application.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               <p>
                 {loading ? (
                   <>
@@ -525,6 +628,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -558,6 +664,18 @@ export const CustomerCandidateLists = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="scheduled">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      A scheduled interview is an appointment with a customer to
+                      discuss qualifications for a job, typically in person, by
+                      phone, or video, after the initial screening process.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               <p>
                 {loading ? (
                   <>
@@ -581,6 +699,80 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
+                        />
+                        {totalRecords > listPageSize ? (
+                          <CardPagination
+                            totalPages={totalRecords / listPageSize}
+                            pageIndex={pageNo}
+                            onCallBack={(evt) => handlePageChange(evt)}
+                          ></CardPagination>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="offers">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      An offer is a formal proposal from a customer, detailing
+                      job details, salary, benefits, start date, and work hours,
+                      indicating successful completion of the interview process.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CustCandidateListView
+                          type={props.type || activeTab}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -614,6 +806,18 @@ export const CustomerCandidateLists = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="accepted">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      An accepted job is when candidates agree to the terms of
+                      the offer and confirm their intention to work for the
+                      customer, securing the job and preparing to start working.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               <p>
                 {loading ? (
                   <>
@@ -637,6 +841,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -670,6 +877,19 @@ export const CustomerCandidateLists = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="rejected">
+              <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      A rejected job refers to a decision to decline an offer or
+                      a customer rescinding it, indicating that the individual
+                      has decided not to work for the customer or has changed
+                      their hiring decision.
+                    </span>
+                  </Col>
+                </Row>
+              </div>
               <p>
                 {loading ? (
                   <>
@@ -693,6 +913,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           updateList={() => onUpdateList()}
                           durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <CardPagination
@@ -745,6 +968,23 @@ export const CustomerCandidateLists = (props) => {
               isOpen={showProfileModal}
               onClose={() => setShowProfileModal(false)}
             />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showPSModal ? (
+          <>
+            <PrescreenModal
+              isOpen={showPSModal}
+              onClose={() => {
+                setShowPSModal(false);
+              }}
+              data={prescreenQues}
+              //sendFormData={(data) => onSendPrescreenData(data)}
+              preScreenType={preScreenType}
+            ></PrescreenModal>
           </>
         ) : (
           <></>

@@ -28,8 +28,13 @@ import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { MessageCard } from "./messageCard";
-import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
+import {
+  getTimezoneDateTime,
+  getVideoChannelId,
+  USPhoneNumber,
+} from "_helpers/helper";
 import { NavLink } from "react-router-dom";
+import { InterviewFeedback } from "./interviewFeedback";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -43,6 +48,7 @@ export function VideoInterviewDetails({
   interviewDetails, // Optional from customer schedule list
   fromCustList, // Optional from customer schedule list
   toggle,
+  postFeedbackData,
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
@@ -50,6 +56,8 @@ export function VideoInterviewDetails({
   const [showNotes, setShowNotes] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
+  const [feedbackModal, setFeedbackModal] = useState(false);
+
   let interviewDetail = [];
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
@@ -64,15 +72,19 @@ export function VideoInterviewDetails({
   } else {
     interviewDetail = interviewDetails;
   }
-
+  const [refreshData, setRefreshData] = useState(
+    interviewDetail?.interviewstatusid === 0 ? false : true
+  );
   let id = getVideoChannelId(
-    interviewDetail?.jobtitle,
     interviewDetail?.jobid,
-    interviewDetail?.scheduleinterviewid
+    interviewDetail?.scheduleinterviewid,
+    interviewDetail?.candidateid
   );
 
   let scheduled = getTimezoneDateTime(
-    interviewDetails?.scheduledate,
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "MM/DD/YYYY"
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
@@ -85,7 +97,9 @@ export function VideoInterviewDetails({
     "YYYY-MM-DD"
   );
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetails?.scheduledate),
+    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
+      " " +
+      interviewDetail?.starttime,
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -123,9 +137,6 @@ export function VideoInterviewDetails({
     };
     cancelScheduleData(cancelData);
   };
-  let USNumber = interviewDetail?.candidatephonenumber
-    ? interviewDetail?.candidatephonenumber?.match(/(\d{3})(\d{3})(\d{4})/)
-    : null;
   const acceptSchedule = () => {
     acceptInterview(interviewId);
   };
@@ -147,6 +158,12 @@ export function VideoInterviewDetails({
       }
     });
   }
+  const interviewGuideLink = useSelector(
+    (state) => state.scheduleInterview?.interviewGuideList
+  );
+  const downloadInterviewGuide = () => {
+    window.open(interviewGuideLink[0].name, "_blank");
+  };
   return (
     <>
       <div className="dropdown-menu-header">
@@ -164,7 +181,7 @@ export function VideoInterviewDetails({
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               {fromCustList ? (
                 <></>
-              ) : (
+              ) : refreshData === false ? (
                 <>
                   <Button
                     outline={!showInviteCard}
@@ -176,7 +193,7 @@ export function VideoInterviewDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  <Button
+                  {/* <Button
                     outline
                     size="sm"
                     className="mb-2 mr-2 btn-transition"
@@ -185,7 +202,7 @@ export function VideoInterviewDetails({
                   >
                     {" "}
                     Message{" "}
-                  </Button>
+                  </Button> */}
 
                   <ButtonGroup size={"sm"}>
                     {interviewDetail?.isaccepted === false &&
@@ -229,6 +246,18 @@ export function VideoInterviewDetails({
                     <ImBin className="mb-1" />
                   </Button>
                 </>
+              ) : (
+                <></>
+                // <Button
+                //   outline
+                //   size="sm"
+                //   className="mb-2 mr-2 btn-transition"
+                //   color="primary"
+                //   onClick={() => setShowMessage(!showMessage)}
+                // >
+                //   {" "}
+                //   Message{" "}
+                // </Button>
               )}
             </Col>
           </div>
@@ -240,12 +269,16 @@ export function VideoInterviewDetails({
       <div className="p-custom">
         <h6 className="fw-bold job-heading">Status</h6>
         <p className="mb-0">
-          {interviewDetail?.isaccepted === true &&
-          interviewDetail?.isrejected === false
-            ? "Scheduled"
+          {interviewDetail?.interviewstatusid !== 0
+            ? interviewDetail?.interviewstatusid === 2
+              ? "Completed but candidate not joined"
+              : "Completed"
+            : interviewDetail?.isaccepted === true &&
+              interviewDetail?.isrejected === false
+            ? "Accepted"
             : interviewDetail?.isrejected === true
-            ? "Rejected by candidate"
-            : "Awaiting confirmation from candidate"}
+            ? "Rejected"
+            : "No response from candidate"}
         </p>
       </div>
       {showInviteCard === true && (
@@ -284,7 +317,11 @@ export function VideoInterviewDetails({
             <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
               <UncontrolledButtonDropdown>
                 <DropdownToggle className="btn-icon btn-icon-only" color="link">
-                  {fromCustList ? <></> : <FaEllipsisV />}
+                  {fromCustList || interviewDetail?.interviewstatusid !== 0 ? (
+                    <></>
+                  ) : (
+                    <FaEllipsisV />
+                  )}
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-right rm-pointers dropdown-menu-shadow dropdown-menu-hover-link">
                   <DropdownItem onClick={(e) => editScheduledInterview(true)}>
@@ -308,14 +345,9 @@ export function VideoInterviewDetails({
               <div className="p-custom">
                 <p className="mb-0">
                   Phone no -{" "}
-                  {interviewDetail.candidatephonenumber !== undefined
+                  {interviewDetail.candidatephonenumber === undefined
                     ? ""
-                    : "(" +
-                      USNumber[1] +
-                      ")-" +
-                      USNumber[2] +
-                      "-" +
-                      USNumber[3]}
+                    : USPhoneNumber(interviewDetail.candidatephonenumber)}
                 </p>
               </div>
             )}
@@ -331,9 +363,10 @@ export function VideoInterviewDetails({
                 <div className="p-custom">
                   <p className="mb-0">
                     <a
-                      href={interviewDetail.videolink}
+                      href={"https://" + interviewDetail.videolink}
                       target={"_blank"}
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
+                      exact
                     >
                       Click here to join
                     </a>{" "}
@@ -384,10 +417,27 @@ export function VideoInterviewDetails({
                 className="mb-2 mr-2 btn-transition"
                 color="primary"
                 size={"sm"}
+                onClick={(e) => downloadInterviewGuide(e)}
               >
                 {" "}
-                Add interview guide{" "}
+                Download interview guide{" "}
               </Button>
+              {refreshData === false && (
+                <>
+                  <Button
+                    outline={!feedbackModal}
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    size={"sm"}
+                    onClick={(e) => {
+                      setFeedbackModal(!feedbackModal);
+                    }}
+                  >
+                    {" "}
+                    Interview feedback{" "}
+                  </Button>
+                </>
+              )}
             </>
           )}
         </CardFooter>
@@ -398,6 +448,18 @@ export function VideoInterviewDetails({
             interviewNotes={interviewDetail?.interviewnotes}
             interviewId={interviewDetail?.scheduleinterviewid}
             postNotesData={(e) => postNotesData(e)}
+          />
+        </div>
+      )}
+      {feedbackModal === true && (
+        <div className="mt-2 mb-2">
+          <InterviewFeedback
+            interviewId={interviewDetails.scheduleinterviewid}
+            postFeedbackData={(e) => {
+              postFeedbackData(e);
+              setFeedbackModal(false);
+              setRefreshData(true);
+            }}
           />
         </div>
       )}

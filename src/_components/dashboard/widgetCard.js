@@ -1,38 +1,42 @@
 import React from "react";
 import { Card, Col, Row } from "reactstrap";
+import "./dashboard.scss";
+import { useNavigate } from "react-router-dom";
 
-export function WidgetCard({ classType, title, count, icon }) {
+export function WidgetCard({ cardOptions }) {
+  const navigate = useNavigate();
+  const redirectPath = (link) => {
+    navigate(link);
+  };
   return (
     <>
-      <Card
-        className={
-          "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
-          classType +
-          " border-" +
-          classType
-        }
-      >
-        <div className="widget-chat-wrapper-outer">
-          <Row>
-            <Col md="4">
-              <div className="icon-wrapper rounded-circle mt-1">
-                <div className={"icon-wrapper-bg bg-" + classType} />
-                <i className={icon + " text-" + classType} />
-              </div>
-            </Col>
-            <Col>
-              <div className="widget-chart-content">
-                <div className="widget-title opacity-5 ">{title}</div>
-                <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                  <div className="widget-chart-flex align-items-center">
-                    <div>{count}</div>
+      <Col>
+        <Card className="main-card mb-3 counter-widget">
+          <div className="grid-menu grid-menu-2col">
+            <Row className="g-0">
+              {cardOptions.map((options, index) => (
+                <Col sm="6" key={index}>
+                  <div
+                    className="widget-chart widget-chart-hover"
+                    onClick={(e) => redirectPath(options?.path)}
+                  >
+                    <div className="icon-wrapper rounded-circle">
+                      <div
+                        className={"icon-wrapper-bg bg-" + options.className}
+                      />
+                      <i
+                        className={options.icon + " text-" + options.className}
+                      />
+                    </div>
+                    <div className="widget-numbers">{options.count}</div>
+                    <div className="widget-subheading">{options.title}</div>
                   </div>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </Card>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </Card>
+      </Col>
     </>
   );
 }

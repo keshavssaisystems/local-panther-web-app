@@ -27,7 +27,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         let skillName = element.skillname == null ? "-" : element.skillname;
         skillsList.push(skillName);
       });
-      skillsData = skillsList.toString();
+      skillsData = skillsList.toString().replace(/,/g, ", ");
     }
   }
 
@@ -236,6 +236,13 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           <HeadingAndDetailWithDiv
             heading={"Job Type"}
             detail={returnJobType()}
+            iconId={5}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Job Location"}
+            detail={
+              jobDetail?.joblocation === "" ? "-" : jobDetail?.joblocation
+            }
             iconId={5}
           />
           <HeadingAndDetailWithDiv

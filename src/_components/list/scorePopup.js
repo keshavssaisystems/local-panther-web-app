@@ -6,8 +6,7 @@ export function ScorePopup({ scoreJson }) {
   let validatedJson = JSON.parse(scoreJson);
   let keys = [
     "jobtitlescore",
-    "cityscore",
-    "statescore",
+    "locationscore",
     "skillsscore",
     "experiencescore",
     "educationscore",
@@ -15,8 +14,7 @@ export function ScorePopup({ scoreJson }) {
   ];
   let displayName = {
     jobtitlescore: "Job title",
-    cityscore: "City",
-    statescore: "State",
+    locationscore: "Location",
     skillsscore: "Skills",
     experiencescore: "Experience",
     educationscore: "Education",

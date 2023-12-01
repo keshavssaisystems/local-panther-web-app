@@ -86,7 +86,10 @@ export const CandidateCardView = (props) => {
     );
     if (res.payload.statusCode === 201) {
       setShowSchdIntSModal(false);
-      props.showSweetAlert({ title: res.payload.message, type: "success" });
+      props.showSweetAlert({
+        title: "Interview scheduled successfully!!!",
+        type: "success",
+      });
 
       props.updateList();
     } else {
@@ -242,10 +245,9 @@ export const CandidateCardView = (props) => {
                           }
                         >
                           <ScorePopup
-                            scoreJson={props?.data?.scorejson?.replace(
-                              /'/g,
-                              '"'
-                            )}
+                            scoreJson={props?.data?.scorejson
+                              ?.replace(/'/g, '"')
+                              .replace(/candidate"s/g, "candidate's")}
                           />
                         </UncontrolledPopover>
                       </>

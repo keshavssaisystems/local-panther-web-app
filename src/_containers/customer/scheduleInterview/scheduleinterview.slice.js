@@ -132,6 +132,33 @@ export const getPreScreenQuestionsThunk = createAsyncThunk(
   }
 );
 
+// getInterviewStatusDropDownThunk thunk
+export const getInterviewStatusDropDownThunk = createAsyncThunk(
+  `${name}/getInterviewStatusDropDownThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=interviewstatus`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
+// interviewFeedbackThunk thunk
+export const interviewFeedbackThunk = createAsyncThunk(
+  `${name}/interviewFeedbackThunk`,
+  async ({ scheduleinterviewid, payload }) => {
+    const FEEDBACK_INTERVIEWER_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview/AddInterviewFeedback/${scheduleinterviewid}`;
+    return await fetchWrapper.put(FEEDBACK_INTERVIEWER_END_POINT, payload);
+  }
+);
+
+// getInterviewGuideListThunk thunk
+export const getInterviewGuideListThunk = createAsyncThunk(
+  `${name}/getInterviewGuideListThunk`,
+  async () => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=Interview Guide`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // Create the slice
 const scheduleInterviewSlice = createSlice({
   name,
@@ -143,9 +170,74 @@ const scheduleInterviewSlice = createSlice({
     allInterview: [],
     candidateSchedules: [],
     prescreenQuestions: [],
+    interviewStatus: [],
+    interviewGuideList: [],
     loading: false,
   },
-  reducers: {},
+  reducers: {
+    feedback: (state, action) => {
+      let modifyScheduled = [];
+      let modifyUpcoming = [];
+      let modifyAllInterview = [];
+      action?.payload?.scheduleInterviewList.forEach((element) => {
+        let elementObject = {};
+        if (
+          element.scheduleinterviewid === action?.payload?.scheduleinterviewid
+        ) {
+          elementObject = element;
+          let interviewstatusid = {
+            interviewstatusid: action?.payload?.interviewstatusid,
+          };
+          elementObject = {
+            ...elementObject,
+            ...interviewstatusid,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifyScheduled?.push(elementObject);
+      });
+      action?.payload?.upcomingInterviewList?.forEach((element) => {
+        let elementObject = {};
+        if (
+          element.scheduleinterviewid === action?.payload?.scheduleinterviewid
+        ) {
+          elementObject = element;
+          let interviewstatusid = {
+            interviewstatusid: action?.payload?.interviewstatusid,
+          };
+          elementObject = {
+            ...elementObject,
+            ...interviewstatusid,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifyUpcoming?.push(elementObject);
+      });
+      action?.payload?.allInterviewList.forEach((element) => {
+        let elementObject = {};
+        if (
+          element.scheduleinterviewid === action?.payload?.scheduleinterviewid
+        ) {
+          elementObject = element;
+          let interviewstatusid = {
+            interviewstatusid: action?.payload?.interviewstatusid,
+          };
+          elementObject = {
+            ...elementObject,
+            ...interviewstatusid,
+          };
+        } else {
+          elementObject = element;
+        }
+        modifyAllInterview?.push(elementObject);
+      });
+      state.scheduleInterview.scheduledInterviewList = modifyScheduled;
+      state.upcomingInterview.scheduledInterviewList = modifyUpcoming;
+      state.allInterview.scheduledInterviewList = modifyAllInterview;
+    },
+  },
 
   extraReducers: {
     [getDurationThunk.pending]: (state) => {
@@ -297,6 +389,39 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getInterviewStatusDropDownThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getInterviewStatusDropDownThunk.fulfilled]: (state, action) => {
+      state.interviewStatus = action.payload.data;
+      state.loading = false;
+    },
+    [getInterviewStatusDropDownThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [interviewFeedbackThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [interviewFeedbackThunk.fulfilled]: (state, action) => {
+      state.error = null;
+      state.loading = false;
+    },
+    [interviewFeedbackThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getInterviewGuideListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getInterviewGuideListThunk.fulfilled]: (state, action) => {
+      state.interviewGuideList = action.payload.data;
+      state.loading = false;
+    },
+    [getInterviewGuideListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -317,6 +442,9 @@ export const scheduleInterviewActions = {
   acceptInterviewThunk,
   rejectInterviewThunk,
   getPreScreenQuestionsThunk,
+  getInterviewStatusDropDownThunk,
+  interviewFeedbackThunk,
+  getInterviewGuideListThunk,
 };
 
 export const scheduleInterviewReducer = scheduleInterviewSlice.reducer;
