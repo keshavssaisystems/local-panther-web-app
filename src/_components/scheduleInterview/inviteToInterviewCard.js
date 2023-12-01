@@ -22,12 +22,13 @@ export function InviteToInterviewCard({ interviewId, postInviteData }) {
     };
     postInviteData(data);
     setShowSuccessMessage(true);
+    event.target.elements.inviteEmails.value = "";
   };
   return (
     <>
       <Card>
         <CardBody>
-          <Form onSubmit={(e) => getFormData(e)}>
+          <Form onSubmit={(e) => getFormData(e)} id="resetter">
             <Col md="12">
               <FormGroup>
                 <Label for="inviteEmails" className="fw-semi-bold">
