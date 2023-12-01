@@ -227,7 +227,7 @@ export function CandidateReport({ title }) {
   return (
     <>
       <PageTitle heading={title} icon={titlelogo} />
-      <Row>
+      <Row className="admin-report-calendar">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardHeader className="card-header-tab">
@@ -293,6 +293,8 @@ export function CandidateReport({ title }) {
                         className="form-control"
                         selected={startDate}
                         maxDate={endDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("@startdate", date);
                           setStartDate(date);
@@ -314,6 +316,8 @@ export function CandidateReport({ title }) {
                         className="form-control"
                         selected={endDate}
                         minDate={startDate}
+                        showMonthDropdown
+                        showYearDropdown
                         onChange={(date) => {
                           handleDateChange("@enddate", date);
                           setEndDate(date);
