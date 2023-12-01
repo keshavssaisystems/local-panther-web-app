@@ -644,7 +644,7 @@ export function CustJobDetail({
                     "/job-detail/" +
                     window.btoa(encodeURIComponent(jobDetail?.jobid))
                   }
-                  socialTypes={["linkedin", "facebook", "twitter", "whatsapp"]}
+                  socialTypes={["linkedin", "facebook", "twitter"]}
                   style={{
                     copyContainer: {
                       display: "none",
