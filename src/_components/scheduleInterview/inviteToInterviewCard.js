@@ -28,7 +28,7 @@ export function InviteToInterviewCard({ interviewId, postInviteData }) {
     <>
       <Card>
         <CardBody>
-          <Form onSubmit={(e) => getFormData(e)} id="resetter">
+          <Form onSubmit={(e) => getFormData(e)}>
             <Col md="12">
               <FormGroup>
                 <Label for="inviteEmails" className="fw-semi-bold">
