@@ -40,7 +40,7 @@ export function AppHeader({
             </h4>
           </div>
           <div className="app-header-right">
-            <ChatCounter />
+            {userroleid !== 1 && <ChatCounter />}
             {userroleid !== 3 ? (
               <NotificationCounter></NotificationCounter>
             ) : (

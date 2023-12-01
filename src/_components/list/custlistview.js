@@ -530,6 +530,157 @@ export const CustCandidateListView = (props) => {
               width: "5%",
             },
           ]
+        : props.type === "rejected"
+        ? [
+            {
+              name: <span className="table-title">Candidate</span>,
+              id: "Candidate",
+              cell: (row) => (
+                <span title={row.firstname + " " + row.lastname}>
+                  {row.firstname + " " + row.lastname}
+                </span>
+              ),
+              selector: (row) => row.firstname + " " + row.lastname,
+              sortable: true,
+              wrap: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Job title</span>,
+              cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+              selector: (row) => row?.jobtitle,
+              sortable: true,
+              width: "20%",
+            },
+            {
+              name: <span className="table-title">Location</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row.recommendedationCandidateShortList?.length > 0
+                      ? (row?.recommendedationCandidateShortList[0].cityname
+                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                          : "") +
+                        "" +
+                        (row.recommendedationCandidateShortList[0].statename
+                          ? row.recommendedationCandidateShortList[0].statename
+                          : "")
+                      : ""
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row.recommendedationCandidateShortList[0].statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
+                    : ""}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
+                  : "",
+              sortable: true,
+              width: "15%",
+            },
+
+            {
+              name: <span className="table-title">Experience</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row?.recommendedationCandidateShortList.length > 0
+                      ? row?.recommendedationCandidateShortList[0]?.experience
+                      : "-"
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
+                    : "-"}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row?.recommendedationCandidateShortList.length > 0
+                  ? row?.recommendedationCandidateShortList[0]?.experience
+                  : "-",
+              sortable: true,
+              width: "10%",
+            },
+            {
+              name: <span className="table-title">Pre-Screen</span>,
+              cell: (row) =>
+                row.candidateprescreenstatus === "NA" ? (
+                  "-"
+                ) : row.candidateprescreenstatus === "Pending" ? (
+                  <Button disabled color="link">
+                    <u>Pending</u>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => props.onPrescreenClick("completed", row)}
+                    color="link"
+                  >
+                    <u>Completed</u>
+                  </Button>
+                ),
+              ignoreRowClick: true,
+              button: true,
+              width: "10%",
+            },
+            {
+              name: <span className="table-title">Status</span>,
+              selector: (row) =>
+                row?.customerrecommendedjobstatusid === 5 &&
+                row?.candidaterecommendedjobstatusid === 6
+                  ? "Offer rejected by candidate"
+                  : row?.candidaterecommendedjobstatusid === 6 &&
+                    row?.customerrecommendedjobstatusid !== 5
+                  ? "Rejected by candidate"
+                  : row?.customerrecommendedjobstatusid === 6
+                  ? "Rejected by customer"
+                  : "-",
+              ignoreRowClick: true,
+              button: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Interest</span>,
+              cell: (row) => (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>
+              ),
+              ignoreRowClick: true,
+              button: true,
+              width: "10%",
+            },
+
+            {
+              name: <span className="table-title">Action</span>,
+              cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+              ignoreRowClick: true,
+              allowOverflow: true,
+              button: true,
+              width: "5%",
+            },
+          ]
         : [
             {
               name: <span className="table-title">Candidate</span>,
