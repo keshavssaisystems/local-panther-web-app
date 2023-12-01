@@ -560,13 +560,14 @@ export const AddEditCompany = (props) => {
               <Col md={6}>
                 <FormGroup>
                   <Label for="zipcode">Zip code</Label>
-                  <input
+                  <InputMask
+                    mask="99999"
                     type="text"
                     name="zipcode"
+                    maxLength={50}
                     onInput={(e) => handleInputChange(e, "zipcode")}
                     placeholder="Enter zipcode"
                     defaultValue={isAddMode ? "" : data?.zipcode}
-                    maxLength={50}
                     className={`field-input placeholder-text form-control ${
                       errors?.zipcode ? "is-invalid error-text" : "input-text"
                     }`}

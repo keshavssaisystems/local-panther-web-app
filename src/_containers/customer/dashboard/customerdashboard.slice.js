@@ -17,9 +17,9 @@ export const getCustomerDashboardThunk = createAsyncThunk(
 // getCustomerDashboardGraphDataThunk thunk
 export const getCustomerDashboardGraphDataThunk = createAsyncThunk(
   `${name}/getCustomerDashboardGraphDataThunk`,
-  async () => {
+  async (date) => {
     let UserID = localStorage.getItem("userId");
-    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CustomerDashboard/GetCustomerDashboardList?userId=${UserID}`;
+    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CustomerDashboard/GetCustomerDashboardList?userId=${UserID}&date=${date}`;
     return await fetchWrapper.get(DASHBOARD_END_POINT);
   }
 );
