@@ -45,3 +45,19 @@
     background-color: #2f479b !important;
   }
 }
+.admin-report-calendar{
+  .react-datepicker {
+    .react-datepicker__current-month.react-datepicker__current-month--hasYearDropdown.react-datepicker__current-month--hasMonthDropdown  {
+      display: none;
+    }
+    .react-datepicker__aria-live{
+      display: none;
+    }
+    .react-datepicker__month-read-view{
+      font-weight: 700;
+    }
+    .react-datepicker__year-read-view{
+      font-weight: 700;
+    }
+  }
+}

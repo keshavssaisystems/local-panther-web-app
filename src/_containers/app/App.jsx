@@ -554,7 +554,10 @@ export function App() {
               {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
               {/* for zoom */}
               <Route path="/video-screen/*" element={<ZoomVideoScreen />} />
-              <Route path="/job-detail/:id" element={<ShareJobDetails />} />
+              <Route
+                path="/job-detail/:id"
+                element={<ShareJobDetails authUser={authUser} />}
+              />
             </Routes>
           </div>
           {authUser && <AppFooter />}

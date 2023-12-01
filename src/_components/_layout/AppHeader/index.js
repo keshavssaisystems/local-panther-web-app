@@ -11,6 +11,7 @@ export function AppHeader({
   headerBackgroundColor = "white",
   enableMobileMenuSmall = true,
   enableHeaderShadow = true,
+  unAuth = false,
 }) {
   const userroleid = useSelector((state) => state.auth.userroleid);
   return (
@@ -30,24 +31,30 @@ export function AppHeader({
           <div className="app-header-left">
             <img src={logo} width={"200px"} height={"48px"} alt="logo" />
           </div>
-          <div className="user-title">
-            <h4>
-              {userroleid === 1
-                ? "Admin"
-                : userroleid === 2
-                ? "Customer"
-                : "Candidate"}
-            </h4>
-          </div>
-          <div className="app-header-right">
-            <ChatCounter />
-            {userroleid !== 3 ? (
-              <NotificationCounter></NotificationCounter>
-            ) : (
-              <></>
-            )}
-            <UserBox />
-          </div>
+          {!unAuth ? (
+            <>
+              <div className="user-title">
+                <h4>
+                  {userroleid === 1
+                    ? "Admin"
+                    : userroleid === 2
+                    ? "Customer"
+                    : "Candidate"}
+                </h4>
+              </div>
+              <div className="app-header-right">
+                {userroleid !== 1 && <ChatCounter />}
+                {userroleid !== 3 ? (
+                  <NotificationCounter></NotificationCounter>
+                ) : (
+                  <></>
+                )}
+                <UserBox />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
         </div>
       </CSSTransitionGroup>
     </>
