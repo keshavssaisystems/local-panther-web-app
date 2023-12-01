@@ -103,7 +103,7 @@ export function CreateJobWizard({ type }) {
     });
     getPreviousJobData({
       pageNo: page,
-      searchText: searchData,
+      searchText: data,
       companyId: localStorage.getItem("companyid"),
       searchType: "JobTitle",
     });
