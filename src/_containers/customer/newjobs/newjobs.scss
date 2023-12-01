@@ -1,38 +1,44 @@
-.job-detail-cont{
-    .forms-wizard li:hover {
-        color: #363636;
-    }
-    .forms-wizard li {
-        color: #6c757d;
-    }
-    .forms-wizard-alt .forms-wizard li em {
-        width: 14px;
-        height: 14px;
-        line-height: 14px;
-        text-indent: -999rem;
-        border: #fff solid 2px;
-        margin: 0px auto 0;
-    }
-    .forms-wizard li.form-wizard-step-done::after, .forms-wizard li.form-wizard-step-done::before {
-        margin-top: -13px;
-        background: #2f479b;
-    }
-    .forms-wizard li.form-wizard-step-done em {
-        font-family: "Linearicons-Free";
-        background: #2f479b;
-        overflow: hidden;
-    }
-    .count-details{
-        font-size: 13px;
-    }
-    span {
-        color: var(--Font-dark-grey, #2F2E2E);
-        text-align: center;
-        font-family: Capitana;
-        font-size: 13px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 16px; /* 123.077% */
-        letter-spacing: -0.13px;
-    }
+.job-detail-cont {
+  .forms-wizard li:hover {
+    color: #363636;
+  }
+  .forms-wizard li {
+    color: #6c757d;
+  }
+  .forms-wizard-alt .forms-wizard li em {
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    text-indent: -999rem;
+    border: #fff solid 2px;
+    margin: 0px auto 0;
+  }
+  .forms-wizard li.form-wizard-step-done::after,
+  .forms-wizard li.form-wizard-step-done::before {
+    margin-top: -13px;
+    background: #2f479b;
+  }
+  .forms-wizard li.form-wizard-step-done em {
+    font-family: "Linearicons-Free";
+    background: #2f479b;
+    overflow: hidden;
+  }
+  .count-details {
+    font-size: 13px;
+  }
+  span {
+    color: var(--Font-dark-grey, #2f2e2e);
+    text-align: center;
+    font-family: Capitana;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px; /* 123.077% */
+    letter-spacing: -0.13px;
+  }
+
+  .card-footer {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 }

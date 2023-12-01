@@ -52,7 +52,10 @@ export function UserBox() {
   const personalInfo_temp = localStorage.getItem("profileImage");
   const [profileImg, setProfileImg] = useState("");
   const dispatch = useDispatch();
-  const logout = () => dispatch(authActions.logout());
+  const logout = () => {
+    let userLoginInfoId = localStorage.getItem("userLoginInfoId");
+    dispatch(authActions.logoutThunk(userLoginInfoId));
+  };
   useEffect(() => {
     const detail = JSON.parse(localStorage.getItem("userDetails")) || {};
     setUserDetail({ ...detail });

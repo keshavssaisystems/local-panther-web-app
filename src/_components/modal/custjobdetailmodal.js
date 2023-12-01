@@ -21,7 +21,7 @@ export const CustJobDetailModal = (props) => {
     >
       <ModalHeader toggle={() => props.onClose()}>Job details</ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
-        <CustJobDetail jobDetails={props.data}></CustJobDetail>
+        <CustJobDetail jobDetails={props.data} isModal={true}></CustJobDetail>
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={() => props.onClose()}>
