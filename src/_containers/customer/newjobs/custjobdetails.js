@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Button } from "reactstrap";
+import { Card, Col, Row, Button, CardFooter } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import Loader from "react-loaders";
@@ -7,7 +7,7 @@ import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import "./newjobs.scss";
 import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
 import moment from "moment";
@@ -21,8 +21,16 @@ import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
 import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
+import { ShareSocial } from "react-share-social";
 
-export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
+export function CustJobDetail({
+  jobDetails,
+  type,
+  publishJob,
+  closeJob,
+  isModal = false,
+  isShare = false,
+}) {
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
@@ -371,7 +379,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                       </div>
                     </div>
                   </Col>
-                  {jobDetail.isdraft ? (
+                  {jobDetail.isdraft && !isShare ? (
                     <Col md={4} lg={4} className="right-align">
                       <Button
                         color="primary"
@@ -397,7 +405,8 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                     <></>
                   )}
                   {jobDetail.isdraft === false &&
-                    jobDetail.isclosed === false && (
+                    jobDetail.isclosed === false &&
+                    !isShare && (
                       <Col md={4} lg={4} className="right-align">
                         <Button
                           color="danger"
@@ -410,7 +419,7 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                         </Button>
                       </Col>
                     )}
-                  {jobDetail.isclosed === true && (
+                  {jobDetail.isclosed === true && !isShare && (
                     <Col md={4} lg={4} className="right-align">
                       <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
                         Job closed
@@ -622,6 +631,54 @@ export function CustJobDetail({ jobDetails, type, publishJob, closeJob }) {
                   }
                   type={"list"}
                 />
+              </>
+            ) : (
+              <></>
+            )}
+            {!isModal ? (
+              <CardFooter>
+                Share:{" "}
+                <ShareSocial
+                  url={
+                    window.location.origin +
+                    "/job-detail/" +
+                    window.btoa(encodeURIComponent(jobDetail?.jobid))
+                  }
+                  socialTypes={["linkedin", "facebook", "twitter", "whatsapp"]}
+                  style={{
+                    copyContainer: {
+                      display: "none",
+                    },
+                    root: {
+                      padding: "0px",
+                    },
+                    title: {
+                      padding: "0px",
+                    },
+                  }}
+                />
+              </CardFooter>
+            ) : (
+              <></>
+            )}
+            {isShare ? (
+              <>
+                <CardFooter>
+                  <div
+                    style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}
+                  >
+                    <span className="me-2"> For more details :</span>{" "}
+                    <Link to="/login">
+                      {" "}
+                      <Button color="primary" className="me-2">
+                        Sign in
+                      </Button>
+                    </Link>
+                    <Link to="/registration">
+                      <Button>register</Button>
+                    </Link>
+                  </div>
+                </CardFooter>
               </>
             ) : (
               <></>

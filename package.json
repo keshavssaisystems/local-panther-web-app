@@ -122,6 +122,7 @@
         "react-scroll": "^1.8.4",
         "react-select": "^5.7.4",
         "react-select-search": "^4.1.6",
+        "react-share-social": "^0.1.55",
         "react-simple-maps": "^2.3.0",
         "react-sizeme": "^3.0.2",
         "react-slick": "^0.28.1",
