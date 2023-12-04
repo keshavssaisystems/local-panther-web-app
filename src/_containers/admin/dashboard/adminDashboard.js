@@ -57,9 +57,6 @@ export function AdminDashboard() {
   const statisticsData = useSelector(
     (state) => state.adminDashboard.statisticsData
   );
-  const dashboardGraphData = useSelector(
-    (state) => state.customerDashboard.dashboardGraphData
-  );
   const scheduledInterview = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
