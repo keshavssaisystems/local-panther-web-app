@@ -267,30 +267,9 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
             Additional qualification for the role
           </Label>
           <Col md={4}>
-            {/* <FormGroup>
-              <SkillsFilter
-                id={"mustHave"}
-                name={"mustHave"}
-                label={"Must have"}
-                defaultValue={
-                  prevStep === 3
-                    ? keyQualificationArr1
-                    : prevKeyQualificationArr1
-                }
-                value={prevKeyQualificationArr1}
-                onCallBack={onCallkeyQualification}
-              />
-              {mustHaveValidation === true && (
-                <FormText color="danger">
-                  Please select must have skiils for better recommendations
-                </FormText>
-              )}
-            </FormGroup> */}
-
             <FormGroup>
               <Label for={"mustHave"} className="fw-semi-bold">
                 Must have
-                <span style={{ color: "red" }}>* </span>
               </Label>
 
               <span>
@@ -313,19 +292,9 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
               <AsyncSelect
                 name="mustHave"
                 placeholder="Search to select"
-                // defaultOptions={
-                //   prevStep === 3
-                //     ? keyQualificationArr1
-                //     : prevKeyQualificationArr1
-                // }
                 loadOptions={loadOptions}
                 isMulti={true}
                 styles={customStyles}
-                // defaultValue={
-                //   prevStep === 3
-                //     ? keyQualificationArr1
-                //     : prevKeyQualificationArr1
-                // }
                 value={
                   prevStep === 3
                     ? keyQualificationArr1
@@ -345,7 +314,6 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
             <FormGroup>
               <Label for={"niceToHave"} className="fw-semi-bold">
                 Nice to have
-                <span style={{ color: "red" }}>* </span>
               </Label>
               <span>
                 {searchOptionalText !== "" && optionalskillExist && (
