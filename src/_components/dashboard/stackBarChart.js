@@ -4,37 +4,31 @@ import Chart from "react-apexcharts";
 
 export function StackBarChart({ graphData }) {
   const stackValues = [
-    "Matched candidates",
-    "Liked by customer",
-    "Liked by candidate",
-    "Liked by both",
-    "Accepted by customer",
-    "Accepted by candidate",
-    "Accepted by both",
-    "Rejected by customer",
-    "Rejected by candidate",
+    "Accepted",
+    "Applied",
+    "Interviews",
+    "Jobs",
+    "Matched",
+    "Offers",
+    "Rejected",
   ];
   const stackValuesKey = {
-    "Matched candidates": "matchedcandidate",
-    "Liked by customer": "likedbycustomer",
-    "Liked by candidate": "likedbycandidate",
-    "Liked by both": "likedbyboth",
-    "Accepted by customer": "acceptedbycustomer",
-    "Accepted by candidate": "acceptedbycandidate",
-    "Accepted by both": "acceptedbyboth",
-    "Rejected by customer": "rejectedbycustomer",
-    "Rejected by candidate": "rejectedbycandidate",
+    Accepted: "acceptedcount",
+    Applied: "appliedcount",
+    Interviews: "interviewcount",
+    Jobs: "jobscount",
+    Matched: "matchedcount",
+    Offers: "offerscount",
+    Rejected: "rejectedcount",
   };
   let mainArray = {
-    matchedcandidate: [],
-    likedbycustomer: [],
-    likedbycandidate: [],
-    likedbyboth: [],
-    acceptedbycustomer: [],
-    acceptedbycandidate: [],
-    rejectedbycustomer: [],
-    rejectedbycandidate: [],
-    acceptedbyboth: [],
+    acceptedcount: [],
+    appliedcount: [],
+    interviewcount: [],
+    jobscount: [],
+    matchedcount: [],
+    offerscount: [],
+    rejectedcount: [],
     jobtitle: [],
     jobid: [],
   };
@@ -57,12 +51,11 @@ export function StackBarChart({ graphData }) {
     chart: {
       type: "line",
       height: 380,
-      width: "80%",
-      // stacked: true,
-      // stackType: "100%",
+      width: "90%",
       toolbar: {
         show: false,
       },
+      fontFamily: "Capitana",
     },
     plotOptions: {
       bar: {
@@ -74,22 +67,20 @@ export function StackBarChart({ graphData }) {
       width: 3,
     },
     colors: [
-      "#008FFB",
-      "#00D8B6",
-      "#FEB019",
-      "#FF4560",
-      "#775DD0",
-      "#01BFD6",
-      "#5564BE",
-      "#F7A600",
-      "#EDCD24",
-      "#F74F58",
+      "#26E7A6",
+      "#FEBC3B",
+      "#8B75D7",
+      "#FB6900",
+      "#B44BB0",
+      "#26A0FB",
+      "#FF6178",
     ],
     series: seriesDataArray,
     labels: mainArray["jobtitle"],
     xaxis: {
       labels: {
         show: true,
+        offsetX: 5,
       },
       axisBorder: {
         show: true,
@@ -108,6 +99,9 @@ export function StackBarChart({ graphData }) {
       labels: {
         style: {
           colors: "#78909c",
+        },
+        formatter: (value) => {
+          return value.toFixed(0);
         },
       },
     },
