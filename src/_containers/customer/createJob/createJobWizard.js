@@ -333,7 +333,7 @@ export function CreateJobWizard({ type }) {
                             className="btn-shadow float-start btn-wide btn-pill"
                             outline
                             style={previousBtn ? {} : { display: "none" }}
-                            onClick={previous}
+                            onClick={() => previous()}
                           >
                             Previous
                           </Button>
@@ -343,7 +343,7 @@ export function CreateJobWizard({ type }) {
                             color="primary"
                             className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
                             style={nextBtn ? {} : { display: "none" }}
-                            onClick={next}
+                            onClick={() => next()}
                             disabled={buttonDisable}
                           >
                             {compState === 2
@@ -390,7 +390,7 @@ export function CreateJobWizard({ type }) {
                                 color="primary"
                                 className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
                                 style={nextBtn ? {} : { display: "none" }}
-                                onClick={next}
+                                onClick={() => next()}
                               >
                                 Continue
                               </Button>

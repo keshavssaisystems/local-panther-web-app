@@ -45,34 +45,25 @@ import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
-  const {
-    data,
-    industyList,
-    industryCompanyMapping,
-    loading = false,
-  } = useSelector((state) => state?.adminListing ?? {});
-
-  const { companyDropdownData } = useSelector(
-    (state) => state?.addCustomer ?? {}
-  );
+  const { data } = useSelector((state) => state?.adminListing ?? {});
 
   let title,
     icon,
-    listingTitle,
-    columns = [],
-    searchFilter = [],
-    buttonsList = [];
+    columns = [];
   useEffect(() => {
     dispatch(getRoles());
   }, []);
-
+  const [pageNo, setPageNo] = useState(0);
   const rolesList = useSelector((state) => state.adminListing.rolesList);
+  const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [viewMode, setViewMode] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const [loading, setLoading] = useState(false);
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -219,9 +210,11 @@ export const AdminListing = ({ entity }) => {
     loadData();
   }, [entity]);
 
-  const loadData = () => {
+  const loadData = async () => {
+    setLoading(true);
     let urlParams = {
-      pageNumber: 0,
+      pageNumber: pageNo,
+      pageSize: pageSize,
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -232,7 +225,8 @@ export const AdminListing = ({ entity }) => {
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
   const customStyles = {
     headCells: {
@@ -343,11 +337,13 @@ export const AdminListing = ({ entity }) => {
     CloseModal();
   };
 
-  const onClearSearch = function () {
+  const onClearSearch = async function () {
+    setLoading(true);
     setSearchText("");
 
     let urlParams = {
-      pageNumber: 0,
+      pageNumber: pageNo,
+      pageSize: pageSize,
     };
 
     if (status !== "All") {
@@ -356,13 +352,15 @@ export const AdminListing = ({ entity }) => {
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
-
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
-  const getUsersList = function () {
+  const getUsersList = async function () {
+    setLoading(true);
     let urlParams = {
-      pageNumber: 0,
+      pageNumber: pageNo,
+      pageSize: pageSize,
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -374,15 +372,17 @@ export const AdminListing = ({ entity }) => {
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
-
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
-  const onSelectRole = (roleId) => {
+  const onSelectRole = async (roleId) => {
+    setLoading(true);
     setRoleId(parseInt(roleId));
     let urlParams = {
       userRoleId: roleId,
       pageNumber: 0,
+      pageSize: pageSize,
     };
     if (status !== "All") {
       urlParams.isActive = status;
@@ -390,12 +390,15 @@ export const AdminListing = ({ entity }) => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
-  const onStatusSelect = (check) => {
+  const onStatusSelect = async (check) => {
+    setLoading(true);
     let urlParams = {
-      pageNumber: 0,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
     if (check === "0") {
       setStatus("All");
@@ -414,7 +417,8 @@ export const AdminListing = ({ entity }) => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
   const resetUserPassword = (row) => {
@@ -437,6 +441,39 @@ export const AdminListing = ({ entity }) => {
         type: "success",
       });
     }
+  };
+
+  const handlePerRowsChange = async (pagesize) => {
+    setPageSize(pagesize);
+    getUserData(pagesize, pageNo);
+  };
+
+  const handlePageChange = async (page) => {
+    setPageNo(page);
+    getUserData(pageSize, page);
+  };
+
+  const getUserData = async (pageSize, pageNo) => {
+    setLoading(true);
+
+    let urlParams = {
+      pageSize: pageSize,
+      pageNumber: pageNo,
+    };
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+    await dispatch(getUsers(urlParams));
+
+    setLoading(false);
   };
 
   return (
@@ -537,8 +574,12 @@ export const AdminListing = ({ entity }) => {
                 columns={columns}
                 pagination
                 fixedHeader
-                // fixedHeaderScrollHeight="400px"
+                progressPending={loading}
                 customStyles={customStyles}
+                paginationServer
+                paginationTotalRows={totalRecords}
+                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                onChangePage={(e) => handlePageChange(e)}
               />
             </CardBody>
           </Card>
