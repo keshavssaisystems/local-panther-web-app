@@ -1,5 +1,11 @@
 .chart-fixed-height{
-    height: 330px
+    height: 330px;
+    @media (max-width: 375px){    
+        .ps-2{
+            padding-left: 2.5rem !important;
+        }
+    }
+
 }
 .customer-slider{
     .slick-slider {

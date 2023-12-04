@@ -133,25 +133,24 @@ export function UpcomingInterviewTable({ tableData }) {
     SetShowAlert(data);
   };
   const checkInterview = function (mode, data) {
-    let startDate = getTimezoneDateTime(
-      moment(data.scheduledate).format("YYYY-MM-DD") + "T" + data.starttime,
-      "MM/DD/YYYY HH:mm:ss"
-    );
-    let durationArr =
-      data?.duration !== undefined ? data?.duration.split(" ") : [];
-    let endDateTime = getTimezoneDateTime(
-      moment(startDate).add(durationArr[0], "m"),
-      "MM/DD/YYYY HH:mm:ss"
-    );
+    // let startDate = getTimezoneDateTime(
+    //   moment(data.scheduledate).format("YYYY-MM-DD") + "T" + data.starttime,
+    //   "MM/DD/YYYY HH:mm:ss"
+    // );
+    // let durationArr =
+    //   data?.duration !== undefined ? data?.duration.split(" ") : [];
+    // let endDateTime = getTimezoneDateTime(
+    //   moment(startDate).add(durationArr[0], "m"),
+    //   "MM/DD/YYYY HH:mm:ss"
+    // );
 
-    let endDate = new Date(endDateTime);
+    // let endDate = new Date(endDateTime);
     // Create a Date object using the parsed values
-    const targetDate = new Date(startDate);
+    // const targetDate = new Date(startDate);
     let id = getVideoChannelId(
-      
       data?.jobid,
       data?.scheduleinterviewid,
-      data?.candidateid,
+      data?.candidateid
     );
     // if (targetDate === new Date()) {
     //   if (mode === "phone") {

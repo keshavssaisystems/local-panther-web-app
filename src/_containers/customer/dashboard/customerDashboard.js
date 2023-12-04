@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
-import { Row, Col, Card, CardBody, CardHeader } from "reactstrap";
-import { DonutChart } from "_components/dashboard/donutChart";
+import { Row, Col } from "reactstrap";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
-import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
-import Slider from "react-slick";
 import {
   customerDashboardActions,
   createjobActions,
@@ -27,6 +24,11 @@ export default function CustomerDashboard() {
       )
     );
   };
+  const getDashboardJobsDataCount = async function () {
+    await dispatch(
+      customerDashboardActions.getCustomerDashboardJobsDataCountThunk()
+    );
+  };
   const getDashboardGraphData = async function () {
     await dispatch(
       customerDashboardActions.getCustomerDashboardGraphDataThunk(
@@ -38,6 +40,7 @@ export default function CustomerDashboard() {
     getCompanyDetails();
     getDashboardGraphData();
     getDashboardCounts();
+    getDashboardJobsDataCount();
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
   }, []);
   const dashboardCounts = useSelector(
@@ -46,7 +49,9 @@ export default function CustomerDashboard() {
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
-
+  const dashboardJobsDataCount = useSelector(
+    (state) => state.customerDashboard.dashboardJobsDataCount
+  );
   let cardOptions = [
     {
       title: "Open jobs",
@@ -63,10 +68,10 @@ export default function CustomerDashboard() {
       path: "/scheduled-interview",
     },
     {
-      title: "Liked candidates",
-      count: dashboardCounts.newcandidatelikedcount,
+      title: "Upcoming interview",
+      count: dashboardCounts.upcominginterviewcount,
       className: "primary",
-      icon: "lnr-thumbs-up",
+      icon: "lnr-calendar-full",
       path: "/scheduled-interview",
     },
     {
@@ -97,7 +102,7 @@ export default function CustomerDashboard() {
           </Col>
         </Row>
         <StackBarChart
-          graphData={dashboardGraphData.candidateStatusByJobDtos}
+          graphData={dashboardJobsDataCount.customerDashboardJobDataCountList}
         />
       </div>
     </>
