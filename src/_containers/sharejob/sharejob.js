@@ -22,8 +22,10 @@ export const ShareJobDetails = (props) => {
   return (
     <>
       {" "}
-      <AppHeader unAuth={true} />
-      <div className={!props.authUser ? "share-job-cont" : ""}>
+      <div
+        style={{ maxWidth: "60vw", margin: "auto" }}
+        className={!props.authUser ? "share-job-cont" : ""}
+      >
         {shareJobDetail.length > 0 ? (
           <>
             <>

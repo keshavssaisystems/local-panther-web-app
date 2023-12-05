@@ -70,6 +70,7 @@ import { ShareJobDetails } from "_containers/sharejob/sharejob";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
+  const [hideSidebar, setHideSidebar] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -98,8 +99,19 @@ export function App() {
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
+  const location = useLocation();
   history.location = useLocation();
-
+  useEffect(() => {
+    if (
+      location.pathname !== "" &&
+      (location.pathname.indexOf("job-detail") !== -1 ||
+        location.pathname.indexOf("video-screen") !== -1)
+    ) {
+      setHideSidebar(true);
+    } else {
+      setHideSidebar(false);
+    }
+  }, [location]);
   const renderRoutes = (userroleid) => {
     if (userroleid === 1) {
       return (
@@ -487,8 +499,9 @@ export function App() {
   return (
     <>
       {authUser && <AppHeader />}
+      {!authUser && hideSidebar && <AppHeader unAuth={true} />}
       <div className={authUser ? `app-main` : ""}>
-        {authUser && <AppSidebar />}
+        {authUser && !hideSidebar && <AppSidebar />}
         <div className={authUser ? `app-main__outer` : ""}>
           <div className="app-main__inner">
             <ToastContainer />
@@ -553,7 +566,10 @@ export function App() {
               {/* for firebase */}
               {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
               {/* for zoom */}
-              <Route path="/video-screen/*" element={<ZoomVideoScreen />} />
+              <Route
+                path="/video-screen/*"
+                element={<ZoomVideoScreen authUser={authUser} />}
+              />
               <Route
                 path="/job-detail/:id"
                 element={<ShareJobDetails authUser={authUser} />}
@@ -561,6 +577,7 @@ export function App() {
             </Routes>
           </div>
           {authUser && <AppFooter />}
+          {!authUser && hideSidebar && <AppFooter />}
         </div>
       </div>
     </>
