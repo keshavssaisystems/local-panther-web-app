@@ -13,6 +13,7 @@ import {
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
+import moment from "moment/moment";
 
 export default function CustomerDashboard() {
   const dispatch = useDispatch();
@@ -28,7 +29,9 @@ export default function CustomerDashboard() {
   };
   const getDashboardGraphData = async function () {
     await dispatch(
-      customerDashboardActions.getCustomerDashboardGraphDataThunk()
+      customerDashboardActions.getCustomerDashboardGraphDataThunk(
+        moment.utc().format("YYYY-MM-DDTHH:mm:ss")
+      )
     );
   };
   useEffect(() => {

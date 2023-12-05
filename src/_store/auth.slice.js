@@ -75,6 +75,23 @@ export const generateToken = createAsyncThunk(
   }
 );
 
+//Get share job details
+export const getShareJobDetails = createAsyncThunk(
+  `${name}/getShareJobDetails`,
+  async (jobid) => {
+    const SHARE_JD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/GetShareJobDetails/${jobid}`;
+    return await fetchWrapper.get(SHARE_JD_END_POINT);
+  }
+);
+
+export const logoutThunk = createAsyncThunk(
+  `${name}/logoutThunk`,
+  async (userLoginInfoId) => {
+    const LOGOUT_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/Logout/${userLoginInfoId}`;
+    return await fetchWrapper.put(LOGOUT_END_POINT);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -88,6 +105,7 @@ const authSlice = createSlice({
       : "",
     token: localStorage.getItem("token") ? localStorage.getItem("token") : "",
     error: null,
+    shareJobDetail: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -100,6 +118,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userDetails");
       localStorage.removeItem("userroleid");
       localStorage.removeItem("pushnotification");
+      localStorage.removeItem("userLoginInfoId");
       localStorage.clear();
 
       history.navigate("/login");
@@ -111,7 +130,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
-      const { token, refreshToken, menuDtoList = [] } = data;
+      const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
       state.menuList = menuDtoList;
       state.user = data;
       state.token = token;
@@ -121,6 +140,7 @@ const authSlice = createSlice({
       const decodedData = jwtDecode(token);
       localStorage.setItem("userId", decodedData.UserId);
       localStorage.setItem("profileImage", decodedData.Profilephotopath);
+      localStorage.setItem("userLoginInfoId", userLoginInfoId);
       localStorage.setItem(
         "userroleid",
         decodedData.role.toLowerCase() === "admin"
@@ -206,6 +226,40 @@ const authSlice = createSlice({
     [registerCustomer.rejected]: (state, action) => {
       state.error = action.error;
     },
+
+    [getShareJobDetails.pending]: (state, { payload }) => {
+      state.shareJobDetail = [];
+    },
+    [getShareJobDetails.fulfilled]: (state, { payload = {} }) => {
+      let data = [];
+      data.push(payload.data);
+      state.shareJobDetail = data;
+    },
+    [getShareJobDetails.rejected]: (state, action) => {
+      // do nothing
+    },
+
+    [logoutThunk.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [logoutThunk.fulfilled]: (state, { payload = {} }) => {
+      state.user = {};
+      state.token = null;
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToekn");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userDetails");
+      localStorage.removeItem("userroleid");
+      localStorage.removeItem("pushnotification");
+      localStorage.removeItem("userLoginInfoId");
+      localStorage.clear();
+
+      history.navigate("/login");
+    },
+    [logoutThunk.rejected]: (state, action) => {
+      // do nothing
+    },
   },
 });
 
@@ -220,6 +274,8 @@ export const authActions = {
   userRegisterThunkNew,
   generateToken,
   registerCustomer,
+  getShareJobDetails,
+  logoutThunk,
 };
 
 export const authReducer = authSlice.reducer;

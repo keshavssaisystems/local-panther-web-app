@@ -1,14 +1,43 @@
 import React, { useState, useEffect } from "react";
-import PageTitle from "../../_components/common/pagetitle";
-import titlelogo from "../../assets/utils/images/candidate.svg";
-import { Alerts } from "_containers/candidate/dashboard/alerts";
-import { useDispatch } from "react-redux";
-import { candidateDashboardActions } from "_store";
 
-export const ShareJobDetails = () => {
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "_store";
+import { CustJobDetail } from "_containers/customer/newjobs/custjobdetails";
+import { useParams } from "react-router-dom";
+import { AppHeader } from "_components/_layout/AppHeader";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./sharejob.scss";
+
+export const ShareJobDetails = (props) => {
   const dispatch = useDispatch();
-
-  useEffect(() => {}, []);
-
-  return <div>Share Job</div>;
+  const { id } = useParams();
+  const shareJobDetail = useSelector((state) => state.auth.shareJobDetail);
+  console.log(shareJobDetail);
+  useEffect(() => {
+    getJobDetail();
+  }, []);
+  const getJobDetail = () => {
+    dispatch(authActions.getShareJobDetails(id));
+  };
+  return (
+    <>
+      {" "}
+      <AppHeader unAuth={true} />
+      <div className={!props.authUser ? "share-job-cont" : ""}>
+        {shareJobDetail.length > 0 ? (
+          <>
+            <>
+              <CustJobDetail
+                jobDetails={shareJobDetail}
+                isShare={true}
+                isModal={true}
+              ></CustJobDetail>
+            </>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
+    </>
+  );
 };
