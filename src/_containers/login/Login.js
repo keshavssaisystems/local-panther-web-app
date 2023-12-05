@@ -205,13 +205,16 @@ export function Login() {
 
                             <Button
                               disabled={isSubmitting}
-                              className="login-btn float-end"
+                              color="primary"
+                              className="btn-text"
+                              size="lg"
                             >
                               {isSubmitting && (
                                 <span className="spinner-border spinner-border-sm me-1"></span>
                               )}
                               <span className="btn-text">Sign in</span>
                             </Button>
+                            <div></div>
                           </div>
                         </FormGroup>
                       </Col>
