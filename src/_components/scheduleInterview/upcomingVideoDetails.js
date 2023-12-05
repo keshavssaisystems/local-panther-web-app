@@ -247,6 +247,12 @@ export function UpcomingVideoDetails({
             ? "Rejected"
             : "No response"}
         </div>
+        {interviewDetails?.interviewstatusid !== 0 && (
+          <div className="p-custom">
+            <h6 className="fw-bold mb-0 job-heading">Interview feedback</h6>
+            {interviewDetails?.interviewfeedback}
+          </div>
+        )}
         {showInviteCard === true && (
           <div className="mt-2 mb-2">
             <InviteToInterviewCard
