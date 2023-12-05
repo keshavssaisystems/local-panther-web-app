@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import "./appheader.scss";
 import { ChatCounter } from "./Components/chatCounter";
 import { NotificationCounter } from "./Components/notificationCounter";
+import { Link } from "react-router-dom";
+
 export function AppHeader({
   headerBackgroundColor = "white",
   enableMobileMenuSmall = true,
@@ -29,7 +31,9 @@ export function AppHeader({
           })}
         >
           <div className="app-header-left">
-            <img src={logo} width={"200px"} height={"48px"} alt="logo" />
+            <Link to="/">
+              <img src={logo} width={"200px"} height={"48px"} alt="logo" />
+            </Link>
           </div>
           {!unAuth ? (
             <>
