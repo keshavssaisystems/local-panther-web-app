@@ -197,17 +197,8 @@ const adminListingSlice = createSlice({
     [getCompanies.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.data = data?.companyDetailsList?.map((item) => {
-        const newContact = item?.contactphonenumber?.match(
-          /(\d{3})(\d{3})(\d{4})/
-        );
-        return {
-          ...item,
-          contactphonenumber: newContact
-            ? "(" + newContact[1] + ")-" + newContact[2] + "-" + newContact[3]
-            : null,
-        };
-      });
+      state.data = data?.companyDetailsList;
+      state.totalRecords = data.totalRows;
     },
     [getCompanies.rejected]: (state, action) => {
       state.loading = false;
@@ -240,6 +231,7 @@ const adminListingSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.data = data?.customerDetailsList;
+      state.totalRecords = data.totalRows;
     },
     [getCustomers.rejected]: (state, action) => {
       state.loading = false;
@@ -253,6 +245,7 @@ const adminListingSlice = createSlice({
       const { data } = payload;
       state.loading = false;
       state.data = data?.userList;
+      state.totalRecords = data.totalRows;
     },
     [getUsers.rejected]: (state, action) => {
       state.loading = false;

@@ -24,12 +24,23 @@ export const getCustomerDashboardGraphDataThunk = createAsyncThunk(
   }
 );
 
+// getCustomerDashboardJobsDataCountThunk thunk
+export const getCustomerDashboardJobsDataCountThunk = createAsyncThunk(
+  `${name}/getCustomerDashboardJobsDataCountThunk`,
+  async () => {
+    let UserID = localStorage.getItem("userId");
+    const DASHBOARD_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CustomerDashboard/GetCustomerDashboardJobsDataCount?userId=${UserID}`;
+    return await fetchWrapper.get(DASHBOARD_END_POINT);
+  }
+);
+
 // Create the slice
 const customerDashboardSlice = createSlice({
   name,
   initialState: {
     dashboardCounts: [],
     dashboardGraphData: [],
+    dashboardJobsDataCount: [],
     loading: false,
   },
   reducers: {},
@@ -57,6 +68,17 @@ const customerDashboardSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getCustomerDashboardJobsDataCountThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCustomerDashboardJobsDataCountThunk.fulfilled]: (state, action) => {
+      state.dashboardJobsDataCount = action.payload.data;
+      state.loading = false;
+    },
+    [getCustomerDashboardJobsDataCountThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -65,6 +87,7 @@ export const customerDashboardActions = {
   ...customerDashboardSlice.actions,
   getCustomerDashboardThunk,
   getCustomerDashboardGraphDataThunk,
+  getCustomerDashboardJobsDataCountThunk,
 };
 
 export const customerDashboardReducer = customerDashboardSlice.reducer;

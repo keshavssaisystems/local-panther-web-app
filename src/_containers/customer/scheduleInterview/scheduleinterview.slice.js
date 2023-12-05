@@ -187,6 +187,7 @@ const scheduleInterviewSlice = createSlice({
           elementObject = element;
           let interviewstatusid = {
             interviewstatusid: action?.payload?.interviewstatusid,
+            interviewfeedback: action?.payload?.interviewfeedback,
           };
           elementObject = {
             ...elementObject,
@@ -205,6 +206,7 @@ const scheduleInterviewSlice = createSlice({
           elementObject = element;
           let interviewstatusid = {
             interviewstatusid: action?.payload?.interviewstatusid,
+            interviewfeedback: action?.payload?.interviewfeedback,
           };
           elementObject = {
             ...elementObject,
@@ -223,6 +225,7 @@ const scheduleInterviewSlice = createSlice({
           elementObject = element;
           let interviewstatusid = {
             interviewstatusid: action?.payload?.interviewstatusid,
+            interviewfeedback: action?.payload?.interviewfeedback,
           };
           elementObject = {
             ...elementObject,
