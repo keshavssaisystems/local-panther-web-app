@@ -417,25 +417,45 @@ export function App() {
           />
           <Route
             path="/job-list-matched"
-            element={<CandidateList type={"matched"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"matched"} />
+              </PrivateRoute>
+            }
           />
 
           <Route
             path="/job-list-interview"
-            element={<CandidateList type={"interview"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"interview"} />
+              </PrivateRoute>
+            }
           />
           <Route
             path="/job-list-accepted"
-            element={<CandidateList type={"accepted"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"accepted"} />
+              </PrivateRoute>
+            }
           />
 
           <Route
             path="/job-list-offers"
-            element={<CandidateList type={"offers"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"offers"} />
+              </PrivateRoute>
+            }
           />
           <Route
             path="/job-list-rejected"
-            element={<CandidateList type={"rejected"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"rejected"} />
+              </PrivateRoute>
+            }
           />
 
           <Route
@@ -465,7 +485,11 @@ export function App() {
 
           <Route
             path="/candidate-profile/:id"
-            element={<CandidateProfile></CandidateProfile>}
+            element={
+              <PrivateRoute>
+                <CandidateProfile></CandidateProfile>
+              </PrivateRoute>
+            }
           />
           <Route
             path="/calendar"

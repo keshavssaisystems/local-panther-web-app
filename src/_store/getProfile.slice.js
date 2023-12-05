@@ -142,6 +142,7 @@ const getProfileSlice = createSlice({
           additionalinformation: filter_data.additionalinformation,
 
           candidateid: 0,
+          jobprofile: filter_data.jobprofile,
           firstname: filter_data.firstname,
           lastname: filter_data.lastname,
           genderid: filter_data.genderid,

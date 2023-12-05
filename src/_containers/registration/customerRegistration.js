@@ -120,9 +120,9 @@ export function CustomerRegistration() {
       .max(30, "Password can be at most 30 characters"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Confirm Password is required")
-      .min(4, "Confirm Password must be at least 4 characters")
-      .max(30, "Confirm Password can be at most 30 characters"),
+      .required("Confirm password is required")
+      .min(4, "Confirm password must be at least 4 characters")
+      .max(30, "Confirm password can be at most 30 characters"),
 
     cityid: Yup.string().required("City, State is required"),
     stateid: Yup.string(),
@@ -784,7 +784,7 @@ export function CustomerRegistration() {
           <Col md={6}>
             <FormGroup>
               <Label for="confirmPassword" className="input-label">
-                Confirm Password <span className="text-danger">*</span>
+                Confirm password <span className="text-danger">*</span>
               </Label>
               <InputGroup>
                 <input
