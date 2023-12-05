@@ -122,7 +122,7 @@ export const Skills = () => {
               <Button
                 // outline
                 size="sm"
-                title="Accept skill"
+                title="Approve skill"
                 className="btn-icon"
                 color="success"
                 onClick={() => onApprove(row, true)}
@@ -207,7 +207,8 @@ export const Skills = () => {
     setOpenModal(true);
   };
 
-  const getSkillsList = function () {
+  const getSkillsList = async function () {
+    setLoading(true);
     let urlParams = {
       pageSize: 1000,
       pageNumber: 1,
@@ -220,7 +221,8 @@ export const Skills = () => {
       urlParams.skillStatusId = status;
     }
 
-    dispatch(getSkills(urlParams));
+    await dispatch(getSkills(urlParams));
+    setLoading(false);
   };
 
   const onApprove = (row, check) => {
@@ -249,10 +251,11 @@ export const Skills = () => {
     postData(payload, payload.skillid);
   };
 
-  const onStatusSelect = (check) => {
+  const onStatusSelect = async (check) => {
+    setLoading(true);
     let urlParams = {
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
     if (check === "0") {
       setStatus("All");
@@ -273,15 +276,17 @@ export const Skills = () => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    dispatch(getSkills(urlParams));
+    await dispatch(getSkills(urlParams));
+    setLoading(false);
   };
 
-  const onClearSearch = function () {
+  const onClearSearch = async function () {
+    setLoading(true);
     setSearchText("");
 
     let urlParams = {
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
 
     if (status === 1) {
@@ -298,7 +303,8 @@ export const Skills = () => {
       setStatus(2);
     }
 
-    dispatch(getSkills(urlParams));
+    await dispatch(getSkills(urlParams));
+    setLoading(false);
   };
 
   const showSweetAlert = ({ title, type }) => {
@@ -489,8 +495,8 @@ export const Skills = () => {
                 responsive
                 paginationServer
                 paginationTotalRows={totalRecords}
-                onChangeRowsPerPage={handlePerRowsChange}
-                onChangePage={handlePageChange}
+                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                onChangePage={(e) => handlePageChange(e)}
               />
             </CardBody>
           </Card>

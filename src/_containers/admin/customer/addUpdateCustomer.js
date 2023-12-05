@@ -36,6 +36,8 @@ export const AddUpdateCustomer = ({
 
   const [lastNameValidation, setLastNameValidation] = useState(false);
   const [PrefixValidation, setPrefixValidation] = useState(false);
+  const [prefixMinLengthValidation, setPrefixMinLengthValidation] =
+    useState(false);
   const [emailValidation, setEmailValidation] = useState(false);
   const [locationValidation, setLocationValidation] = useState(false);
   const companiesList = useSelector((state) => state.dropdown.companyList);
@@ -81,6 +83,11 @@ export const AddUpdateCustomer = ({
       if (data.prefix === "") {
         setPrefixValidation(true);
       } else {
+        if (data.prefix.length < 2) {
+          setPrefixMinLengthValidation(true);
+        } else {
+          setPrefixMinLengthValidation(false);
+        }
         setPrefixValidation(false);
       }
     } else if (check === "company") {
@@ -303,6 +310,12 @@ export const AddUpdateCustomer = ({
                   {PrefixValidation && save && (
                     <FormText color="danger">Please enter prefix</FormText>
                   )}
+
+                  {prefixMinLengthValidation && !PrefixValidation && (
+                    <FormText color="danger">
+                      Please enter minimum 2 characters
+                    </FormText>
+                  )}
                 </FormGroup>
               </Col>
 
@@ -361,6 +374,7 @@ export const AddUpdateCustomer = ({
                     className={`form-control placeholder-name ${
                       emailValidation ? "is-invalid" : ""
                     }`}
+                    disabled={isEdit}
                     maxLength={70}
                     onInput={(e) => handleInputChange(e, "email")}
                   />

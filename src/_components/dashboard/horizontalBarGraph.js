@@ -67,13 +67,13 @@ export function HorizonatalBarGraph({ graphData }) {
       <Card className="mb-3 chart-fixed-height">
         <CardBody className="p-0">
           <Row>
-            <Col md={1} className="me-2">
+            <Col md={1} sm={1} xs={1}>
               <div className="icon-wrapper rounded-circle mt-3 ms-3">
                 <div className={"icon-wrapper-bg bg-dark"} />
                 <i className={"lnr-users mb-1 text-dark"} />
               </div>
             </Col>
-            <Col>
+            <Col md={11} sm={11} xs={11} className="ps-2">
               <div className="card-header-title font-size-lg mt-3 ms-4 text-capitalize fw-normal">
                 Candidate's
               </div>

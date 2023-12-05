@@ -459,6 +459,7 @@ export function ScheduleInterview() {
         allInterviewList: allInterviews,
         scheduleinterviewid: scheduleinterviewid,
         interviewstatusid: event.interviewstatusid,
+        interviewfeedback: event.interviewfeedback,
       })
     );
   };
