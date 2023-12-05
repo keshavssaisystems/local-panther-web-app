@@ -605,7 +605,7 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="jobprofile" className="input-label">
-                            Job Profile <span className="text-danger">*</span>
+                            Job profile <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
@@ -811,7 +811,7 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="confirmPassword" className="input-label">
-                            Confirm Password{" "}
+                            Confirm password{" "}
                             <span className="text-danger">*</span>
                           </Label>
                           <InputGroup>

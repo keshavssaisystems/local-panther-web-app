@@ -83,6 +83,7 @@ function personalInfoInsertActions() {
         isreadytoworkimmediately,
         isactive,
         userid,
+        jobprofile,
       }) =>
         await fetchWrapper.put(`${baseUrl}/api/Candidate/${candidateid}`, {
           candidateid,
@@ -102,6 +103,7 @@ function personalInfoInsertActions() {
           isreadytoworkimmediately,
           isactive,
           userid,
+          jobprofile,
         })
     );
   }

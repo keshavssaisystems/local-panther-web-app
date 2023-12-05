@@ -237,7 +237,7 @@ export function Login() {
                                 <CardTitle>Error</CardTitle>
 
                                 <SweetAlert
-                                  title="Invalid Credentials"
+                                  title={authError.message}
                                   type="error"
                                   onConfirm={() => setError(false)}
                                 />
