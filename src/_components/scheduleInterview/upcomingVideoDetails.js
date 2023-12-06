@@ -10,7 +10,6 @@ import {
   UncontrolledButtonDropdown,
   Card,
   CardBody,
-  ButtonGroup,
   ModalHeader,
   ModalBody,
   Modal,
@@ -52,7 +51,7 @@ export function UpcomingVideoDetails({
     if (oldInterviewId !== interviewId) {
       setFeedbackModal(false);
     }
-  }, [interviewId]);
+  }, [interviewId, oldInterviewId]);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
@@ -158,6 +157,11 @@ export function UpcomingVideoDetails({
   const downloadInterviewGuide = () => {
     window.open(interviewGuideLink[0].name, "_blank");
   };
+  let suggestedJson =
+    interviewDetails?.suggestedquestion !== ""
+      ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
+      : "";
+  let suggestedQuestionArray = suggestedJson?.questions?.split("\n");
   return (
     <>
       <CardBody>
@@ -181,16 +185,6 @@ export function UpcomingVideoDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  {/* <Button
-                    outline
-                    size="sm"
-                    className="mb-2 mr-2 btn-transition"
-                    color="primary"
-                  >
-                    {" "}
-                    Message{" "}
-                  </Button> */}
-
                   <Button
                     outline
                     size="sm"
@@ -204,17 +198,6 @@ export function UpcomingVideoDetails({
                 </Col>
               ) : (
                 <></>
-                // <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-                //   <Button
-                //     outline
-                //     size="sm"
-                //     className="mb-2 mr-2 btn-transition"
-                //     color="primary"
-                //   >
-                //     {" "}
-                //     Message{" "}
-                //   </Button>
-                // </Col>
               )}
             </div>
           </div>
@@ -483,6 +466,22 @@ export function UpcomingVideoDetails({
             </p>
           )}
         </div>
+        {interviewDetails?.suggestedquestion !== "" && (
+          <div className="p-3 suggested-question">
+            <h6 className="fw-bold">Suggested Questions</h6>
+            {suggestedQuestionArray?.length > 0 &&
+              suggestedQuestionArray?.map((suggestedQuestion) => (
+                <>
+                  <p className="mb-1">{suggestedQuestion}</p>
+                </>
+              ))}
+            {suggestedQuestionArray?.length === 0 && (
+              <p className="mb-0 ">
+                <i> - No suggested question added</i>
+              </p>
+            )}
+          </div>
+        )}
         <div className="divider" />
         <div className="d-block text-center mb-1">
           <h6 className="fw-bold">

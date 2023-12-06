@@ -267,6 +267,7 @@ export function CandidateSkills(props) {
         };
       });
       setOptions(filter_data);
+      return filter_data;
     } else {
       setSearchText("");
       setOptions([]);

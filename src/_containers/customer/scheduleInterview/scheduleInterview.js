@@ -626,7 +626,7 @@ export function ScheduleInterview() {
             )}
             {toggleVar === "upcoming" && (
               <Row>
-                <Col lg="4">
+                <Col md={4} lg="4">
                   <UpcomingCard
                     upcomingList={upcomingInterviews.scheduledInterviewList}
                     selectedInterview={selectedClass}
@@ -638,7 +638,7 @@ export function ScheduleInterview() {
                     onPageChange={onPageChange}
                   />
                 </Col>
-                <Col lg="8">
+                <Col md={8} lg="8">
                   <UpcomingDetail
                     interviewDetails={
                       selectedJobData[0] === undefined

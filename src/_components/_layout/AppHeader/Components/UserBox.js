@@ -54,7 +54,11 @@ export function UserBox() {
   const dispatch = useDispatch();
   const logout = () => {
     let userLoginInfoId = localStorage.getItem("userLoginInfoId");
-    dispatch(authActions.logoutThunk(userLoginInfoId));
+    if (userLoginInfoId) {
+      dispatch(authActions.logoutThunk(userLoginInfoId));
+    } else {
+      dispatch(authActions.logout());
+    }
   };
   useEffect(() => {
     const detail = JSON.parse(localStorage.getItem("userDetails")) || {};

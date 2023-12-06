@@ -32,7 +32,6 @@ import {
   HiringManager,
   CandidateReport,
   IncompleteCandidateProfile,
-  PartiallyFilledJobs,
   AdminCalendar,
   JobsWithoutMatchedCandidates,
   CandidateWithoutMatchedJobs,
@@ -54,7 +53,6 @@ import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 import { messaging } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
-import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
 
@@ -418,25 +416,45 @@ export function App() {
           />
           <Route
             path="/job-list-matched"
-            element={<CandidateList type={"matched"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"matched"} />
+              </PrivateRoute>
+            }
           />
 
           <Route
             path="/job-list-interview"
-            element={<CandidateList type={"interview"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"interview"} />
+              </PrivateRoute>
+            }
           />
           <Route
             path="/job-list-accepted"
-            element={<CandidateList type={"accepted"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"accepted"} />
+              </PrivateRoute>
+            }
           />
 
           <Route
             path="/job-list-offers"
-            element={<CandidateList type={"offers"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"offers"} />
+              </PrivateRoute>
+            }
           />
           <Route
             path="/job-list-rejected"
-            element={<CandidateList type={"rejected"} />}
+            element={
+              <PrivateRoute>
+                <CandidateList type={"rejected"} />
+              </PrivateRoute>
+            }
           />
 
           <Route
@@ -466,7 +484,11 @@ export function App() {
 
           <Route
             path="/candidate-profile/:id"
-            element={<CandidateProfile></CandidateProfile>}
+            element={
+              <PrivateRoute>
+                <CandidateProfile></CandidateProfile>
+              </PrivateRoute>
+            }
           />
           <Route
             path="/calendar"

@@ -47,6 +47,13 @@ export function StackBarChart({ graphData }) {
       seriesDataArray.push(seriesData);
     });
   }
+  let wrappedTitle = [];
+  if (mainArray["jobtitle"]?.length > 0) {
+    mainArray["jobtitle"].forEach((title) => {
+      let wrapTitle = title.split(" ");
+      wrappedTitle.push(wrapTitle);
+    });
+  }
   let baroptions = {
     chart: {
       type: "line",
@@ -76,11 +83,11 @@ export function StackBarChart({ graphData }) {
       "#FF6178",
     ],
     series: seriesDataArray,
-    labels: mainArray["jobtitle"],
+    labels: wrappedTitle,
     xaxis: {
       labels: {
         show: true,
-        offsetX: 5,
+        rotate: 0,
       },
       axisBorder: {
         show: true,

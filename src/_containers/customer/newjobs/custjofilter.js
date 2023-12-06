@@ -36,7 +36,7 @@ export const CustJobFilter = (props) => {
         <Card className="main-card mb-3 card-filter">
           <CardBody>
             <Row>
-              <Col>
+              <Col lg={3} md={6}>
                 <Form onSubmit={(e) => getFilterValue(e)}>
                   <InputGroup>
                     <Input
@@ -68,9 +68,9 @@ export const CustJobFilter = (props) => {
                   </InputGroup>
                 </Form>
               </Col>
-              <Col></Col>
-              <Col></Col>
-              <Col>
+              <Col lg={3} md={1}></Col>
+              <Col lg={3} md={1}></Col>
+              <Col lg={3} md={4}>
                 <Input
                   name="jobStatus"
                   type="select"

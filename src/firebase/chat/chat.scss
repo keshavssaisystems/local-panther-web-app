@@ -110,3 +110,19 @@ color: black;
         font-weight: normal;
     }
 }
+
+@media (max-width: 768px) {    
+    .app-inner-layout__sidebar{
+        max-width: 260px;
+    }
+    .width-full{
+        width: 95%;
+    }
+    .chat-box-area{
+        height: 595px !important;
+    }
+    .scroll-area-lg {
+        height: 562px !important;
+        bottom: 0;
+    }
+}

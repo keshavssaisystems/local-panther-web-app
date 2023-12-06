@@ -108,6 +108,7 @@ export function PersonalInformation(props) {
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
     let data = {
+      jobprofile: selectedCandidate.personalInfo.jobprofile,
       firstname: selectedCandidate.personalInfo.firstname,
       lastname: selectedCandidate.personalInfo.lastname,
       email: selectedCandidate.personalInfo.email,
@@ -319,10 +320,12 @@ export function PersonalInformation(props) {
     }
 
     if (
-      new_data.firstname == "" ||
-      new_data.lastname == "" ||
-      new_data.phonenumber == "" ||
-      new_data.email == "" ||
+      new_data.jobprofile === "" ||
+      !new_data.jobprofile ||
+      new_data.firstname === "" ||
+      new_data.lastname === "" ||
+      new_data.phonenumber === "" ||
+      new_data.email === "" ||
       new_data.cityid == 0
     ) {
       return;
@@ -346,6 +349,7 @@ export function PersonalInformation(props) {
         address: new_data.address,
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
+        jobprofile: new_data.jobprofile,
       };
 
       let response = await dispatch(
@@ -464,14 +468,15 @@ export function PersonalInformation(props) {
   const onHandleInputChange = function (check, data) {
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
-
-    if (check == "firstname") {
+    if (check === "jobprofile") {
+      new_data.jobprofile = data;
+    } else if (check === "firstname") {
       new_data.firstname = data;
-    } else if (check == "lastname") {
+    } else if (check === "lastname") {
       new_data.lastname = data;
-    } else if (check == "address") {
+    } else if (check === "address") {
       new_data.address = data;
-    } else if (check == "email") {
+    } else if (check === "email") {
       new_data.email = data;
 
       if (!new_data.email.match(emailRegex)) {
@@ -479,20 +484,20 @@ export function PersonalInformation(props) {
       } else {
         errors.emailError = false;
       }
-    } else if (check == "phonenumber") {
+    } else if (check === "phonenumber") {
       new_data.phonenumber = data;
       if (!new_data.phonenumber.match(phoneRegExp)) {
         errors.phoneError = true;
       } else {
         errors.phoneError = false;
       }
-    } else if (check == "zip") {
+    } else if (check === "zip") {
       new_data.zipcode = data;
-    } else if (check == "authorization") {
+    } else if (check === "authorization") {
       new_data.employmenteligiblity = data;
-    } else if (check == "work") {
+    } else if (check === "work") {
       new_data.isreadytoworkimmediately = !new_data.isreadytoworkimmediately;
-    } else if (check == "city") {
+    } else if (check === "city") {
       let new_array = [
         {
           value: data.value,
@@ -510,7 +515,7 @@ export function PersonalInformation(props) {
       ];
 
       new_data.state = obj;
-    } else if (check == "country") {
+    } else if (check === "country") {
       let new_array = [
         {
           value: data.value,
@@ -645,9 +650,11 @@ export function PersonalInformation(props) {
                               " " +
                               selectedCandidate.personalInfo.lastname}
                           </strong>
-                          <p className="widget-description text-focus content-text mt-0">
-                            {selectedCandidate.personalInfo.position}
-                          </p>
+                          {selectedCandidate.personalInfo.jobprofile && (
+                            <p className="widget-description text-focus content-text mt-0">
+                              {selectedCandidate.personalInfo.jobprofile}
+                            </p>
+                          )}
                           <p className="candidate-label mt-0 mb-0">
                             {selectedCandidate.personalInfo.organization !=
                               "Not Working" &&
@@ -826,6 +833,37 @@ export function PersonalInformation(props) {
             <ModalBody>
               {getResponse ? (
                 <Form onSubmit={(evt) => onSubmit(evt)}>
+                  <Row className="mb-3">
+                    <Col className="col-6">
+                      <Label for="firstname" className="fw-semi-bold">
+                        Job profile <span className="required-icon">*</span>
+                      </Label>
+                      <input
+                        type="text"
+                        name="jobProfile"
+                        id="jobProfile"
+                        placeholder="Enter job profile"
+                        maxLength={50}
+                        value={getResponse.jobprofile}
+                        onInput={(evt) =>
+                          onHandleInputChange("jobprofile", evt.target.value)
+                        }
+                        className={`field-input placeholder-text form-control ${
+                          getResponse.jobprofile === "" ||
+                          !getResponse.jobprofile
+                            ? "is-invalid error-text"
+                            : ""
+                        }`}
+                      />
+                      <div className="invalid-feedback">
+                        {getResponse.jobprofile === "" ||
+                        !getResponse.jobprofile
+                          ? "Job profile is required"
+                          : ""}
+                      </div>
+                    </Col>
+                  </Row>
+
                   <Row>
                     <div className="mb-1 fw-bold">Contact</div>
                     <hr />
@@ -855,7 +893,7 @@ export function PersonalInformation(props) {
                         />
                         <div className="invalid-feedback">
                           {getResponse.firstname == ""
-                            ? "Firstname is required"
+                            ? "First name is required"
                             : ""}
                         </div>
                       </FormGroup>
@@ -882,7 +920,7 @@ export function PersonalInformation(props) {
 
                         <div className="invalid-feedback">
                           {getResponse.lastname == ""
-                            ? "Lastname is required"
+                            ? "Last name is required"
                             : ""}
                         </div>
                       </FormGroup>
