@@ -10,7 +10,6 @@ import {
   UncontrolledButtonDropdown,
   Card,
   CardBody,
-  ButtonGroup,
   ModalHeader,
   ModalBody,
   Modal,
@@ -52,7 +51,7 @@ export function UpcomingVideoDetails({
     if (oldInterviewId !== interviewId) {
       setFeedbackModal(false);
     }
-  }, [interviewId]);
+  }, [interviewId, oldInterviewId]);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
@@ -158,20 +157,7 @@ export function UpcomingVideoDetails({
   const downloadInterviewGuide = () => {
     window.open(interviewGuideLink[0].name, "_blank");
   };
-  let suggestedJson = {
-    candidate_position: [
-      "AIML engineer",
-      "IT Project Manager",
-      "Technical Executive",
-      "Data Scientist",
-    ],
-    candidate_skills:
-      "Deep Learning,Amazon Textract,NumPy (Python Package),Large Language Modeling,Machine Learning,Generative Adversarial Networks,ActivePython (Python Package),Natural Language Processing,Pandas (Python Package),Google APIs,Apache OpenNLP,MongoDB,Hugging Face Transformers,Azure Cognitive Services,Computer Vision,Data Analysis,Data Engineering,DevOps,Jupyter Notebook,MySQL,Github,Azure DevOps,Information Technology,Leadership,Problem Solving,Project Management,Resource Management,Risk Management,Budget Management,Power BI,IT Governance",
-    job_position: "new test publish",
-    job_skills: ".NET Development",
-    questions:
-      "1. Can you explain your experience with Deep Learning and its applications?\n2. Have you worked with Amazon Textract before? Can you explain its functionality and how you have used it?\n3. How proficient are you in using NumPy (Python Package) for data manipulation and analysis?\n4. Can you explain your experience with Large Language Modeling and its applications?\n5. Have you worked with Machine Learning algorithms before? Can you provide examples of projects where you have implemented ML models?\n6. Can you explain the concept of Generative Adversarial Networks (GANs) and how they can be used in AI applications?\n7. Have you used ActivePython (Python Package) before? Can you explain its functionality and how you have used it?\n8. How proficient are you in Natural Language Processing (NLP) techniques and tools?\n9. Have you worked with Pandas (Python Package) for data manipulation and analysis? Can you provide examples of projects where you have used Pandas?\n10. Have you worked with Google APIs before? Can you explain the APIs you have used and the projects where you have implemented them?\n11. Can you explain your experience with Apache OpenNLP and its applications in NLP tasks?\n12. Have you worked with MongoDB for data storage and retrieval? Can you explain your experience with MongoDB and provide examples of projects where you have used it?\n13. Can you explain your experience with Hugging Face Transformers and how you have used them in NLP tasks?\n14. Have you worked with Azure Cognitive Services before? Can you explain the services you have used and the projects where you have implemented them?\n15. Can you explain your experience with Computer Vision and the projects where you have implemented CV algorithms?",
-  };
+  let suggestedJson = interviewDetails?.suggestedquestion;
   let suggestedQuestionArray = suggestedJson?.questions?.split("\n");
   return (
     <>
@@ -196,16 +182,6 @@ export function UpcomingVideoDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  {/* <Button
-                    outline
-                    size="sm"
-                    className="mb-2 mr-2 btn-transition"
-                    color="primary"
-                  >
-                    {" "}
-                    Message{" "}
-                  </Button> */}
-
                   <Button
                     outline
                     size="sm"
@@ -219,17 +195,6 @@ export function UpcomingVideoDetails({
                 </Col>
               ) : (
                 <></>
-                // <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-                //   <Button
-                //     outline
-                //     size="sm"
-                //     className="mb-2 mr-2 btn-transition"
-                //     color="primary"
-                //   >
-                //     {" "}
-                //     Message{" "}
-                //   </Button>
-                // </Col>
               )}
             </div>
           </div>
@@ -498,20 +463,22 @@ export function UpcomingVideoDetails({
             </p>
           )}
         </div>
-        <div className="p-3 suggested-question">
-          <h6 className="fw-bold">Suggested Questions</h6>
-          {suggestedQuestionArray.length > 0 &&
-            suggestedQuestionArray?.map((suggestedQuestion) => (
-              <>
-                <p className="mb-1">{suggestedQuestion}</p>
-              </>
-            ))}
-          {suggestedQuestionArray.length === 0 && (
-            <p className="mb-0 ">
-              <i> - No suggested question added</i>
-            </p>
-          )}
-        </div>
+        {interviewDetails?.suggestedquestion !== "" && (
+          <div className="p-3 suggested-question">
+            <h6 className="fw-bold">Suggested Questions</h6>
+            {suggestedQuestionArray?.length > 0 &&
+              suggestedQuestionArray?.map((suggestedQuestion) => (
+                <>
+                  <p className="mb-1">{suggestedQuestion}</p>
+                </>
+              ))}
+            {suggestedQuestionArray?.length === 0 && (
+              <p className="mb-0 ">
+                <i> - No suggested question added</i>
+              </p>
+            )}
+          </div>
+        )}
         <div className="divider" />
         <div className="d-block text-center mb-1">
           <h6 className="fw-bold">
