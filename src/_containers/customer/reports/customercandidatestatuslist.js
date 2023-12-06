@@ -238,7 +238,7 @@ export function CustomerReportCandidateStatus() {
             </CardHeader>
             <CardBody>
               <Row>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <Input
                       type="select"
@@ -268,7 +268,7 @@ export function CustomerReportCandidateStatus() {
                   </FormGroup>
                 </Col>
 
-                <Col lg="3" md="3" sm="12" sx="12">
+                <Col lg="3" md="4" sm="12" sx="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     className="me-4"
