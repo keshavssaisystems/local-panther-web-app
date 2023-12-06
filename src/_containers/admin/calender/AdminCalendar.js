@@ -185,8 +185,8 @@ export function AdminCalendar({ title }) {
       <Row>
         <Col sm={12} md={12} lg={12} xl={12}>
           <Row>
-            <Col xl="5" lg="5" md="5" sm="12"></Col>
-            <Col xl="2" lg="2" md="2" sm="12">
+            <Col xl="5" lg="5" md="3" sm="12"></Col>
+            <Col xl="2" lg="2" md="3" sm="12">
               <FormGroup>
                 <Input
                   type="select"
@@ -217,7 +217,7 @@ export function AdminCalendar({ title }) {
                 </Input>
               </FormGroup>
             </Col>
-            <Col xl="2" lg="2" md="2" sm="12" sx="12">
+            <Col xl="2" lg="2" md="3" sm="12" sx="12">
               <FormGroup>
                 <Input
                   type="select"
