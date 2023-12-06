@@ -216,14 +216,14 @@ export function CandidateProfile() {
             />
           </Row>
           <Row>
-            <Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
               <ResumeDetails
                 resumeInfo={profileData.resumeInfo}
                 candidateDetails={profileData.personalInfo}
                 onCallBack={() => loadPage()}
               />
             </Col>
-            <Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
               <CandidateSkills
                 skillInfo={profileData.skillsInfo}
                 popularSkillData={popularSkills}
@@ -232,13 +232,13 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
               <CandidateQualification
                 qualificationInfo={profileData.qualificationsInfo}
                 onCallBack={() => loadPage()}
               />
             </Col>
-            <Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
               <CandidateEducation
                 educationInfo={profileData.educationInfo}
                 onCallBack={() => loadPage()}
@@ -246,13 +246,13 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
               <CertificationDetails
                 certificationsInfo={profileData.certificationsInfo}
                 onCallBack={() => loadPage()}
               />
             </Col>
-            <Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
               <AdditionalInformation onCallBack={() => loadPage()} />
             </Col>
           </Row>
