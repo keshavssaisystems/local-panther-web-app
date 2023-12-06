@@ -157,7 +157,10 @@ export function UpcomingVideoDetails({
   const downloadInterviewGuide = () => {
     window.open(interviewGuideLink[0].name, "_blank");
   };
-  let suggestedJson = interviewDetails?.suggestedquestion;
+  let suggestedJson =
+    interviewDetails?.suggestedquestion !== ""
+      ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
+      : "";
   let suggestedQuestionArray = suggestedJson?.questions?.split("\n");
   return (
     <>
