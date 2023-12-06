@@ -435,7 +435,7 @@ export const CustomerList = () => {
           <Card className="mb-3">
             <CardBody>
               <Row>
-                <Col md={10}>
+                <Col md={12} lg={10} sm={12}>
                   <Form onSubmit={(e) => getFilterValue(e)}>
                     <Row>
                       <Col>
@@ -514,7 +514,7 @@ export const CustomerList = () => {
                     </Row>
                   </Form>
                 </Col>
-                <Col>
+                <Col md={12} lg={2} sm={12}>
                   <Button
                     style={{ background: "#2f479b" }}
                     color={"primary"}
