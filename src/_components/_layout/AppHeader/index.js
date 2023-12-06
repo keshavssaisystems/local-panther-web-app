@@ -3,6 +3,7 @@ import cx from "classnames";
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 import { UserBox } from "./Components/UserBox";
 import logo from "../../../assets/utils/images/panther-logo.png";
+import smlogo from "../../../assets/utils/sidebarimages/icon.png";
 import { useSelector } from "react-redux";
 import "./appheader.scss";
 import { ChatCounter } from "./Components/chatCounter";
@@ -51,24 +52,18 @@ export function AppHeader({
               <Col style={{ lineHeight: "50px" }}>
                 {isSidebarOpen && !unAuth ? (
                   <FontAwesomeIcon
-                    style={{ fontSize: "24px" }}
+                    style={{ fontSize: "24px", marginTop: "15px" }}
                     icon={faBars}
                     onClick={() => onCloseSidebar()}
                   />
                 ) : (
                   <img
-                    style={{ fontSize: "24px" }}
-                    src={sideBarIcons.close}
-                    alt="close icons"
-                    width={"24px"}
-                    height={"24px"}
+                    src={smlogo}
+                    alt="Open side Menu"
+                    width={"40px"}
+                    height={"40px"}
                     onClick={() => onOpenSidebar()}
                   />
-                  // <FontAwesomeIcon
-                  //   style={{ fontSize: "24px" }}
-                  //   icon={sideBarIcons.close}
-                  //   onClick={() => onOpenSidebar()}
-                  // />
                 )}
               </Col>
             </Row>
