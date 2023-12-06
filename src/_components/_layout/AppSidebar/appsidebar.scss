@@ -43,6 +43,7 @@
     }
   }
 
+
   .sidebar-open {
     // min-width: 15vw;
     .side-navigation-panel-select-option-text,
@@ -66,6 +67,20 @@
 
     .side-navigation-panel-select-option {
       min-width: 2vw;
+    }
+  }
+}
+@media only screen and (min-width: 1440px) {
+  .appsidebar {
+    max-width: 15vw;
+    .sidebar-open {
+      min-width: 15vw;
+    }
+    .sidebar-close {
+      min-width: auto;
+      .side-navigation-panel-select-option {
+        min-width: 2vw;
+      }
     }
   }
 }

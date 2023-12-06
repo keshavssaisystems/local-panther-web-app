@@ -59,7 +59,9 @@ export const AppSidebar = (props) => {
       {/* Sidebar Overlay */}
 
       <div
-        className={`appsidebar  overflow-y-auto  bg-white `}
+        className={`appsidebar  overflow-y-auto  bg-white ${
+          props.isSidebarOpen ? "sidebar-open-main" : ""
+        } `}
         // onMouseEnter={() => onEnterToSidebar()}
         // onMouseLeave={() => onLeaveToSidebar()}
       >
