@@ -675,7 +675,7 @@ export function CustJobDetail({
                       </Button>
                     </Link>
                     <Link to="/registration">
-                      <Button>register</Button>
+                      <Button>Register</Button>
                     </Link>
                   </div>
                 </CardFooter>
