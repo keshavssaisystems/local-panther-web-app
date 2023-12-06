@@ -497,7 +497,7 @@ export const CandidateList = (props) => {
           </ButtonGroup>
         </Col>
 
-        <Col xs={12} sm={12} md={4} lg={4} xl={12} className="mb-3">
+        <Col xs={12} sm={12} md={12} lg={12} xl={12} className="mb-3">
           <TabContent activeTab={activeTab}>
             <TabPane tabId="matched">
               <div className="p-3 tab-info">
