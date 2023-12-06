@@ -34,7 +34,7 @@ export const getPreviousJobListThunk = createAsyncThunk(
 export const getRecommendedListThunk = createAsyncThunk(
   `${name}/getRecommendedListThunk`,
   async ({ pageNo, searchText, searchType }) => {
-    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}&searchType=${searchType}`;
+    const PRESCREEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Job/GetAllJobs?pageSize=10&pageNumber=${pageNo}&searchText=${searchText}&searchType=${searchType}`;
     return await fetchWrapper.get(PRESCREEN_END_POINT);
   }
 );

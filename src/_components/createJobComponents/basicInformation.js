@@ -260,7 +260,7 @@ export function BasicInformation({
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label className="fw-semi-bold">
                 Company name<span style={{ color: "red" }}>* </span>
@@ -277,7 +277,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"jobTitle"} className="fw-semi-bold">
                 Job title<span style={{ color: "red" }}>* </span>
@@ -299,7 +299,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="openPositions" className="fw-semi-bold">
                 Number of position<span style={{ color: "red" }}>* </span>
@@ -325,7 +325,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="jobLocation" className="fw-semi-bold">
                 Job location
@@ -353,7 +353,7 @@ export function BasicInformation({
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="address" className="fw-semi-bold">
                 Address
@@ -370,7 +370,7 @@ export function BasicInformation({
               />
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 City<span style={{ color: "red" }}>* </span>
@@ -412,7 +412,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 State
@@ -431,7 +431,7 @@ export function BasicInformation({
               />
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="country" className="fw-semi-bold">
                 Country
@@ -450,7 +450,7 @@ export function BasicInformation({
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="zipCode" className="fw-semi-bold">
                 Zip code<span style={{ color: "red" }}>* </span>
@@ -475,7 +475,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup className="mt-4">
               <Input
                 id={"authorizedtoworkinus"}
@@ -493,7 +493,7 @@ export function BasicInformation({
               </Label>
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup className="mt-4">
               <Input
                 id={"sponsorshiprequiured"}
@@ -511,10 +511,10 @@ export function BasicInformation({
               </Label>
             </FormGroup>
           </Col>
-          <Col></Col>
+          <Col md={6} lg={3}></Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={6} lg={6}>
             <FormGroup>
               <Label for="description" className="fw-semi-bold">
                 Description<span style={{ color: "red" }}>* </span>
@@ -540,7 +540,7 @@ export function BasicInformation({
               <FormText color="danger">Please enter description</FormText>
             )}
           </Col>
-          <Col>
+          <Col md={6} lg={6}>
             <FormGroup>
               <Label for="companyDetails" className="fw-semi-bold">
                 Company details

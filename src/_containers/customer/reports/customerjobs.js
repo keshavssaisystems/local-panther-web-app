@@ -267,7 +267,7 @@ export function CustomerReportJobList() {
             </CardHeader>
             <CardBody>
               <Row>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -290,7 +290,7 @@ export function CustomerReportJobList() {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -313,7 +313,7 @@ export function CustomerReportJobList() {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="3" md="3" sm="12" sx="12">
+                <Col lg="3" md="4" sm="12" sx="12">
                   {/* <ButtonGroup> */}
                   <Button
                     style={{ background: "rgb(47 71 155)" }}

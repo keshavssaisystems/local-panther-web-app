@@ -138,7 +138,7 @@ export function ExperienceAndSchedules({
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label className="fw-semi-bold">
                 Job Type<span style={{ color: "red" }}>* </span>
@@ -172,7 +172,7 @@ export function ExperienceAndSchedules({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="workSchedule" className="fw-semi-bold">
                 Work schedules
@@ -200,7 +200,7 @@ export function ExperienceAndSchedules({
                 ))}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="shifts" className="fw-semi-bold">
                 Shifts
@@ -228,10 +228,10 @@ export function ExperienceAndSchedules({
                 ))}
             </FormGroup>
           </Col>
-          <Col></Col>
+          <Col md={6} lg={3}></Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"experienceLevel"} className="fw-semi-bold">
                 Experience level
@@ -257,7 +257,7 @@ export function ExperienceAndSchedules({
               </Input>
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"hiringTimeline"} className="fw-semi-bold">
                 Hiring timeline
@@ -283,8 +283,8 @@ export function ExperienceAndSchedules({
               </Input>
             </FormGroup>
           </Col>
-          <Col></Col>
-          <Col></Col>
+          <Col md={6} lg={3}></Col>
+          <Col md={6} lg={3}></Col>
         </Row>
         <Button color="primary" className="float-end mb-3">
           Save

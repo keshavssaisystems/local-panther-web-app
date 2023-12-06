@@ -32,7 +32,6 @@ import {
   HiringManager,
   CandidateReport,
   IncompleteCandidateProfile,
-  PartiallyFilledJobs,
   AdminCalendar,
   JobsWithoutMatchedCandidates,
   CandidateWithoutMatchedJobs,
@@ -54,7 +53,6 @@ import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 import { messaging } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
-import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
 
