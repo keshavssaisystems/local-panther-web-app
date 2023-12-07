@@ -216,7 +216,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Raise offer"
+            title="Make offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -272,7 +272,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Raise offer"
+            title="Make offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
@@ -337,7 +337,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Raise offer"
+            title="Make offer"
             onClick={() => onAcceptClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="success"
