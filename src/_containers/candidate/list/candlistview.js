@@ -253,7 +253,43 @@ export const CandListView = (props) => {
       );
     }
   };
-
+  const getPay = (data) => {
+    let maxAmount = new Intl.NumberFormat("en-US").format(
+      data.jobPaymentBenefitDtos[0]?.maximumamount
+    );
+    let minAmount = new Intl.NumberFormat("en-US").format(
+      data.jobPaymentBenefitDtos[0]?.minimumamount
+    );
+    if (minAmount !== "" && maxAmount !== "") {
+      return (
+        "$" +
+        minAmount +
+        " - $" +
+        maxAmount +
+        " ( " +
+        data.jobPaymentBenefitDtos[0]?.payperiodtype +
+        " ) "
+      );
+    }
+    if (minAmount !== "" && maxAmount === "") {
+      return (
+        "$" +
+        minAmount +
+        " (" +
+        data.jobPaymentBenefitDtos[0]?.payperiodtype +
+        ") "
+      );
+    }
+    if (minAmount === "" && maxAmount !== "") {
+      return (
+        "$" +
+        data.jobPaymentBenefitDtos[0]?.maximumamount +
+        " (" +
+        data.jobPaymentBenefitDtos[0]?.payperiodtype +
+        ") "
+      );
+    }
+  };
   const renderMenu = (row) => {
     return (
       <div className="d-block w-100 text-center">
@@ -621,6 +657,108 @@ export const CandListView = (props) => {
             sortable: true,
             width: "14%",
           },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "8%",
+          },
+        ]
+      : props.type === "offers"
+      ? [
+          {
+            name: <span className="table-title">Job Id</span>,
+            id: "Job Id",
+            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
+            selector: (row) => row.jobid,
+            sortable: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "22%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "17%",
+          },
+          {
+            name: <span className="table-title">Pay</span>,
+            id: "pay",
+            selector: (row) => getPay(row),
+
+            sortable: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Experience</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
