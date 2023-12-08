@@ -40,7 +40,6 @@ export function CustJobDetail({
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   let loading = true;
   let jobDetail = {};
-  let skillArray = [];
   let skillsData = "-";
 
   if (jobDetails.length > 0) {
@@ -302,7 +301,7 @@ export function CustJobDetail({
       icon: scheduledIcon,
     },
     {
-      name: "Offers",
+      name: "Offer",
       count:
         jobDetail.totalOfferedCandidates === null
           ? 0

@@ -7,18 +7,16 @@ export function StackBarChart({ graphData }) {
     "Accepted",
     "Applied",
     "Interviews",
-    "Jobs",
     "Matched",
-    "Offers",
+    "Offer",
     "Rejected",
   ];
   const stackValuesKey = {
     Accepted: "acceptedcount",
     Applied: "appliedcount",
     Interviews: "interviewcount",
-    Jobs: "jobscount",
     Matched: "matchedcount",
-    Offers: "offerscount",
+    Offer: "offerscount",
     Rejected: "rejectedcount",
   };
   let mainArray = {
