@@ -692,7 +692,6 @@ export function ScheduleInterview() {
                     events={upData}
                     startAccessor="start"
                     endAccessor="end"
-                    messages={{ agenda: "Schedule" }}
                     eventPropGetter={(upData) => {
                       const backgroundColor = upData.color
                         ? upData.color
