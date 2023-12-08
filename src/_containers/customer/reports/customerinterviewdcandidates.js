@@ -46,6 +46,7 @@ import { getProfileActions } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import "./customerreport.scss";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CustomerReportInterviewedCandidates() {
   const dispatch = useDispatch();
@@ -81,15 +82,22 @@ export function CustomerReportInterviewedCandidates() {
     if (interviewedCandidateList?.length > 0) {
       let filteredData = interviewedCandidateList.map((data) => {
         return {
-          "Job Code": data.jobid,
-          Title: data.jobtitle,
-          Status: data.jobstatus,
           "Candidate Name": data.candidatename,
+          Title: data.jobtitle,
           "Interviewed date": data.scheduledate
-            ? moment(data.scheduledate).format("MM/DD/YYYY")
+            ? getTimezoneDateTime(
+                moment(
+                  moment(data.scheduledate).format("YYYY-MM-DD") +
+                    " " +
+                    data.starttime
+                ).format("MM/DD/YYYY hh:mm a"),
+                "MM/DD/YYYY hh:mm a"
+              )
             : "",
           Interviewers: data.intervieweremailids,
-          "Comments/Notes": data.interviewnotes,
+          "Interview mode": data.format,
+          "Interview status": data.interviewstatus,
+          "Interview feedback": data.interviewfeedback,
         };
       });
       setExcelData([
@@ -169,46 +177,17 @@ export function CustomerReportInterviewedCandidates() {
     }
   };
   const columns = [
-    {
-      name: <span className="table-title">Job Code</span>,
-      cell: (row) => (
-        <span className="table-cell" title={row.jobid}>
-          {row.jobid}
-        </span>
-      ),
-      sortable: true,
-      selector: (row) => row.jobid,
-      minWidth: "150px",
-    },
-    {
-      name: <span className="table-title">Title</span>,
-      cell: (row) => (
-        <span className="table-cell" title={row.jobtitle}>
-          <Button
-            className="no-padding"
-            color="link"
-            onClick={() => openJobDetails(row.jobid)}
-          >
-            {" "}
-            {row.jobtitle}
-          </Button>
-        </span>
-      ),
-      sortable: true,
-      selector: (row) => row.jobtitle,
-      minWidth: "350px",
-    },
-    {
-      name: <span className="table-title">Status</span>,
-      cell: (row) => (
-        <span className="table-cell" title={row.jobstatus}>
-          {row.jobstatus}
-        </span>
-      ),
-      sortable: true,
-      selector: (row) => row.jobstatus,
-      minWidth: "150px",
-    },
+    // {
+    //   name: <span className="table-title">Job Code</span>,
+    //   cell: (row) => (
+    //     <span className="table-cell" title={row.jobid}>
+    //       {row.jobid}
+    //     </span>
+    //   ),
+    //   sortable: true,
+    //   selector: (row) => row.jobid,
+    //   minWidth: "100px",
+    // },
     {
       name: <span className="table-title">Candidate Name</span>,
       cell: (row) => (
@@ -227,13 +206,38 @@ export function CustomerReportInterviewedCandidates() {
       minWidth: "200px",
     },
     {
+      name: <span className="table-title">Title</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {" "}
+            {row.jobtitle}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobtitle,
+      minWidth: "250px",
+    },
+    {
       name: <span className="table-title">Interviewed date</span>,
       cell: (row) => (
         <span
           className="table-cell"
           title={
             row.scheduledate
-              ? moment(row.scheduledate).format("MM/DD/YYYY")
+              ? getTimezoneDateTime(
+                  moment(
+                    moment(row.scheduledate).format("YYYY-MM-DD") +
+                      " " +
+                      row.starttime
+                  ).format("MM/DD/YYYY hh:mm a"),
+                  "MM/DD/YYYY hh:mm a"
+                )
               : ""
           }
         >
@@ -241,15 +245,31 @@ export function CustomerReportInterviewedCandidates() {
             color="link"
             onClick={() => onInterviewDetailClick(row.scheduleinterviewid)}
           >
-            {" "}
             {row.scheduledate
-              ? moment(row.scheduledate).format("MM/DD/YYYY")
+              ? getTimezoneDateTime(
+                  moment(
+                    moment(row.scheduledate).format("YYYY-MM-DD") +
+                      " " +
+                      row.starttime
+                  ).format("MM/DD/YYYY hh:mm a"),
+                  "MM/DD/YYYY hh:mm a"
+                )
               : ""}
           </Button>
         </span>
       ),
       sortable: true,
-      selector: (row) => row.scheduledate,
+      selector: (row) =>
+        row.scheduledate
+          ? getTimezoneDateTime(
+              moment(
+                moment(row.scheduledate).format("YYYY-MM-DD") +
+                  " " +
+                  row.starttime
+              ).format("MM/DD/YYYY hh:mm a"),
+              "MM/DD/YYYY hh:mm a"
+            )
+          : "",
       minWidth: "200px",
     },
     {
@@ -261,18 +281,36 @@ export function CustomerReportInterviewedCandidates() {
       ),
       sortable: true,
       selector: (row) => row.intervieweremailids,
-      minWidth: "300px",
+      minWidth: "200px",
     },
     {
-      name: <span className="table-title">Comments/Notes</span>,
+      name: <span className="table-title">Interview mode</span>,
       cell: (row) => (
-        <span className="table-cell" title={row.interviewnotes}>
-          {row.interviewnotes}
+        <span className="table-cell" title={row.format}>
+          {row.format}
         </span>
       ),
       sortable: true,
-      selector: (row) => row.interviewnotes,
+      selector: (row) => row.format,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">Interview status</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.interviewstatus}>
+          {row.interviewstatus}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.interviewstatus,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Interview feedback</span>,
+      sortable: true,
+      selector: (row) => row.interviewfeedback,
       minWidth: "300px",
+      wrap: true,
     },
   ];
 
