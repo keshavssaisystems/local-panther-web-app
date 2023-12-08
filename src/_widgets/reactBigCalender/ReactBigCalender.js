@@ -14,7 +14,15 @@ export function ReactBigCalender({
 }) {
   const [view, setView] = useState(Views.MONTH);
   const localizer = momentLocalizer(moment, "Etc/Universal");
-
+  const views = {
+    month: true,
+    week: true,
+    day: true,
+    agenda: true, // Add or modify views as needed
+  };
+  const messages = {
+    agenda: "Schedule", // Change the label for Agenda to Schedule
+  };
   const handleSelectEvent = (event) => {
     onHandleSelectEvent(event);
   };
@@ -33,6 +41,7 @@ export function ReactBigCalender({
           defaultView={Views.MONTH}
           localizer={localizer}
           events={events}
+          messages={{ agenda: "Schedule" }}
           startAccessor="start"
           endAccessor="end"
           // popup
@@ -45,7 +54,8 @@ export function ReactBigCalender({
             return { style: { backgroundColor, fontSize } };
           }}
           today={false}
-          views={["month", "week", "day", "agenda"]}
+          views={views}
+          messages={messages}
           toolbar={toolbar}
           onRangeChange={handleNavigate}
           view={view} // Specify the view

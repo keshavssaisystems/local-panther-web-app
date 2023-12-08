@@ -18,7 +18,6 @@ import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import momentTimezone from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import {
   customerCandidateListsActions,
@@ -47,6 +46,15 @@ export function ScheduleInterview() {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
+  const views = {
+    month: true,
+    week: true,
+    day: true,
+    agenda: true, // Add or modify views as needed
+  };
+  const messages = {
+    agenda: "Schedule", // Change the label for Agenda to Schedule
+  };
   useEffect(() => {
     getGraphData();
   }, [msLogin]);
@@ -684,6 +692,7 @@ export function ScheduleInterview() {
                     events={upData}
                     startAccessor="start"
                     endAccessor="end"
+                    messages={{ agenda: "Schedule" }}
                     eventPropGetter={(upData) => {
                       const backgroundColor = upData.color
                         ? upData.color
@@ -692,6 +701,8 @@ export function ScheduleInterview() {
                       return { style: { backgroundColor, fontSize } };
                     }}
                     onSelectEvent={handleSelectEvent}
+                    views={views}
+                    messages={messages}
                   />
                 </CardBody>
               </Card>

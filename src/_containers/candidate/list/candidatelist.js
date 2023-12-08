@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  TabContent,
-  TabPane,
-  ButtonGroup,
-  Button,
-  Row,
-  Col,
-  Card,
-  CardBody,
-} from "reactstrap";
+import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
 import classnames from "classnames";
 import { CardPagination } from "_components/common/cardpagination";
 import { useSelector, useDispatch } from "react-redux";
@@ -347,11 +338,11 @@ export const CandidateList = (props) => {
 
   const onPrescreenClickAction = async (type, row) => {
     if (type === "pending") {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getJobPrescreenApplicationQues(row.jobid)
       );
     } else {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getCompJobPrescreenApplication(row.jobid)
       );
     }
@@ -466,7 +457,7 @@ export const CandidateList = (props) => {
                 toggle("offers");
               }}
             >
-              Offers
+              Offer
             </Button>
             <Button
               color="primary"
@@ -1008,7 +999,7 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Offers candidates are candidates who have decided to offer
+                      Offer candidates are candidates who have decided to offer
                       a job after interviewing and assessing their
                       qualifications. This means the customer has made a final
                       decision on who to hire and communicated the offer to the

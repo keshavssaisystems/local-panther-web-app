@@ -210,7 +210,7 @@ export const Skills = () => {
   const getSkillsList = async function () {
     setLoading(true);
     let urlParams = {
-      pageSize: 1000,
+      pageSize: pageSize,
       pageNumber: 1,
     };
     if (searchData !== "") {

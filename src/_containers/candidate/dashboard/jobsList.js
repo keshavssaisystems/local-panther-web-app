@@ -227,7 +227,7 @@ export function JobsList(props) {
         <CardHeader className="card-header-tab">
           <div className="card-header-title font-size-md text-capitalize fw-bold">
             <img src={jobsIcon} alt="jobs-img" className="me-2" />
-            Latest jobs
+            Latest matched jobs
           </div>
         </CardHeader>
         {!loader ? (
