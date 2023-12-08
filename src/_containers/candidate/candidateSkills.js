@@ -119,7 +119,7 @@ export function CandidateSkills(props) {
     }
   }, [skills_data]);
 
-  const removeSkills = function (data) {
+  const removeSkills = function (data, index) {
     let filter_data = skills_data?.find((x) => x.value === data.value);
     if (filter_data) {
       let new_array = [...skills];
@@ -127,15 +127,13 @@ export function CandidateSkills(props) {
       setSkills(new_array);
     }
     let multiple_skills = [...skillsMultiple];
-    let multiple_skills_new = multiple_skills?.filter(function (obj) {
-      return obj.value !== data.value;
-    });
 
+    multiple_skills.splice(index, 1);
     let data_new = selectedSkillData.filter(function (obj) {
       return obj.id !== data.value;
     });
 
-    setSkillsMultiple(multiple_skills_new);
+    setSkillsMultiple(multiple_skills);
     setSelectedSkillData(data_new);
   };
 
@@ -515,7 +513,7 @@ export function CandidateSkills(props) {
                         </Col>
                         <Col>
                           <Label
-                            onClick={() => removeSkills(item)}
+                            onClick={() => removeSkills(item, index)}
                             className="skills-remove"
                           >
                             remove

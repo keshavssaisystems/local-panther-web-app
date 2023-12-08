@@ -47,6 +47,15 @@ export function ScheduleInterview() {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
+  const views = {
+    month: true,
+    week: true,
+    day: true,
+    agenda: true, // Add or modify views as needed
+  };
+  const messages = {
+    agenda: "Schedule", // Change the label for Agenda to Schedule
+  };
   useEffect(() => {
     getGraphData();
   }, [msLogin]);
@@ -692,6 +701,8 @@ export function ScheduleInterview() {
                       return { style: { backgroundColor, fontSize } };
                     }}
                     onSelectEvent={handleSelectEvent}
+                    views={views}
+                    messages={messages}
                   />
                 </CardBody>
               </Card>

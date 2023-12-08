@@ -12,7 +12,7 @@ import {
   Form,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getSkillsFilter } from "_store";
+import { getLanguageFilter } from "_store";
 
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
@@ -91,7 +91,7 @@ export function AdditionalInfoModal(props) {
     props.onCallAdditionalInfo();
   };
 
-  const removeTabs = function (data) {
+  const removeTabs = function (data, index) {
     // let new_data = { ...formDetails };
 
     // let temp_array = new_data.candidateLanguageDtos.map((item) => ({
@@ -101,11 +101,9 @@ export function AdditionalInfoModal(props) {
     // new_data.candidateLanguageDtos = temp_array;
     // setFormData(new_data);
     let multiple_language = [...languageMultiple];
-    let multiple_language_new = multiple_language?.filter(function (obj) {
-      return obj.value !== data.value;
-    });
+    multiple_language.splice(index, 1);
 
-    setLanguageMultiple(multiple_language_new);
+    setLanguageMultiple(multiple_language);
   };
 
   const addMoreTabs = function (index) {
@@ -209,10 +207,10 @@ export function AdditionalInfoModal(props) {
   const [languageMultiple, setLanguageMultiple] = useState([]);
   const [languageExist, setLanguageExist] = useState(false);
   const loadOptions = async (inputValue) => {
-    const { data = [] } = await getSkillsFilter(inputValue);
+    const { data = [] } = await getLanguageFilter(inputValue);
 
     const isKeyTrueForAll = data.some(
-      (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
+      (item) => item["languagename"].toLowerCase() === inputValue.toLowerCase()
     );
     if (isKeyTrueForAll) {
       setLanguageExist(false);
@@ -220,10 +218,10 @@ export function AdditionalInfoModal(props) {
       setLanguageExist(true);
     }
 
-    let filter_data = data.map(({ skillid: value, ...rest }) => {
+    let filter_data = data.map(({ languageid: value, ...rest }) => {
       return {
         value,
-        label: `${rest.skillname}`,
+        label: `${rest.languagename}`,
       };
     });
     return filter_data;
@@ -361,7 +359,7 @@ export function AdditionalInfoModal(props) {
                     </Col>
                     <Col>
                       <Label
-                        onClick={() => removeTabs(item)}
+                        onClick={() => removeTabs(item, index)}
                         className="language-remove"
                         style={{
                           color: "#545cd8",

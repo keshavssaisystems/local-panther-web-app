@@ -50,3 +50,8 @@ export const getSkillsFilter = async (searchText) => {
     `${baseUrl}/Skill/GetSkillDropdown?searchText=${searchText}`
   );
 };
+
+export const getLanguageFilter = async (searchText) => {
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+  return await fetchWrapper.get(`${baseUrl}/Language?searchText=${searchText}`);
+};
