@@ -24,6 +24,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
   getCustReporCandStatList,
   getRecommendedJobStatus,
+  getCustReportJobDetail,
 } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 
@@ -34,6 +35,7 @@ import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
 import { getProfileActions } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./customerreport.scss";
 
 export function CustomerReportCandidateStatus() {
@@ -44,11 +46,15 @@ export function CustomerReportCandidateStatus() {
   let [recommStatusId, setRecommStatusId] = useState();
   const [excelData, setExcelData] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showJDModal, setShowJDModal] = useState(false);
   const candidateStatusList = useSelector(
     (state) => state?.customerReportReducer?.candidateStatusList
   );
 
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDetail = useSelector(
+    (state) => state?.customerReportReducer?.jobDetail
+  );
   const recommendedJobStatusList = useSelector(
     (state) => state?.customerReportReducer?.recommendedJobStatusList
   );
@@ -115,6 +121,14 @@ export function CustomerReportCandidateStatus() {
     }
   };
 
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getCustReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
+  };
+
   const columns = [
     // {
     //   name: "Candidate Id",
@@ -138,6 +152,23 @@ export function CustomerReportCandidateStatus() {
       ),
       sortable: true,
       minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Title</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row.jobtitle}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobtitle,
+      minWidth: "400px",
     },
     {
       name: <span className="table-title">Email</span>,
@@ -344,6 +375,19 @@ export function CustomerReportCandidateStatus() {
               onClose={() => setShowProfileModal(false)}
             />
           </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
         ) : (
           <></>
         )}
