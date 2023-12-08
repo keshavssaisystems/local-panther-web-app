@@ -12,6 +12,7 @@ import {
 import { CKEditor } from "ckeditor4-react";
 import "./createJob.scss";
 import AsyncSelect from "react-select/async";
+import Select from "react-select";
 import InputMask from "react-input-mask";
 import { getLocation } from "_store";
 
@@ -256,6 +257,12 @@ export function BasicInformation({
     setDescriptionData(event);
     setDescriptionValidation(false);
   };
+  let educationOptions = jobLocationOptions.map(({ id: value, ...rest }) => {
+    return {
+      value: `${value}`,
+      label: `${rest.name}`,
+    };
+  });
   return (
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
@@ -511,7 +518,38 @@ export function BasicInformation({
               </Label>
             </FormGroup>
           </Col>
-          <Col md={6} lg={3}></Col>
+        </Row>
+        <Row>
+          <Col md={6} lg={6}>
+            <FormGroup>
+              <Label for="education" className="fw-semi-bold">
+                Education
+              </Label>
+              <Select
+                // defaultValue={[educationOptions[2]]}
+                isMulti
+                name="education"
+                options={educationOptions}
+                classNamePrefix="select"
+                placeholder="Select Education"
+              />
+            </FormGroup>
+          </Col>
+          <Col md={6} lg={6}>
+            <FormGroup>
+              <Label for="certification" className="fw-semi-bold">
+                Certification
+              </Label>
+              <Select
+                // defaultValue={[educationOptions[2]]}
+                isMulti
+                name="certification"
+                options={educationOptions}
+                classNamePrefix="select"
+                placeholder="Select Certification"
+              />
+            </FormGroup>
+          </Col>
         </Row>
         <Row>
           <Col md={6} lg={6}>
@@ -554,7 +592,7 @@ export function BasicInformation({
                     ? preValue.companyDetail
                     : previousValue.companyDetail
                 }
-                placeholder="Enter company deatils"
+                placeholder="Enter company details"
                 maxLength={1000}
                 className={"textarea-height-custom"}
               />
