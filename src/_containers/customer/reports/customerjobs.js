@@ -25,142 +25,18 @@ import {
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 
-import { getCustReportJobList } from "./customerreport.slice";
+import {
+  getCustReportJobList,
+  getCustReportJobDetail,
+} from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 import moment from "moment";
 import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./customerreport.scss";
-const columns = [
-  {
-    name: <span className="table-title">Job Code</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobid}>
-        {row.jobid}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.jobid,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">Title</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobtitle}>
-        {row.jobtitle}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.jobtitle,
-    minWidth: "400px",
-  },
-  {
-    name: <span className="table-title">Status</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobstatus}>
-        {row.jobstatus}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.jobstatus,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">No. of Positions</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.noofopenposition}>
-        {row.noofopenposition}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.noofopenposition,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">Posted date</span>,
-    cell: (row) => (
-      <span
-        className="table-cell"
-        title={
-          row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
-        }
-      >
-        {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.createddate,
-    minWidth: "180px",
-  },
-  {
-    name: <span className="table-title">No. of Matched</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.matchedcandidates}>
-        {row.matchedcandidates}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.matchedcandidates,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">No. of Liked</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.likedcandidates}>
-        {row.likedcandidates}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.likedcandidates,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">No. of Maybe</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.maybecandidates}>
-        {row.maybecandidates}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.maybecandidates,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">No. of Accepted</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.acceptedcandidates}>
-        {row.acceptedcandidates}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.acceptedcandidates,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">No. of Rejected</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.rejectedcandidates}>
-        {row.rejectedcandidates}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.rejectedcandidates,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">No. of Interviews Scheduled</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.scheduledinterviews}>
-        {row.scheduledinterviews}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.scheduledinterviews,
-    minWidth: "150px",
-  },
-];
 
 export function CustomerReportJobList() {
   const dispatch = useDispatch();
@@ -170,9 +46,13 @@ export function CustomerReportJobList() {
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
   const [excelData, setExcelData] = useState([]);
+  const [showJDModal, setShowJDModal] = useState(false);
 
   const jobList = useSelector((state) => state?.customerReportReducer?.jobList);
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDetail = useSelector(
+    (state) => state?.customerReportReducer?.jobDetail
+  );
   useEffect(() => {
     onGetCustReportJobList();
 
@@ -210,7 +90,7 @@ export function CustomerReportJobList() {
   const onGetCustReportJobList = (filter) => {
     let data = {
       ...filter,
-      reportId: id,
+      reportId: id ? id : 10,
     };
     dispatch(getCustReportJobList(data));
   };
@@ -232,6 +112,149 @@ export function CustomerReportJobList() {
     setEndDate(null);
     onGetCustReportJobList({});
   };
+
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getCustReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
+  };
+
+  const columns = [
+    {
+      name: <span className="table-title">Job Code</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobid}>
+          {row.jobid}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobid,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">Title</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row.jobtitle}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobtitle,
+      minWidth: "400px",
+    },
+    {
+      name: <span className="table-title">Status</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobstatus}>
+          {row.jobstatus}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobstatus,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">No. of Positions</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.noofopenposition}>
+          {row.noofopenposition}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.noofopenposition,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">Posted date</span>,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
+          }
+        >
+          {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.createddate,
+      minWidth: "180px",
+    },
+    {
+      name: <span className="table-title">No. of Matched</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.matchedcandidates}>
+          {row.matchedcandidates}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.matchedcandidates,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">No. of Liked</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.likedcandidates}>
+          {row.likedcandidates}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.likedcandidates,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">No. of Maybe</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.maybecandidates}>
+          {row.maybecandidates}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.maybecandidates,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">No. of Accepted</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.acceptedcandidates}>
+          {row.acceptedcandidates}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.acceptedcandidates,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">No. of Rejected</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.rejectedcandidates}>
+          {row.rejectedcandidates}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.rejectedcandidates,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">No. of Interviews Scheduled</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.scheduledinterviews}>
+          {row.scheduledinterviews}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.scheduledinterviews,
+      minWidth: "150px",
+    },
+  ];
 
   return (
     <>
@@ -365,6 +388,19 @@ export function CustomerReportJobList() {
           </Card>
         </Col>
       </Row>
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }
