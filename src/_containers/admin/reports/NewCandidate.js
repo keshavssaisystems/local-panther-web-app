@@ -31,75 +31,80 @@ import { newCandidateThunk } from "../_redux/report.slice";
 import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
+import { getProfileActions } from "_store";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
 import "./adminreports.scss";
-
-const columns = [
-  {
-    name: <span className="table-title">Name</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.candidatename}>
-        {row.candidatename}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.candidatename,
-    minWidth: "250px",
-  },
-  {
-    name: <span className="table-title">Skills</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.skills}>
-        {row.skills}
-      </span>
-    ),
-    sortable: true,
-
-    selector: (row) => row.skills,
-    minWidth: "350px",
-  },
-  {
-    name: <span className="table-title">Experience</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.experience}>
-        {row.experience}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.experience,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">Location</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.location}>
-        {row.location}{" "}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.location,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">Created</span>,
-    cell: (row) => (
-      <span
-        className="table-cell"
-        title={
-          row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
-        }
-      >
-        {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.createddate,
-    minWidth: "180px",
-  },
-];
 
 export function NewCandidate({ title }) {
   const dispatch = useDispatch();
+  const columns = [
+    {
+      name: <span className="table-title">Name</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.candidatename}>
+          <Button
+            color="link"
+            onClick={() => onCandidateClick(row.candidateid)}
+          >
+            {row.candidatename}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.candidatename,
+      minWidth: "250px",
+    },
+    {
+      name: <span className="table-title">Skills</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.skills}>
+          {row.skills}
+        </span>
+      ),
+      sortable: true,
 
+      selector: (row) => row.skills,
+      minWidth: "350px",
+    },
+    {
+      name: <span className="table-title">Experience</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.experience}>
+          {row.experience}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.experience,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Location</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.location}>
+          {row.location}{" "}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.location,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Created</span>,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""
+          }
+        >
+          {row.createddate ? moment(row.createddate).format("MM/DD/YYYY") : ""}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.createddate,
+      minWidth: "180px",
+    },
+  ];
   const { newCandidate: data = [], loading = false } = useSelector(
     (state) => state?.adminReportReducer ?? {}
   );
@@ -111,6 +116,7 @@ export function NewCandidate({ title }) {
   const [excelData, setExcelData] = useState([]);
   let [skill, setSkill] = useState([]);
   let [location, setLocation] = useState([]);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
     dispatch(newCandidateThunk());
@@ -161,6 +167,15 @@ export function NewCandidate({ title }) {
     setSkill([]);
     setLocation([]);
     dispatch(newCandidateThunk());
+  };
+
+  const onCandidateClick = async (candidateId) => {
+    const response = await dispatch(
+      getProfileActions.getCandidate(candidateId)
+    );
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
   };
 
   return (
@@ -331,6 +346,18 @@ export function NewCandidate({ title }) {
           </Card>
         </Col>
       </Row>
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

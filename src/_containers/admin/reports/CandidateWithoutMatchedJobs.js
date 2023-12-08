@@ -33,6 +33,8 @@ import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import { updateMonthstoYears } from "_helpers/helper";
+import { getProfileActions } from "_store";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -53,7 +55,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
   let [filter, setFilter] = useState(initFilter);
 
   const [excelData, setExcelData] = useState([]);
-
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const { reportData: data = [], loading = false } = useSelector(
     (state) => state?.adminReportReducer ?? {}
   );
@@ -142,7 +144,12 @@ export function CandidateWithoutMatchedJobs({ title }) {
       name: <span className="table-title">Candidate</span>,
       cell: (row) => (
         <span className="table-cell" title={row?.candidatename}>
-          {row?.candidatename}
+          <Button
+            color="link"
+            onClick={() => onCandidateClick(row.candidateid)}
+          >
+            {row?.candidatename}
+          </Button>
         </span>
       ),
       sortable: true,
@@ -219,6 +226,15 @@ export function CandidateWithoutMatchedJobs({ title }) {
       minWidth: "250px",
     },
   ];
+
+  const onCandidateClick = async (candidateId) => {
+    const response = await dispatch(
+      getProfileActions.getCandidate(candidateId)
+    );
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
+  };
 
   return (
     <>
@@ -389,6 +405,18 @@ export function CandidateWithoutMatchedJobs({ title }) {
           </Card>
         </Col>
       </Row>
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

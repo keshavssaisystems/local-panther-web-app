@@ -326,12 +326,22 @@ export function App() {
           />
 
           <Route
+            path="/report"
+            element={
+              <PrivateRoute>
+                <CustomerReportJobList />
+              </PrivateRoute>
+            }
+            key={5}
+          />
+          <Route
             path="/report/customer-jobs/:id"
             element={
               <PrivateRoute>
                 <CustomerReportJobList />
               </PrivateRoute>
             }
+            key={6}
           />
           <Route
             path="/report/customer-scheduled-interviews/:id"

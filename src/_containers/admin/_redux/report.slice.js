@@ -89,6 +89,15 @@ export const getCandidateDropdownList = createAsyncThunk(
   }
 );
 
+// get job detail for admin report
+export const getAdminReportJobDetail = createAsyncThunk(
+  `${name}/getAdminReportJobDetail`,
+  async (jobId) => {
+    const ADM_RPT_JD_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`;
+    return await fetchWrapper.get(ADM_RPT_JD_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -99,6 +108,7 @@ const adminReportSlice = createSlice({
     reportData: [],
     customerList: [],
     candidateList: [],
+    jobDetail: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -191,6 +201,16 @@ const adminReportSlice = createSlice({
       state.candidateList = payload.data ? payload.data : [];
     },
     [getCandidateDropdownList.rejected]: (state, action) => {},
+    // admin report job detail
+    [getAdminReportJobDetail.pending]: (state) => {
+      state.jobDetail = [];
+    },
+    [getAdminReportJobDetail.fulfilled]: (state, { payload = {} }) => {
+      let data = [];
+      data.push(payload.data);
+      state.jobDetail = data;
+    },
+    [getAdminReportJobDetail.rejected]: (state, action) => {},
   },
 });
 
@@ -202,6 +222,7 @@ export const adminReportActions = {
   getReportDataThunk, // Export the async report data action
   getCustomerDropdownList,
   getCandidateDropdownList,
+  getAdminReportJobDetail,
 };
 
 export const adminReportReducer = adminReportSlice.reducer;
