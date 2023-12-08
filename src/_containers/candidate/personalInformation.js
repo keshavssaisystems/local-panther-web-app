@@ -688,7 +688,7 @@ export function PersonalInformation(props) {
                           <Row>
                             <Col className="col-12 mb-0">
                               <Label className="candidate-label mb-0">
-                                Employement eligibility:{" "}
+                                Employment eligibility:{" "}
                                 <strong className="content-text">
                                   {selectedCandidate.personalInfo.eligibility}
                                 </strong>
@@ -1190,7 +1190,7 @@ export function PersonalInformation(props) {
                   </Row>
 
                   <Row>
-                    <div className="mb-1 fw-bold">Employement eligibility</div>
+                    <div className="mb-1 fw-bold">Employment eligibility</div>
                     <hr />
                   </Row>
 

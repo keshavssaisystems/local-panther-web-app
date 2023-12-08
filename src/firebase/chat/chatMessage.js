@@ -8,7 +8,7 @@ export function ChatMessage(props) {
   const { text, sender, sendDate } = props.message;
   let today = moment.utc().tz(offset).format("YYYY-MM-DD");
   let displayDate = moment.utc(sendDate).tz(offset).format("YYYY-MM-DD");
-  let displayTime = moment.utc(sendDate).tz(offset).format("hh:mm a");
+  let displayTime = moment.utc(sendDate).tz(offset).format("hh:mm A");
   let displayDateTime =
     displayDate === today
       ? displayTime + " | Today"
@@ -24,15 +24,15 @@ export function ChatMessage(props) {
           <div className="chat-box-wrapper">
             <div>
               <div className="chat-box">{text}</div>
-              <small className="opacity-6">{displayDateTime}</small>
+              <small className="timing">{displayDateTime}</small>
             </div>
           </div>
         )}
         {messageClass === "sent" && (
           <div className="chat-box-wrapper chat-box-wrapper-right float-end">
             <div>
-              <div className="chat-box">{text}</div>
-              <small className="opacity-6"> {displayDateTime}</small>
+              <div className="chat-box-send">{text}</div>
+              <small className="timing"> {displayDateTime}</small>
             </div>
           </div>
         )}

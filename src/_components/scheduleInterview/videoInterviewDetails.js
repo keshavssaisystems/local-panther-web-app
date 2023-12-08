@@ -27,7 +27,6 @@ import { NotesCard } from "./notesCard";
 import { InviteToInterviewCard } from "./inviteToInterviewCard";
 import { useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
-import { MessageCard } from "./messageCard";
 import {
   getTimezoneDateTime,
   getVideoChannelId,
@@ -54,7 +53,6 @@ export function VideoInterviewDetails({
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
   const [showRejectPopup, setShowRejectPopup] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const [feedbackModal, setFeedbackModal] = useState(false);
 
@@ -143,6 +141,11 @@ export function VideoInterviewDetails({
   const rejectSchedule = () => {
     rejectInterview(interviewId);
   };
+  let suggestedJson =
+    interviewDetail?.suggestedquestion !== ""
+      ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
+      : "";
+  let suggestedQuestionArray = suggestedJson?.questions?.split("\n");
   let customQuestion = [];
   let preQuestions = [];
   if (
@@ -164,6 +167,7 @@ export function VideoInterviewDetails({
   const downloadInterviewGuide = () => {
     window.open(interviewGuideLink[0].name, "_blank");
   };
+
   return (
     <>
       <div className="dropdown-menu-header">
@@ -193,16 +197,6 @@ export function VideoInterviewDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  {/* <Button
-                    outline
-                    size="sm"
-                    className="mb-2 mr-2 btn-transition"
-                    color="primary"
-                    onClick={() => setShowMessage(!showMessage)}
-                  >
-                    {" "}
-                    Message{" "}
-                  </Button> */}
 
                   <ButtonGroup size={"sm"}>
                     {interviewDetail?.isaccepted === false &&
@@ -248,16 +242,6 @@ export function VideoInterviewDetails({
                 </>
               ) : (
                 <></>
-                // <Button
-                //   outline
-                //   size="sm"
-                //   className="mb-2 mr-2 btn-transition"
-                //   color="primary"
-                //   onClick={() => setShowMessage(!showMessage)}
-                // >
-                //   {" "}
-                //   Message{" "}
-                // </Button>
               )}
             </Col>
           </div>
@@ -281,19 +265,19 @@ export function VideoInterviewDetails({
             : "No response from candidate"}
         </p>
       </div>
+      {interviewDetail?.interviewstatusid !== 0 &&
+        interviewDetail?.interviewfeedback !== "" && (
+          <div className="p-custom">
+            <h6 className="fw-bold job-heading">Interview feedback</h6>
+            <p className="mb-0">{interviewDetail?.interviewfeedback}</p>
+          </div>
+        )}
+
       {showInviteCard === true && (
         <div className="mt-2 mb-2">
           <InviteToInterviewCard
             interviewId={interviewDetail?.scheduleinterviewid}
             postInviteData={(e) => postInviteData(e)}
-          />
-        </div>
-      )}
-      {showMessage === true && (
-        <div className="mt-2 mb-2">
-          <MessageCard
-            interviewId={interviewDetail?.scheduleinterviewid}
-            postMessageData={(e) => postMessageData(e)}
           />
         </div>
       )}
@@ -507,6 +491,23 @@ export function VideoInterviewDetails({
           </p>
         )}
       </div>
+      {interviewDetail?.suggestedquestion !== "" && (
+        <div className="p-3 suggested-question">
+          <h6 className="fw-bold">Suggested Questions</h6>
+          {suggestedQuestionArray?.length > 0 &&
+            suggestedQuestionArray?.map((suggestedQuestion) => (
+              <>
+                <p className="mb-1">{suggestedQuestion}</p>
+              </>
+            ))}
+          {suggestedQuestionArray?.length === 0 && (
+            <p className="mb-0 ">
+              <i> - No suggested question added</i>
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="divider" />
       <div className="d-block text-center mb-1">
         <h6 className="fw-bold">

@@ -380,7 +380,7 @@ export function CustJobDetail({
                     </div>
                   </Col>
                   {jobDetail.isdraft && !isShare ? (
-                    <Col md={4} lg={4} className="right-align">
+                    <Col md={12} lg={4} className="right-align">
                       <Button
                         color="primary"
                         className={"me-1 mt-3"}
@@ -675,7 +675,7 @@ export function CustJobDetail({
                       </Button>
                     </Link>
                     <Link to="/registration">
-                      <Button>register</Button>
+                      <Button>Register</Button>
                     </Link>
                   </div>
                 </CardFooter>

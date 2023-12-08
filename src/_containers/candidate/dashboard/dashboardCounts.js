@@ -125,7 +125,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4">
+                <Col md="7" lg="4">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-info"} />
                     <i className={"lnr-bullhorn text-info"} />
@@ -133,7 +133,7 @@ export function DashboardCounts() {
                 </Col>
                 <Col>
                   <div className="widget-chart-content">
-                    <div className="widget-title opacity-5 ">Offers</div>
+                    <div className="widget-title opacity-5 "> Offers </div>
                     <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
                       <div className="widget-chart-flex align-items-center">
                         <div

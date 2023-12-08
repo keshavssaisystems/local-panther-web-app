@@ -73,22 +73,22 @@ export function AdminDashboard() {
   );
   let cardOptions = [
     {
-      title: "Active clients",
+      title: "Active companies",
       count: dashboardCounts.activecompanycount,
       className: "primary",
-      icon: "lnr-briefcase",
+      icon: "lnr-apartment",
     },
     {
-      title: "Active hiring manager",
+      title: "Active customers",
       count: dashboardCounts.activecustomercount,
       className: "info",
-      icon: "lnr-briefcase",
+      icon: "lnr-user",
     },
     {
       title: "Active candidates",
       count: dashboardCounts.activecandidatecount,
       className: "danger",
-      icon: "lnr-briefcase",
+      icon: "lnr-users",
     },
     {
       title: "Open jobs",
@@ -177,7 +177,7 @@ export function AdminDashboard() {
             analyiticalCounts?.Past30DaysInterview
           ? "border-success"
           : "border-danger",
-      count: analyiticalCounts?.Upcoming30DaysInterview,
+      count: analyiticalCounts?.Past30DaysInterview,
       arrowDirection:
         analyiticalCounts?.Upcoming30DaysInterview ===
         analyiticalCounts?.Past30DaysInterview
@@ -211,7 +211,7 @@ export function AdminDashboard() {
             analyiticalCounts?.Past30to60DaysCandidateRegistration
           ? "border-success"
           : "border-danger",
-      count: analyiticalCounts?.Past30DaysCandidateRegistration,
+      count: analyiticalCounts?.Past30to60DaysCandidateRegistration,
       arrowDirection:
         analyiticalCounts?.Past30DaysCandidateRegistration ===
         analyiticalCounts?.Past30to60DaysCandidateRegistration
@@ -251,13 +251,13 @@ export function AdminDashboard() {
           <WidgetCounter cardOptions={dashCardUI} />
         </Row>
         <Row>
-          <Col sm="12" md="6" lg="6">
+          <Col sm="12" md="12" lg="6">
             <AdminSlider data={upcomingInterview} />
           </Col>
-          <Col sm="6" md="3" lg="3">
+          <Col sm="6" md="6" lg="3">
             <MissingInterview cardOptions={missedInterviewList} />
           </Col>
-          <Col sm="6" md="3" lg="3">
+          <Col sm="6" md="6" lg="3">
             <OpenJobsGraph
               openJobsCount={dashboardCounts.openjobcount}
               graphData={analyiticalCounts}

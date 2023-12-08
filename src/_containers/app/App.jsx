@@ -32,7 +32,6 @@ import {
   HiringManager,
   CandidateReport,
   IncompleteCandidateProfile,
-  PartiallyFilledJobs,
   AdminCalendar,
   JobsWithoutMatchedCandidates,
   CandidateWithoutMatchedJobs,
@@ -54,7 +53,6 @@ import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 import { messaging } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
-import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
 
@@ -70,6 +68,8 @@ import { ShareJobDetails } from "_containers/sharejob/sharejob";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
+  const [hideSidebar, setHideSidebar] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -98,8 +98,19 @@ export function App() {
   // init custom history object to allow navigation from
   // anywhere in the react app (inside or outside components)
   history.navigate = useNavigate();
+  const location = useLocation();
   history.location = useLocation();
-
+  useEffect(() => {
+    if (
+      location.pathname !== "" &&
+      (location.pathname.indexOf("job-detail") !== -1 ||
+        location.pathname.indexOf("video-screen") !== -1)
+    ) {
+      setHideSidebar(true);
+    } else {
+      setHideSidebar(false);
+    }
+  }, [location]);
   const renderRoutes = (userroleid) => {
     if (userroleid === 1) {
       return (
@@ -508,13 +519,40 @@ export function App() {
     }
   };
 
+  const onOpenSidebar = () => {
+    setIsSidebarOpen(true);
+  };
+
+  const onCloseSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
   return (
     <>
-      {authUser && <AppHeader />}
+      {authUser && (
+        <AppHeader
+          isSidebarOpen={isSidebarOpen}
+          onOpenSidebar={() => onOpenSidebar()}
+          onCloseSidebar={() => onCloseSidebar()}
+        />
+      )}
+      {!authUser && hideSidebar && (
+        <AppHeader
+          unAuth={true}
+          isSidebarOpen={isSidebarOpen}
+          onOpenSidebar={() => onOpenSidebar()}
+          onCloseSidebar={() => onCloseSidebar()}
+        />
+      )}
       <div className={authUser ? `app-main` : ""}>
-        {authUser && <AppSidebar />}
+        {authUser && !hideSidebar && (
+          <AppSidebar
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+          />
+        )}
         <div className={authUser ? `app-main__outer` : ""}>
-          <div className="app-main__inner">
+          <div className={"app-main__inner "}>
             <ToastContainer />
             <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}
@@ -577,7 +615,10 @@ export function App() {
               {/* for firebase */}
               {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
               {/* for zoom */}
-              <Route path="/video-screen/*" element={<ZoomVideoScreen />} />
+              <Route
+                path="/video-screen/*"
+                element={<ZoomVideoScreen authUser={authUser} />}
+              />
               <Route
                 path="/job-detail/:id"
                 element={<ShareJobDetails authUser={authUser} />}
@@ -585,6 +626,7 @@ export function App() {
             </Routes>
           </div>
           {authUser && <AppFooter />}
+          {!authUser && hideSidebar && <AppFooter />}
         </div>
       </div>
     </>

@@ -258,7 +258,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="3" lg="3" md="4" sm="12" xs="12">
                   <SkillsFilter
                     name={"@skillid"}
                     placeholder={"Search Skills"}
@@ -269,7 +269,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                     value={skill}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="3" lg="3" md="4" sm="12" xs="12">
                   <LocationFilter
                     name={"@cityid"}
                     placeholder={"Search Location"}
@@ -280,7 +280,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                     value={location}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -303,7 +303,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -326,7 +326,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     color="primary"
@@ -337,7 +337,7 @@ export function CandidateWithoutMatchedJobs({ title }) {
                     Search
                   </Button>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     color="link"
                     type="button"

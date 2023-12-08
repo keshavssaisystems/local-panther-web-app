@@ -490,7 +490,7 @@ export const AdminListing = ({ entity }) => {
           <Card className="mb-3">
             <CardBody>
               <Row className="mb-3">
-                <Col>
+                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
                   <FormGroup>
                     <Input
                       type="select"
@@ -511,7 +511,7 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col className="col-3">
+                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
                   <FormGroup>
                     <Input
                       type="select"
@@ -525,8 +525,16 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col className="col-1"></Col>
-                <Col className="col">
+                {/* <Col className="col-1"></Col> */}
+                <Col
+                  className="right-align"
+                  xxl={6}
+                  xl={6}
+                  md={12}
+                  lg={8}
+                  sm={12}
+                  xs={12}
+                >
                   <Button
                     style={{
                       background: "#2f479b",

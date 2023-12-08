@@ -75,7 +75,7 @@ export function HorizonatalBarGraph({ graphData }) {
             </Col>
             <Col md={11} sm={11} xs={11} className="ps-2">
               <div className="card-header-title font-size-lg mt-3 ms-4 text-capitalize fw-normal">
-                Candidate's
+                Candidate Interview's
               </div>
               <span className="text-muted mt-1 ms-4">
                 Accepted, Scheduled & rejected

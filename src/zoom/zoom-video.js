@@ -6,7 +6,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
-export const ZoomVideoScreen = () => {
+import "../_containers/sharejob/sharejob.scss";
+export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
   const [sessionData, setSessionData] = useState([]);
   const [showAlert, SetShowAlert] = useState({
@@ -107,7 +108,9 @@ export const ZoomVideoScreen = () => {
   return (
     <>
       {/* <div id="previewContainer"></div> */}
-      <div id="sessionContainer"></div>
+      <div className={!props.authUser ? "share-job-cont" : ""}>
+        <div id="sessionContainer"></div>
+      </div>
 
       <>
         {" "}

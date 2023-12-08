@@ -51,7 +51,7 @@ export function ChatNameCard({
 
   return (
     <>
-      <NavItem key={keyItem}>
+      <NavItem key={keyItem} className="chat-main-room">
         <DropdownItem
           active={userId === selected}
           onClick={(e) =>

@@ -277,7 +277,7 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
           <Label className="fw-semi-bold">
             Additional qualification for the role
           </Label>
-          <Col md={4}>
+          <Col md={6} lg={4}>
             <FormGroup>
               <Label for={"mustHave"} className="fw-semi-bold">
                 Must have
@@ -306,7 +306,7 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
               )}
             </FormGroup>
           </Col>
-          <Col md={4}>
+          <Col md={6} lg={4}>
             <FormGroup>
               <Label for={"niceToHave"} className="fw-semi-bold">
                 Nice to have

@@ -5,6 +5,16 @@
   .forms-wizard li {
     color: #6c757d;
   }
+  @media (max-width: 768px) {    
+    .forms-wizard{
+      min-width: 600px;
+      width: auto;
+    }
+    .forms-wizard-alt{
+      max-width: 430px !important;
+      overflow: auto;
+    }
+  }
   .forms-wizard-alt .forms-wizard li em {
     width: 14px;
     height: 14px;

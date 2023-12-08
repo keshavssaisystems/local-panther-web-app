@@ -173,7 +173,7 @@ export function PersonalInformationNew(props) {
                     <Row>
                       <Col>
                         <Label className="personal-info-label">
-                          Employement Eligibility:{" "}
+                          Employment Eligibility:{" "}
                           <strong className="content-text">
                             Authorized to work in the US{" "}
                           </strong>
