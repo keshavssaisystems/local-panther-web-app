@@ -18,7 +18,6 @@ import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import momentTimezone from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import {
   customerCandidateListsActions,
@@ -30,7 +29,7 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
-import { Login } from "@microsoft/mgt-react";
+import { Agenda, Login } from "@microsoft/mgt-react";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -684,6 +683,7 @@ export function ScheduleInterview() {
                     events={upData}
                     startAccessor="start"
                     endAccessor="end"
+                    messages={{ agenda: "Schedule" }}
                     eventPropGetter={(upData) => {
                       const backgroundColor = upData.color
                         ? upData.color

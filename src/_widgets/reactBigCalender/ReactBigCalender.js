@@ -33,6 +33,7 @@ export function ReactBigCalender({
           defaultView={Views.MONTH}
           localizer={localizer}
           events={events}
+          messages={{ agenda: "Schedule" }}
           startAccessor="start"
           endAccessor="end"
           // popup

@@ -297,7 +297,7 @@ export const CustomerCandidateLists = (props) => {
                 toggle("offers");
               }}
             >
-              Offers
+              Offer
             </Button>
             <Button
               color="primary"
