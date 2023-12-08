@@ -1,29 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Button,
-  FormGroup,
-  InputGroup,
-  Label,
-  Form,
-  CardFooter,
-} from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { Row, Col, Card, CardBody, Button } from "reactstrap";
+import { useSelector } from "react-redux";
 
-import {
-  formatDate,
-  formatDateQualification,
-  calculateExperience,
-  getDate,
-  getEducText,
-  convertText,
-} from "_helpers/helper";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import { getDate, getEducText } from "_helpers/helper";
 import html2pdf from "html2pdf.js";
 
 export function ProfilePDF(props) {
@@ -171,7 +150,18 @@ export function ProfilePDF(props) {
                   <h1>
                     <strong>
                       {" "}
-                      {personalInfo_temp.firstname} {personalInfo_temp.lastname}
+                      {personalInfo_temp.firstname} {personalInfo_temp.lastname}{" "}
+                      {personalInfo_temp.pronounname !== "" && (
+                        <span
+                          style={{
+                            color: "#979797",
+                            fontWeight: "400",
+                            fontSize: "16px",
+                          }}
+                        >
+                          ( {personalInfo_temp.pronounname} )
+                        </span>
+                      )}
                     </strong>
                   </h1>
                   <p>

@@ -1,9 +1,9 @@
-import { SkillsFilter } from "_components/dropdownComponents/SkillsFilter";
 import React, { useState, useEffect } from "react";
 import { FormGroup, Form, Row, Col, Button, Label, FormText } from "reactstrap";
 
 import AsyncSelect from "react-select/async";
 import { getSkillsFilter } from "_store";
+import AsyncCreatableSelect from "react-select/async-creatable";
 
 export function KeyQualification({ data, postData, prevStep, previousData }) {
   const [prevKeyQualificationArr1, setPrevKey] = useState([]);
@@ -258,6 +258,17 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
       setPrevKey2(data);
     }
   };
+  const formatCreateLabel = (inputValue) => {
+    if (skillExist && inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new skill - <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
+    }
+  };
 
   return (
     <>
@@ -272,24 +283,7 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
                 Must have
               </Label>
 
-              <span>
-                {searchText !== "" && skillExist && (
-                  <Label
-                    style={{
-                      color: "#545cd8",
-                      fontWeight: "400",
-                      cursor: "pointer",
-                    }}
-                    className="fw-semi-bold float-end"
-                    onClick={() => addNewSkill()}
-                  >
-                    Add
-                  </Label>
-                )}{" "}
-              </span>
-              {/* )} */}
-
-              <AsyncSelect
+              <AsyncCreatableSelect
                 name="mustHave"
                 placeholder="Search to select"
                 loadOptions={loadOptions}
@@ -302,6 +296,8 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
                 }
                 onKeyDown={(e) => handleKeyDown(e)}
                 onChange={(evt) => onSelectSkillsDropdown(evt)}
+                formatCreateLabel={formatCreateLabel}
+                onCreateOption={addNewSkill}
               />
               {mustHaveValidation === true && (
                 <FormText color="danger">
@@ -315,22 +311,8 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
               <Label for={"niceToHave"} className="fw-semi-bold">
                 Nice to have
               </Label>
-              <span>
-                {searchOptionalText !== "" && optionalskillExist && (
-                  <Label
-                    style={{
-                      color: "#545cd8",
-                      fontWeight: "400",
-                      cursor: "pointer",
-                    }}
-                    className="fw-semi-bold float-end"
-                    onClick={() => addNewSkillOptional()}
-                  >
-                    Add
-                  </Label>
-                )}{" "}
-              </span>
-              <AsyncSelect
+
+              <AsyncCreatableSelect
                 name="niceToHave"
                 id="niceToHave"
                 placeholder="Search to select"
@@ -344,6 +326,8 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
                 }
                 onKeyDown={(e) => handleKeyDownOptional(e)}
                 onChange={(evt) => selectOptionalSkills(evt)}
+                formatCreateLabel={formatCreateLabel}
+                onCreateOption={addNewSkillOptional}
               />
             </FormGroup>
           </Col>

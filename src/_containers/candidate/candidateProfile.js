@@ -101,6 +101,7 @@ export function CandidateProfile() {
     await getPersonalDetails();
     await getDropdownLists();
   };
+  dispatch(getProfileActions.getPronoun());
   let popular_skills = [];
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());
@@ -216,14 +217,14 @@ export function CandidateProfile() {
             />
           </Row>
           <Row>
-            <Col>
+            <Col lg={6} md={12} sm={12}>
               <ResumeDetails
                 resumeInfo={profileData.resumeInfo}
                 candidateDetails={profileData.personalInfo}
                 onCallBack={() => loadPage()}
               />
             </Col>
-            <Col>
+            <Col lg={6} md={12} sm={12}>
               <CandidateSkills
                 skillInfo={profileData.skillsInfo}
                 popularSkillData={popularSkills}
@@ -232,13 +233,13 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col lg={6} md={12} sm={12}>
               <CandidateQualification
                 qualificationInfo={profileData.qualificationsInfo}
                 onCallBack={() => loadPage()}
               />
             </Col>
-            <Col>
+            <Col lg={6} md={12} sm={12}>
               <CandidateEducation
                 educationInfo={profileData.educationInfo}
                 onCallBack={() => loadPage()}
@@ -246,13 +247,13 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col lg={6} md={12} sm={12}>
               <CertificationDetails
                 certificationsInfo={profileData.certificationsInfo}
                 onCallBack={() => loadPage()}
               />
             </Col>
-            <Col>
+            <Col lg={6} md={12} sm={12}>
               <AdditionalInformation onCallBack={() => loadPage()} />
             </Col>
           </Row>

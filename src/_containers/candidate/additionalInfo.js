@@ -116,7 +116,7 @@ export function AdditionalInformation(props) {
           <CardHeader className="card-title-text  text-capitalize ">
             Additional information
             {getResponse?.[0]?.summary === "" ? (
-              <div className="ms-auto me-2">
+              <div className="float-end me-2 ms-auto">
                 <Label className="link-text" onClick={(evt) => edit("add")}>
                   Add
                 </Label>

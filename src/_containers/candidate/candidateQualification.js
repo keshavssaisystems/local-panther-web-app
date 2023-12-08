@@ -147,7 +147,7 @@ export function CandidateQualification(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Qualifications
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <Label
                 className="link-text"
                 onClick={(evt) => setPersonalModal(true)}
