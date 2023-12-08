@@ -29,7 +29,7 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
-import { Agenda, Login } from "@microsoft/mgt-react";
+import { Login } from "@microsoft/mgt-react";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
