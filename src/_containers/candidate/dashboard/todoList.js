@@ -162,7 +162,7 @@ export function TodoList(props) {
                                     )}
                                   </div>
                                 </div>
-                                <div className="widget-content-right widget-content-actions todo-icons">
+                                <div className="widget-content-right todo-icons">
                                   <BsPencil
                                     className="me-2"
                                     onClick={(e) => addNotes("edit", item, e)}
@@ -283,7 +283,7 @@ export function TodoList(props) {
               <Col className="d-flex justify-content-center">
                 <Button
                   className="me-2"
-                  style={{backgroundColor:'#2f479b'}}
+                  style={{ backgroundColor: "#2f479b" }}
                   onClick={(evt) => deleteToDo(false)}
                 >
                   YES

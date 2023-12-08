@@ -123,7 +123,7 @@ export function CandidateEducation(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Education
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <Label
                 className="link-text"
                 onClick={(evt) => setPersonalModal(true)}
@@ -135,16 +135,6 @@ export function CandidateEducation(props) {
 
           <CardBody className="scroll-area-md">
             <div>
-              {/* <Col className="mb-3">
-                <strong className="card-title-text">Education</strong>
-                <Label
-                  className="float-end link-text"
-                  onClick={(evt) => setPersonalModal(true)}
-                >
-                  Add
-                </Label>
-              </Col> */}
-
               {!loader ? (
                 <Row>
                   {educationalDetails.length > 0 ? (

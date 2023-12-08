@@ -84,6 +84,7 @@ function personalInfoInsertActions() {
         isactive,
         userid,
         jobprofile,
+        pronounid,
       }) =>
         await fetchWrapper.put(`${baseUrl}/api/Candidate/${candidateid}`, {
           candidateid,
@@ -104,6 +105,7 @@ function personalInfoInsertActions() {
           isactive,
           userid,
           jobprofile,
+          pronounid,
         })
     );
   }

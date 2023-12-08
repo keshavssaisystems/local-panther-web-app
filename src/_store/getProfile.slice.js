@@ -21,10 +21,6 @@ const initialState = {
         id: 1,
         name: "Sponsorship required",
       },
-      {
-        id: 2,
-        name: "Not Specified",
-      },
     ],
 
     selectedCity: [
@@ -57,8 +53,15 @@ const initialState = {
         label: "",
       },
     ],
+    selectedPronoun: [
+      {
+        value: 0,
+        label: "",
+      },
+    ],
   },
 
+  pronounList: [],
   profileData: {
     personalInfo: {},
     resumeInfo: {},
@@ -85,6 +88,18 @@ export const getCandidate = createAsyncThunk(
     const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Candidate/GetCandidateById/${candidateid}`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
+export const getPronoun = createAsyncThunk(
+  "candidate/getPronoun",
+  async (inputValue) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=pronounsname`
     );
 
     return response.data; // Assuming your API response has a "data" property
@@ -158,6 +173,8 @@ const getProfileSlice = createSlice({
           isactive: true,
           userid: 0,
           currentUserId: 0,
+          pronounname: filter_data.pronounname,
+          pronounid: filter_data.pronounid,
         };
         let new_data = { ...state.profileData };
         new_data.personalInfo = data;
@@ -203,12 +220,33 @@ const getProfileSlice = createSlice({
             label: filter_data.ethnicity,
           },
         ];
+        dropdown_selected.selectedPronoun = [
+          {
+            value: filter_data.pronounid,
+            label: filter_data.pronounname,
+          },
+        ];
 
         state.dropdownLists = dropdown_selected;
         state.profileImage = localStorage.getItem("profileImage");
       })
       .addCase(getCandidate.rejected, (state, action) => {
         state.loader = false;
+        state.error = action.error;
+      })
+
+      .addCase(getPronoun.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(getPronoun.fulfilled, (state, action) => {
+        state.pronounList = action.payload.map(({ id: value, ...rest }) => {
+          return {
+            value,
+            label: `${rest.name}`,
+          };
+        });
+      })
+      .addCase(getPronoun.rejected, (state, action) => {
         state.error = action.error;
       });
   },
@@ -218,5 +256,6 @@ const getProfileSlice = createSlice({
 export const getProfileActions = {
   ...getProfileSlice.actions,
   getCandidate, // Export the async action
+  getPronoun,
 };
 export const getProfileReducer = getProfileSlice.reducer;
