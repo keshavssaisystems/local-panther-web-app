@@ -63,7 +63,7 @@ export function Statistics({ graphData }) {
     ],
     legend: {
       position: "top",
-      offsetX: 400,
+      offsetX: 100,
       onItemClick: {
         toggleDataSeries: false,
       },
