@@ -144,6 +144,7 @@ export const CandidateList = (props) => {
     }
   };
   let successMessage = "Job status updated successfully!!!";
+
   const onCandidateCardActions = async (
     type,
     candidaterecommendedjobid,
@@ -242,7 +243,7 @@ export const CandidateList = (props) => {
       }
     } else if (type === "rejectInterview") {
       let payload = {
-        rejectionreason: "",
+        rejectionreason: reason,
       };
       let res = await dispatch(
         scheduleInterviewActions.rejectInterviewThunk({
@@ -682,11 +683,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -757,11 +760,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -834,11 +839,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -910,11 +917,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -987,11 +996,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -1065,11 +1076,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
