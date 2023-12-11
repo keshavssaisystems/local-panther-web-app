@@ -10,7 +10,6 @@ export function ScorePopup({ scoreJson }) {
     "skillsscore",
     "experiencescore",
     "educationscore",
-    "certificatescore",
   ];
   let displayName = {
     jobtitlescore: "Job title",
@@ -18,7 +17,6 @@ export function ScorePopup({ scoreJson }) {
     skillsscore: "Skills",
     experiencescore: "Experience",
     educationscore: "Education",
-    certificatescore: "Certificate",
   };
   return (
     <>

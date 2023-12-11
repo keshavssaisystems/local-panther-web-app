@@ -41,19 +41,15 @@ export const CustomerList = () => {
     title: "",
     description: "",
   });
+
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
     dispatch(dropdownActions.getStatusListThunk());
-    dispatch(
-      getCustomers({
-        isActive: true,
-        pageSize: pageSize,
-        pageNumber: pageNo,
-        companyId: 0,
-      })
-    );
+    getCustomerDetails(pageSize, pageNo);
   }, []);
   const [customerStatus, setCustomerStatus] = useState(0);
   const [companyId, setCompanyId] = useState(0);
@@ -65,8 +61,6 @@ export const CustomerList = () => {
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
 
-  const [pageNo, setPageNo] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   let title = "Customers";
   let icon = companyLogo;
   let columns = [

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,16 +13,58 @@ import {
   Button,
   ButtonGroup,
 } from "reactstrap";
+import SweetAlert from "react-bootstrap-sweetalert";
 
-import { BsCheckCircle } from "react-icons/bs";
+import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { getTimezoneDateTime } from "_helpers/helper";
+import { useDispatch } from "react-redux";
+import { customerCandidateListsActions } from "_containers/customer/candidatelists/customercandidatelists.slice";
+import { candidateListActions } from "_containers/candidate/list/candidatelist.slice";
 
 export const CandListView = (props) => {
-  const onBtnClick = (type, candidaterecommendedjobid) => {
-    props.onCandidateActions(type, candidaterecommendedjobid);
+  const dispatch = useDispatch();
+
+  const onBtnClick = (type, candidaterecommendedjobid, reason) => {
+    props.onCandidateActions(type, candidaterecommendedjobid, reason);
   };
+  const [rejectReasonModal, setRejectReasonModal] = useState(false);
+  const [candidaterecommendedjobid, setRecommendedJobId] = useState(0);
+  const [rejectType, setRejectType] = useState("");
+  const [title, setTitle] = useState("");
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+
+  const rejectReason = (rejectTitle, type, candidaterecommendedjobid) => {
+    setTitle(rejectTitle);
+    setRejectType(type);
+    setRecommendedJobId(candidaterecommendedjobid);
+    setRejectReasonModal(true);
+  };
+
+  const submitReject = async (comment) => {
+    setRejectReasonModal(false);
+    onBtnClick(rejectType, candidaterecommendedjobid, comment);
+  };
+  // const showSweetAlert = ({ title, type }) => {
+  //   let data = { ...showAlert };
+  //   data.title = title;
+  //   data.type = type;
+  //   data.show = true;
+  //   SetShowAlert(data);
+  // };
+  // const closeSweetAlert = () => {
+  //   let data = { ...showAlert };
+  //   data.title = "";
+  //   data.type = "";
+  //   data.show = false;
+  //   SetShowAlert(data);
+  // };
 
   const onShowModal = (row, type) => {
     props.showModal(row, type);
@@ -131,9 +173,10 @@ export const CandListView = (props) => {
                   size="sm"
                   title="Reject interview"
                   onClick={() =>
-                    onBtnClick(
+                    rejectReason(
+                      "interview reject",
                       "rejectInterview",
-                      row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                      row.candidaterecommendedjobid
                     )
                   }
                   className="btn-icon"
@@ -188,7 +231,11 @@ export const CandListView = (props) => {
             size="sm"
             title="Reject offer"
             onClick={() =>
-              onBtnClick("rejected", row.candidaterecommendedjobid)
+              rejectReason(
+                "offer reject",
+                "rejected",
+                row.candidaterecommendedjobid
+              )
             }
             className="btn-icon"
             color="danger"
@@ -262,7 +309,11 @@ export const CandListView = (props) => {
             size="sm"
             title="Reject offer"
             onClick={() =>
-              onBtnClick("rejected", row.candidaterecommendedjobid)
+              rejectReason(
+                "offer reject",
+                "rejected",
+                row.candidaterecommendedjobid
+              )
             }
             className="btn-icon"
             color="danger"
@@ -920,6 +971,9 @@ export const CandListView = (props) => {
     props.onPrescreenClick(type, row);
   };
 
+  const closeModal = function () {
+    setRejectReasonModal(false);
+  };
   return (
     <>
       <DataTable
@@ -931,6 +985,24 @@ export const CandListView = (props) => {
         // pagination
         className="cust-list-view"
       />
+      {rejectReasonModal && (
+        <RejectReasonModal
+          isRMOpen={rejectReasonModal}
+          callBack={(e) => submitReject(e)}
+          callBackError={() => closeModal()}
+          title={"rejection"}
+        />
+      )}
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeModal()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 };
