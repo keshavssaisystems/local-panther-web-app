@@ -1,40 +1,22 @@
 import React, { useState, useEffect } from "react";
 import companyLogo from "assets/utils/images/candidate.svg";
-import {
-  customers,
-  company,
-  users,
-  roles,
-  menuMapping,
-} from "_containers/admin/common/adminColumnsListing";
 import PageTitle from "_components/common/pagetitle";
 import {
   Row,
   Col,
   Card,
   CardBody,
-  CardHeader,
   Button,
-  FormGroup,
-  InputGroup,
-  Input,
   Modal,
   ModalHeader,
   ModalBody,
 } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getCompanies,
-  getIndustries,
-  getCustomers,
-  getUsers,
   getRoles,
   getMenuMappings,
-  deleteUser,
   deleteRole,
   getRolesList,
 } from "_containers/admin/_redux/adminListing.slice";
@@ -49,26 +31,17 @@ import { AddEditRole } from "../common/addEditRole";
 
 export const RoleMenuListing = ({ entity }) => {
   const dispatch = useDispatch();
-  const {
-    data,
-    industyList,
-    industryCompanyMapping,
-    loading = false,
-  } = useSelector((state) => state?.adminListing ?? {});
+  const { data } = useSelector((state) => state?.adminListing ?? {});
 
-  let title,
-    icon,
-    listingTitle,
-    columns = [],
-    searchFilter = [],
-    buttonsList = [];
+  let icon,
+    columns = [];
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [viewMode, setViewMode] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [editingData, setEditingData] = useState(null);
@@ -136,10 +109,12 @@ export const RoleMenuListing = ({ entity }) => {
     loadData();
   }, []);
 
-  const loadData = () => {
+  const loadData = async () => {
+    setLoading(true);
     dispatch(getRoles());
-    dispatch(getRolesList(urlParams));
+    await dispatch(getRolesList(urlParams));
     dispatch(getMenuMappings());
+    setLoading(false);
   };
   const customStyles = {
     headCells: {
@@ -165,22 +140,6 @@ export const RoleMenuListing = ({ entity }) => {
 
     setOpenModal(true);
   };
-  const [check, setCheck] = useState();
-  const deleteConfirm = (row, check) => {
-    setCheck(check);
-    setSelectedRowData(row);
-    setIsDelete(true);
-  };
-
-  const onAddClick = () => {
-    setIsAddMode(true); // Open the modal
-    setViewMode(false);
-    setOpenModal(true);
-  };
-
-  const onSearchClick = () => {
-    console.log("Search is clicked");
-  };
 
   const close = () => {
     setIsAddMode(false);
@@ -193,30 +152,6 @@ export const RoleMenuListing = ({ entity }) => {
   const CloseModal = () => {
     close();
     loadData();
-  };
-  const onUpdateNewComp = (evt, formType) => {
-    // const newData = { ...formType === 'company' ? newCompData : newCustData };
-    // newData[evt.target.name] = { value: evt.target.value, error: false };
-    // formType === 'company' ? setNewCompData(newData) : setNewCustData(newData);
-  };
-
-  const onSaveClick = async (e) => {
-    if (isAddMode) {
-      // do something for  e.target.value in Add mode
-    } else {
-      // do something for  e.target.value in EDIT mode
-    }
-  };
-
-  const [inputValue, setValue] = useState("");
-  const [selectedValue, setSelectedValue] = useState(null);
-
-  // handle input change event
-  // onInputChange={handleInputChange}
-
-  // handle selection
-  const handleChange = (e) => {
-    setSelectedValue(e.target.value);
   };
 
   const deleteUserData = async function () {
@@ -289,20 +224,6 @@ export const RoleMenuListing = ({ entity }) => {
             <CardBody>
               <Row className="mb-3">
                 <Col className="col">
-                  {/* {entity === "roles" ? (
-                    <Button
-                      style={{
-                        background: "#2f479b",
-                        borderColor: "#545cd8",
-                      }}
-                      className="float-end me-3 mt-1"
-                      onClick={() => onAddClick()}
-                    >
-                      Add role
-                    </Button>
-                  ) : (
-                    <></>
-                  )} */}
                   <div
                     className={cx(
                       "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
@@ -341,7 +262,7 @@ export const RoleMenuListing = ({ entity }) => {
                 columns={columns}
                 pagination
                 fixedHeader
-                // fixedHeaderScrollHeight="400px"
+                progressPending={loading}
                 customStyles={customStyles}
               />
             </CardBody>

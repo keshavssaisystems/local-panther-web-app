@@ -36,7 +36,7 @@ export const Skills = () => {
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({ skillname: "" });
   const [pageNo, setPageNo] = useState(1);
-
+  const [pageSize, setPageSize] = useState(10);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -45,13 +45,7 @@ export const Skills = () => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(
-      getSkills({
-        pageSize: 10,
-        isActive: true,
-        pageNumber: 1,
-      })
-    );
+    getSkillsList(pageSize, pageNo);
   }, []);
 
   const [success, setSuccess] = useState(false);
@@ -63,7 +57,7 @@ export const Skills = () => {
   const [save, setSave] = useState(false);
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
+
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   let title = "Companies";
@@ -404,7 +398,7 @@ export const Skills = () => {
         type: "skill",
         ispopular: true,
         isactive: true,
-        skillstatusid: 0,
+        skillstatusid: 1,
         skillstatusupdateddate: new Date().toISOString(),
         skillstatusupdatedby: JSON.parse(localStorage.getItem("userDetails"))
           ?.UserId,

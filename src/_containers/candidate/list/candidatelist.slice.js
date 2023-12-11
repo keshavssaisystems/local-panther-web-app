@@ -95,12 +95,9 @@ export const candidateApply = createAsyncThunk(
 // candidate reject thunk
 export const candidateReject = createAsyncThunk(
   `${name}/candidateReject`,
-  async (jobId) => {
-    const REJECT_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateRejected/${jobId}`;
-    return await fetchWrapper.put(REJECT_END_POINT, {
-      candidaterejectedcomment: "",
-      candidaterejectedreasonid: 0,
-    });
+  async ({ candidaterecommendedjobid, payload }) => {
+    const REJECT_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateRejected/${candidaterecommendedjobid}`;
+    return await fetchWrapper.put(REJECT_END_POINT, payload);
   }
 );
 

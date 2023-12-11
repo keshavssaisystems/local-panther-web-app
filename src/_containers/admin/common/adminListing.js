@@ -45,15 +45,17 @@ import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
-  const { data } = useSelector((state) => state?.adminListing ?? {});
 
+  const [pageSize, setPageSize] = useState(10);
+  const [pageNo, setPageNo] = useState(0);
   let title,
     icon,
     columns = [];
   useEffect(() => {
+    loadData();
     dispatch(getRoles());
   }, []);
-  const [pageNo, setPageNo] = useState(0);
+  const { data } = useSelector((state) => state?.adminListing ?? {});
   const rolesList = useSelector((state) => state.adminListing.rolesList);
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
@@ -62,7 +64,6 @@ export const AdminListing = ({ entity }) => {
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [viewMode, setViewMode] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
 
   const [openModal, setOpenModal] = useState(false);
@@ -78,21 +79,7 @@ export const AdminListing = ({ entity }) => {
 
   const [roleid, setRoleId] = useState(0);
   const [status, setStatus] = useState("All");
-  const [newCompData, setNewCompData] = useState({
-    // ... other fields
-    newCompName: { value: "", error: false },
-    newIndusName: { value: "", error: false },
-    newCompDesc: { value: "" },
-    newCompEmp: { value: "" },
-    newCompAdd: { value: "" },
-    newCompState: { value: 0 },
-    newCompCity: { value: 0 },
-    newCompCountry: { value: 0 },
-    newCompLog: { value: 0 },
-    newCompZip: { value: "" },
-    newCompEmail: { value: "" },
-    newCompPhonenum: { value: "" },
-  });
+
   title = users.title;
   icon = companyLogo;
   columns = [
