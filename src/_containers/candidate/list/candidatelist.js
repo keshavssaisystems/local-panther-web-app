@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  TabContent,
-  TabPane,
-  ButtonGroup,
-  Button,
-  Row,
-  Col,
-  Card,
-  CardBody,
-} from "reactstrap";
+import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
 import classnames from "classnames";
 import { CardPagination } from "_components/common/cardpagination";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,6 +21,7 @@ import {
   custJobListActions,
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
+import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -40,6 +32,8 @@ export const CandidateList = (props) => {
   const [selectedIDData, setSelectedIDData] = useState([]);
   const [showPSModal, setShowPSModal] = useState(false);
   const [preScreenType, setPreScreenType] = useState("");
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleId, setRescheduleId] = useState("");
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -265,6 +259,9 @@ export const CandidateList = (props) => {
           type: "danger",
         });
       }
+    } else if (type === "rescheduleInterview") {
+      setShowRescheduleModal(true);
+      setRescheduleId(candidaterecommendedjobid);
     }
   };
 
@@ -359,11 +356,11 @@ export const CandidateList = (props) => {
 
   const onPrescreenClickAction = async (type, row) => {
     if (type === "pending") {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getJobPrescreenApplicationQues(row.jobid)
       );
     } else {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getCompJobPrescreenApplication(row.jobid)
       );
     }
@@ -394,6 +391,25 @@ export const CandidateList = (props) => {
 
     if (res.payload.statusCode === 201) {
       setShowPSModal(false);
+      showSweetAlert({ title: res.payload.message, type: "success" });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
+  const onSendRescheduleData = async (data) => {
+    let res = await dispatch(
+      candidateListActions.updateRescheduleReason({
+        scheduleinterviewid: rescheduleId,
+        reschedulerequestedreason: data,
+      })
+    );
+
+    if (res?.payload?.statusCode === 204) {
+      setShowRescheduleModal(false);
       showSweetAlert({ title: res.payload.message, type: "success" });
     } else {
       showSweetAlert({
@@ -478,7 +494,7 @@ export const CandidateList = (props) => {
                 toggle("offers");
               }}
             >
-              Offers
+              Offer
             </Button>
             <Button
               color="primary"
@@ -1020,7 +1036,7 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Offers candidates are candidates who have decided to offer
+                      Offer candidates are candidates who have decided to offer
                       a job after interviewing and assessing their
                       qualifications. This means the customer has made a final
                       decision on who to hire and communicated the offer to the
@@ -1147,6 +1163,19 @@ export const CandidateList = (props) => {
                 preScreenType={preScreenType}
               ></PrescreenModal>
             </>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {showRescheduleModal ? (
+            <CandRescheduleModal
+              isOpen={showRescheduleModal}
+              onClose={() => {
+                setShowRescheduleModal(false);
+              }}
+              onSubmitReschedule={(data) => onSendRescheduleData(data)}
+            ></CandRescheduleModal>
           ) : (
             <></>
           )}

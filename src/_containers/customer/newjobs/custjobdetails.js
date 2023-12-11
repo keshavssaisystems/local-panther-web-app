@@ -30,6 +30,7 @@ export function CustJobDetail({
   closeJob,
   isModal = false,
   isShare = false,
+  isAdmin = false,
 }) {
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
@@ -40,7 +41,6 @@ export function CustJobDetail({
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   let loading = true;
   let jobDetail = {};
-  let skillArray = [];
   let skillsData = "-";
 
   if (jobDetails.length > 0) {
@@ -302,7 +302,7 @@ export function CustJobDetail({
       icon: scheduledIcon,
     },
     {
-      name: "Offers",
+      name: "Offer",
       count:
         jobDetail.totalOfferedCandidates === null
           ? 0
@@ -379,52 +379,59 @@ export function CustJobDetail({
                       </div>
                     </div>
                   </Col>
-                  {jobDetail.isdraft && !isShare ? (
-                    <Col md={12} lg={4} className="right-align">
-                      <Button
-                        color="primary"
-                        className={"me-1 mt-3"}
-                        onClick={(e) =>
-                          navigate(`/customer-edit-job/${jobDetail.jobid}`)
-                        }
-                      >
-                        <FiEdit className="mb-1" /> Edit job
-                      </Button>
-                      <Button
-                        color="primary"
-                        className={"me-3 mt-3"}
-                        onClick={(e) => {
-                          setPublishSuccess(true);
-                          publishJob(jobDetail.jobid);
-                        }}
-                      >
-                        <FiCheckSquare className="mb-1" /> Publish job
-                      </Button>
-                    </Col>
+
+                  {!isAdmin ? (
+                    <>
+                      {jobDetail.isdraft && !isShare ? (
+                        <Col md={12} lg={4} className="right-align">
+                          <Button
+                            color="primary"
+                            className={"me-1 mt-3"}
+                            onClick={(e) =>
+                              navigate(`/customer-edit-job/${jobDetail.jobid}`)
+                            }
+                          >
+                            <FiEdit className="mb-1" /> Edit job
+                          </Button>
+                          <Button
+                            color="primary"
+                            className={"me-3 mt-3"}
+                            onClick={(e) => {
+                              setPublishSuccess(true);
+                              publishJob(jobDetail.jobid);
+                            }}
+                          >
+                            <FiCheckSquare className="mb-1" /> Publish job
+                          </Button>
+                        </Col>
+                      ) : (
+                        <></>
+                      )}
+                      {jobDetail.isdraft === false &&
+                        jobDetail.isclosed === false &&
+                        !isShare && (
+                          <Col md={4} lg={4} className="right-align">
+                            <Button
+                              color="danger"
+                              className={"me-3 mt-3"}
+                              onClick={(e) => {
+                                setCloseConfirmation(true);
+                              }}
+                            >
+                              <FiXSquare className="mb-1" /> Close job
+                            </Button>
+                          </Col>
+                        )}
+                      {jobDetail.isclosed === true && !isShare && (
+                        <Col md={4} lg={4} className="right-align">
+                          <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
+                            Job closed
+                          </div>
+                        </Col>
+                      )}
+                    </>
                   ) : (
                     <></>
-                  )}
-                  {jobDetail.isdraft === false &&
-                    jobDetail.isclosed === false &&
-                    !isShare && (
-                      <Col md={4} lg={4} className="right-align">
-                        <Button
-                          color="danger"
-                          className={"me-3 mt-3"}
-                          onClick={(e) => {
-                            setCloseConfirmation(true);
-                          }}
-                        >
-                          <FiXSquare className="mb-1" /> Close job
-                        </Button>
-                      </Col>
-                    )}
-                  {jobDetail.isclosed === true && !isShare && (
-                    <Col md={4} lg={4} className="right-align">
-                      <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
-                        Job closed
-                      </div>
-                    </Col>
                   )}
                 </Row>
               </div>

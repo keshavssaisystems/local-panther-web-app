@@ -18,7 +18,6 @@ import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import momentTimezone from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
 import {
   customerCandidateListsActions,

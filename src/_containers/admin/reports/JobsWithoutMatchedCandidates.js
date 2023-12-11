@@ -25,7 +25,10 @@ import {
   CompanyFilter,
 } from "../filterComponent";
 
-import { getReportDataThunk } from "../_redux/report.slice";
+import {
+  getReportDataThunk,
+  getAdminReportJobDetail,
+} from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,6 +39,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -58,10 +62,12 @@ export function JobsWithoutMatchedCandidates({ title }) {
   let [filter, setFilter] = useState(initFilter);
 
   const [excelData, setExcelData] = useState([]);
-
-  const { reportData: data = [], loading = false } = useSelector(
-    (state) => state?.adminReportReducer ?? {}
-  );
+  const [showJDModal, setShowJDModal] = useState(false);
+  const {
+    reportData: data = [],
+    loading = false,
+    jobDetail = [],
+  } = useSelector((state) => state?.adminReportReducer ?? {});
 
   const getReportData = (isClearAll) => {
     let parameter = "";
@@ -143,6 +149,14 @@ export function JobsWithoutMatchedCandidates({ title }) {
     getReportData(true);
   };
 
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getAdminReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
+  };
+
   const columns = [
     {
       name: <span className="table-title">Company</span>,
@@ -159,7 +173,13 @@ export function JobsWithoutMatchedCandidates({ title }) {
       name: <span className="table-title">Job Title</span>,
       cell: (row) => (
         <span className="table-cell" title={row?.jobtitle}>
-          {row?.jobtitle}
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row?.jobtitle}
+          </Button>
         </span>
       ),
       sortable: true,
@@ -408,6 +428,19 @@ export function JobsWithoutMatchedCandidates({ title }) {
           </Card>
         </Col>
       </Row>
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }
