@@ -51,20 +51,6 @@ export const CandListView = (props) => {
     setRejectReasonModal(false);
     onBtnClick(rejectType, candidaterecommendedjobid, comment);
   };
-  // const showSweetAlert = ({ title, type }) => {
-  //   let data = { ...showAlert };
-  //   data.title = title;
-  //   data.type = type;
-  //   data.show = true;
-  //   SetShowAlert(data);
-  // };
-  // const closeSweetAlert = () => {
-  //   let data = { ...showAlert };
-  //   data.title = "";
-  //   data.type = "";
-  //   data.show = false;
-  //   SetShowAlert(data);
-  // };
 
   const onShowModal = (row, type) => {
     props.showModal(row, type);
@@ -175,7 +161,7 @@ export const CandListView = (props) => {
                   rejectReason(
                     "interview reject",
                     "rejectInterview",
-                    row.candidaterecommendedjobid
+                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
                   )
                 }
                 className="btn-icon"
