@@ -38,12 +38,7 @@ export const CompanyList = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
-    dispatch(
-      getCompanies({
-        pageSize: pageSize,
-        pageNumber: pageNo,
-      })
-    );
+    getCompanyList(pageSize, pageNo);
   }, []);
 
   const [success, setSuccess] = useState(false);

@@ -150,7 +150,11 @@ export const CandidateList = (props) => {
     }
   };
   let successMessage = "Job status updated successfully!!!";
-  const onCandidateCardActions = async (type, candidaterecommendedjobid) => {
+  const onCandidateCardActions = async (
+    type,
+    candidaterecommendedjobid,
+    reason
+  ) => {
     if (type === "liked") {
       let res = await dispatch(
         candidateListActions.candidateLike(candidaterecommendedjobid)
@@ -168,8 +172,16 @@ export const CandidateList = (props) => {
         });
       }
     } else if (type === "rejected") {
+      let payload = {
+        candidaterejectedcomment: reason,
+        candidaterejectedreasonid: 0,
+      };
+
       let res = await dispatch(
-        candidateListActions.candidateReject(candidaterecommendedjobid)
+        candidateListActions.candidateReject({
+          candidaterecommendedjobid,
+          payload,
+        })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: successMessage, type: "success" });
