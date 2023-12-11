@@ -21,6 +21,7 @@ import {
   custJobListActions,
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
+import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -31,6 +32,8 @@ export const CandidateList = (props) => {
   const [selectedIDData, setSelectedIDData] = useState([]);
   const [showPSModal, setShowPSModal] = useState(false);
   const [preScreenType, setPreScreenType] = useState("");
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleId, setRescheduleId] = useState("");
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -244,6 +247,9 @@ export const CandidateList = (props) => {
           type: "danger",
         });
       }
+    } else if (type === "rescheduleInterview") {
+      setShowRescheduleModal(true);
+      setRescheduleId(candidaterecommendedjobid);
     }
   };
 
@@ -373,6 +379,25 @@ export const CandidateList = (props) => {
 
     if (res.payload.statusCode === 201) {
       setShowPSModal(false);
+      showSweetAlert({ title: res.payload.message, type: "success" });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
+  const onSendRescheduleData = async (data) => {
+    let res = await dispatch(
+      candidateListActions.updateRescheduleReason({
+        scheduleinterviewid: rescheduleId,
+        reschedulerequestedreason: data,
+      })
+    );
+
+    if (res?.payload?.statusCode === 204) {
+      setShowRescheduleModal(false);
       showSweetAlert({ title: res.payload.message, type: "success" });
     } else {
       showSweetAlert({
@@ -1126,6 +1151,19 @@ export const CandidateList = (props) => {
                 preScreenType={preScreenType}
               ></PrescreenModal>
             </>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {showRescheduleModal ? (
+            <CandRescheduleModal
+              isOpen={showRescheduleModal}
+              onClose={() => {
+                setShowRescheduleModal(false);
+              }}
+              onSubmitReschedule={(data) => onSendRescheduleData(data)}
+            ></CandRescheduleModal>
           ) : (
             <></>
           )}

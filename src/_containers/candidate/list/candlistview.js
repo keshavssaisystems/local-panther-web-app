@@ -125,21 +125,41 @@ export const CandListView = (props) => {
         <ButtonGroup>
           {row?.scheduledInterviewDtos[0]?.isrejected === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
-              <Button
-                // outline
-                size="sm"
-                title="Reject interview"
-                onClick={() =>
-                  onBtnClick(
-                    "rejectInterview",
-                    row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                  )
-                }
-                className="btn-icon"
-                color="danger"
-              >
-                <img src={customerIcons?.list_reject} alt="list reject"></img>
-              </Button>
+              <>
+                <Button
+                  // outline
+                  size="sm"
+                  title="Reject interview"
+                  onClick={() =>
+                    onBtnClick(
+                      "rejectInterview",
+                      row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                    )
+                  }
+                  className="btn-icon"
+                  color="danger"
+                >
+                  <img src={customerIcons?.list_reject} alt="list reject"></img>
+                </Button>
+                <Button
+                  // outline
+                  size="sm"
+                  title="Reschedule interview"
+                  onClick={() =>
+                    onBtnClick(
+                      "rescheduleInterview",
+                      row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                    )
+                  }
+                  className="btn-icon"
+                  color="alternate"
+                >
+                  <img
+                    src={customerIcons?.list_schedule}
+                    alt="list reschedule"
+                  ></img>
+                </Button>
+              </>
             )}
           {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
             row?.scheduledInterviewDtos[0]?.isactive === true && (
