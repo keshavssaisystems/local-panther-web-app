@@ -128,6 +128,15 @@ export const getCompJobPrescreenApplication = createAsyncThunk(
   }
 );
 
+// update reschedule reason for candidate thunk
+export const updateRescheduleReason = createAsyncThunk(
+  `${name}/updateRescheduleReason`,
+  async (payload) => {
+    const UPDATE_RESCHEDULE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview/InterviewRescheduleRequest/${payload.scheduleinterviewid}`;
+    return await fetchWrapper.put(UPDATE_RESCHEDULE_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const candidateList = createSlice({
   name,
@@ -317,6 +326,11 @@ const candidateList = createSlice({
     [getCompJobPrescreenApplication.rejected]: (state, action) => {
       state.loading = false;
     },
+
+    // update reschedule
+    [updateRescheduleReason.pending]: (state) => {},
+    [updateRescheduleReason.fulfilled]: (state, { payload = {} }) => {},
+    [updateRescheduleReason.rejected]: (state, action) => {},
   },
 });
 
@@ -333,5 +347,6 @@ export const candidateListActions = {
   getJobPrescreenApplicationQues,
   postJobPrescreenApplication,
   getCompJobPrescreenApplication,
+  updateRescheduleReason,
 };
 export const candidateListReducer = candidateList.reducer;
