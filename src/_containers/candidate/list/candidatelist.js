@@ -264,8 +264,14 @@ export const CandidateList = (props) => {
       setShowRescheduleModal(true);
       setRescheduleId(candidaterecommendedjobid);
     } else if (type === "reaccepted") {
+      let payload = {
+        rejectionreason: reason,
+      };
       let res = await dispatch(
-        candidateListActions.candidateAcceptAgain(candidaterecommendedjobid)
+        candidateListActions.candidateAcceptAgain({
+          candidaterecommendedjobid,
+          payload: payload,
+        })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: successMessage, type: "success" });

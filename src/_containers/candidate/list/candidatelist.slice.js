@@ -77,9 +77,9 @@ export const candidateAccept = createAsyncThunk(
 // candidate accept again thunk
 export const candidateAcceptAgain = createAsyncThunk(
   `${name}/candidateAcceptAgain`,
-  async (jobId) => {
-    const ACCEPTED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateAcceptedAgain/${jobId}`;
-    return await fetchWrapper.put(ACCEPTED_END_POINT);
+  async ({ candidaterecommendedjobid, payload }) => {
+    const ACCEPTED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateAcceptedAgain/${candidaterecommendedjobid}`;
+    return await fetchWrapper.put(ACCEPTED_END_POINT, payload);
   }
 );
 
