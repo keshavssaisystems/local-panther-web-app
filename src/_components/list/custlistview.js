@@ -19,7 +19,7 @@ import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleIn
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
-import { BsClock } from "react-icons/bs";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import customerIcons from "assets/utils/images/customer";
@@ -646,19 +646,7 @@ export const CustCandidateListView = (props) => {
             {
               name: <span className="table-title">Status</span>,
               cell: (row) => (
-                <span
-                  title={
-                    row?.customerrecommendedjobstatusid === 5 &&
-                    row?.candidaterecommendedjobstatusid === 6
-                      ? "Offer rejected by candidate"
-                      : row?.candidaterecommendedjobstatusid === 6 &&
-                        row?.customerrecommendedjobstatusid !== 5
-                      ? "Rejected by candidate"
-                      : row?.customerrecommendedjobstatusid === 6
-                      ? "Rejected by customer"
-                      : "-"
-                  }
-                >
+                <span>
                   {row?.customerrecommendedjobstatusid === 5 &&
                   row?.candidaterecommendedjobstatusid === 6
                     ? "Offer rejected by candidate"
@@ -668,27 +656,39 @@ export const CustCandidateListView = (props) => {
                     : row?.customerrecommendedjobstatusid === 6
                     ? "Rejected by customer"
                     : "-"}
-                  {row?.scheduledInterviewDtos?.length > 0 &&
-                  row?.scheduledInterviewDtos[0].isrejected ? (
+                  {row?.candidaterecommendedjobstatusid === 6 ? (
                     <>
                       {" "}
-                      <FontAwesomeIcon
-                        id={
-                          row?.scheduledInterviewDtos[0].scheduleinterviewid +
-                          "" +
-                          row?.scheduledInterviewDtos[0].jobid
-                        }
-                        icon={faInfoCircle}
-                      ></FontAwesomeIcon>
+                      <BsFillInfoCircleFill
+                        id={"rr_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
                       <UncontrolledTooltip
                         placement="bottom"
-                        target={
-                          row?.scheduledInterviewDtos[0].scheduleinterviewid +
-                          "" +
-                          row?.scheduledInterviewDtos[0].jobid
-                        }
+                        target={"rr_" + row?.jobid + row?.candidateid}
                       >
-                        {row?.scheduledInterviewDtos[0].rejectionreason}
+                        {row?.candidaterejectedcomment !== ""
+                          ? row?.candidaterejectedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                  {row?.customerrecommendedjobstatusid === 6 ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"rr_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      ></BsFillInfoCircleFill>
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"rr_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.customerrejectedcomment !== ""
+                          ? row?.customerrejectedcomment
+                          : "-"}
                       </UncontrolledTooltip>
                     </>
                   ) : (
@@ -740,6 +740,26 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span title={row.firstname + " " + row.lastname}>
                   {row.firstname + " " + row.lastname}
+                  {row?.candidateacceptedcomment !== "" &&
+                  props.type === "accepted" ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"ac_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"ac_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.candidateacceptedcomment !== ""
+                          ? row?.candidateacceptedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </span>
               ),
               selector: (row) => row.firstname + " " + row.lastname,
@@ -1014,8 +1034,12 @@ export const CustCandidateListView = (props) => {
                           0 ||
                         row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                           undefined
-                        ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? row?.scheduledInterviewDtos[0]
+                            ?.isreschedulerequested === true
+                          ? "Request for reschedule"
+                          : row?.scheduledInterviewDtos[0]?.isaccepted ===
+                              true &&
+                            row?.scheduledInterviewDtos[0]?.isrejected === false
                           ? "Accepted"
                           : row?.scheduledInterviewDtos[0]?.isrejected === true
                           ? "Rejected"
@@ -1037,8 +1061,11 @@ export const CustCandidateListView = (props) => {
                     ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                       row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                         undefined
-                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? row?.scheduledInterviewDtos[0]
+                          ?.isreschedulerequested === true
+                        ? "Request for reschedule"
+                        : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                          row?.scheduledInterviewDtos[0]?.isrejected === false
                         ? "Accepted"
                         : row?.scheduledInterviewDtos[0]?.isrejected === true
                         ? "Rejected"
@@ -1050,6 +1077,67 @@ export const CustCandidateListView = (props) => {
                       : ""
                     : "Cancelled"
                   : ""}
+                {row?.scheduledInterviewDtos?.length > 0 &&
+                row?.scheduledInterviewDtos[0].isreschedulerequested ? (
+                  <>
+                    {" "}
+                    <BsFillInfoCircleFill
+                      id={
+                        "rsr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    ></BsFillInfoCircleFill>
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      target={
+                        "rsr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    >
+                      {row?.scheduledInterviewDtos[0]
+                        .reschedulerequestedreason !== ""
+                        ? row?.scheduledInterviewDtos[0]
+                            .reschedulerequestedreason
+                        : "-"}
+                    </UncontrolledTooltip>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {row?.scheduledInterviewDtos?.length > 0 &&
+                row?.scheduledInterviewDtos[0].isrejected &&
+                row?.scheduledInterviewDtos[0].interviewstatusid === 0 ? (
+                  <>
+                    {" "}
+                    <BsFillInfoCircleFill
+                      id={
+                        "rr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    ></BsFillInfoCircleFill>
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      target={
+                        "rr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    >
+                      {row?.scheduledInterviewDtos[0].rejectionreason !== ""
+                        ? row?.scheduledInterviewDtos[0].rejectionreason
+                        : "-"}
+                    </UncontrolledTooltip>
+                  </>
+                ) : (
+                  <></>
+                )}
               </span>
             ),
             selector: (row) =>
@@ -1059,8 +1147,11 @@ export const CustCandidateListView = (props) => {
                   ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                     row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                       undefined
-                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                    ? row?.scheduledInterviewDtos[0]?.isreschedulerequested ===
+                      true
+                      ? "Request for reschedule"
+                      : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
                       ? "Rejected"
