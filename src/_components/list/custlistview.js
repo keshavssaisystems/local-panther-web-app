@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import {
   UncontrolledButtonDropdown,
   DropdownItem,
@@ -12,6 +12,7 @@ import {
   Col,
   Button,
   ButtonGroup,
+  UncontrolledTooltip,
 } from "reactstrap";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
@@ -550,7 +551,7 @@ export const CustCandidateListView = (props) => {
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "20%",
+              width: "17%",
             },
             {
               name: <span className="table-title">Location</span>,
@@ -644,6 +645,57 @@ export const CustCandidateListView = (props) => {
             },
             {
               name: <span className="table-title">Status</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.customerrecommendedjobstatusid === 5 &&
+                    row?.candidaterecommendedjobstatusid === 6
+                      ? "Offer rejected by candidate"
+                      : row?.candidaterecommendedjobstatusid === 6 &&
+                        row?.customerrecommendedjobstatusid !== 5
+                      ? "Rejected by candidate"
+                      : row?.customerrecommendedjobstatusid === 6
+                      ? "Rejected by customer"
+                      : "-"
+                  }
+                >
+                  {row?.customerrecommendedjobstatusid === 5 &&
+                  row?.candidaterecommendedjobstatusid === 6
+                    ? "Offer rejected by candidate"
+                    : row?.candidaterecommendedjobstatusid === 6 &&
+                      row?.customerrecommendedjobstatusid !== 5
+                    ? "Rejected by candidate"
+                    : row?.customerrecommendedjobstatusid === 6
+                    ? "Rejected by customer"
+                    : "-"}
+                  {row?.scheduledInterviewDtos?.length > 0 &&
+                  row?.scheduledInterviewDtos[0].isrejected ? (
+                    <>
+                      {" "}
+                      <FontAwesomeIcon
+                        id={
+                          row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                          "" +
+                          row?.scheduledInterviewDtos[0].jobid
+                        }
+                        icon={faInfoCircle}
+                      ></FontAwesomeIcon>
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={
+                          row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                          "" +
+                          row?.scheduledInterviewDtos[0].jobid
+                        }
+                      >
+                        {row?.scheduledInterviewDtos[0].rejectionreason}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </span>
+              ),
               selector: (row) =>
                 row?.customerrecommendedjobstatusid === 5 &&
                 row?.candidaterecommendedjobstatusid === 6
@@ -656,7 +708,7 @@ export const CustCandidateListView = (props) => {
                   : "-",
               ignoreRowClick: true,
               button: true,
-              width: "15%",
+              width: "18%",
             },
             {
               name: <span className="table-title">Interest</span>,
