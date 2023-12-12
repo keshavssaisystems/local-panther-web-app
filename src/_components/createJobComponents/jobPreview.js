@@ -78,6 +78,28 @@ export default function JobPreview({ previewData, editdata }) {
       }
     });
   }
+  let levelOfEducationString = [];
+  if (previewData.basicInformation.levelofeducationids !== "") {
+    previewData.basicInformation.levelofeducationOption?.forEach((element) => {
+      if (
+        previewData.basicInformation.levelofeducationids?.includes(element.id)
+      ) {
+        levelOfEducationString.push(element.name);
+      }
+    });
+    levelOfEducationString = levelOfEducationString.toString();
+  }
+  let studyFieldString = [];
+  if (previewData.basicInformation.fieldofstudiesids !== "") {
+    previewData.basicInformation.fieldofstudiesOption?.forEach((element) => {
+      if (
+        previewData.basicInformation.fieldofstudiesids?.includes(element.id)
+      ) {
+        studyFieldString.push(element.name);
+      }
+    });
+    studyFieldString = studyFieldString.toString();
+  }
   let mustHaveArray = [];
   let niceToHaveArray = [];
   if (previewData.keyQualification?.length > 0) {
@@ -240,6 +262,40 @@ export default function JobPreview({ previewData, editdata }) {
                         true
                       ? "Yes"
                       : "No"}
+                  </p>
+                </div>
+              </Col>
+              <Col md={6} lg={3}></Col>
+            </Row>
+            <Row>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">
+                    Level of education
+                  </h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {levelOfEducationString === undefined
+                      ? "-"
+                      : levelOfEducationString}
+                  </p>
+                </div>
+              </Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Field of study</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {studyFieldString === undefined ? "-" : studyFieldString}
+                  </p>
+                </div>
+              </Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Certifications</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.certifications === undefined
+                      ? "-"
+                      : previewData.basicInformation.certifications}
                   </p>
                 </div>
               </Col>

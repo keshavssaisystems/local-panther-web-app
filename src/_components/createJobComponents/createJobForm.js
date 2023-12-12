@@ -97,21 +97,21 @@ export default function CreateJob({
       let data = {
         basicInformation: {
           companyId: "",
-          jobTitle: previousData.jobtitle,
-          noOfPostions: previousData.noofopenposition,
-          jobLocation: previousData.joblocationid,
-          address: previousData.locationaddress,
-          cityId: previousData.cityid,
-          stateId: previousData.stateid,
-          cityName: previousData.cityname,
-          stateName: previousData.statename,
-          zipcode: previousData.zipcode,
-          description: previousData.description,
-          companyDetail: previousData.companydetails,
+          jobTitle: previousData?.jobtitle,
+          noOfPostions: previousData?.noofopenposition,
+          jobLocation: previousData?.joblocationid,
+          address: previousData?.locationaddress,
+          cityId: previousData?.cityid,
+          stateId: previousData?.stateid,
+          cityName: previousData?.cityname,
+          stateName: previousData?.statename,
+          zipcode: previousData?.zipcode,
+          description: previousData?.description,
+          companyDetail: previousData?.companydetails,
           jobLoactionOptions: jobLocationOptions,
-          customquestionanswertype: previousData.customquestionanswertype,
-          authorizedtoworkinus: previousData.authorizedtoworkinus,
-          sponsorshiprequiured: previousData.sponsorshiprequiured,
+          customquestionanswertype: previousData?.customquestionanswertype,
+          authorizedtoworkinus: previousData?.authorizedtoworkinus,
+          sponsorshiprequiured: previousData?.sponsorshiprequiured,
         },
         experienceSchedule: {
           jobType:
@@ -246,7 +246,7 @@ export default function CreateJob({
                   hiringTimelineOption={hiringTimelineOption}
                   postData={(e) => getESPostData(e)}
                   prevStep={previousStep}
-                  previousData={previousData.jobExperienceScheduleDtos ?? {}}
+                  previousData={previousData?.jobExperienceScheduleDtos ?? {}}
                   esFormSubmitted={esFormSubmitted}
                 />
               </CardBody>
@@ -276,7 +276,7 @@ export default function CreateJob({
                   payPeriodTypeOption={payPeriodTypeOption}
                   postData={(e) => getPBPostData(e)}
                   prevStep={previousStep}
-                  previousData={previousData.jobPaymentBenefitDtos ?? {}}
+                  previousData={previousData?.jobPaymentBenefitDtos ?? {}}
                 />
               </CardBody>
             </Collapse>
@@ -304,7 +304,7 @@ export default function CreateJob({
                   data={jobData.keyQualification}
                   postData={(e) => getKQPostData(e)}
                   prevStep={previousStep}
-                  previousData={previousData.jobKeyQualificationDtos ?? {}}
+                  previousData={previousData?.jobKeyQualificationDtos ?? {}}
                 />
               </CardBody>
             </Collapse>
@@ -333,7 +333,7 @@ export default function CreateJob({
                   preScreenQuestionsOption={preScreenQuestionsOption}
                   postData={(e) => getPSPostData(e)}
                   prevStep={previousStep}
-                  previousData={previousData.jobPrescreenApplicationDtos ?? {}}
+                  previousData={previousData?.jobPrescreenApplicationDtos ?? {}}
                 />
               </CardBody>
             </Collapse>

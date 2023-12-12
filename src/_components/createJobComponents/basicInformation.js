@@ -15,6 +15,7 @@ import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import InputMask from "react-input-mask";
 import { getLocation } from "_store";
+import { useSelector } from "react-redux";
 
 export function BasicInformation({
   data,
@@ -25,6 +26,27 @@ export function BasicInformation({
   bIFormSubmitted,
   customerDetails,
 }) {
+  const fieldOfStudyOption = useSelector(
+    (state) => state.dropdown.fieldOfStudyList
+  );
+  const levelOfEducationOption = useSelector(
+    (state) => state.dropdown.levelOfEducationList
+  );
+
+  let educationOptions = levelOfEducationOption.map(
+    ({ id: value, ...rest }) => {
+      return {
+        value: `${value}`,
+        label: `${rest.name}`,
+      };
+    }
+  );
+  let fieldStudyOptions = fieldOfStudyOption.map(({ id: value, ...rest }) => {
+    return {
+      value: `${value}`,
+      label: `${rest.name}`,
+    };
+  });
   const [successMessage, setSuccessMessage] = useState(false);
   const [stateData, setStateData] = useState({});
   const customStyles = {
@@ -38,6 +60,38 @@ export function BasicInformation({
       margin: "0px",
     }),
   };
+  const getEducationData = (data) => {
+    if (data?.levelofeducationids?.split(",")?.length > 0) {
+      let newData = data.levelofeducationids.split(",");
+      let newOptions = educationOptions.filter((data) =>
+        newData.includes(data.value)
+      );
+      return newOptions;
+    }
+    if (data?.levelofeducationids?.split(",")?.length === undefined) {
+      return educationOptions.filter(
+        (data2) => data2.value === Number(data?.levelofeducationids)
+      );
+    }
+  };
+  const getStudyData = (data) => {
+    if (data?.fieldofstudiesids?.split(",")?.length > 0) {
+      let newData = data.fieldofstudiesids.split(",");
+      let newOptions = fieldStudyOptions.filter((data) =>
+        newData.includes(data.value)
+      );
+      return newOptions;
+    }
+    if (data?.fieldofstudiesids?.split(",")?.length === undefined) {
+      return fieldStudyOptions.filter(
+        (data2) => data2.value === Number(data?.fieldofstudiesids)
+      );
+    }
+  };
+  let educationData =
+    prevStep === 3 ? getEducationData(data) : getEducationData(previousData);
+  let studyData =
+    prevStep === 3 ? getStudyData(data) : getStudyData(previousData);
   const [preValue, setPreValue] = useState({
     companyId: "",
     jobTitle:
@@ -77,6 +131,10 @@ export function BasicInformation({
       data === undefined || data.sponsorshiprequiured === undefined
         ? ""
         : data.sponsorshiprequiured,
+    certifications:
+      data === undefined || data.certifications === undefined
+        ? ""
+        : data.certifications,
   });
   const [previousValue, setPreviousValue] = useState({
     companyId: "",
@@ -138,6 +196,10 @@ export function BasicInformation({
       previousData === undefined || previousData.statename === undefined
         ? ""
         : "US",
+    certifications:
+      previousData === undefined || previousData.certifications === undefined
+        ? ""
+        : previousData.certifications,
   });
   const [descriptionData, setDescriptionData] = useState(
     prevStep === 3 && preValue.description !== ""
@@ -188,6 +250,8 @@ export function BasicInformation({
     }
   };
   const saveData = (eventData) => {
+    let educationString = getEducationFormData(eventData);
+    let studyString = getStudyFormData(eventData);
     let data = {
       companyId: eventData.target.elements.companyName.value,
       jobTitle: eventData.target.elements.jobTitle.value,
@@ -223,6 +287,11 @@ export function BasicInformation({
         eventData.target.elements.authorizedtoworkinus.checked,
       sponsorshiprequiured:
         eventData.target.elements.sponsorshiprequiured.checked,
+      levelofeducationids: educationString,
+      fieldofstudiesids: studyString,
+      certifications: eventData.target.elements.certifications.value,
+      levelofeducationOption: levelOfEducationOption,
+      fieldofstudiesOption: fieldOfStudyOption,
     };
     postData(data);
     setPreValue(data);
@@ -257,12 +326,32 @@ export function BasicInformation({
     setDescriptionData(event);
     setDescriptionValidation(false);
   };
-  let educationOptions = jobLocationOptions.map(({ id: value, ...rest }) => {
-    return {
-      value: `${value}`,
-      label: `${rest.name}`,
-    };
-  });
+  const getEducationFormData = (eventData) => {
+    let postEducationData = [];
+    let educationArray = eventData?.target?.elements?.levelofeducationids;
+    if (educationArray?.length === undefined) {
+      return educationArray.value;
+    }
+    if (educationArray?.length > 0) {
+      educationArray?.forEach((element) => {
+        postEducationData.push(element.value);
+      });
+      return postEducationData.toString();
+    }
+  };
+  const getStudyFormData = (eventData) => {
+    let postStudyData = [];
+    let studyArray = eventData?.target?.elements?.fieldofstudiesids;
+    if (studyArray?.length === undefined) {
+      return studyArray.value;
+    }
+    if (studyArray?.length > 0) {
+      studyArray?.forEach((element) => {
+        postStudyData.push(element.value);
+      });
+      return postStudyData.toString();
+    }
+  };
   return (
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
@@ -389,22 +478,22 @@ export function BasicInformation({
                   {
                     value:
                       prevStep === 3
-                        ? data.cityId +
+                        ? data?.cityId +
                           ", " +
-                          data.stateId +
+                          data?.stateId +
                           ", " +
-                          data.cityName +
+                          data?.cityName +
                           ", " +
-                          data.stateName
-                        : previousData.cityid +
+                          data?.stateName
+                        : previousData?.cityid +
                           ", " +
-                          previousData.stateid +
+                          previousData?.stateid +
                           ", " +
-                          previousData.cityname +
+                          previousData?.cityname +
                           ", " +
-                          previousData.statename,
+                          previousData?.statename,
                     label:
-                      prevStep === 3 ? data.cityName : previousData.cityname,
+                      prevStep === 3 ? data?.cityName : previousData?.cityname,
                   }
                   // previousValue.statename
                 }
@@ -520,33 +609,51 @@ export function BasicInformation({
           </Col>
         </Row>
         <Row>
-          <Col md={6} lg={6}>
+          <Col md={6} lg={3}>
             <FormGroup>
-              <Label for="education" className="fw-semi-bold">
-                Education
+              <Label for="levelofeducationids" className="fw-semi-bold">
+                Level of education
               </Label>
               <Select
-                // defaultValue={[educationOptions[2]]}
+                defaultValue={educationData}
                 isMulti
-                name="education"
+                name="levelofeducationids"
                 options={educationOptions}
                 classNamePrefix="select"
-                placeholder="Select Education"
+                placeholder="Select level of education"
+              />
+            </FormGroup>
+          </Col>
+          <Col md={6} lg={3}>
+            <FormGroup>
+              <Label for="fieldofstudiesids" className="fw-semi-bold">
+                Field of Study
+              </Label>
+              <Select
+                defaultValue={studyData}
+                isMulti
+                name="fieldofstudiesids"
+                options={fieldStudyOptions}
+                classNamePrefix="select"
+                placeholder="Select field of study"
               />
             </FormGroup>
           </Col>
           <Col md={6} lg={6}>
             <FormGroup>
-              <Label for="certification" className="fw-semi-bold">
+              <Label for="certifications" className="fw-semi-bold">
                 Certification
               </Label>
-              <Select
-                // defaultValue={[educationOptions[2]]}
-                isMulti
-                name="certification"
-                options={educationOptions}
-                classNamePrefix="select"
-                placeholder="Select Certification"
+              <Input
+                id={"certifications"}
+                name={"certifications"}
+                type={"text"}
+                placeholder="Enter certification"
+                defaultValue={
+                  prevStep === 3
+                    ? preValue.certifications
+                    : previousValue.certifications
+                }
               />
             </FormGroup>
           </Col>

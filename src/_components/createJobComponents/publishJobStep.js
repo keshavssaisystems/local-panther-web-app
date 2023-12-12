@@ -32,6 +32,9 @@ export default function PublishJobStep({
       customquestionanswertype: reqData.preCustomScreen,
       authorizedtoworkinus: reqData.basicInformation.authorizedtoworkinus,
       sponsorshiprequiured: reqData.basicInformation.sponsorshiprequiured,
+      fieldofstudiesids: reqData.basicInformation.fieldofstudiesids,
+      levelofeducationids: reqData.basicInformation.levelofeducationids,
+      certifications: reqData.basicInformation.certifications,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,

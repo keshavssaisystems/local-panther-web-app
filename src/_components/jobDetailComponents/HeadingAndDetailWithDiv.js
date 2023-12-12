@@ -11,6 +11,9 @@ import {
   BsStopwatch,
   BsPersonGear,
   BsPinMap,
+  BsMortarboard,
+  BsPostcard,
+  BsJournalBookmark,
 } from "react-icons/bs";
 import { Col, Row } from "reactstrap";
 
@@ -31,6 +34,9 @@ export function HeadingAndDetailWithDiv({ heading, detail, iconId }) {
               {iconId === 8 && <BsStopwatch />}
               {iconId === 9 && <BsPersonGear />}
               {iconId === 10 && <BsPinMap />}
+              {iconId === 11 && <BsMortarboard />}
+              {iconId === 12 && <BsPostcard />}
+              {iconId === 13 && <BsJournalBookmark />}
             </div>
           </Col>
           <Col className="padding-demo-2">

@@ -126,6 +126,8 @@ export function CreateJobWizard({ type }) {
     await dispatch(dropdownActions.getHiringTimelineThunk());
     await dispatch(dropdownActions.getPayPeriodTypeThunk());
     await dispatch(dropdownActions.getPreScreenQuestionThunk());
+    await dispatch(dropdownActions?.getFieldOfStudyThunk());
+    await dispatch(dropdownActions?.getLevelOFEducationThunk());
   };
 
   const jobLocationOptions = useSelector(
@@ -222,7 +224,7 @@ export function CreateJobWizard({ type }) {
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
           publishJob={(e) => publishNewJob(e)}
-          jobId={type === "edit" ? selectedJobDetailsForEdit[0].jobid : 0}
+          jobId={type === "edit" ? selectedJobDetailsForEdit[0]?.jobid : 0}
           type={type}
         />
       ),
