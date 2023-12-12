@@ -45,7 +45,10 @@ export const CandRescheduleModal = (props) => {
             <img src={errorIcon} alt="error-icon" />
           </div>
           <div className="mb-0 d-flex justify-content-center reject-reason-text">
-            Please Provide a Reason for reschedule
+            Please provide a reason for
+          </div>
+          <div className="mb-0 d-flex justify-content-center reject-reason-text">
+            reschedule
           </div>
 
           <div className="candidate-list">
@@ -53,17 +56,26 @@ export const CandRescheduleModal = (props) => {
               <Col>
                 <FormGroup>
                   <Label className="reject-modal-label" for="exampleText">
-                    Comment
+                    Reason{" "}
+                    <span
+                      className="required-icon"
+                      style={{ color: "#ff0000" }}
+                    >
+                      *
+                    </span>
                   </Label>
                   <Input
                     type="textarea"
                     className="dropdown-placeholder"
-                    placeholder="Enter comment here"
+                    placeholder="Enter reason here"
                     onInput={(evt) => onAddComment(evt.target.value)}
                     name="text"
                     maxLength={100}
                     id="exampleText"
                     value={reason.value}
+                    style={{
+                      borderColor: reasonErr ? "#ff0000" : "#ced4da",
+                    }}
                   />
                   <span className="dropdown-placeholder float-end">
                     {reason ? reason.length : 0}/100
