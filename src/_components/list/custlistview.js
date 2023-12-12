@@ -740,6 +740,26 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span title={row.firstname + " " + row.lastname}>
                   {row.firstname + " " + row.lastname}
+                  {row?.candidateacceptedcomment !== "" &&
+                  props.type === "accepted" ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"ac_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"ac_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.candidateacceptedcomment !== ""
+                          ? row?.candidateacceptedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </span>
               ),
               selector: (row) => row.firstname + " " + row.lastname,
