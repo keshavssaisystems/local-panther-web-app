@@ -103,6 +103,8 @@ export function CustJobDetail({
       return `$${new Intl.NumberFormat("en-US").format(
         jobDetail.jobPaymentBenefitDtos[0].maximumamount
       )}`;
+    } else {
+      return "-";
     }
   };
 
@@ -156,6 +158,25 @@ export function CustJobDetail({
         }
       });
       return shiftString.toString();
+    } else {
+      return "-";
+    }
+  };
+
+  const returnEducation = () => {
+    if (jobDetail && jobDetail?.jobLevelofedulcationDtos?.length > 0) {
+      return jobDetail?.jobLevelofedulcationDtos
+        .map((item) => item.levelofeducation)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
+  const returnStudy = () => {
+    if (jobDetail && jobDetail?.jobFieldofstudyDtos?.length > 0) {
+      return jobDetail?.jobFieldofstudyDtos
+        .map((item) => item.fieldofstudy)
+        .join(", ");
     } else {
       return "-";
     }
@@ -441,88 +462,9 @@ export function CustJobDetail({
                 <ol className="forms-wizard">{renderSteps()}</ol>
               </div>
             )}
-            {/* {type === "Open" && jobDetail.isdraft === false && (
-              <div className="p-3 mt-2 align-left">
-                <ButtonWithCount
-                  buttonName={"Applied"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalAppliedCandidates === null
-                      ? 0
-                      : jobDetail.totalAppliedCandidates
-                  }
-                  action={`/customer-candidate-applied/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Matched"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalRecommendedCandidates === null
-                      ? 0
-                      : jobDetail.totalRecommendedCandidates
-                  }
-                  action={`/customer-candidate-matched/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Liked"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalLikedCandidates === null
-                      ? 0
-                      : jobDetail.totalLikedCandidates
-                  }
-                  action={`/customer-candidate-liked/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Maybe"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalLikedCandidates === null
-                      ? 0
-                      : jobDetail.totalLikedCandidates
-                  }
-                  action={`/customer-candidate-maybe/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Scheduled"}
-                  color={"primary"}
-                  count={
-                    jobDetail.totalLikedCandidates === null
-                      ? 0
-                      : jobDetail.totalLikedCandidates
-                  }
-                  action={`/customer-candidate-scheduled/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Accepted"}
-                  color={"success"}
-                  count={
-                    jobDetail.totalAcceptedCandidates === null
-                      ? 0
-                      : jobDetail.totalAcceptedCandidates
-                  }
-                  action={`/customer-candidate-accepted/${jobDetails[0]?.jobid}`}
-                />
-                <ButtonWithCount
-                  buttonName={"Rejected"}
-                  color={"danger"}
-                  count={
-                    jobDetail.totalRejectedCandidates === null
-                      ? 0
-                      : jobDetail.totalRejectedCandidates
-                  }
-                  action={`/customer-candidate-rejected/${jobDetails[0]?.jobid}`}
-                />
-              </div>
-            )} */}
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job details</h6>
             </div>
-            {/* <HeadingAndDetailWithDiv
-              heading={"Job Role:"}
-              detail={jobDetail.jobrole}
-              iconId={1}
-            /> */}
             <HeadingAndDetailWithDiv
               heading={"Job Type"}
               detail={returnJobType()}
@@ -580,6 +522,25 @@ export function CustJobDetail({
               heading={"Address"}
               detail={returnAddress()}
               iconId={10}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Level of education"}
+              detail={returnEducation()}
+              iconId={11}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Field of study"}
+              detail={returnStudy()}
+              iconId={13}
+            />
+            <HeadingAndDetailWithDiv
+              heading={"Certifications"}
+              detail={
+                jobDetail?.certifications === ""
+                  ? "-"
+                  : jobDetail?.certifications
+              }
+              iconId={12}
             />
             <HeadingAndDetailWithDiv
               heading={"Authorized to work in United States"}
@@ -645,7 +606,7 @@ export function CustJobDetail({
             {!isModal ? (
               <CardFooter>
                 Share:{" "}
-                <ShareSocial
+                {/* <ShareSocial
                   url={
                     window.location.origin +
                     "/job-detail/" +
@@ -663,7 +624,7 @@ export function CustJobDetail({
                       padding: "0px",
                     },
                   }}
-                />
+                /> */}
               </CardFooter>
             ) : (
               <></>
