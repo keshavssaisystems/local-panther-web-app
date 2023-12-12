@@ -124,16 +124,6 @@ export const CandListView = (props) => {
     } else if (props.type === "applied") {
       return (
         <ButtonGroup>
-          {/* <Button
-            // outline
-            size="sm"
-            title="Maybe"
-            className=" btn-icon"
-            color="warning"
-            onClick={() => onBtnClick("maybe", row.candidaterecommendedjobid)}
-          >
-            <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-          </Button> */}
           <Button
             // outline
             size="sm"
@@ -160,7 +150,7 @@ export const CandListView = (props) => {
                   title="Reject interview"
                   onClick={() =>
                     rejectReason(
-                      "interview reject",
+                      "rejection",
                       "rejectInterview",
                       row?.scheduledInterviewDtos[0]?.scheduleinterviewid
                     )
@@ -218,7 +208,7 @@ export const CandListView = (props) => {
             title="Reject offer"
             onClick={() =>
               rejectReason(
-                "offer reject",
+                "rejection",
                 "rejected",
                 row.candidaterecommendedjobid
               )
@@ -239,8 +229,14 @@ export const CandListView = (props) => {
               title="Accept offer"
               className="btn-icon"
               color="success"
-              onClick={() =>
-                onBtnClick("accepted", row.candidaterecommendedjobid)
+              onClick={
+                () =>
+                  rejectReason(
+                    "reaccepting",
+                    "reaccepted",
+                    row.candidaterecommendedjobid
+                  )
+                // onBtnClick("accepted", row.candidaterecommendedjobid)
               }
             >
               <img src={customerIcons?.list_accept} alt="list apply"></img>
@@ -249,17 +245,6 @@ export const CandListView = (props) => {
           {row?.customerrecommendedjobstatusid !== 5 &&
             row?.customerrecommendedjobstatusid !== 6 && (
               <>
-                {/* <Button
-                  size="sm"
-                  title="Maybe"
-                  className=" btn-icon"
-                  color="warning"
-                  onClick={() =>
-                    onBtnClick("maybe", row.candidaterecommendedjobid)
-                  }
-                >
-                  <img src={customerIcons?.list_maybe} alt="list maybe"></img>
-                </Button> */}
                 <Button
                   size="sm"
                   title="Apply"
@@ -296,7 +281,7 @@ export const CandListView = (props) => {
             title="Reject offer"
             onClick={() =>
               rejectReason(
-                "offer reject",
+                "rejection",
                 "rejected",
                 row.candidaterecommendedjobid
               )
@@ -976,7 +961,7 @@ export const CandListView = (props) => {
           isRMOpen={rejectReasonModal}
           callBack={(e) => submitReject(e)}
           callBackError={() => closeModal()}
-          title={"rejection"}
+          title={title}
         />
       )}
       <>

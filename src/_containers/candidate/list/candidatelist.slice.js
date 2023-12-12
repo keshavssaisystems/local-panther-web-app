@@ -74,6 +74,15 @@ export const candidateAccept = createAsyncThunk(
   }
 );
 
+// candidate accept again thunk
+export const candidateAcceptAgain = createAsyncThunk(
+  `${name}/candidateAcceptAgain`,
+  async (jobId) => {
+    const ACCEPTED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateAcceptedAgain/${jobId}`;
+    return await fetchWrapper.put(ACCEPTED_END_POINT);
+  }
+);
+
 // candidate accept thunk
 export const candidateMayBe = createAsyncThunk(
   `${name}/candidateMayBe`,
@@ -210,6 +219,18 @@ const candidateList = createSlice({
       state.error = action.error;
     },
 
+    [candidateAcceptAgain.pending]: (state) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [candidateAcceptAgain.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [candidateAcceptAgain.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
     // job detail
     [getJobDetails.pending]: (state) => {
       state.jdLoading = true;
@@ -340,6 +361,7 @@ export const candidateListActions = {
   getRecommendedJobList, // Export the async job list action
   candidateLike, // Export the like action
   candidateAccept,
+  candidateAcceptAgain,
   candidateMayBe,
   getJobDetails,
   candidateApply,

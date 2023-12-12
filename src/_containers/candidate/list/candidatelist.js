@@ -263,6 +263,19 @@ export const CandidateList = (props) => {
     } else if (type === "rescheduleInterview") {
       setShowRescheduleModal(true);
       setRescheduleId(candidaterecommendedjobid);
+    } else if (type === "reaccepted") {
+      let res = await dispatch(
+        candidateListActions.candidateAcceptAgain(candidaterecommendedjobid)
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: successMessage, type: "success" });
+        toggle(activeTab, pageNo);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
     }
   };
 

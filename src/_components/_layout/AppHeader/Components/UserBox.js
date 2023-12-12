@@ -17,6 +17,9 @@ import {
   CardBody,
   ModalHeader,
   ModalBody,
+  FormGroup,
+  Label,
+  Input,
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -34,6 +37,8 @@ import { SuccessPopUp } from "_components/common/successPopUp";
 import { settingsActions } from "_store";
 import cx from "classnames";
 import Switch from "react-switch";
+import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function UserBox() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -46,9 +51,13 @@ export function UserBox() {
       ? JSON.parse(localStorage.getItem("pushnotification"))
       : false
   );
-  // const personalInfo_temp = useSelector(
-  //   (state) => state.getProfile?.profileImage
-  // );
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+  const [rejectReasonModal, setRejectReasonModal] = useState(false);
   const personalInfo_temp = localStorage.getItem("profileImage");
   const [profileImg, setProfileImg] = useState("");
   const dispatch = useDispatch();
@@ -72,20 +81,38 @@ export function UserBox() {
   // only show nav when logged in
   if (!authUser) return null;
 
-  const deactivate = async function () {
+  const deactivate = async function (reason) {
+    if (reason === "") {
+      return;
+    }
     let id = JSON.parse(localStorage.getItem("userDetails"))?.UserId;
     let data = {
       userId: id,
+      deactivateduserlogid: 0,
+      deactivationdate: new Date().toISOString(),
+      isactive: false,
+      deactivationreason: reason,
     };
 
     let response = await dispatch(settingsActions.deactivateUser({ id, data }));
     if (response.payload) {
-      logout();
+      setDeactivateConfirm(false);
+      setRejectReasonModal(false);
+      showSweetAlert({
+        title: `${response.payload.message}`,
+        type: "success",
+      });
     } else {
       setError(true);
     }
   };
-
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
   const close = function () {
     setChangePwd(false);
     setSuccess(false);
@@ -98,6 +125,7 @@ export function UserBox() {
   };
 
   const closeModal = function () {
+    setRejectReasonModal(false);
     setSuccess(false);
     setChangePwd(false);
   };
@@ -117,6 +145,10 @@ export function UserBox() {
     } else {
       setError(true);
     }
+  };
+
+  const rejectReason = () => {
+    setRejectReasonModal(true);
   };
 
   return (
@@ -206,7 +238,7 @@ export function UserBox() {
                             <NavItem>
                               <NavLink
                                 href="javascript:void(0)"
-                                onClick={() => setDeactivateConfirm(true)}
+                                onClick={() => [setDeactivateConfirm(true)]}
                               >
                                 Deactivate account
                               </NavLink>
@@ -258,12 +290,14 @@ export function UserBox() {
               <Row>
                 <Col className="d-flex justify-content-center">
                   <Button
+                    style={{ background: "#2f479b", borderColor: "#2f479b" }}
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => deactivate()}
+                    onClick={(evt) => rejectReason()}
                   >
                     YES
                   </Button>
                   <Button
+                    style={{ background: "#2f2e2e", borderColor: "#2f2e2e" }}
                     className="success-close-btn"
                     onClick={(evt) => setDeactivateConfirm(false)}
                   >
@@ -303,6 +337,24 @@ export function UserBox() {
           />
         </ModalBody>
       </Modal>
+      {rejectReasonModal && (
+        <RejectReasonModal
+          isRMOpen={rejectReasonModal}
+          callBack={(e) => deactivate(e)}
+          callBackError={() => closeModal()}
+          title={"deactivating account"}
+        />
+      )}
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => logout()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 }
