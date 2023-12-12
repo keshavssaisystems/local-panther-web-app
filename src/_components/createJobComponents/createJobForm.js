@@ -112,6 +112,9 @@ export default function CreateJob({
           customquestionanswertype: previousData?.customquestionanswertype,
           authorizedtoworkinus: previousData?.authorizedtoworkinus,
           sponsorshiprequiured: previousData?.sponsorshiprequiured,
+          levelofeducationids: previousData?.levelofeducationids,
+          fieldofstudiesids: previousData?.fieldofstudiesids,
+          certifications: previousData?.certifications,
         },
         experienceSchedule: {
           jobType:
