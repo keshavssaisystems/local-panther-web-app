@@ -111,8 +111,13 @@ export function UpdateScheduleInterviewModal({
     )
       .tz("Etc/UTC")
       .format("HH:mm:ss");
+
     let data = {
-      scheduleinterviewid: interviewData?.scheduleinterviewid,
+      scheduleinterviewid:
+        interviewData?.scheduledInterviewDtos &&
+        interviewData?.scheduledInterviewDtos?.length > 0
+          ? interviewData?.scheduledInterviewDtos[0].scheduleinterviewid
+          : interviewData?.scheduleinterviewid,
       jobid: interviewData?.jobid,
       candidateid: interviewData?.candidateid,
       scheduledate: scheduleDateUTC,

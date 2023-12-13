@@ -141,71 +141,82 @@ export const CandListView = (props) => {
     } else if (props.type === "interview") {
       return (
         <ButtonGroup>
-          {row?.scheduledInterviewDtos[0]?.isactive === true && (
+          {row?.scheduledInterviewDtos !== undefined &&
+          row?.scheduledInterviewDtos?.length > 0 &&
+          row?.scheduledInterviewDtos[0]?.isactive === true ? (
             <>
-              {row?.scheduledInterviewDtos[0]?.isrejected === false &&
-                row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
-                  <>
-                    <Button
-                      // outline
-                      size="sm"
-                      title="Reject interview"
-                      onClick={() =>
-                        rejectReason(
-                          "interview reject",
-                          "rejectInterview",
-                          row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                        )
-                      }
-                      className="btn-icon"
-                      color="danger"
-                    >
-                      <img
-                        src={customerIcons?.list_reject}
-                        alt="list reject"
-                      ></img>
-                    </Button>
-                    <Button
-                      // outline
-                      size="sm"
-                      title="Reschedule interview"
-                      onClick={() =>
-                        onBtnClick(
-                          "rescheduleInterview",
-                          row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                        )
-                      }
-                      className="btn-icon"
-                      color="alternate"
-                    >
-                      <img
-                        src={customerIcons?.list_schedule}
-                        alt="list reschedule"
-                      ></img>
-                    </Button>
-                  </>
-                )}
-              {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
-                row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
-                  <Button
-                    size="sm"
-                    title="Accept interview"
-                    className="btn-icon"
-                    color="success"
-                    onClick={() =>
-                      onBtnClick(
-                        "acceptInterview",
-                        row?.scheduledInterviewDtos[0]?.scheduleinterviewid
-                      )
-                    }
-                  >
-                    <img
-                      src={customerIcons?.list_accept}
-                      alt="list accept"
-                    ></img>
-                  </Button>
-                )}
+              {row?.scheduledInterviewDtos[0]?.isreschedulerequested ===
+                false && (
+                <>
+                  {row?.scheduledInterviewDtos[0]?.isrejected === false &&
+                    row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
+                      <>
+                        <Button
+                          // outline
+                          size="sm"
+                          title="Reject interview"
+                          onClick={() =>
+                            rejectReason(
+                              "interview reject",
+                              "rejectInterview",
+                              row?.scheduledInterviewDtos[0]
+                                ?.scheduleinterviewid
+                            )
+                          }
+                          className="btn-icon"
+                          color="danger"
+                        >
+                          <img
+                            src={customerIcons?.list_reject}
+                            alt="list reject"
+                          ></img>
+                        </Button>
+                        <Button
+                          // outline
+                          size="sm"
+                          title="Reschedule interview"
+                          onClick={() =>
+                            onBtnClick(
+                              "rescheduleInterview",
+                              row?.scheduledInterviewDtos[0]
+                                ?.scheduleinterviewid
+                            )
+                          }
+                          className="btn-icon"
+                          color="alternate"
+                        >
+                          <img
+                            src={customerIcons?.list_schedule}
+                            alt="list reschedule"
+                          ></img>
+                        </Button>
+                      </>
+                    )}
+                  {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
+                    row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
+                      <Button
+                        size="sm"
+                        title="Accept interview"
+                        className="btn-icon"
+                        color="success"
+                        onClick={() =>
+                          onBtnClick(
+                            "acceptInterview",
+                            row?.scheduledInterviewDtos[0]?.scheduleinterviewid
+                          )
+                        }
+                      >
+                        <img
+                          src={customerIcons?.list_accept}
+                          alt="list accept"
+                        ></img>
+                      </Button>
+                    )}
+                </>
+              )}
             </>
+          ) : (
+            <></>
           )}
         </ButtonGroup>
       );
@@ -499,8 +510,12 @@ export const CandListView = (props) => {
                           0 ||
                         row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                           undefined
-                        ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? row?.scheduledInterviewDtos[0]
+                            ?.isreschedulerequested === true
+                          ? "Requested for reschedule"
+                          : row?.scheduledInterviewDtos[0]?.isaccepted ===
+                              true &&
+                            row?.scheduledInterviewDtos[0]?.isrejected === false
                           ? "Accepted"
                           : row?.scheduledInterviewDtos[0]?.isrejected === true
                           ? "Rejected"
@@ -522,8 +537,11 @@ export const CandListView = (props) => {
                     ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                       row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                         undefined
-                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? row?.scheduledInterviewDtos[0]
+                          ?.isreschedulerequested === true
+                        ? "Requested for reschedule"
+                        : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                          row?.scheduledInterviewDtos[0]?.isrejected === false
                         ? "Accepted"
                         : row?.scheduledInterviewDtos[0]?.isrejected === true
                         ? "Rejected"
@@ -544,8 +562,11 @@ export const CandListView = (props) => {
                   ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                     row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                       undefined
-                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                    ? row?.scheduledInterviewDtos[0]?.isreschedulerequested ===
+                      true
+                      ? "Requested for reschedule"
+                      : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
                       ? "Rejected"

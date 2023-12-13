@@ -104,6 +104,7 @@ export const AdminListing = ({ entity }) => {
     {
       name: "Email",
       id: "email",
+      cell: (row) => <>{row.email}</>,
       selector: (row) => row.email,
       sortable: true,
     },
@@ -436,8 +437,8 @@ export const AdminListing = ({ entity }) => {
   };
 
   const handlePageChange = async (page) => {
-    setPageNo(page);
-    getUserData(pageSize, page);
+    setPageNo(page - 1);
+    getUserData(pageSize, page - 1);
   };
 
   const getUserData = async (pageSize, pageNo) => {

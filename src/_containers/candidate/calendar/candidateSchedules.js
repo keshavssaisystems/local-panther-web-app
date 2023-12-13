@@ -103,7 +103,9 @@ export function CandidateSchedules() {
         start: new Date(startDate),
         end: new Date(endDate),
         color:
-          upcomingInterview?.interviewstatusid !== 0
+          upcomingInterview?.isreschedulerequested === true
+            ? "#2f479b"
+            : upcomingInterview?.interviewstatusid !== 0
             ? upcomingInterview?.interviewstatusid === 1
               ? "#30b1ff"
               : "#6c757d"
@@ -229,6 +231,10 @@ export function CandidateSchedules() {
                     P
                   </div>{" "}
                   Not joined
+                  <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
+                    P
+                  </div>{" "}
+                  Requested for reschedule
                 </div>
                 <Calendar
                   localizer={localizer}

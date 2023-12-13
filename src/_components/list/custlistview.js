@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import {
   UncontrolledButtonDropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Row,
-  Col,
   Button,
   ButtonGroup,
   UncontrolledTooltip,
@@ -20,13 +18,15 @@ import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDe
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import customerIcons from "assets/utils/images/customer";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
+import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
+import { scheduleInterviewActions } from "_store";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -38,9 +38,16 @@ export const CustCandidateListView = (props) => {
   const [selectedRowData, setSelectedRowData] = useState("");
   const [selectedIDData, setSelectedIDData] = useState("");
   const [showJDModal, setShowJDModal] = useState(false);
+  const [showIRSModal, setShowIRSModal] = useState(false);
 
   const dispatch = useDispatch();
+  const durationOptions = useSelector(
+    (state) => state.scheduleInterview.duration
+  );
 
+  useEffect(() => {
+    dispatch(scheduleInterviewActions.getDurationThunk());
+  }, []);
   const onAcceptClick = async (candidaterecommendedjobid) => {
     let res = await dispatch(
       customerCandidateListsActions.putAcceptedCandidate({
@@ -290,6 +297,20 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_reject} alt="list reject"></img>
           </Button>
+          {row?.scheduledInterviewDtos?.length > 0 &&
+            row?.scheduledInterviewDtos[0]?.isreschedulerequested === true &&
+            row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
+              <Button
+                // outline
+                size="sm"
+                title="Reschedule Interview"
+                onClick={() => onRescheduleInterview(row)}
+                className="btn-icon"
+                color="alternate"
+              >
+                <img src={customerIcons.list_schedule} alt="list reject"></img>
+              </Button>
+            )}
         </ButtonGroup>
       );
     } else if (props.type === "offers") {
@@ -1230,6 +1251,40 @@ export const CustCandidateListView = (props) => {
     props.updateList();
   };
 
+  const onRescheduleInterview = (row) => {
+    setSelectedRowData(row);
+    setShowIRSModal(true);
+  };
+
+  const postUpdateRescheduleInterview = (data) => {
+    updateScheduledInterview(data);
+  };
+
+  const updateScheduledInterview = async function (formData) {
+    let scheduleinterviewid = formData.scheduleinterviewid;
+    let res = await dispatch(
+      scheduleInterviewActions.updateScheduledInterviewThunk({
+        scheduleinterviewid,
+        formData,
+      })
+    );
+
+    if (res.payload?.statusCode === 204) {
+      setShowIRSModal(false);
+      props.showSweetAlert({
+        title: res.payload.message,
+        type: "success",
+      });
+
+      props.updateList();
+    } else {
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
   return (
     <>
       <DataTable
@@ -1319,6 +1374,21 @@ export const CustCandidateListView = (props) => {
             isOpen={showJDModal}
             data={[selectedRowData]}
             onClose={() => setShowJDModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showIRSModal ? (
+          <UpdateScheduleInterviewModal
+            interviewData={selectedRowData}
+            durationOptions={durationOptions}
+            postData={(e) => {
+              postUpdateRescheduleInterview(e);
+            }}
+            isOpen={showIRSModal}
+            onClose={() => setShowIRSModal(false)}
           />
         ) : (
           <></>
