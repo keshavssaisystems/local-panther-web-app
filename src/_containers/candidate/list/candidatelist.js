@@ -265,7 +265,7 @@ export const CandidateList = (props) => {
       setRescheduleId(candidaterecommendedjobid);
     } else if (type === "reaccepted") {
       let payload = {
-        rejectionreason: reason,
+        candidateacceptedcomment: reason,
       };
       let res = await dispatch(
         candidateListActions.candidateAcceptAgain({
