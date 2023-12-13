@@ -73,7 +73,24 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
       )}`;
     }
   };
-
+  const returnEducation = () => {
+    if (jobDetail && jobDetail?.jobLevelofedulcationDtos?.length > 0) {
+      return jobDetail?.jobLevelofedulcationDtos
+        .map((item) => item.levelofeducation)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
+  const returnStudy = () => {
+    if (jobDetail && jobDetail?.jobFieldofstudyDtos?.length > 0) {
+      return jobDetail?.jobFieldofstudyDtos
+        .map((item) => item.fieldofstudy)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
   const returnJobType = () => {
     let jobTypeString = [];
     if (
@@ -290,6 +307,23 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
             heading={"Address"}
             detail={returnAddress()}
             iconId={10}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Level of education"}
+            detail={returnEducation()}
+            iconId={11}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Field of study"}
+            detail={returnStudy()}
+            iconId={13}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Certifications"}
+            detail={
+              jobDetail?.certifications === "" ? "-" : jobDetail?.certifications
+            }
+            iconId={12}
           />
           <HeadingAndDetailWithoutIcon
             heading={"Job Description"}

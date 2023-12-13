@@ -12,12 +12,14 @@ import {
   Form,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { getLanguageFilter } from "_store";
 
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import addIcon from "../../assets/utils/images/add.svg";
 import subtract from "../../assets/utils/images/Subtract 1.svg";
+import AsyncCreatableSelect from "react-select/async-creatable";
 
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
@@ -58,6 +60,18 @@ export function AdditionalInfoModal(props) {
         isactive: true,
         currentUserId: parseInt(userDetails.UserId),
       };
+
+      let language_multiple = [...languageMultiple];
+
+      language_multiple = props?.selected?.language.map((rest) => {
+        return {
+          value: rest.languageid,
+          label: rest.language,
+          proficiencyid: rest.proficiencyid,
+          proficiency: rest.proficiency,
+        };
+      });
+      setLanguageMultiple(language_multiple);
     }
     setFormData(data);
   };
@@ -77,15 +91,19 @@ export function AdditionalInfoModal(props) {
     props.onCallAdditionalInfo();
   };
 
-  const removeTabs = function (index) {
-    let new_data = { ...formDetails };
+  const removeTabs = function (data, index) {
+    // let new_data = { ...formDetails };
 
-    let temp_array = new_data.candidateLanguageDtos.map((item) => ({
-      ...item,
-    }));
-    temp_array.splice(index, 1);
-    new_data.candidateLanguageDtos = temp_array;
-    setFormData(new_data);
+    // let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+    //   ...item,
+    // }));
+    // temp_array.splice(index, 1);
+    // new_data.candidateLanguageDtos = temp_array;
+    // setFormData(new_data);
+    let multiple_language = [...languageMultiple];
+    multiple_language.splice(index, 1);
+
+    setLanguageMultiple(multiple_language);
   };
 
   const addMoreTabs = function (index) {
@@ -112,22 +130,26 @@ export function AdditionalInfoModal(props) {
       // let language_details = [...new_data.candidateLanguageDtos];
       // language_details[index].language = data;
       // new_data.candidateLanguageDtos = language_details;
-
-      let temp_array = new_data.candidateLanguageDtos.map((item) => ({
-        ...item,
-      }));
-      temp_array[index].languageid = data;
-      temp_array[index].language = languageList.find(
-        (x) => x.id === parseInt(data)
-      )?.name;
-      new_data.candidateLanguageDtos = temp_array;
+      // let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+      //   ...item,
+      // }));
+      // temp_array[index].languageid = data;
+      // temp_array[index].language = languageList.find(
+      //   (x) => x.id === parseInt(data)
+      // )?.name;
+      // new_data.candidateLanguageDtos = temp_array;
     } else if (check === "proficiency") {
-      let temp_array = new_data.candidateLanguageDtos.map((item) => ({
-        ...item,
-      }));
+      // let temp_array = new_data.candidateLanguageDtos.map((item) => ({
+      //   ...item,
+      // }));
 
-      temp_array[index].proficiencyid = data;
-      new_data.candidateLanguageDtos = temp_array;
+      // temp_array[index].proficiencyid = data;
+      // new_data.candidateLanguageDtos = temp_array;
+
+      let new_array = [...languageMultiple];
+      new_array[index].proficiencyid = data;
+
+      setLanguageMultiple(new_array);
     } else if (check === "summary") {
       new_data.summary = data;
       if (data !== "") {
@@ -150,10 +172,28 @@ export function AdditionalInfoModal(props) {
     } else {
       setFormError(false);
     }
+    let postData = {
+      candidateid: userDetails.InternalUserId,
+      candidateadditioninformationid:
+        formDetails.candidateadditioninformationid,
+      summary: formDetails.summary,
+      candidateLanguageDtos: [],
+      additionalinformation: formDetails.additionalinformation,
+      isactive: true,
+      currentUserId: parseInt(userDetails.UserId),
+    };
+    postData.candidateLanguageDtos = languageMultiple.map((rest) => {
+      return {
+        languageid: rest.value,
+        language: rest.label,
+        proficiencyid: rest.proficiencyid,
+        proficiency: rest.proficiency,
+      };
+    });
 
     let response;
     response = await dispatch(
-      additionalInfoDetailsSlice.addadditionalInfoThunk(formDetails)
+      additionalInfoDetailsSlice.addadditionalInfoThunk(postData)
     );
 
     if (response.payload) {
@@ -164,123 +204,176 @@ export function AdditionalInfoModal(props) {
     }
   };
 
+  const [languageMultiple, setLanguageMultiple] = useState([]);
+  const [languageExist, setLanguageExist] = useState(false);
+  const loadOptions = async (inputValue) => {
+    const { data = [] } = await getLanguageFilter(inputValue);
+
+    const isKeyTrueForAll = data.some(
+      (item) => item["languagename"].toLowerCase() === inputValue.toLowerCase()
+    );
+    if (isKeyTrueForAll) {
+      setLanguageExist(false);
+    } else {
+      setLanguageExist(true);
+    }
+
+    let filter_data = data.map(({ languageid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.languagename}`,
+      };
+    });
+    return filter_data;
+  };
+
+  const onSelectLanguageDropdown = function (data) {
+    let multipleSkill = [...languageMultiple];
+    multipleSkill = data;
+    setLanguageMultiple(multipleSkill);
+  };
+
+  const formatCreateLabel = (inputValue) => {
+    if (languageExist && inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new language -{" "}
+          <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
+    }
+  };
+  const addNewLanguage = (input) => {
+    if (input === "") {
+      return;
+    }
+
+    let selected_data = {
+      value: 0,
+      label: input,
+      proficiencyid: 0,
+      proficiency: "",
+    };
+
+    let new_array = [...languageMultiple];
+    let i = languageMultiple.findIndex(
+      (x) => x.label.toLowerCase() === input.toLowerCase()
+    );
+    if (i > -1) {
+      return;
+    } else {
+      new_array.push(selected_data);
+    }
+
+    setLanguageMultiple(new_array);
+  };
   return (
     <div>
       <div>
         {formDetails ? (
           <Form>
-            {formDetails?.candidateLanguageDtos?.map((item, index) => (
-              <Row>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="language" className="fw-semi-bold">
-                      Language
-                    </Label>
-                    <Input
-                      className="placeholder-text"
-                      style={{
-                        fontSize: "14px",
-                      }}
-                      type="select"
-                      id="language"
-                      name="language"
-                      onChange={(evt) =>
-                        onHandleInputChange("language", evt.target.value, index)
-                      }
-                      placeholderText="Select proficiency"
-                    >
-                      <option
-                        className="placeholder-text"
+            <Row>
+              <Col md={6}>
+                <Label for={languageList} className="fw-semi-bold">
+                  Language
+                </Label>
+                <AsyncCreatableSelect
+                  id="languageList"
+                  name="languageList"
+                  isMulti
+                  isClearable
+                  cacheOptions
+                  loadOptions={loadOptions}
+                  value={languageMultiple}
+                  onChange={(evt) => onSelectLanguageDropdown(evt)}
+                  formatCreateLabel={formatCreateLabel}
+                  isSearchable
+                  placeholder="Search to select"
+                  onCreateOption={addNewLanguage}
+                />
+              </Col>
+            </Row>
+
+            <Row className="mt-2">
+              {languageMultiple?.map((item, index) => (
+                <div>
+                  <Row>
+                    <Col md={4}>
+                      <FormGroup>
+                        <Label for={"skillsInput"} className="fw-semi-bold">
+                          Selected language
+                        </Label>
+                        <Input
+                          type="text"
+                          name="languageSelected"
+                          id="languageSelected"
+                          disabled={true}
+                          value={item.label}
+                        ></Input>
+                      </FormGroup>
+                    </Col>
+
+                    <Col md={4}>
+                      <div>
+                        <FormGroup>
+                          <Label for={"proficiency"} className="fw-semi-bold">
+                            Proficiency
+                          </Label>
+
+                          <Input
+                            id={"proficiency"}
+                            name={"proficiency"}
+                            type={"select"}
+                            onChange={(evt) =>
+                              onHandleInputChange(
+                                "proficiency",
+                                evt.target.value,
+                                index
+                              )
+                            }
+                            placeholderText="Select proficiency"
+                          >
+                            <option
+                              className="placeholder-text"
+                              style={{
+                                fontSize: "14px",
+                              }}
+                              key={0}
+                            >
+                              Select proficiency
+                            </option>
+                            {proficiencyList?.map((col) => (
+                              <option
+                                selected={col.id == item.proficiencyid}
+                                key={col.id}
+                                value={col.id}
+                              >
+                                {col.name}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </div>
+                    </Col>
+                    <Col>
+                      <Label
+                        onClick={() => removeTabs(item, index)}
+                        className="language-remove"
                         style={{
+                          color: "#545cd8",
+                          fontWeight: "400",
                           fontSize: "14px",
                         }}
-                        key={0}
                       >
-                        Select language
-                      </option>
-                      {languageList?.map((col) => (
-                        <option
-                          selected={col.id == item.languageid}
-                          key={col.id}
-                          value={col.id}
-                        >
-                          {col.name}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="proficiency" className="fw-semi-bold">
-                      Proficiency
-                    </Label>
-                    <Input
-                      className="placeholder-text"
-                      style={{
-                        fontSize: "14px",
-                      }}
-                      type="select"
-                      id="proficiency"
-                      name="proficiency"
-                      onChange={(evt) =>
-                        onHandleInputChange(
-                          "proficiency",
-                          evt.target.value,
-                          index
-                        )
-                      }
-                      placeholderText="Select proficiency"
-                    >
-                      <option
-                        className="placeholder-text"
-                        style={{
-                          fontSize: "14px",
-                        }}
-                        key={0}
-                      >
-                        Select proficiency
-                      </option>
-                      {proficiencyList?.map((col) => (
-                        <option
-                          selected={col.id == item.proficiencyid}
-                          key={col.id}
-                          value={col.id}
-                        >
-                          {col.name}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col>
-                  {index == formDetails?.candidateLanguageDtos.length - 1 ? (
-                    <img
-                      src={addIcon}
-                      alt="add-icon"
-                      style={{ marginTop: "15%" }}
-                      className="me-2"
-                      onClick={() => addMoreTabs()}
-                    ></img>
-                  ) : (
-                    <></>
-                  )}
-                  {(index == formDetails?.candidateLanguageDtos?.length - 1 &&
-                    index != 0) ||
-                  index < formDetails?.candidateLanguageDtos?.length - 1 ? (
-                    <img
-                      src={subtract}
-                      alt="add-icon"
-                      style={{ marginTop: "15%" }}
-                      className="me-2"
-                      onClick={() => removeTabs(index)}
-                    ></img>
-                  ) : (
-                    <></>
-                  )}
-                </Col>
-              </Row>
-            ))}
+                        remove
+                      </Label>
+                    </Col>
+                  </Row>
+                </div>
+              ))}
+            </Row>
 
             <Row className="mb-2">
               <Col>

@@ -24,6 +24,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
   getCustReportJobAgingList,
   getJobDropdown,
+  getCustReportJobDetail,
 } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 
@@ -31,65 +32,8 @@ import DataTable from "react-data-table-component";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./customerreport.scss";
-
-const columns = [
-  {
-    name: <span className="table-title">Job Code</span>,
-    selector: (row) => row.jobid,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobid}>
-        {row.jobid}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "120px",
-  },
-  {
-    name: <span className="table-title">Title</span>,
-    selector: (row) => row.jobtitle,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobtitle}>
-        {row.jobtitle}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "350px",
-  },
-  {
-    name: <span className="table-title">Status</span>,
-    selector: (row) => row.jobstatus,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobstatus}>
-        {row.jobstatus}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">No. of Days</span>,
-    selector: (row) => row.noofdays,
-    cell: (row) => (
-      <span className="table-cell" title={row.noofdays}>
-        {row.noofdays}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "120px",
-  },
-  {
-    name: <span className="table-title">Aging group</span>,
-    selector: (row) => row.aginggroup,
-    cell: (row) => (
-      <span className="table-cell" title={row.aginggroup}>
-        {row.aginggroup}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "350px",
-  },
-];
 
 export function CustomerReportJobAging() {
   const dispatch = useDispatch();
@@ -99,12 +43,15 @@ export function CustomerReportJobAging() {
   let [filter, setFilter] = useState({});
   let [jobId, setJobId] = useState();
   const [excelData, setExcelData] = useState([]);
-
+  const [showJDModal, setShowJDModal] = useState(false);
   const jobAgingList = useSelector(
     (state) => state?.customerReportReducer?.jobAgingList
   );
 
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDetail = useSelector(
+    (state) => state?.customerReportReducer?.jobDetail
+  );
   const jobDropDownList = useSelector(
     (state) => state?.customerReportReducer?.jobDropDownList
   );
@@ -159,6 +106,78 @@ export function CustomerReportJobAging() {
     onGetCustReportJobAgingList({});
   };
 
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getCustReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
+  };
+
+  const columns = [
+    {
+      name: <span className="table-title">Job Code</span>,
+      selector: (row) => row.jobid,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobid}>
+          {row.jobid}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "120px",
+    },
+    {
+      name: <span className="table-title">Title</span>,
+      selector: (row) => row.jobtitle,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row.jobtitle}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      minWidth: "350px",
+    },
+    {
+      name: <span className="table-title">Status</span>,
+      selector: (row) => row.jobstatus,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobstatus}>
+          {row.jobstatus}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">No. of Days</span>,
+      selector: (row) => row.noofdays,
+      cell: (row) => (
+        <span className="table-cell" title={row.noofdays}>
+          {row.noofdays}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "120px",
+    },
+    {
+      name: <span className="table-title">Aging group</span>,
+      selector: (row) => row.aginggroup,
+      cell: (row) => (
+        <span className="table-cell" title={row.aginggroup}>
+          {row.aginggroup}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "350px",
+    },
+  ];
+
   return (
     <>
       <PageTitle heading={"Customer Aging Group Report"} icon={titlelogo} />
@@ -193,7 +212,7 @@ export function CustomerReportJobAging() {
             </CardHeader>
             <CardBody>
               <Row>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <Input
                       type="select"
@@ -220,7 +239,7 @@ export function CustomerReportJobAging() {
                   </FormGroup>
                 </Col>
 
-                <Col lg="3" md="3" sm="12" sx="12">
+                <Col lg="3" md="4" sm="12" sx="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     className="me-4"
@@ -270,6 +289,19 @@ export function CustomerReportJobAging() {
           </Card>
         </Col>
       </Row>
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

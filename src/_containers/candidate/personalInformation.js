@@ -58,6 +58,7 @@ export function PersonalInformation(props) {
 
   const genderList = useSelector((state) => state.gender.genderList);
   const raceList = useSelector((state) => state.ethnicity.ethnicityList);
+  const pronounList = useSelector((state) => state.getProfile.pronounList);
   const eligibilityList_temp = useSelector(
     (state) => state.getProfile.dropdownLists.eligibilityDropDown
   );
@@ -105,6 +106,7 @@ export function PersonalInformation(props) {
   const [stateSelect, setStateSelect] = useState("");
   const [countrySelect, setCountrySelect] = useState("");
   const [raceSelect, setRaceSelect] = useState("");
+  const [pronounSelect, setPronounSelect] = useState("");
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
     let data = {
@@ -152,11 +154,17 @@ export function PersonalInformation(props) {
           label: selectedCandidate.personalInfo.ethnicity,
         },
       ],
+      pronoun: [
+        {
+          value: selectedCandidate.personalInfo.pronounid,
+          label: selectedCandidate.personalInfo.pronounname,
+        },
+      ],
+
       isactive: true,
       userid: 0,
       currentUserId: 0,
     };
-
     setGetResponse(data);
     if (props.profileInfo.personalInfo.city != "") {
       loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
@@ -193,6 +201,12 @@ export function PersonalInformation(props) {
       );
       setRaceSelect(ethnicityData);
     }
+
+    if (selectedCandidate.selectedDropDown?.selectedPronoun[0].value != 0) {
+      let pronounData = [...pronounSelect];
+      pronounData.push(selectedCandidate.selectedDropDown?.selectedPronoun[0]);
+      setPronounSelect(pronounData);
+    }
   }, [selectedCandidate]);
 
   const [cityReqError, setCityReqError] = useState(false);
@@ -203,7 +217,6 @@ export function PersonalInformation(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
-  const [profileSuccess, setProfileSuccess] = useState(false);
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const [profileImage, setProfileImage] = useState(
@@ -277,6 +290,24 @@ export function PersonalInformation(props) {
     get_data.ethinicity = new_array;
     setGetResponse(get_data);
   };
+
+  const onSelectPronounDropdown = (data) => {
+    let new_data = [];
+    new_data.push(data);
+    setPronounSelect(new_data);
+
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: data.value,
+        label: data.label,
+      },
+    ];
+
+    get_data.pronoun = new_array;
+    setGetResponse(get_data);
+  };
+
   const onSelectGenderDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
@@ -350,6 +381,7 @@ export function PersonalInformation(props) {
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
         jobprofile: new_data.jobprofile,
+        pronounid: new_data.pronoun[0]?.value,
       };
 
       let response = await dispatch(
@@ -537,26 +569,6 @@ export function PersonalInformation(props) {
     accept: ".png",
   });
 
-  // const getFileName = function () {
-  //   let name = "";
-
-  //   if (resumeDetails) {
-  //     if (resumeDetails.resumepath) {
-  //       const lastIndex = resumeDetails.resumepath.lastIndexOf(".");
-  //       let jobTitle = candidateDetails.position
-  //         ? candidateDetails.position.replace(/ /g, "_")
-  //         : "";
-  //       if (lastIndex !== -1) {
-  //         name =
-  //           candidateDetails.lastname +
-  //           (jobTitle ? "_" + jobTitle : "") +
-  //           "." +
-  //           resumeDetails.resumepath.slice(lastIndex + 1);
-  //       }
-  //     }
-  //     setFileName(name);
-  //   }
-  // };
   const addEditProfileImage = function (acceptedFiles) {
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
@@ -646,9 +658,17 @@ export function PersonalInformation(props) {
                       <div className="widget-chart-content">
                         <div>
                           <strong className="candidate-name mb-1">
-                            {selectedCandidate.personalInfo.firstname +
-                              " " +
-                              selectedCandidate.personalInfo.lastname}
+                            <span className="me-2">
+                              {selectedCandidate.personalInfo.firstname +
+                                " " +
+                                selectedCandidate.personalInfo.lastname}
+                            </span>
+                            {selectedCandidate.personalInfo.pronounname !==
+                              "" && (
+                              <span className="candidate-label">
+                                ( {selectedCandidate.personalInfo.pronounname} )
+                              </span>
+                            )}
                           </strong>
                           {selectedCandidate.personalInfo.jobprofile && (
                             <p className="widget-description text-focus content-text mt-0">
@@ -668,7 +688,7 @@ export function PersonalInformation(props) {
                           <Row>
                             <Col className="col-12 mb-0">
                               <Label className="candidate-label mb-0">
-                                Employement eligibility:{" "}
+                                Employment eligibility:{" "}
                                 <strong className="content-text">
                                   {selectedCandidate.personalInfo.eligibility}
                                 </strong>
@@ -1151,10 +1171,26 @@ export function PersonalInformation(props) {
                         />
                       </FormGroup>
                     </Col>
+
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="pronoun" className="fw-semi-bold">
+                          Pronoun
+                        </Label>
+                        <AsyncSelect
+                          name="pronoun"
+                          placeholder="Select"
+                          defaultOptions={pronounList}
+                          isMulti={false}
+                          value={pronounSelect}
+                          onChange={(evt) => onSelectPronounDropdown(evt)}
+                        />
+                      </FormGroup>
+                    </Col>
                   </Row>
 
                   <Row>
-                    <div className="mb-1 fw-bold">Employement eligibility</div>
+                    <div className="mb-1 fw-bold">Employment eligibility</div>
                     <hr />
                   </Row>
 

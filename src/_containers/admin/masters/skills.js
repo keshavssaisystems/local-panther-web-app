@@ -36,7 +36,7 @@ export const Skills = () => {
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({ skillname: "" });
   const [pageNo, setPageNo] = useState(1);
-
+  const [pageSize, setPageSize] = useState(10);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -45,13 +45,7 @@ export const Skills = () => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(
-      getSkills({
-        pageSize: 10,
-        isActive: true,
-        pageNumber: 1,
-      })
-    );
+    getSkillsList(pageSize, pageNo);
   }, []);
 
   const [success, setSuccess] = useState(false);
@@ -63,7 +57,7 @@ export const Skills = () => {
   const [save, setSave] = useState(false);
   const [status, setStatus] = useState("All");
   const [loading, setLoading] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
+
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   let title = "Companies";
@@ -210,7 +204,7 @@ export const Skills = () => {
   const getSkillsList = async function () {
     setLoading(true);
     let urlParams = {
-      pageSize: 1000,
+      pageSize: pageSize,
       pageNumber: 1,
     };
     if (searchData !== "") {
@@ -404,7 +398,7 @@ export const Skills = () => {
         type: "skill",
         ispopular: true,
         isactive: true,
-        skillstatusid: 0,
+        skillstatusid: 1,
         skillstatusupdateddate: new Date().toISOString(),
         skillstatusupdatedby: JSON.parse(localStorage.getItem("userDetails"))
           ?.UserId,
@@ -426,7 +420,7 @@ export const Skills = () => {
               <Row>
                 <Col md={12}>
                   <Row className="mb-3">
-                    <Col md={5} lg={3} sm={12}>
+                    <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
                       <FormGroup>
                         <Input
                           type="select"
@@ -441,7 +435,7 @@ export const Skills = () => {
                         </Input>
                       </FormGroup>
                     </Col>
-                    <Col className="col">
+                    <Col xxl={9} xl={9} md={12} lg={8} sm={12} xs={12}>
                       <Button
                         style={{ background: "#2f479b" }}
                         color={"primary"}

@@ -45,15 +45,17 @@ import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
-  const { data } = useSelector((state) => state?.adminListing ?? {});
 
+  const [pageSize, setPageSize] = useState(10);
+  const [pageNo, setPageNo] = useState(0);
   let title,
     icon,
     columns = [];
   useEffect(() => {
+    loadData();
     dispatch(getRoles());
   }, []);
-  const [pageNo, setPageNo] = useState(0);
+  const { data } = useSelector((state) => state?.adminListing ?? {});
   const rolesList = useSelector((state) => state.adminListing.rolesList);
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
@@ -62,7 +64,6 @@ export const AdminListing = ({ entity }) => {
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [viewMode, setViewMode] = useState(false);
-  const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
 
   const [openModal, setOpenModal] = useState(false);
@@ -78,21 +79,7 @@ export const AdminListing = ({ entity }) => {
 
   const [roleid, setRoleId] = useState(0);
   const [status, setStatus] = useState("All");
-  const [newCompData, setNewCompData] = useState({
-    // ... other fields
-    newCompName: { value: "", error: false },
-    newIndusName: { value: "", error: false },
-    newCompDesc: { value: "" },
-    newCompEmp: { value: "" },
-    newCompAdd: { value: "" },
-    newCompState: { value: 0 },
-    newCompCity: { value: 0 },
-    newCompCountry: { value: 0 },
-    newCompLog: { value: 0 },
-    newCompZip: { value: "" },
-    newCompEmail: { value: "" },
-    newCompPhonenum: { value: "" },
-  });
+
   title = users.title;
   icon = companyLogo;
   columns = [
@@ -490,7 +477,7 @@ export const AdminListing = ({ entity }) => {
           <Card className="mb-3">
             <CardBody>
               <Row className="mb-3">
-                <Col>
+                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
                   <FormGroup>
                     <Input
                       type="select"
@@ -511,7 +498,7 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col className="col-3">
+                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
                   <FormGroup>
                     <Input
                       type="select"
@@ -525,8 +512,16 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col className="col-1"></Col>
-                <Col className="col">
+                {/* <Col className="col-1"></Col> */}
+                <Col
+                  className="right-align"
+                  xxl={6}
+                  xl={6}
+                  md={12}
+                  lg={8}
+                  sm={12}
+                  xs={12}
+                >
                   <Button
                     style={{
                       background: "#2f479b",

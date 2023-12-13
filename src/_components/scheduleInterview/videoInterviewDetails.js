@@ -141,7 +141,10 @@ export function VideoInterviewDetails({
   const rejectSchedule = () => {
     rejectInterview(interviewId);
   };
-  let suggestedJson = interviewDetail?.suggestedquestion;
+  let suggestedJson =
+    interviewDetail?.suggestedquestion !== ""
+      ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
+      : "";
   let suggestedQuestionArray = suggestedJson?.questions?.split("\n");
   let customQuestion = [];
   let preQuestions = [];

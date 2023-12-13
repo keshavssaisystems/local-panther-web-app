@@ -41,19 +41,15 @@ export const CustomerList = () => {
     title: "",
     description: "",
   });
+
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
     dispatch(dropdownActions.getStatusListThunk());
-    dispatch(
-      getCustomers({
-        isActive: true,
-        pageSize: pageSize,
-        pageNumber: pageNo,
-        companyId: 0,
-      })
-    );
+    getCustomerDetails(pageSize, pageNo);
   }, []);
   const [customerStatus, setCustomerStatus] = useState(0);
   const [companyId, setCompanyId] = useState(0);
@@ -65,8 +61,6 @@ export const CustomerList = () => {
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
 
-  const [pageNo, setPageNo] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   let title = "Customers";
   let icon = companyLogo;
   let columns = [
@@ -435,7 +429,7 @@ export const CustomerList = () => {
           <Card className="mb-3">
             <CardBody>
               <Row>
-                <Col md={10}>
+                <Col md={12} lg={10} sm={12}>
                   <Form onSubmit={(e) => getFilterValue(e)}>
                     <Row>
                       <Col>
@@ -514,7 +508,7 @@ export const CustomerList = () => {
                     </Row>
                   </Form>
                 </Col>
-                <Col>
+                <Col md={12} lg={2} sm={12}>
                   <Button
                     style={{ background: "#2f479b" }}
                     color={"primary"}

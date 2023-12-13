@@ -7,18 +7,16 @@ export function StackBarChart({ graphData }) {
     "Accepted",
     "Applied",
     "Interviews",
-    "Jobs",
     "Matched",
-    "Offers",
+    "Offer",
     "Rejected",
   ];
   const stackValuesKey = {
     Accepted: "acceptedcount",
     Applied: "appliedcount",
     Interviews: "interviewcount",
-    Jobs: "jobscount",
     Matched: "matchedcount",
-    Offers: "offerscount",
+    Offer: "offerscount",
     Rejected: "rejectedcount",
   };
   let mainArray = {
@@ -45,6 +43,13 @@ export function StackBarChart({ graphData }) {
         data: mainArray[stackValuesKey[element]],
       };
       seriesDataArray.push(seriesData);
+    });
+  }
+  let wrappedTitle = [];
+  if (mainArray["jobtitle"]?.length > 0) {
+    mainArray["jobtitle"].forEach((title) => {
+      let wrapTitle = title.split(" ");
+      wrappedTitle.push(wrapTitle);
     });
   }
   let baroptions = {
@@ -76,11 +81,11 @@ export function StackBarChart({ graphData }) {
       "#FF6178",
     ],
     series: seriesDataArray,
-    labels: mainArray["jobtitle"],
+    labels: wrappedTitle,
     xaxis: {
       labels: {
         show: true,
-        offsetX: 5,
+        rotate: 0,
       },
       axisBorder: {
         show: true,

@@ -32,7 +32,6 @@ import {
   HiringManager,
   CandidateReport,
   IncompleteCandidateProfile,
-  PartiallyFilledJobs,
   AdminCalendar,
   JobsWithoutMatchedCandidates,
   CandidateWithoutMatchedJobs,
@@ -54,7 +53,6 @@ import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 import { messaging } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
-import { VideoScreen } from "firebase/video";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
 
@@ -71,6 +69,7 @@ export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -327,12 +326,22 @@ export function App() {
           />
 
           <Route
+            path="/report"
+            element={
+              <PrivateRoute>
+                <CustomerReportJobList />
+              </PrivateRoute>
+            }
+            key={5}
+          />
+          <Route
             path="/report/customer-jobs/:id"
             element={
               <PrivateRoute>
                 <CustomerReportJobList />
               </PrivateRoute>
             }
+            key={6}
           />
           <Route
             path="/report/customer-scheduled-interviews/:id"
@@ -520,14 +529,40 @@ export function App() {
     }
   };
 
+  const onOpenSidebar = () => {
+    setIsSidebarOpen(true);
+  };
+
+  const onCloseSidebar = () => {
+    setIsSidebarOpen(false);
+  };
+
   return (
     <>
-      {authUser && <AppHeader />}
-      {!authUser && hideSidebar && <AppHeader unAuth={true} />}
+      {authUser && (
+        <AppHeader
+          isSidebarOpen={isSidebarOpen}
+          onOpenSidebar={() => onOpenSidebar()}
+          onCloseSidebar={() => onCloseSidebar()}
+        />
+      )}
+      {!authUser && hideSidebar && (
+        <AppHeader
+          unAuth={true}
+          isSidebarOpen={isSidebarOpen}
+          onOpenSidebar={() => onOpenSidebar()}
+          onCloseSidebar={() => onCloseSidebar()}
+        />
+      )}
       <div className={authUser ? `app-main` : ""}>
-        {authUser && !hideSidebar && <AppSidebar />}
+        {authUser && !hideSidebar && (
+          <AppSidebar
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+          />
+        )}
         <div className={authUser ? `app-main__outer` : ""}>
-          <div className="app-main__inner">
+          <div className={"app-main__inner "}>
             <ToastContainer />
             <Routes forceRefresh={true}>
               {renderRoutes(userroleid)}

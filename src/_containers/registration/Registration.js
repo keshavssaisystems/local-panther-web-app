@@ -565,7 +565,7 @@ export function Registration() {
                   </Label>
 
                   {registrationType.map((item, index) => (
-                    <Col md={3} lg={2} sm={2}>
+                    <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
                       <FormGroup check style={{ marginLeft: "5px" }}>
                         <Input
                           style={{ fontSize: "18px" }}

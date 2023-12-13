@@ -81,7 +81,7 @@ export function PaymentAndBenefits({
     <>
       <Form onSubmit={(e) => getFormData(e)}>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             {" "}
             <FormGroup>
               <Label className="fw-semi-bold">Pay period type</Label>
@@ -110,7 +110,7 @@ export function PaymentAndBenefits({
               </Input>
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"minimumAmount"} className="fw-semi-bold">
                 Minimum amount
@@ -129,7 +129,7 @@ export function PaymentAndBenefits({
               />
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="maximumAmount" className="fw-semi-bold">
                 Maximum amount
@@ -148,10 +148,10 @@ export function PaymentAndBenefits({
               />
             </FormGroup>
           </Col>
-          <Col></Col>
+          <Col md={6} lg={3}></Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={6} lg={6}>
             <FormGroup>
               <Label for="compensationPackage" className="fw-semi-bold">
                 Compensation package
@@ -170,7 +170,7 @@ export function PaymentAndBenefits({
               />
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={6}>
             <FormGroup>
               <Label for="benefits" className="fw-semi-bold">
                 Benefits

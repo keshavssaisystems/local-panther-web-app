@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  TabContent,
-  TabPane,
-  ButtonGroup,
-  Button,
-  Row,
-  Col,
-  Card,
-  CardBody,
-} from "reactstrap";
+import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
 import classnames from "classnames";
 import { CardPagination } from "_components/common/cardpagination";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,6 +21,7 @@ import {
   custJobListActions,
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
+import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -40,6 +32,8 @@ export const CandidateList = (props) => {
   const [selectedIDData, setSelectedIDData] = useState([]);
   const [showPSModal, setShowPSModal] = useState(false);
   const [preScreenType, setPreScreenType] = useState("");
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleId, setRescheduleId] = useState("");
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -150,7 +144,12 @@ export const CandidateList = (props) => {
     }
   };
   let successMessage = "Job status updated successfully!!!";
-  const onCandidateCardActions = async (type, candidaterecommendedjobid) => {
+
+  const onCandidateCardActions = async (
+    type,
+    candidaterecommendedjobid,
+    reason
+  ) => {
     if (type === "liked") {
       let res = await dispatch(
         candidateListActions.candidateLike(candidaterecommendedjobid)
@@ -168,8 +167,16 @@ export const CandidateList = (props) => {
         });
       }
     } else if (type === "rejected") {
+      let payload = {
+        candidaterejectedcomment: reason,
+        candidaterejectedreasonid: 0,
+      };
+
       let res = await dispatch(
-        candidateListActions.candidateReject(candidaterecommendedjobid)
+        candidateListActions.candidateReject({
+          candidaterecommendedjobid,
+          payload,
+        })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: successMessage, type: "success" });
@@ -236,7 +243,7 @@ export const CandidateList = (props) => {
       }
     } else if (type === "rejectInterview") {
       let payload = {
-        rejectionreason: "",
+        rejectionreason: reason,
       };
       let res = await dispatch(
         scheduleInterviewActions.rejectInterviewThunk({
@@ -246,6 +253,28 @@ export const CandidateList = (props) => {
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
+        toggle(activeTab, pageNo);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+    } else if (type === "rescheduleInterview") {
+      setShowRescheduleModal(true);
+      setRescheduleId(candidaterecommendedjobid);
+    } else if (type === "reaccepted") {
+      let payload = {
+        rejectionreason: reason,
+      };
+      let res = await dispatch(
+        candidateListActions.candidateAcceptAgain({
+          candidaterecommendedjobid,
+          payload: payload,
+        })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: successMessage, type: "success" });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -347,11 +376,11 @@ export const CandidateList = (props) => {
 
   const onPrescreenClickAction = async (type, row) => {
     if (type === "pending") {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getJobPrescreenApplicationQues(row.jobid)
       );
     } else {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getCompJobPrescreenApplication(row.jobid)
       );
     }
@@ -382,6 +411,25 @@ export const CandidateList = (props) => {
 
     if (res.payload.statusCode === 201) {
       setShowPSModal(false);
+      showSweetAlert({ title: res.payload.message, type: "success" });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
+  const onSendRescheduleData = async (data) => {
+    let res = await dispatch(
+      candidateListActions.updateRescheduleReason({
+        scheduleinterviewid: rescheduleId,
+        reschedulerequestedreason: data,
+      })
+    );
+
+    if (res?.payload?.statusCode === 204) {
+      setShowRescheduleModal(false);
       showSweetAlert({ title: res.payload.message, type: "success" });
     } else {
       showSweetAlert({
@@ -466,7 +514,7 @@ export const CandidateList = (props) => {
                 toggle("offers");
               }}
             >
-              Offers
+              Offer
             </Button>
             <Button
               color="primary"
@@ -497,7 +545,7 @@ export const CandidateList = (props) => {
           </ButtonGroup>
         </Col>
 
-        <Col xs={12} sm={12} md={4} lg={4} xl={12} className="mb-3">
+        <Col xs={12} sm={12} md={12} lg={12} xl={12} className="mb-3">
           <TabContent activeTab={activeTab}>
             <TabPane tabId="matched">
               <div className="p-3 tab-info">
@@ -654,11 +702,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -729,11 +779,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -806,11 +858,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -882,11 +936,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -959,11 +1015,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -1008,7 +1066,7 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Offers candidates are candidates who have decided to offer
+                      Offer candidates are candidates who have decided to offer
                       a job after interviewing and assessing their
                       qualifications. This means the customer has made a final
                       decision on who to hire and communicated the offer to the
@@ -1037,11 +1095,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -1135,6 +1195,19 @@ export const CandidateList = (props) => {
                 preScreenType={preScreenType}
               ></PrescreenModal>
             </>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {showRescheduleModal ? (
+            <CandRescheduleModal
+              isOpen={showRescheduleModal}
+              onClose={() => {
+                setShowRescheduleModal(false);
+              }}
+              onSubmitReschedule={(data) => onSendRescheduleData(data)}
+            ></CandRescheduleModal>
           ) : (
             <></>
           )}

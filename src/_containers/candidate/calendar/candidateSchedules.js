@@ -11,6 +11,7 @@ import { scheduleInterviewActions } from "_store";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import "./calendar.scss";
+import { faLessThanEqual } from "@fortawesome/free-solid-svg-icons";
 
 export function CandidateSchedules() {
   const dispatch = useDispatch();
@@ -22,7 +23,15 @@ export function CandidateSchedules() {
     const day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
-
+  const views = {
+    month: true,
+    week: true,
+    day: true,
+    agenda: true, // Add or modify views as needed
+  };
+  const messages = {
+    agenda: "Schedule", // Change the label for Agenda to Schedule
+  };
   useEffect(() => {
     // Get the current date
     const currentDate = new Date();
@@ -224,9 +233,10 @@ export function CandidateSchedules() {
                 <Calendar
                   localizer={localizer}
                   events={upData}
+                  views={views}
+                  messages={messages}
                   startAccessor="start"
                   endAccessor="end"
-                  views={["month", "week", "day", "agenda"]}
                   // popup
                   eventPropGetter={(upData) => {
                     const backgroundColor = upData.color

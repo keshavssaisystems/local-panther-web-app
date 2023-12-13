@@ -251,13 +251,13 @@ export function AdminDashboard() {
           <WidgetCounter cardOptions={dashCardUI} />
         </Row>
         <Row>
-          <Col sm="12" md="6" lg="6">
+          <Col sm="12" md="12" lg="6">
             <AdminSlider data={upcomingInterview} />
           </Col>
-          <Col sm="6" md="3" lg="3">
+          <Col sm="6" md="6" lg="3">
             <MissingInterview cardOptions={missedInterviewList} />
           </Col>
-          <Col sm="6" md="3" lg="3">
+          <Col sm="6" md="6" lg="3">
             <OpenJobsGraph
               openJobsCount={dashboardCounts.openjobcount}
               graphData={analyiticalCounts}

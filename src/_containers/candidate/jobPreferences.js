@@ -549,7 +549,7 @@ export function JobPreferences(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Job preferences
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <BsPencil
                 className="icons me-2"
                 onClick={() => setPersonalModal(true)}
@@ -959,7 +959,7 @@ export function JobPreferences(props) {
                             checked={parentItem.anywhereonlynear == 1}
                           />{" "}
                           <Label check className="fw-semi-bold">
-                            Any where
+                            Anywhere
                           </Label>
                         </FormGroup>
                       </Col>

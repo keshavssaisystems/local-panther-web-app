@@ -8,7 +8,6 @@ import {
   CardFooter,
   CardHeader,
 } from "reactstrap";
-import AsyncSelect from "react-select/async";
 import {
   Row,
   Col,
@@ -31,6 +30,7 @@ import { profileSkillsActions } from "_store";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { NoDataFound } from "_components/common/nodatafound";
+import AsyncCreatableSelect from "react-select/async-creatable";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
@@ -119,7 +119,7 @@ export function CandidateSkills(props) {
     }
   }, [skills_data]);
 
-  const removeSkills = function (data) {
+  const removeSkills = function (data, index) {
     let filter_data = skills_data?.find((x) => x.value === data.value);
     if (filter_data) {
       let new_array = [...skills];
@@ -127,20 +127,20 @@ export function CandidateSkills(props) {
       setSkills(new_array);
     }
     let multiple_skills = [...skillsMultiple];
-    let multiple_skills_new = multiple_skills?.filter(function (obj) {
-      return obj.value !== data.value;
-    });
 
+    multiple_skills.splice(index, 1);
     let data_new = selectedSkillData.filter(function (obj) {
       return obj.id !== data.value;
     });
 
-    setSkillsMultiple(multiple_skills_new);
+    setSkillsMultiple(multiple_skills);
     setSelectedSkillData(data_new);
   };
 
   const onSelectSkillsDropdown = function (data) {
-    setSkillsMultiple(data);
+    let multipleSkill = [...skillsMultiple];
+    multipleSkill = data;
+    setSkillsMultiple(multipleSkill);
     setSearchText("");
     let new_data = [...skills];
     let index = skills?.findIndex(
@@ -159,19 +159,21 @@ export function CandidateSkills(props) {
       selected_data.id = 0;
       selected_data.name = "";
       selected_data.experience = "";
+      setSkills(skills_data);
     }
-
-    let new_array = [...selectedSkillData];
-    let i = selectedSkillData.findIndex(
-      (x) => x.id == data[data.length - 1]?.value
+    const result = skills_data.filter(
+      (objA) =>
+        !skills.some((objB) => objB.value === objA.value) &&
+        !data.some((objC) => objC.value == objA.value)
     );
-    if (i > -1) {
-      new_array.splice(i, 1);
-    } else {
-      new_array.push(selected_data);
-    }
+    let new_array = [...skills];
+    if (result.length > 0) {
+      result.map((item, index) => {
+        new_array.push(item);
+      });
 
-    setSelectedSkillData(new_array);
+      setSkills(new_array);
+    }
   };
   const close = function () {
     setPersonalModal(false);
@@ -219,16 +221,16 @@ export function CandidateSkills(props) {
       setMustHaveValidation(false);
       let id = JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId;
       let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
-
-      let payload = selectedSkillData.map((rest) => {
+      console.log(skillsMultiple);
+      let payload = skillsMultiple.map((rest) => {
         return {
           candidateid: Number(id),
           yearsofexperience:
             rest.experience === "" ? 0 : parseInt(rest.experience),
-          skillid: rest.id,
+          skillid: rest.value,
           currentUserId: parseInt(userId),
           isactive: true,
-          skillname: rest.name,
+          skillname: rest.label,
         };
       });
 
@@ -244,7 +246,7 @@ export function CandidateSkills(props) {
     }
   };
   const [skillExist, setSkillExist] = useState(false);
-  const loadOptions = async function (inputValue) {
+  const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
       setSearchText(inputValue);
       setLabelVisibility(true);
@@ -290,31 +292,27 @@ export function CandidateSkills(props) {
     }
   };
 
-  const onSelectExperience = function (selectedSkill, data) {
-    const index = selectedSkillData.findIndex(
-      (x) => x.id == selectedSkill.value
-    );
-
-    let new_array = [...selectedSkillData];
+  const onSelectExperience = function (selectedSkill, data, index) {
+    let new_array = [...skillsMultiple];
     new_array[index].experience = data;
 
     setSelectedSkillData(new_array);
   };
 
-  const addNewSkill = () => {
-    if (searchText === "") {
+  const addNewSkill = (input) => {
+    if (input === "") {
       return;
     }
 
     let selected_data = {
       value: 0,
-      label: searchText,
+      label: input,
       experience: "",
     };
 
     let new_array = [...skillsMultiple];
-    let i = selectedSkillData.findIndex(
-      (x) => x.name.toLowerCase() === searchText.toLowerCase()
+    let i = skillsMultiple.findIndex(
+      (x) => x.label.toLowerCase() === input.toLowerCase()
     );
     if (i > -1) {
       setSearchText("");
@@ -327,7 +325,7 @@ export function CandidateSkills(props) {
 
     let skill_data = {
       id: 0,
-      name: searchText,
+      name: input,
       experience: "",
     };
     let new_data = [...selectedSkillData];
@@ -338,16 +336,16 @@ export function CandidateSkills(props) {
     setSearchText("");
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Backspace") {
-      setSearchText("");
-      setSkillExist(false);
+  const formatCreateLabel = (inputValue) => {
+    if (skillExist && inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new skill - <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
     }
-  };
-  const handleBlur = (searchText) => {
-    // AsyncSelect lost focus, hide the label
-
-    setSearchText("");
   };
 
   return (
@@ -356,7 +354,7 @@ export function CandidateSkills(props) {
         <Card className="main-card mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Skills
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <Label
                 className="link-text"
                 onClick={(evt) => setPersonalModal(true)}
@@ -367,16 +365,6 @@ export function CandidateSkills(props) {
           </CardHeader>
 
           <CardBody className="scroll-area-md">
-            {/* <div className="mb-3">
-              <strong className="card-title-text">Skills</strong>
-              <Label
-                className="float-end  link-text"
-                onClick={(evt) => setPersonalModal(true)}
-              >
-                Add
-              </Label>
-            </div> */}
-
             {!loader ? (
               <div>
                 {getResponse?.length > 0 ? (
@@ -446,19 +434,19 @@ export function CandidateSkills(props) {
                         Skills <span style={{ color: "red" }}>* </span>
                       </Label>
 
-                      <AsyncSelect
+                      <AsyncCreatableSelect
+                        id="skills"
                         name="skills"
-                        placeholder="Search to select"
+                        isMulti
+                        isClearable
+                        cacheOptions
                         loadOptions={loadOptions}
-                        isMulti={true}
                         value={skillsMultiple}
                         onChange={(evt) => onSelectSkillsDropdown(evt)}
-                        styles={{
-                          borderColor: mustHaveValidation
-                            ? "#d92550 !important"
-                            : "",
-                        }}
-                        onKeyDown={(e) => handleKeyDown(e)}
+                        formatCreateLabel={formatCreateLabel}
+                        isSearchable
+                        placeholder="Search to select"
+                        onCreateOption={addNewSkill}
                       />
 
                       {mustHaveValidation === true && (
@@ -466,24 +454,9 @@ export function CandidateSkills(props) {
                       )}
                     </FormGroup>
                   </Col>
-                  {/* {isLabelVisible && ( */}
-                  <Col>
-                    {skillExist && searchText !== "" ? (
-                      <Label
-                        style={{ marginTop: "30px" }}
-                        className="fw-semi-bold skills-remove"
-                        onClick={() => addNewSkill()}
-                      >
-                        Add
-                      </Label>
-                    ) : (
-                      ""
-                    )}
-                  </Col>
-                  {/* )} */}
                 </Row>
                 <Row className="mt-2">
-                  {skillsMultiple?.map((item) => (
+                  {skillsMultiple?.map((item, index) => (
                     <div>
                       <Row>
                         <Col md={4}>
@@ -516,7 +489,11 @@ export function CandidateSkills(props) {
                                 name={"experienceLevel"}
                                 type={"select"}
                                 onChange={(evt) =>
-                                  onSelectExperience(item, evt.target.value)
+                                  onSelectExperience(
+                                    item,
+                                    evt.target.value,
+                                    index
+                                  )
                                 }
                               >
                                 <option key={0}>Select experience level</option>
@@ -536,7 +513,7 @@ export function CandidateSkills(props) {
                         </Col>
                         <Col>
                           <Label
-                            onClick={() => removeSkills(item)}
+                            onClick={() => removeSkills(item, index)}
                             className="skills-remove"
                           >
                             remove

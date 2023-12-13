@@ -38,12 +38,7 @@ export const CompanyList = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
-    dispatch(
-      getCompanies({
-        pageSize: pageSize,
-        pageNumber: pageNo,
-      })
-    );
+    getCompanyList(pageSize, pageNo);
   }, []);
 
   const [success, setSuccess] = useState(false);
@@ -309,7 +304,7 @@ export const CompanyList = () => {
               <Row>
                 <Col md={12}>
                   <Row className="mb-3">
-                    <Col md={5} lg={3} sm={12}>
+                    <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
                       <FormGroup>
                         <Input
                           type="select"
@@ -323,7 +318,7 @@ export const CompanyList = () => {
                         </Input>
                       </FormGroup>
                     </Col>
-                    <Col className="col">
+                    <Col xxl={9} xl={9} md={12} lg={8} sm={12} xs={12}>
                       <Button
                         style={{ background: "#2f479b" }}
                         color={"primary"}

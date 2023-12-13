@@ -109,6 +109,23 @@ export const getEmployeeCountThunk = createAsyncThunk(
   }
 );
 
+// getFieldOfStudyThunk thunk
+export const getFieldOfStudyThunk = createAsyncThunk(
+  `${name}/getFieldOfStudyThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=fieldofstudy`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
+
+// getLevelOFEducationThunk thunk
+export const getLevelOFEducationThunk = createAsyncThunk(
+  `${name}/getLevelOFEducationThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=levelofeducation`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
 // getStateListThunk thunk
 export const getStateListThunk = createAsyncThunk(
   `${name}/getStateListThunk`,
@@ -134,6 +151,8 @@ const dropdownSlice = createSlice({
     employeeList: [],
     stateList: [],
     statusList: [],
+    levelOfEducationList: [],
+    fieldOfStudyList: [],
     loading: false,
   },
   reducers: {},
@@ -286,6 +305,28 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getFieldOfStudyThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getFieldOfStudyThunk.fulfilled]: (state, action) => {
+      state.fieldOfStudyList = action.payload.data;
+      state.loading = false;
+    },
+    [getFieldOfStudyThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getLevelOFEducationThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getLevelOFEducationThunk.fulfilled]: (state, action) => {
+      state.levelOfEducationList = action.payload.data;
+      state.loading = false;
+    },
+    [getLevelOFEducationThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -305,6 +346,8 @@ export const dropdownActions = {
   getStateListThunk,
   getEmployeeCountThunk,
   getStatusListThunk,
+  getFieldOfStudyThunk,
+  getLevelOFEducationThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

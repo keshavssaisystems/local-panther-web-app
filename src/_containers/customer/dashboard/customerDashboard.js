@@ -49,6 +49,7 @@ export default function CustomerDashboard() {
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
+  console.log(dashboardGraphData);
   const dashboardJobsDataCount = useSelector(
     (state) => state.customerDashboard.dashboardJobsDataCount
   );
