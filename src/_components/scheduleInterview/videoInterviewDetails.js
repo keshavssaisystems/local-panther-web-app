@@ -518,10 +518,7 @@ export function VideoInterviewDetails({
       <div className="d-block text-center mb-1">
         <h6 className="fw-bold">
           Request sent on{" "}
-          {getTimezoneDateTime(
-            moment(interviewDetail?.createddate).format("MM/DD/YYYY"),
-            "MM/DD/YYYY"
-          )}
+          {getTimezoneDateTime(interviewDetail?.createddate, "MM/DD/YYYY")}
         </h6>
       </div>
       {showCancelPopup && (

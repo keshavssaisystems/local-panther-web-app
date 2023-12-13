@@ -487,11 +487,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -561,11 +563,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -633,11 +637,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -704,11 +710,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -775,11 +783,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -846,11 +856,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -918,11 +930,13 @@ export const CustomerCandidateLists = (props) => {
                           }
                         />
                         {totalRecords > listPageSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / listPageSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}

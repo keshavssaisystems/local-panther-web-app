@@ -492,10 +492,7 @@ export function UpcomingVideoDetails({
         <div className="d-block text-center mb-1">
           <h6 className="fw-bold">
             Request sent on{" "}
-            {getTimezoneDateTime(
-              moment(interviewDetails?.createddate).format("MM/DD/YYYY"),
-              "MM/DD/YYYY"
-            )}
+            {getTimezoneDateTime(interviewDetails?.createddate, "MM/DD/YYYY")}
           </h6>
         </div>
       </CardBody>
