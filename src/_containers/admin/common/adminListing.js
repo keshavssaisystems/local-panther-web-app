@@ -1,28 +1,21 @@
 import React, { useState, useEffect } from "react";
 import companyLogo from "assets/utils/images/candidate.svg";
-import {
-  customers,
-  company,
-  users,
-  roles,
-  menuMapping,
-} from "_containers/admin/common/adminColumnsListing";
+import { users } from "_containers/admin/common/adminColumnsListing";
 import PageTitle from "_components/common/pagetitle";
 import {
   Row,
   Col,
   Card,
   CardBody,
-  CardHeader,
   Button,
   FormGroup,
-  InputGroup,
   Input,
   Modal,
   ModalHeader,
   ModalBody,
+  UncontrolledTooltip,
 } from "reactstrap";
-import { BsSearch } from "react-icons/bs";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 import { USPhoneNumber } from "_helpers/helper";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
@@ -104,7 +97,29 @@ export const AdminListing = ({ entity }) => {
     {
       name: "Email",
       id: "email",
-      cell: (row) => <>{row.email}</>,
+      cell: (row) => (
+        <>
+          {row.email}
+          {row?.isactive === false && (
+            <>
+              <BsFillInfoCircleFill
+                id={"rr_" + row?.id}
+                color="primary"
+                className="ms-2"
+              ></BsFillInfoCircleFill>
+              <UncontrolledTooltip
+                placement="bottom"
+                target={"rr_" + row?.jobid}
+              >
+                {row?.deactivationreason !== "" ||
+                row?.deactivationreason !== undefined
+                  ? row?.deactivationreason
+                  : "-"}
+              </UncontrolledTooltip>
+            </>
+          )}
+        </>
+      ),
       selector: (row) => row.email,
       sortable: true,
     },
