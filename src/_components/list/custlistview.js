@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import {
   UncontrolledButtonDropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Row,
-  Col,
   Button,
   ButtonGroup,
   UncontrolledTooltip,
@@ -290,6 +288,20 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_reject} alt="list reject"></img>
           </Button>
+          {row?.scheduledInterviewDtos?.length > 0 &&
+            row?.scheduledInterviewDtos[0]?.isreschedulerequested === true &&
+            row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
+              <Button
+                // outline
+                size="sm"
+                title="Reschedule Interview"
+                // onClick={() => onRejectClick(candidaterecommendedjobid)}
+                className="btn-icon"
+                color="alternate"
+              >
+                <img src={customerIcons.list_schedule} alt="list reject"></img>
+              </Button>
+            )}
         </ButtonGroup>
       );
     } else if (props.type === "offers") {
