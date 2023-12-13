@@ -60,7 +60,8 @@ export function UpcomingCard({
                     </Col>
                     {interview?.interviewstatusid === 0 &&
                       interview.isaccepted === true &&
-                      interview.isrejected === false && (
+                      interview.isrejected === false &&
+                      interview.isreschedulerequested === false && (
                         <Col md="12" lg="5">
                           <div className="mb-2 me-2 mt-1 badge bg-success float-end badge-custom">
                             Accepted
@@ -69,7 +70,8 @@ export function UpcomingCard({
                       )}
                     {interview?.interviewstatusid === 0 &&
                       interview.isaccepted === false &&
-                      interview.isrejected === false && (
+                      interview.isrejected === false &&
+                      interview.isreschedulerequested === false && (
                         <Col md="12" lg="5">
                           <div className="mb-2 me-2 mt-1 badge bg-warning float-end badge-custom">
                             No response
@@ -79,24 +81,34 @@ export function UpcomingCard({
                     {((interview?.interviewstatusid === 0 &&
                       interview.isrejected === true &&
                       interview.isaccepted === true) ||
-                      interview.isrejected === true) && (
+                      interview.isrejected === true) &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-danger float-end badge-custom">
+                            Rejected
+                          </div>
+                        </Col>
+                      )}
+                    {interview?.interviewstatusid === 1 &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-info float-end badge-custom">
+                            Completed
+                          </div>
+                        </Col>
+                      )}
+                    {interview?.interviewstatusid === 2 &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-secondary float-end badge-custom">
+                            Not joined
+                          </div>
+                        </Col>
+                      )}
+                    {interview.isreschedulerequested === true && (
                       <Col md="12" lg="5">
-                        <div className="mb-2 me-2 mt-1 badge bg-danger float-end badge-custom">
-                          Rejected
-                        </div>
-                      </Col>
-                    )}
-                    {interview?.interviewstatusid === 1 && (
-                      <Col md="12" lg="5">
-                        <div className="mb-2 me-2 mt-1 badge bg-info float-end badge-custom">
-                          Completed
-                        </div>
-                      </Col>
-                    )}
-                    {interview?.interviewstatusid === 2 && (
-                      <Col md="12" lg="5">
-                        <div className="mb-2 me-2 mt-1 badge bg-secondary float-end badge-custom">
-                          Not joined
+                        <div className="mb-2 me-2 mt-1 badge bg-primary float-end badge-custom">
+                          Requested for reschedule
                         </div>
                       </Col>
                     )}

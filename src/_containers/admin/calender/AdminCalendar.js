@@ -104,11 +104,17 @@ export function AdminCalendar({ title }) {
       start: new Date(startDate),
       end: new Date(endDate),
       color:
-        item.isaccepted === true && item.isrejected === false
-          ? "#14BD66"
+        item?.isreschedulerequested === true
+          ? "#2f479b"
+          : item?.interviewstatusid !== 0
+          ? item?.interviewstatusid === 1
+            ? "#30b1ff"
+            : "#6c757d"
+          : item.isaccepted === true && item.isrejected === false
+          ? "green"
           : item.isrejected === true
-          ? "#FF406D"
-          : "#F7B924",
+          ? "red"
+          : "#f7b924",
     };
   });
 
@@ -277,6 +283,10 @@ export function AdminCalendar({ title }) {
             Interview completed
             <div className="ms-3 mb-3 me-0 badge badge-color-grey">P</div> Not
             joined
+            <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
+              P
+            </div>{" "}
+            Requested for reschedule
           </div>
         </Col>
       </Row>

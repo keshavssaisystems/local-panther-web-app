@@ -219,7 +219,11 @@ export function UpcomingVideoDetails({
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Status</h6>
-          {interviewDetails?.interviewstatusid !== 0
+          {interviewDetails?.isreschedulerequested === true
+            ? "Requested for reschedule (" +
+              interviewDetails?.reschedulerequestedreason +
+              ")"
+            : interviewDetails?.interviewstatusid !== 0
             ? interviewDetails?.interviewstatusid === 1
               ? "Completed"
               : "Candidate not joined"
@@ -227,7 +231,9 @@ export function UpcomingVideoDetails({
               interviewDetails?.isrejected === false
             ? "Accepted"
             : interviewDetails?.isrejected === true
-            ? "Rejected"
+            ? interviewDetails?.rejectionreason !== ""
+              ? "Rejected (" + interviewDetails?.rejectionreason + ")"
+              : "Rejected"
             : "No response"}
         </div>
         {interviewDetails?.interviewstatusid !== 0 &&

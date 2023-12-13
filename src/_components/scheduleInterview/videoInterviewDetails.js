@@ -253,7 +253,11 @@ export function VideoInterviewDetails({
       <div className="p-custom">
         <h6 className="fw-bold job-heading">Status</h6>
         <p className="mb-0">
-          {interviewDetail?.interviewstatusid !== 0
+          {interviewDetail?.isreschedulerequested === true
+            ? "Requested for reschedule (" +
+              interviewDetail?.reschedulerequestedreason +
+              ")"
+            : interviewDetail?.interviewstatusid !== 0
             ? interviewDetail?.interviewstatusid === 2
               ? "Completed but candidate not joined"
               : "Completed"
@@ -261,7 +265,9 @@ export function VideoInterviewDetails({
               interviewDetail?.isrejected === false
             ? "Accepted"
             : interviewDetail?.isrejected === true
-            ? "Rejected"
+            ? interviewDetail?.rejectionreason !== ""
+              ? "Rejected (" + interviewDetail?.rejectionreason + ")"
+              : "Rejected"
             : "No response from candidate"}
         </p>
       </div>
