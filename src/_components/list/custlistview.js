@@ -28,6 +28,7 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { scheduleInterviewActions } from "_store";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
+import axios from "axios";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -50,27 +51,28 @@ export const CustCandidateListView = (props) => {
   useEffect(() => {
     dispatch(scheduleInterviewActions.getDurationThunk());
   }, []);
-  const onAcceptClick = async (candidaterecommendedjobid) => {
+  const onAcceptClick = async (row) => {
     //Enable upload offer modal from here
-    // setShowUploadOfferModal(true);
-    let res = await dispatch(
-      customerCandidateListsActions.putAcceptedCandidate({
-        id: candidaterecommendedjobid,
-      })
-    );
+    setSelectedRowData(row);
+    setShowUploadOfferModal(true);
+    // let res = await dispatch(
+    //   customerCandidateListsActions.putAcceptedCandidate({
+    //     id: candidaterecommendedjobid,
+    //   })
+    // );
 
-    if (res.payload.statusCode === 204) {
-      props.showSweetAlert({
-        title: "Candidate status updated successfully!!!",
-        type: "success",
-      });
-      props.updateList();
-    } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
-    }
+    // if (res.payload.statusCode === 204) {
+    //   props.showSweetAlert({
+    //     title: "Candidate status updated successfully!!!",
+    //     type: "success",
+    //   });
+    //   props.updateList();
+    // } else {
+    //   props.showSweetAlert({
+    //     title: res.payload.message || res.payload.status,
+    //     type: "danger",
+    //   });
+    // }
   };
 
   const showJobDetail = (row) => {
@@ -220,7 +222,7 @@ export const CustCandidateListView = (props) => {
             // outline
             size="sm"
             title="Make offer"
-            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            onClick={() => onAcceptClick(row)}
             className="btn-icon"
             color="success"
           >
@@ -276,7 +278,7 @@ export const CustCandidateListView = (props) => {
             // outline
             size="sm"
             title="Make offer"
-            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            onClick={() => onAcceptClick(row)}
             className="btn-icon"
             color="success"
           >
@@ -355,7 +357,7 @@ export const CustCandidateListView = (props) => {
             // outline
             size="sm"
             title="Make offer"
-            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            onClick={() => onAcceptClick(row)}
             className="btn-icon"
             color="success"
           >
@@ -1455,6 +1457,47 @@ export const CustCandidateListView = (props) => {
     }
   };
 
+  const onUploadOfferDoc = (file) => {
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+    form.append(
+      "Candidaterecommendedjobid",
+      selectedRowData.candidaterecommendedjobid
+    );
+    form.append("Offerfile", file[0]);
+    form.append(
+      "CurrentUserId",
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+
+    axios
+      .post(`${process.env.REACT_APP_PANTHER_URL}/MakeJobOffer`, form, config)
+      .then((result) => {
+        if (result.data.statusCode == 200) {
+          setShowUploadOfferModal(false);
+          props.showSweetAlert({
+            title: result.data.message,
+            type: "success",
+          });
+        } else {
+          props.showSweetAlert({
+            title: result.data.message || result.data.status,
+            type: "danger",
+          });
+        }
+      })
+      .catch((error) => {});
+  };
+
   return (
     <>
       <DataTable
@@ -1569,6 +1612,7 @@ export const CustCandidateListView = (props) => {
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
             onClose={() => setShowUploadOfferModal(false)}
+            uploadOfferDoc={(file) => onUploadOfferDoc(file)}
           />
         ) : (
           <></>
