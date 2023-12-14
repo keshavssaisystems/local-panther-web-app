@@ -219,6 +219,7 @@ export function UpdateScheduleInterviewModal({
                       dateFormat="MM/dd/yyyy"
                       placeholderText="Eg. MM/DD/YYYY"
                       name={"scheduleDate"}
+                      minDate={new Date()}
                     />
                     {/* <Input
                       type="date"
