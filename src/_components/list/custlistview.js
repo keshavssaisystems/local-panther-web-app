@@ -99,13 +99,13 @@ export const CustCandidateListView = (props) => {
     setShowReModal(true);
   };
 
-  const onSubmitRejectModal = async (reasonid, comment) => {
+  const onSubmitRejectModal = async (comment) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
       customerCandidateListsActions.putRejectCandidate({
         id: currCRJId,
         customerrejectedcomment: comment,
-        customerrejectedreasonid: reasonid,
+        customerrejectedreasonid: 0,
         currentUserId: userId,
       })
     );
