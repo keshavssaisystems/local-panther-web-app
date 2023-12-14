@@ -63,7 +63,8 @@ export function UpcomingVideoDetails({
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
-  const interviewDetails = selectedJobDetails[0];
+  const interviewDetails =
+    selectedJobDetails?.length > 0 ? selectedJobDetails[0] : [];
   let scheduled = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("YYYY-MM-DD") +
       " " +
