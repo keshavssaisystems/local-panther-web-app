@@ -24,7 +24,6 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  console.log(interviewData);
   const newdate = new Date(
     getTimezoneDateTime(
       moment(interviewData?.scheduledate),
