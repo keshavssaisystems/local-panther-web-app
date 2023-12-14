@@ -41,6 +41,7 @@ export default function CustomerDashboard() {
     getDashboardGraphData();
     getDashboardCounts();
     getDashboardJobsDataCount();
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
   }, []);
   const dashboardCounts = useSelector(
