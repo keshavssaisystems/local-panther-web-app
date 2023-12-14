@@ -27,6 +27,7 @@ import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { scheduleInterviewActions } from "_store";
+import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -39,6 +40,7 @@ export const CustCandidateListView = (props) => {
   const [selectedIDData, setSelectedIDData] = useState("");
   const [showJDModal, setShowJDModal] = useState(false);
   const [showIRSModal, setShowIRSModal] = useState(false);
+  const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
 
   const dispatch = useDispatch();
   const durationOptions = useSelector(
@@ -49,6 +51,8 @@ export const CustCandidateListView = (props) => {
     dispatch(scheduleInterviewActions.getDurationThunk());
   }, []);
   const onAcceptClick = async (candidaterecommendedjobid) => {
+    //Enable upload offer modal from here
+    // setShowUploadOfferModal(true);
     let res = await dispatch(
       customerCandidateListsActions.putAcceptedCandidate({
         id: candidaterecommendedjobid,
@@ -1389,6 +1393,16 @@ export const CustCandidateListView = (props) => {
             }}
             isOpen={showIRSModal}
             onClose={() => setShowIRSModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showUploadOfferModal ? (
+          <CustomerUploadOffer
+            isOpen={showUploadOfferModal}
+            onClose={() => setShowUploadOfferModal(false)}
           />
         ) : (
           <></>
