@@ -431,6 +431,7 @@ export const CandidateList = (props) => {
     if (res?.payload?.statusCode === 204) {
       setShowRescheduleModal(false);
       showSweetAlert({ title: res.payload.message, type: "success" });
+      toggle(activeTab, pageNo);
     } else {
       showSweetAlert({
         title: res.payload.message || res.payload.status,
