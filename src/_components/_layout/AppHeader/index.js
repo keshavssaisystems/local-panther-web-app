@@ -50,20 +50,26 @@ export function AppHeader({
                 )}
               </Col>
               <Col style={{ lineHeight: "50px" }}>
-                {isSidebarOpen && !unAuth ? (
-                  <FontAwesomeIcon
-                    style={{ fontSize: "24px", marginTop: "15px" }}
-                    icon={faBars}
-                    onClick={() => onCloseSidebar()}
-                  />
+                {unAuth ? (
+                  <></>
                 ) : (
-                  <img
-                    src={smlogo}
-                    alt="Open side Menu"
-                    width={"40px"}
-                    height={"40px"}
-                    onClick={() => onOpenSidebar()}
-                  />
+                  <>
+                    {isSidebarOpen ? (
+                      <FontAwesomeIcon
+                        style={{ fontSize: "24px", marginTop: "15px" }}
+                        icon={faBars}
+                        onClick={() => onCloseSidebar()}
+                      />
+                    ) : (
+                      <img
+                        src={smlogo}
+                        alt="Open side Menu"
+                        width={"40px"}
+                        height={"40px"}
+                        onClick={() => onOpenSidebar()}
+                      />
+                    )}
+                  </>
                 )}
               </Col>
             </Row>

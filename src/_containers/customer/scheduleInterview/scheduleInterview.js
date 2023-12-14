@@ -206,6 +206,11 @@ export function ScheduleInterview() {
       ? upcomingInterviews.scheduledInterviewList[0]
       : []
   );
+  let selectedJob =
+    upcomingInterviews.scheduledInterviewList !== undefined &&
+    upcomingInterviews.scheduledInterviewList.length > 0
+      ? upcomingInterviews.scheduledInterviewList[0]
+      : {};
   let selectedJobDetails =
     upcomingInterviews.scheduledInterviewList !== undefined &&
     upcomingInterviews.scheduledInterviewList.length > 0
@@ -651,9 +656,11 @@ export function ScheduleInterview() {
                 <Col md={8} lg="8">
                   <UpcomingDetail
                     interviewDetails={
-                      selectedJobData[0] === undefined
-                        ? upcomingInterviews?.scheduledInterviewList[0]
-                        : selectedJobData[0]
+                      selectedJob.scheduleinterviewid === undefined
+                        ? upcomingInterviews?.scheduledInterviewList?.length > 0
+                          ? upcomingInterviews?.scheduledInterviewList[0]
+                          : []
+                        : selectedJob
                     }
                     cancelScheduleData={(e) => cancelScheduleData(e)}
                     postNotesData={(e) => postNotesData(e)}
