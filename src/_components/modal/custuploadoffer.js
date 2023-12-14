@@ -1,12 +1,25 @@
-import React, { useCallback, useEffect } from "react";
-import { Modal, ModalBody, Button, ModalFooter, ModalHeader } from "reactstrap";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Modal,
+  ModalBody,
+  Button,
+  ModalFooter,
+  ModalHeader,
+  ButtonGroup,
+  FormText,
+} from "reactstrap";
 import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 export const CustomerUploadOffer = (props) => {
+  const [fileName, setFileName] = useState("");
+  const [file, setFile] = useState("");
+  const [fileError, setFileError] = useState(false);
   useEffect(() => {}, []);
   const onDrop = useCallback((acceptedFiles) => {
     let name = acceptedFiles[0].name.replace(/^.*[\\\/]/, "");
-    console.log(name);
+    setFileError(name === "");
+    setFileName(name);
+    setFile(acceptedFiles);
   }, []);
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -15,6 +28,15 @@ export const CustomerUploadOffer = (props) => {
 
   const onCancel = (acceptedFiles) => {
     console.log(acceptedFiles);
+  };
+
+  const onUploadClick = () => {
+    if (fileName === "") {
+      setFileError(true);
+      return false;
+    } else {
+      props.uploadOfferDoc(file);
+    }
   };
 
   return (
@@ -46,11 +68,30 @@ export const CustomerUploadOffer = (props) => {
             )}
           </Dropzone>
         </div>
+        <div className="pt-2">
+          <strong className="content-title">
+            <span className="me-2">{fileName}</span>
+          </strong>
+          {fileError ? (
+            <FormText color="danger">Please select file for upload.</FormText>
+          ) : (
+            <></>
+          )}
+        </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={() => props.onClose()}>
-          Close
-        </Button>
+        <ButtonGroup>
+          <Button
+            color="primary"
+            className="me-2"
+            onClick={() => onUploadClick()}
+          >
+            Upload File
+          </Button>
+          <Button color="secondary" onClick={() => props.onClose()}>
+            Close
+          </Button>
+        </ButtonGroup>
       </ModalFooter>
     </Modal>
   );
