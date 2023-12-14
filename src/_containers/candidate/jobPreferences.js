@@ -380,7 +380,7 @@ export function JobPreferences(props) {
         data.replace(/,/g, "")
       );
     } else if (check === "relocate") {
-      new_data[0].willingtorelocate = data == "on" ? true : false;
+      new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
     } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
     } else if (check === "near") {
@@ -935,7 +935,10 @@ export function JobPreferences(props) {
                           name="relocate"
                           id="relocate"
                           onInput={(evt) =>
-                            onHandleInputChange("relocate", evt.target.value)
+                            onHandleInputChange(
+                              "relocate",
+                              !parentItem.willingtorelocate
+                            )
                           }
                           type="checkbox"
                           checked={parentItem.willingtorelocate}
