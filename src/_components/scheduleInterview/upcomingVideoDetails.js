@@ -137,7 +137,7 @@ export function UpcomingVideoDetails({
   let preQuestions = [];
   if (
     interviewDetails?.jobCandidatePrescreenApplicantDtos !== null &&
-    interviewDetails?.jobCandidatePrescreenApplicantDtos.length > 0
+    interviewDetails?.jobCandidatePrescreenApplicantDtos?.length > 0
   ) {
     interviewDetails.jobCandidatePrescreenApplicantDtos.forEach((element) => {
       if (element.iscustomquestion === false) {
@@ -159,7 +159,8 @@ export function UpcomingVideoDetails({
     window.open(interviewGuideLink[0].name, "_blank");
   };
   let suggestedJson =
-    interviewDetails?.suggestedquestion !== ""
+    interviewDetails?.suggestedquestion !== "" &&
+    interviewDetails?.suggestedquestion !== undefined
       ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
       : "";
   let suggestedQuestionArray = suggestedJson?.questions?.split("\n");

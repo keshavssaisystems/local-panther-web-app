@@ -16,22 +16,19 @@ import "./prescreen.scss";
 export const RejectModal = (props) => {
   const [reason, setReason] = useState("");
   const [selReason, setSelReason] = useState("");
-  const [reasonErr, setReasonErr] = useState(false);
+  const [save, setSave] = useState(false);
 
-  const onChangeReason = (evt) => {
-    setReasonErr(false);
-    setSelReason(evt);
-  };
   const onAddComment = (evt) => {
     setReason(evt);
   };
 
   const onSubmitReject = () => {
-    if (selReason === "") {
-      setReasonErr(true);
+    setSave(true);
+    if (reason === "") {
       return false;
     }
-    props.onSubmitReject(selReason, reason);
+
+    props.onSubmitReject(reason);
   };
   return (
     <Modal
@@ -51,72 +48,33 @@ export const RejectModal = (props) => {
           </div>
           <div className="candidate-list">
             <Row>
-              <Col className="mb-2">
-                {props.rejectDrpDwnList ? (
-                  <>
-                    <Label
-                      className="reject-modal-label"
-                      for="exampleCustomSelectDisabled"
-                    >
-                      Reason{" "}
-                      <span
-                        className="required-icon"
-                        style={{ color: "#ff0000" }}
-                      >
-                        *
-                      </span>
-                    </Label>
-                    <Input
-                      className="reason-dropdown-input dropdown-placeholder"
-                      style={{
-                        borderColor: reasonErr ? "#ff0000" : "#ced4da",
-                      }}
-                      type="select"
-                      id="jobType"
-                      name="jobType"
-                      placeholder="Select Reason"
-                      onChange={(evt) => onChangeReason(evt.target.value)}
-                      value={selReason}
-                    >
-                      <option className="dropdown-placeholder">
-                        Select Reason
-                      </option>
-                      {props.rejectDrpDwnList.map((col) => (
-                        <option key={col.id} value={col.id}>
-                          {col.name}
-                        </option>
-                      ))}
-                    </Input>
-                    {reasonErr ? (
-                      <p className="filter-info-text">Reason is required</p>
-                    ) : (
-                      <></>
-                    )}
-                  </>
-                ) : (
-                  <></>
-                )}
-              </Col>
-            </Row>
-            <Row>
               <Col>
                 <FormGroup>
                   <Label className="reject-modal-label" for="exampleText">
-                    Comment
+                    Reason
                   </Label>
                   <Input
                     type="textarea"
                     className="dropdown-placeholder"
-                    placeholder="Enter comment here"
+                    placeholder="Enter reason here"
                     onInput={(evt) => onAddComment(evt.target.value)}
                     name="text"
                     maxLength={100}
                     id="exampleText"
                     value={reason.value}
+                    style={{
+                      borderColor:
+                        save && reason === "" ? "#ff0000" : "#ced4da",
+                    }}
                   />
                   <span className="dropdown-placeholder float-end">
                     {reason ? reason.length : 0}/100
                   </span>
+                  {save && reason === "" ? (
+                    <p className="filter-info-text">Reason is required</p>
+                  ) : (
+                    <></>
+                  )}
                 </FormGroup>
               </Col>
             </Row>
