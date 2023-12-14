@@ -103,13 +103,13 @@ export const AdminListing = ({ entity }) => {
           {row?.isactive === false && (
             <>
               <BsFillInfoCircleFill
-                id={"rr_" + row?.id}
+                id={"rr_" + row?.userId}
                 color="primary"
                 className="ms-2"
               ></BsFillInfoCircleFill>
               <UncontrolledTooltip
                 placement="bottom"
-                target={"rr_" + row?.jobid}
+                target={"rr_" + row?.userId}
               >
                 {row?.deactivationreason !== "" ||
                 row?.deactivationreason !== undefined
