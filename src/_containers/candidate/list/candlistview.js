@@ -8,8 +8,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Row,
-  Col,
   Button,
   ButtonGroup,
 } from "reactstrap";
@@ -19,13 +17,9 @@ import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { getTimezoneDateTime } from "_helpers/helper";
-import { useDispatch } from "react-redux";
-import { customerCandidateListsActions } from "_containers/customer/candidatelists/customercandidatelists.slice";
-import { candidateListActions } from "_containers/candidate/list/candidatelist.slice";
+import { BsFileEarmarkPdf } from "react-icons/bs";
 
 export const CandListView = (props) => {
-  const dispatch = useDispatch();
-
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
     props.onCandidateActions(type, candidaterecommendedjobid, reason);
   };
@@ -772,7 +766,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "17%",
+            width: "13%",
           },
           {
             name: <span className="table-title">Pay</span>,
@@ -831,7 +825,26 @@ export const CandListView = (props) => {
             button: true,
             width: "10%",
           },
-
+          {
+            name: <span className="table-title">Offer</span>,
+            cell: (row) =>
+              row?.jobOfferDtos?.length > 0 ? (
+                <>
+                  <BsFileEarmarkPdf
+                    size={"23px"}
+                    title="Click to view offer"
+                    onClick={() =>
+                      window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                    }
+                  />
+                </>
+              ) : (
+                <> - </>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "7%",
+          },
           {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
@@ -847,7 +860,7 @@ export const CandListView = (props) => {
             ignoreRowClick: true,
             allowOverflow: true,
             button: true,
-            width: "8%",
+            width: "5%",
           },
         ]
       : [

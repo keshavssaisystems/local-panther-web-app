@@ -17,7 +17,7 @@ import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleIn
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
-import { BsFillInfoCircleFill } from "react-icons/bs";
+import { BsFillInfoCircleFill, BsFileEarmarkPdf } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import customerIcons from "assets/utils/images/customer";
@@ -153,15 +153,6 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const returnSkills = (row) => {
-    if (row?.candidateSkillDtos && row?.candidateSkillDtos?.length > 0) {
-      return row?.candidateSkillDtos
-        .map((element) => element.skillname)
-        .join(", ");
-    } else {
-      return "";
-    }
-  };
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
@@ -743,6 +734,181 @@ export const CustCandidateListView = (props) => {
               ignoreRowClick: true,
               button: true,
               width: "10%",
+            },
+
+            {
+              name: <span className="table-title">Action</span>,
+              cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+              ignoreRowClick: true,
+              allowOverflow: true,
+              button: true,
+              width: "5%",
+            },
+          ]
+        : props.type === "offers"
+        ? [
+            {
+              name: <span className="table-title">Candidate</span>,
+              id: "Candidate",
+              cell: (row) => (
+                <span title={row.firstname + " " + row.lastname}>
+                  {row.firstname + " " + row.lastname}
+                  {row?.candidateacceptedcomment !== "" &&
+                  props.type === "accepted" ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"ac_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"ac_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.candidateacceptedcomment !== ""
+                          ? row?.candidateacceptedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </span>
+              ),
+              selector: (row) => row.firstname + " " + row.lastname,
+              sortable: true,
+              wrap: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Job title</span>,
+              cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+              selector: (row) => row?.jobtitle,
+              sortable: true,
+              width: "25%",
+            },
+            {
+              name: <span className="table-title">Location</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row.recommendedationCandidateShortList?.length > 0
+                      ? (row?.recommendedationCandidateShortList[0].cityname
+                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                          : "") +
+                        "" +
+                        (row.recommendedationCandidateShortList[0].statename
+                          ? row.recommendedationCandidateShortList[0].statename
+                          : "")
+                      : ""
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row.recommendedationCandidateShortList?.length > 0
+                    ? (row?.recommendedationCandidateShortList[0].cityname
+                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                        : "") +
+                      "" +
+                      (row.recommendedationCandidateShortList[0].statename
+                        ? row.recommendedationCandidateShortList[0].statename
+                        : "")
+                    : ""}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row.recommendedationCandidateShortList?.length > 0
+                  ? (row?.recommendedationCandidateShortList[0].cityname
+                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+                      : "") +
+                    "" +
+                    (row.recommendedationCandidateShortList[0].statename
+                      ? row.recommendedationCandidateShortList[0].statename
+                      : "")
+                  : "",
+              sortable: true,
+              width: "12%",
+            },
+
+            {
+              name: <span className="table-title">Experience</span>,
+              cell: (row) => (
+                <span
+                  title={
+                    row?.recommendedationCandidateShortList &&
+                    row?.recommendedationCandidateShortList.length > 0
+                      ? row?.recommendedationCandidateShortList[0]?.experience
+                      : "-"
+                  }
+                >
+                  {row?.recommendedationCandidateShortList &&
+                  row?.recommendedationCandidateShortList.length > 0
+                    ? row?.recommendedationCandidateShortList[0]?.experience
+                    : "-"}
+                </span>
+              ),
+              selector: (row) =>
+                row?.recommendedationCandidateShortList &&
+                row?.recommendedationCandidateShortList.length > 0
+                  ? row?.recommendedationCandidateShortList[0]?.experience
+                  : "-",
+              sortable: true,
+              width: "12%",
+            },
+            {
+              name: <span className="table-title">Pre-Screen</span>,
+              cell: (row) =>
+                row.candidateprescreenstatus === "NA" ? (
+                  "-"
+                ) : row.candidateprescreenstatus === "Pending" ? (
+                  <Button disabled color="link">
+                    <u>Pending</u>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => props.onPrescreenClick("completed", row)}
+                    color="link"
+                  >
+                    <u>Completed</u>
+                  </Button>
+                ),
+              ignoreRowClick: true,
+              button: true,
+              width: "10%",
+            },
+            {
+              name: <span className="table-title">Offer</span>,
+              cell: (row) =>
+                row?.jobOfferDtos?.length > 0 ? (
+                  <>
+                    <BsFileEarmarkPdf
+                      size={"23px"}
+                      title="Click to view offer"
+                      onClick={() =>
+                        window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                      }
+                    />
+                  </>
+                ) : (
+                  <> - </>
+                ),
+              ignoreRowClick: true,
+              button: true,
+              width: "10%",
+            },
+            {
+              name: <span className="table-title">Interest</span>,
+              cell: (row) => (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>
+              ),
+              ignoreRowClick: true,
+              button: true,
+              width: "11%",
             },
 
             {
