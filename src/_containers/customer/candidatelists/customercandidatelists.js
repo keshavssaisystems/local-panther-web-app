@@ -450,11 +450,12 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      Liked jobs are jobs saved for later review or comparison
-                      by clicking a button or icon on a job record. They will be
-                      stored in a separate section of the profile, allowing
-                      users to easily access them and decide whether to apply or
-                      not.
+                      Liked candidates are individuals who have shown interest
+                      in a candidate by clicking a button or icon on a matched
+                      list. They are saved for later review or comparison and
+                      are typically stored in a separate section of the user
+                      account, allowing users to easily access them and decide
+                      whether to contact them.
                     </span>
                   </Col>
                 </Row>
@@ -525,12 +526,11 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      A job record may be marked with questions or doubts,
-                      indicating uncertain applications due to a lack of
-                      information, qualifications, and locations. These jobs may
-                      also be saved in a separate section of the user profile,
-                      allowing the user to review and change their decisions
-                      later.
+                      Candidates are individuals unsure about being invited to
+                      apply, often marked with a question or doubt. They may
+                      also be saved in a separate section of the user account,
+                      allowing users to review and change decisions later. This
+                      helps make informed decisions about potential candidates.
                     </span>
                   </Col>
                 </Row>
@@ -601,10 +601,11 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      Applied jobs are those that users submit applications for
-                      through the platform. They are marked as applied and are
-                      stored in a separate section of the profile. The user can
-                      track the status and withdraw the application.
+                      Applied candidates are those who have submitted their
+                      application for a job through the platform. They are
+                      stored in a separate section of the user account, allowing
+                      users to track their application status, contact them, or
+                      reject them.
                     </span>
                   </Col>
                 </Row>
@@ -675,9 +676,12 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      A scheduled interview is an appointment with a customer to
-                      discuss qualifications for a job, typically in person, by
-                      phone, or video, after the initial screening process.
+                      Scheduled interview candidates are selected for an
+                      interview and have a scheduled date and time. They move to
+                      the next stage of the hiring process, where skills are
+                      evaluated. These candidates are stored in a separate
+                      section of the user account, where users can view their
+                      interview details and prepare for the meeting.
                     </span>
                   </Col>
                 </Row>
@@ -748,9 +752,14 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      An offer is a formal proposal from a customer, detailing
-                      job details, salary, benefits, start date, and work hours,
-                      indicating successful completion of the interview process.
+                      Offer candidates are candidates who have decided to offer
+                      a job after interviewing and assessing their
+                      qualifications. This means the customer has made a final
+                      decision on who to hire and communicated the offer to the
+                      candidate, either verbally or in writing. They are
+                      typically stored in a separate section of the account,
+                      allowing users to track the offer's status, negotiate
+                      terms, or withdraw it if needed.
                     </span>
                   </Col>
                 </Row>
@@ -821,9 +830,12 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      An accepted job is when candidates agree to the terms of
-                      the offer and confirm their intention to work for the
-                      customer, securing the job and preparing to start working.
+                      Accepted candidates are those who have accepted a job
+                      offer, either verbally or in writing, indicating that you
+                      have successfully hired them and agreed on their
+                      employment terms. They are typically stored in a separate
+                      section of the user account, providing information on
+                      their start date, contract details, and onboarding tasks.
                     </span>
                   </Col>
                 </Row>
@@ -894,10 +906,13 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      A rejected job refers to a decision to decline an offer or
-                      a customer rescinding it, indicating that the individual
-                      has decided not to work for the customer or has changed
-                      their hiring decision.
+                      Rejected candidates are those who have been rejected
+                      during the hiring process due to non-compliance with
+                      requirements, withdrawal of application, or refusal of
+                      offer. They are stored in a separate section of the
+                      account, where the reason for rejection can be viewed,
+                      feedback can be provided, or the candidate may be
+                      reconsidered for future opportunities.
                     </span>
                   </Col>
                 </Row>
