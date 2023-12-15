@@ -93,7 +93,8 @@ export function ProfilePDF(props) {
     if (content) {
       const pdfOptions = {
         margin: 10,
-        filename: "document.pdf",
+        filename:
+          personalInfo_temp?.firstname + " " + personalInfo_temp.lastname,
         image: { type: "jpeg", quality: 0.98 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };

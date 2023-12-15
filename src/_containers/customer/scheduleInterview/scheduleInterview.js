@@ -19,6 +19,7 @@ import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDe
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { useSelector, useDispatch } from "react-redux";
+import Loader from "react-loaders";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
@@ -94,7 +95,6 @@ export function ScheduleInterview() {
   const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
 
   const getUpdatedScheduleList = () => {
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
@@ -206,15 +206,10 @@ export function ScheduleInterview() {
       ? upcomingInterviews.scheduledInterviewList[0]
       : []
   );
-  let selectedJob =
-    upcomingInterviews.scheduledInterviewList !== undefined &&
-    upcomingInterviews.scheduledInterviewList.length > 0
-      ? upcomingInterviews.scheduledInterviewList[0]
-      : {};
   let selectedJobDetails =
     upcomingInterviews.scheduledInterviewList !== undefined &&
     upcomingInterviews.scheduledInterviewList.length > 0
-      ? [upcomingInterviews.scheduledInterviewList[0]]
+      ? upcomingInterviews.scheduledInterviewList[0]
       : [];
   const getSelectedInterview = (scheduleinterviewid) => {
     selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
@@ -222,7 +217,7 @@ export function ScheduleInterview() {
         return element.scheduleinterviewid === scheduleinterviewid;
       }
     );
-    setSelectedJobData(selectedJobDetails);
+    setSelectedJobData(selectedJobDetails[0]);
     setSelectedClass(scheduleinterviewid);
   };
 
@@ -233,7 +228,7 @@ export function ScheduleInterview() {
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
     };
     getUpcomingData(filterOnPageChange);
-    setSelectedJobData([]);
+    setSelectedJobData({});
   };
 
   const onCloseIdModal = () => {
@@ -478,6 +473,8 @@ export function ScheduleInterview() {
       })
     );
   };
+  console.log(selectedJobData);
+  console.log(upcomingInterviews);
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -641,36 +638,46 @@ export function ScheduleInterview() {
             )}
             {toggleVar === "upcoming" && (
               <Row>
-                <Col md={4} lg="4">
-                  <UpcomingCard
-                    upcomingList={upcomingInterviews.scheduledInterviewList}
-                    selectedInterview={selectedClass}
-                    getSelectedInterviewId={(e) => getSelectedInterview(e)}
-                    totalRows={upcomingInterviews.totalRows}
-                    pageSize={5}
-                    page={page}
-                    setPage={setPage}
-                    onPageChange={onPageChange}
+                {upcomingInterviews.scheduledInterviewList?.length > 0 ? (
+                  <>
+                    <Col md={4} lg="4">
+                      <UpcomingCard
+                        upcomingList={upcomingInterviews.scheduledInterviewList}
+                        selectedInterview={selectedClass}
+                        getSelectedInterviewId={(e) => getSelectedInterview(e)}
+                        totalRows={upcomingInterviews.totalRows}
+                        pageSize={5}
+                        page={page}
+                        setPage={setPage}
+                        onPageChange={onPageChange}
+                      />
+                    </Col>
+                    <Col md={8} lg="8">
+                      <UpcomingDetail
+                        interviewDetails={
+                          selectedJobData.scheduleinterviewid === undefined
+                            ? upcomingInterviews?.scheduledInterviewList
+                                ?.length > 0
+                              ? upcomingInterviews?.scheduledInterviewList[0]
+                              : []
+                            : selectedJobData
+                        }
+                        cancelScheduleData={(e) => cancelScheduleData(e)}
+                        postNotesData={(e) => postNotesData(e)}
+                        postInviteData={(e) => postInviteData(e)}
+                        acceptInterview={(e) => acceptScheduleData(e)}
+                        rejectInterview={(e) => rejectScheduleData(e)}
+                        getUpdatedFormData={(e) => getFormData(e)}
+                        postFeedbackData={(e) => postFeedbackData(e)}
+                      />
+                    </Col>
+                  </>
+                ) : (
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
                   />
-                </Col>
-                <Col md={8} lg="8">
-                  <UpcomingDetail
-                    interviewDetails={
-                      selectedJob.scheduleinterviewid === undefined
-                        ? upcomingInterviews?.scheduledInterviewList?.length > 0
-                          ? upcomingInterviews?.scheduledInterviewList[0]
-                          : []
-                        : selectedJob
-                    }
-                    cancelScheduleData={(e) => cancelScheduleData(e)}
-                    postNotesData={(e) => postNotesData(e)}
-                    postInviteData={(e) => postInviteData(e)}
-                    acceptInterview={(e) => acceptScheduleData(e)}
-                    rejectInterview={(e) => rejectScheduleData(e)}
-                    getUpdatedFormData={(e) => getFormData(e)}
-                    postFeedbackData={(e) => postFeedbackData(e)}
-                  />
-                </Col>
+                )}
               </Row>
             )}
             {toggleVar === "calendar" && (
