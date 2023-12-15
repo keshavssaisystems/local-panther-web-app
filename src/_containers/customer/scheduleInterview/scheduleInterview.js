@@ -125,6 +125,9 @@ export function ScheduleInterview() {
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
+  const upcomingInterviewLoading = useSelector(
+    (state) => state.scheduleInterview.upcomingInterviewLoading
+  );
   const allInterviews = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
   );
@@ -638,7 +641,7 @@ export function ScheduleInterview() {
             )}
             {toggleVar === "upcoming" && (
               <Row>
-                {upcomingInterviews.scheduledInterviewList?.length > 0 ? (
+                {upcomingInterviewLoading === false ? (
                   <>
                     <Col md={4} lg="4">
                       <UpcomingCard
