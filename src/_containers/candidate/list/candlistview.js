@@ -831,6 +831,7 @@ export const CandListView = (props) => {
               row?.jobOfferDtos?.length > 0 ? (
                 <>
                   <BsFileEarmarkPdf
+                    className="icon-pointer"
                     size={"23px"}
                     title="Click to view offer"
                     onClick={() =>
@@ -861,6 +862,136 @@ export const CandListView = (props) => {
             allowOverflow: true,
             button: true,
             width: "5%",
+          },
+        ]
+      : props.type === "accepted"
+      ? [
+          {
+            name: <span className="table-title">Job Id</span>,
+            id: "Job Id",
+            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
+            selector: (row) => row.jobid,
+            sortable: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "34%",
+          },
+
+          {
+            name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Offer</span>,
+            cell: (row) =>
+              row?.jobOfferDtos?.length > 0 ? (
+                <>
+                  <BsFileEarmarkPdf
+                    className="icon-pointer"
+                    size={"23px"}
+                    title="Click to view offer"
+                    onClick={() =>
+                      window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                    }
+                  />
+                </>
+              ) : (
+                <> - </>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "7%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "6%",
           },
         ]
       : [
