@@ -10,6 +10,7 @@ import { CustJobCard } from "./custjobcard";
 import { CustJobDetail } from "./custjobdetails";
 import Loader from "react-loaders";
 import { CustJobFilter } from "./custjofilter";
+import { NoDataFound } from "_components/common/nodatafound";
 
 export const CustJobList = () => {
   const [page, setPage] = useState(1);
@@ -138,72 +139,88 @@ export const CustJobList = () => {
         />
 
         <Row>
-          {!loading ? (
+          {jobList?.length > 0 ? (
             <>
-              {" "}
-              <p className="mb-1 row-count">{totalRows} jobs</p>
-              <Col md={4} lg={4}>
-                {jobList?.length > 0 ? (
-                  jobList.map((data) => {
-                    return (
-                      <CustJobCard
-                        key={data.jobid}
-                        name={data.jobtitle}
-                        customer={data.companyname}
-                        minExperience={data.minexperience}
-                        maxExperience={data.maxexperience}
-                        location={data.cityname + ", " + data.statename}
-                        description={data.description}
-                        role={data.jobrole}
-                        jobId={data.jobid}
-                        createdDate={data.jobcreatedatetime}
-                        type={"Open"}
-                        selectedJob={
-                          jobDetail?.length > 0 ? jobDetail[0].jobid : ""
-                        }
-                        getSelectedJobId={(e) => getSelectedJob(e)}
-                        additionalData={data}
-                      />
-                    );
-                  })
-                ) : (
-                  <></>
-                )}
-              </Col>
-              <Col md={8} lg={8}>
-                {!jdLoading ? (
-                  <>
-                    {jobDetail?.length > 0 && jobList?.length > 0 ? (
-                      <>
-                        <CustJobDetail
-                          jobDetails={jobDetail}
-                          type={"Open"}
-                          publishJob={(e) => publishNewJob(e)}
-                          closeJob={(e) => closeJob(e)}
-                        ></CustJobDetail>
-                      </>
+              {!loading ? (
+                <>
+                  {" "}
+                  <p className="mb-1 row-count">{totalRows} jobs</p>
+                  <Col md={4} lg={4}>
+                    {jobList?.length > 0 ? (
+                      jobList.map((data) => {
+                        return (
+                          <CustJobCard
+                            key={data.jobid}
+                            name={data.jobtitle}
+                            customer={data.companyname}
+                            minExperience={data.minexperience}
+                            maxExperience={data.maxexperience}
+                            location={data.cityname + ", " + data.statename}
+                            description={data.description}
+                            role={data.jobrole}
+                            jobId={data.jobid}
+                            createdDate={data.jobcreatedatetime}
+                            type={"Open"}
+                            selectedJob={
+                              jobDetail?.length > 0 ? jobDetail[0].jobid : ""
+                            }
+                            getSelectedJobId={(e) => getSelectedJob(e)}
+                            additionalData={data}
+                          />
+                        );
+                      })
                     ) : (
                       <></>
                     )}
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <Loader
-                      type="line-scale-pulse-out-rapid"
-                      className="d-flex justify-content-center"
-                    />
-                  </>
-                )}
-              </Col>
+                  </Col>
+                  <Col md={8} lg={8}>
+                    {!jdLoading ? (
+                      <>
+                        {jobDetail?.length > 0 && jobList?.length > 0 ? (
+                          <>
+                            <CustJobDetail
+                              jobDetails={jobDetail}
+                              type={"Open"}
+                              publishJob={(e) => publishNewJob(e)}
+                              closeJob={(e) => closeJob(e)}
+                            ></CustJobDetail>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {" "}
+                        <Loader
+                          type="line-scale-pulse-out-rapid"
+                          className="d-flex justify-content-center"
+                        />
+                      </>
+                    )}
+                  </Col>
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                </>
+              )}
             </>
           ) : (
             <>
-              {" "}
-              <Loader
-                type="line-scale-pulse-out-rapid"
-                className="d-flex justify-content-center"
-              />
+              <Row
+                style={{ textAlign: "center", minHeight: "40vh" }}
+                className="center-middle-align"
+              >
+                <Col>
+                  {" "}
+                  <NoDataFound></NoDataFound>
+                </Col>
+              </Row>
             </>
           )}
         </Row>

@@ -15,29 +15,31 @@ export function UpcomingDetail({
 }) {
   return (
     <>
-      {interviewDetails !== undefined && (
-        <Card className="upcoming-interview">
-          <UpcomingVideoDetails
-            interviewId={interviewDetails.scheduleinterviewid}
-            cancelScheduleData={(e) => cancelScheduleData(e)}
-            postNotesData={(e) => postNotesData(e)}
-            postInviteData={(e) => postInviteData(e)}
-            acceptInterview={(e) => acceptInterview(e)}
-            rejectInterview={(e) => rejectInterview(e)}
-            getUpdatedFormData={(e) => getUpdatedFormData(e)}
-            postFeedbackData={(e) => postFeedbackData(e)}
-          />
-        </Card>
-      )}
-      {interviewDetails === undefined && (
-        <Card className="upcoming-interview">
-          <CardBody>
-            <CardText className="mb-0 text-center">
-              <b>No upcoming interview scheduled...</b>
-            </CardText>
-          </CardBody>
-        </Card>
-      )}
+      {interviewDetails !== undefined ||
+        (interviewDetails.length > 0 && (
+          <Card className="upcoming-interview">
+            <UpcomingVideoDetails
+              interviewId={interviewDetails.scheduleinterviewid}
+              cancelScheduleData={(e) => cancelScheduleData(e)}
+              postNotesData={(e) => postNotesData(e)}
+              postInviteData={(e) => postInviteData(e)}
+              acceptInterview={(e) => acceptInterview(e)}
+              rejectInterview={(e) => rejectInterview(e)}
+              getUpdatedFormData={(e) => getUpdatedFormData(e)}
+              postFeedbackData={(e) => postFeedbackData(e)}
+            />
+          </Card>
+        ))}
+      {interviewDetails === undefined ||
+        (interviewDetails.length === 0 && (
+          <Card className="upcoming-interview">
+            <CardBody>
+              <CardText className="mb-0 text-center">
+                <b>No upcoming interview scheduled...</b>
+              </CardText>
+            </CardBody>
+          </Card>
+        ))}
     </>
   );
 }

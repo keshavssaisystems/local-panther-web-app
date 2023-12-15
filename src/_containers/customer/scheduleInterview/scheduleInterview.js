@@ -11,6 +11,7 @@ import {
   CardBody,
   Input,
 } from "reactstrap";
+import { NoDataFound } from "_components/common/nodatafound";
 import "./scheduleInterview.scss";
 import { ScheduleInterviewList } from "_components/scheduleInterview/scheduleInterviewList";
 import { UpcomingCard } from "_components/scheduleInterview/upcomingCard";
@@ -476,8 +477,6 @@ export function ScheduleInterview() {
       })
     );
   };
-  console.log(selectedJobData);
-  console.log(upcomingInterviews);
   return (
     <>
       <PageTitle heading="Interviews" icon={titlelogo} />
@@ -643,37 +642,58 @@ export function ScheduleInterview() {
               <Row>
                 {upcomingInterviewLoading === false ? (
                   <>
-                    <Col md={4} lg="4">
-                      <UpcomingCard
-                        upcomingList={upcomingInterviews.scheduledInterviewList}
-                        selectedInterview={selectedClass}
-                        getSelectedInterviewId={(e) => getSelectedInterview(e)}
-                        totalRows={upcomingInterviews.totalRows}
-                        pageSize={5}
-                        page={page}
-                        setPage={setPage}
-                        onPageChange={onPageChange}
-                      />
-                    </Col>
-                    <Col md={8} lg="8">
-                      <UpcomingDetail
-                        interviewDetails={
-                          selectedJobData.scheduleinterviewid === undefined
-                            ? upcomingInterviews?.scheduledInterviewList
-                                ?.length > 0
-                              ? upcomingInterviews?.scheduledInterviewList[0]
-                              : []
-                            : selectedJobData
-                        }
-                        cancelScheduleData={(e) => cancelScheduleData(e)}
-                        postNotesData={(e) => postNotesData(e)}
-                        postInviteData={(e) => postInviteData(e)}
-                        acceptInterview={(e) => acceptScheduleData(e)}
-                        rejectInterview={(e) => rejectScheduleData(e)}
-                        getUpdatedFormData={(e) => getFormData(e)}
-                        postFeedbackData={(e) => postFeedbackData(e)}
-                      />
-                    </Col>
+                    {upcomingInterviews.scheduledInterviewList.length > 0 ? (
+                      <>
+                        <Col md={4} lg="4">
+                          <UpcomingCard
+                            upcomingList={
+                              upcomingInterviews.scheduledInterviewList
+                            }
+                            selectedInterview={selectedClass}
+                            getSelectedInterviewId={(e) =>
+                              getSelectedInterview(e)
+                            }
+                            totalRows={upcomingInterviews.totalRows}
+                            pageSize={5}
+                            page={page}
+                            setPage={setPage}
+                            onPageChange={onPageChange}
+                          />
+                        </Col>
+                        <Col md={8} lg="8">
+                          <UpcomingDetail
+                            interviewDetails={
+                              selectedJobData.scheduleinterviewid === undefined
+                                ? upcomingInterviews?.scheduledInterviewList
+                                    ?.length > 0
+                                  ? upcomingInterviews
+                                      ?.scheduledInterviewList[0]
+                                  : []
+                                : selectedJobData
+                            }
+                            cancelScheduleData={(e) => cancelScheduleData(e)}
+                            postNotesData={(e) => postNotesData(e)}
+                            postInviteData={(e) => postInviteData(e)}
+                            acceptInterview={(e) => acceptScheduleData(e)}
+                            rejectInterview={(e) => rejectScheduleData(e)}
+                            getUpdatedFormData={(e) => getFormData(e)}
+                            postFeedbackData={(e) => postFeedbackData(e)}
+                          />
+                        </Col>
+                      </>
+                    ) : (
+                      <>
+                        <Row
+                          style={{ textAlign: "center", minHeight: "40vh" }}
+                          className="center-middle-align"
+                        >
+                          <Col>
+                            {" "}
+                            <NoDataFound></NoDataFound>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
                   </>
                 ) : (
                   <Loader
