@@ -43,6 +43,7 @@ export default function CustomerDashboard() {
     getDashboardJobsDataCount();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts

@@ -6,6 +6,7 @@ import {
   createjobActions,
   scheduleInterviewActions,
   adminDashboardSliceActions,
+  customerDashboardActions,
 } from "_store";
 import { WidgetCounter } from "_components/dashboard/widgetCounter";
 import { Statistics } from "_components/dashboard/statistics";
@@ -47,6 +48,7 @@ export function AdminDashboard() {
     getStatistics();
     getAnalyiticalCounts();
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.adminDashboard.dashboardCountDetails
