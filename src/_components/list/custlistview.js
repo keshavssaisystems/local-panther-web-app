@@ -1480,7 +1480,11 @@ export const CustCandidateListView = (props) => {
     );
 
     axios
-      .post(`${process.env.REACT_APP_PANTHER_URL}/MakeJobOffer`, form, config)
+      .post(
+        `${process.env.REACT_APP_PANTHER_URL}/api/JobOffer/MakeJobOffer`,
+        form,
+        config
+      )
       .then((result) => {
         if (result.data.statusCode == 200) {
           setShowUploadOfferModal(false);
@@ -1488,6 +1492,7 @@ export const CustCandidateListView = (props) => {
             title: result.data.message,
             type: "success",
           });
+          props.updateList();
         } else {
           props.showSweetAlert({
             title: result.data.message || result.data.status,
