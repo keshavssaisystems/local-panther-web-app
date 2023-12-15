@@ -751,7 +751,7 @@ export const CustCandidateListView = (props) => {
               width: "5%",
             },
           ]
-        : props.type === "offers"
+        : props.type === "offers" || props.type === "accepted"
         ? [
             {
               name: <span className="table-title">Candidate</span>,
@@ -889,6 +889,7 @@ export const CustCandidateListView = (props) => {
                 row?.jobOfferDtos?.length > 0 ? (
                   <>
                     <BsFileEarmarkPdf
+                      className={"icon-pointer"}
                       size={"23px"}
                       title="Click to view offer"
                       onClick={() =>
