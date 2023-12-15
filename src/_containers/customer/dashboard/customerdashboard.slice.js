@@ -34,6 +34,17 @@ export const getCustomerDashboardJobsDataCountThunk = createAsyncThunk(
   }
 );
 
+// getSendTimezoneBeckendThunk thunk
+export const getSendTimezoneBeckendThunk = createAsyncThunk(
+  `${name}/getSendTimezoneBeckendThunk`,
+  async () => {
+    let UserID = localStorage.getItem("userId");
+    let SystemTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const DASHBOARD_TIMEZONE_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/UserTimezone/${UserID}?timeZone=${SystemTimezone}`;
+    return await fetchWrapper.put(DASHBOARD_TIMEZONE_END_POINT);
+  }
+);
+
 // Create the slice
 const customerDashboardSlice = createSlice({
   name,
@@ -41,6 +52,7 @@ const customerDashboardSlice = createSlice({
     dashboardCounts: [],
     dashboardGraphData: [],
     dashboardJobsDataCount: [],
+    sendTimezoneBeckend: [],
     loading: false,
   },
   reducers: {},
@@ -79,6 +91,17 @@ const customerDashboardSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getSendTimezoneBeckendThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getSendTimezoneBeckendThunk.fulfilled]: (state, action) => {
+      state.sendTimezoneBeckend = action.payload.data;
+      state.loading = false;
+    },
+    [getSendTimezoneBeckendThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -88,6 +111,7 @@ export const customerDashboardActions = {
   getCustomerDashboardThunk,
   getCustomerDashboardGraphDataThunk,
   getCustomerDashboardJobsDataCountThunk,
+  getSendTimezoneBeckendThunk,
 };
 
 export const customerDashboardReducer = customerDashboardSlice.reducer;
