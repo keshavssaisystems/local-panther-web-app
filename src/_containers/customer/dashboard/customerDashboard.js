@@ -8,6 +8,7 @@ import {
   createjobActions,
   scheduleInterviewActions,
   dropdownActions,
+  customerCandidateListsActions,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
@@ -48,6 +49,7 @@ export default function CustomerDashboard() {
     dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
     );
+    dispatch(customerCandidateListsActions.getDurationOptions());
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts

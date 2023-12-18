@@ -579,7 +579,7 @@ export const CandidateList = (props) => {
                     <p className="mb-1 row-count">
                       {totalRecords > 0 ? `${totalRecords} jobs` : ""}{" "}
                     </p>
-                    <Col md="4" lg="4">
+                    <Col xs="12" sm="12" md="12" lg="4" xl="4" xxl="4">
                       {candidateJobList?.length > 0 ? (
                         candidateJobList.map((data) => {
                           return (
@@ -625,7 +625,7 @@ export const CandidateList = (props) => {
                         <></>
                       )}
                     </Col>
-                    <Col md="8" lg="8">
+                    <Col xs="12" sm="12" md="12" lg="8" xl="8" xxl="8">
                       {!jdLoading ? (
                         <>
                           {jobDetail?.length > 0 &&

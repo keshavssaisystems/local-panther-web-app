@@ -145,7 +145,14 @@ export const CustJobList = () => {
                 <>
                   {" "}
                   <p className="mb-1 row-count">{totalRows} jobs</p>
-                  <Col md={4} lg={4}>
+                  <Col
+                    xs={{ size: 12, order: 1 }}
+                    sm={{ size: 12, order: 1 }}
+                    md={{ size: 12, order: 1 }}
+                    lg={{ size: 4, order: 1 }}
+                    xl={{ size: 4, order: 1 }}
+                    xxl={{ size: 4, order: 1 }}
+                  >
                     {jobList?.length > 0 ? (
                       jobList.map((data) => {
                         return (
@@ -172,8 +179,46 @@ export const CustJobList = () => {
                     ) : (
                       <></>
                     )}
+                    {/* {!loading && jobList?.length > 0 ? (
+                      <>
+                        <CardPagination
+                          totalPages={current}
+                          pageIndex={page}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )} */}
                   </Col>
-                  <Col md={8} lg={8}>
+                  <Col
+                    xs={{ size: 12, order: 2 }}
+                    sm={{ size: 12, order: 2 }}
+                    md={{ size: 12, order: 2 }}
+                    lg={{ size: 4, order: 3 }}
+                    xl={{ size: 4, order: 3 }}
+                    xxl={{ size: 4, order: 3 }}
+                  >
+                    {!loading && jobList?.length > 0 ? (
+                      <>
+                        <CardPagination
+                          totalPages={current}
+                          pageIndex={page}
+                          onCallBack={(evt) => handlePageChange(evt)}
+                        ></CardPagination>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Col>
+                  <Col
+                    xs={{ size: 12, order: 3 }}
+                    sm={{ size: 12, order: 3 }}
+                    md={{ size: 12, order: 3 }}
+                    lg={{ size: 8, order: 2 }}
+                    xl={{ size: 8, order: 2 }}
+                    xxl={{ size: 8, order: 2 }}
+                  >
                     {!jdLoading ? (
                       <>
                         {jobDetail?.length > 0 && jobList?.length > 0 ? (
@@ -225,7 +270,14 @@ export const CustJobList = () => {
           )}
         </Row>
         <Row>
-          <Col md={4} lg={4}>
+          {/* <Col
+            xs={{ size: 12, order: 2 }}
+            sm={{ size: 12, order: 2 }}
+            md={{ size: 12, order: 2 }}
+            lg={{ size: 4, order: 3 }}
+            xl={{ size: 4, order: 3 }}
+            xxl={{ size: 4, order: 3 }}
+          >
             {!loading && jobList?.length > 0 ? (
               <>
                 <CardPagination
@@ -237,7 +289,7 @@ export const CustJobList = () => {
             ) : (
               <></>
             )}
-          </Col>
+          </Col> */}
         </Row>
       </Row>
     </>

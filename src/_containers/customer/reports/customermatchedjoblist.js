@@ -290,7 +290,7 @@ export function CustomerReportMatchedCandidate() {
                       onClick={() =>
                         exportToExcel(
                           excelData,
-                          "customerMatchedJobListReport",
+                          "customerMatchedCandidateListByJobReport",
                           true
                         )
                       }
