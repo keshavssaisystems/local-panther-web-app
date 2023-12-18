@@ -106,18 +106,16 @@ export const formatDateQualification = function (dateString) {
 
   // Get the month, day, and year components
   const month = monthNames[date.getMonth()];
-  const day = date.getDate();
   const year = date.getFullYear();
 
   const today_month = monthNames[new Date().getMonth()];
-  const today_day = new Date().getDate();
   const today_year = new Date().getFullYear();
   let today = `${today_month} ${today_year}`;
 
   // Create the formatted date string
   const formattedDate = `${month} ${year}`;
 
-  if (today == formattedDate) {
+  if (today === formattedDate) {
     return "Present";
   } else {
     return formattedDate;
@@ -208,7 +206,7 @@ export const endDateValidation = function (dateString) {
   // Create the formatted date string
   const formattedDate = `${month} ${year}`;
 
-  if (today == formattedDate) {
+  if (today === formattedDate) {
     return "Present";
   } else {
     return formattedDate;
@@ -232,15 +230,15 @@ export function calculateExperience(fromDate, toDate) {
       : "";
 
   let experienceText;
-  if (monthsText != "" && yearsText != "") {
+  if (monthsText !== "" && yearsText !== "") {
     experienceText = [yearsText, monthsText].filter(Boolean).join(", ");
-  } else if (yearsText != "" || monthsText != "") {
+  } else if (yearsText !== "" || monthsText !== "") {
     experienceText = [yearsText, monthsText].filter(Boolean).join("");
   }
-  if (monthsText == "" && yearsText == "") {
+  if (monthsText === "" && yearsText === "") {
     experienceText = "";
   }
-  if (experienceText != "") {
+  if (experienceText !== "") {
     experienceText = `(${experienceText})`;
   }
 
@@ -249,45 +247,45 @@ export function calculateExperience(fromDate, toDate) {
 
 export const getDate = function (data) {
   let text = "";
-  if (data.startdate) {
-    text = formatDate(data.startdate);
+  if (data?.startdate && !data?.startdate?.includes("1900")) {
+    text = formatDate(data?.startdate);
 
-    if (data.enddate) {
+    if (data?.enddate && !data?.enddate?.includes("1900")) {
       text += " to " + formatDateQualification(data.enddate);
     }
-  } else if (data.enddate) {
-    text = formatDateQualification(data.enddate);
+  } else if (data?.enddate && !data?.enddate?.includes("1900")) {
+    text = formatDateQualification(data?.enddate);
   }
   return text;
 };
 
 export const getEducText = function (data) {
   let text = "";
-  if (data.school != "") {
+  if (data.school !== "") {
     text = data.school;
-    if (data.cityname != "") {
+    if (data.cityname !== "") {
       text += ", " + data.cityname;
     }
-    if (data.statename != "") {
+    if (data.statename !== "") {
       text += ", " + data.statename;
     }
-    if (data.countryname != "") {
+    if (data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.cityname != "") {
+  } else if (data.cityname !== "") {
     text = data.cityname;
-    if (data.statename != "") {
+    if (data.statename !== "") {
       text += ", " + data.statename;
     }
-    if (data.countryname != "") {
+    if (data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.statename != "") {
+  } else if (data.statename !== "") {
     text = data.statename;
-    if (data.countryname != "") {
+    if (data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.countryname != "") {
+  } else if (data.countryname !== "") {
     text = data.countryname;
     text += data.countryname;
   }
@@ -296,18 +294,13 @@ export const getEducText = function (data) {
 };
 export const convertText = function (htmlContent) {
   let data;
-  const lines = htmlContent?.split("<p>").map((line, index) => {
+  htmlContent?.split("<p>").map((line, index) => {
     if (index === 0) {
-      data = "";
+      return (data = "");
     } else {
-      data += `<li>${line?.replace("</p>", "")}</li>`;
+      return (data += `<li>${line?.replace("</p>", "")}</li>`);
     }
   });
-  if (data != "") {
-    return data;
-  } else {
-    return data;
-  }
 };
 
 export const getLocationText = function (data) {
@@ -333,12 +326,12 @@ export const getLocationText = function (data) {
 };
 
 export function convertDateToYYYMMDD(dateStr) {
-  if (dateStr.month == "" && dateStr.year == "") {
+  if (dateStr.month === "" && dateStr.year === "") {
     return null;
   }
 
-  const monthStr = dateStr.month == "" ? "January" : dateStr.month;
-  const yearStr = dateStr.year == "" ? new Date().getFullYear() : dateStr.year;
+  const monthStr = dateStr.month === "" ? "January" : dateStr.month;
+  const yearStr = dateStr.year === "" ? new Date().getFullYear() : dateStr.year;
 
   // Convert the month string to a number (1-12)
   const month = new Date(Date.parse(monthStr + " 1, 2000")).getMonth() + 1;
@@ -394,8 +387,8 @@ export function convertTo12HourFormat(time24) {
 }
 export function calculateEndTime(startTime, duration) {
   // Parse the start time and duration
-  const [hours, minutes, seconds] = startTime.split(":").map(Number);
-  const [durationValue, durationUnit] = duration.split(" ");
+  const [hours, minutes] = startTime.split(":").map(Number);
+  const [durationValue] = duration.split(" ");
   const durationInMinutes = parseInt(durationValue);
 
   // Calculate the end time in minutes
