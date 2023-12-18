@@ -364,6 +364,8 @@ export const CandListView = (props) => {
             </DropdownItem>
 
             {props.type === "interview" &&
+            row?.scheduledInterviewDtos &&
+            row?.scheduledInterviewDtos.length > 0 &&
             row?.scheduledInterviewDtos[0]?.isactive ? (
               <DropdownItem onClick={() => onShowModal(row, "id")}>
                 <i className="dropdown-icon lnr-license"> </i>
