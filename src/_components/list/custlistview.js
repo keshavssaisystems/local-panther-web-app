@@ -47,10 +47,6 @@ export const CustCandidateListView = (props) => {
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
-
-  useEffect(() => {
-    dispatch(scheduleInterviewActions.getDurationThunk());
-  }, []);
   const onAcceptClick = async (row) => {
     //Enable upload offer modal from here
     setSelectedRowData(row);

@@ -105,13 +105,13 @@ export function CandidateEducation(props) {
   };
   const getDate = function (data) {
     let text = "";
-    if (data.startdate) {
+    if (data.startdate && !data?.startdate?.includes("1900")) {
       text = formatMonthYear(data.startdate);
 
-      if (data.enddate) {
+      if (data.enddate && !data?.enddate?.includes("1900")) {
         text += " to " + endDateValidation(data.enddate);
       }
-    } else if (data.enddate) {
+    } else if (data.enddate && !data?.enddate?.includes("1900")) {
       text = endDateValidation(data.enddate);
     }
     return text;
