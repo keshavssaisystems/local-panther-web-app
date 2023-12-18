@@ -393,7 +393,14 @@ export function CustJobDetail({
                         <h5 className="menu-header-title job-title-details">
                           {jobDetail.jobtitle}
                         </h5>
-                        <p className="mb-0 mt-0">{jobDetail.companyname}</p>
+                        <p className="mb-0 mt-0">
+                          {jobDetail.companyname}
+                          {jobDetail?.subsidiaryid !== undefined &&
+                          jobDetail?.subsidiaryid !== 0
+                            ? " (" + jobDetail?.subsidiaryname + ")"
+                            : ""}
+                        </p>
+
                         <p className="mb-0 mt-0">
                           <FiMapPin className="muted-icon" /> {returnAddress()}
                         </p>
