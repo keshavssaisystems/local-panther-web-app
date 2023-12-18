@@ -117,6 +117,20 @@ export default function JobPreview({ previewData, editdata }) {
     previewData.preCustomScreen === undefined
       ? previewData.basicInformation.customquestionanswertype
       : previewData.preCustomScreen;
+  let subsidiaryData = "";
+  if (
+    previewData.basicInformation.subsidiaryid !== "" &&
+    previewData.basicInformation.subsidiaryOption !== undefined
+  ) {
+    previewData.basicInformation.subsidiaryOption.forEach((element) => {
+      if (
+        Number(previewData.basicInformation.subsidiaryid) ===
+        element.subsidiaryid
+      ) {
+        subsidiaryData = element.subsidiaryname;
+      }
+    });
+  }
   return (
     <>
       <Row className="mt-4">
@@ -137,6 +151,20 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
+              {previewData?.basicInformation?.subsidiaryOption?.length > 0 && (
+                <Col md={6} lg={3}>
+                  <div className="detail-padding">
+                    <h6 className="mb-0 job-heading-custom">Subsidiary name</h6>
+                    <p className="mb-0 mt-1 mr-1">
+                      {previewData.basicInformation === undefined ||
+                      previewData.basicInformation.subsidiaryid === undefined
+                        ? "-"
+                        : subsidiaryData}
+                    </p>
+                  </div>
+                </Col>
+              )}
+
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job title</h6>
@@ -172,8 +200,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-            </Row>
-            <Row>
+
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Address</h6>
@@ -218,8 +245,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-            </Row>
-            <Row>
+
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Zip code</h6>
@@ -265,9 +291,6 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col md={6} lg={3}></Col>
-            </Row>
-            <Row>
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
@@ -299,7 +322,6 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col md={6} lg={3}></Col>
             </Row>
             <Row>
               <Col md={12} lg={6}>

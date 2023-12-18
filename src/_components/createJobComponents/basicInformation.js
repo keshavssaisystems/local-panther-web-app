@@ -32,6 +32,9 @@ export function BasicInformation({
   const levelOfEducationOption = useSelector(
     (state) => state.dropdown.levelOfEducationList
   );
+  const subsidiaryOption = useSelector(
+    (state) => state.dropdown.subsidiaryList
+  );
 
   let educationOptions = levelOfEducationOption.map(
     ({ id: value, ...rest }) => {
@@ -135,6 +138,10 @@ export function BasicInformation({
       data === undefined || data.certifications === undefined
         ? ""
         : data.certifications,
+    subsidiaryid:
+      data === undefined || data.subsidiaryid === undefined
+        ? ""
+        : data.subsidiaryid,
   });
   const [previousValue, setPreviousValue] = useState({
     companyId: "",
@@ -200,6 +207,10 @@ export function BasicInformation({
       previousData === undefined || previousData.certifications === undefined
         ? ""
         : previousData.certifications,
+    subsidiaryid:
+      previousData === undefined || previousData.subsidiaryid === undefined
+        ? ""
+        : previousData.subsidiaryid,
   });
   const [descriptionData, setDescriptionData] = useState(
     prevStep === 3 && preValue.description !== ""
@@ -292,6 +303,8 @@ export function BasicInformation({
       certifications: eventData.target.elements.certifications.value,
       levelofeducationOption: levelOfEducationOption,
       fieldofstudiesOption: fieldOfStudyOption,
+      subsidiaryid: eventData.target.elements.subsidiaryid.value,
+      subsidiaryOption: subsidiaryOption,
     };
     postData(data);
     setPreValue(data);
@@ -373,6 +386,41 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
+          {subsidiaryOption.length > 0 && (
+            <Col md={6} lg={3}>
+              <FormGroup>
+                <Label for={"jobTitle"} className="fw-semi-bold">
+                  Subsidiary name
+                </Label>
+                <Input
+                  id={"subsidiaryid"}
+                  name={"subsidiaryid"}
+                  type={"select"}
+                >
+                  <option key={0} value={0}>
+                    Select subsidiary
+                  </option>
+                  {subsidiaryOption.length > 0 &&
+                    subsidiaryOption.map((options) => (
+                      <option
+                        key={options.subsidiaryid}
+                        value={options.subsidiaryid}
+                        selected={
+                          prevStep === 3
+                            ? preValue.subsidiaryid
+                            : previousValue.subsidiaryid ===
+                              options.subsidiaryid
+                        }
+                      >
+                        {options.subsidiaryname}
+                      </option>
+                    ))}
+                </Input>
+              </FormGroup>
+            </Col>
+          )}
+        </Row>
+        <Row>
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"jobTitle"} className="fw-semi-bold">
@@ -447,8 +495,6 @@ export function BasicInformation({
               </Input>
             </FormGroup>
           </Col>
-        </Row>
-        <Row>
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="address" className="fw-semi-bold">
@@ -466,6 +512,8 @@ export function BasicInformation({
               />
             </FormGroup>
           </Col>
+        </Row>
+        <Row>
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
@@ -544,8 +592,6 @@ export function BasicInformation({
               />
             </FormGroup>
           </Col>
-        </Row>
-        <Row>
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="zipCode" className="fw-semi-bold">
@@ -571,6 +617,8 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
+        </Row>
+        <Row>
           <Col md={6} lg={3}>
             <FormGroup className="mt-4">
               <Input

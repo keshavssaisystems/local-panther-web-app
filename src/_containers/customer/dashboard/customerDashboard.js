@@ -7,6 +7,7 @@ import {
   customerDashboardActions,
   createjobActions,
   scheduleInterviewActions,
+  dropdownActions,
   customerCandidateListsActions,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
@@ -45,6 +46,9 @@ export default function CustomerDashboard() {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
+    dispatch(
+      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
+    );
     dispatch(customerCandidateListsActions.getDurationOptions());
   }, []);
   const dashboardCounts = useSelector(

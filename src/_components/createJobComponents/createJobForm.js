@@ -115,6 +115,7 @@ export default function CreateJob({
           levelofeducationids: previousData?.levelofeducationids,
           fieldofstudiesids: previousData?.fieldofstudiesids,
           certifications: previousData?.certifications,
+          subsidiaryid: previousData?.subsidiaryid,
         },
         experienceSchedule: {
           jobType:
