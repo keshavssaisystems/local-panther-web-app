@@ -15,6 +15,8 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Input,
+  FormText,
 } from "reactstrap";
 import {
   CompanyFilter,
@@ -26,6 +28,7 @@ import {
   openJobsThunk,
   scheduledInterviewListThunk,
   getAdminReportJobDetail,
+  getADMReportSubsidiaryList,
 } from "../_redux/report.slice";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -46,6 +49,7 @@ export function OpenJobs({ title }) {
     scheduledLoading = false,
     loading = false,
     jobDetail = [],
+    subsidiaryList = [],
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
   let [isOpen, setIsOpen] = useState(false);
@@ -54,6 +58,8 @@ export function OpenJobs({ title }) {
   let [company, setCompany] = useState([]);
   let [skill, setSkill] = useState([]);
   let [location, setLocation] = useState([]);
+  let [subsidiaryId, setSubsidiaryId] = useState();
+  let [subsidiaryErr, setSubsidiaryErr] = useState(false);
   let [filter, setFilter] = useState({});
 
   const [excelData, setExcelData] = useState([]);
@@ -90,11 +96,25 @@ export function OpenJobs({ title }) {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (company?.label) {
+      dispatch(getADMReportSubsidiaryList(company.value));
+    }
+  }, [company]);
+
   const handleChange = (name, value) => {
-    setFilter({
-      ...filter,
-      [name]: value,
-    });
+    if (name === "companyId") {
+      setFilter({
+        ...filter,
+        [name]: value,
+        ["subsidiaryid"]: "",
+      });
+    } else {
+      setFilter({
+        ...filter,
+        [name]: value,
+      });
+    }
   };
 
   const handleDateChange = (name, value) => {
@@ -115,6 +135,7 @@ export function OpenJobs({ title }) {
     setCompany([]);
     setSkill([]);
     setLocation([]);
+    setSubsidiaryId("");
     dispatch(openJobsThunk());
   };
 
@@ -413,6 +434,16 @@ export function OpenJobs({ title }) {
     },
   ];
 
+  const updateSubsidiary = (e) => {
+    if (!company?.label) {
+      setSubsidiaryErr(true);
+    } else {
+      handleChange("subsidiaryid", e.target.value);
+      setSubsidiaryId(e.target.value);
+      setSubsidiaryErr(false);
+    }
+  };
+
   return (
     <>
       <PageTitle heading={title} icon={titlelogo} />
@@ -446,7 +477,7 @@ export function OpenJobs({ title }) {
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{ zIndex: 9, position: "relative" }}>
+              <Row className="pb-2" style={{ zIndex: 9, position: "relative" }}>
                 <Col
                   xxl="2"
                   xl="2"
@@ -462,9 +493,44 @@ export function OpenJobs({ title }) {
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
+                      setSubsidiaryId("");
+                      setSubsidiaryErr(false);
                     }}
                     value={company}
                   />
+                </Col>
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                  <Input
+                    type="select"
+                    value={subsidiaryId}
+                    name="subsidiary"
+                    id="subsidiary"
+                    placeholder="Subsidiary Id"
+                    onChange={(e) => {
+                      updateSubsidiary(e);
+                    }}
+                  >
+                    <option value={""}>Select a Subsidiary</option>
+                    {subsidiaryList?.length > 0 ? (
+                      subsidiaryList.map((data) => (
+                        <option
+                          value={data.subsidiaryid ? data.subsidiaryid : ""}
+                          key={data.subsidiaryid ? data.subsidiaryid : ""}
+                        >
+                          {data.subsidiaryname ? data.subsidiaryname : ""}
+                        </option>
+                      ))
+                    ) : (
+                      <></>
+                    )}
+                  </Input>
+                  {subsidiaryErr ? (
+                    <FormText color="danger">
+                      Please select company first
+                    </FormText>
+                  ) : (
+                    <></>
+                  )}
                 </Col>
                 <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <SkillsFilter

@@ -76,6 +76,7 @@ export function App() {
     if (authUser) {
       updatePushNotifications();
       messaging.onMessage((payload) => {
+        console.log(payload);
         toast(
           <Row>
             <p>

@@ -98,6 +98,15 @@ export const getAdminReportJobDetail = createAsyncThunk(
   }
 );
 
+// get admin report Subsidiary List
+export const getADMReportSubsidiaryList = createAsyncThunk(
+  `${name}/getADMReportSubsidiaryList`,
+  async (companyId) => {
+    const SUBSIDIARY_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Subsidiary/GetSubsidiaryDropdown?companyId=${companyId}`;
+    return await fetchWrapper.get(SUBSIDIARY_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -109,6 +118,7 @@ const adminReportSlice = createSlice({
     customerList: [],
     candidateList: [],
     jobDetail: [],
+    subsidiaryList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -211,6 +221,14 @@ const adminReportSlice = createSlice({
       state.jobDetail = data;
     },
     [getAdminReportJobDetail.rejected]: (state, action) => {},
+    // admin report subsidiary list
+    [getADMReportSubsidiaryList.pending]: (state) => {
+      state.subsidiaryList = [];
+    },
+    [getADMReportSubsidiaryList.fulfilled]: (state, { payload = {} }) => {
+      state.subsidiaryList = payload?.data ? payload?.data : [];
+    },
+    [getADMReportSubsidiaryList.rejected]: (state, action) => {},
   },
 });
 
@@ -223,6 +241,7 @@ export const adminReportActions = {
   getCustomerDropdownList,
   getCandidateDropdownList,
   getAdminReportJobDetail,
+  getADMReportSubsidiaryList,
 };
 
 export const adminReportReducer = adminReportSlice.reducer;
