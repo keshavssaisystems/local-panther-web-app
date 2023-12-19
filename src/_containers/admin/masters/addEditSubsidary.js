@@ -4,19 +4,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
-import axios from "axios";
+
 import {
-  getStatesList,
-  getCitiesList,
-  getCompaniesList,
-  getCountriesList,
-  addCustomer,
+  addSubsidiary,
+  editSubsidiary,
 } from "_containers/admin/_redux/addCustomer.slice";
 import AsyncSelect from "react-select/async";
 import { getLocationFilter } from "_store";
-import { useDropzone } from "react-dropzone";
-import Dropzone from "react-dropzone";
-import { BsTrash3 } from "react-icons/bs";
 
 import {
   Form,
@@ -24,28 +18,20 @@ import {
   Label,
   Row,
   Col,
-  FormText,
   Button,
   ModalHeader,
   Modal,
   ModalBody,
-  ListGroup,
-  ListGroupItem,
   Input,
 } from "reactstrap";
 import { async } from "q";
-import { addCompany } from "../_redux/addCustomer.slice";
 import InputMask from "react-input-mask";
-import "./adminListing.scss";
 
-export const AddEditCompany = (props) => {
+export const AddEditSubsidary = (props) => {
   const dispatch = useDispatch();
-  const { companyDropdownData } = useSelector(
-    (state) => state?.addCustomer ?? {}
-  );
-
+  const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const { openModal, entity, isAddMode, data, setIsAddMode, onClose } = props;
-  const logourl = data?.logourl;
+
   const [editData, setEditData] = useState(data);
 
   const [cityList, setCityList] = useState([]);
@@ -58,6 +44,7 @@ export const AddEditCompany = (props) => {
   const [error, setError] = useState(false);
   const employeeList = useSelector((state) => state.dropdown.employeeList);
   const [companyValidation, setCompanyValidation] = useState(false);
+  const [subsidaryValidation, setSubsidaryValidation] = useState(false);
 
   const [locationValidation, setLocationValidation] = useState(false);
   const [countryValidation, setCountryValidation] = useState(false);
@@ -69,8 +56,6 @@ export const AddEditCompany = (props) => {
     }
   }, []);
 
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
@@ -113,7 +98,7 @@ export const AddEditCompany = (props) => {
   // form validation rules
   const validationSchema = Yup.object().shape({
     company: Yup.string().required("Company is required"),
-    industry: Yup.string(),
+    subsidary: Yup.string().required("Subsidary is required"),
     city: Yup.string().required("City is required"),
     state: Yup.string(),
     aboutCompany: Yup.string().max(50),
@@ -163,22 +148,23 @@ export const AddEditCompany = (props) => {
   const handleInputChange = (event, check) => {
     let data = { ...editData };
     if (check === "company") {
-      data.companyname = event.target.value;
-      if (data.company === "") {
+      data.companyid = event.target.value;
+      if (data.company === 0) {
         setCompanyValidation(true);
       } else {
         setCompanyValidation(false);
       }
-    } else if (check === "industry") {
-      data.industry = event.target.value;
+    } else if (check === "subsidary") {
+      data.subsidiaryname = event.target.value;
+      if (data.subsidary === 0) {
+        setSubsidaryValidation(true);
+      } else {
+        setSubsidaryValidation(false);
+      }
     } else if (check === "description") {
       data.description = event.target.value;
     } else if (check === "numberOfEmployees") {
       data.noofemployees = parseInt(event.target.value);
-    } else if (check === "email") {
-      data.contactemail = event.target.value;
-    } else if (check === "phone") {
-      data.contactphonenumber = event.target.value;
     } else if (check === "location") {
       data.cityid = parseInt(event.value);
       data.stateid = String(
@@ -230,12 +216,16 @@ export const AddEditCompany = (props) => {
   const getValidation = (event) => {
     event.preventDefault();
     setSave(true);
-    event.target.elements.company.value === ""
+    Number(event.target.elements.company.value) === 0
       ? setCompanyValidation(true)
       : setCompanyValidation(false);
     event.target.elements.city.value === ""
       ? setLocationValidation(true)
       : setLocationValidation(false);
+    event.target.elements.subsidary.value === ""
+      ? setSubsidaryValidation(true)
+      : setSubsidaryValidation(false);
+
     event.target.elements.countryid.value === ""
       ? setCountryValidation(true)
       : setCountryValidation(false);
@@ -250,104 +240,43 @@ export const AddEditCompany = (props) => {
   };
 
   const onSubmit = async () => {
-    var form = new FormData();
-
-    form.append("Companyname", editData.companyname);
-    form.append("Industry", editData.industry ? editData.industry : "");
-    form.append(
-      "Contactemail",
-      editData.contactemail ? editData.contactemail : ""
-    );
-    form.append(
-      "Description",
-      editData.description ? editData.description : ""
-    );
-    form.append(
-      "Noofemployees",
-      editData.noofemployees ? editData.noofemployees : 0
-    );
-    form.append(
-      "Contactphonenumber",
-      editData.contactphonenumber ? editData.contactphonenumber : ""
-    );
-    form.append("Cityid", editData.cityid);
-    form.append("Stateid", editData.stateid);
-    form.append("Countryid", editData.countryid);
-    form.append(
-      "CurrentUserId",
-      JSON.parse(localStorage.getItem("userDetails"))?.UserId
-    );
-    form.append("Zipcode", editData.zipcode);
-    form.append("Address", editData.address);
-    form.append("Logourl", logourl ? logourl : "");
-    form.append("Logourlfile", logo?.[0] ? logo[0] : logo);
+    let payload = {
+      subsidiaryid: 0,
+      companyid: Number(editData.companyid),
+      subsidiaryname: editData.subsidiaryname,
+      address: editData.address,
+      zipcode: editData.zipcode,
+      cityid: Number(editData.cityid),
+      stateid: Number(editData.stateid),
+      countryid: Number(editData.countryid),
+      isactive: true,
+      currentuserid: Number(
+        JSON.parse(localStorage.getItem("userDetails"))?.UserId
+      ),
+    };
+    let response;
     if (isAddMode) {
-      form.append("Companyid", 0);
-
-      axios
-        .post(`${url}/api/Company`, form, config)
-        .then((result) => {
-          if (result.data) {
-            if (result.data.status === "Success") {
-              setSuccess(true);
-              showSweetAlert({
-                title: result.data.message,
-                type: "success",
-              });
-            } else {
-              showSweetAlert({
-                title: result.data.message,
-                type: "error",
-              });
-              setError(true);
-            }
-          } else {
-            setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later",
-              type: "warning",
-            });
-          }
-        })
-        .catch((error) => {});
+      response = await dispatch(addSubsidiary({ payload }));
     } else {
-      form.append("Companyid", data.companyid);
-      axios
-        .put(`${url}/api/Company/${data.companyid}`, form, config)
-        .then((result) => {
-          if (result.data) {
-            if (result.data.status === "Success") {
-              setSuccess(true);
-              showSweetAlert({
-                title: result.data.message,
-                type: "success",
-              });
-            } else {
-              showSweetAlert({
-                title: result.data.message,
-                type: "error",
-              });
-              setError(true);
-            }
-          } else {
-            setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later",
-              type: "warning",
-            });
-          }
-        })
-        .catch((error) => {});
+      payload.subsidiaryid = editData.subsidiaryid;
+      let id = editData.subsidiaryid;
+      response = await dispatch(editSubsidiary({ id, payload }));
+    }
+
+    if (response.payload) {
+      setSuccess(true);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    } else {
+      setError(true);
+      showSweetAlert({
+        title: "Something went wrong, please try again later",
+        type: "warning",
+      });
     }
   };
-  const onDrop = (acceptedFiles) => {
-    setLogo(acceptedFiles);
-    setSelectedFile(acceptedFiles[0]?.name);
-  };
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: ".pdf, .docx, .rtf",
-  });
 
   return (
     <Modal
@@ -360,7 +289,7 @@ export const AddEditCompany = (props) => {
     >
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
-          {isAddMode ? "Add new company" : "Edit company"}
+          {isAddMode ? "Add new subsidiary" : "Edit subsidiary"}
         </strong>
       </ModalHeader>
       <ModalBody>
@@ -372,17 +301,28 @@ export const AddEditCompany = (props) => {
                   <Label for="company">
                     Company <span style={{ color: "red" }}>* </span>
                   </Label>
-                  <input
-                    type="text"
+                  <Input
+                    type="select"
                     name="company"
-                    defaultValue={isAddMode ? "" : data?.companyname}
-                    onInput={(e) => handleInputChange(e, "company")}
-                    placeholder="Enter company"
                     className={`field-input placeholder-text form-control ${
                       companyValidation ? "is-invalid error-text" : "input-text"
                     }`}
-                    maxLength={50}
-                  />
+                    onChange={(e) => handleInputChange(e, "company")}
+                  >
+                    <option value={0}>All companies</option>
+                    {companyDropdown?.length > 0 &&
+                      companyDropdown?.map((options) => (
+                        <option
+                          selected={options.companyid === editData.companyid}
+                          key={options.companyid}
+                          value={options.companyid}
+                        >
+                          {" "}
+                          {options.companyname}{" "}
+                        </option>
+                      ))}
+                  </Input>
+
                   <div className="invalid-feedback">
                     {companyValidation ? "Company is required" : ""}
                   </div>
@@ -391,101 +331,75 @@ export const AddEditCompany = (props) => {
 
               <Col md={6}>
                 <FormGroup>
-                  <Label for="industry">Industry</Label>
+                  <Label for="subsidary">
+                    Subsidary <span style={{ color: "red" }}>* </span>
+                  </Label>
                   <input
                     type="text"
-                    name="industry"
-                    onInput={(e) => handleInputChange(e, "industry")}
-                    placeholder="Enter industry"
-                    maxLength={200}
-                    defaultValue={isAddMode ? "" : data?.industry}
-                    className={`field-input placeholder-text form-control `}
+                    name="subsidary"
+                    defaultValue={isAddMode ? "" : data?.subsidiaryname}
+                    onInput={(e) => handleInputChange(e, "subsidary")}
+                    placeholder="Enter subsidary"
+                    className={`field-input placeholder-text form-control ${
+                      subsidaryValidation
+                        ? "is-invalid error-text"
+                        : "input-text"
+                    }`}
+                    maxLength={50}
+                  />
+                  <div className="invalid-feedback">
+                    {subsidaryValidation ? "Subsidary is required" : ""}
+                  </div>
+                </FormGroup>
+              </Col>
+              <Col md={12}>
+                <FormGroup>
+                  <Label for="address">Address</Label>
+                  <input
+                    type="text"
+                    name="address"
+                    defaultValue={isAddMode ? "" : data?.address}
+                    onInput={(e) => handleInputChange(e, "address")}
+                    placeholder="Enter address"
+                    maxLength={100}
+                    className={`field-input placeholder-text form-control`}
                   />
                 </FormGroup>
               </Col>
 
-              <Col md={12}>
-                <FormGroup>
-                  <Label for="description">Description</Label>
-                  <Input
-                    type="textarea"
-                    name="description"
-                    id="description"
-                    maxLength={250}
-                    onInput={(e) => handleInputChange(e, "description")}
-                    placeholder="Enter description"
-                    defaultValue={isAddMode ? "" : data?.description}
-                    className={`field-input placeholder-text form-control ${
-                      errors?.aboutCompany
-                        ? "is-invalid error-text"
-                        : "input-text"
-                    }`}
-                  />
-                </FormGroup>
-              </Col>
               <Col md={6}>
                 <FormGroup>
-                  <Label for="employee">No of employees</Label>
-                  <Input
-                    type="select"
-                    name="employee"
-                    id="employee"
-                    placeholder="company..."
-                    className={`form-control placeholder-name`}
-                    onChange={(e) => handleInputChange(e, "numberOfEmployees")}
-                  >
-                    <option key={0} value={0}>
-                      Select no of employee
-                    </option>
-                    {employeeList?.length > 0 &&
-                      employeeList?.map((options) => (
-                        <option
-                          key={options.id}
-                          value={options.id}
-                          selected={
-                            isAddMode ? 0 : data?.noofemployees === options.id
+                  <Label for="country" className="fw-semi-bold">
+                    Country <span className="text-danger">*</span>
+                  </Label>
+                  <AsyncSelect
+                    name="country"
+                    placeholder="Select country"
+                    placeholderText="search"
+                    isMulti={false}
+                    {...register("countryid")}
+                    defaultOptions={countryList}
+                    className={`placeholder-name ${
+                      countryValidation ? "async-border-red" : "async-no-error"
+                    }`}
+                    onChange={(e) => handleInputChange(e, "country")}
+                    // onMenuOpen={() => checkCityValid()}
+
+                    defaultValue={
+                      isAddMode
+                        ? []
+                        : {
+                            value: 1,
+                            label: data?.countryname,
                           }
-                        >
-                          {options.name}
-                        </option>
-                      ))}
-                  </Input>
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="phone">Phone</Label>
-                  <InputMask
-                    mask="(999)-999-9999"
-                    type="text"
-                    name="phone"
-                    maxLength={50}
-                    onInput={(e) => handleInputChange(e, "phone")}
-                    placeholder="Enter phone"
-                    defaultValue={isAddMode ? "" : data?.contactphonenumber}
-                    className={`field-input placeholder-text form-control `}
+                    }
                   />
-                </FormGroup>
-              </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="email">Email</Label>
-                  <input
-                    type="email"
-                    name="email"
-                    onInput={(e) => handleInputChange(e, "email")}
-                    defaultValue={isAddMode ? "" : data?.contactemail}
-                    maxLength={50}
-                    placeholder="Enter email"
-                    className={`field-input placeholder-text form-control ${
-                      errors?.email ? "is-invalid error-text" : "input-text"
-                    }`}
-                  />
-                  <div className="invalid-feedback">
-                    {errors?.email?.message}
+                  <div className="async-error-text">
+                    {countryValidation ? "Country is required" : ""}
                   </div>
                 </FormGroup>
               </Col>
+
               <Col md={6}>
                 <FormGroup>
                   <Label for="city" className="fw-semi-bold">
@@ -526,39 +440,6 @@ export const AddEditCompany = (props) => {
 
               <Col md={6}>
                 <FormGroup>
-                  <Label for="country" className="fw-semi-bold">
-                    Country <span className="text-danger">*</span>
-                  </Label>
-                  <AsyncSelect
-                    name="country"
-                    placeholder="Select country"
-                    placeholderText="search"
-                    isMulti={false}
-                    {...register("countryid")}
-                    defaultOptions={countryList}
-                    className={`placeholder-name ${
-                      countryValidation ? "async-border-red" : "async-no-error"
-                    }`}
-                    onChange={(e) => handleInputChange(e, "country")}
-                    // onMenuOpen={() => checkCityValid()}
-
-                    defaultValue={
-                      isAddMode
-                        ? []
-                        : {
-                            value: 1,
-                            label: data?.countryname,
-                          }
-                    }
-                  />
-                  <div className="async-error-text">
-                    {countryValidation ? "Country is required" : ""}
-                  </div>
-                </FormGroup>
-              </Col>
-
-              <Col md={6}>
-                <FormGroup>
                   <Label for="zipcode">Zip code</Label>
                   <InputMask
                     mask="99999"
@@ -577,56 +458,8 @@ export const AddEditCompany = (props) => {
                   </div>
                 </FormGroup>
               </Col>
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="address">Address</Label>
-                  <input
-                    type="text"
-                    name="address"
-                    defaultValue={isAddMode ? "" : data?.address}
-                    onInput={(e) => handleInputChange(e, "address")}
-                    placeholder="Enter address"
-                    maxLength={100}
-                    className={`field-input placeholder-text form-control`}
-                  />
-                </FormGroup>
-              </Col>
-              <Col md={12}>
-                <div className="dropzone-wrapper dropzone-wrapper-sm">
-                  <Dropzone
-                    onDrop={(e) => onDrop(e)}
-                    onFileDialogCancel={onCancel}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                      <div {...getRootProps()}>
-                        <input {...getInputProps()} />
-                        <div className="dropzone-content">
-                          <p>Upload logo</p>
-                          <p>
-                            Try dropping some files here, or click to select
-                            files to upload.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </Dropzone>
-                </div>
-              </Col>
             </Row>
-            {selectedFile !== "" && (
-              <Col>
-                <b className="mb-2 d-block mt-2 ">Uploaded logo</b>
-                <div>
-                  <span className="me-3"> {selectedFile}</span>
 
-                  <BsTrash3
-                    className="icons"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => onCancel()}
-                  />
-                </div>
-              </Col>
-            )}
             <Col></Col>
             <Button
               className="mt-3 float-end"
