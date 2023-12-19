@@ -238,7 +238,11 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         <Card className="card-shadow-primary profile-responsive card-border mb-3">
           <DetailsHeader
             heading={jobDetail.jobtitle}
-            subHeading={jobDetail.companyname}
+            subHeading={
+              jobDetail.subsidiaryid !== 0
+                ? jobDetail.companyname + " (" + jobDetail?.subsidiaryname + ")"
+                : jobDetail.companyname
+            }
             location={returnAddress()}
             // ApplyButton={type !== "Open"}
             // jobId={jobDetail.jobid}

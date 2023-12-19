@@ -88,6 +88,11 @@ export function CustJobCard({
                 <Col md={12} lg={7}>
                   <div className="job-title">{name}</div>
                   <div className="muted-name">{customer}</div>
+                  {additionalData?.subsidiaryid !== 0 && (
+                    <div className="muted-name">
+                      {additionalData?.subsidiaryname}
+                    </div>
+                  )}
                 </Col>
                 <Col md={12} lg={5}>
                   {renderStatusIcon(additionalData)}
