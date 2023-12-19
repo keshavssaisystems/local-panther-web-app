@@ -263,31 +263,31 @@ export const getDate = function (data) {
 
 export const getEducText = function (data) {
   let text = "";
-  if (data.school != "") {
+  if (data.school !== "") {
     text = data.school;
-    if (data.cityname != "") {
+    if (data.cityname !== "") {
       text += ", " + data.cityname;
     }
-    if (data.statename != "") {
+    if (data.statename !== "") {
       text += ", " + data.statename;
     }
-    if (data.countryname != "") {
+    if (data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.cityname != "") {
+  } else if (data.cityname !== "") {
     text = data.cityname;
-    if (data.statename != "") {
+    if (data.statename !== "") {
       text += ", " + data.statename;
     }
-    if (data.countryname != "") {
+    if (data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.statename != "") {
+  } else if (data.statename !== "") {
     text = data.statename;
-    if (data.countryname != "") {
+    if (data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.countryname != "") {
+  } else if (data.countryname !== "") {
     text = data.countryname;
     text += data.countryname;
   }

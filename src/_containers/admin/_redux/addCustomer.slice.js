@@ -88,6 +88,22 @@ export const addCompany = createAsyncThunk(
   }
 );
 
+export const addSubsidiary = createAsyncThunk(
+  `${name}/addSubsidiary`,
+  async ({ payload }) => {
+    const ADD_SUBSIDIARY = `${baseUrl}/Subsidiary`;
+    return await fetchWrapper.post(ADD_SUBSIDIARY, payload);
+  }
+);
+
+export const editSubsidiary = createAsyncThunk(
+  `${name}/editSubsidiary`,
+  async ({ id, payload }) => {
+    const EDIT_SUBSIDIARY = `${baseUrl}/Subsidiary/${id}`;
+    return await fetchWrapper.put(EDIT_SUBSIDIARY, payload);
+  }
+);
+
 // Create the slice
 const addCustomerSlice = createSlice({
   name,
@@ -133,7 +149,7 @@ const addCustomerSlice = createSlice({
     [getCompanyAdmin.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
-      state.companiesDetails = data;
+      state.companiesDetails = data?.companyDetailsList;
     },
     [getCompanyAdmin.rejected]: (state, action) => {
       state.loading = false;
@@ -243,6 +259,30 @@ const addCustomerSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    [addSubsidiary.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [addSubsidiary.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [addSubsidiary.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [editSubsidiary.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [editSubsidiary.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [editSubsidiary.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -257,6 +297,8 @@ export const addCustomerActions = {
   getCountriesList,
   addCompany,
   updateCustomer,
+  addSubsidiary,
+  editSubsidiary,
 };
 
 export const addCustomerReducer = addCustomerSlice.reducer;

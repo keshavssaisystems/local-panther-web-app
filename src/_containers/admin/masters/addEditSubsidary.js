@@ -4,19 +4,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
-import axios from "axios";
+
 import {
-  getStatesList,
-  getCitiesList,
-  getCompaniesList,
-  getCountriesList,
-  addCustomer,
+  addSubsidiary,
+  editSubsidiary,
 } from "_containers/admin/_redux/addCustomer.slice";
 import AsyncSelect from "react-select/async";
 import { getLocationFilter } from "_store";
-import { useDropzone } from "react-dropzone";
-import Dropzone from "react-dropzone";
-import { BsTrash3 } from "react-icons/bs";
 
 import {
   Form,
@@ -24,27 +18,20 @@ import {
   Label,
   Row,
   Col,
-  FormText,
   Button,
   ModalHeader,
   Modal,
   ModalBody,
-  ListGroup,
-  ListGroupItem,
   Input,
 } from "reactstrap";
 import { async } from "q";
-import { addCompany } from "../_redux/addCustomer.slice";
 import InputMask from "react-input-mask";
 
 export const AddEditSubsidary = (props) => {
   const dispatch = useDispatch();
-  const { companyDropdownData } = useSelector(
-    (state) => state?.addCustomer ?? {}
-  );
-
+  const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const { openModal, entity, isAddMode, data, setIsAddMode, onClose } = props;
-  const logourl = data?.logourl;
+
   const [editData, setEditData] = useState(data);
 
   const [cityList, setCityList] = useState([]);
@@ -161,15 +148,15 @@ export const AddEditSubsidary = (props) => {
   const handleInputChange = (event, check) => {
     let data = { ...editData };
     if (check === "company") {
-      data.company = event.target.value;
-      if (data.company === "") {
+      data.companyid = event.target.value;
+      if (data.company === 0) {
         setCompanyValidation(true);
       } else {
         setCompanyValidation(false);
       }
     } else if (check === "subsidary") {
-      data.subsidary = event.target.value;
-      if (data.subsidary === "") {
+      data.subsidiaryname = event.target.value;
+      if (data.subsidary === 0) {
         setSubsidaryValidation(true);
       } else {
         setSubsidaryValidation(false);
@@ -229,7 +216,7 @@ export const AddEditSubsidary = (props) => {
   const getValidation = (event) => {
     event.preventDefault();
     setSave(true);
-    event.target.elements.company.value === ""
+    Number(event.target.elements.company.value) === 0
       ? setCompanyValidation(true)
       : setCompanyValidation(false);
     event.target.elements.city.value === ""
@@ -253,104 +240,43 @@ export const AddEditSubsidary = (props) => {
   };
 
   const onSubmit = async () => {
-    var form = new FormData();
-
-    form.append("Companyname", editData.company);
-    form.append("Subsidary", editData.subsidary ? editData.subsidary : "");
-    form.append(
-      "Contactemail",
-      editData.contactemail ? editData.contactemail : ""
-    );
-    form.append(
-      "Description",
-      editData.description ? editData.description : ""
-    );
-    form.append(
-      "Noofemployees",
-      editData.noofemployees ? editData.noofemployees : 0
-    );
-    form.append(
-      "Contactphonenumber",
-      editData.contactphonenumber ? editData.contactphonenumber : ""
-    );
-    form.append("Cityid", editData.cityid);
-    form.append("Stateid", editData.stateid);
-    form.append("Countryid", editData.countryid);
-    form.append(
-      "CurrentUserId",
-      JSON.parse(localStorage.getItem("userDetails"))?.UserId
-    );
-    form.append("Zipcode", editData.zipcode);
-    form.append("Address", editData.address);
-    form.append("Logourl", logourl ? logourl : "");
-    form.append("Logourlfile", logo?.[0] ? logo[0] : logo);
+    let payload = {
+      subsidiaryid: 0,
+      companyid: Number(editData.companyid),
+      subsidiaryname: editData.subsidiaryname,
+      address: editData.address,
+      zipcode: editData.zipcode,
+      cityid: Number(editData.cityid),
+      stateid: Number(editData.stateid),
+      countryid: Number(editData.countryid),
+      isactive: true,
+      currentuserid: Number(
+        JSON.parse(localStorage.getItem("userDetails"))?.UserId
+      ),
+    };
+    let response;
     if (isAddMode) {
-      form.append("Companyid", 0);
-
-      axios
-        .post(`${url}/api/Company`, form, config)
-        .then((result) => {
-          if (result.data) {
-            if (result.data.status === "Success") {
-              setSuccess(true);
-              showSweetAlert({
-                title: result.data.message,
-                type: "success",
-              });
-            } else {
-              showSweetAlert({
-                title: result.data.message,
-                type: "error",
-              });
-              setError(true);
-            }
-          } else {
-            setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later",
-              type: "warning",
-            });
-          }
-        })
-        .catch((error) => {});
+      response = await dispatch(addSubsidiary({ payload }));
     } else {
-      form.append("Companyid", data.companyid);
-      axios
-        .put(`${url}/api/Company/${data.companyid}`, form, config)
-        .then((result) => {
-          if (result.data) {
-            if (result.data.status === "Success") {
-              setSuccess(true);
-              showSweetAlert({
-                title: result.data.message,
-                type: "success",
-              });
-            } else {
-              showSweetAlert({
-                title: result.data.message,
-                type: "error",
-              });
-              setError(true);
-            }
-          } else {
-            setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later",
-              type: "warning",
-            });
-          }
-        })
-        .catch((error) => {});
+      payload.subsidiaryid = editData.subsidiaryid;
+      let id = editData.subsidiaryid;
+      response = await dispatch(editSubsidiary({ id, payload }));
+    }
+
+    if (response.payload) {
+      setSuccess(true);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    } else {
+      setError(true);
+      showSweetAlert({
+        title: "Something went wrong, please try again later",
+        type: "warning",
+      });
     }
   };
-  const onDrop = (acceptedFiles) => {
-    setLogo(acceptedFiles);
-    setSelectedFile(acceptedFiles[0]?.name);
-  };
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: ".pdf, .docx, .rtf",
-  });
 
   return (
     <Modal
@@ -363,7 +289,7 @@ export const AddEditSubsidary = (props) => {
     >
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
-          {isAddMode ? "Add new company" : "Edit company"}
+          {isAddMode ? "Add new subsidiary" : "Edit subsidiary"}
         </strong>
       </ModalHeader>
       <ModalBody>
@@ -375,17 +301,28 @@ export const AddEditSubsidary = (props) => {
                   <Label for="company">
                     Company <span style={{ color: "red" }}>* </span>
                   </Label>
-                  <input
-                    type="text"
+                  <Input
+                    type="select"
                     name="company"
-                    defaultValue={isAddMode ? "" : data?.companyname}
-                    onInput={(e) => handleInputChange(e, "company")}
-                    placeholder="Enter company"
                     className={`field-input placeholder-text form-control ${
                       companyValidation ? "is-invalid error-text" : "input-text"
                     }`}
-                    maxLength={50}
-                  />
+                    onChange={(e) => handleInputChange(e, "company")}
+                  >
+                    <option value={0}>All companies</option>
+                    {companyDropdown?.length > 0 &&
+                      companyDropdown?.map((options) => (
+                        <option
+                          selected={options.companyid === editData.companyid}
+                          key={options.companyid}
+                          value={options.companyid}
+                        >
+                          {" "}
+                          {options.companyname}{" "}
+                        </option>
+                      ))}
+                  </Input>
+
                   <div className="invalid-feedback">
                     {companyValidation ? "Company is required" : ""}
                   </div>
@@ -399,8 +336,8 @@ export const AddEditSubsidary = (props) => {
                   </Label>
                   <input
                     type="text"
-                    name="company"
-                    defaultValue={isAddMode ? "" : data?.subsidary}
+                    name="subsidary"
+                    defaultValue={isAddMode ? "" : data?.subsidiaryname}
                     onInput={(e) => handleInputChange(e, "subsidary")}
                     placeholder="Enter subsidary"
                     className={`field-input placeholder-text form-control ${
@@ -429,52 +366,37 @@ export const AddEditSubsidary = (props) => {
                   />
                 </FormGroup>
               </Col>
-              <Col md={12}>
-                <FormGroup>
-                  <Label for="description">Description</Label>
-                  <Input
-                    type="textarea"
-                    name="description"
-                    id="description"
-                    maxLength={250}
-                    onInput={(e) => handleInputChange(e, "description")}
-                    placeholder="Enter description"
-                    defaultValue={isAddMode ? "" : data?.description}
-                    className={`field-input placeholder-text form-control ${
-                      errors?.aboutCompany
-                        ? "is-invalid error-text"
-                        : "input-text"
-                    }`}
-                  />
-                </FormGroup>
-              </Col>
+
               <Col md={6}>
                 <FormGroup>
-                  <Label for="employee">No of employees</Label>
-                  <Input
-                    type="select"
-                    name="employee"
-                    id="employee"
-                    placeholder="company..."
-                    className={`form-control placeholder-name`}
-                    onChange={(e) => handleInputChange(e, "numberOfEmployees")}
-                  >
-                    <option key={0} value={0}>
-                      Select no of employee
-                    </option>
-                    {employeeList?.length > 0 &&
-                      employeeList?.map((options) => (
-                        <option
-                          key={options.id}
-                          value={options.id}
-                          selected={
-                            isAddMode ? 0 : data?.noofemployees === options.id
+                  <Label for="country" className="fw-semi-bold">
+                    Country <span className="text-danger">*</span>
+                  </Label>
+                  <AsyncSelect
+                    name="country"
+                    placeholder="Select country"
+                    placeholderText="search"
+                    isMulti={false}
+                    {...register("countryid")}
+                    defaultOptions={countryList}
+                    className={`placeholder-name ${
+                      countryValidation ? "async-border-red" : "async-no-error"
+                    }`}
+                    onChange={(e) => handleInputChange(e, "country")}
+                    // onMenuOpen={() => checkCityValid()}
+
+                    defaultValue={
+                      isAddMode
+                        ? []
+                        : {
+                            value: 1,
+                            label: data?.countryname,
                           }
-                        >
-                          {options.name}
-                        </option>
-                      ))}
-                  </Input>
+                    }
+                  />
+                  <div className="async-error-text">
+                    {countryValidation ? "Country is required" : ""}
+                  </div>
                 </FormGroup>
               </Col>
 
@@ -512,39 +434,6 @@ export const AddEditSubsidary = (props) => {
                   />
                   <div className="async-error-text">
                     {locationValidation ? "City, State is required" : ""}
-                  </div>
-                </FormGroup>
-              </Col>
-
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="country" className="fw-semi-bold">
-                    Country <span className="text-danger">*</span>
-                  </Label>
-                  <AsyncSelect
-                    name="country"
-                    placeholder="Select country"
-                    placeholderText="search"
-                    isMulti={false}
-                    {...register("countryid")}
-                    defaultOptions={countryList}
-                    className={`placeholder-name ${
-                      countryValidation ? "async-border-red" : "async-no-error"
-                    }`}
-                    onChange={(e) => handleInputChange(e, "country")}
-                    // onMenuOpen={() => checkCityValid()}
-
-                    defaultValue={
-                      isAddMode
-                        ? []
-                        : {
-                            value: 1,
-                            label: data?.countryname,
-                          }
-                    }
-                  />
-                  <div className="async-error-text">
-                    {countryValidation ? "Country is required" : ""}
                   </div>
                 </FormGroup>
               </Col>

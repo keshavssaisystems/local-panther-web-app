@@ -141,7 +141,7 @@ export function App() {
             }
           />
           <Route
-            path="masters/subsidaries"
+            path="masters/subsidiary"
             element={
               <PrivateRoute>
                 <SubsidaryList />

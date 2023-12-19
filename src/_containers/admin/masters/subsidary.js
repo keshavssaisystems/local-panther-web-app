@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from "react";
 import companyLogo from "assets/utils/images/candidate.svg";
 import PageTitle from "_components/common/pagetitle";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Form,
-  FormGroup,
-  Input,
-  Button,
-} from "reactstrap";
+import { Row, Col, Card, CardBody, FormGroup, Input, Button } from "reactstrap";
 import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions, addCustomerActions } from "_store";
-import { getCompanies } from "_containers/admin/_redux/adminListing.slice";
+import { getSubsidary } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditSubsidary } from "./addEditSubsidary";
+import { getLocationText } from "_helpers/helper";
+import { editSubsidiary } from "_containers/admin/_redux/addCustomer.slice";
 
 export const SubsidaryList = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({});
   const [pageNo, setPageNo] = useState(1);
@@ -38,7 +30,7 @@ export const SubsidaryList = () => {
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
-    getCompanyList(pageSize, pageNo);
+    getSubsidaryList(pageSize, pageNo);
   }, []);
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const [companyId, setCompanyId] = useState(0);
@@ -55,7 +47,7 @@ export const SubsidaryList = () => {
   let columns = [
     {
       name: "Company name",
-      id: "name",
+      id: "companyname",
       cell: (row) => (
         <div
           className="editrow"
@@ -63,7 +55,6 @@ export const SubsidaryList = () => {
             setEditData(row);
             setOpenModal(true);
             setIsAddMode(false);
-            setIsEdit(true);
           }}
         >
           {row.companyname}
@@ -74,28 +65,57 @@ export const SubsidaryList = () => {
 
     {
       name: "Subsidiary name",
-      id: "cityname",
-      selector: (row) => row.cityname,
+      id: "subsidiaryname",
+      selector: (row) => row.subsidiaryname,
       sortable: true,
     },
 
     {
       name: "Address",
-      id: "cityname",
-      selector: (row) => row.statename,
-      sortable: true,
-    },
-    {
-      name: "City, State, Country",
       id: "address",
       selector: (row) => row.address,
       sortable: true,
     },
     {
+      name: "City, State, Country",
+      id: "cityname",
+      selector: (row) => getLocationText(row),
+      sortable: true,
+    },
+    {
       name: "Zip code",
-      id: "phonenumber",
+      id: "zipcode",
       selector: (row) => row.zipcode,
       sortable: true,
+    },
+    {
+      name: "Action",
+      id: "isactive",
+      cell: (row) => (
+        <div className="d-block w-100">
+          <div
+            title="Active/Inactive subsidiary"
+            className="switch has-switch  me-2"
+            data-on-label="ON"
+            data-off-label="OFF"
+            style={{ verticalAlign: "bottom", cursor: "pointer" }}
+            onClick={() => toggleNotification(!row.isactive, row)}
+          >
+            <div
+              className={cx("switch-animate", {
+                "switch-on": row.isactive,
+                "switch-off": !row.isactive,
+              })}
+            >
+              <input type="checkbox" />
+              <span className="switch-left">ON</span>
+              <label>&nbsp;</label>
+              <span className="switch-right">OFF</span>
+            </div>
+          </div>
+        </div>
+      ),
+      sortable: false,
     },
   ];
 
@@ -124,7 +144,6 @@ export const SubsidaryList = () => {
       statename: "",
     };
     setIsAddMode(true);
-    setIsEdit(false);
     setEditData(obj);
     setOpenModal(true);
   };
@@ -132,21 +151,21 @@ export const SubsidaryList = () => {
   const closeModal = () => {
     setOpenModal(false);
     dispatch(
-      getCompanies({
+      getSubsidary({
         pageSize: pageSize,
         pageNumber: pageNo,
       })
     );
   };
 
-  const getCompanyList = async function (pageSize, pageNo) {
+  const getSubsidaryList = async function (pageSize, pageNo) {
     setLoading(true);
     let urlParams = {
       pageSize: pageSize,
       pageNumber: pageNo,
     };
 
-    if (companyId === 0) {
+    if (companyId !== 0) {
       urlParams.companyid = companyId;
     }
     if (searchData !== "") {
@@ -156,8 +175,7 @@ export const SubsidaryList = () => {
     if (status !== "All") {
       urlParams.isActive = status;
     }
-
-    await dispatch(getCompanies(urlParams));
+    await dispatch(getSubsidary(urlParams));
     setLoading(false);
   };
 
@@ -167,9 +185,14 @@ export const SubsidaryList = () => {
       pageSize: pageSize,
       pageNumber: pageNo,
     };
-
-    if (selected) {
-      setCompanyId(Number(data));
+    if (selected === "company") {
+      setCompanyId(Number(check));
+      if (check !== "0") {
+        urlParams.companyid = Number(check);
+      }
+      if (status) {
+        urlParams.isActive = true;
+      }
     } else {
       if (check === "0") {
         setStatus("All");
@@ -182,11 +205,14 @@ export const SubsidaryList = () => {
         urlParams.isActive = false;
         setStatus(false);
       }
+      if (companyId !== 0) {
+        urlParams.companyid = companyId;
+      }
     }
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    await dispatch(getCompanies(urlParams));
+    await dispatch(getSubsidary(urlParams));
     setLoading(false);
   };
 
@@ -205,7 +231,7 @@ export const SubsidaryList = () => {
       urlParams.companyid = companyId;
     }
     setLoading(true);
-    await dispatch(getCompanies(urlParams));
+    await dispatch(getSubsidary(urlParams));
     setLoading(false);
   };
 
@@ -259,10 +285,9 @@ export const SubsidaryList = () => {
     );
     setEditData({});
     setOpenModal(false);
-    setIsEdit(false);
     if (res.payload) {
       dispatch(
-        addCustomerActions.getCompaniesList({
+        getSubsidary({
           isActive: true,
           pageSize: pageSize,
           pageNumber: pageNo,
@@ -291,13 +316,48 @@ export const SubsidaryList = () => {
     }
   };
 
+  const toggleNotification = async function (value, row) {
+    let payload = {
+      subsidiaryid: row.subsidiaryid,
+      companyid: Number(row.companyid),
+      subsidiaryname: row.subsidiaryname,
+      address: row.address,
+      zipcode: row.zipcode,
+      cityid: Number(row.cityid),
+      stateid: Number(row.stateid),
+      countryid: Number(row.countryid),
+      isactive: value,
+      currentuserid: Number(
+        JSON.parse(localStorage.getItem("userDetails"))?.UserId
+      ),
+    };
+    let response;
+
+    let id = row.subsidiaryid;
+    response = await dispatch(editSubsidiary({ id, payload }));
+
+    if (response.payload) {
+      setSuccess(true);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    } else {
+      setError(true);
+      showSweetAlert({
+        title: "Something went wrong, please try again later",
+        type: "warning",
+      });
+    }
+  };
+
   const handlePerRowsChange = async (pagesize) => {
     setPageSize(pagesize);
-    getCompanyList(pagesize, pageNo);
+    getSubsidaryList(pagesize, pageNo);
   };
   const handlePageChange = async (page) => {
     setPageNo(page);
-    getCompanyList(pageSize, page);
+    getSubsidaryList(pageSize, page);
   };
 
   return (
@@ -309,92 +369,87 @@ export const SubsidaryList = () => {
         <Col md="12">
           <Card className="mb-3">
             <CardBody>
-              <Row>
-                <Col md={12}>
-                  <Row className="mb-3">
-                    <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="companyid"
-                          onChange={(e) =>
-                            onStatusSelect("company", e.target.value)
-                          }
-                        >
-                          <option value={0}>All companies</option>
-                          {companyDropdown?.length > 0 &&
-                            companyDropdown?.map((options) => (
-                              <option
-                                key={options.companyid}
-                                value={options.companyid}
-                              >
-                                {" "}
-                                {options.companyname}{" "}
-                              </option>
-                            ))}
-                        </Input>
-                      </FormGroup>
-                    </Col>
-
-                    <Col xxl={2} xl={2} md={12} lg={3} sm={12} xs={12}>
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="status"
-                          defaultValue="Active"
-                          onChange={(e) =>
-                            onStatusSelect("status", e.target.value)
-                          }
-                        >
-                          <option value={0}>All status</option>
-                          <option value={1}>Active</option>
-                          <option value={2}>In-active</option>
-                        </Input>
-                      </FormGroup>
-                    </Col>
-                    <Col xxl={10} xl={10} md={12} lg={9} sm={12} xs={12}>
-                      <Button
-                        style={{ background: "#2f479b" }}
-                        color={"primary"}
-                        className="input-group-text float-end mt-1"
-                        type="submit"
-                        onClick={(e) => addModal()}
-                      >
-                        Add company
-                      </Button>
-                      <div
-                        className={cx(
-                          "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-                          {
-                            active: true,
-                          }
-                        )}
-                      >
-                        <div className="input-holder float-end">
-                          <input
-                            type="text"
-                            className="search-input search-placeholder"
-                            id="search-input"
-                            value={searchData}
-                            onInput={(evt) => setSearchText(evt.target.value)}
-                            placeholder="Search.."
-                          />
-                          <button
-                            className="btn-close"
-                            onClick={(evt) => onClearSearch()}
-                          />
-                          <button
-                            onClick={(evt) => getCompanyList(pageSize, pageNo)}
-                            className="search-icon"
+              <Row className="mb-3">
+                <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      name="companyid"
+                      onChange={(e) =>
+                        onStatusSelect("company", e.target.value)
+                      }
+                    >
+                      <option value={0}>All companies</option>
+                      {companyDropdown?.length > 0 &&
+                        companyDropdown?.map((options) => (
+                          <option
+                            key={options.companyid}
+                            value={options.companyid}
                           >
-                            <span />
-                          </button>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                            {" "}
+                            {options.companyname}{" "}
+                          </option>
+                        ))}
+                    </Input>
+                  </FormGroup>
+                </Col>
+
+                <Col xxl={2} xl={2} md={12} lg={3} sm={12} xs={12}>
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      name="status"
+                      defaultValue="Active"
+                      onChange={(e) => onStatusSelect("status", e.target.value)}
+                    >
+                      <option value={0}>All status</option>
+                      <option value={1}>Active</option>
+                      <option value={2}>In-active</option>
+                    </Input>
+                  </FormGroup>
+                </Col>
+                <Col xxl={7} xl={7} md={12} lg={5} sm={12} xs={12}>
+                  <Button
+                    style={{ background: "#2f479b" }}
+                    color={"primary"}
+                    className="input-group-text float-end mt-1"
+                    type="submit"
+                    onClick={(e) => addModal()}
+                  >
+                    Add subsidary
+                  </Button>
+                  <div
+                    className={cx(
+                      "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+                      {
+                        active: true,
+                      }
+                    )}
+                  >
+                    <div className="input-holder float-end">
+                      <input
+                        type="text"
+                        className="search-input search-placeholder"
+                        id="search-input"
+                        value={searchData}
+                        onInput={(evt) => setSearchText(evt.target.value)}
+                        placeholder="Search.."
+                      />
+                      <button
+                        className="btn-close"
+                        onClick={(evt) => onClearSearch()}
+                      />
+                      <button
+                        onClick={(evt) => getSubsidaryList(pageSize, pageNo)}
+                        className="search-icon"
+                      >
+                        <span />
+                      </button>
+                    </div>
+                  </div>
                 </Col>
               </Row>
+
               <DataTable
                 data={data}
                 columns={columns}
