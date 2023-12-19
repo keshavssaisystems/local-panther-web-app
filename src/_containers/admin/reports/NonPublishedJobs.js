@@ -17,6 +17,8 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Input,
+  FormText,
 } from "reactstrap";
 
 import {
@@ -28,6 +30,7 @@ import {
 import {
   getReportDataThunk,
   getAdminReportJobDetail,
+  getADMReportSubsidiaryList,
 } from "../_redux/report.slice";
 
 import DatePicker from "react-datepicker";
@@ -58,6 +61,8 @@ export function NonPublishedJobs({ title }) {
   let [company, setCompany] = useState([]);
   let [skill, setSkill] = useState([]);
   let [location, setLocation] = useState([]);
+  let [subsidiaryId, setSubsidiaryId] = useState();
+  let [subsidiaryErr, setSubsidiaryErr] = useState(false);
   let [filter, setFilter] = useState(initFilter);
   const [excelData, setExcelData] = useState([]);
   const [showJDModal, setShowJDModal] = useState(false);
@@ -65,6 +70,7 @@ export function NonPublishedJobs({ title }) {
     reportData: data = [],
     loading = false,
     jobDetail = [],
+    subsidiaryList = [],
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
   const getReportData = (isClearAll) => {
@@ -110,11 +116,25 @@ export function NonPublishedJobs({ title }) {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (company?.label) {
+      dispatch(getADMReportSubsidiaryList(company.value));
+    }
+  }, [company]);
+
   const handleChange = (name, value) => {
-    setFilter({
-      ...filter,
-      [name]: value,
-    });
+    if (name === "companyId") {
+      setFilter({
+        ...filter,
+        [name]: value,
+        ["subsidiaryid"]: "",
+      });
+    } else {
+      setFilter({
+        ...filter,
+        [name]: value,
+      });
+    }
   };
 
   const handleDateChange = (name, value) => {
@@ -228,6 +248,16 @@ export function NonPublishedJobs({ title }) {
     },
   ];
 
+  const updateSubsidiary = (e) => {
+    if (!company?.label) {
+      setSubsidiaryErr(true);
+    } else {
+      handleChange("subsidiaryid", e.target.value);
+      setSubsidiaryId(e.target.value);
+      setSubsidiaryErr(false);
+    }
+  };
+
   return (
     <>
       <PageTitle heading={title} icon={titlelogo} />
@@ -265,7 +295,7 @@ export function NonPublishedJobs({ title }) {
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{ zIndex: 9, position: "relative" }}>
+              <Row className="pb-2" style={{ zIndex: 9, position: "relative" }}>
                 <Col
                   xxl="2"
                   xl="3"
@@ -281,9 +311,44 @@ export function NonPublishedJobs({ title }) {
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
+                      setSubsidiaryId("");
+                      setSubsidiaryErr(false);
                     }}
                     value={company}
                   />
+                </Col>
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                  <Input
+                    type="select"
+                    value={subsidiaryId}
+                    name="subsidiary"
+                    id="subsidiary"
+                    placeholder="Subsidiary Id"
+                    onChange={(e) => {
+                      updateSubsidiary(e);
+                    }}
+                  >
+                    <option value={""}>Select a Subsidiary</option>
+                    {subsidiaryList?.length > 0 ? (
+                      subsidiaryList.map((data) => (
+                        <option
+                          value={data.subsidiaryid ? data.subsidiaryid : ""}
+                          key={data.subsidiaryid ? data.subsidiaryid : ""}
+                        >
+                          {data.subsidiaryname ? data.subsidiaryname : ""}
+                        </option>
+                      ))
+                    ) : (
+                      <></>
+                    )}
+                  </Input>
+                  {subsidiaryErr ? (
+                    <FormText color="danger">
+                      Please select company first
+                    </FormText>
+                  ) : (
+                    <></>
+                  )}
                 </Col>
                 <Col xxl="2" xl="3" lg="3" md="4" sm="12" xs="12">
                   <SkillsFilter
