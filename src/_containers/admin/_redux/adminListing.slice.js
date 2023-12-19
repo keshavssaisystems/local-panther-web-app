@@ -30,6 +30,16 @@ export const getCompanies = createAsyncThunk(
   }
 );
 
+export const getSubsidary = createAsyncThunk(
+  `${name}/getSubsidary`,
+  async (payload = {}) => {
+    const GET_SUBSIDARY_STATS = `${baseUrl}/Subsidiary?${new URLSearchParams(
+      payload
+    )}`;
+    return await fetchWrapper.get(GET_SUBSIDARY_STATS);
+  }
+);
+
 //https://panther-api-dev.azurewebsites.net/api/Customer/Get?isActive=true&pageSize=500
 export const getCustomers = createAsyncThunk(
   `${name}/getCustomers`,
@@ -201,6 +211,20 @@ const adminListingSlice = createSlice({
       state.totalRecords = data.totalRows;
     },
     [getCompanies.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [getSubsidary.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getSubsidary.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.data = data?.subsidiaryList;
+      state.totalRecords = data.totalRows;
+    },
+    [getSubsidary.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
@@ -432,6 +456,7 @@ const adminListingSlice = createSlice({
 export const adminListingActions = {
   ...adminListingSlice.actions,
   getCompanies,
+  getSubsidary,
   getIndustries,
   getCustomers,
   getUsers,

@@ -64,6 +64,7 @@ import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
+import { SubsidaryList } from "_containers/admin/masters/subsidary";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -136,6 +137,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <Skills />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="masters/subsidiary"
+            element={
+              <PrivateRoute>
+                <SubsidaryList />
               </PrivateRoute>
             }
           />
