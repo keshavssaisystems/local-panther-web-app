@@ -602,11 +602,13 @@ export const CandidateList = (props) => {
                               additionalData={data}
                               onCandidateActions={(
                                 type,
-                                candidaterecommendedjobid
+                                candidaterecommendedjobid,
+                                reason
                               ) =>
                                 onCandidateCardActions(
                                   type,
-                                  candidaterecommendedjobid
+                                  candidaterecommendedjobid,
+                                  reason
                                 )
                               }
                             />

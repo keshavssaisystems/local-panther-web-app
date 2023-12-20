@@ -15,7 +15,6 @@ import {
   BsBriefcase,
   BsListStars,
   BsFillFlagFill,
-  BsHandThumbsUp,
   BsXCircle,
   BsQuestionCircle,
   BsCheckCircle,
@@ -27,6 +26,7 @@ import "./candidatelist.scss";
 import "./candcardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import { ScorePopup } from "_components/list/scorePopup";
+import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
 
 export function CandCardView({
   name,
@@ -42,6 +42,8 @@ export function CandCardView({
   additionalData,
   onCandidateActions,
 }) {
+  const [rejectReasonModal, setRejectReasonModal] = useState(false);
+  const [title, setTitle] = useState("");
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -62,7 +64,9 @@ export function CandCardView({
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
-
+  const closeModal = function () {
+    setRejectReasonModal(false);
+  };
   const returnPayment = () => {
     if (
       additionalData?.jobPaymentBenefitDtos &&
@@ -92,8 +96,12 @@ export function CandCardView({
     }
   };
 
-  const onBtnClick = (type) => {
-    onCandidateActions(type, additionalData.candidaterecommendedjobid);
+  const onBtnClick = (reason) => {
+    onCandidateActions(
+      "rejected",
+      additionalData.candidaterecommendedjobid,
+      reason
+    );
   };
   const [button, setButton] = useState(false);
   return (
@@ -253,7 +261,7 @@ export function CandCardView({
                       title="Reject"
                       className="btn-icon mb-1"
                       color="primary"
-                      onClick={() => onBtnClick("rejected")}
+                      onClick={() => setRejectReasonModal(true)}
                       size="sm"
                     >
                       Reject <BsXCircle></BsXCircle>
@@ -276,6 +284,14 @@ export function CandCardView({
           </CardBody>
         </Card>
       </div>
+      {rejectReasonModal && (
+        <RejectReasonModal
+          isRMOpen={rejectReasonModal}
+          callBack={(e) => onBtnClick(e)}
+          callBackError={() => closeModal()}
+          title={"rejection"}
+        />
+      )}
     </>
   );
 }
