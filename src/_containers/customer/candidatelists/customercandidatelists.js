@@ -216,6 +216,7 @@ export const CustomerCandidateLists = (props) => {
           md={12}
           lg={8}
           xl={8}
+          xxl={8}
           className="mb-3 tab-selection-text"
         >
           <ButtonGroup size="md" className="cust-btn-tabs">
@@ -327,7 +328,15 @@ export const CustomerCandidateLists = (props) => {
             </Button>
           </ButtonGroup>
         </Col>
-        <Col xs={12} sm={12} md={12} lg={4} xl={4} className="mb-3 right-align">
+        <Col
+          xs={12}
+          sm={12}
+          md={12}
+          lg={4}
+          xl={4}
+          xxl={4}
+          className="mb-3 right-align"
+        >
           {jobList?.length > 0 ? (
             <Input
               value={selectedJobId}
