@@ -721,11 +721,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -797,11 +799,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -872,11 +876,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -947,11 +953,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -1023,11 +1031,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -1098,11 +1108,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}

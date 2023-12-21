@@ -707,28 +707,42 @@ export function ScheduleInterview() {
               <Card>
                 <CardBody className="scheduled-calender">
                   <div className="text-end">
-                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
-                    No response
-                    <div className="ms-3 mb-3 me-1 badge badge-color-green">
-                      P
-                    </div>
-                    Accepted interview{" "}
-                    <div className="ms-3 mb-3 me-0 badge badge-color-red">
-                      P
-                    </div>{" "}
-                    Rejected interview
-                    <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
-                      P
-                    </div>{" "}
-                    Interview completed
-                    <div className="ms-3 mb-3 me-0 badge badge-color-grey">
-                      P
-                    </div>{" "}
-                    Not joined
-                    <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
-                      P
-                    </div>{" "}
-                    Requested for reschedule
+                    <span className="legend">
+                      <div className="mb-3 me-0 badge badge-color-yellow">
+                        P
+                      </div>{" "}
+                      No response
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                        P
+                      </div>
+                      Accepted interview{" "}
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-red">
+                        P
+                      </div>{" "}
+                      Rejected interview
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                        P
+                      </div>{" "}
+                      Interview completed
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-grey">
+                        P
+                      </div>{" "}
+                      Not joined
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
+                        P
+                      </div>{" "}
+                      Requested for reschedule
+                    </span>
                   </div>
                   <Calendar
                     localizer={localizer}

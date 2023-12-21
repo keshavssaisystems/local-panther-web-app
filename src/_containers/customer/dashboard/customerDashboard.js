@@ -54,6 +54,7 @@ export default function CustomerDashboard() {
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
+  console.log(dashboardCounts);
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
@@ -65,23 +66,23 @@ export default function CustomerDashboard() {
     {
       title: "Open jobs",
       count: dashboardCounts.openjobcount,
-      className: "success",
+      className: "primary",
       icon: "lnr-graduation-hat",
       path: "/job-list",
     },
     {
       title: "Pending interview",
       count: dashboardCounts.pendinginterviewschedulescount,
-      className: "warning",
+      className: "info",
       icon: "lnr-calendar-full",
       path: "/scheduled-interview",
     },
     {
-      title: "Upcoming interview",
-      count: dashboardCounts.upcominginterviewcount,
-      className: "primary",
-      icon: "lnr-calendar-full",
-      path: "/scheduled-interview",
+      title: "Liked candidates",
+      count: dashboardCounts.newcandidatelikedcount,
+      className: "success",
+      icon: "lnr-thumbs-up",
+      path: "/candidate-list",
     },
     {
       title: "Matched candidate pending to review",
