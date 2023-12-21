@@ -28,7 +28,7 @@ export const RejectModal = (props) => {
       return false;
     }
 
-    props.onSubmitReject(reason);
+    props.onSubmitReject(reason, 0);
   };
   return (
     <Modal
@@ -51,7 +51,7 @@ export const RejectModal = (props) => {
               <Col>
                 <FormGroup>
                   <Label className="reject-modal-label" for="exampleText">
-                    Reason
+                    Reason <span style={{ color: "red" }}>* </span>
                   </Label>
                   <Input
                     type="textarea"
