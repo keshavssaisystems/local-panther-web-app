@@ -150,6 +150,14 @@ export function App() {
             }
           />
           <Route
+            path="masters/subsidiary/:id"
+            element={
+              <PrivateRoute>
+                <SubsidaryList />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="masters/company"
             element={
               <PrivateRoute>

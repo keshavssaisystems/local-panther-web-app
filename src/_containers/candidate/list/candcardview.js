@@ -96,12 +96,8 @@ export function CandCardView({
     }
   };
 
-  const onBtnClick = (reason) => {
-    onCandidateActions(
-      "rejected",
-      additionalData.candidaterecommendedjobid,
-      reason
-    );
+  const onBtnClick = (type, reason) => {
+    onCandidateActions(type, additionalData.candidaterecommendedjobid, reason);
   };
   const [button, setButton] = useState(false);
   return (
@@ -295,7 +291,7 @@ export function CandCardView({
       {rejectReasonModal && (
         <RejectReasonModal
           isRMOpen={rejectReasonModal}
-          callBack={(e) => onBtnClick(e)}
+          callBack={(reason) => onBtnClick("rejected", reason)}
           callBackError={() => closeModal()}
           title={"rejection"}
         />
