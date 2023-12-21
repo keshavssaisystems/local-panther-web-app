@@ -24,50 +24,27 @@ import {
   ModalBody,
   Input,
 } from "reactstrap";
-import { async } from "q";
 import InputMask from "react-input-mask";
 
 export const AddEditSubsidary = (props) => {
   const dispatch = useDispatch();
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
-  const { openModal, entity, isAddMode, data, setIsAddMode, onClose } = props;
+  const { openModal, isAddMode, data, onClose } = props;
 
   const [editData, setEditData] = useState(data);
 
   const [cityList, setCityList] = useState([]);
   const [countryList, setCountryList] = useState([]);
-  const [cityValue, setCityValue] = useState(0);
-  const [countryValue, setCountryValue] = useState(0);
   const [success, setSuccess] = useState(false);
-  const [selectedFile, setSelectedFile] = useState("");
-  const [logo, setLogo] = useState([]);
   const [error, setError] = useState(false);
-  const employeeList = useSelector((state) => state.dropdown.employeeList);
   const [companyValidation, setCompanyValidation] = useState(false);
   const [subsidaryValidation, setSubsidaryValidation] = useState(false);
 
   const [locationValidation, setLocationValidation] = useState(false);
   const [countryValidation, setCountryValidation] = useState(false);
-  const [save, setSave] = useState(false);
-  useEffect(() => {
-    if (!isAddMode) {
-      let name = data?.logourl?.replace(/^.*[\\\/]/, "");
-      setSelectedFile(name);
-    }
-  }, []);
 
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
-  const authData = localStorage.getItem("token")
-    ? localStorage.getItem("token")
-    : "";
-  const config = {
-    headers: {
-      "content-type": "multipart/form-data",
-      Authorization: `Bearer ${authData}`,
-    },
-  };
   useEffect(() => {
     let country_response;
     country_response = cityList.map(({ countryid: value, ...rest }) => {
@@ -104,9 +81,7 @@ export const AddEditSubsidary = (props) => {
     aboutCompany: Yup.string().max(50),
     numOfEmployees: Yup.string(),
     phone: Yup.string(),
-    email: Yup.string()
-      // .required("Email is required")
-      .matches(emailRegex, "Email is not valid"),
+    email: Yup.string().matches(emailRegex, "Email is not valid"),
     zipcode: Yup.string(),
     countryid: Yup.string().required("Country is required"),
     address: Yup.string(),
@@ -115,9 +90,8 @@ export const AddEditSubsidary = (props) => {
   const formOptions = { resolver: yupResolver(validationSchema) };
 
   // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState, setValue, getValues } =
-    useForm(formOptions);
-  const { errors, isSubmitting } = formState;
+  const { register, formState, setValue } = useForm(formOptions);
+  const { errors } = formState;
 
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -131,18 +105,6 @@ export const AddEditSubsidary = (props) => {
     });
 
     return filter_data;
-  };
-
-  const onSelectCountryDropdown = (data) => {
-    setCountryValue(data.value);
-    setValue("countryid", String(data.value));
-  };
-
-  const setAsyncSelectValue = (data) => {
-    setValue("city", String(data.value));
-    setCityValue(data.value);
-    let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
-    setValue("state", state);
   };
 
   const handleInputChange = (event, check) => {
@@ -191,10 +153,6 @@ export const AddEditSubsidary = (props) => {
     setEditData(data);
   };
 
-  const onCancel = (acceptedFiles) => {
-    setLogo(null);
-    setSelectedFile("");
-  };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
     data.title = title;
@@ -215,7 +173,6 @@ export const AddEditSubsidary = (props) => {
 
   const getValidation = (event) => {
     event.preventDefault();
-    setSave(true);
     Number(event.target.elements.company.value) === 0
       ? setCompanyValidation(true)
       : setCompanyValidation(false);
@@ -234,7 +191,6 @@ export const AddEditSubsidary = (props) => {
       event.target.elements.city.value !== "" &&
       event.target.elements.countryid.value !== ""
     ) {
-      setSave(false);
       onSubmit();
     }
   };
@@ -332,14 +288,14 @@ export const AddEditSubsidary = (props) => {
               <Col md={6}>
                 <FormGroup>
                   <Label for="subsidary">
-                    Subsidary <span style={{ color: "red" }}>* </span>
+                    Subsidiary <span style={{ color: "red" }}>* </span>
                   </Label>
                   <input
                     type="text"
                     name="subsidary"
                     defaultValue={isAddMode ? "" : data?.subsidiaryname}
                     onInput={(e) => handleInputChange(e, "subsidary")}
-                    placeholder="Enter subsidary"
+                    placeholder="Enter subsidiary"
                     className={`field-input placeholder-text form-control ${
                       subsidaryValidation
                         ? "is-invalid error-text"
@@ -348,7 +304,7 @@ export const AddEditSubsidary = (props) => {
                     maxLength={50}
                   />
                   <div className="invalid-feedback">
-                    {subsidaryValidation ? "Subsidary is required" : ""}
+                    {subsidaryValidation ? "Subsidiary is required" : ""}
                   </div>
                 </FormGroup>
               </Col>
@@ -366,40 +322,6 @@ export const AddEditSubsidary = (props) => {
                   />
                 </FormGroup>
               </Col>
-
-              <Col md={6}>
-                <FormGroup>
-                  <Label for="country" className="fw-semi-bold">
-                    Country <span className="text-danger">*</span>
-                  </Label>
-                  <AsyncSelect
-                    name="country"
-                    placeholder="Select country"
-                    placeholderText="search"
-                    isMulti={false}
-                    {...register("countryid")}
-                    defaultOptions={countryList}
-                    className={`placeholder-name ${
-                      countryValidation ? "async-border-red" : "async-no-error"
-                    }`}
-                    onChange={(e) => handleInputChange(e, "country")}
-                    // onMenuOpen={() => checkCityValid()}
-
-                    defaultValue={
-                      isAddMode
-                        ? []
-                        : {
-                            value: 1,
-                            label: data?.countryname,
-                          }
-                    }
-                  />
-                  <div className="async-error-text">
-                    {countryValidation ? "Country is required" : ""}
-                  </div>
-                </FormGroup>
-              </Col>
-
               <Col md={6}>
                 <FormGroup>
                   <Label for="city" className="fw-semi-bold">
@@ -434,6 +356,38 @@ export const AddEditSubsidary = (props) => {
                   />
                   <div className="async-error-text">
                     {locationValidation ? "City, State is required" : ""}
+                  </div>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="country" className="fw-semi-bold">
+                    Country <span className="text-danger">*</span>
+                  </Label>
+                  <AsyncSelect
+                    name="country"
+                    placeholder="Select country"
+                    placeholderText="search"
+                    isMulti={false}
+                    {...register("countryid")}
+                    defaultOptions={countryList}
+                    className={`placeholder-name ${
+                      countryValidation ? "async-border-red" : "async-no-error"
+                    }`}
+                    onChange={(e) => handleInputChange(e, "country")}
+                    // onMenuOpen={() => checkCityValid()}
+
+                    defaultValue={
+                      isAddMode
+                        ? []
+                        : {
+                            value: 1,
+                            label: data?.countryname,
+                          }
+                    }
+                  />
+                  <div className="async-error-text">
+                    {countryValidation ? "Country is required" : ""}
                   </div>
                 </FormGroup>
               </Col>
