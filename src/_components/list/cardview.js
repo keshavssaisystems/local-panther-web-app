@@ -43,7 +43,7 @@ export const CandidateCardView = (props) => {
     setShowReModal(true);
   };
 
-  const onSubmitRejectModal = async (reasonid, comment) => {
+  const onSubmitRejectModal = async (comment, reasonid) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
       customerCandidateListsActions.putRejectCandidate({
@@ -418,8 +418,8 @@ export const CandidateCardView = (props) => {
           <RejectModal
             isRMOpen={showReModal}
             onCancelReject={() => setShowReModal(false)}
-            onSubmitReject={(reason, comment) =>
-              onSubmitRejectModal(reason, comment)
+            onSubmitReject={(comment, reasonid) =>
+              onSubmitRejectModal(comment, reasonid)
             }
             rejectDrpDwnList={props.rejectDrpDwnList}
           />

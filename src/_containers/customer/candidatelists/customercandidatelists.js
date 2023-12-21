@@ -78,9 +78,11 @@ export const CustomerCandidateLists = (props) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   onGetPageList(pageNo, props.type || activeTab, id);
-  // }, [props.type, id]);
+  useEffect(() => {
+    if (id) {
+      onGetPageList(pageNo, props.type || activeTab, id);
+    }
+  }, [props.type, id]);
 
   const returnStatusId = (type) => {
     if (type === "liked") {

@@ -96,12 +96,8 @@ export function CandCardView({
     }
   };
 
-  const onBtnClick = (reason) => {
-    onCandidateActions(
-      "rejected",
-      additionalData.candidaterecommendedjobid,
-      reason
-    );
+  const onBtnClick = (type, reason) => {
+    onCandidateActions(type, additionalData.candidaterecommendedjobid, reason);
   };
   const [button, setButton] = useState(false);
   return (
@@ -115,11 +111,19 @@ export function CandCardView({
             <Row>
               <Col md="12">
                 <Row className="mb-2">
-                  <Col md="7">
+                  <Col xs={7} sm={7} md="7" lg={7} xl={7} xxl={7}>
                     <div className="job-title">{name}</div>
                     <div className="muted-name">{customer}</div>
                   </Col>
-                  <Col className="right-align">
+                  <Col
+                    xs={5}
+                    sm={5}
+                    md="5"
+                    lg={5}
+                    xl={5}
+                    xxl={5}
+                    className="right-align"
+                  >
                     {additionalData.avgscore ? (
                       <>
                         <Dropdown
@@ -287,7 +291,7 @@ export function CandCardView({
       {rejectReasonModal && (
         <RejectReasonModal
           isRMOpen={rejectReasonModal}
-          callBack={(e) => onBtnClick(e)}
+          callBack={(reason) => onBtnClick("rejected", reason)}
           callBackError={() => closeModal()}
           title={"rejection"}
         />

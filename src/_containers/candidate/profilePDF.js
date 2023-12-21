@@ -179,7 +179,7 @@ export function ProfilePDF(props) {
                   {getData?.length > 0 ? (
                     <p>
                       <span style={{ fontWeight: "600" }}>
-                        Willing to relocate to:{" "}
+                        Willing to relocate:{" "}
                         {getData[0].willingtorelocate ? "Yes" : "No"}
                       </span>
                     </p>

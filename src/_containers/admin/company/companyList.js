@@ -19,8 +19,11 @@ import { dropdownActions, addCustomerActions } from "_store";
 import { getCompanies } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
+import { Nav, NavItem, PopoverBody } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 export const CompanyList = () => {
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
@@ -66,6 +69,22 @@ export const CompanyList = () => {
         >
           {row.companyname}
         </div>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Subsidiary count",
+
+      cell: (row) => (
+        <span
+          style={{
+            cursor: row.subsidiarycount !== 0 ? "pointer" : "not-allowed",
+          }}
+          className={row.subsidiarycount !== 0 ? "editrow" : ""}
+          onClick={() => navigateTo(row)}
+        >
+          {row.subsidiarycount}
+        </span>
       ),
       sortable: true,
     },
@@ -131,6 +150,12 @@ export const CompanyList = () => {
     setIsEdit(false);
     setEditData(obj);
     setOpenModal(true);
+  };
+
+  const navigateTo = (row) => {
+    if (row.subsidiarycount !== 0) {
+      navigate(`/masters/subsidiary/${row.companyid}`);
+    }
   };
 
   const closeModal = () => {
