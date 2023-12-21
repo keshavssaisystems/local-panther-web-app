@@ -11,8 +11,11 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditSubsidary } from "./addEditSubsidary";
 import { getLocationText } from "_helpers/helper";
 import { editSubsidiary } from "_containers/admin/_redux/addCustomer.slice";
+import { useParams } from "react-router-dom";
 
-export const SubsidaryList = () => {
+export const SubsidaryList = (props) => {
+  debugger;
+  const { id } = useParams();
   const [openModal, setOpenModal] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({});
@@ -33,7 +36,7 @@ export const SubsidaryList = () => {
     getSubsidaryList(pageSize, pageNo);
   }, []);
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
-  const [companyId, setCompanyId] = useState(0);
+  const [companyId, setCompanyId] = useState(id ? id : 0);
 
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -150,12 +153,10 @@ export const SubsidaryList = () => {
 
   const closeModal = () => {
     setOpenModal(false);
-    dispatch(
-      getSubsidary({
-        pageSize: pageSize,
-        pageNumber: pageNo,
-      })
-    );
+    getSubsidaryList({
+      pageSize: pageSize,
+      pageNumber: pageNo,
+    });
   };
 
   const getSubsidaryList = async function (pageSize, pageNo) {
@@ -349,6 +350,7 @@ export const SubsidaryList = () => {
         type: "warning",
       });
     }
+    getSubsidaryList(pageSize, pageNo);
   };
 
   const handlePerRowsChange = async (pagesize) => {
@@ -383,6 +385,9 @@ export const SubsidaryList = () => {
                       {companyDropdown?.length > 0 &&
                         companyDropdown?.map((options) => (
                           <option
+                            selected={
+                              id ? options.companyid === Number(id) : ""
+                            }
                             key={options.companyid}
                             value={options.companyid}
                           >
@@ -416,7 +421,7 @@ export const SubsidaryList = () => {
                     type="submit"
                     onClick={(e) => addModal()}
                   >
-                    Add subsidary
+                    Add subsidiary
                   </Button>
                   <div
                     className={cx(
