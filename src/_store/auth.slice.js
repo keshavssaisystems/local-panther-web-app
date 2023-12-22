@@ -106,11 +106,13 @@ const authSlice = createSlice({
     token: localStorage.getItem("token") ? localStorage.getItem("token") : "",
     error: null,
     shareJobDetail: [],
+    loader: false,
   },
   reducers: {
     logout: (state, { payload }) => {
       state.user = {};
       state.token = null;
+      state.loader = false;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToekn");
@@ -128,6 +130,7 @@ const authSlice = createSlice({
   extraReducers: {
     [loginThunk.pending]: (state, { payload }) => {
       state.error = null;
+      state.loader = true;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
       const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
@@ -165,10 +168,12 @@ const authSlice = createSlice({
       const { from } = history.location.state || {
         from: { pathname: "/" },
       };
-      history.navigate(from);
+      // state.loader = false;
+      // history.navigate(from);
     },
     [loginThunk.rejected]: (state, action) => {
       state.error = action.error;
+      state.loader = false;
     },
     [registerThunk.pending]: (state, { payload }) => {
       state.error = null;
@@ -245,6 +250,7 @@ const authSlice = createSlice({
     [logoutThunk.fulfilled]: (state, { payload = {} }) => {
       state.user = {};
       state.token = null;
+      state.loader = false;
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToekn");
