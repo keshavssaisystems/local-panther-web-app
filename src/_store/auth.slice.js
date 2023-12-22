@@ -168,8 +168,8 @@ const authSlice = createSlice({
       const { from } = history.location.state || {
         from: { pathname: "/" },
       };
-      // state.loader = false;
-      // history.navigate(from);
+      state.loader = false;
+      history.navigate(from);
     },
     [loginThunk.rejected]: (state, action) => {
       state.error = action.error;
