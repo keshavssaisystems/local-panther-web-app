@@ -142,7 +142,7 @@ export function Login() {
               md={{ order: 1, size: 12 }}
               sm={{ order: 1, size: 12 }}
               xs={{ order: 1, size: 12 }}
-              className="h-100 d-flex bg-white justify-content-center align-items-center"
+              className="h-100 d-flex bg-white justify-content-center align-items-center  pe-2 ps-2"
             >
               <Col lg="9" md="10" sm="12">
                 <img
