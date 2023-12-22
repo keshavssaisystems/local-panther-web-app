@@ -546,8 +546,14 @@ export function Registration() {
             lg="7"
             md="12"
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
+            style={{ overflow: "auto" }}
           >
-            <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
+            <Col
+              lg="9"
+              md="10"
+              sm="12"
+              className="mx-auto app-login-box me-2 ms-2"
+            >
               <div className="">
                 <img src={logo} alt="logo" className="logo mb-2" />
               </div>
@@ -589,7 +595,7 @@ export function Registration() {
                     <Link to="/login">
                       <Button
                         style={{ background: "#2F2E2E" }}
-                        className=" btn-text"
+                        className=" btn-text me-2"
                         size="lg"
                       >
                         Back

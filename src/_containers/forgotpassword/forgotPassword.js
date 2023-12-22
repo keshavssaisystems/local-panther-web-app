@@ -99,7 +99,7 @@ export function ForgotPassword() {
             md="12"
             className="h-100 d-flex bg-white justify-content-center align-items-center"
           >
-            <Col lg="6" md="8" sm="12">
+            <Col lg="6" md="8" sm="12" className="ps-2">
               <img
                 src={logo}
                 className="logo mb-2"
