@@ -15,7 +15,8 @@ import {
 
 import Slider from "react-slick";
 import { messaging } from "../../firebase";
-
+import LoadingOverlay from "react-loading-overlay-ts";
+import Loader from "react-loaders";
 import { BsLinkedin, BsGoogle, BsApple } from "react-icons/bs";
 
 import { Col, Row, Button, Form, FormGroup, Label } from "reactstrap";
@@ -32,6 +33,7 @@ export function Login() {
   const dispatch = useDispatch();
   const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
+  const loading = useSelector((state) => state.auth.loader);
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [sliderSettings] = useState({
@@ -104,164 +106,178 @@ export function Login() {
   return (
     <>
       <div className="app-container login-container">
-        <div className="h-100">
-          <Row className="h-100 g-0">
-            <Col
-              xxl={{ order: 1, size: 4 }}
-              xl={{ order: 1, size: 4 }}
-              lg={{ order: 1, size: 4 }}
-              md={{ order: 2, size: 12 }}
-              sm={{ order: 2, size: 12 }}
-              xs={{ order: 2, size: 12 }}
-              className="d-lg-block"
-            >
-              <div className="">
-                <Slider {...sliderSettings}>
-                  <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                    <div
-                      className="slide-img-bg"
-                      style={{
-                        backgroundImage: "url(" + loginBgImg + ")",
-                      }}
-                    />
-                    <div className="login-slider-title">
-                      <p>Experts In Human Capital</p>
-                      <p className="login-slider-text m-5">
-                        What makes The Panther Group the ideal career partner?
-                        We focus on what you want most from your career!
-                      </p>
+        <LoadingOverlay
+          tag="div"
+          active={loading}
+          styles={{
+            overlay: (base) => ({
+              ...base,
+              background: "#fff",
+              opacity: 0.5,
+            }),
+          }}
+          spinner={
+            <Loader active={loading} type="line-scale-pulse-out-rapid"></Loader>
+          }
+        >
+          <div className="h-100">
+            <Row className="h-100 g-0">
+              <Col
+                xxl={{ order: 1, size: 4 }}
+                xl={{ order: 1, size: 4 }}
+                lg={{ order: 1, size: 4 }}
+                md={{ order: 2, size: 12 }}
+                sm={{ order: 2, size: 12 }}
+                xs={{ order: 2, size: 12 }}
+                className="d-lg-block"
+              >
+                <div className="">
+                  <Slider {...sliderSettings}>
+                    <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
+                      <div
+                        className="slide-img-bg"
+                        style={{
+                          backgroundImage: "url(" + loginBgImg + ")",
+                        }}
+                      />
+                      <div className="login-slider-title">
+                        <p>Experts In Human Capital</p>
+                        <p className="login-slider-text m-5">
+                          What makes The Panther Group the ideal career partner?
+                          We focus on what you want most from your career!
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Slider>
-              </div>
-            </Col>
-            <Col
-              xxl={{ order: 2, size: 8 }}
-              xl={{ order: 2, size: 8 }}
-              lg={{ order: 2, size: 8 }}
-              md={{ order: 1, size: 12 }}
-              sm={{ order: 1, size: 12 }}
-              xs={{ order: 1, size: 12 }}
-              className="h-100 d-flex bg-white justify-content-center align-items-center  pe-2 ps-2"
-            >
-              <Col lg="9" md="10" sm="12">
-                <img
-                  src={logo}
-                  className="logo mb-2"
-                  width={"200px"}
-                  alt="logo"
-                />
-                <Row className="login-divider" />
+                  </Slider>
+                </div>
+              </Col>
+              <Col
+                xxl={{ order: 2, size: 8 }}
+                xl={{ order: 2, size: 8 }}
+                lg={{ order: 2, size: 8 }}
+                md={{ order: 1, size: 12 }}
+                sm={{ order: 1, size: 12 }}
+                xs={{ order: 1, size: 12 }}
+                className="h-100 d-flex bg-white justify-content-center align-items-center"
+              >
+                <Col lg="9" md="10" sm="12">
+                  <img
+                    src={logo}
+                    className="logo mb-2"
+                    width={"200px"}
+                    alt="logo"
+                  />
+                  <Row className="login-divider" />
 
-                <p className="mb-3 mt-4 title-text">
-                  Please sign in to your account.
-                </p>
+                  <p className="mb-3 mt-4 title-text">
+                    Please sign in to your account.
+                  </p>
 
-                <div className="login-form">
-                  <Form onSubmit={handleSubmit(onSubmit)}>
-                    <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="email" className="input-label">
-                            Email <span className="required-icon">*</span>
-                          </Label>
-                          <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            placeholder="Email"
-                            {...register("email")}
-                            className={`login-field-input placeholder-text form-control ${
-                              errors.email
-                                ? "is-invalid error-text"
-                                : "input-text"
-                            }`}
-                          />
-                          <div className="invalid-feedback">
-                            {errors.email?.message}
-                          </div>
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="password" className="input-label">
-                            Password <span className="required-icon">*</span>
-                          </Label>
-                          <InputGroup>
+                  <div className="login-form">
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="email" className="input-label">
+                              Email <span className="required-icon">*</span>
+                            </Label>
                             <input
-                              placeholder="Enter password"
-                              name="password"
-                              type={showPassword ? "text" : "password"}
-                              id="password"
-                              {...register("password")}
+                              type="email"
+                              name="email"
+                              id="email"
+                              placeholder="Email"
+                              {...register("email")}
                               className={`login-field-input placeholder-text form-control ${
-                                errors.password ? "is-invalid" : ""
+                                errors.email
+                                  ? "is-invalid error-text"
+                                  : "input-text"
                               }`}
                             />
-                            <InputGroupText
-                              onClick={(evt) => togglePasswordVisibility()}
-                            >
-                              {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </InputGroupText>
                             <div className="invalid-feedback">
-                              {errors.password?.message}
+                              {errors.email?.message}
                             </div>
-                          </InputGroup>
-                          <div className="mt-4 mb-3 float-end">
-                            <Link
-                              to="/forgot-password"
-                              className="text-primary forgot-pwd-text me-3 "
-                            >
-                              Forgot password?
-                            </Link>
+                          </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label for="password" className="input-label">
+                              Password <span className="required-icon">*</span>
+                            </Label>
+                            <InputGroup>
+                              <input
+                                placeholder="Enter password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                {...register("password")}
+                                className={`login-field-input placeholder-text form-control ${
+                                  errors.password ? "is-invalid" : ""
+                                }`}
+                              />
+                              <InputGroupText
+                                onClick={(evt) => togglePasswordVisibility()}
+                              >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                              </InputGroupText>
+                              <div className="invalid-feedback">
+                                {errors.password?.message}
+                              </div>
+                            </InputGroup>
+                            <div className="mt-4 mb-3 float-end">
+                              <Link
+                                to="/forgot-password"
+                                className="text-primary forgot-pwd-text me-3 "
+                              >
+                                Forgot password?
+                              </Link>
 
-                            <Button
-                              disabled={isSubmitting}
-                              color="primary"
-                              className="btn-text"
-                              size="lg"
-                            >
-                              {isSubmitting && (
-                                <span className="spinner-border spinner-border-sm me-1"></span>
-                              )}
-                              <span className="btn-text">Sign in</span>
-                            </Button>
-                            <div></div>
-                          </div>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col className="login-divider me-2" />
+                              <Button
+                                disabled={isSubmitting}
+                                color="primary"
+                                className="btn-text"
+                                size="lg"
+                              >
+                                {isSubmitting && (
+                                  <span className="spinner-border spinner-border-sm me-1"></span>
+                                )}
+                                <span className="btn-text">Sign in</span>
+                              </Button>
+                              <div></div>
+                            </div>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="login-divider me-2" />
 
-                      <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
-                        or
-                      </Col>
-                      <Col className="login-divider" />
-                    </Row>
+                        <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                          or
+                        </Col>
+                        <Col className="login-divider" />
+                      </Row>
 
-                    {error && (
-                      <div>
-                        <Row>
-                          <Col md="3">
-                            <Card className="mb-3 text-center">
-                              <CardBody>
-                                <CardTitle>Error</CardTitle>
+                      {error && (
+                        <div>
+                          <Row>
+                            <Col md="3">
+                              <Card className="mb-3 text-center">
+                                <CardBody>
+                                  <CardTitle>Error</CardTitle>
 
-                                <SweetAlert
-                                  title={authError.message}
-                                  type="error"
-                                  onConfirm={() => setError(false)}
-                                />
-                              </CardBody>
-                            </Card>
-                          </Col>
-                        </Row>
-                      </div>
-                    )}
-                  </Form>
+                                  <SweetAlert
+                                    title={authError.message}
+                                    type="error"
+                                    onConfirm={() => setError(false)}
+                                  />
+                                </CardBody>
+                              </Card>
+                            </Col>
+                          </Row>
+                        </div>
+                      )}
+                    </Form>
 
-                  {/* <Row className="mt-5 d-flex justify-content-center align-items-center">
+                    {/* <Row className="mt-5 d-flex justify-content-center align-items-center">
                     <Col></Col>
                     <Col>
                       <Row>
@@ -285,16 +301,17 @@ export function Login() {
                     <Col></Col>
                   </Row> */}
 
-                  <p className="mt-3 d-flex justify-content-center align-items-center">
-                    <Link to="/registration" className="forgot-pwd-text">
-                      Not a member yet?
-                    </Link>
-                  </p>
-                </div>
+                    <p className="mt-3 d-flex justify-content-center align-items-center">
+                      <Link to="/registration" className="forgot-pwd-text">
+                        Not a member yet?
+                      </Link>
+                    </p>
+                  </div>
+                </Col>
               </Col>
-            </Col>
-          </Row>
-        </div>
+            </Row>
+          </div>
+        </LoadingOverlay>
       </div>
     </>
   );

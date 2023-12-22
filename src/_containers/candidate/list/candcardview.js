@@ -43,7 +43,7 @@ export function CandCardView({
   onCandidateActions,
 }) {
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
-  const [title, setTitle] = useState("");
+
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
