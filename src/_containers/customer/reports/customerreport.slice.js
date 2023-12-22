@@ -17,7 +17,9 @@ export const getCustReportJobList = createAsyncThunk(
       process.env.REACT_APP_NEW_API_URL
     }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
       payload.startDate ? `'${payload.startDate}'` : null
-    },@enddate=${payload.endDate ? `'${payload.endDate}'` : null}`;
+    },@enddate=${
+      payload.endDate ? `'${payload.endDate}'` : null
+    },@subsidiaryid=${payload.subsidiaryid ? payload.subsidiaryid : null}`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_LIST_END_POINT);
   }
 );
@@ -187,6 +189,15 @@ export const getCustReportSchdIntvDetail = createAsyncThunk(
   }
 );
 
+// get report Subsidiary List
+export const getReportSubsidiaryList = createAsyncThunk(
+  `${name}/getReportSubsidiaryList`,
+  async (companyId) => {
+    const SUBSIDIARY_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Subsidiary/GetSubsidiaryDropdown?companyId=${companyId}`;
+    return await fetchWrapper.get(SUBSIDIARY_END_POINT);
+  }
+);
+
 // Create the slice
 const customerReportSlice = createSlice({
   name,
@@ -204,6 +215,7 @@ const customerReportSlice = createSlice({
     recommendedJobStatusList: [],
     jobDetail: [],
     scheduleInterviewDetail: [],
+    subsidiaryList: [],
   },
   reducers: {
     // logout: (state, { payload }) => {
@@ -346,6 +358,14 @@ const customerReportSlice = createSlice({
         : [];
     },
     [getCustReportSchdIntvDetail.rejected]: (state, action) => {},
+    // customer report subsidiary list
+    [getReportSubsidiaryList.pending]: (state) => {
+      state.subsidiaryList = [];
+    },
+    [getReportSubsidiaryList.fulfilled]: (state, { payload = {} }) => {
+      state.subsidiaryList = payload?.data ? payload?.data : [];
+    },
+    [getReportSubsidiaryList.rejected]: (state, action) => {},
   },
 });
 
@@ -364,6 +384,7 @@ export const customerReportActions = {
   getScheduledCandidatesForCustomerDropdown,
   getCustReportJobDetail,
   getCustReportSchdIntvDetail,
+  getReportSubsidiaryList,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;

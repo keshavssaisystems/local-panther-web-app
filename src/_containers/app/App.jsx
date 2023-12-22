@@ -64,6 +64,7 @@ import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
+import { SubsidaryList } from "_containers/admin/masters/subsidary";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -75,6 +76,7 @@ export function App() {
     if (authUser) {
       updatePushNotifications();
       messaging.onMessage((payload) => {
+        console.log(payload);
         toast(
           <Row>
             <p>
@@ -136,6 +138,22 @@ export function App() {
             element={
               <PrivateRoute>
                 <Skills />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="masters/subsidiary"
+            element={
+              <PrivateRoute>
+                <SubsidaryList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="masters/subsidiary/:id"
+            element={
+              <PrivateRoute>
+                <SubsidaryList />
               </PrivateRoute>
             }
           />
@@ -320,6 +338,10 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
+          <Route
+            path="/candidate-list/liked"
+            element={<CustomerCandidateLists type={"liked"} />}
+          />
           <Route
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}

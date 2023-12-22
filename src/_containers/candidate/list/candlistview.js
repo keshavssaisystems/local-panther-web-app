@@ -70,8 +70,11 @@ export const CandListView = (props) => {
             title="Reject"
             className="btn-icon"
             color="danger"
+            // onClick={() =>
+            //   onBtnClick("rejected", row.candidaterecommendedjobid)
+            // }
             onClick={() =>
-              onBtnClick("rejected", row.candidaterecommendedjobid)
+              rejectReason("reject", "rejected", row.candidaterecommendedjobid)
             }
           >
             <img src={customerIcons?.list_reject} alt="list reject"></img>
@@ -95,8 +98,12 @@ export const CandListView = (props) => {
             // outline
             size="sm"
             title="Reject"
+            // onClick={() =>
+            //   onBtnClick("rejected", row.candidaterecommendedjobid)
+            // }
+
             onClick={() =>
-              onBtnClick("rejected", row.candidaterecommendedjobid)
+              rejectReason("reject", "rejected", row.candidaterecommendedjobid)
             }
             className="btn-icon"
             color="danger"
@@ -122,8 +129,12 @@ export const CandListView = (props) => {
             // outline
             size="sm"
             title="Reject"
+            // onClick={() =>
+            //   onBtnClick("rejected", row.candidaterecommendedjobid)
+            // }
+
             onClick={() =>
-              onBtnClick("rejected", row.candidaterecommendedjobid)
+              rejectReason("reject", "rejected", row.candidaterecommendedjobid)
             }
             className="btn-icon"
             color="danger"

@@ -135,6 +135,15 @@ export const getStateListThunk = createAsyncThunk(
   }
 );
 
+// getSubsidiaryListThunk thunk
+export const getSubsidiaryListThunk = createAsyncThunk(
+  `${name}/getSubsidiaryListThunk`,
+  async (companyId) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Subsidiary/GetSubsidiaryDropdown?companyId=${companyId}`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT);
+  }
+);
+
 // Create the slice
 const dropdownSlice = createSlice({
   name,
@@ -153,6 +162,7 @@ const dropdownSlice = createSlice({
     statusList: [],
     levelOfEducationList: [],
     fieldOfStudyList: [],
+    subsidiaryList: [],
     loading: false,
   },
   reducers: {},
@@ -327,6 +337,17 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getSubsidiaryListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getSubsidiaryListThunk.fulfilled]: (state, action) => {
+      state.subsidiaryList = action.payload.data;
+      state.loading = false;
+    },
+    [getSubsidiaryListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -348,6 +369,7 @@ export const dropdownActions = {
   getStatusListThunk,
   getFieldOfStudyThunk,
   getLevelOFEducationThunk,
+  getSubsidiaryListThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

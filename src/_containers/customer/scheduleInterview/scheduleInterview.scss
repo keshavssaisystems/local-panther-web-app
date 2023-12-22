@@ -14,12 +14,12 @@
     background-color: #3ac47d;
     border-color: #3ac47d;
   }
-  .badge-color-blue{
+  .badge-color-blue {
     color: #2f479b;
     background-color: #2f479b;
     border: 1px solid #2f479b;
   }
-  .badge-color-white{
+  .badge-color-white {
     color: #fff;
     background-color: #fff;
     border: 1px solid #2f479b;
@@ -87,34 +87,38 @@
   .rbc-time-header {
     margin-left: 77px !important;
   }
-  .badge-color-yellow{
+  .badge-color-yellow {
     color: rgb(247, 185, 36);
     background-color: rgb(247, 185, 36);
     border-color: rgb(247, 185, 36);
   }
-  .badge-color-green{
+  .badge-color-green {
     color: green;
     background-color: green;
     border-color: green;
   }
-  .badge-color-red{
+  .badge-color-red {
     color: #d92550;
     background-color: #d92550;
     border-color: #d92550;
   }
-  .badge-color-skyblue{
+  .badge-color-skyblue {
     color: #30b1ff;
     background-color: #30b1ff;
     border-color: #30b1ff;
   }
-  .badge-color-grey{
+  .badge-color-grey {
     color: #6c757d;
     background-color: #6c757d;
     border-color: #6c757d;
   }
-  .badge-color-darkblue{
+  .badge-color-darkblue {
     color: #2f479b;
     background-color: #2f479b;
     border-color: #2f479b;
+  }
+
+  .legend {
+    display: inline-block;
   }
 }

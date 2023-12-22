@@ -106,7 +106,15 @@ export function Login() {
       <div className="app-container login-container">
         <div className="h-100">
           <Row className="h-100 g-0">
-            <Col lg="4" className="d-lg-block">
+            <Col
+              xxl={{ order: 1, size: 4 }}
+              xl={{ order: 1, size: 4 }}
+              lg={{ order: 1, size: 4 }}
+              md={{ order: 2, size: 12 }}
+              sm={{ order: 2, size: 12 }}
+              xs={{ order: 2, size: 12 }}
+              className="d-lg-block"
+            >
               <div className="">
                 <Slider {...sliderSettings}>
                   <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
@@ -128,9 +136,13 @@ export function Login() {
               </div>
             </Col>
             <Col
-              lg="8"
-              md="12"
-              className="h-100 d-flex bg-white justify-content-center align-items-center"
+              xxl={{ order: 2, size: 8 }}
+              xl={{ order: 2, size: 8 }}
+              lg={{ order: 2, size: 8 }}
+              md={{ order: 1, size: 12 }}
+              sm={{ order: 1, size: 12 }}
+              xs={{ order: 1, size: 12 }}
+              className="h-100 d-flex bg-white justify-content-center align-items-center  pe-2 ps-2"
             >
               <Col lg="9" md="10" sm="12">
                 <img

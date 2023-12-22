@@ -7,6 +7,8 @@ import {
   customerDashboardActions,
   createjobActions,
   scheduleInterviewActions,
+  dropdownActions,
+  customerCandidateListsActions,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
@@ -44,10 +46,15 @@ export default function CustomerDashboard() {
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
+    dispatch(
+      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
+    );
+    dispatch(customerCandidateListsActions.getDurationOptions());
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
+  console.log(dashboardCounts);
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
@@ -59,23 +66,23 @@ export default function CustomerDashboard() {
     {
       title: "Open jobs",
       count: dashboardCounts.openjobcount,
-      className: "success",
+      className: "primary",
       icon: "lnr-graduation-hat",
       path: "/job-list",
     },
     {
       title: "Pending interview",
       count: dashboardCounts.pendinginterviewschedulescount,
-      className: "warning",
+      className: "info",
       icon: "lnr-calendar-full",
       path: "/scheduled-interview",
     },
     {
-      title: "Upcoming interview",
-      count: dashboardCounts.upcominginterviewcount,
-      className: "primary",
-      icon: "lnr-calendar-full",
-      path: "/scheduled-interview",
+      title: "Liked candidates",
+      count: dashboardCounts.newcandidatelikedcount,
+      className: "success",
+      icon: "lnr-thumbs-up",
+      path: "/candidate-list/liked",
     },
     {
       title: "Matched candidate pending to review",

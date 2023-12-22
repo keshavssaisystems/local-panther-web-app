@@ -43,7 +43,7 @@ export const CandidateCardView = (props) => {
     setShowReModal(true);
   };
 
-  const onSubmitRejectModal = async (reasonid, comment) => {
+  const onSubmitRejectModal = async (comment, reasonid) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
       customerCandidateListsActions.putRejectCandidate({
@@ -194,7 +194,7 @@ export const CandidateCardView = (props) => {
           <Row>
             <Col className="col-12">
               <Row>
-                <Col className="col-9">
+                <Col xs={7} sm={7} md={7} lg={7} xl={8} xxl={9}>
                   <div className="card-title">
                     {props?.data?.candidateQualificationsDtos &&
                     props?.data?.candidateQualificationsDtos.length > 0
@@ -220,7 +220,7 @@ export const CandidateCardView = (props) => {
                       : ""}
                   </p>
                 </Col>
-                <Col className="col-3">
+                <Col xs={5} sm={5} md={5} lg={5} xl={4} xxl={3}>
                   <div className="card-title right-align">
                     {props?.data?.avgscore ? (
                       <>
@@ -418,8 +418,8 @@ export const CandidateCardView = (props) => {
           <RejectModal
             isRMOpen={showReModal}
             onCancelReject={() => setShowReModal(false)}
-            onSubmitReject={(reason, comment) =>
-              onSubmitRejectModal(reason, comment)
+            onSubmitReject={(comment, reasonid) =>
+              onSubmitRejectModal(comment, reasonid)
             }
             rejectDrpDwnList={props.rejectDrpDwnList}
           />

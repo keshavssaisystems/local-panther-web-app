@@ -13,6 +13,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Input,
 } from "reactstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,6 +29,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
   getCustReportJobList,
   getCustReportJobDetail,
+  getReportSubsidiaryList,
 } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 import moment from "moment";
@@ -45,6 +47,7 @@ export function CustomerReportJobList() {
   let [filter, setFilter] = useState({});
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
+  let [subsidiaryId, setSubsidiaryId] = useState();
   const [excelData, setExcelData] = useState([]);
   const [showJDModal, setShowJDModal] = useState(false);
 
@@ -53,9 +56,16 @@ export function CustomerReportJobList() {
   const jobDetail = useSelector(
     (state) => state?.customerReportReducer?.jobDetail
   );
+
+  const subsidiaryList = useSelector(
+    (state) => state?.customerReportReducer?.subsidiaryList
+  );
   useEffect(() => {
     onGetCustReportJobList();
-
+    let compId = localStorage.getItem("companyid")
+      ? localStorage.getItem("companyid")
+      : "";
+    dispatch(getReportSubsidiaryList(compId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -76,6 +86,8 @@ export function CustomerReportJobList() {
           "No. of Accepted": data.acceptedcandidates,
           "No. of Rejected": data.rejectedcandidates,
           "No. of Interviews Scheduled": data.scheduledinterviews,
+          SubsidiaryId: data?.subsidiaryid,
+          SubsidiaryName: data?.subsidiaryname,
         };
       });
       setExcelData([
@@ -106,10 +118,18 @@ export function CustomerReportJobList() {
     });
   };
 
+  const handleChange = (name, value) => {
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
   const onSubmitClear = () => {
     setFilter({});
     setStartDate(null);
     setEndDate(null);
+    setSubsidiaryId("");
     onGetCustReportJobList({});
   };
 
@@ -290,6 +310,35 @@ export function CustomerReportJobList() {
             </CardHeader>
             <CardBody>
               <Row>
+                <Col lg="2" md="4" sm="12" sx="12">
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      value={subsidiaryId}
+                      name="subsidiary"
+                      id="subsidiary"
+                      placeholder="Subsidiary Id"
+                      onChange={(e) => {
+                        handleChange("subsidiaryid", e.target.value);
+                        setSubsidiaryId(e.target.value);
+                      }}
+                    >
+                      <option value={""}>Select a Subsidiary</option>
+                      {subsidiaryList?.length > 0 ? (
+                        subsidiaryList.map((data) => (
+                          <option
+                            value={data.subsidiaryid ? data.subsidiaryid : ""}
+                            key={data.subsidiaryid ? data.subsidiaryid : ""}
+                          >
+                            {data.subsidiaryname ? data.subsidiaryname : ""}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
+                  </FormGroup>
+                </Col>
                 <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
