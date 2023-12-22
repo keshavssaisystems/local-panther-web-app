@@ -86,6 +86,8 @@ export function CustomerReportJobList() {
           "No. of Accepted": data.acceptedcandidates,
           "No. of Rejected": data.rejectedcandidates,
           "No. of Interviews Scheduled": data.scheduledinterviews,
+          SubsidiaryId: data?.subsidiaryid,
+          SubsidiaryName: data?.subsidiaryname,
         };
       });
       setExcelData([

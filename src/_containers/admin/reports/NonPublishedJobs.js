@@ -110,6 +110,8 @@ export function NonPublishedJobs({ title }) {
             typeof rec?.nicetohaveskills === "string" && rec?.nicetohaveskills,
           "Open position": rec?.noofopenposition,
           Address: rec.address,
+          SubsidiaryId: rec?.subsidiaryid,
+          SubsidiaryName: rec?.subsidiaryname,
         };
       });
       setExcelData([{ sheetName: "NonPublishedJobs", details: filteredData }]);

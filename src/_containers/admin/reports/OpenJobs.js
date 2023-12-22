@@ -90,6 +90,8 @@ export function OpenJobs({ title }) {
           Scheduled: rec.scheduled,
           Accepted: rec.accept,
           Rejected: rec.reject,
+          SubsidiaryId: rec?.subsidiaryid,
+          SubsidiaryName: rec?.subsidiaryname,
         };
       });
       setExcelData([{ sheetName: "OpenJobs", details: filteredData }]);

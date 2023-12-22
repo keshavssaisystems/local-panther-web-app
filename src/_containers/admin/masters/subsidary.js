@@ -14,7 +14,6 @@ import { editSubsidiary } from "_containers/admin/_redux/addCustomer.slice";
 import { useParams } from "react-router-dom";
 
 export const SubsidaryList = (props) => {
-  debugger;
   const { id } = useParams();
   const [openModal, setOpenModal] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
