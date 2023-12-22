@@ -152,17 +152,14 @@ export const SubsidaryList = (props) => {
 
   const closeModal = () => {
     setOpenModal(false);
-    getSubsidaryList({
-      pageSize: pageSize,
-      pageNumber: pageNo,
-    });
+    getSubsidaryList(pageSize, pageNo);
   };
 
-  const getSubsidaryList = async function (pageSize, pageNo) {
+  const getSubsidaryList = async function (pagesize, pageno) {
     setLoading(true);
     let urlParams = {
-      pageSize: pageSize,
-      pageNumber: pageNo,
+      pageSize: pagesize,
+      pageNumber: pageno,
     };
 
     if (companyId !== 0) {
