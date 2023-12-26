@@ -213,7 +213,7 @@ export function AdminDashboard() {
             analyiticalCounts?.Past30to60DaysCandidateRegistration
           ? "border-success"
           : "border-danger",
-      count: analyiticalCounts?.Past30to60DaysCandidateRegistration,
+      count: analyiticalCounts?.Past30DaysCandidateRegistration,
       arrowDirection:
         analyiticalCounts?.Past30DaysCandidateRegistration ===
         analyiticalCounts?.Past30to60DaysCandidateRegistration
