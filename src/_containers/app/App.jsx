@@ -59,7 +59,7 @@ import { Skills } from "_containers/admin/masters/skills";
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
 import { ToastContainer, toast } from "react-toastify";
-import { Row } from "reactstrap";
+import { Row, Button } from "reactstrap";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
@@ -76,13 +76,28 @@ export function App() {
     if (authUser) {
       updatePushNotifications();
       messaging.onMessage((payload) => {
-        console.log(payload);
+        let isProfilePage = window.location.pathname.indexOf("/profile") !== -1;
         toast(
           <Row>
             <p>
               <b>{payload.notification.title}</b>
             </p>
             <p>{payload.notification.body}</p>
+            {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
+              <p>
+                Updated resume data available
+                <Button
+                  color="link"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
+                  REFRESH
+                </Button>
+              </p>
+            ) : (
+              <></>
+            )}
           </Row>,
           {
             position: "bottom-right",
