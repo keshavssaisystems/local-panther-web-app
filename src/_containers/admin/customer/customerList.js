@@ -115,6 +115,7 @@ export const CustomerList = () => {
     {
       name: "Action",
       id: "isactive",
+
       cell: (row) => (
         <div>
           <div
@@ -197,6 +198,7 @@ export const CustomerList = () => {
         </div>
       ),
       sortable: false,
+      width: "20%",
     },
   ];
 

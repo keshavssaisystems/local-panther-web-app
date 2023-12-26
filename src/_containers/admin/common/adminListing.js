@@ -134,7 +134,7 @@ export const AdminListing = ({ entity }) => {
       name: "Action",
       id: "isactive",
       cell: (row) => (
-        <div className="d-block w-100">
+        <div className="d-block">
           <div
             title="Active/Inactive user"
             className="switch has-switch  me-2"
@@ -206,6 +206,7 @@ export const AdminListing = ({ entity }) => {
         </div>
       ),
       sortable: false,
+      width: "27%",
     },
   ];
 
