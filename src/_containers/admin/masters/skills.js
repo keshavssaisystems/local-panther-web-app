@@ -60,7 +60,7 @@ export const Skills = () => {
 
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
-  let title = "Companies";
+  let title = "Skills";
   let icon = companyLogo;
   let columns = [
     {

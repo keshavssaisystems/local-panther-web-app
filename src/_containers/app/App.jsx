@@ -353,10 +353,7 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
-          <Route
-            path="/candidate-list/liked"
-            element={<CustomerCandidateLists type={"liked"} />}
-          />
+
           <Route
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}

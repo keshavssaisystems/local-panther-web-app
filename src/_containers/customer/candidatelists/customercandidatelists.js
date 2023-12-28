@@ -497,6 +497,9 @@ export const CustomerCandidateLists = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -571,6 +574,9 @@ export const CustomerCandidateLists = (props) => {
                           durationOptions={durationOptions}
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
+                          }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -647,6 +653,9 @@ export const CustomerCandidateLists = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -722,6 +731,9 @@ export const CustomerCandidateLists = (props) => {
                           durationOptions={durationOptions}
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
+                          }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -801,6 +813,9 @@ export const CustomerCandidateLists = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
                           }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -876,6 +891,9 @@ export const CustomerCandidateLists = (props) => {
                           durationOptions={durationOptions}
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
+                          }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -953,6 +971,9 @@ export const CustomerCandidateLists = (props) => {
                           durationOptions={durationOptions}
                           onPrescreenClick={(type, row) =>
                             onPrescreenActionClick(type, row)
+                          }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
                           }
                         />
                         {totalRecords > listPageSize ? (
