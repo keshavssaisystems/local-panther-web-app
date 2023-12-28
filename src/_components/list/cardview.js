@@ -354,18 +354,6 @@ export const CandidateCardView = (props) => {
                 <BsCheckCircle />
               </Button>
             </Col> */}
-
-              <Button
-                outline
-                title="liked"
-                className="btn-icon mb-1"
-                color="primary"
-                size="sm"
-                onClick={() => onActionClick("like")}
-              >
-                Like <BsHandThumbsUp></BsHandThumbsUp>
-              </Button>
-
               <Button
                 outline
                 title="maybe"
@@ -376,18 +364,16 @@ export const CandidateCardView = (props) => {
               >
                 Maybe <BsQuestionCircle></BsQuestionCircle>
               </Button>
-
               <Button
                 outline
-                title="reject"
+                title="liked"
                 className="btn-icon mb-1"
                 color="primary"
-                onClick={() => onRejectClick()}
                 size="sm"
+                onClick={() => onActionClick("like")}
               >
-                Reject <BsXCircle></BsXCircle>
+                Like <BsHandThumbsUp></BsHandThumbsUp>
               </Button>
-
               <Button
                 outline
                 title="schedule"
@@ -397,6 +383,16 @@ export const CandidateCardView = (props) => {
                 onClick={() => onScheduleInterview()}
               >
                 <span>Schedule</span> <BsClock />
+              </Button>
+              <Button
+                outline
+                title="reject"
+                className="btn-icon mb-1"
+                color="primary"
+                onClick={() => onRejectClick()}
+                size="sm"
+              >
+                Reject <BsXCircle></BsXCircle>
               </Button>
             </ButtonGroup>
           </Row>
