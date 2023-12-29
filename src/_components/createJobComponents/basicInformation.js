@@ -27,7 +27,6 @@ export function BasicInformation({
   customerDetails,
 }) {
   const [jobLocationOption, setJobLocationOption] = useState(0);
-  console.log(jobLocationOption);
   const fieldOfStudyOption = useSelector(
     (state) => state.dropdown.fieldOfStudyList
   );
