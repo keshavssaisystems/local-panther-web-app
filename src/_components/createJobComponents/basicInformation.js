@@ -26,6 +26,8 @@ export function BasicInformation({
   bIFormSubmitted,
   customerDetails,
 }) {
+  const [jobLocationOption, setJobLocationOption] = useState(0);
+  console.log(jobLocationOption);
   const fieldOfStudyOption = useSelector(
     (state) => state.dropdown.fieldOfStudyList
   );
@@ -227,6 +229,7 @@ export function BasicInformation({
   const [countryOnchange, setCountryOnChange] = useState(false);
   const [descriptionValidation, setDescriptionValidation] = useState(false);
   const [zipCodeValidation, setZipCodeValidation] = useState(false);
+  const [addressValidation, setAddressValidation] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -245,6 +248,9 @@ export function BasicInformation({
     event.target.elements.zipCode.value === ""
       ? setZipCodeValidation(true)
       : setZipCodeValidation(false);
+    event.target.elements.address.value === ""
+      ? setAddressValidation(true)
+      : setAddressValidation(false);
     descriptionData === ""
       ? setDescriptionValidation(true)
       : setDescriptionValidation(false);
@@ -255,7 +261,10 @@ export function BasicInformation({
       event.target.elements.zipCode.value !== "" &&
       event.target.elements.city.value !==
         "undefined, undefined, undefined, undefined" &&
-      descriptionData !== ""
+      descriptionData !== "" &&
+      Number(jobLocationOption) !== 1 &&
+      Number(jobLocationOption) !== 0 &&
+      event.target.elements.address.value === ""
     ) {
       saveData(event);
     }
@@ -474,7 +483,12 @@ export function BasicInformation({
               <Label for="jobLocation" className="fw-semi-bold">
                 Job location
               </Label>
-              <Input id={"jobLocation"} name={"jobLocation"} type={"select"}>
+              <Input
+                id={"jobLocation"}
+                name={"jobLocation"}
+                type={"select"}
+                onChange={(e) => setJobLocationOption(e.target.value)}
+              >
                 <option key={0} value={0}>
                   Select job location
                 </option>
@@ -498,7 +512,11 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="address" className="fw-semi-bold">
-                Address
+                Address{" "}
+                {Number(jobLocationOption) !== 1 &&
+                  Number(jobLocationOption) !== 0 && (
+                    <span style={{ color: "red" }}>* </span>
+                  )}
               </Label>
               <Input
                 id={"address"}
@@ -509,7 +527,20 @@ export function BasicInformation({
                   prevStep === 3 ? preValue.address : previousValue.address
                 }
                 maxLength={100}
+                invalid={
+                  addressValidation &&
+                  Number(jobLocationOption) !== 1 &&
+                  Number(jobLocationOption) !== 0
+                    ? true
+                    : false
+                }
+                onChange={() => setAddressValidation(false)}
               />
+              {addressValidation &&
+                Number(jobLocationOption) !== 1 &&
+                Number(jobLocationOption) !== 0 && (
+                  <FormText color="danger">Please enter address</FormText>
+                )}
             </FormGroup>
           </Col>
         </Row>
@@ -651,7 +682,7 @@ export function BasicInformation({
               />{" "}
               {"  "}
               <Label for="sponsorshiprequiured" className="fw-semi-bold">
-                Sponsorship is required
+                Willing to sponsor
               </Label>
             </FormGroup>
           </Col>
