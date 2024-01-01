@@ -75,12 +75,12 @@ export default function SelectJobType({
                   onClick={(e) => onButtonClick(e)}
                 />
                 <Label for="new" check className="radio-label-custom">
-                  Start with new
+                  Create a new job posting
                 </Label>
                 {"  "}
                 <p className="mt-0 mb-2 text-muted-custom">Beginning a new</p>
               </FormGroup>
-              <FormGroup check>
+              {/* <FormGroup check>
                 <Input
                   type="radio"
                   name="jobType"
@@ -99,7 +99,7 @@ export default function SelectJobType({
                 <p className="mt-0 mb-2 text-muted-custom">
                   Generate a job post from available jobs and edit from there
                 </p>
-              </FormGroup>
+              </FormGroup> */}
             </Form>
           </Col>
         </Row>

@@ -206,7 +206,7 @@ export const AdminListing = ({ entity }) => {
         </div>
       ),
       sortable: false,
-      width: "27%",
+      minWidth: "200px",
     },
   ];
 

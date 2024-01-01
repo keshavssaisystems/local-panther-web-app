@@ -25,6 +25,12 @@ export function DashboardCounts() {
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
               "alternate border-alternate"
             }
+            onClick={(e) =>
+              navigateToJobsPage(e, counts.matchedcandidate, "matched")
+            }
+            style={{
+              cursor: counts.matchedcandidate === 0 ? "not-allowed" : "pointer",
+            }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
@@ -42,23 +48,7 @@ export function DashboardCounts() {
                     <div className="widget-title opacity-5 ">Matched jobs</div>
                     <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
                       <div className="widget-chart-flex align-items-center">
-                        <div
-                          onClick={(e) =>
-                            navigateToJobsPage(
-                              e,
-                              counts.matchedcandidate,
-                              "matched"
-                            )
-                          }
-                          style={{
-                            cursor:
-                              counts.matchedcandidate === 0
-                                ? "not-allowed"
-                                : "pointer",
-                          }}
-                        >
-                          {counts ? counts.matchedcandidate : 0}
-                        </div>
+                        <div>{counts ? counts.matchedcandidate : 0}</div>
                       </div>
                     </div>
                   </div>
@@ -73,6 +63,13 @@ export function DashboardCounts() {
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
               "primary border-primary"
             }
+            onClick={(e) =>
+              navigateToJobsPage(e, counts.interveiwSchedule, "interview")
+            }
+            style={{
+              cursor:
+                counts.interveiwSchedule === 0 ? "not-allowed" : "pointer",
+            }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
@@ -89,23 +86,7 @@ export function DashboardCounts() {
                     </div>
                     <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
                       <div className="widget-chart-flex align-items-center">
-                        <div
-                          onClick={(e) =>
-                            navigateToJobsPage(
-                              e,
-                              counts.interveiwSchedule,
-                              "interview"
-                            )
-                          }
-                          style={{
-                            cursor:
-                              counts.interveiwSchedule === 0
-                                ? "not-allowed"
-                                : "pointer",
-                          }}
-                        >
-                          {counts ? counts.interveiwSchedule : 0}
-                        </div>
+                        <div>{counts ? counts.interveiwSchedule : 0}</div>
                       </div>
                     </div>
                   </div>
@@ -121,6 +102,13 @@ export function DashboardCounts() {
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
               "info border-info"
             }
+            onClick={(e) =>
+              navigateToJobsPage(e, counts.offersforcandidate, "offers")
+            }
+            style={{
+              cursor:
+                counts.offersforcandidate === 0 ? "not-allowed" : "pointer",
+            }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
@@ -137,23 +125,7 @@ export function DashboardCounts() {
                     </div>
                     <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
                       <div className="widget-chart-flex align-items-center">
-                        <div
-                          onClick={(e) =>
-                            navigateToJobsPage(
-                              e,
-                              counts.offersforcandidate,
-                              "offers"
-                            )
-                          }
-                          style={{
-                            cursor:
-                              counts.offersforcandidate === 0
-                                ? "not-allowed"
-                                : "pointer",
-                          }}
-                        >
-                          {counts ? counts.offersforcandidate : 0}
-                        </div>
+                        <div>{counts ? counts.offersforcandidate : 0}</div>
                       </div>
                     </div>
                   </div>
@@ -169,6 +141,13 @@ export function DashboardCounts() {
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
               "success border-success"
             }
+            onClick={(e) =>
+              navigateToJobsPage(e, counts.acceptedbycandidate, "accepted")
+            }
+            style={{
+              cursor:
+                counts.acceptedbycandidate === 0 ? "not-allowed" : "pointer",
+            }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
@@ -183,23 +162,7 @@ export function DashboardCounts() {
                     <div className="widget-title opacity-5 ">Accepted</div>
                     <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
                       <div className="widget-chart-flex align-items-center">
-                        <div
-                          onClick={(e) =>
-                            navigateToJobsPage(
-                              e,
-                              counts.acceptedbycandidate,
-                              "accepted"
-                            )
-                          }
-                          style={{
-                            cursor:
-                              counts.acceptedbycandidate === 0
-                                ? "not-allowed"
-                                : "pointer",
-                          }}
-                        >
-                          {counts ? counts.acceptedbycandidate : 0}
-                        </div>
+                        <div>{counts ? counts.acceptedbycandidate : 0}</div>
                       </div>
                     </div>
                   </div>
@@ -214,6 +177,13 @@ export function DashboardCounts() {
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
               "danger border-danger"
             }
+            onClick={(e) =>
+              navigateToJobsPage(e, counts.rejectedbycandidate, "rejected")
+            }
+            style={{
+              cursor:
+                counts.rejectedbycandidate === 0 ? "not-allowed" : "pointer",
+            }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
@@ -228,23 +198,7 @@ export function DashboardCounts() {
                     <div className="widget-title opacity-5 ">Rejected</div>
                     <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
                       <div className="widget-chart-flex align-items-center">
-                        <div
-                          onClick={(e) =>
-                            navigateToJobsPage(
-                              e,
-                              counts.rejectedbycandidate,
-                              "rejected"
-                            )
-                          }
-                          style={{
-                            cursor:
-                              counts.rejectedbycandidate === 0
-                                ? "not-allowed"
-                                : "pointer",
-                          }}
-                        >
-                          {counts ? counts.rejectedbycandidate : 0}
-                        </div>
+                        <div>{counts ? counts.rejectedbycandidate : 0}</div>
                       </div>
                     </div>
                   </div>

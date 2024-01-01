@@ -198,7 +198,7 @@ export const CustomerList = () => {
         </div>
       ),
       sortable: false,
-      width: "20%",
+      minWidth: "204px",
     },
   ];
 

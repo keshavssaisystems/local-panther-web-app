@@ -82,7 +82,7 @@ export default function CustomerDashboard() {
       count: dashboardCounts.newcandidatelikedcount,
       className: "success",
       icon: "lnr-thumbs-up",
-      path: "/candidate-list/liked",
+      path: "/customer-candidate-liked/0",
     },
     {
       title: "Matched candidate pending to review",
