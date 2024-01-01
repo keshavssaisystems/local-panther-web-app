@@ -37,6 +37,9 @@ export function BasicInformation({
   const subsidiaryOption = useSelector(
     (state) => state.dropdown.subsidiaryList
   );
+  const securityClearanceOptions = useSelector(
+    (state) => state.dropdown.securityClearanceList
+  );
 
   let educationOptions = levelOfEducationOption.map(
     ({ id: value, ...rest }) => {
@@ -144,6 +147,14 @@ export function BasicInformation({
       data === undefined || data.subsidiaryid === undefined
         ? ""
         : data.subsidiaryid,
+    issecurityclearancerequired:
+      data === undefined || data.issecurityclearancerequired === undefined
+        ? ""
+        : data.issecurityclearancerequired,
+    securityclearanceid:
+      data === undefined || data.securityclearanceid === undefined
+        ? ""
+        : data.securityclearanceid,
   });
   const [previousValue, setPreviousValue] = useState({
     companyId: "",
@@ -213,6 +224,16 @@ export function BasicInformation({
       previousData === undefined || previousData.subsidiaryid === undefined
         ? ""
         : previousData.subsidiaryid,
+    issecurityclearancerequired:
+      previousData === undefined ||
+      previousData.issecurityclearancerequired === undefined
+        ? ""
+        : previousData.issecurityclearancerequired,
+    securityclearanceid:
+      previousData === undefined ||
+      previousData.securityclearanceid === undefined
+        ? ""
+        : previousData.securityclearanceid,
   });
   const [descriptionData, setDescriptionData] = useState(
     prevStep === 3 && preValue.description !== ""
@@ -266,10 +287,7 @@ export function BasicInformation({
       event.target.elements.zipCode.value !== "" &&
       event.target.elements.city.value !==
         "undefined, undefined, undefined, undefined" &&
-      descriptionData !== "" &&
-      Number(jobLocationOption) !== 1 &&
-      Number(jobLocationOption) !== 0 &&
-      event.target.elements.address.value === ""
+      descriptionData !== ""
     ) {
       saveData(event);
     }
@@ -319,6 +337,13 @@ export function BasicInformation({
       fieldofstudiesOption: fieldOfStudyOption,
       subsidiaryid: eventData.target.elements.subsidiaryid.value,
       subsidiaryOption: subsidiaryOption,
+      issecurityclearancerequired:
+        eventData.target.elements.issecurityclearancerequired.checked,
+      securityclearance:
+        eventData?.target?.elements?.securityclearance?.value === undefined
+          ? ""
+          : eventData?.target?.elements?.securityclearance?.value,
+      securityclearanceOptions: securityClearanceOptions,
     };
     postData(data);
     setPreValue(data);
@@ -694,19 +719,19 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup className="mt-4">
               <Input
-                id={"sponsorshiprequiured"}
-                name={"sponsorshiprequiured"}
+                id={"issecurityclearancerequired"}
+                name={"issecurityclearancerequired"}
                 type={"checkbox"}
                 defaultChecked={
                   prevStep === 3
-                    ? preValue.sponsorshiprequiured
-                    : previousValue.sponsorshiprequiured
+                    ? preValue.issecurityclearancerequired
+                    : previousValue.issecurityclearancerequired
                 }
                 onChange={(e) => setSecurityClearence(e.target.checked)}
               />{" "}
               {"  "}
               <Label for="sponsorshiprequiured" className="fw-semi-bold">
-                Security clearence required
+                Security clearance required
               </Label>
             </FormGroup>
           </Col>
@@ -714,14 +739,31 @@ export function BasicInformation({
             <Col md={6} lg={3}>
               <FormGroup>
                 <Label for="sponsorshiprequiured" className="fw-semi-bold">
-                  Security clearence
+                  Security clearance
                 </Label>
                 <Input
-                  id={"sponsorshiprequiured"}
-                  name={"sponsorshiprequiured"}
-                  type={"text"}
-                />{" "}
-                {"  "}
+                  id={"securityclearance"}
+                  name={"securityclearance"}
+                  type={"select"}
+                >
+                  <option key={0} value={0}>
+                    Select security clearance
+                  </option>
+                  {securityClearanceOptions.length > 0 &&
+                    securityClearanceOptions.map((options) => (
+                      <option
+                        key={options.id}
+                        value={options.id}
+                        selected={
+                          prevStep === 3
+                            ? preValue.securityclearanceid
+                            : previousValue.securityclearanceid === options.id
+                        }
+                      >
+                        {options.name}
+                      </option>
+                    ))}
+                </Input>
               </FormGroup>
             </Col>
           )}

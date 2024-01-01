@@ -13,6 +13,7 @@ export default function JobPreview({ previewData, editdata }) {
   let hiringTimelineData = "-";
   let experinceLevelData = "-";
   let payPeriodTypeData = "-";
+  let securityClearenceData = "-";
   if (
     previewData.basicInformation.jobLocation !== "" &&
     previewData.basicInformation.jobLoactionOptions !== undefined
@@ -20,6 +21,18 @@ export default function JobPreview({ previewData, editdata }) {
     previewData.basicInformation.jobLoactionOptions.forEach((element) => {
       if (Number(previewData.basicInformation.jobLocation) === element.id) {
         jobLocationData = element.name;
+      }
+    });
+  }
+  if (
+    previewData.basicInformation.securityclearance !== "" &&
+    previewData.basicInformation.securityclearanceOptions !== undefined
+  ) {
+    previewData.basicInformation.securityclearanceOptions.forEach((element) => {
+      if (
+        Number(previewData.basicInformation.securityclearance) === element.id
+      ) {
+        securityClearenceData = element.name;
       }
     });
   }
@@ -277,7 +290,7 @@ export default function JobPreview({ previewData, editdata }) {
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
-                    Sponsorship is required
+                    Willing to Sponsor
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
@@ -291,6 +304,35 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">
+                    Security Clearance Required
+                  </h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.issecurityclearancerequired ===
+                      undefined
+                      ? "-"
+                      : previewData.basicInformation
+                          .issecurityclearancerequired === true
+                      ? "Yes"
+                      : "No"}
+                  </p>
+                </div>
+              </Col>
+              {previewData.basicInformation.issecurityclearancerequired ===
+                true && (
+                <Col md={6} lg={3}>
+                  <div className="detail-padding">
+                    <h6 className="mb-0 job-heading-custom">
+                      Security Clearance
+                    </h6>
+                    <p className="mb-0 mt-1 mr-1">{securityClearenceData}</p>
+                  </div>
+                </Col>
+              )}
+
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">

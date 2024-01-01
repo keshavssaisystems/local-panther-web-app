@@ -36,6 +36,9 @@ export default function PublishJobStep({
       levelofeducationids: reqData.basicInformation.levelofeducationids,
       certifications: reqData.basicInformation.certifications,
       subsidiaryid: reqData.basicInformation.subsidiaryid,
+      issecurityclearancerequired:
+        reqData.basicInformation.issecurityclearancerequired,
+      securityclearanceid: reqData.basicInformation.securityclearance,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,

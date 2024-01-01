@@ -116,6 +116,9 @@ export default function CreateJob({
           fieldofstudiesids: previousData?.fieldofstudiesids,
           certifications: previousData?.certifications,
           subsidiaryid: previousData?.subsidiaryid,
+          issecurityclearancerequired:
+            previousData?.issecurityclearancerequired,
+          securityclearanceid: previousData?.securityclearanceid,
         },
         experienceSchedule: {
           jobType:
