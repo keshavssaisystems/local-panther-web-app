@@ -27,6 +27,7 @@ export function BasicInformation({
   customerDetails,
 }) {
   const [jobLocationOption, setJobLocationOption] = useState(0);
+
   const fieldOfStudyOption = useSelector(
     (state) => state.dropdown.fieldOfStudyList
   );
@@ -229,6 +230,11 @@ export function BasicInformation({
   const [descriptionValidation, setDescriptionValidation] = useState(false);
   const [zipCodeValidation, setZipCodeValidation] = useState(false);
   const [addressValidation, setAddressValidation] = useState(false);
+  const [securityClearence, setSecurityClearence] = useState(
+    prevStep === 3
+      ? preValue.sponsorshiprequiured
+      : previousValue.sponsorshiprequiured
+  );
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -685,6 +691,40 @@ export function BasicInformation({
               </Label>
             </FormGroup>
           </Col>
+          <Col md={6} lg={3}>
+            <FormGroup className="mt-4">
+              <Input
+                id={"sponsorshiprequiured"}
+                name={"sponsorshiprequiured"}
+                type={"checkbox"}
+                defaultChecked={
+                  prevStep === 3
+                    ? preValue.sponsorshiprequiured
+                    : previousValue.sponsorshiprequiured
+                }
+                onChange={(e) => setSecurityClearence(e.target.checked)}
+              />{" "}
+              {"  "}
+              <Label for="sponsorshiprequiured" className="fw-semi-bold">
+                Security clearence required
+              </Label>
+            </FormGroup>
+          </Col>
+          {securityClearence === true && (
+            <Col md={6} lg={3}>
+              <FormGroup>
+                <Label for="sponsorshiprequiured" className="fw-semi-bold">
+                  Security clearence
+                </Label>
+                <Input
+                  id={"sponsorshiprequiured"}
+                  name={"sponsorshiprequiured"}
+                  type={"text"}
+                />{" "}
+                {"  "}
+              </FormGroup>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col md={6} lg={3}>

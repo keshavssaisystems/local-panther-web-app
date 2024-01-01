@@ -192,7 +192,7 @@ export function PreScreenApplicant({
                       {"  "}
                       <Label className="fw-semi-bold">Audio</Label>
                     </Col>
-                    <Col md={5}>
+                    <Col md={3}>
                       <Input
                         id={"applicantsRecordAnswer"}
                         name={"applicantsRecordAnswer"}
@@ -201,6 +201,16 @@ export function PreScreenApplicant({
                       />{" "}
                       {"  "}
                       <Label className="fw-semi-bold">Video</Label>
+                    </Col>
+                    <Col md={3}>
+                      <Input
+                        id={"applicantsRecordAnswer"}
+                        name={"applicantsRecordAnswer"}
+                        type={"radio"}
+                        value={"Text"}
+                      />{" "}
+                      {"  "}
+                      <Label className="fw-semi-bold">Text</Label>
                     </Col>
                   </Row>
                 </FormGroup>
