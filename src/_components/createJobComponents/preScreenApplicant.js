@@ -11,6 +11,7 @@ import {
 } from "reactstrap";
 import { findRestrictedWords } from "_helpers/helper";
 import { BsPlusSquare } from "react-icons/bs";
+import { useSelector } from "react-redux";
 export function PreScreenApplicant({
   data,
   postData,
@@ -18,7 +19,13 @@ export function PreScreenApplicant({
   prevStep,
   previousData,
 }) {
-  const wordArray = ["apple", "banana", "gender"];
+  const flaggedWordList = useSelector(
+    (state) => state.dropdown.flaggedWordsList
+  );
+  let wordArray = [];
+  flaggedWordList.forEach((element) => {
+    wordArray.push(element.name);
+  });
   let prevDataArr = [];
   if (prevStep === 1 && previousData.length > 0) {
     previousData.forEach((element) => {
