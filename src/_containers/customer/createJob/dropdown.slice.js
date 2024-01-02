@@ -151,6 +151,14 @@ export const getSecurityClearanceListThunk = createAsyncThunk(
     return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
   }
 );
+// getCloseJobReasonListThunk thunk
+export const getCloseJobReasonListThunk = createAsyncThunk(
+  `${name}/getCloseJobReasonListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=ClosedJobReason`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
 
 // Create the slice
 const dropdownSlice = createSlice({
@@ -172,6 +180,7 @@ const dropdownSlice = createSlice({
     fieldOfStudyList: [],
     subsidiaryList: [],
     securityClearanceList: [],
+    closeJobReasonList: [],
     loading: false,
   },
   reducers: {},
@@ -368,6 +377,17 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getCloseJobReasonListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCloseJobReasonListThunk.fulfilled]: (state, action) => {
+      state.closeJobReasonList = action.payload.data;
+      state.loading = false;
+    },
+    [getCloseJobReasonListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -391,6 +411,7 @@ export const dropdownActions = {
   getLevelOFEducationThunk,
   getSubsidiaryListThunk,
   getSecurityClearanceListThunk,
+  getCloseJobReasonListThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;
