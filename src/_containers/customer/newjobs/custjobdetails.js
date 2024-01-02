@@ -627,7 +627,7 @@ export function CustJobDetail({
             {!isModal ? (
               <CardFooter>
                 Share:{" "}
-                {/* <ShareSocial
+                <ShareSocial
                   url={
                     window.location.origin +
                     "/job-detail/" +
@@ -645,7 +645,7 @@ export function CustJobDetail({
                       padding: "0px",
                     },
                   }}
-                /> */}
+                />
               </CardFooter>
             ) : (
               <></>
