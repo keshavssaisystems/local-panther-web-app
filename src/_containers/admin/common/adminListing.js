@@ -1,28 +1,21 @@
 import React, { useState, useEffect } from "react";
 import companyLogo from "assets/utils/images/candidate.svg";
-import {
-  customers,
-  company,
-  users,
-  roles,
-  menuMapping,
-} from "_containers/admin/common/adminColumnsListing";
+import { users } from "_containers/admin/common/adminColumnsListing";
 import PageTitle from "_components/common/pagetitle";
 import {
   Row,
   Col,
   Card,
   CardBody,
-  CardHeader,
   Button,
   FormGroup,
-  InputGroup,
   Input,
   Modal,
   ModalHeader,
   ModalBody,
+  UncontrolledTooltip,
 } from "reactstrap";
-import { BsSearch } from "react-icons/bs";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 import { USPhoneNumber } from "_helpers/helper";
 import "_containers/admin/common/adminListing.scss";
 import DataTable from "react-data-table-component";
@@ -45,34 +38,26 @@ import { FaEye } from "react-icons/fa";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
-  const {
-    data,
-    industyList,
-    industryCompanyMapping,
-    loading = false,
-  } = useSelector((state) => state?.adminListing ?? {});
 
-  const { companyDropdownData } = useSelector(
-    (state) => state?.addCustomer ?? {}
-  );
-
+  const [pageSize, setPageSize] = useState(10);
+  const [pageNo, setPageNo] = useState(0);
   let title,
     icon,
-    listingTitle,
-    columns = [],
-    searchFilter = [],
-    buttonsList = [];
+    columns = [];
   useEffect(() => {
+    loadData();
     dispatch(getRoles());
   }, []);
-
+  const { data } = useSelector((state) => state?.adminListing ?? {});
   const rolesList = useSelector((state) => state.adminListing.rolesList);
+  const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [viewMode, setViewMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -87,21 +72,7 @@ export const AdminListing = ({ entity }) => {
 
   const [roleid, setRoleId] = useState(0);
   const [status, setStatus] = useState("All");
-  const [newCompData, setNewCompData] = useState({
-    // ... other fields
-    newCompName: { value: "", error: false },
-    newIndusName: { value: "", error: false },
-    newCompDesc: { value: "" },
-    newCompEmp: { value: "" },
-    newCompAdd: { value: "" },
-    newCompState: { value: 0 },
-    newCompCity: { value: 0 },
-    newCompCountry: { value: 0 },
-    newCompLog: { value: 0 },
-    newCompZip: { value: "" },
-    newCompEmail: { value: "" },
-    newCompPhonenum: { value: "" },
-  });
+
   title = users.title;
   icon = companyLogo;
   columns = [
@@ -126,6 +97,29 @@ export const AdminListing = ({ entity }) => {
     {
       name: "Email",
       id: "email",
+      cell: (row) => (
+        <>
+          {row.email}
+          {row?.isactive === false && (
+            <>
+              <BsFillInfoCircleFill
+                id={"rr_" + row?.userId}
+                color="primary"
+                className="ms-2"
+              ></BsFillInfoCircleFill>
+              <UncontrolledTooltip
+                placement="bottom"
+                target={"rr_" + row?.userId}
+              >
+                {row?.deactivationreason !== "" ||
+                row?.deactivationreason !== undefined
+                  ? row?.deactivationreason
+                  : "-"}
+              </UncontrolledTooltip>
+            </>
+          )}
+        </>
+      ),
       selector: (row) => row.email,
       sortable: true,
     },
@@ -140,7 +134,7 @@ export const AdminListing = ({ entity }) => {
       name: "Action",
       id: "isactive",
       cell: (row) => (
-        <div className="d-block w-100">
+        <div className="d-block">
           <div
             title="Active/Inactive user"
             className="switch has-switch  me-2"
@@ -212,6 +206,7 @@ export const AdminListing = ({ entity }) => {
         </div>
       ),
       sortable: false,
+      minWidth: "200px",
     },
   ];
 
@@ -219,9 +214,11 @@ export const AdminListing = ({ entity }) => {
     loadData();
   }, [entity]);
 
-  const loadData = () => {
+  const loadData = async () => {
+    setLoading(true);
     let urlParams = {
-      pageNumber: 0,
+      pageNumber: pageNo,
+      pageSize: pageSize,
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -232,7 +229,8 @@ export const AdminListing = ({ entity }) => {
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
   const customStyles = {
     headCells: {
@@ -343,11 +341,13 @@ export const AdminListing = ({ entity }) => {
     CloseModal();
   };
 
-  const onClearSearch = function () {
+  const onClearSearch = async function () {
+    setLoading(true);
     setSearchText("");
 
     let urlParams = {
-      pageNumber: 0,
+      pageNumber: pageNo,
+      pageSize: pageSize,
     };
 
     if (status !== "All") {
@@ -356,13 +356,15 @@ export const AdminListing = ({ entity }) => {
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
-
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
-  const getUsersList = function () {
+  const getUsersList = async function () {
+    setLoading(true);
     let urlParams = {
-      pageNumber: 0,
+      pageNumber: pageNo,
+      pageSize: pageSize,
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -374,15 +376,17 @@ export const AdminListing = ({ entity }) => {
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
-
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
-  const onSelectRole = (roleId) => {
+  const onSelectRole = async (roleId) => {
+    setLoading(true);
     setRoleId(parseInt(roleId));
     let urlParams = {
       userRoleId: roleId,
       pageNumber: 0,
+      pageSize: pageSize,
     };
     if (status !== "All") {
       urlParams.isActive = status;
@@ -390,12 +394,15 @@ export const AdminListing = ({ entity }) => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
-  const onStatusSelect = (check) => {
+  const onStatusSelect = async (check) => {
+    setLoading(true);
     let urlParams = {
-      pageNumber: 0,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
     if (check === "0") {
       setStatus("All");
@@ -414,7 +421,8 @@ export const AdminListing = ({ entity }) => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    dispatch(getUsers(urlParams));
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
   };
 
   const resetUserPassword = (row) => {
@@ -439,6 +447,39 @@ export const AdminListing = ({ entity }) => {
     }
   };
 
+  const handlePerRowsChange = async (pagesize) => {
+    setPageSize(pagesize);
+    getUserData(pagesize, pageNo);
+  };
+
+  const handlePageChange = async (page) => {
+    setPageNo(page - 1);
+    getUserData(pageSize, page - 1);
+  };
+
+  const getUserData = async (pageSize, pageNo) => {
+    setLoading(true);
+
+    let urlParams = {
+      pageSize: pageSize,
+      pageNumber: pageNo,
+    };
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+    await dispatch(getUsers(urlParams));
+
+    setLoading(false);
+  };
+
   return (
     <>
       <Row>
@@ -453,7 +494,7 @@ export const AdminListing = ({ entity }) => {
           <Card className="mb-3">
             <CardBody>
               <Row className="mb-3">
-                <Col>
+                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
                   <FormGroup>
                     <Input
                       type="select"
@@ -474,7 +515,7 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col className="col-3">
+                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
                   <FormGroup>
                     <Input
                       type="select"
@@ -488,8 +529,16 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col className="col-1"></Col>
-                <Col className="col">
+                {/* <Col className="col-1"></Col> */}
+                <Col
+                  className="right-align"
+                  xxl={6}
+                  xl={6}
+                  md={12}
+                  lg={8}
+                  sm={12}
+                  xs={12}
+                >
                   <Button
                     style={{
                       background: "#2f479b",
@@ -537,8 +586,12 @@ export const AdminListing = ({ entity }) => {
                 columns={columns}
                 pagination
                 fixedHeader
-                // fixedHeaderScrollHeight="400px"
+                progressPending={loading}
                 customStyles={customStyles}
+                paginationServer
+                paginationTotalRows={totalRecords}
+                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                onChangePage={(e) => handlePageChange(e)}
               />
             </CardBody>
           </Card>

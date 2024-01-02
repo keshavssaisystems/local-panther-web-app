@@ -12,8 +12,10 @@ import {
 import { CKEditor } from "ckeditor4-react";
 import "./createJob.scss";
 import AsyncSelect from "react-select/async";
+import Select from "react-select";
 import InputMask from "react-input-mask";
 import { getLocation } from "_store";
+import { useSelector } from "react-redux";
 
 export function BasicInformation({
   data,
@@ -24,6 +26,31 @@ export function BasicInformation({
   bIFormSubmitted,
   customerDetails,
 }) {
+  const [jobLocationOption, setJobLocationOption] = useState(0);
+  const fieldOfStudyOption = useSelector(
+    (state) => state.dropdown.fieldOfStudyList
+  );
+  const levelOfEducationOption = useSelector(
+    (state) => state.dropdown.levelOfEducationList
+  );
+  const subsidiaryOption = useSelector(
+    (state) => state.dropdown.subsidiaryList
+  );
+
+  let educationOptions = levelOfEducationOption.map(
+    ({ id: value, ...rest }) => {
+      return {
+        value: `${value}`,
+        label: `${rest.name}`,
+      };
+    }
+  );
+  let fieldStudyOptions = fieldOfStudyOption.map(({ id: value, ...rest }) => {
+    return {
+      value: `${value}`,
+      label: `${rest.name}`,
+    };
+  });
   const [successMessage, setSuccessMessage] = useState(false);
   const [stateData, setStateData] = useState({});
   const customStyles = {
@@ -37,6 +64,38 @@ export function BasicInformation({
       margin: "0px",
     }),
   };
+  const getEducationData = (data) => {
+    if (data?.levelofeducationids?.split(",")?.length > 0) {
+      let newData = data.levelofeducationids.split(",");
+      let newOptions = educationOptions.filter((data) =>
+        newData.includes(data.value)
+      );
+      return newOptions;
+    }
+    if (data?.levelofeducationids?.split(",")?.length === undefined) {
+      return educationOptions.filter(
+        (data2) => data2.value === Number(data?.levelofeducationids)
+      );
+    }
+  };
+  const getStudyData = (data) => {
+    if (data?.fieldofstudiesids?.split(",")?.length > 0) {
+      let newData = data.fieldofstudiesids.split(",");
+      let newOptions = fieldStudyOptions.filter((data) =>
+        newData.includes(data.value)
+      );
+      return newOptions;
+    }
+    if (data?.fieldofstudiesids?.split(",")?.length === undefined) {
+      return fieldStudyOptions.filter(
+        (data2) => data2.value === Number(data?.fieldofstudiesids)
+      );
+    }
+  };
+  let educationData =
+    prevStep === 3 ? getEducationData(data) : getEducationData(previousData);
+  let studyData =
+    prevStep === 3 ? getStudyData(data) : getStudyData(previousData);
   const [preValue, setPreValue] = useState({
     companyId: "",
     jobTitle:
@@ -76,6 +135,14 @@ export function BasicInformation({
       data === undefined || data.sponsorshiprequiured === undefined
         ? ""
         : data.sponsorshiprequiured,
+    certifications:
+      data === undefined || data.certifications === undefined
+        ? ""
+        : data.certifications,
+    subsidiaryid:
+      data === undefined || data.subsidiaryid === undefined
+        ? ""
+        : data.subsidiaryid,
   });
   const [previousValue, setPreviousValue] = useState({
     companyId: "",
@@ -137,6 +204,14 @@ export function BasicInformation({
       previousData === undefined || previousData.statename === undefined
         ? ""
         : "US",
+    certifications:
+      previousData === undefined || previousData.certifications === undefined
+        ? ""
+        : previousData.certifications,
+    subsidiaryid:
+      previousData === undefined || previousData.subsidiaryid === undefined
+        ? ""
+        : previousData.subsidiaryid,
   });
   const [descriptionData, setDescriptionData] = useState(
     prevStep === 3 && preValue.description !== ""
@@ -153,6 +228,7 @@ export function BasicInformation({
   const [countryOnchange, setCountryOnChange] = useState(false);
   const [descriptionValidation, setDescriptionValidation] = useState(false);
   const [zipCodeValidation, setZipCodeValidation] = useState(false);
+  const [addressValidation, setAddressValidation] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -171,6 +247,9 @@ export function BasicInformation({
     event.target.elements.zipCode.value === ""
       ? setZipCodeValidation(true)
       : setZipCodeValidation(false);
+    event.target.elements.address.value === ""
+      ? setAddressValidation(true)
+      : setAddressValidation(false);
     descriptionData === ""
       ? setDescriptionValidation(true)
       : setDescriptionValidation(false);
@@ -181,12 +260,17 @@ export function BasicInformation({
       event.target.elements.zipCode.value !== "" &&
       event.target.elements.city.value !==
         "undefined, undefined, undefined, undefined" &&
-      descriptionData !== ""
+      descriptionData !== "" &&
+      Number(jobLocationOption) !== 1 &&
+      Number(jobLocationOption) !== 0 &&
+      event.target.elements.address.value === ""
     ) {
       saveData(event);
     }
   };
   const saveData = (eventData) => {
+    let educationString = getEducationFormData(eventData);
+    let studyString = getStudyFormData(eventData);
     let data = {
       companyId: eventData.target.elements.companyName.value,
       jobTitle: eventData.target.elements.jobTitle.value,
@@ -222,6 +306,13 @@ export function BasicInformation({
         eventData.target.elements.authorizedtoworkinus.checked,
       sponsorshiprequiured:
         eventData.target.elements.sponsorshiprequiured.checked,
+      levelofeducationids: educationString,
+      fieldofstudiesids: studyString,
+      certifications: eventData.target.elements.certifications.value,
+      levelofeducationOption: levelOfEducationOption,
+      fieldofstudiesOption: fieldOfStudyOption,
+      subsidiaryid: eventData.target.elements.subsidiaryid.value,
+      subsidiaryOption: subsidiaryOption,
     };
     postData(data);
     setPreValue(data);
@@ -256,11 +347,37 @@ export function BasicInformation({
     setDescriptionData(event);
     setDescriptionValidation(false);
   };
+  const getEducationFormData = (eventData) => {
+    let postEducationData = [];
+    let educationArray = eventData?.target?.elements?.levelofeducationids;
+    if (educationArray?.length === undefined) {
+      return educationArray.value;
+    }
+    if (educationArray?.length > 0) {
+      educationArray?.forEach((element) => {
+        postEducationData.push(element.value);
+      });
+      return postEducationData.toString();
+    }
+  };
+  const getStudyFormData = (eventData) => {
+    let postStudyData = [];
+    let studyArray = eventData?.target?.elements?.fieldofstudiesids;
+    if (studyArray?.length === undefined) {
+      return studyArray.value;
+    }
+    if (studyArray?.length > 0) {
+      studyArray?.forEach((element) => {
+        postStudyData.push(element.value);
+      });
+      return postStudyData.toString();
+    }
+  };
   return (
     <>
       <Form onSubmit={(e) => getFormValidation(e)}>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label className="fw-semi-bold">
                 Company name<span style={{ color: "red" }}>* </span>
@@ -277,7 +394,42 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          {subsidiaryOption.length > 0 && (
+            <Col md={6} lg={3}>
+              <FormGroup>
+                <Label for={"jobTitle"} className="fw-semi-bold">
+                  Subsidiary name
+                </Label>
+                <Input
+                  id={"subsidiaryid"}
+                  name={"subsidiaryid"}
+                  type={"select"}
+                >
+                  <option key={0} value={0}>
+                    Select subsidiary
+                  </option>
+                  {subsidiaryOption.length > 0 &&
+                    subsidiaryOption.map((options) => (
+                      <option
+                        key={options.subsidiaryid}
+                        value={options.subsidiaryid}
+                        selected={
+                          prevStep === 3
+                            ? preValue.subsidiaryid
+                            : previousValue.subsidiaryid ===
+                              options.subsidiaryid
+                        }
+                      >
+                        {options.subsidiaryname}
+                      </option>
+                    ))}
+                </Input>
+              </FormGroup>
+            </Col>
+          )}
+        </Row>
+        <Row>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"jobTitle"} className="fw-semi-bold">
                 Job title<span style={{ color: "red" }}>* </span>
@@ -299,7 +451,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="openPositions" className="fw-semi-bold">
                 Number of position<span style={{ color: "red" }}>* </span>
@@ -325,12 +477,17 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="jobLocation" className="fw-semi-bold">
                 Job location
               </Label>
-              <Input id={"jobLocation"} name={"jobLocation"} type={"select"}>
+              <Input
+                id={"jobLocation"}
+                name={"jobLocation"}
+                type={"select"}
+                onChange={(e) => setJobLocationOption(e.target.value)}
+              >
                 <option key={0} value={0}>
                   Select job location
                 </option>
@@ -351,12 +508,14 @@ export function BasicInformation({
               </Input>
             </FormGroup>
           </Col>
-        </Row>
-        <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="address" className="fw-semi-bold">
-                Address
+                Address{" "}
+                {Number(jobLocationOption) !== 1 &&
+                  Number(jobLocationOption) !== 0 && (
+                    <span style={{ color: "red" }}>* </span>
+                  )}
               </Label>
               <Input
                 id={"address"}
@@ -367,10 +526,25 @@ export function BasicInformation({
                   prevStep === 3 ? preValue.address : previousValue.address
                 }
                 maxLength={100}
+                invalid={
+                  addressValidation &&
+                  Number(jobLocationOption) !== 1 &&
+                  Number(jobLocationOption) !== 0
+                    ? true
+                    : false
+                }
+                onChange={() => setAddressValidation(false)}
               />
+              {addressValidation &&
+                Number(jobLocationOption) !== 1 &&
+                Number(jobLocationOption) !== 0 && (
+                  <FormText color="danger">Please enter address</FormText>
+                )}
             </FormGroup>
           </Col>
-          <Col>
+        </Row>
+        <Row>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 City<span style={{ color: "red" }}>* </span>
@@ -382,22 +556,22 @@ export function BasicInformation({
                   {
                     value:
                       prevStep === 3
-                        ? data.cityId +
+                        ? data?.cityId +
                           ", " +
-                          data.stateId +
+                          data?.stateId +
                           ", " +
-                          data.cityName +
+                          data?.cityName +
                           ", " +
-                          data.stateName
-                        : previousData.cityid +
+                          data?.stateName
+                        : previousData?.cityid +
                           ", " +
-                          previousData.stateid +
+                          previousData?.stateid +
                           ", " +
-                          previousData.cityname +
+                          previousData?.cityname +
                           ", " +
-                          previousData.statename,
+                          previousData?.statename,
                     label:
-                      prevStep === 3 ? data.cityName : previousData.cityname,
+                      prevStep === 3 ? data?.cityName : previousData?.cityname,
                   }
                   // previousValue.statename
                 }
@@ -412,7 +586,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 State
@@ -431,7 +605,7 @@ export function BasicInformation({
               />
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="country" className="fw-semi-bold">
                 Country
@@ -448,9 +622,7 @@ export function BasicInformation({
               />
             </FormGroup>
           </Col>
-        </Row>
-        <Row>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup>
               <Label for="zipCode" className="fw-semi-bold">
                 Zip code<span style={{ color: "red" }}>* </span>
@@ -475,7 +647,9 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col>
+        </Row>
+        <Row>
+          <Col md={6} lg={3}>
             <FormGroup className="mt-4">
               <Input
                 id={"authorizedtoworkinus"}
@@ -493,7 +667,7 @@ export function BasicInformation({
               </Label>
             </FormGroup>
           </Col>
-          <Col>
+          <Col md={6} lg={3}>
             <FormGroup className="mt-4">
               <Input
                 id={"sponsorshiprequiured"}
@@ -507,14 +681,63 @@ export function BasicInformation({
               />{" "}
               {"  "}
               <Label for="sponsorshiprequiured" className="fw-semi-bold">
-                Sponsorship is required
+                Willing to sponsor
               </Label>
             </FormGroup>
           </Col>
-          <Col></Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={6} lg={3}>
+            <FormGroup>
+              <Label for="levelofeducationids" className="fw-semi-bold">
+                Level of education
+              </Label>
+              <Select
+                defaultValue={educationData}
+                isMulti
+                name="levelofeducationids"
+                options={educationOptions}
+                classNamePrefix="select"
+                placeholder="Select level of education"
+              />
+            </FormGroup>
+          </Col>
+          <Col md={6} lg={3}>
+            <FormGroup>
+              <Label for="fieldofstudiesids" className="fw-semi-bold">
+                Field of Study
+              </Label>
+              <Select
+                defaultValue={studyData}
+                isMulti
+                name="fieldofstudiesids"
+                options={fieldStudyOptions}
+                classNamePrefix="select"
+                placeholder="Select field of study"
+              />
+            </FormGroup>
+          </Col>
+          <Col md={6} lg={6}>
+            <FormGroup>
+              <Label for="certifications" className="fw-semi-bold">
+                Certification
+              </Label>
+              <Input
+                id={"certifications"}
+                name={"certifications"}
+                type={"text"}
+                placeholder="Enter certification"
+                defaultValue={
+                  prevStep === 3
+                    ? preValue.certifications
+                    : previousValue.certifications
+                }
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6} lg={6}>
             <FormGroup>
               <Label for="description" className="fw-semi-bold">
                 Description<span style={{ color: "red" }}>* </span>
@@ -540,7 +763,7 @@ export function BasicInformation({
               <FormText color="danger">Please enter description</FormText>
             )}
           </Col>
-          <Col>
+          <Col md={6} lg={6}>
             <FormGroup>
               <Label for="companyDetails" className="fw-semi-bold">
                 Company details
@@ -554,7 +777,7 @@ export function BasicInformation({
                     ? preValue.companyDetail
                     : previousValue.companyDetail
                 }
-                placeholder="Enter company deatils"
+                placeholder="Enter company details"
                 maxLength={1000}
                 className={"textarea-height-custom"}
               />

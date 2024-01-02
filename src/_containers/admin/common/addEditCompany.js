@@ -163,7 +163,7 @@ export const AddEditCompany = (props) => {
   const handleInputChange = (event, check) => {
     let data = { ...editData };
     if (check === "company") {
-      data.company = event.target.value;
+      data.companyname = event.target.value;
       if (data.company === "") {
         setCompanyValidation(true);
       } else {
@@ -252,7 +252,7 @@ export const AddEditCompany = (props) => {
   const onSubmit = async () => {
     var form = new FormData();
 
-    form.append("Companyname", editData.company);
+    form.append("Companyname", editData.companyname);
     form.append("Industry", editData.industry ? editData.industry : "");
     form.append(
       "Contactemail",

@@ -96,7 +96,7 @@ export function Chat({ groupId, details }) {
   };
   return (
     <>
-      <CardBody className="overflow-auto">
+      <CardBody className="overflow-auto chat-box-area">
         <main className="scroll-area-lg">
           <PerfectScrollbar>
             {messages &&

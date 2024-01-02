@@ -126,6 +126,11 @@ export function CreateJobWizard({ type }) {
     await dispatch(dropdownActions.getHiringTimelineThunk());
     await dispatch(dropdownActions.getPayPeriodTypeThunk());
     await dispatch(dropdownActions.getPreScreenQuestionThunk());
+    await dispatch(dropdownActions?.getFieldOfStudyThunk());
+    await dispatch(dropdownActions?.getLevelOFEducationThunk());
+    await dispatch(
+      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
+    );
   };
 
   const jobLocationOptions = useSelector(
@@ -222,7 +227,7 @@ export function CreateJobWizard({ type }) {
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
           publishJob={(e) => publishNewJob(e)}
-          jobId={type === "edit" ? selectedJobDetailsForEdit[0].jobid : 0}
+          jobId={type === "edit" ? selectedJobDetailsForEdit[0]?.jobid : 0}
           type={type}
         />
       ),
@@ -333,7 +338,7 @@ export function CreateJobWizard({ type }) {
                             className="btn-shadow float-start btn-wide btn-pill"
                             outline
                             style={previousBtn ? {} : { display: "none" }}
-                            onClick={previous}
+                            onClick={() => previous()}
                           >
                             Previous
                           </Button>
@@ -343,7 +348,7 @@ export function CreateJobWizard({ type }) {
                             color="primary"
                             className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
                             style={nextBtn ? {} : { display: "none" }}
-                            onClick={next}
+                            onClick={() => next()}
                             disabled={buttonDisable}
                           >
                             {compState === 2
@@ -390,7 +395,7 @@ export function CreateJobWizard({ type }) {
                                 color="primary"
                                 className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
                                 style={nextBtn ? {} : { display: "none" }}
-                                onClick={next}
+                                onClick={() => next()}
                               >
                                 Continue
                               </Button>

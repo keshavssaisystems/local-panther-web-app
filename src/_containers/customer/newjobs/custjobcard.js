@@ -85,11 +85,18 @@ export function CustJobCard({
           <Row>
             <Col md="12">
               <Row className="mb-2">
-                <Col md="7">
+                <Col md={12} lg={7}>
                   <div className="job-title">{name}</div>
                   <div className="muted-name">{customer}</div>
+                  {additionalData?.subsidiaryid !== 0 && (
+                    <div className="muted-name">
+                      {additionalData?.subsidiaryname}
+                    </div>
+                  )}
                 </Col>
-                <Col>{renderStatusIcon(additionalData)}</Col>
+                <Col md={12} lg={5}>
+                  {renderStatusIcon(additionalData)}
+                </Col>
               </Row>
               <p className="job-details">
                 <FiMapPin /> {location}
@@ -130,12 +137,12 @@ export function CustJobCard({
                 </p>
               )}
               <Row>
-                <Col md={9} lg={9}>
+                <Col md={12} lg={9}>
                   <div className="muted-name mt-2">
                     Posted {getTimezoneDateTimeForNow(moment(createdDate))}
                   </div>
                 </Col>
-                <Col md={3} lg={3} className="mt-2 right-align"></Col>
+                <Col md={12} lg={3} className="mt-2 right-align"></Col>
               </Row>
               {type === "Candidate" && (
                 <>

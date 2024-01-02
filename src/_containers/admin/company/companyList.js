@@ -15,26 +15,23 @@ import "_containers/admin/common/adminListing.scss";
 import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { BsSearch } from "react-icons/bs";
 import { dropdownActions, addCustomerActions } from "_store";
 import { getCompanies } from "_containers/admin/_redux/adminListing.slice";
-import { USPhoneNumber } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
+import { Nav, NavItem, PopoverBody } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 export const CompanyList = () => {
+  const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({});
-  const [updateSuccessPopup, setUpdateSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(
-    "Company added successfully!!!"
-  );
-  const [errorPopup, setErrorPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(
-    "Company added successfully!!!"
-  );
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [loading, setLoading] = useState(false);
+
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -44,12 +41,7 @@ export const CompanyList = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
-    dispatch(
-      getCompanies({
-        pageSize: 1000,
-        pageNumber: 1,
-      })
-    );
+    getCompanyList(pageSize, pageNo);
   }, []);
 
   const [success, setSuccess] = useState(false);
@@ -58,6 +50,7 @@ export const CompanyList = () => {
 
   const [status, setStatus] = useState("All");
   const { data } = useSelector((state) => state?.adminListing ?? {});
+  const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   let title = "Companies";
   let icon = companyLogo;
   let columns = [
@@ -76,6 +69,22 @@ export const CompanyList = () => {
         >
           {row.companyname}
         </div>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Subsidiary count",
+
+      cell: (row) => (
+        <span
+          style={{
+            cursor: row.subsidiarycount !== 0 ? "pointer" : "not-allowed",
+          }}
+          className={row.subsidiarycount !== 0 ? "editrow" : ""}
+          onClick={() => navigateTo(row)}
+        >
+          {row.subsidiarycount}
+        </span>
       ),
       sortable: true,
     },
@@ -143,32 +152,27 @@ export const CompanyList = () => {
     setOpenModal(true);
   };
 
+  const navigateTo = (row) => {
+    if (row.subsidiarycount !== 0) {
+      navigate(`/masters/subsidiary/${row.companyid}`);
+    }
+  };
+
   const closeModal = () => {
     setOpenModal(false);
     dispatch(
       getCompanies({
-        pageSize: 1000,
-        pageNumber: 1,
+        pageSize: pageSize,
+        pageNumber: pageNo,
       })
     );
   };
 
-  const getFilterValue = (event) => {
-    event.preventDefault();
-    dispatch(
-      getCompanies({
-        searchText: event.target.elements.search.value,
-        isActive: event.target.elements.status.value,
-        pageSize: 1000,
-        pageNumber: 1,
-      })
-    );
-  };
-
-  const getCompanyList = function () {
+  const getCompanyList = async function (pageSize, pageNo) {
+    setLoading(true);
     let urlParams = {
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -178,13 +182,15 @@ export const CompanyList = () => {
       urlParams.isActive = status;
     }
 
-    dispatch(getCompanies(urlParams));
+    await dispatch(getCompanies(urlParams));
+    setLoading(false);
   };
 
-  const onStatusSelect = (check) => {
+  const onStatusSelect = async (check) => {
+    setLoading(true);
     let urlParams = {
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
     if (check === "0") {
       setStatus("All");
@@ -200,22 +206,24 @@ export const CompanyList = () => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    dispatch(getCompanies(urlParams));
+    await dispatch(getCompanies(urlParams));
+    setLoading(false);
   };
 
-  const onClearSearch = function () {
+  const onClearSearch = async function () {
     setSearchText("");
 
     let urlParams = {
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
 
     if (status !== "All") {
       urlParams.isActive = status;
     }
-
-    dispatch(getCompanies(urlParams));
+    setLoading(true);
+    await dispatch(getCompanies(urlParams));
+    setLoading(false);
   };
 
   const showSweetAlert = ({ title, type }) => {
@@ -273,8 +281,8 @@ export const CompanyList = () => {
       dispatch(
         addCustomerActions.getCompaniesList({
           isActive: true,
-          pageSize: 1000,
-          pageNumber: 1,
+          pageSize: pageSize,
+          pageNumber: pageNo,
           companyId: 0,
         })
       );
@@ -300,6 +308,15 @@ export const CompanyList = () => {
     }
   };
 
+  const handlePerRowsChange = async (pagesize) => {
+    setPageSize(pagesize);
+    getCompanyList(pagesize, pageNo);
+  };
+  const handlePageChange = async (page) => {
+    setPageNo(page);
+    getCompanyList(pageSize, page);
+  };
+
   return (
     <>
       <Row>
@@ -312,7 +329,7 @@ export const CompanyList = () => {
               <Row>
                 <Col md={12}>
                   <Row className="mb-3">
-                    <Col md={5} lg={3} sm={12}>
+                    <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
                       <FormGroup>
                         <Input
                           type="select"
@@ -326,7 +343,7 @@ export const CompanyList = () => {
                         </Input>
                       </FormGroup>
                     </Col>
-                    <Col className="col">
+                    <Col xxl={9} xl={9} md={12} lg={8} sm={12} xs={12}>
                       <Button
                         style={{ background: "#2f479b" }}
                         color={"primary"}
@@ -358,7 +375,7 @@ export const CompanyList = () => {
                             onClick={(evt) => onClearSearch()}
                           />
                           <button
-                            onClick={(evt) => getCompanyList()}
+                            onClick={(evt) => getCompanyList(pageSize, pageNo)}
                             className="search-icon"
                           >
                             <span />
@@ -375,7 +392,12 @@ export const CompanyList = () => {
                 pagination
                 fixedHeader
                 customStyles={customStyles}
+                progressPending={loading}
                 responsive
+                paginationServer
+                paginationTotalRows={totalRecords}
+                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                onChangePage={(e) => handlePageChange(e)}
               />
             </CardBody>
           </Card>

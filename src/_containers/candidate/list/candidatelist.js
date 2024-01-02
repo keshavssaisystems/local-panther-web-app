@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  TabContent,
-  TabPane,
-  ButtonGroup,
-  Button,
-  Row,
-  Col,
-  Card,
-  CardBody,
-} from "reactstrap";
+import { TabContent, TabPane, ButtonGroup, Button, Row, Col } from "reactstrap";
 import classnames from "classnames";
 import { CardPagination } from "_components/common/cardpagination";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,6 +21,7 @@ import {
   custJobListActions,
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
+import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -40,6 +32,8 @@ export const CandidateList = (props) => {
   const [selectedIDData, setSelectedIDData] = useState([]);
   const [showPSModal, setShowPSModal] = useState(false);
   const [preScreenType, setPreScreenType] = useState("");
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleId, setRescheduleId] = useState("");
 
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
@@ -150,7 +144,12 @@ export const CandidateList = (props) => {
     }
   };
   let successMessage = "Job status updated successfully!!!";
-  const onCandidateCardActions = async (type, candidaterecommendedjobid) => {
+
+  const onCandidateCardActions = async (
+    type,
+    candidaterecommendedjobid,
+    reason
+  ) => {
     if (type === "liked") {
       let res = await dispatch(
         candidateListActions.candidateLike(candidaterecommendedjobid)
@@ -168,8 +167,16 @@ export const CandidateList = (props) => {
         });
       }
     } else if (type === "rejected") {
+      let payload = {
+        candidaterejectedcomment: reason,
+        candidaterejectedreasonid: 0,
+      };
+
       let res = await dispatch(
-        candidateListActions.candidateReject(candidaterecommendedjobid)
+        candidateListActions.candidateReject({
+          candidaterecommendedjobid,
+          payload,
+        })
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: successMessage, type: "success" });
@@ -236,7 +243,7 @@ export const CandidateList = (props) => {
       }
     } else if (type === "rejectInterview") {
       let payload = {
-        rejectionreason: "",
+        rejectionreason: reason,
       };
       let res = await dispatch(
         scheduleInterviewActions.rejectInterviewThunk({
@@ -246,6 +253,28 @@ export const CandidateList = (props) => {
       );
       if (res.payload.statusCode === 204) {
         showSweetAlert({ title: res.payload.message, type: "success" });
+        toggle(activeTab, pageNo);
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+    } else if (type === "rescheduleInterview") {
+      setShowRescheduleModal(true);
+      setRescheduleId(candidaterecommendedjobid);
+    } else if (type === "reaccepted") {
+      let payload = {
+        candidateacceptedcomment: reason,
+      };
+      let res = await dispatch(
+        candidateListActions.candidateAcceptAgain({
+          candidaterecommendedjobid,
+          payload: payload,
+        })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: successMessage, type: "success" });
         toggle(activeTab, pageNo);
       } else {
         showSweetAlert({
@@ -347,11 +376,11 @@ export const CandidateList = (props) => {
 
   const onPrescreenClickAction = async (type, row) => {
     if (type === "pending") {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getJobPrescreenApplicationQues(row.jobid)
       );
     } else {
-      let res = await dispatch(
+      await dispatch(
         candidateListActions.getCompJobPrescreenApplication(row.jobid)
       );
     }
@@ -383,6 +412,26 @@ export const CandidateList = (props) => {
     if (res.payload.statusCode === 201) {
       setShowPSModal(false);
       showSweetAlert({ title: res.payload.message, type: "success" });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
+  const onSendRescheduleData = async (data) => {
+    let res = await dispatch(
+      candidateListActions.updateRescheduleReason({
+        scheduleinterviewid: rescheduleId,
+        reschedulerequestedreason: data,
+      })
+    );
+
+    if (res?.payload?.statusCode === 204) {
+      setShowRescheduleModal(false);
+      showSweetAlert({ title: res.payload.message, type: "success" });
+      toggle(activeTab, pageNo);
     } else {
       showSweetAlert({
         title: res.payload.message || res.payload.status,
@@ -466,7 +515,7 @@ export const CandidateList = (props) => {
                 toggle("offers");
               }}
             >
-              Offers
+              Offer
             </Button>
             <Button
               color="primary"
@@ -497,7 +546,7 @@ export const CandidateList = (props) => {
           </ButtonGroup>
         </Col>
 
-        <Col xs={12} sm={12} md={4} lg={4} xl={12} className="mb-3">
+        <Col xs={12} sm={12} md={12} lg={12} xl={12} className="mb-3">
           <TabContent activeTab={activeTab}>
             <TabPane tabId="matched">
               <div className="p-3 tab-info">
@@ -530,7 +579,7 @@ export const CandidateList = (props) => {
                     <p className="mb-1 row-count">
                       {totalRecords > 0 ? `${totalRecords} jobs` : ""}{" "}
                     </p>
-                    <Col md="4" lg="4">
+                    <Col xs="12" sm="12" md="12" lg="4" xl="4" xxl="4">
                       {candidateJobList?.length > 0 ? (
                         candidateJobList.map((data) => {
                           return (
@@ -553,11 +602,13 @@ export const CandidateList = (props) => {
                               additionalData={data}
                               onCandidateActions={(
                                 type,
-                                candidaterecommendedjobid
+                                candidaterecommendedjobid,
+                                reason
                               ) =>
                                 onCandidateCardActions(
                                   type,
-                                  candidaterecommendedjobid
+                                  candidaterecommendedjobid,
+                                  reason
                                 )
                               }
                             />
@@ -576,7 +627,7 @@ export const CandidateList = (props) => {
                         <></>
                       )}
                     </Col>
-                    <Col md="8" lg="8">
+                    <Col xs="12" sm="12" md="12" lg="8" xl="8" xxl="8">
                       {!jdLoading ? (
                         <>
                           {jobDetail?.length > 0 &&
@@ -628,11 +679,12 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Candidates are individuals unsure about being invited to
-                      apply, often marked with a question or doubt. They may
-                      also be saved in a separate section of the user account,
-                      allowing users to review and change decisions later. This
-                      helps make informed decisions about potential candidates.
+                      A job record may be marked with questions or doubts,
+                      indicating uncertain applications due to a lack of
+                      information, qualifications, and locations. These jobs may
+                      also be saved in a separate section of the user profile,
+                      allowing the user to review and change their decisions
+                      later.
                     </span>
                   </Col>
                 </Row>
@@ -654,11 +706,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -667,11 +721,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -703,11 +759,10 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Applied candidates are those who have submitted their
-                      application for a job through the platform. They are
-                      stored in a separate section of the user account, allowing
-                      users to track their application status, contact them, or
-                      reject them.
+                      Applied jobs are those that users submit applications for
+                      through the platform. They are marked as applied and are
+                      stored in a separate section of the profile. The user can
+                      track the status and withdraw the application.
                     </span>
                   </Col>
                 </Row>
@@ -729,11 +784,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -742,11 +799,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -778,13 +837,9 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Scheduled interview candidates are selected for an
-                      interview and have a scheduled date and time. They move to
-                      the next stage of the hiring process, where skills are
-                      evaluated. These candidates are stored in a separate
-                      section of the user account, where users can view their
-                      interview details and prepare for the meeting. access them
-                      and decide whether to apply or not.
+                      A scheduled interview is an appointment with a customer to
+                      discuss qualifications for a job, typically in person, by
+                      phone, or video, after the initial screening process.
                     </span>
                   </Col>
                 </Row>
@@ -806,11 +861,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -819,11 +876,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -855,12 +914,9 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Accepted candidates are those who have accepted a job
-                      offer, either verbally or in writing, indicating that you
-                      have successfully hired them and agreed on their
-                      employment terms. They are typically stored in a separate
-                      section of the user account, providing information on
-                      their start date, contract details, and onboarding tasks.
+                      An accepted job is when candidates agree to the terms of
+                      the offer and confirm their intention to work for the
+                      customer, securing the job and preparing to start working.
                     </span>
                   </Col>
                 </Row>
@@ -882,11 +938,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -895,11 +953,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -931,13 +991,10 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Rejected candidates are those who have been rejected
-                      during the hiring process due to non-compliance with
-                      requirements, withdrawal of application, or refusal of
-                      offer. They are stored in a separate section of the
-                      account, where the reason for rejection can be viewed,
-                      feedback can be provided, or the candidate may be
-                      reconsidered for future opportunities.
+                      A rejected job refers to a decision to decline an offer or
+                      a customer rescinding it, indicating that the individual
+                      has decided not to work for the customer or has changed
+                      their hiring decision.
                     </span>
                   </Col>
                 </Row>
@@ -959,11 +1016,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -972,11 +1031,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -1008,14 +1069,9 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span>
-                      Offers candidates are candidates who have decided to offer
-                      a job after interviewing and assessing their
-                      qualifications. This means the customer has made a final
-                      decision on who to hire and communicated the offer to the
-                      candidate, either verbally or in writing. They are
-                      typically stored in a separate section of the account,
-                      allowing users to track the offer's status, negotiate
-                      terms, or withdraw it if needed.
+                      An offer is a formal proposal from a customer, detailing
+                      job details, salary, benefits, start date, and work hours,
+                      indicating successful completion of the interview process.
                     </span>
                   </Col>
                 </Row>
@@ -1037,11 +1093,13 @@ export const CandidateList = (props) => {
                           data={candidateJobList}
                           onCandidateActions={(
                             type,
-                            candidaterecommendedjobid
+                            candidaterecommendedjobid,
+                            reason
                           ) =>
                             onCandidateCardActions(
                               type,
-                              candidaterecommendedjobid
+                              candidaterecommendedjobid,
+                              reason
                             )
                           }
                           showModal={(e, type) => onShowModal(e, type)}
@@ -1050,11 +1108,13 @@ export const CandidateList = (props) => {
                           }
                         />
                         {totalRecords > candLPSize ? (
-                          <CardPagination
-                            totalPages={totalRecords / candLPSize}
-                            pageIndex={pageNo}
-                            onCallBack={(evt) => handlePageChange(evt)}
-                          ></CardPagination>
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / candLPSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
                         ) : (
                           <></>
                         )}
@@ -1135,6 +1195,19 @@ export const CandidateList = (props) => {
                 preScreenType={preScreenType}
               ></PrescreenModal>
             </>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {showRescheduleModal ? (
+            <CandRescheduleModal
+              isOpen={showRescheduleModal}
+              onClose={() => {
+                setShowRescheduleModal(false);
+              }}
+              onSubmitReschedule={(data) => onSendRescheduleData(data)}
+            ></CandRescheduleModal>
           ) : (
             <></>
           )}

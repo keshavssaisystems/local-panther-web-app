@@ -74,6 +74,15 @@ export const candidateAccept = createAsyncThunk(
   }
 );
 
+// candidate accept again thunk
+export const candidateAcceptAgain = createAsyncThunk(
+  `${name}/candidateAcceptAgain`,
+  async ({ candidaterecommendedjobid, payload }) => {
+    const ACCEPTED_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateAcceptedAgain/${candidaterecommendedjobid}`;
+    return await fetchWrapper.put(ACCEPTED_END_POINT, payload);
+  }
+);
+
 // candidate accept thunk
 export const candidateMayBe = createAsyncThunk(
   `${name}/candidateMayBe`,
@@ -95,12 +104,9 @@ export const candidateApply = createAsyncThunk(
 // candidate reject thunk
 export const candidateReject = createAsyncThunk(
   `${name}/candidateReject`,
-  async (jobId) => {
-    const REJECT_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateRejected/${jobId}`;
-    return await fetchWrapper.put(REJECT_END_POINT, {
-      candidaterejectedcomment: "",
-      candidaterejectedreasonid: 0,
-    });
+  async ({ candidaterecommendedjobid, payload }) => {
+    const REJECT_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/candidateRejected/${candidaterecommendedjobid}`;
+    return await fetchWrapper.put(REJECT_END_POINT, payload);
   }
 );
 
@@ -128,6 +134,15 @@ export const getCompJobPrescreenApplication = createAsyncThunk(
   async (jobId) => {
     const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/JobCandidatePrescreenApplication?pageSize=10&pageNumber=1&jobId=${jobId}&isActive=true&candidateId=${internalUserId}`;
     return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
+  }
+);
+
+// update reschedule reason for candidate thunk
+export const updateRescheduleReason = createAsyncThunk(
+  `${name}/updateRescheduleReason`,
+  async (payload) => {
+    const UPDATE_RESCHEDULE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview/InterviewRescheduleRequest/${payload.scheduleinterviewid}`;
+    return await fetchWrapper.put(UPDATE_RESCHEDULE_END_POINT, payload);
   }
 );
 
@@ -200,6 +215,18 @@ const candidateList = createSlice({
       state.loading = false;
     },
     [candidateAccept.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [candidateAcceptAgain.pending]: (state) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [candidateAcceptAgain.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [candidateAcceptAgain.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
@@ -320,6 +347,11 @@ const candidateList = createSlice({
     [getCompJobPrescreenApplication.rejected]: (state, action) => {
       state.loading = false;
     },
+
+    // update reschedule
+    [updateRescheduleReason.pending]: (state) => {},
+    [updateRescheduleReason.fulfilled]: (state, { payload = {} }) => {},
+    [updateRescheduleReason.rejected]: (state, action) => {},
   },
 });
 
@@ -329,6 +361,7 @@ export const candidateListActions = {
   getRecommendedJobList, // Export the async job list action
   candidateLike, // Export the like action
   candidateAccept,
+  candidateAcceptAgain,
   candidateMayBe,
   getJobDetails,
   candidateApply,
@@ -336,5 +369,6 @@ export const candidateListActions = {
   getJobPrescreenApplicationQues,
   postJobPrescreenApplication,
   getCompJobPrescreenApplication,
+  updateRescheduleReason,
 };
 export const candidateListReducer = candidateList.reducer;

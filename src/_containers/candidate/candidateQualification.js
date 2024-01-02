@@ -11,12 +11,7 @@ import {
   CardHeader,
 } from "reactstrap";
 import { profileActions } from "_store";
-import {
-  formatDate,
-  formatDateQualification,
-  calculateExperience,
-  getDate,
-} from "_helpers/helper";
+import { formatDate, calculateExperience, getDate } from "_helpers/helper";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
@@ -29,9 +24,6 @@ import { NoDataFound } from "_components/common/nodatafound";
 
 export function CandidateQualification(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
-  const [tabs, setTabs] = useState([
-    { id: 1, title: "Tab 1", content: <QualificationModal /> },
-  ]);
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
   const loading = useSelector((state) => state.getProfile.loader);
   const dispatch = useDispatch();
@@ -78,16 +70,6 @@ export function CandidateQualification(props) {
     setError(false);
     props.onCallBack();
   };
-
-  const [newTabId, setNewTabId] = useState(2);
-  const addMoreTabs = function () {
-    const newTab = {
-      id: 1,
-      content: <QualificationModal />,
-    };
-    setTabs([...tabs, newTab]);
-    setNewTabId(newTabId + 1);
-  };
   const handlePageChange = function () {
     setPersonalModal(false);
     setEditModal(false);
@@ -100,32 +82,32 @@ export function CandidateQualification(props) {
 
   const getText = function (data) {
     let text = "";
-    if (data.company != "") {
+    if (data.company !== "") {
       text = data.company;
-      if (data.cityname != "" && data.cityname) {
+      if (data.cityname !== "" && data.cityname) {
         text += ", " + data.cityname;
       }
-      if (data.statename != "" && data.statename) {
+      if (data.statename !== "" && data.statename) {
         text += ", " + data.statename;
       }
 
-      if (data.countryname != "" && data.countryname) {
+      if (data.countryname !== "" && data.countryname) {
         text += ", " + data.countryname;
       }
-    } else if (data.cityname != "") {
+    } else if (data.cityname !== "") {
       text = data.cityname;
-      if (data.statename != "" && data.statename) {
+      if (data.statename !== "" && data.statename) {
         text += ", " + data.statename;
       }
-      if (data.countryname != "" && data.countryname) {
+      if (data.countryname !== "" && data.countryname) {
         text += ", " + data.countryname;
       }
-    } else if (data.statename != "" && data.statename) {
+    } else if (data.statename !== "" && data.statename) {
       text = data.statename;
-      if (data.countryname != "" && data.countryname) {
+      if (data.countryname !== "" && data.countryname) {
         text += ", " + data.countryname;
       }
-    } else if (data.countryname != "" && data.countryname) {
+    } else if (data.countryname !== "" && data.countryname) {
       text = data.countryname;
       text += data.countryname;
     }
@@ -134,7 +116,7 @@ export function CandidateQualification(props) {
   };
 
   const checkEndDate = function (date) {
-    if (new Date(date) == new Date()) {
+    if (new Date(date) === new Date()) {
       return "Present";
     } else {
       formatDate(date);
@@ -147,7 +129,7 @@ export function CandidateQualification(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Qualifications
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <Label
                 className="link-text"
                 onClick={(evt) => setPersonalModal(true)}

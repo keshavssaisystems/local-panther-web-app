@@ -58,6 +58,7 @@ export function PersonalInformation(props) {
 
   const genderList = useSelector((state) => state.gender.genderList);
   const raceList = useSelector((state) => state.ethnicity.ethnicityList);
+  const pronounList = useSelector((state) => state.getProfile.pronounList);
   const eligibilityList_temp = useSelector(
     (state) => state.getProfile.dropdownLists.eligibilityDropDown
   );
@@ -105,9 +106,11 @@ export function PersonalInformation(props) {
   const [stateSelect, setStateSelect] = useState("");
   const [countrySelect, setCountrySelect] = useState("");
   const [raceSelect, setRaceSelect] = useState("");
+  const [pronounSelect, setPronounSelect] = useState("");
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
     let data = {
+      jobprofile: selectedCandidate.personalInfo.jobprofile,
       firstname: selectedCandidate.personalInfo.firstname,
       lastname: selectedCandidate.personalInfo.lastname,
       email: selectedCandidate.personalInfo.email,
@@ -151,11 +154,17 @@ export function PersonalInformation(props) {
           label: selectedCandidate.personalInfo.ethnicity,
         },
       ],
+      pronoun: [
+        {
+          value: selectedCandidate.personalInfo.pronounid,
+          label: selectedCandidate.personalInfo.pronounname,
+        },
+      ],
+
       isactive: true,
       userid: 0,
       currentUserId: 0,
     };
-
     setGetResponse(data);
     if (props.profileInfo.personalInfo.city != "") {
       loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
@@ -192,6 +201,12 @@ export function PersonalInformation(props) {
       );
       setRaceSelect(ethnicityData);
     }
+
+    if (selectedCandidate.selectedDropDown?.selectedPronoun[0].value != 0) {
+      let pronounData = [...pronounSelect];
+      pronounData.push(selectedCandidate.selectedDropDown?.selectedPronoun[0]);
+      setPronounSelect(pronounData);
+    }
   }, [selectedCandidate]);
 
   const [cityReqError, setCityReqError] = useState(false);
@@ -202,7 +217,6 @@ export function PersonalInformation(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
-  const [profileSuccess, setProfileSuccess] = useState(false);
 
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const [profileImage, setProfileImage] = useState(
@@ -276,6 +290,24 @@ export function PersonalInformation(props) {
     get_data.ethinicity = new_array;
     setGetResponse(get_data);
   };
+
+  const onSelectPronounDropdown = (data) => {
+    let new_data = [];
+    new_data.push(data);
+    setPronounSelect(new_data);
+
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: data.value,
+        label: data.label,
+      },
+    ];
+
+    get_data.pronoun = new_array;
+    setGetResponse(get_data);
+  };
+
   const onSelectGenderDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
@@ -319,10 +351,12 @@ export function PersonalInformation(props) {
     }
 
     if (
-      new_data.firstname == "" ||
-      new_data.lastname == "" ||
-      new_data.phonenumber == "" ||
-      new_data.email == "" ||
+      new_data.jobprofile === "" ||
+      !new_data.jobprofile ||
+      new_data.firstname === "" ||
+      new_data.lastname === "" ||
+      new_data.phonenumber === "" ||
+      new_data.email === "" ||
       new_data.cityid == 0
     ) {
       return;
@@ -346,6 +380,8 @@ export function PersonalInformation(props) {
         address: new_data.address,
         userid: userDetails.UserId,
         currentUserId: userDetails.UserId,
+        jobprofile: new_data.jobprofile,
+        pronounid: new_data.pronoun[0]?.value,
       };
 
       let response = await dispatch(
@@ -464,14 +500,15 @@ export function PersonalInformation(props) {
   const onHandleInputChange = function (check, data) {
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
-
-    if (check == "firstname") {
+    if (check === "jobprofile") {
+      new_data.jobprofile = data;
+    } else if (check === "firstname") {
       new_data.firstname = data;
-    } else if (check == "lastname") {
+    } else if (check === "lastname") {
       new_data.lastname = data;
-    } else if (check == "address") {
+    } else if (check === "address") {
       new_data.address = data;
-    } else if (check == "email") {
+    } else if (check === "email") {
       new_data.email = data;
 
       if (!new_data.email.match(emailRegex)) {
@@ -479,20 +516,20 @@ export function PersonalInformation(props) {
       } else {
         errors.emailError = false;
       }
-    } else if (check == "phonenumber") {
+    } else if (check === "phonenumber") {
       new_data.phonenumber = data;
       if (!new_data.phonenumber.match(phoneRegExp)) {
         errors.phoneError = true;
       } else {
         errors.phoneError = false;
       }
-    } else if (check == "zip") {
+    } else if (check === "zip") {
       new_data.zipcode = data;
-    } else if (check == "authorization") {
+    } else if (check === "authorization") {
       new_data.employmenteligiblity = data;
-    } else if (check == "work") {
+    } else if (check === "work") {
       new_data.isreadytoworkimmediately = !new_data.isreadytoworkimmediately;
-    } else if (check == "city") {
+    } else if (check === "city") {
       let new_array = [
         {
           value: data.value,
@@ -510,7 +547,7 @@ export function PersonalInformation(props) {
       ];
 
       new_data.state = obj;
-    } else if (check == "country") {
+    } else if (check === "country") {
       let new_array = [
         {
           value: data.value,
@@ -532,26 +569,6 @@ export function PersonalInformation(props) {
     accept: ".png",
   });
 
-  // const getFileName = function () {
-  //   let name = "";
-
-  //   if (resumeDetails) {
-  //     if (resumeDetails.resumepath) {
-  //       const lastIndex = resumeDetails.resumepath.lastIndexOf(".");
-  //       let jobTitle = candidateDetails.position
-  //         ? candidateDetails.position.replace(/ /g, "_")
-  //         : "";
-  //       if (lastIndex !== -1) {
-  //         name =
-  //           candidateDetails.lastname +
-  //           (jobTitle ? "_" + jobTitle : "") +
-  //           "." +
-  //           resumeDetails.resumepath.slice(lastIndex + 1);
-  //       }
-  //     }
-  //     setFileName(name);
-  //   }
-  // };
   const addEditProfileImage = function (acceptedFiles) {
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
@@ -641,13 +658,23 @@ export function PersonalInformation(props) {
                       <div className="widget-chart-content">
                         <div>
                           <strong className="candidate-name mb-1">
-                            {selectedCandidate.personalInfo.firstname +
-                              " " +
-                              selectedCandidate.personalInfo.lastname}
+                            <span className="me-2">
+                              {selectedCandidate.personalInfo.firstname +
+                                " " +
+                                selectedCandidate.personalInfo.lastname}
+                            </span>
+                            {selectedCandidate.personalInfo.pronounname !==
+                              "" && (
+                              <span className="candidate-label">
+                                ( {selectedCandidate.personalInfo.pronounname} )
+                              </span>
+                            )}
                           </strong>
-                          <p className="widget-description text-focus content-text mt-0">
-                            {selectedCandidate.personalInfo.position}
-                          </p>
+                          {selectedCandidate.personalInfo.jobprofile && (
+                            <p className="widget-description text-focus content-text mt-0">
+                              {selectedCandidate.personalInfo.jobprofile}
+                            </p>
+                          )}
                           <p className="candidate-label mt-0 mb-0">
                             {selectedCandidate.personalInfo.organization !=
                               "Not Working" &&
@@ -661,7 +688,7 @@ export function PersonalInformation(props) {
                           <Row>
                             <Col className="col-12 mb-0">
                               <Label className="candidate-label mb-0">
-                                Employement eligibility:{" "}
+                                Employment eligibility:{" "}
                                 <strong className="content-text">
                                   {selectedCandidate.personalInfo.eligibility}
                                 </strong>
@@ -826,6 +853,38 @@ export function PersonalInformation(props) {
             <ModalBody>
               {getResponse ? (
                 <Form onSubmit={(evt) => onSubmit(evt)}>
+                  <Row className="mb-3">
+                    <Col className="col-6">
+                      <Label for="firstname" className="fw-semi-bold">
+                        Desired/Current Job profile{" "}
+                        <span className="required-icon">*</span>
+                      </Label>
+                      <input
+                        type="text"
+                        name="jobProfile"
+                        id="jobProfile"
+                        placeholder="Enter job profile"
+                        maxLength={50}
+                        value={getResponse.jobprofile}
+                        onInput={(evt) =>
+                          onHandleInputChange("jobprofile", evt.target.value)
+                        }
+                        className={`field-input placeholder-text form-control ${
+                          getResponse.jobprofile === "" ||
+                          !getResponse.jobprofile
+                            ? "is-invalid error-text"
+                            : ""
+                        }`}
+                      />
+                      <div className="invalid-feedback">
+                        {getResponse.jobprofile === "" ||
+                        !getResponse.jobprofile
+                          ? "Job profile is required"
+                          : ""}
+                      </div>
+                    </Col>
+                  </Row>
+
                   <Row>
                     <div className="mb-1 fw-bold">Contact</div>
                     <hr />
@@ -855,7 +914,7 @@ export function PersonalInformation(props) {
                         />
                         <div className="invalid-feedback">
                           {getResponse.firstname == ""
-                            ? "Firstname is required"
+                            ? "First name is required"
                             : ""}
                         </div>
                       </FormGroup>
@@ -882,7 +941,7 @@ export function PersonalInformation(props) {
 
                         <div className="invalid-feedback">
                           {getResponse.lastname == ""
-                            ? "Lastname is required"
+                            ? "Last name is required"
                             : ""}
                         </div>
                       </FormGroup>
@@ -1059,7 +1118,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Birth year
+                          Date of Birth
                         </Label>
 
                         <InputGroup>
@@ -1113,10 +1172,26 @@ export function PersonalInformation(props) {
                         />
                       </FormGroup>
                     </Col>
+
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="pronoun" className="fw-semi-bold">
+                          Pronoun
+                        </Label>
+                        <AsyncSelect
+                          name="pronoun"
+                          placeholder="Select"
+                          defaultOptions={pronounList}
+                          isMulti={false}
+                          value={pronounSelect}
+                          onChange={(evt) => onSelectPronounDropdown(evt)}
+                        />
+                      </FormGroup>
+                    </Col>
                   </Row>
 
                   <Row>
-                    <div className="mb-1 fw-bold">Employement eligibility</div>
+                    <div className="mb-1 fw-bold">Employment eligibility</div>
                     <hr />
                   </Row>
 

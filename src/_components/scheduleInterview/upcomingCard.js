@@ -51,7 +51,7 @@ export function UpcomingCard({
               <Row>
                 <Col md="12">
                   <Row className="mb-2">
-                    <Col md="7">
+                    <Col md="12" lg="7">
                       <div className="job-title">{interview.candidatename}</div>
                       <div className="muted-name">
                         {" "}
@@ -60,18 +60,20 @@ export function UpcomingCard({
                     </Col>
                     {interview?.interviewstatusid === 0 &&
                       interview.isaccepted === true &&
-                      interview.isrejected === false && (
-                        <Col md="5">
-                          <div className="mb-2 me-2 badge bg-success float-end badge-custom">
+                      interview.isrejected === false &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-success float-end badge-custom">
                             Accepted
                           </div>
                         </Col>
                       )}
                     {interview?.interviewstatusid === 0 &&
                       interview.isaccepted === false &&
-                      interview.isrejected === false && (
-                        <Col md="5">
-                          <div className="mb-2 me-2 badge bg-warning float-end badge-custom">
+                      interview.isrejected === false &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-warning float-end badge-custom">
                             No response
                           </div>
                         </Col>
@@ -79,24 +81,34 @@ export function UpcomingCard({
                     {((interview?.interviewstatusid === 0 &&
                       interview.isrejected === true &&
                       interview.isaccepted === true) ||
-                      interview.isrejected === true) && (
-                      <Col md="5">
-                        <div className="mb-2 me-2 badge bg-danger float-end badge-custom">
-                          Rejected
-                        </div>
-                      </Col>
-                    )}
-                    {interview?.interviewstatusid === 1 && (
-                      <Col md="5">
-                        <div className="mb-2 me-2 badge bg-info float-end badge-custom">
-                          Completed
-                        </div>
-                      </Col>
-                    )}
-                    {interview?.interviewstatusid === 2 && (
-                      <Col md="5">
-                        <div className="mb-2 me-2 badge bg-secondary float-end badge-custom">
-                          Not joined
+                      interview.isrejected === true) &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-danger float-end badge-custom">
+                            Rejected
+                          </div>
+                        </Col>
+                      )}
+                    {interview?.interviewstatusid === 1 &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-info float-end badge-custom">
+                            Completed
+                          </div>
+                        </Col>
+                      )}
+                    {interview?.interviewstatusid === 2 &&
+                      interview.isreschedulerequested === false && (
+                        <Col md="12" lg="5">
+                          <div className="mb-2 me-2 mt-1 badge bg-secondary float-end badge-custom">
+                            Not joined
+                          </div>
+                        </Col>
+                      )}
+                    {interview.isreschedulerequested === true && (
+                      <Col md="12" lg="5">
+                        <div className="mb-2 me-2 mt-1 badge bg-primary float-end badge-custom">
+                          Requested for reschedule
                         </div>
                       </Col>
                     )}

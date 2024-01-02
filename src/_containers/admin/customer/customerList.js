@@ -33,6 +33,7 @@ export const CustomerList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -40,19 +41,15 @@ export const CustomerList = () => {
     title: "",
     description: "",
   });
+
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
     dispatch(dropdownActions.getStatusListThunk());
-    dispatch(
-      getCustomers({
-        isActive: true,
-        pageSize: 1000,
-        pageNumber: 1,
-        companyId: 0,
-      })
-    );
+    getCustomerDetails(pageSize, pageNo);
   }, []);
   const [customerStatus, setCustomerStatus] = useState(0);
   const [companyId, setCompanyId] = useState(0);
@@ -60,8 +57,10 @@ export const CustomerList = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const { data } = useSelector((state) => state?.adminListing ?? {});
+  const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
+
   let title = "Customers";
   let icon = companyLogo;
   let columns = [
@@ -116,6 +115,7 @@ export const CustomerList = () => {
     {
       name: "Action",
       id: "isactive",
+
       cell: (row) => (
         <div>
           <div
@@ -173,7 +173,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Approve candidate"
+                title="Accept customer"
                 className="btn-icon"
                 color="success"
                 onClick={() => onApprove(row, true)}
@@ -186,7 +186,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Reject candidate"
+                title="Reject customer"
                 className="btn-icon"
                 color="danger"
                 onClick={() => onApprove(row, false)}
@@ -198,6 +198,7 @@ export const CustomerList = () => {
         </div>
       ),
       sortable: false,
+      minWidth: "204px",
     },
   ];
 
@@ -230,7 +231,7 @@ export const CustomerList = () => {
       });
     }
 
-    getCustomerDetails();
+    getCustomerDetails(pageSize, pageNo);
   };
 
   const toggleNotification = async function (value, row) {
@@ -286,20 +287,22 @@ export const CustomerList = () => {
     setOpenModal(true);
   };
 
-  const getFilterValue = (event) => {
+  const getFilterValue = async (event) => {
+    setLoading(true);
     event.preventDefault();
 
     let obj = {
       isActive: event.target.elements.status.value,
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
       companyId: event.target.elements.companyid.value,
     };
     if (event.target.elements.customerStatus.value !== "All status") {
       obj.customerStatusId = Number(event.target.elements.customerStatus.value);
     }
 
-    dispatch(getCustomers(obj));
+    await dispatch(getCustomers(obj));
+    setLoading(false);
   };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
@@ -315,7 +318,7 @@ export const CustomerList = () => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
-    getCustomerDetails();
+    getCustomerDetails(pageSize, pageNo);
   };
   const postData = async (data) => {
     let res = await dispatch(addCustomerActions.addCustomer(data));
@@ -354,7 +357,7 @@ export const CustomerList = () => {
     setOpenModal(false);
     setIsEdit(false);
     if (res.payload) {
-      getCustomerDetails();
+      getCustomerDetails(pageSize, pageNo);
       if (res.payload.statusCode === 204) {
         setSuccess(true);
         showSweetAlert({
@@ -390,10 +393,11 @@ export const CustomerList = () => {
       setCompanyId(Number(data));
     }
   };
-  const getCustomerDetails = () => {
+  const getCustomerDetails = async (pageSize, pageNo) => {
+    setLoading(true);
     let obj = {
-      pageSize: 1000,
-      pageNumber: 1,
+      pageSize: pageSize,
+      pageNumber: pageNo,
     };
     if (customerStatus !== 0) {
       obj.customerStatusId = Number(customerStatus);
@@ -404,7 +408,17 @@ export const CustomerList = () => {
     if (companyId !== 0) {
       obj.companyId = companyId;
     }
-    dispatch(getCustomers(obj));
+    await dispatch(getCustomers(obj));
+    setLoading(false);
+  };
+
+  const handlePerRowsChange = async (pagesize) => {
+    setPageSize(pagesize);
+    getCustomerDetails(pagesize, pageNo);
+  };
+  const handlePageChange = async (page) => {
+    setPageNo(page);
+    getCustomerDetails(pageSize, page);
   };
 
   return (
@@ -417,7 +431,7 @@ export const CustomerList = () => {
           <Card className="mb-3">
             <CardBody>
               <Row>
-                <Col md={10}>
+                <Col md={12} lg={10} sm={12}>
                   <Form onSubmit={(e) => getFilterValue(e)}>
                     <Row>
                       <Col>
@@ -496,7 +510,7 @@ export const CustomerList = () => {
                     </Row>
                   </Form>
                 </Col>
-                <Col>
+                <Col md={12} lg={2} sm={12}>
                   <Button
                     style={{ background: "#2f479b" }}
                     color={"primary"}
@@ -514,7 +528,12 @@ export const CustomerList = () => {
                 pagination
                 fixedHeader
                 customStyles={customStyles}
+                progressPending={loading}
                 responsive
+                paginationServer
+                paginationTotalRows={totalRecords}
+                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                onChangePage={(e) => handlePageChange(e)}
               />
             </CardBody>
           </Card>

@@ -166,6 +166,7 @@ const scheduleInterviewSlice = createSlice({
     duration: [],
     scheduleInterview: [],
     upcomingInterview: [],
+    upcomingInterviewLoading: false,
     upcomingInterviewWOPagination: [],
     allInterview: [],
     candidateSchedules: [],
@@ -187,6 +188,7 @@ const scheduleInterviewSlice = createSlice({
           elementObject = element;
           let interviewstatusid = {
             interviewstatusid: action?.payload?.interviewstatusid,
+            interviewfeedback: action?.payload?.interviewfeedback,
           };
           elementObject = {
             ...elementObject,
@@ -205,6 +207,7 @@ const scheduleInterviewSlice = createSlice({
           elementObject = element;
           let interviewstatusid = {
             interviewstatusid: action?.payload?.interviewstatusid,
+            interviewfeedback: action?.payload?.interviewfeedback,
           };
           elementObject = {
             ...elementObject,
@@ -223,6 +226,7 @@ const scheduleInterviewSlice = createSlice({
           elementObject = element;
           let interviewstatusid = {
             interviewstatusid: action?.payload?.interviewstatusid,
+            interviewfeedback: action?.payload?.interviewfeedback,
           };
           elementObject = {
             ...elementObject,
@@ -272,15 +276,15 @@ const scheduleInterviewSlice = createSlice({
       state.error = action.error;
     },
     [getUpcomingInterviewListThunk.pending]: (state) => {
-      state.loading = true;
+      state.upcomingInterviewLoading = true;
     },
     [getUpcomingInterviewListThunk.fulfilled]: (state, action) => {
       state.upcomingInterview = action.payload.data;
-      state.loading = false;
+      state.upcomingInterviewLoading = false;
     },
     [getUpcomingInterviewListThunk.rejected]: (state, action) => {
       state.error = action.error;
-      state.loading = true;
+      state.upcomingInterviewLoading = true;
     },
     [getUpcomingInterviewListWOPaginationThunk.pending]: (state) => {
       state.loading = true;

@@ -1,33 +1,38 @@
-.candidate-calendar{
-    .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
-        background-image: none;
-        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-        background-color: rgb(57, 193, 123);
-        border-color: rgb(57, 193, 123);
-    }
+.candidate-calendar {
+  .rbc-toolbar button:active,
+  .rbc-toolbar button.rbc-active {
+    background-image: none;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    background-color: rgb(57, 193, 123);
+    border-color: rgb(57, 193, 123);
+  }
+
+  .legend {
+    display: inline-block;
+  }
 }
-.scheduled-interview{
-    font-family: Capitana;
-    .dropdown-menu-header {
-      color: #fff;
-      margin-top: -0.65rem;
-      margin-bottom: 0;
-      position: relative;
-      z-index: 6;
-    }
-    .interview-p-tag {
-      color: #2f479b !important;
-    }
-    .dropdown-menu-header .dropdown-menu-header-inner {
-      margin: -1px -1px 0;
-      padding: 0.5rem 0.5rem 0 0.5rem;
-      position: relative;
-    }
-    .p-custom {
-      padding: 0.5rem 1rem;
-    }
-    .candidate-schedule .location-icon {
-        font-size: 16px;
-        font-weight: 600;
-    }
+.scheduled-interview {
+  font-family: Capitana;
+  .dropdown-menu-header {
+    color: #fff;
+    margin-top: -0.65rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 6;
+  }
+  .interview-p-tag {
+    color: #2f479b !important;
+  }
+  .dropdown-menu-header .dropdown-menu-header-inner {
+    margin: -1px -1px 0;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    position: relative;
+  }
+  .p-custom {
+    padding: 0.5rem 1rem;
+  }
+  .candidate-schedule .location-icon {
+    font-size: 16px;
+    font-weight: 600;
+  }
 }

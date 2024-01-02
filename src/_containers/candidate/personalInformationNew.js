@@ -173,7 +173,7 @@ export function PersonalInformationNew(props) {
                     <Row>
                       <Col>
                         <Label className="personal-info-label">
-                          Employement Eligibility:{" "}
+                          Employment Eligibility:{" "}
                           <strong className="content-text">
                             Authorized to work in the US{" "}
                           </strong>
@@ -489,7 +489,7 @@ export function PersonalInformationNew(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="gender" className="input-label">
-                        Birth Year
+                      Date of Birth
                       </Label>
                       <InputGroup>
                         <div className="input-group-text">

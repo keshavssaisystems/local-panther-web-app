@@ -10,7 +10,6 @@ import {
   UncontrolledButtonDropdown,
   Card,
   CardBody,
-  ButtonGroup,
   ModalHeader,
   ModalBody,
   Modal,
@@ -52,7 +51,7 @@ export function UpcomingVideoDetails({
     if (oldInterviewId !== interviewId) {
       setFeedbackModal(false);
     }
-  }, [interviewId]);
+  }, [interviewId, oldInterviewId]);
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
   );
@@ -64,7 +63,8 @@ export function UpcomingVideoDetails({
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
   );
-  const interviewDetails = selectedJobDetails[0];
+  const interviewDetails =
+    selectedJobDetails?.length > 0 ? selectedJobDetails[0] : [];
   let scheduled = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("YYYY-MM-DD") +
       " " +
@@ -137,7 +137,7 @@ export function UpcomingVideoDetails({
   let preQuestions = [];
   if (
     interviewDetails?.jobCandidatePrescreenApplicantDtos !== null &&
-    interviewDetails?.jobCandidatePrescreenApplicantDtos.length > 0
+    interviewDetails?.jobCandidatePrescreenApplicantDtos?.length > 0
   ) {
     interviewDetails.jobCandidatePrescreenApplicantDtos.forEach((element) => {
       if (element.iscustomquestion === false) {
@@ -158,6 +158,20 @@ export function UpcomingVideoDetails({
   const downloadInterviewGuide = () => {
     window.open(interviewGuideLink[0].name, "_blank");
   };
+  let suggestedJson = "";
+  let suggestedQuestionArray = [];
+  try {
+    suggestedJson =
+      interviewDetails?.suggestedquestion !== "" &&
+      interviewDetails?.suggestedquestion !== undefined
+        ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
+        : "";
+    suggestedQuestionArray = suggestedJson?.questions?.split("\n");
+  } catch {
+    suggestedJson = "";
+    suggestedQuestionArray = [];
+  }
+
   return (
     <>
       <CardBody>
@@ -181,16 +195,6 @@ export function UpcomingVideoDetails({
                     {" "}
                     Invite to interview{" "}
                   </Button>
-                  {/* <Button
-                    outline
-                    size="sm"
-                    className="mb-2 mr-2 btn-transition"
-                    color="primary"
-                  >
-                    {" "}
-                    Message{" "}
-                  </Button> */}
-
                   <Button
                     outline
                     size="sm"
@@ -204,17 +208,6 @@ export function UpcomingVideoDetails({
                 </Col>
               ) : (
                 <></>
-                // <Col style={{ display: "flex", justifyContent: "flex-end" }}>
-                //   <Button
-                //     outline
-                //     size="sm"
-                //     className="mb-2 mr-2 btn-transition"
-                //     color="primary"
-                //   >
-                //     {" "}
-                //     Message{" "}
-                //   </Button>
-                // </Col>
               )}
             </div>
           </div>
@@ -236,7 +229,11 @@ export function UpcomingVideoDetails({
         </div>
         <div className="p-custom">
           <h6 className="fw-bold mb-0 job-heading">Status</h6>
-          {interviewDetails?.interviewstatusid !== 0
+          {interviewDetails?.isreschedulerequested === true
+            ? "Requested for reschedule (" +
+              interviewDetails?.reschedulerequestedreason +
+              ")"
+            : interviewDetails?.interviewstatusid !== 0
             ? interviewDetails?.interviewstatusid === 1
               ? "Completed"
               : "Candidate not joined"
@@ -244,9 +241,18 @@ export function UpcomingVideoDetails({
               interviewDetails?.isrejected === false
             ? "Accepted"
             : interviewDetails?.isrejected === true
-            ? "Rejected"
+            ? interviewDetails?.rejectionreason !== ""
+              ? "Rejected (" + interviewDetails?.rejectionreason + ")"
+              : "Rejected"
             : "No response"}
         </div>
+        {interviewDetails?.interviewstatusid !== 0 &&
+          interviewDetails?.interviewfeedback !== "" && (
+            <div className="p-custom">
+              <h6 className="fw-bold mb-0 job-heading">Interview feedback</h6>
+              {interviewDetails?.interviewfeedback}
+            </div>
+          )}
         {showInviteCard === true && (
           <div className="mt-2 mb-2">
             <InviteToInterviewCard
@@ -476,14 +482,27 @@ export function UpcomingVideoDetails({
             </p>
           )}
         </div>
+        {interviewDetails?.suggestedquestion !== "" && (
+          <div className="p-3 suggested-question">
+            <h6 className="fw-bold">Suggested Questions</h6>
+            {suggestedQuestionArray?.length > 0 &&
+              suggestedQuestionArray?.map((suggestedQuestion) => (
+                <>
+                  <p className="mb-1">{suggestedQuestion}</p>
+                </>
+              ))}
+            {suggestedQuestionArray?.length === 0 && (
+              <p className="mb-0 ">
+                <i> - No suggested question added</i>
+              </p>
+            )}
+          </div>
+        )}
         <div className="divider" />
         <div className="d-block text-center mb-1">
           <h6 className="fw-bold">
             Request sent on{" "}
-            {getTimezoneDateTime(
-              moment(interviewDetails?.createddate).format("MM/DD/YYYY"),
-              "MM/DD/YYYY"
-            )}
+            {getTimezoneDateTime(interviewDetails?.createddate, "MM/DD/YYYY")}
           </h6>
         </div>
       </CardBody>

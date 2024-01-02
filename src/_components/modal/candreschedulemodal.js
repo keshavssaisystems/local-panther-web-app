@@ -13,27 +13,31 @@ import {
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import "./prescreen.scss";
 
-export const RejectModal = (props) => {
+export const CandRescheduleModal = (props) => {
   const [reason, setReason] = useState("");
-  const [selReason, setSelReason] = useState("");
-  const [save, setSave] = useState(false);
+  const [reasonErr, setReasonErr] = useState(false);
 
   const onAddComment = (evt) => {
+    if (evt === "") {
+      setReasonErr(true);
+    } else {
+      setReasonErr(false);
+    }
     setReason(evt);
   };
 
   const onSubmitReject = () => {
-    setSave(true);
     if (reason === "") {
+      setReasonErr(true);
       return false;
+    } else {
+      props.onSubmitReschedule(reason);
     }
-
-    props.onSubmitReject(reason, 0);
   };
   return (
     <Modal
       className="prescreen-modal modal-dialog-reject-align"
-      isOpen={props.isRMOpen}
+      isOpen={props.isOpen}
     >
       <Card>
         <CardBody>
@@ -41,17 +45,24 @@ export const RejectModal = (props) => {
             <img src={errorIcon} alt="error-icon" />
           </div>
           <div className="mb-0 d-flex justify-content-center reject-reason-text">
-            Please Provide a Reason for
+            Please provide a reason for
           </div>
-          <div className="mb-3 d-flex justify-content-center reject-reason-text">
-            Candidate Rejection
+          <div className="mb-0 d-flex justify-content-center reject-reason-text">
+            reschedule
           </div>
+
           <div className="candidate-list">
             <Row>
               <Col>
                 <FormGroup>
                   <Label className="reject-modal-label" for="exampleText">
-                    Reason <span style={{ color: "red" }}>* </span>
+                    Reason{" "}
+                    <span
+                      className="required-icon"
+                      style={{ color: "#ff0000" }}
+                    >
+                      *
+                    </span>
                   </Label>
                   <Input
                     type="textarea"
@@ -63,19 +74,18 @@ export const RejectModal = (props) => {
                     id="exampleText"
                     value={reason.value}
                     style={{
-                      borderColor:
-                        save && reason === "" ? "#ff0000" : "#ced4da",
+                      borderColor: reasonErr ? "#ff0000" : "#ced4da",
                     }}
                   />
                   <span className="dropdown-placeholder float-end">
                     {reason ? reason.length : 0}/100
                   </span>
-                  {save && reason === "" ? (
-                    <p className="filter-info-text">Reason is required</p>
-                  ) : (
-                    <></>
-                  )}
                 </FormGroup>
+                {reasonErr ? (
+                  <p className="filter-info-text">Reason is required</p>
+                ) : (
+                  <></>
+                )}
               </Col>
             </Row>
             <Row>
@@ -89,7 +99,7 @@ export const RejectModal = (props) => {
                 </Button>
                 <Button
                   className="reject-close-btn"
-                  onClick={(evt) => props.onCancelReject()}
+                  onClick={(evt) => props.onClose()}
                 >
                   Cancel
                 </Button>

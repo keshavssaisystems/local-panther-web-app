@@ -24,8 +24,17 @@
     background-color: #6c757d;
     border-color: #6c757d;
   }
+  .badge-color-darkblue {
+    color: #2f479b;
+    background-color: #2f479b;
+    border-color: #2f479b;
+  }
 
   .rbc-agenda-event-cell {
     cursor: pointer;
+  }
+
+  .legend {
+    display: inline-block;
   }
 }

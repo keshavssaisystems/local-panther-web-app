@@ -140,40 +140,63 @@ export function HiringManager({ title }) {
 
   const columns = [
     {
-      name: "Company",
-      cell: (row) => row?.companyname,
+      name: <span className="table-title">Company</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.companyname}>
+          {row?.companyname}
+        </span>
+      ),
       sortable: true,
       wrap: true,
       selector: (row) => row.companyname,
       minWidth: "250px",
     },
     {
-      name: "Customer",
-      cell: (row) => row?.customername,
+      name: <span className="table-title">Customer</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.customername}>
+          {row?.customername}
+        </span>
+      ),
       sortable: true,
       wrap: true,
       selector: (row) => row.customername,
       minWidth: "200px",
     },
     {
-      name: "Email",
-      cell: (row) => row?.email,
+      name: <span className="table-title">Email</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.email}>
+          {row?.email}
+        </span>
+      ),
       wrap: true,
       sortable: true,
       selector: (row) => row.email,
       minWidth: "250px",
     },
     {
-      name: "Phone",
-      cell: (row) => (row?.phonenumber ? USPhoneNumber(row.phonenumber) : ""),
+      name: <span className="table-title">Phone</span>,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={row?.phonenumber ? USPhoneNumber(row.phonenumber) : ""}
+        >
+          {row?.phonenumber ? USPhoneNumber(row.phonenumber) : ""}
+        </span>
+      ),
       sortable: true,
       wrap: true,
       selector: (row) => row.phonenumber,
       minWidth: "200px",
     },
     {
-      name: "Address",
-      cell: (row) => row?.address,
+      name: <span className="table-title">Address</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row?.address}>
+          {row?.address}
+        </span>
+      ),
       sortable: true,
       wrap: true,
       selector: (row) => row.address,
@@ -219,7 +242,15 @@ export function HiringManager({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12" className="pe-1">
+                <Col
+                  xxl="2"
+                  xl="3"
+                  lg="3"
+                  md="4"
+                  sm="12"
+                  xs="12"
+                  className="pe-1"
+                >
                   <CompanyFilter
                     name={"@companyid"}
                     placeholder={"Search Company"}
@@ -294,7 +325,7 @@ export function HiringManager({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col> */}
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     color="primary"
@@ -305,7 +336,7 @@ export function HiringManager({ title }) {
                     Search
                   </Button>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     color="link"
                     type="button"

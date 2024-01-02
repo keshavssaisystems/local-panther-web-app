@@ -15,7 +15,7 @@ export function UpcomingDetail({
 }) {
   return (
     <>
-      {interviewDetails !== undefined && (
+      {interviewDetails.scheduleinterviewid !== undefined && (
         <Card className="upcoming-interview">
           <UpcomingVideoDetails
             interviewId={interviewDetails.scheduleinterviewid}
@@ -29,7 +29,7 @@ export function UpcomingDetail({
           />
         </Card>
       )}
-      {interviewDetails === undefined && (
+      {interviewDetails.scheduleinterviewid === undefined && (
         <Card className="upcoming-interview">
           <CardBody>
             <CardText className="mb-0 text-center">

@@ -1,8 +1,13 @@
 .appsidebar {
+  max-width: 15vw;
+  min-width: auto;
+  position: inherit;
+  z-index: 15;
+  overflow: auto;
   .side-navigation-panel {
     padding: 16px;
     height: calc(100vh - 70px);
-    min-width: 280px;
+
     .side-navigation-panel-select .side-navigation-panel-select-wrap {
       .side-navigation-panel-select-option-selected {
         background-color: #aad6ff;
@@ -32,9 +37,95 @@
     .side-navigation-panel-select-inner {
       .side-navigation-panel-select-inner-wrap {
         .side-navigation-panel-select-inner-option {
-          padding: .5rem 0 .5rem 1rem !important;
+          padding: 0.5rem 0 0.5rem 1rem !important;
         }
       }
+    }
+  }
+
+
+  .sidebar-open {
+    // min-width: 15vw;
+    .side-navigation-panel-select-option-text,
+    .side-navigation-panel-select-inner-option-text,
+    .side-navigation-panel-select-option svg {
+      display: block !important;
+    }
+
+    .side-navigation-panel-select-option {
+      max-width: initial;
+    }
+  }
+
+  .sidebar-close {
+    // min-width: 5vw;
+    .side-navigation-panel-select-option-text,
+    .side-navigation-panel-select-inner-option-text,
+    .side-navigation-panel-select-option svg {
+      display: none !important;
+    }
+
+    .side-navigation-panel-select-option {
+      min-width: 2vw;
+    }
+  }
+}
+@media only screen and (min-width: 1440px) {
+  .appsidebar {
+    max-width: 15vw;
+    .sidebar-open {
+      min-width: 15vw;
+    }
+    .sidebar-close {
+      min-width: auto;
+      .side-navigation-panel-select-option {
+        min-width: 2vw;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1440px) and (min-width: 1024px) {
+  .appsidebar {
+    max-width: 20vw;
+    .sidebar-open {
+      min-width: 20vw;
+    }
+    .sidebar-close {
+      min-width: auto;
+      .side-navigation-panel-select-option {
+        min-width: 3vw;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 768px) {
+  .appsidebar {
+    max-width: 25vw;
+    .sidebar-open {
+      min-width: 25vw;
+    }
+    .sidebar-close {
+      min-width: auto;
+      .side-navigation-panel-select-option {
+        min-width: 4vw;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 0px) {
+  .appsidebar {
+    max-width: 40vw;
+    min-width: 40vw;
+    position: absolute;
+    .sidebar-open {
+      display: contents;
+      transition: opacity 3s ease-in-out;
+    }
+    .sidebar-close {
+      display: none;
     }
   }
 }

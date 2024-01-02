@@ -17,7 +17,9 @@ export const getCustReportJobList = createAsyncThunk(
       process.env.REACT_APP_NEW_API_URL
     }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
       payload.startDate ? `'${payload.startDate}'` : null
-    },@enddate=${payload.endDate ? `'${payload.endDate}'` : null}`;
+    },@enddate=${
+      payload.endDate ? `'${payload.endDate}'` : null
+    },@subsidiaryid=${payload.subsidiaryid ? payload.subsidiaryid : null}`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_LIST_END_POINT);
   }
 );
@@ -168,6 +170,34 @@ export const getScheduledCandidatesForCustomerDropdown = createAsyncThunk(
     return await fetchWrapper.get(GET_SCFC_DROPDOWN_END_POINT);
   }
 );
+
+// get job detail for customer report
+export const getCustReportJobDetail = createAsyncThunk(
+  `${name}/getCustReportJobDetail`,
+  async (jobId) => {
+    const CUST_RPT_JD_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`;
+    return await fetchWrapper.get(CUST_RPT_JD_END_POINT);
+  }
+);
+
+// get job detail for customer report
+export const getCustReportSchdIntvDetail = createAsyncThunk(
+  `${name}/getCustReportSchdIntvDetail`,
+  async (scheduleInterviewId) => {
+    const CUST_RPT_JD_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/ScheduledInterview?pageSize=10&pageNumber=1&scheduleInterviewId=${scheduleInterviewId}&isActive=true&isPaginationRequired=true`;
+    return await fetchWrapper.get(CUST_RPT_JD_END_POINT);
+  }
+);
+
+// get report Subsidiary List
+export const getReportSubsidiaryList = createAsyncThunk(
+  `${name}/getReportSubsidiaryList`,
+  async (companyId) => {
+    const SUBSIDIARY_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Subsidiary/GetSubsidiaryDropdown?companyId=${companyId}`;
+    return await fetchWrapper.get(SUBSIDIARY_END_POINT);
+  }
+);
+
 // Create the slice
 const customerReportSlice = createSlice({
   name,
@@ -183,6 +213,9 @@ const customerReportSlice = createSlice({
     jobDropDownList: [],
     candidateDropDownList: [],
     recommendedJobStatusList: [],
+    jobDetail: [],
+    scheduleInterviewDetail: [],
+    subsidiaryList: [],
   },
   reducers: {
     // logout: (state, { payload }) => {
@@ -304,6 +337,35 @@ const customerReportSlice = createSlice({
       state.candidateDropDownList = action?.payload?.data;
     },
     [getScheduledCandidatesForCustomerDropdown.rejected]: (state, action) => {},
+
+    // customer report job detail
+    [getCustReportJobDetail.pending]: (state) => {
+      state.jobDetail = [];
+    },
+    [getCustReportJobDetail.fulfilled]: (state, { payload = {} }) => {
+      let data = [];
+      data.push(payload.data);
+      state.jobDetail = data;
+    },
+    [getCustReportJobDetail.rejected]: (state, action) => {},
+    // customer report schdeule interview detail
+    [getCustReportSchdIntvDetail.pending]: (state) => {
+      state.scheduleInterviewDetail = [];
+    },
+    [getCustReportSchdIntvDetail.fulfilled]: (state, { payload = {} }) => {
+      state.scheduleInterviewDetail = payload?.data?.scheduledInterviewList
+        ? payload?.data?.scheduledInterviewList
+        : [];
+    },
+    [getCustReportSchdIntvDetail.rejected]: (state, action) => {},
+    // customer report subsidiary list
+    [getReportSubsidiaryList.pending]: (state) => {
+      state.subsidiaryList = [];
+    },
+    [getReportSubsidiaryList.fulfilled]: (state, { payload = {} }) => {
+      state.subsidiaryList = payload?.data ? payload?.data : [];
+    },
+    [getReportSubsidiaryList.rejected]: (state, action) => {},
   },
 });
 
@@ -320,6 +382,9 @@ export const customerReportActions = {
   getJobDropdown,
   getRecommendedJobStatus,
   getScheduledCandidatesForCustomerDropdown,
+  getCustReportJobDetail,
+  getCustReportSchdIntvDetail,
+  getReportSubsidiaryList,
 };
 
 export const customerReportReducer = customerReportSlice.reducer;

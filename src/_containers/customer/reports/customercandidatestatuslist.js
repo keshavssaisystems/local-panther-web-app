@@ -24,6 +24,7 @@ import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
   getCustReporCandStatList,
   getRecommendedJobStatus,
+  getCustReportJobDetail,
 } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 
@@ -32,100 +33,10 @@ import Loader from "react-loaders";
 import { updateMonthstoYears, USPhoneNumber } from "_helpers/helper";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import { getProfileActions } from "_store";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./customerreport.scss";
-
-const columns = [
-  // {
-  //   name: "Candidate Id",
-  //   selector: (row) => row.candidateid,
-  //   sortable: true,
-  // },
-  {
-    name: <span className="table-title">Name</span>,
-
-    selector: (row) => row.candidatename,
-    cell: (row) => (
-      <span className="table-cell" title={row.candidatename}>
-        {row.candidatename}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">Email</span>,
-    selector: (row) => row.email,
-    cell: (row) => (
-      <span className="table-cell" title={row.email}>
-        {row.email}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">Phone</span>,
-    selector: (row) => row.phone,
-    cell: (row) => (
-      <span
-        className="table-cell"
-        title={row.phone ? USPhoneNumber(row.phone) : ""}
-      >
-        {row.phone ? USPhoneNumber(row.phone) : ""}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "180px",
-  },
-  {
-    name: <span className="table-title">Skills</span>,
-    selector: (row) => row.skill,
-    cell: (row) => (
-      <span className="table-cell" title={row?.skill}>
-        {row?.skill}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "400px",
-  },
-  {
-    name: <span className="table-title">Education</span>,
-    selector: (row) => row.education,
-    cell: (row) => (
-      <span className="table-cell" title={row.education}>
-        {row.education}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "400px",
-  },
-  {
-    name: <span className="table-title">Experience</span>,
-    selector: (row) => row.experience,
-    cell: (row) => (
-      <span
-        className="table-cell"
-        title={row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
-      >
-        {row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
-      </span>
-    ),
-    sortable: true,
-    minWidth: "200px",
-  },
-  // {
-  //   name: "Location",
-  //   selector: (row) => row.location,
-  //   sortable: true,
-  // },
-  {
-    name: <span className="table-title">Certifications</span>,
-    selector: (row) => row.certifications,
-    cell: (row) => row.certifications,
-    sortable: true,
-    minWidth: "200px",
-  },
-];
 
 export function CustomerReportCandidateStatus() {
   const dispatch = useDispatch();
@@ -134,12 +45,16 @@ export function CustomerReportCandidateStatus() {
   let [filter, setFilter] = useState({});
   let [recommStatusId, setRecommStatusId] = useState();
   const [excelData, setExcelData] = useState([]);
-
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showJDModal, setShowJDModal] = useState(false);
   const candidateStatusList = useSelector(
     (state) => state?.customerReportReducer?.candidateStatusList
   );
 
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDetail = useSelector(
+    (state) => state?.customerReportReducer?.jobDetail
+  );
   const recommendedJobStatusList = useSelector(
     (state) => state?.customerReportReducer?.recommendedJobStatusList
   );
@@ -197,6 +112,139 @@ export function CustomerReportCandidateStatus() {
     onGetCustReporCandStatList({});
   };
 
+  const onCandidateClick = async (candidateId) => {
+    const response = await dispatch(
+      getProfileActions.getCandidate(candidateId)
+    );
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
+  };
+
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getCustReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
+  };
+
+  const columns = [
+    // {
+    //   name: "Candidate Id",
+    //   selector: (row) => row.candidateid,
+    //   sortable: true,
+    // },
+    {
+      name: <span className="table-title">Name</span>,
+
+      selector: (row) => row.candidatename,
+      cell: (row) => (
+        <span className="table-cell" title={row.candidatename}>
+          <Button
+            color="link"
+            onClick={() => onCandidateClick(row.candidateid)}
+          >
+            {" "}
+            {row.candidatename}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Title</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row.jobtitle}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobtitle,
+      minWidth: "400px",
+    },
+    {
+      name: <span className="table-title">Email</span>,
+      selector: (row) => row.email,
+      cell: (row) => (
+        <span className="table-cell" title={row.email}>
+          {row.email}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Phone</span>,
+      selector: (row) => row.phone,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={row.phone ? USPhoneNumber(row.phone) : ""}
+        >
+          {row.phone ? USPhoneNumber(row.phone) : ""}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "180px",
+    },
+    {
+      name: <span className="table-title">Skills</span>,
+      selector: (row) => row.skill,
+      cell: (row) => (
+        <span className="table-cell" title={row?.skill}>
+          {row?.skill}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "400px",
+    },
+    {
+      name: <span className="table-title">Education</span>,
+      selector: (row) => row.education,
+      cell: (row) => (
+        <span className="table-cell" title={row.education}>
+          {row.education}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "400px",
+    },
+    {
+      name: <span className="table-title">Experience</span>,
+      selector: (row) => row.experience,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
+        >
+          {row.experience > 0 ? updateMonthstoYears(row.experience) : ""}
+        </span>
+      ),
+      sortable: true,
+      minWidth: "200px",
+    },
+    // {
+    //   name: "Location",
+    //   selector: (row) => row.location,
+    //   sortable: true,
+    // },
+    {
+      name: <span className="table-title">Certifications</span>,
+      selector: (row) => row.certifications,
+      cell: (row) => row.certifications,
+      sortable: true,
+      minWidth: "200px",
+    },
+  ];
+
   return (
     <>
       <PageTitle
@@ -238,7 +286,7 @@ export function CustomerReportCandidateStatus() {
             </CardHeader>
             <CardBody>
               <Row>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <Input
                       type="select"
@@ -268,7 +316,7 @@ export function CustomerReportCandidateStatus() {
                   </FormGroup>
                 </Col>
 
-                <Col lg="3" md="3" sm="12" sx="12">
+                <Col lg="3" md="4" sm="12" sx="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     className="me-4"
@@ -319,6 +367,31 @@ export function CustomerReportCandidateStatus() {
           </Card>
         </Col>
       </Row>
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

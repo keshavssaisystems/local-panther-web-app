@@ -89,6 +89,24 @@ export const getCandidateDropdownList = createAsyncThunk(
   }
 );
 
+// get job detail for admin report
+export const getAdminReportJobDetail = createAsyncThunk(
+  `${name}/getAdminReportJobDetail`,
+  async (jobId) => {
+    const ADM_RPT_JD_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Job/GetJobDetails/${jobId}`;
+    return await fetchWrapper.get(ADM_RPT_JD_END_POINT);
+  }
+);
+
+// get admin report Subsidiary List
+export const getADMReportSubsidiaryList = createAsyncThunk(
+  `${name}/getADMReportSubsidiaryList`,
+  async (companyId) => {
+    const SUBSIDIARY_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Subsidiary/GetSubsidiaryDropdown?companyId=${companyId}`;
+    return await fetchWrapper.get(SUBSIDIARY_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -99,6 +117,8 @@ const adminReportSlice = createSlice({
     reportData: [],
     customerList: [],
     candidateList: [],
+    jobDetail: [],
+    subsidiaryList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -191,6 +211,24 @@ const adminReportSlice = createSlice({
       state.candidateList = payload.data ? payload.data : [];
     },
     [getCandidateDropdownList.rejected]: (state, action) => {},
+    // admin report job detail
+    [getAdminReportJobDetail.pending]: (state) => {
+      state.jobDetail = [];
+    },
+    [getAdminReportJobDetail.fulfilled]: (state, { payload = {} }) => {
+      let data = [];
+      data.push(payload.data);
+      state.jobDetail = data;
+    },
+    [getAdminReportJobDetail.rejected]: (state, action) => {},
+    // admin report subsidiary list
+    [getADMReportSubsidiaryList.pending]: (state) => {
+      state.subsidiaryList = [];
+    },
+    [getADMReportSubsidiaryList.fulfilled]: (state, { payload = {} }) => {
+      state.subsidiaryList = payload?.data ? payload?.data : [];
+    },
+    [getADMReportSubsidiaryList.rejected]: (state, action) => {},
   },
 });
 
@@ -202,6 +240,8 @@ export const adminReportActions = {
   getReportDataThunk, // Export the async report data action
   getCustomerDropdownList,
   getCandidateDropdownList,
+  getAdminReportJobDetail,
+  getADMReportSubsidiaryList,
 };
 
 export const adminReportReducer = adminReportSlice.reducer;

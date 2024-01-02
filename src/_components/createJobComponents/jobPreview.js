@@ -78,6 +78,28 @@ export default function JobPreview({ previewData, editdata }) {
       }
     });
   }
+  let levelOfEducationString = [];
+  if (previewData.basicInformation.levelofeducationids !== "") {
+    previewData.basicInformation.levelofeducationOption?.forEach((element) => {
+      if (
+        previewData.basicInformation.levelofeducationids?.includes(element.id)
+      ) {
+        levelOfEducationString.push(element.name);
+      }
+    });
+    levelOfEducationString = levelOfEducationString.toString();
+  }
+  let studyFieldString = [];
+  if (previewData.basicInformation.fieldofstudiesids !== "") {
+    previewData.basicInformation.fieldofstudiesOption?.forEach((element) => {
+      if (
+        previewData.basicInformation.fieldofstudiesids?.includes(element.id)
+      ) {
+        studyFieldString.push(element.name);
+      }
+    });
+    studyFieldString = studyFieldString.toString();
+  }
   let mustHaveArray = [];
   let niceToHaveArray = [];
   if (previewData.keyQualification?.length > 0) {
@@ -95,6 +117,20 @@ export default function JobPreview({ previewData, editdata }) {
     previewData.preCustomScreen === undefined
       ? previewData.basicInformation.customquestionanswertype
       : previewData.preCustomScreen;
+  let subsidiaryData = "";
+  if (
+    previewData.basicInformation.subsidiaryid !== "" &&
+    previewData.basicInformation.subsidiaryOption !== undefined
+  ) {
+    previewData.basicInformation.subsidiaryOption.forEach((element) => {
+      if (
+        Number(previewData.basicInformation.subsidiaryid) ===
+        element.subsidiaryid
+      ) {
+        subsidiaryData = element.subsidiaryname;
+      }
+    });
+  }
   return (
     <>
       <Row className="mt-4">
@@ -104,7 +140,7 @@ export default function JobPreview({ previewData, editdata }) {
           </p>
           <div className="information-section">
             <Row>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Company name</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -115,7 +151,21 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              {previewData?.basicInformation?.subsidiaryOption?.length > 0 && (
+                <Col md={6} lg={3}>
+                  <div className="detail-padding">
+                    <h6 className="mb-0 job-heading-custom">Subsidiary name</h6>
+                    <p className="mb-0 mt-1 mr-1">
+                      {previewData.basicInformation === undefined ||
+                      previewData.basicInformation.subsidiaryid === undefined
+                        ? "-"
+                        : subsidiaryData}
+                    </p>
+                  </div>
+                </Col>
+              )}
+
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job title</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -126,7 +176,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
                     Number of positions
@@ -139,7 +189,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job location</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -150,9 +200,8 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-            </Row>
-            <Row>
-              <Col>
+
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Address</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -163,7 +212,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">City</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -174,7 +223,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">State</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -185,7 +234,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Country</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -196,9 +245,8 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-            </Row>
-            <Row>
-              <Col>
+
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Zip code</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -209,7 +257,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
                     Authorized to work in United States
@@ -226,7 +274,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
                     Sponsorship is required
@@ -243,10 +291,40 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col></Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">
+                    Level of education
+                  </h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {levelOfEducationString === undefined
+                      ? "-"
+                      : levelOfEducationString}
+                  </p>
+                </div>
+              </Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Field of study</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {studyFieldString === undefined ? "-" : studyFieldString}
+                  </p>
+                </div>
+              </Col>
+              <Col md={6} lg={3}>
+                <div className="detail-padding">
+                  <h6 className="mb-0 job-heading-custom">Certifications</h6>
+                  <p className="mb-0 mt-1 mr-1">
+                    {previewData.basicInformation === undefined ||
+                    previewData.basicInformation.certifications === undefined
+                      ? "-"
+                      : previewData.basicInformation.certifications}
+                  </p>
+                </div>
+              </Col>
             </Row>
             <Row>
-              <Col>
+              <Col md={12} lg={6}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Description</h6>
                   <div
@@ -261,7 +339,7 @@ export default function JobPreview({ previewData, editdata }) {
                   />
                 </div>
               </Col>
-              <Col>
+              <Col md={12} lg={6}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Company details</h6>
                   <p className="mb-2 mt-1 mr-1">
@@ -281,7 +359,7 @@ export default function JobPreview({ previewData, editdata }) {
           </p>
           <div className="information-section">
             <Row>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Job Type</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -292,7 +370,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Work schedules</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -303,7 +381,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Experience level</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -316,7 +394,7 @@ export default function JobPreview({ previewData, editdata }) {
               </Col>
             </Row>
             <Row>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Shifts</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -327,7 +405,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Hiring timeline</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -338,7 +416,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col></Col>
+              <Col md={6} lg={3}></Col>
             </Row>
           </div>
         </Col>
@@ -348,7 +426,7 @@ export default function JobPreview({ previewData, editdata }) {
           </p>
           <div className="information-section">
             <Row>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Pay period type</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -359,7 +437,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Minimum amount</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -373,7 +451,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Maximum amount</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -389,7 +467,7 @@ export default function JobPreview({ previewData, editdata }) {
               </Col>
             </Row>
             <Row>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
                     Compensation package
@@ -403,7 +481,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Benefits</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -433,7 +511,7 @@ export default function JobPreview({ previewData, editdata }) {
               </Col>
             </Row>
             <Row>
-              <Col md={4}>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Must have</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -445,7 +523,7 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col md={4}>
+              <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Nice to have</h6>
                   <p className="mb-0 mt-1 mr-1">
@@ -466,7 +544,7 @@ export default function JobPreview({ previewData, editdata }) {
           </p>
           <div className="information-section">
             <Row>
-              <Col md={8}>
+              <Col md={10} lg={8}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
                     Pre-screen questions

@@ -31,6 +31,8 @@ import {
   getCustReportScheduleIVList,
   getScheduledCandidatesForCustomerDropdown,
   getJobDropdown,
+  getCustReportJobDetail,
+  getCustReportSchdIntvDetail,
 } from "./customerreport.slice";
 import { useParams } from "react-router-dom";
 
@@ -39,91 +41,11 @@ import moment from "moment";
 import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import { getProfileActions } from "_store";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import "./customerreport.scss";
-const columns = [
-  {
-    name: <span className="table-title">Job Code</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobid}>
-        {row.jobid}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.jobid,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">Title</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobtitle}>
-        {row.jobtitle}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.jobtitle,
-    minWidth: "300px",
-  },
-  {
-    name: <span className="table-title">Status</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.jobstatus}>
-        {row.jobstatus}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.jobstatus,
-    minWidth: "150px",
-  },
-  {
-    name: <span className="table-title">Candidate Name</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.candidatename}>
-        {row.candidatename}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.candidatename,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">Scheduled date</span>,
-    cell: (row) => (
-      <span
-        className="table-cell"
-        title={
-          row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : ""
-        }
-      >
-        {row.scheduledate ? moment(row.scheduledate).format("MM/DD/YYYY") : ""}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.scheduledate,
-    minWidth: "200px",
-  },
-  {
-    name: <span className="table-title">Interviewers</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.intervieweremailids}>
-        {row.intervieweremailids}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.intervieweremailids,
-    minWidth: "350px",
-  },
-  {
-    name: <span className="table-title">Meeting Status</span>,
-    cell: (row) => (
-      <span className="table-cell" title={row.meetingstatus}>
-        {row.meetingstatus}
-      </span>
-    ),
-    sortable: true,
-    selector: (row) => row.meetingstatus,
-    minWidth: "150px",
-  },
-];
 
 export function CustomerReportScheduledInterviews() {
   const dispatch = useDispatch();
@@ -134,11 +56,20 @@ export function CustomerReportScheduledInterviews() {
   let [jobId, setJobId] = useState();
   let [candidateId, setCandidateId] = useState();
   const [excelData, setExcelData] = useState([]);
-
+  const [showJDModal, setShowJDModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showIDModal, setShowIDModal] = useState(false);
   const schdInterviewList = useSelector(
     (state) => state?.customerReportReducer?.schdInterviewList
   );
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
+  const jobDetail = useSelector(
+    (state) => state?.customerReportReducer?.jobDetail
+  );
+  const scheduleInterviewDetail = useSelector(
+    (state) => state?.customerReportReducer?.scheduleInterviewDetail
+  );
+
   const jobDropDownList = useSelector(
     (state) => state?.customerReportReducer?.jobDropDownList
   );
@@ -213,6 +144,137 @@ export function CustomerReportScheduledInterviews() {
     onGetCustReportScheduleIVList(filter);
   };
 
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getCustReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
+  };
+
+  const onCandidateClick = async (candidateId) => {
+    const response = await dispatch(
+      getProfileActions.getCandidate(candidateId)
+    );
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
+  };
+
+  const onInterviewDetailClick = async (interviewdetailid) => {
+    const response = await dispatch(
+      getCustReportSchdIntvDetail(interviewdetailid)
+    );
+    if (response?.payload) {
+      setShowIDModal(true);
+    }
+  };
+
+  const columns = [
+    {
+      name: <span className="table-title">Job Code</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobid}>
+          {row.jobid}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobid,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">Title</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobtitle}>
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row.jobtitle}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobtitle,
+      minWidth: "300px",
+    },
+    {
+      name: <span className="table-title">Status</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.jobstatus}>
+          {row.jobstatus}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.jobstatus,
+      minWidth: "150px",
+    },
+    {
+      name: <span className="table-title">Candidate Name</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.candidatename}>
+          <Button
+            color="link"
+            onClick={() => onCandidateClick(row.candidateid)}
+          >
+            {row.candidatename}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.candidatename,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Scheduled date</span>,
+      cell: (row) => (
+        <span
+          className="table-cell"
+          title={
+            row.scheduledate
+              ? moment(row.scheduledate).format("MM/DD/YYYY")
+              : ""
+          }
+        >
+          <Button
+            color="link"
+            onClick={() => onInterviewDetailClick(row.scheduleinterviewid)}
+          >
+            {row.scheduledate
+              ? moment(row.scheduledate).format("MM/DD/YYYY")
+              : ""}
+          </Button>
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.scheduledate,
+      minWidth: "200px",
+    },
+    {
+      name: <span className="table-title">Interviewers</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.intervieweremailids}>
+          {row.intervieweremailids}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.intervieweremailids,
+      minWidth: "350px",
+    },
+    {
+      name: <span className="table-title">Meeting Status</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.meetingstatus}>
+          {row.meetingstatus}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.meetingstatus,
+      minWidth: "150px",
+    },
+  ];
+
   return (
     <>
       <PageTitle
@@ -254,7 +316,7 @@ export function CustomerReportScheduledInterviews() {
             </CardHeader>
             <CardBody>
               <Row>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     {/* <Label for="candidateid">Candidate Id</Label> */}
                     {/* <Input
@@ -296,7 +358,7 @@ export function CustomerReportScheduledInterviews() {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     {/* <Label for="jobid">Job Id</Label> */}
                     {/* <Input
@@ -333,7 +395,7 @@ export function CustomerReportScheduledInterviews() {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -356,7 +418,7 @@ export function CustomerReportScheduledInterviews() {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -379,7 +441,7 @@ export function CustomerReportScheduledInterviews() {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="3" md="3" sm="12" sx="12">
+                <Col lg="3" md="4" sm="12" sx="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     className="me-4"
@@ -429,6 +491,47 @@ export function CustomerReportScheduledInterviews() {
           </Card>
         </Col>
       </Row>
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showIDModal && scheduleInterviewDetail.length > 0 ? (
+          <>
+            <InterViewDetailModal
+              data={scheduleInterviewDetail[0]}
+              isOpen={showIDModal}
+              onClose={() => {
+                setShowIDModal(false);
+              }}
+              isAdmin={true}
+            ></InterViewDetailModal>
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

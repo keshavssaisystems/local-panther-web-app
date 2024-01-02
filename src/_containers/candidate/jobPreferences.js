@@ -380,7 +380,7 @@ export function JobPreferences(props) {
         data.replace(/,/g, "")
       );
     } else if (check === "relocate") {
-      new_data[0].willingtorelocate = data == "on" ? true : false;
+      new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
     } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
     } else if (check === "near") {
@@ -549,7 +549,7 @@ export function JobPreferences(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Job preferences
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <BsPencil
                 className="icons me-2"
                 onClick={() => setPersonalModal(true)}
@@ -935,7 +935,10 @@ export function JobPreferences(props) {
                           name="relocate"
                           id="relocate"
                           onInput={(evt) =>
-                            onHandleInputChange("relocate", evt.target.value)
+                            onHandleInputChange(
+                              "relocate",
+                              !parentItem.willingtorelocate
+                            )
                           }
                           type="checkbox"
                           checked={parentItem.willingtorelocate}
@@ -959,7 +962,7 @@ export function JobPreferences(props) {
                             checked={parentItem.anywhereonlynear == 1}
                           />{" "}
                           <Label check className="fw-semi-bold">
-                            Any where
+                            Anywhere
                           </Label>
                         </FormGroup>
                       </Col>

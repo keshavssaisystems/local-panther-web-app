@@ -42,7 +42,7 @@
     border: solid 1px #afaba5;
     border-radius: 5px;
     width: auto;
-    height: 35px;
+    height: auto;
   }
   .skills-view-popup {
     border: solid 1px #afaba5;
@@ -234,6 +234,11 @@
     font-weight: 400;
     font-size: 14px;
   }
+  .skills-remove {
+    color: #545cd8;
+    font-weight: 400;
+    font-size: 14px;
+  }
   .btn-text {
     font-family: Capitana;
     font-size: 16px;
@@ -264,6 +269,8 @@
     font-size: 12px !important;
   }
   .skills-view-text {
+    width: auto;
+    height: auto;
     font-family: Capitana;
     font-size: 16px;
     font-weight: 400;

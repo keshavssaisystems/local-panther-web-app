@@ -33,6 +33,8 @@ import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import { updateMonthstoYears } from "_helpers/helper";
+import { getProfileActions } from "_store";
+import { BuildCVModal } from "_components/modal/buildcvmodal";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -53,6 +55,7 @@ export function IncompleteCandidateProfile({ title }) {
   let [location, setLocation] = useState([]);
 
   const [excelData, setExcelData] = useState([]);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   const { reportData: data = [], loading = false } = useSelector(
     (state) => state?.adminReportReducer ?? {}
@@ -140,7 +143,13 @@ export function IncompleteCandidateProfile({ title }) {
       name: <span className="table-title">Candidate</span>,
       cell: (row) => (
         <span className="table-cell" title={row?.candidatename}>
-          {row?.candidatename}
+          <Button
+            color="link"
+            onClick={() => onCandidateClick(row.candidateid)}
+          >
+            {" "}
+            {row?.candidatename}
+          </Button>
         </span>
       ),
       sortable: true,
@@ -214,6 +223,15 @@ export function IncompleteCandidateProfile({ title }) {
     },
   ];
 
+  const onCandidateClick = async (candidateId) => {
+    const response = await dispatch(
+      getProfileActions.getCandidate(candidateId)
+    );
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
+  };
+
   return (
     <>
       <PageTitle heading={title} icon={titlelogo} />
@@ -252,7 +270,7 @@ export function IncompleteCandidateProfile({ title }) {
             </CardHeader>
             <CardBody>
               <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="3" lg="3" md="4" sm="12" xs="12">
                   <SkillsFilter
                     name={"@skillid"}
                     placeholder={"Search Skill"}
@@ -263,7 +281,7 @@ export function IncompleteCandidateProfile({ title }) {
                     value={skill}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="3" lg="3" md="4" sm="12" xs="12">
                   <LocationFilter
                     name={"@cityid"}
                     placeholder={"Search Location"}
@@ -274,7 +292,7 @@ export function IncompleteCandidateProfile({ title }) {
                     value={location}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -297,7 +315,7 @@ export function IncompleteCandidateProfile({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -320,7 +338,7 @@ export function IncompleteCandidateProfile({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     color="primary"
@@ -331,7 +349,7 @@ export function IncompleteCandidateProfile({ title }) {
                     Search
                   </Button>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     color="link"
                     type="button"
@@ -383,6 +401,18 @@ export function IncompleteCandidateProfile({ title }) {
           </Card>
         </Col>
       </Row>
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

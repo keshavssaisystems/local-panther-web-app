@@ -11,6 +11,7 @@ import {
   CardBody,
   Input,
 } from "reactstrap";
+import { NoDataFound } from "_components/common/nodatafound";
 import "./scheduleInterview.scss";
 import { ScheduleInterviewList } from "_components/scheduleInterview/scheduleInterviewList";
 import { UpcomingCard } from "_components/scheduleInterview/upcomingCard";
@@ -18,8 +19,8 @@ import { UpcomingDetail } from "_components/scheduleInterview/upcomingDetail";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import momentTimezone from "moment-timezone";
 import { useSelector, useDispatch } from "react-redux";
+import Loader from "react-loaders";
 import {
   customerCandidateListsActions,
   scheduleInterviewActions,
@@ -47,6 +48,15 @@ export function ScheduleInterview() {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
+  const views = {
+    month: true,
+    week: true,
+    day: true,
+    agenda: true, // Add or modify views as needed
+  };
+  const messages = {
+    agenda: "Schedule", // Change the label for Agenda to Schedule
+  };
   useEffect(() => {
     getGraphData();
   }, [msLogin]);
@@ -86,7 +96,6 @@ export function ScheduleInterview() {
   const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
 
   const getUpdatedScheduleList = () => {
-    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
@@ -116,6 +125,9 @@ export function ScheduleInterview() {
   );
   const upcomingInterviews = useSelector(
     (state) => state.scheduleInterview.upcomingInterview
+  );
+  const upcomingInterviewLoading = useSelector(
+    (state) => state.scheduleInterview.upcomingInterviewLoading
   );
   const allInterviews = useSelector(
     (state) => state.scheduleInterview.allInterview.scheduledInterviewList
@@ -150,7 +162,9 @@ export function ScheduleInterview() {
         start: new Date(startDate),
         end: new Date(endDate),
         color:
-          upcomingInterview?.interviewstatusid !== 0
+          upcomingInterview?.isreschedulerequested === true
+            ? "#2f479b"
+            : upcomingInterview?.interviewstatusid !== 0
             ? upcomingInterview?.interviewstatusid === 1
               ? "#30b1ff"
               : "#6c757d"
@@ -199,7 +213,7 @@ export function ScheduleInterview() {
   let selectedJobDetails =
     upcomingInterviews.scheduledInterviewList !== undefined &&
     upcomingInterviews.scheduledInterviewList.length > 0
-      ? [upcomingInterviews.scheduledInterviewList[0]]
+      ? upcomingInterviews.scheduledInterviewList[0]
       : [];
   const getSelectedInterview = (scheduleinterviewid) => {
     selectedJobDetails = upcomingInterviews.scheduledInterviewList.filter(
@@ -207,7 +221,7 @@ export function ScheduleInterview() {
         return element.scheduleinterviewid === scheduleinterviewid;
       }
     );
-    setSelectedJobData(selectedJobDetails);
+    setSelectedJobData(selectedJobDetails[0]);
     setSelectedClass(scheduleinterviewid);
   };
 
@@ -218,7 +232,7 @@ export function ScheduleInterview() {
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
     };
     getUpcomingData(filterOnPageChange);
-    setSelectedJobData([]);
+    setSelectedJobData({});
   };
 
   const onCloseIdModal = () => {
@@ -459,6 +473,7 @@ export function ScheduleInterview() {
         allInterviewList: allInterviews,
         scheduleinterviewid: scheduleinterviewid,
         interviewstatusid: event.interviewstatusid,
+        interviewfeedback: event.interviewfeedback,
       })
     );
   };
@@ -625,58 +640,109 @@ export function ScheduleInterview() {
             )}
             {toggleVar === "upcoming" && (
               <Row>
-                <Col lg="4">
-                  <UpcomingCard
-                    upcomingList={upcomingInterviews.scheduledInterviewList}
-                    selectedInterview={selectedClass}
-                    getSelectedInterviewId={(e) => getSelectedInterview(e)}
-                    totalRows={upcomingInterviews.totalRows}
-                    pageSize={5}
-                    page={page}
-                    setPage={setPage}
-                    onPageChange={onPageChange}
+                {upcomingInterviewLoading === false ? (
+                  <>
+                    {upcomingInterviews.scheduledInterviewList.length > 0 ? (
+                      <>
+                        <Col md={4} lg="4">
+                          <UpcomingCard
+                            upcomingList={
+                              upcomingInterviews.scheduledInterviewList
+                            }
+                            selectedInterview={selectedClass}
+                            getSelectedInterviewId={(e) =>
+                              getSelectedInterview(e)
+                            }
+                            totalRows={upcomingInterviews.totalRows}
+                            pageSize={5}
+                            page={page}
+                            setPage={setPage}
+                            onPageChange={onPageChange}
+                          />
+                        </Col>
+                        <Col md={8} lg="8">
+                          <UpcomingDetail
+                            interviewDetails={
+                              selectedJobData.scheduleinterviewid === undefined
+                                ? upcomingInterviews?.scheduledInterviewList
+                                    ?.length > 0
+                                  ? upcomingInterviews
+                                      ?.scheduledInterviewList[0]
+                                  : []
+                                : selectedJobData
+                            }
+                            cancelScheduleData={(e) => cancelScheduleData(e)}
+                            postNotesData={(e) => postNotesData(e)}
+                            postInviteData={(e) => postInviteData(e)}
+                            acceptInterview={(e) => acceptScheduleData(e)}
+                            rejectInterview={(e) => rejectScheduleData(e)}
+                            getUpdatedFormData={(e) => getFormData(e)}
+                            postFeedbackData={(e) => postFeedbackData(e)}
+                          />
+                        </Col>
+                      </>
+                    ) : (
+                      <>
+                        <Row
+                          style={{ textAlign: "center", minHeight: "40vh" }}
+                          className="center-middle-align"
+                        >
+                          <Col>
+                            {" "}
+                            <NoDataFound></NoDataFound>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
                   />
-                </Col>
-                <Col lg="8">
-                  <UpcomingDetail
-                    interviewDetails={
-                      selectedJobData[0] === undefined
-                        ? upcomingInterviews?.scheduledInterviewList[0]
-                        : selectedJobData[0]
-                    }
-                    cancelScheduleData={(e) => cancelScheduleData(e)}
-                    postNotesData={(e) => postNotesData(e)}
-                    postInviteData={(e) => postInviteData(e)}
-                    acceptInterview={(e) => acceptScheduleData(e)}
-                    rejectInterview={(e) => rejectScheduleData(e)}
-                    getUpdatedFormData={(e) => getFormData(e)}
-                    postFeedbackData={(e) => postFeedbackData(e)}
-                  />
-                </Col>
+                )}
               </Row>
             )}
             {toggleVar === "calendar" && (
               <Card>
                 <CardBody className="scheduled-calender">
                   <div className="text-end">
-                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
-                    No response
-                    <div className="ms-3 mb-3 me-1 badge badge-color-green">
-                      P
-                    </div>
-                    Accepted interview{" "}
-                    <div className="ms-3 mb-3 me-0 badge badge-color-red">
-                      P
-                    </div>{" "}
-                    Rejected interview
-                    <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
-                      P
-                    </div>{" "}
-                    Interview completed
-                    <div className="ms-3 mb-3 me-0 badge badge-color-grey">
-                      P
-                    </div>{" "}
-                    Not joined
+                    <span className="legend">
+                      <div className="mb-3 me-0 badge badge-color-yellow">
+                        P
+                      </div>{" "}
+                      No response
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                        P
+                      </div>
+                      Accepted interview{" "}
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-red">
+                        P
+                      </div>{" "}
+                      Rejected interview
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                        P
+                      </div>{" "}
+                      Interview completed
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-grey">
+                        P
+                      </div>{" "}
+                      Not joined
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
+                        P
+                      </div>{" "}
+                      Requested for reschedule
+                    </span>
                   </div>
                   <Calendar
                     localizer={localizer}
@@ -691,6 +757,8 @@ export function ScheduleInterview() {
                       return { style: { backgroundColor, fontSize } };
                     }}
                     onSelectEvent={handleSelectEvent}
+                    views={views}
+                    messages={messages}
                   />
                 </CardBody>
               </Card>

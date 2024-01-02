@@ -4,7 +4,7 @@
     font-family: Capitana !important;
     font-size: 31px;
     font-weight: 700;
-    line-height: 16px;
+    line-height: 31px;
     letter-spacing: -0.01em;
     text-align: center;
     color: #ffffff;
@@ -152,7 +152,7 @@
     font-size: 31px;
     font-style: normal;
     font-weight: 700;
-    line-height: 16px;
+    line-height: 31px;
     letter-spacing: -0.31px;
     text-transform: capitalize;
   }
@@ -191,6 +191,18 @@
       background: #2f479b;
       margin-top: 0px;
       height: 30px;
+    }
+    .btn-text {
+      color: #fff;
+      font-family: Capitana;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 16px;
+      letter-spacing: -0.01em;
+      text-align: left;
+      padding: 12px, 20px, 12px, 20px;
+      background: #2f479b;
+      cursor: pointer;
     }
   }
 }

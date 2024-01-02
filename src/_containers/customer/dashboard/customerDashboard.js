@@ -1,15 +1,14 @@
 import React, { useEffect } from "react";
-import { Row, Col, Card, CardBody, CardHeader } from "reactstrap";
-import { DonutChart } from "_components/dashboard/donutChart";
+import { Row, Col } from "reactstrap";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
-import { UpcomingInterviewTable } from "_components/dashboard/upcomingInterviewTable";
 import { WidgetCard } from "_components/dashboard/widgetCard";
 import { useSelector, useDispatch } from "react-redux";
-import Slider from "react-slick";
 import {
   customerDashboardActions,
   createjobActions,
   scheduleInterviewActions,
+  dropdownActions,
+  customerCandidateListsActions,
 } from "_store";
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
@@ -27,6 +26,11 @@ export default function CustomerDashboard() {
       )
     );
   };
+  const getDashboardJobsDataCount = async function () {
+    await dispatch(
+      customerDashboardActions.getCustomerDashboardJobsDataCountThunk()
+    );
+  };
   const getDashboardGraphData = async function () {
     await dispatch(
       customerDashboardActions.getCustomerDashboardGraphDataThunk(
@@ -38,36 +42,47 @@ export default function CustomerDashboard() {
     getCompanyDetails();
     getDashboardGraphData();
     getDashboardCounts();
+    getDashboardJobsDataCount();
+    dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
+    dispatch(
+      dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
+    );
+    dispatch(customerCandidateListsActions.getDurationOptions());
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
+  console.log(dashboardCounts);
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
-
+  console.log(dashboardGraphData);
+  const dashboardJobsDataCount = useSelector(
+    (state) => state.customerDashboard.dashboardJobsDataCount
+  );
   let cardOptions = [
     {
       title: "Open jobs",
       count: dashboardCounts.openjobcount,
-      className: "success",
+      className: "primary",
       icon: "lnr-graduation-hat",
       path: "/job-list",
     },
     {
       title: "Pending interview",
       count: dashboardCounts.pendinginterviewschedulescount,
-      className: "warning",
+      className: "info",
       icon: "lnr-calendar-full",
       path: "/scheduled-interview",
     },
     {
       title: "Liked candidates",
       count: dashboardCounts.newcandidatelikedcount,
-      className: "primary",
+      className: "success",
       icon: "lnr-thumbs-up",
-      path: "/scheduled-interview",
+      path: "/customer-candidate-liked/0",
     },
     {
       title: "Matched candidate pending to review",
@@ -97,7 +112,7 @@ export default function CustomerDashboard() {
           </Col>
         </Row>
         <StackBarChart
-          graphData={dashboardGraphData.candidateStatusByJobDtos}
+          graphData={dashboardJobsDataCount.customerDashboardJobDataCountList}
         />
       </div>
     </>

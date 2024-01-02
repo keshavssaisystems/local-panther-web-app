@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,24 +8,27 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Row,
-  Col,
   Button,
   ButtonGroup,
+  UncontrolledTooltip,
 } from "reactstrap";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
-import { BsClock } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { BsFillInfoCircleFill, BsFileEarmarkPdf } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import customerIcons from "assets/utils/images/customer";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
+import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
+import { scheduleInterviewActions } from "_store";
+import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
+import axios from "axios";
 
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -37,28 +40,35 @@ export const CustCandidateListView = (props) => {
   const [selectedRowData, setSelectedRowData] = useState("");
   const [selectedIDData, setSelectedIDData] = useState("");
   const [showJDModal, setShowJDModal] = useState(false);
+  const [showIRSModal, setShowIRSModal] = useState(false);
+  const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
 
   const dispatch = useDispatch();
+  const durationOptions = useSelector(
+    (state) => state.scheduleInterview.duration
+  );
+  const onAcceptClick = async (row) => {
+    //Enable upload offer modal from here
+    setSelectedRowData(row);
+    setShowUploadOfferModal(true);
+    // let res = await dispatch(
+    //   customerCandidateListsActions.putAcceptedCandidate({
+    //     id: candidaterecommendedjobid,
+    //   })
+    // );
 
-  const onAcceptClick = async (candidaterecommendedjobid) => {
-    let res = await dispatch(
-      customerCandidateListsActions.putAcceptedCandidate({
-        id: candidaterecommendedjobid,
-      })
-    );
-
-    if (res.payload.statusCode === 204) {
-      props.showSweetAlert({
-        title: "Candidate status updated successfully!!!",
-        type: "success",
-      });
-      props.updateList();
-    } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
-    }
+    // if (res.payload.statusCode === 204) {
+    //   props.showSweetAlert({
+    //     title: "Candidate status updated successfully!!!",
+    //     type: "success",
+    //   });
+    //   props.updateList();
+    // } else {
+    //   props.showSweetAlert({
+    //     title: res.payload.message || res.payload.status,
+    //     type: "danger",
+    //   });
+    // }
   };
 
   const showJobDetail = (row) => {
@@ -91,13 +101,13 @@ export const CustCandidateListView = (props) => {
     setShowReModal(true);
   };
 
-  const onSubmitRejectModal = async (reasonid, comment) => {
+  const onSubmitRejectModal = async (comment) => {
     let userId = localStorage.getItem("userId");
     let res = await dispatch(
       customerCandidateListsActions.putRejectCandidate({
         id: currCRJId,
         customerrejectedcomment: comment,
-        customerrejectedreasonid: reasonid,
+        customerrejectedreasonid: 0,
         currentUserId: userId,
       })
     );
@@ -145,34 +155,10 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const returnSkills = (row) => {
-    if (row?.candidateSkillDtos && row?.candidateSkillDtos?.length > 0) {
-      return row?.candidateSkillDtos
-        .map((element) => element.skillname)
-        .join(", ");
-    } else {
-      return "";
-    }
-  };
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
         <ButtonGroup>
-          {props.type !== "liked" ? (
-            <Button
-              disabled={props.type === "liked"}
-              // outline
-              size="sm"
-              title="Like"
-              className=" btn-icon"
-              color="primary"
-              onClick={() => onActionClick("like", candidaterecommendedjobid)}
-            >
-              <img src={customerIcons.list_liked} alt="list liked"></img>
-            </Button>
-          ) : (
-            <></>
-          )}
           {props.type !== "maybe" ? (
             <Button
               disabled={props.type === "maybe"}
@@ -188,16 +174,22 @@ export const CustCandidateListView = (props) => {
           ) : (
             <></>
           )}
-          <Button
-            // outline
-            size="sm"
-            title="Reject"
-            onClick={() => onRejectClick(candidaterecommendedjobid)}
-            className="btn-icon"
-            color="danger"
-          >
-            <img src={customerIcons.list_reject} alt="list reject"></img>
-          </Button>
+          {props.type !== "liked" ? (
+            <Button
+              disabled={props.type === "liked"}
+              // outline
+              size="sm"
+              title="Like"
+              className=" btn-icon"
+              color="primary"
+              onClick={() => onActionClick("like", candidaterecommendedjobid)}
+            >
+              <img src={customerIcons.list_liked} alt="list liked"></img>
+            </Button>
+          ) : (
+            <></>
+          )}
+
           <Button
             // outline
             size="sm"
@@ -208,6 +200,16 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_schedule} alt="list maybe"></img>
           </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Reject"
+            onClick={() => onRejectClick(candidaterecommendedjobid)}
+            className="btn-icon"
+            color="danger"
+          >
+            <img src={customerIcons.list_reject} alt="list reject"></img>
+          </Button>
         </ButtonGroup>
       );
     } else if (props.type === "applied") {
@@ -216,8 +218,18 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Raise offer"
-            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            title="Schedule"
+            className="btn-icon"
+            color="alternate"
+            onClick={() => onScheduleClick(row)}
+          >
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Make offer"
+            onClick={() => onAcceptClick(row)}
             className="btn-icon"
             color="success"
           >
@@ -254,16 +266,6 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_reject} alt="list reject"></img>
           </Button>
-          <Button
-            // outline
-            size="sm"
-            title="Schedule"
-            className="btn-icon"
-            color="alternate"
-            onClick={() => onScheduleClick(row)}
-          >
-            <img src={customerIcons.list_schedule} alt="list maybe"></img>
-          </Button>
         </ButtonGroup>
       );
     } else if (props.type === "scheduled") {
@@ -272,8 +274,18 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Raise offer"
-            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            title="Reschedule Interview"
+            onClick={() => onRescheduleInterview(row)}
+            className="btn-icon"
+            color="alternate"
+          >
+            <img src={customerIcons.list_schedule} alt="list reject"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Make offer"
+            onClick={() => onAcceptClick(row)}
             className="btn-icon"
             color="success"
           >
@@ -337,8 +349,18 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Raise offer"
-            onClick={() => onAcceptClick(candidaterecommendedjobid)}
+            title="Schedule"
+            className="btn-icon"
+            color="alternate"
+            onClick={() => onScheduleClick(row)}
+          >
+            <img src={customerIcons.list_schedule} alt="list maybe"></img>
+          </Button>
+          <Button
+            // outline
+            size="sm"
+            title="Make offer"
+            onClick={() => onAcceptClick(row)}
             className="btn-icon"
             color="success"
           >
@@ -366,17 +388,6 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_maybe} alt="list maybe"></img>
           </Button> */}
-
-          <Button
-            // outline
-            size="sm"
-            title="Schedule"
-            className="btn-icon"
-            color="alternate"
-            onClick={() => onScheduleClick(row)}
-          >
-            <img src={customerIcons.list_schedule} alt="list maybe"></img>
-          </Button>
         </ButtonGroup>
       );
     }
@@ -408,6 +419,10 @@ export const CustCandidateListView = (props) => {
             ) : (
               <></>
             )}
+            <DropdownItem onClick={() => props.onBuildResume(candidateid)}>
+              <i className="dropdown-icon lnr-layers"></i>
+              <span>Candidate details</span>
+            </DropdownItem>
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
@@ -429,84 +444,84 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "20%",
+              width: "25%",
             },
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "30%",
+              width: "50%",
             },
-            {
-              name: <span className="table-title">Location</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.recommendedationCandidateShortList &&
-                    row.recommendedationCandidateShortList?.length > 0
-                      ? (row?.recommendedationCandidateShortList[0].cityname
-                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                          : "") +
-                        "" +
-                        (row.recommendedationCandidateShortList[0].statename
-                          ? row.recommendedationCandidateShortList[0].statename
-                          : "")
-                      : ""
-                  }
-                >
-                  {row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList?.length > 0
-                    ? (row?.recommendedationCandidateShortList[0].cityname
-                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                        : "") +
-                      "" +
-                      (row.recommendedationCandidateShortList[0].statename
-                        ? row.recommendedationCandidateShortList[0].statename
-                        : "")
-                    : ""}
-                </span>
-              ),
-              selector: (row) =>
-                row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList?.length > 0
-                  ? (row?.recommendedationCandidateShortList[0].cityname
-                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                      : "") +
-                    "" +
-                    (row.recommendedationCandidateShortList[0].statename
-                      ? row.recommendedationCandidateShortList[0].statename
-                      : "")
-                  : "",
-              sortable: true,
-              width: "15%",
-            },
+            // {
+            //   name: <span className="table-title">Location</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row.recommendedationCandidateShortList?.length > 0
+            //           ? (row?.recommendedationCandidateShortList[0].cityname
+            //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //               : "") +
+            //             "" +
+            //             (row.recommendedationCandidateShortList[0].statename
+            //               ? row.recommendedationCandidateShortList[0].statename
+            //               : "")
+            //           : ""
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row.recommendedationCandidateShortList?.length > 0
+            //         ? (row?.recommendedationCandidateShortList[0].cityname
+            //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //             : "") +
+            //           "" +
+            //           (row.recommendedationCandidateShortList[0].statename
+            //             ? row.recommendedationCandidateShortList[0].statename
+            //             : "")
+            //         : ""}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row.recommendedationCandidateShortList?.length > 0
+            //       ? (row?.recommendedationCandidateShortList[0].cityname
+            //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //           : "") +
+            //         "" +
+            //         (row.recommendedationCandidateShortList[0].statename
+            //           ? row.recommendedationCandidateShortList[0].statename
+            //           : "")
+            //       : "",
+            //   sortable: true,
+            //   width: "15%",
+            // },
 
-            {
-              name: <span className="table-title">Experience</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.recommendedationCandidateShortList &&
-                    row?.recommendedationCandidateShortList.length > 0
-                      ? row?.recommendedationCandidateShortList[0]?.experience
-                      : "-"
-                  }
-                >
-                  {row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"}
-                </span>
-              ),
-              selector: (row) =>
-                row?.recommendedationCandidateShortList &&
-                row?.recommendedationCandidateShortList.length > 0
-                  ? row?.recommendedationCandidateShortList[0]?.experience
-                  : "-",
-              sortable: true,
-              width: "15%",
-            },
+            // {
+            //   name: <span className="table-title">Experience</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row?.recommendedationCandidateShortList.length > 0
+            //           ? row?.recommendedationCandidateShortList[0]?.experience
+            //           : "-"
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row?.recommendedationCandidateShortList.length > 0
+            //         ? row?.recommendedationCandidateShortList[0]?.experience
+            //         : "-"}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row?.recommendedationCandidateShortList.length > 0
+            //       ? row?.recommendedationCandidateShortList[0]?.experience
+            //       : "-",
+            //   sortable: true,
+            //   width: "15%",
+            // },
 
             {
               name: <span className="table-title">Interest</span>,
@@ -519,7 +534,7 @@ export const CustCandidateListView = (props) => {
               ),
               ignoreRowClick: true,
               button: true,
-              width: "15%",
+              width: "17%",
             },
             {
               name: <span className="table-title">Action</span>,
@@ -527,7 +542,7 @@ export const CustCandidateListView = (props) => {
               ignoreRowClick: true,
               allowOverflow: true,
               button: true,
-              width: "5%",
+              width: "8%",
             },
           ]
         : props.type === "rejected"
@@ -543,84 +558,84 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "15%",
+              width: "20%",
             },
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "20%",
+              width: "30%",
             },
-            {
-              name: <span className="table-title">Location</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.recommendedationCandidateShortList &&
-                    row.recommendedationCandidateShortList?.length > 0
-                      ? (row?.recommendedationCandidateShortList[0].cityname
-                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                          : "") +
-                        "" +
-                        (row.recommendedationCandidateShortList[0].statename
-                          ? row.recommendedationCandidateShortList[0].statename
-                          : "")
-                      : ""
-                  }
-                >
-                  {row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList?.length > 0
-                    ? (row?.recommendedationCandidateShortList[0].cityname
-                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                        : "") +
-                      "" +
-                      (row.recommendedationCandidateShortList[0].statename
-                        ? row.recommendedationCandidateShortList[0].statename
-                        : "")
-                    : ""}
-                </span>
-              ),
-              selector: (row) =>
-                row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList?.length > 0
-                  ? (row?.recommendedationCandidateShortList[0].cityname
-                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                      : "") +
-                    "" +
-                    (row.recommendedationCandidateShortList[0].statename
-                      ? row.recommendedationCandidateShortList[0].statename
-                      : "")
-                  : "",
-              sortable: true,
-              width: "15%",
-            },
+            // {
+            //   name: <span className="table-title">Location</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row.recommendedationCandidateShortList?.length > 0
+            //           ? (row?.recommendedationCandidateShortList[0].cityname
+            //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //               : "") +
+            //             "" +
+            //             (row.recommendedationCandidateShortList[0].statename
+            //               ? row.recommendedationCandidateShortList[0].statename
+            //               : "")
+            //           : ""
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row.recommendedationCandidateShortList?.length > 0
+            //         ? (row?.recommendedationCandidateShortList[0].cityname
+            //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //             : "") +
+            //           "" +
+            //           (row.recommendedationCandidateShortList[0].statename
+            //             ? row.recommendedationCandidateShortList[0].statename
+            //             : "")
+            //         : ""}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row.recommendedationCandidateShortList?.length > 0
+            //       ? (row?.recommendedationCandidateShortList[0].cityname
+            //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //           : "") +
+            //         "" +
+            //         (row.recommendedationCandidateShortList[0].statename
+            //           ? row.recommendedationCandidateShortList[0].statename
+            //           : "")
+            //       : "",
+            //   sortable: true,
+            //   width: "15%",
+            // },
 
-            {
-              name: <span className="table-title">Experience</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.recommendedationCandidateShortList &&
-                    row?.recommendedationCandidateShortList.length > 0
-                      ? row?.recommendedationCandidateShortList[0]?.experience
-                      : "-"
-                  }
-                >
-                  {row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"}
-                </span>
-              ),
-              selector: (row) =>
-                row?.recommendedationCandidateShortList &&
-                row?.recommendedationCandidateShortList.length > 0
-                  ? row?.recommendedationCandidateShortList[0]?.experience
-                  : "-",
-              sortable: true,
-              width: "10%",
-            },
+            // {
+            //   name: <span className="table-title">Experience</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row?.recommendedationCandidateShortList.length > 0
+            //           ? row?.recommendedationCandidateShortList[0]?.experience
+            //           : "-"
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row?.recommendedationCandidateShortList.length > 0
+            //         ? row?.recommendedationCandidateShortList[0]?.experience
+            //         : "-"}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row?.recommendedationCandidateShortList.length > 0
+            //       ? row?.recommendedationCandidateShortList[0]?.experience
+            //       : "-",
+            //   sortable: true,
+            //   width: "10%",
+            // },
             {
               name: <span className="table-title">Pre-Screen</span>,
               cell: (row) =>
@@ -640,10 +655,61 @@ export const CustCandidateListView = (props) => {
                 ),
               ignoreRowClick: true,
               button: true,
-              width: "10%",
+              width: "12%",
             },
             {
               name: <span className="table-title">Status</span>,
+              cell: (row) => (
+                <span>
+                  {row?.customerrecommendedjobstatusid === 5 &&
+                  row?.candidaterecommendedjobstatusid === 6
+                    ? "Offer rejected by candidate"
+                    : row?.candidaterecommendedjobstatusid === 6 &&
+                      row?.customerrecommendedjobstatusid !== 5
+                    ? "Rejected by candidate"
+                    : row?.customerrecommendedjobstatusid === 6
+                    ? "Rejected by customer"
+                    : "-"}
+                  {row?.candidaterecommendedjobstatusid === 6 ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"rr_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"rr_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.candidaterejectedcomment !== ""
+                          ? row?.candidaterejectedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                  {row?.customerrecommendedjobstatusid === 6 ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"rr_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      ></BsFillInfoCircleFill>
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"rr_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.customerrejectedcomment !== ""
+                          ? row?.customerrejectedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </span>
+              ),
               selector: (row) =>
                 row?.customerrecommendedjobstatusid === 5 &&
                 row?.candidaterecommendedjobstatusid === 6
@@ -656,7 +722,7 @@ export const CustCandidateListView = (props) => {
                   : "-",
               ignoreRowClick: true,
               button: true,
-              width: "15%",
+              width: "21%",
             },
             {
               name: <span className="table-title">Interest</span>,
@@ -669,7 +735,183 @@ export const CustCandidateListView = (props) => {
               ),
               ignoreRowClick: true,
               button: true,
-              width: "10%",
+              width: "12%",
+            },
+
+            {
+              name: <span className="table-title">Action</span>,
+              cell: (row) => <>{renderMenu(row.candidateid, row)}</>,
+              ignoreRowClick: true,
+              allowOverflow: true,
+              button: true,
+              width: "5%",
+            },
+          ]
+        : props.type === "offers" || props.type === "accepted"
+        ? [
+            {
+              name: <span className="table-title">Candidate</span>,
+              id: "Candidate",
+              cell: (row) => (
+                <span title={row.firstname + " " + row.lastname}>
+                  {row.firstname + " " + row.lastname}
+                  {row?.candidateacceptedcomment !== "" &&
+                  props.type === "accepted" ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"ac_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"ac_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.candidateacceptedcomment !== ""
+                          ? row?.candidateacceptedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </span>
+              ),
+              selector: (row) => row.firstname + " " + row.lastname,
+              sortable: true,
+              wrap: true,
+              width: "22%",
+            },
+            {
+              name: <span className="table-title">Job title</span>,
+              cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+              selector: (row) => row?.jobtitle,
+              sortable: true,
+              width: "35%",
+            },
+            // {
+            //   name: <span className="table-title">Location</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row.recommendedationCandidateShortList?.length > 0
+            //           ? (row?.recommendedationCandidateShortList[0].cityname
+            //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //               : "") +
+            //             "" +
+            //             (row.recommendedationCandidateShortList[0].statename
+            //               ? row.recommendedationCandidateShortList[0].statename
+            //               : "")
+            //           : ""
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row.recommendedationCandidateShortList?.length > 0
+            //         ? (row?.recommendedationCandidateShortList[0].cityname
+            //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //             : "") +
+            //           "" +
+            //           (row.recommendedationCandidateShortList[0].statename
+            //             ? row.recommendedationCandidateShortList[0].statename
+            //             : "")
+            //         : ""}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row.recommendedationCandidateShortList?.length > 0
+            //       ? (row?.recommendedationCandidateShortList[0].cityname
+            //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //           : "") +
+            //         "" +
+            //         (row.recommendedationCandidateShortList[0].statename
+            //           ? row.recommendedationCandidateShortList[0].statename
+            //           : "")
+            //       : "",
+            //   sortable: true,
+            //   width: "12%",
+            // },
+
+            // {
+            //   name: <span className="table-title">Experience</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row?.recommendedationCandidateShortList.length > 0
+            //           ? row?.recommendedationCandidateShortList[0]?.experience
+            //           : "-"
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row?.recommendedationCandidateShortList.length > 0
+            //         ? row?.recommendedationCandidateShortList[0]?.experience
+            //         : "-"}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row?.recommendedationCandidateShortList.length > 0
+            //       ? row?.recommendedationCandidateShortList[0]?.experience
+            //       : "-",
+            //   sortable: true,
+            //   width: "12%",
+            // },
+            {
+              name: <span className="table-title">Pre-Screen</span>,
+              cell: (row) =>
+                row.candidateprescreenstatus === "NA" ? (
+                  "-"
+                ) : row.candidateprescreenstatus === "Pending" ? (
+                  <Button disabled color="link">
+                    <u>Pending</u>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => props.onPrescreenClick("completed", row)}
+                    color="link"
+                  >
+                    <u>Completed</u>
+                  </Button>
+                ),
+              ignoreRowClick: true,
+              button: true,
+              width: "15%",
+            },
+            {
+              name: <span className="table-title">Offer</span>,
+              cell: (row) =>
+                row?.jobOfferDtos?.length > 0 ? (
+                  <>
+                    <BsFileEarmarkPdf
+                      className={"icon-pointer"}
+                      size={"23px"}
+                      title="Click to view offer"
+                      onClick={() =>
+                        window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                      }
+                    />
+                  </>
+                ) : (
+                  <> - </>
+                ),
+              ignoreRowClick: true,
+              button: true,
+              width: "11%",
+            },
+            {
+              name: <span className="table-title">Interest</span>,
+              cell: (row) => (
+                <div className="list-btn-group">
+                  <ButtonGroup>
+                    {renderButtons(row.candidaterecommendedjobid, row)}
+                  </ButtonGroup>
+                </div>
+              ),
+              ignoreRowClick: true,
+              button: true,
+              width: "12%",
             },
 
             {
@@ -688,89 +930,109 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span title={row.firstname + " " + row.lastname}>
                   {row.firstname + " " + row.lastname}
+                  {row?.candidateacceptedcomment !== "" &&
+                  props.type === "accepted" ? (
+                    <>
+                      {" "}
+                      <BsFillInfoCircleFill
+                        id={"ac_" + row?.jobid + row?.candidateid}
+                        color="primary"
+                      />
+                      <UncontrolledTooltip
+                        placement="bottom"
+                        target={"ac_" + row?.jobid + row?.candidateid}
+                      >
+                        {row?.candidateacceptedcomment !== ""
+                          ? row?.candidateacceptedcomment
+                          : "-"}
+                      </UncontrolledTooltip>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </span>
               ),
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "15%",
+              width: "22%",
             },
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "25%",
+              width: "40%",
             },
-            {
-              name: <span className="table-title">Location</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.recommendedationCandidateShortList &&
-                    row.recommendedationCandidateShortList?.length > 0
-                      ? (row?.recommendedationCandidateShortList[0].cityname
-                          ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                          : "") +
-                        "" +
-                        (row.recommendedationCandidateShortList[0].statename
-                          ? row.recommendedationCandidateShortList[0].statename
-                          : "")
-                      : ""
-                  }
-                >
-                  {row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList?.length > 0
-                    ? (row?.recommendedationCandidateShortList[0].cityname
-                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                        : "") +
-                      "" +
-                      (row.recommendedationCandidateShortList[0].statename
-                        ? row.recommendedationCandidateShortList[0].statename
-                        : "")
-                    : ""}
-                </span>
-              ),
-              selector: (row) =>
-                row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList?.length > 0
-                  ? (row?.recommendedationCandidateShortList[0].cityname
-                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                      : "") +
-                    "" +
-                    (row.recommendedationCandidateShortList[0].statename
-                      ? row.recommendedationCandidateShortList[0].statename
-                      : "")
-                  : "",
-              sortable: true,
-              width: "15%",
-            },
+            // {
+            //   name: <span className="table-title">Location</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row.recommendedationCandidateShortList?.length > 0
+            //           ? (row?.recommendedationCandidateShortList[0].cityname
+            //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //               : "") +
+            //             "" +
+            //             (row.recommendedationCandidateShortList[0].statename
+            //               ? row.recommendedationCandidateShortList[0].statename
+            //               : "")
+            //           : ""
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row.recommendedationCandidateShortList?.length > 0
+            //         ? (row?.recommendedationCandidateShortList[0].cityname
+            //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //             : "") +
+            //           "" +
+            //           (row.recommendedationCandidateShortList[0].statename
+            //             ? row.recommendedationCandidateShortList[0].statename
+            //             : "")
+            //         : ""}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row.recommendedationCandidateShortList?.length > 0
+            //       ? (row?.recommendedationCandidateShortList[0].cityname
+            //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+            //           : "") +
+            //         "" +
+            //         (row.recommendedationCandidateShortList[0].statename
+            //           ? row.recommendedationCandidateShortList[0].statename
+            //           : "")
+            //       : "",
+            //   sortable: true,
+            //   width: "15%",
+            // },
 
-            {
-              name: <span className="table-title">Experience</span>,
-              cell: (row) => (
-                <span
-                  title={
-                    row?.recommendedationCandidateShortList &&
-                    row?.recommendedationCandidateShortList.length > 0
-                      ? row?.recommendedationCandidateShortList[0]?.experience
-                      : "-"
-                  }
-                >
-                  {row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"}
-                </span>
-              ),
-              selector: (row) =>
-                row?.recommendedationCandidateShortList &&
-                row?.recommendedationCandidateShortList.length > 0
-                  ? row?.recommendedationCandidateShortList[0]?.experience
-                  : "-",
-              sortable: true,
-              width: "15%",
-            },
+            // {
+            //   name: <span className="table-title">Experience</span>,
+            //   cell: (row) => (
+            //     <span
+            //       title={
+            //         row?.recommendedationCandidateShortList &&
+            //         row?.recommendedationCandidateShortList.length > 0
+            //           ? row?.recommendedationCandidateShortList[0]?.experience
+            //           : "-"
+            //       }
+            //     >
+            //       {row?.recommendedationCandidateShortList &&
+            //       row?.recommendedationCandidateShortList.length > 0
+            //         ? row?.recommendedationCandidateShortList[0]?.experience
+            //         : "-"}
+            //     </span>
+            //   ),
+            //   selector: (row) =>
+            //     row?.recommendedationCandidateShortList &&
+            //     row?.recommendedationCandidateShortList.length > 0
+            //       ? row?.recommendedationCandidateShortList[0]?.experience
+            //       : "-",
+            //   sortable: true,
+            //   width: "15%",
+            // },
             {
               name: <span className="table-title">Pre-Screen</span>,
               cell: (row) =>
@@ -790,7 +1052,7 @@ export const CustCandidateListView = (props) => {
                 ),
               ignoreRowClick: true,
               button: true,
-              width: "10%",
+              width: "18%",
             },
             {
               name: <span className="table-title">Interest</span>,
@@ -826,84 +1088,84 @@ export const CustCandidateListView = (props) => {
             ),
             selector: (row) => row.firstname + " " + row.lastname,
             sortable: true,
-            width: "16%",
+            width: "20%",
           },
           {
             name: <span className="table-title">Job title</span>,
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row?.jobtitle,
             sortable: true,
-            width: "16%",
+            width: "27%",
           },
-          {
-            name: <span className="table-title">Location</span>,
-            cell: (row) => (
-              <span
-                title={
-                  row?.recommendedationCandidateShortList &&
-                  row.recommendedationCandidateShortList?.length > 0
-                    ? (row?.recommendedationCandidateShortList[0].cityname
-                        ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                        : "") +
-                      "" +
-                      (row.recommendedationCandidateShortList[0].statename
-                        ? row.recommendedationCandidateShortList[0].statename
-                        : "")
-                    : ""
-                }
-              >
-                {row?.recommendedationCandidateShortList &&
-                row.recommendedationCandidateShortList?.length > 0
-                  ? (row?.recommendedationCandidateShortList[0].cityname
-                      ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                      : "") +
-                    "" +
-                    (row.recommendedationCandidateShortList[0].statename
-                      ? row.recommendedationCandidateShortList[0].statename
-                      : "")
-                  : ""}
-              </span>
-            ),
-            selector: (row) =>
-              row?.recommendedationCandidateShortList &&
-              row.recommendedationCandidateShortList?.length > 0
-                ? (row?.recommendedationCandidateShortList[0].cityname
-                    ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-                    : "") +
-                  "" +
-                  (row.recommendedationCandidateShortList[0].statename
-                    ? row.recommendedationCandidateShortList[0].statename
-                    : "")
-                : "",
-            sortable: true,
-            width: "13%",
-          },
+          // {
+          //   name: <span className="table-title">Location</span>,
+          //   cell: (row) => (
+          //     <span
+          //       title={
+          //         row?.recommendedationCandidateShortList &&
+          //         row.recommendedationCandidateShortList?.length > 0
+          //           ? (row?.recommendedationCandidateShortList[0].cityname
+          //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+          //               : "") +
+          //             "" +
+          //             (row.recommendedationCandidateShortList[0].statename
+          //               ? row.recommendedationCandidateShortList[0].statename
+          //               : "")
+          //           : ""
+          //       }
+          //     >
+          //       {row?.recommendedationCandidateShortList &&
+          //       row.recommendedationCandidateShortList?.length > 0
+          //         ? (row?.recommendedationCandidateShortList[0].cityname
+          //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+          //             : "") +
+          //           "" +
+          //           (row.recommendedationCandidateShortList[0].statename
+          //             ? row.recommendedationCandidateShortList[0].statename
+          //             : "")
+          //         : ""}
+          //     </span>
+          //   ),
+          //   selector: (row) =>
+          //     row?.recommendedationCandidateShortList &&
+          //     row.recommendedationCandidateShortList?.length > 0
+          //       ? (row?.recommendedationCandidateShortList[0].cityname
+          //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
+          //           : "") +
+          //         "" +
+          //         (row.recommendedationCandidateShortList[0].statename
+          //           ? row.recommendedationCandidateShortList[0].statename
+          //           : "")
+          //       : "",
+          //   sortable: true,
+          //   width: "13%",
+          // },
 
-          {
-            name: <span className="table-title">Experience</span>,
-            cell: (row) => (
-              <span
-                title={
-                  row?.recommendedationCandidateShortList &&
-                  row?.recommendedationCandidateShortList.length > 0
-                    ? row?.recommendedationCandidateShortList[0]?.experience
-                    : "-"
-                }
-              >
-                {row?.recommendedationCandidateShortList &&
-                row?.recommendedationCandidateShortList.length > 0
-                  ? row?.recommendedationCandidateShortList[0]?.experience
-                  : "-"}
-              </span>
-            ),
-            selector: (row) =>
-              row?.recommendedationCandidateShortList &&
-              row?.recommendedationCandidateShortList.length > 0
-                ? row?.recommendedationCandidateShortList[0]?.experience
-                : "-",
-            sortable: true,
-            width: "10%",
-          },
+          // {
+          //   name: <span className="table-title">Experience</span>,
+          //   cell: (row) => (
+          //     <span
+          //       title={
+          //         row?.recommendedationCandidateShortList &&
+          //         row?.recommendedationCandidateShortList.length > 0
+          //           ? row?.recommendedationCandidateShortList[0]?.experience
+          //           : "-"
+          //       }
+          //     >
+          //       {row?.recommendedationCandidateShortList &&
+          //       row?.recommendedationCandidateShortList.length > 0
+          //         ? row?.recommendedationCandidateShortList[0]?.experience
+          //         : "-"}
+          //     </span>
+          //   ),
+          //   selector: (row) =>
+          //     row?.recommendedationCandidateShortList &&
+          //     row?.recommendedationCandidateShortList.length > 0
+          //       ? row?.recommendedationCandidateShortList[0]?.experience
+          //       : "-",
+          //   sortable: true,
+          //   width: "10%",
+          // },
 
           {
             name: <span className="table-title">Scheduled</span>,
@@ -947,7 +1209,7 @@ export const CustCandidateListView = (props) => {
                   )
                 : "",
 
-            width: "14%",
+            width: "16%",
           },
           {
             name: <span className="table-title">Interview Status</span>,
@@ -962,8 +1224,12 @@ export const CustCandidateListView = (props) => {
                           0 ||
                         row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                           undefined
-                        ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                          row?.scheduledInterviewDtos[0]?.isrejected === false
+                        ? row?.scheduledInterviewDtos[0]
+                            ?.isreschedulerequested === true
+                          ? "Request for reschedule"
+                          : row?.scheduledInterviewDtos[0]?.isaccepted ===
+                              true &&
+                            row?.scheduledInterviewDtos[0]?.isrejected === false
                           ? "Accepted"
                           : row?.scheduledInterviewDtos[0]?.isrejected === true
                           ? "Rejected"
@@ -985,8 +1251,11 @@ export const CustCandidateListView = (props) => {
                     ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                       row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                         undefined
-                      ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                        row?.scheduledInterviewDtos[0]?.isrejected === false
+                      ? row?.scheduledInterviewDtos[0]
+                          ?.isreschedulerequested === true
+                        ? "Request for reschedule"
+                        : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                          row?.scheduledInterviewDtos[0]?.isrejected === false
                         ? "Accepted"
                         : row?.scheduledInterviewDtos[0]?.isrejected === true
                         ? "Rejected"
@@ -998,6 +1267,67 @@ export const CustCandidateListView = (props) => {
                       : ""
                     : "Cancelled"
                   : ""}
+                {row?.scheduledInterviewDtos?.length > 0 &&
+                row?.scheduledInterviewDtos[0].isreschedulerequested ? (
+                  <>
+                    {" "}
+                    <BsFillInfoCircleFill
+                      id={
+                        "rsr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    ></BsFillInfoCircleFill>
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      target={
+                        "rsr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    >
+                      {row?.scheduledInterviewDtos[0]
+                        .reschedulerequestedreason !== ""
+                        ? row?.scheduledInterviewDtos[0]
+                            .reschedulerequestedreason
+                        : "-"}
+                    </UncontrolledTooltip>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {row?.scheduledInterviewDtos?.length > 0 &&
+                row?.scheduledInterviewDtos[0].isrejected &&
+                row?.scheduledInterviewDtos[0].interviewstatusid === 0 ? (
+                  <>
+                    {" "}
+                    <BsFillInfoCircleFill
+                      id={
+                        "rr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    ></BsFillInfoCircleFill>
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      target={
+                        "rr_" +
+                        row?.scheduledInterviewDtos[0].scheduleinterviewid +
+                        "" +
+                        row?.scheduledInterviewDtos[0].jobid
+                      }
+                    >
+                      {row?.scheduledInterviewDtos[0].rejectionreason !== ""
+                        ? row?.scheduledInterviewDtos[0].rejectionreason
+                        : "-"}
+                    </UncontrolledTooltip>
+                  </>
+                ) : (
+                  <></>
+                )}
               </span>
             ),
             selector: (row) =>
@@ -1007,8 +1337,11 @@ export const CustCandidateListView = (props) => {
                   ? row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 ||
                     row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                       undefined
-                    ? row?.scheduledInterviewDtos[0]?.isaccepted === true &&
-                      row?.scheduledInterviewDtos[0]?.isrejected === false
+                    ? row?.scheduledInterviewDtos[0]?.isreschedulerequested ===
+                      true
+                      ? "Request for reschedule"
+                      : row?.scheduledInterviewDtos[0]?.isaccepted === true &&
+                        row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
                       ? "Rejected"
@@ -1020,7 +1353,7 @@ export const CustCandidateListView = (props) => {
                     : ""
                   : "Cancelled"
                 : "",
-            width: "10%",
+            width: "12%",
           },
           {
             name: <span className="table-title">Pre-Screen</span>,
@@ -1041,7 +1374,7 @@ export const CustCandidateListView = (props) => {
               ),
             ignoreRowClick: true,
             button: true,
-            width: "8%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Interest</span>,
@@ -1052,7 +1385,7 @@ export const CustCandidateListView = (props) => {
             ),
             ignoreRowClick: true,
             button: true,
-            width: "8%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -1085,6 +1418,86 @@ export const CustCandidateListView = (props) => {
   const onCloseAMModal = () => {
     setShowAModal(false);
     props.updateList();
+  };
+
+  const onRescheduleInterview = (row) => {
+    setSelectedRowData(row);
+    setShowIRSModal(true);
+  };
+
+  const postUpdateRescheduleInterview = (data) => {
+    updateScheduledInterview(data);
+  };
+
+  const updateScheduledInterview = async function (formData) {
+    let scheduleinterviewid = formData.scheduleinterviewid;
+    let res = await dispatch(
+      scheduleInterviewActions.updateScheduledInterviewThunk({
+        scheduleinterviewid,
+        formData,
+      })
+    );
+
+    if (res.payload?.statusCode === 204) {
+      setShowIRSModal(false);
+      props.showSweetAlert({
+        title: res.payload.message,
+        type: "success",
+      });
+
+      props.updateList();
+    } else {
+      props.showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
+
+  const onUploadOfferDoc = (file) => {
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+    form.append(
+      "Candidaterecommendedjobid",
+      selectedRowData.candidaterecommendedjobid
+    );
+    form.append("Offerfile", file[0]);
+    form.append(
+      "CurrentUserId",
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+
+    axios
+      .post(
+        `${process.env.REACT_APP_PANTHER_URL}/api/JobOffer/MakeJobOffer`,
+        form,
+        config
+      )
+      .then((result) => {
+        if (result.data.statusCode == 200) {
+          setShowUploadOfferModal(false);
+          props.showSweetAlert({
+            title: result.data.message,
+            type: "success",
+          });
+          props.updateList();
+        } else {
+          props.showSweetAlert({
+            title: result.data.message || result.data.status,
+            type: "danger",
+          });
+        }
+      })
+      .catch((error) => {});
   };
 
   return (
@@ -1176,6 +1589,32 @@ export const CustCandidateListView = (props) => {
             isOpen={showJDModal}
             data={[selectedRowData]}
             onClose={() => setShowJDModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showIRSModal ? (
+          <UpdateScheduleInterviewModal
+            interviewData={selectedRowData}
+            durationOptions={durationOptions}
+            postData={(e) => {
+              postUpdateRescheduleInterview(e);
+            }}
+            isOpen={showIRSModal}
+            onClose={() => setShowIRSModal(false)}
+          />
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showUploadOfferModal ? (
+          <CustomerUploadOffer
+            isOpen={showUploadOfferModal}
+            onClose={() => setShowUploadOfferModal(false)}
+            uploadOfferDoc={(file) => onUploadOfferDoc(file)}
           />
         ) : (
           <></>

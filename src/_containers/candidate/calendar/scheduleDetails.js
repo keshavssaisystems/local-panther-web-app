@@ -11,7 +11,6 @@ import { USPhoneNumber } from "_helpers/helper";
 import { useSelector } from "react-redux";
 
 export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
-  console.log(interviewDetail);
   const interviewGuideLink = useSelector(
     (state) => state.scheduleInterview?.interviewGuideList
   );
@@ -148,87 +147,100 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
                   <div className="p-custom">
                     <p className="mb-0">
                       <b>Interview status -</b>{" "}
-                      {interviewDetail?.isaccepted === true &&
-                      interviewDetail?.isrejected === false
+                      {interviewDetail?.isreschedulerequested === true
+                        ? "Requested for reschedule"
+                        : interviewDetail?.interviewstatusid !== 0
+                        ? interviewDetail?.interviewstatusid === 2
+                          ? "Completed but candidate not joined"
+                          : "Completed"
+                        : interviewDetail?.isaccepted === true &&
+                          interviewDetail?.isrejected === false
                         ? "Accepted"
                         : interviewDetail?.isrejected === true
                         ? "Rejected"
-                        : "Tentative"}
+                        : "No response from candidate"}
                     </p>
                   </div>
-                  <div className="p-custom">
-                    <p className="mb-0">
-                      {scheduled} at {startTime} to {endTime} ({" "}
-                      {interviewDetail.duration} )
-                    </p>
-                  </div>
-                  {interviewDetail?.format === "Phone" && (
-                    <div className="p-custom">
-                      <p className="mb-0">
-                        Phone no -{" "}
-                        {interviewDetail.candidatephonenumber === undefined
-                          ? ""
-                          : USPhoneNumber(interviewDetail.candidatephonenumber)}
-                      </p>
-                    </div>
-                  )}
-                  {interviewDetail?.format === "In-person" && (
-                    <div className="p-custom">
-                      <p className="mb-0">
-                        Scheduled at {interviewDetail.interviewaddress}
-                      </p>
-                    </div>
-                  )}
-                  {!isAdmin ? (
+                  {interviewDetail?.isreschedulerequested === false && (
                     <>
-                      {" "}
-                      {interviewDetail?.isappvideocall === false &&
-                        interviewDetail?.format === "Video" &&
-                        interviewDetail?.isactive === true &&
-                        interviewDetail?.isrejected === false && (
-                          <div className="p-custom">
-                            <p className="mb-0">
-                              <a
-                                href={interviewDetail.videolink}
-                                target={"_blank"}
-                                rel="noreferrer"
-                              >
-                                Click here to join
-                              </a>{" "}
-                              the interview
-                            </p>
-                          </div>
-                        )}
-                      {interviewDetail.isappvideocall === true &&
-                        interviewDetail?.format === "Video" &&
-                        interviewDetail?.isactive === true &&
-                        interviewDetail?.isrejected === false && (
-                          <div className="p-custom">
-                            <p className="mb-0">
-                              <a href="/">
-                                <NavLink to={`/video-screen/${id}`} exact>
-                                  Click here to join
-                                </NavLink>
-                              </a>{" "}
-                              the in-app interview
-                            </p>
-                          </div>
-                        )}
+                      <div className="p-custom">
+                        <p className="mb-0">
+                          {scheduled} at {startTime} to {endTime} ({" "}
+                          {interviewDetail.duration} )
+                        </p>
+                      </div>
+                      {interviewDetail?.format === "Phone" && (
+                        <div className="p-custom">
+                          <p className="mb-0">
+                            Phone no -{" "}
+                            {interviewDetail.candidatephonenumber === undefined
+                              ? ""
+                              : USPhoneNumber(
+                                  interviewDetail.candidatephonenumber
+                                )}
+                          </p>
+                        </div>
+                      )}
+                      {interviewDetail?.format === "In-person" && (
+                        <div className="p-custom">
+                          <p className="mb-0">
+                            Scheduled at {interviewDetail.interviewaddress}
+                          </p>
+                        </div>
+                      )}
+                      {!isAdmin ? (
+                        <>
+                          {" "}
+                          {interviewDetail?.isappvideocall === false &&
+                            interviewDetail?.format === "Video" &&
+                            interviewDetail?.isactive === true &&
+                            interviewDetail?.isrejected === false && (
+                              <div className="p-custom">
+                                <p className="mb-0">
+                                  <a
+                                    href={interviewDetail.videolink}
+                                    target={"_blank"}
+                                    rel="noreferrer"
+                                  >
+                                    Click here to join
+                                  </a>{" "}
+                                  the interview
+                                </p>
+                              </div>
+                            )}
+                          {interviewDetail.isappvideocall === true &&
+                            interviewDetail?.format === "Video" &&
+                            interviewDetail?.isactive === true &&
+                            interviewDetail?.isrejected === false && (
+                              <div className="p-custom">
+                                <p className="mb-0">
+                                  <a href="/">
+                                    <NavLink to={`/video-screen/${id}`} exact>
+                                      Click here to join
+                                    </NavLink>
+                                  </a>{" "}
+                                  the in-app interview
+                                </p>
+                              </div>
+                            )}
+                        </>
+                      ) : (
+                        <></>
+                      )}
+
+                      {interviewDetail.messagetocandidate !== "" && (
+                        <div className="p-custom">
+                          <p className="mb-0">
+                            <b>Note -</b>{" "}
+                            {interviewDetail.messagetocandidate === ""
+                              ? "-"
+                              : interviewDetail.messagetocandidate}
+                          </p>
+                        </div>
+                      )}
                     </>
-                  ) : (
-                    <></>
                   )}
 
-                  {interviewDetail.messagetocandidate !== "" && (
-                    <div className="p-custom">
-                      <p className="mb-0">
-                        <b>Note -</b>{" "}
-                        {interviewDetail.messagetocandidate === ""
-                          ? "-"
-                          : interviewDetail.messagetocandidate}
-                      </p>
-                    </div>
-                  )}
                   {!isAdmin ? (
                     <>
                       <div className="p-custom">

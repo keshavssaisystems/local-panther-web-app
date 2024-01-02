@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import Loader from "react-loaders";
-
 import {
   Col,
   Row,
@@ -16,8 +15,9 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Input,
+  FormText,
 } from "reactstrap";
-
 import {
   CompanyFilter,
   SkillsFilter,
@@ -27,17 +27,18 @@ import { Popup } from "_widgets";
 import {
   openJobsThunk,
   scheduledInterviewListThunk,
+  getAdminReportJobDetail,
+  getADMReportSubsidiaryList,
 } from "../_redux/report.slice";
-
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
-
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
+import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./adminreports.scss";
 
 export function OpenJobs({ title }) {
@@ -47,6 +48,8 @@ export function OpenJobs({ title }) {
     scheduledInterviewList = [],
     scheduledLoading = false,
     loading = false,
+    jobDetail = [],
+    subsidiaryList = [],
   } = useSelector((state) => state?.adminReportReducer ?? {});
 
   let [isOpen, setIsOpen] = useState(false);
@@ -55,9 +58,12 @@ export function OpenJobs({ title }) {
   let [company, setCompany] = useState([]);
   let [skill, setSkill] = useState([]);
   let [location, setLocation] = useState([]);
+  let [subsidiaryId, setSubsidiaryId] = useState();
+  let [subsidiaryErr, setSubsidiaryErr] = useState(false);
   let [filter, setFilter] = useState({});
 
   const [excelData, setExcelData] = useState([]);
+  const [showJDModal, setShowJDModal] = useState(false);
   useEffect(() => {
     dispatch(openJobsThunk());
 
@@ -84,17 +90,33 @@ export function OpenJobs({ title }) {
           Scheduled: rec.scheduled,
           Accepted: rec.accept,
           Rejected: rec.reject,
+          SubsidiaryId: rec?.subsidiaryid,
+          SubsidiaryName: rec?.subsidiaryname,
         };
       });
       setExcelData([{ sheetName: "OpenJobs", details: filteredData }]);
     }
   }, [data]);
 
+  useEffect(() => {
+    if (company?.label) {
+      dispatch(getADMReportSubsidiaryList(company.value));
+    }
+  }, [company]);
+
   const handleChange = (name, value) => {
-    setFilter({
-      ...filter,
-      [name]: value,
-    });
+    if (name === "companyId") {
+      setFilter({
+        ...filter,
+        [name]: value,
+        ["subsidiaryid"]: "",
+      });
+    } else {
+      setFilter({
+        ...filter,
+        [name]: value,
+      });
+    }
   };
 
   const handleDateChange = (name, value) => {
@@ -115,12 +137,21 @@ export function OpenJobs({ title }) {
     setCompany([]);
     setSkill([]);
     setLocation([]);
+    setSubsidiaryId("");
     dispatch(openJobsThunk());
   };
 
   const handleSheduleClick = (jobId) => {
     dispatch(scheduledInterviewListThunk({ jobId }));
     setIsOpen(true);
+  };
+
+  const openJobDetails = async (jobId) => {
+    let res = await dispatch(getAdminReportJobDetail(jobId));
+
+    if (res?.payload?.statusCode === 200) {
+      setShowJDModal(true);
+    }
   };
 
   /* const handleRowClicked = (e) => {
@@ -131,7 +162,7 @@ export function OpenJobs({ title }) {
   const columns = [
     {
       name: <span className="table-title">Company</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.companyname}>
           {row.companyname}
         </span>
@@ -142,9 +173,15 @@ export function OpenJobs({ title }) {
     },
     {
       name: <span className="table-title">Title</span>,
-      selector: (row) => (
+      cell: (row) => (
         <span className="table-cell" title={row.jobtitle}>
-          {row.jobtitle}
+          <Button
+            className="no-padding"
+            color="link"
+            onClick={() => openJobDetails(row.jobid)}
+          >
+            {row.jobtitle}
+          </Button>
         </span>
       ),
       sortable: true,
@@ -399,6 +436,16 @@ export function OpenJobs({ title }) {
     },
   ];
 
+  const updateSubsidiary = (e) => {
+    if (!company?.label) {
+      setSubsidiaryErr(true);
+    } else {
+      handleChange("subsidiaryid", e.target.value);
+      setSubsidiaryId(e.target.value);
+      setSubsidiaryErr(false);
+    }
+  };
+
   return (
     <>
       <PageTitle heading={title} icon={titlelogo} />
@@ -432,19 +479,62 @@ export function OpenJobs({ title }) {
               </div>
             </CardHeader>
             <CardBody>
-              <Row style={{ zIndex: 9, position: "relative" }}>
-                <Col lg="2" md="2" sm="12" sx="12" className="pe-1">
+              <Row className="pb-2" style={{ zIndex: 9, position: "relative" }}>
+                <Col
+                  xxl="2"
+                  xl="2"
+                  lg="3"
+                  md="4"
+                  sm="12"
+                  xs="12"
+                  className="pe-1"
+                >
                   <CompanyFilter
                     name={"companyId"}
                     placeholder={"Search Company"}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
+                      setSubsidiaryId("");
+                      setSubsidiaryErr(false);
                     }}
                     value={company}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                  <Input
+                    type="select"
+                    value={subsidiaryId}
+                    name="subsidiary"
+                    id="subsidiary"
+                    placeholder="Subsidiary Id"
+                    onChange={(e) => {
+                      updateSubsidiary(e);
+                    }}
+                  >
+                    <option value={""}>Select a Subsidiary</option>
+                    {subsidiaryList?.length > 0 ? (
+                      subsidiaryList.map((data) => (
+                        <option
+                          value={data.subsidiaryid ? data.subsidiaryid : ""}
+                          key={data.subsidiaryid ? data.subsidiaryid : ""}
+                        >
+                          {data.subsidiaryname ? data.subsidiaryname : ""}
+                        </option>
+                      ))
+                    ) : (
+                      <></>
+                    )}
+                  </Input>
+                  {subsidiaryErr ? (
+                    <FormText color="danger">
+                      Please select company first
+                    </FormText>
+                  ) : (
+                    <></>
+                  )}
+                </Col>
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <SkillsFilter
                     name={"skillId"}
                     placeholder={"Search Skill"}
@@ -455,7 +545,7 @@ export function OpenJobs({ title }) {
                     value={skill}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <LocationFilter
                     name={"cityId"}
                     placeholder={"Search Location"}
@@ -466,7 +556,7 @@ export function OpenJobs({ title }) {
                     value={location}
                   />
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -489,7 +579,7 @@ export function OpenJobs({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="2" sm="12" sx="12">
+                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -512,7 +602,7 @@ export function OpenJobs({ title }) {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}
                     color="primary"
@@ -523,7 +613,7 @@ export function OpenJobs({ title }) {
                     Search
                   </Button>
                 </Col>
-                <Col lg="1" md="2" sm="12" sx="12">
+                <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     color="link"
                     type="button"
@@ -571,6 +661,19 @@ export function OpenJobs({ title }) {
         columns={scheduledListColumns}
         scheduledLoading={scheduledLoading}
       />
+      <>
+        {" "}
+        {showJDModal && jobDetail?.length > 0 ? (
+          <CustJobDetailModal
+            isOpen={showJDModal}
+            data={jobDetail}
+            onClose={() => setShowJDModal(false)}
+            isAdmin={true}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

@@ -8,7 +8,6 @@ import {
   CardFooter,
   CardHeader,
 } from "reactstrap";
-import AsyncSelect from "react-select/async";
 import {
   Row,
   Col,
@@ -31,6 +30,7 @@ import { profileSkillsActions } from "_store";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { NoDataFound } from "_components/common/nodatafound";
+import AsyncCreatableSelect from "react-select/async-creatable";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
@@ -38,6 +38,8 @@ export function CandidateSkills(props) {
   const get_response = useSelector(
     (state) => state.getProfile.profileData.skillsInfo
   );
+  const [options, setOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const [getResponse, setResponse] = useState([]);
 
@@ -53,6 +55,7 @@ export function CandidateSkills(props) {
 
   const [selectedSkillData, setSelectedSkillData] = useState([]);
   const [loader, setLoader] = useState(true);
+  const [isLabelVisible, setLabelVisibility] = useState(true);
 
   const [selectedExp, setSelectedExp] = useState([]);
   useEffect(() => {
@@ -116,7 +119,7 @@ export function CandidateSkills(props) {
     }
   }, [skills_data]);
 
-  const removeSkills = function (data) {
+  const removeSkills = function (data, index) {
     let filter_data = skills_data?.find((x) => x.value === data.value);
     if (filter_data) {
       let new_array = [...skills];
@@ -124,21 +127,21 @@ export function CandidateSkills(props) {
       setSkills(new_array);
     }
     let multiple_skills = [...skillsMultiple];
-    let multiple_skills_new = multiple_skills?.filter(function (obj) {
-      return obj.value !== data.value;
-    });
 
+    multiple_skills.splice(index, 1);
     let data_new = selectedSkillData.filter(function (obj) {
       return obj.id !== data.value;
     });
 
-    setSkillsMultiple(multiple_skills_new);
+    setSkillsMultiple(multiple_skills);
     setSelectedSkillData(data_new);
   };
 
   const onSelectSkillsDropdown = function (data) {
-    setSkillsMultiple(data);
-
+    let multipleSkill = [...skillsMultiple];
+    multipleSkill = data;
+    setSkillsMultiple(multipleSkill);
+    setSearchText("");
     let new_data = [...skills];
     let index = skills?.findIndex(
       (x) => x.value == data[data.length - 1]?.value
@@ -153,23 +156,24 @@ export function CandidateSkills(props) {
       selected_data.name = data[data.length - 1].label;
       selected_data.experience = "";
     } else {
-      setSearchText("");
       selected_data.id = 0;
       selected_data.name = "";
       selected_data.experience = "";
+      setSkills(skills_data);
     }
-
-    let new_array = [...selectedSkillData];
-    let i = selectedSkillData.findIndex(
-      (x) => x.id == data[data.length - 1]?.value
+    const result = skills_data.filter(
+      (objA) =>
+        !skills.some((objB) => objB.value === objA.value) &&
+        !data.some((objC) => objC.value == objA.value)
     );
-    if (i > -1) {
-      new_array.splice(i, 1);
-    } else {
-      new_array.push(selected_data);
-    }
+    let new_array = [...skills];
+    if (result.length > 0) {
+      result.map((item, index) => {
+        new_array.push(item);
+      });
 
-    setSelectedSkillData(new_array);
+      setSkills(new_array);
+    }
   };
   const close = function () {
     setPersonalModal(false);
@@ -217,16 +221,16 @@ export function CandidateSkills(props) {
       setMustHaveValidation(false);
       let id = JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId;
       let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
-
-      let payload = selectedSkillData.map((rest) => {
+      console.log(skillsMultiple);
+      let payload = skillsMultiple.map((rest) => {
         return {
           candidateid: Number(id),
           yearsofexperience:
             rest.experience === "" ? 0 : parseInt(rest.experience),
-          skillid: rest.id,
+          skillid: rest.value,
           currentUserId: parseInt(userId),
           isactive: true,
-          skillname: rest.name,
+          skillname: rest.label,
         };
       });
 
@@ -241,18 +245,34 @@ export function CandidateSkills(props) {
       }
     }
   };
-  const [skillsList, setSkillsList] = useState([]);
-  const loadOptions = async function (inputValue) {
+  const [skillExist, setSkillExist] = useState(false);
+  const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
       setSearchText(inputValue);
+      setLabelVisibility(true);
+
       const { data = [] } = await getSkillsFilter(inputValue);
-      setSkillsList(data);
-      return data.map(({ skillid: value, ...rest }) => {
+
+      const isKeyTrueForAll = data.some(
+        (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
+      );
+      if (isKeyTrueForAll) {
+        setSkillExist(false);
+      } else {
+        setSkillExist(true);
+      }
+
+      let filter_data = data.map(({ skillid: value, ...rest }) => {
         return {
           value,
           label: `${rest.skillname}`,
         };
       });
+      setOptions(filter_data);
+      return filter_data;
+    } else {
+      setSearchText("");
+      setOptions([]);
     }
   };
 
@@ -272,32 +292,31 @@ export function CandidateSkills(props) {
     }
   };
 
-  const onSelectExperience = function (selectedSkill, data) {
-    const index = selectedSkillData.findIndex(
-      (x) => x.id == selectedSkill.value
-    );
-
-    let new_array = [...selectedSkillData];
+  const onSelectExperience = function (selectedSkill, data, index) {
+    let new_array = [...skillsMultiple];
     new_array[index].experience = data;
 
     setSelectedSkillData(new_array);
   };
 
-  const addNewSkill = () => {
-    if (searchText === "") {
+  const addNewSkill = (input) => {
+    if (input === "") {
       return;
     }
 
     let selected_data = {
       value: 0,
-      label: searchText,
+      label: input,
       experience: "",
     };
 
     let new_array = [...skillsMultiple];
-    let i = selectedSkillData.findIndex((x) => x.name === searchText);
+    let i = skillsMultiple.findIndex(
+      (x) => x.label.toLowerCase() === input.toLowerCase()
+    );
     if (i > -1) {
-      new_array.splice(i, 1);
+      setSearchText("");
+      return;
     } else {
       new_array.push(selected_data);
     }
@@ -306,7 +325,7 @@ export function CandidateSkills(props) {
 
     let skill_data = {
       id: 0,
-      name: searchText,
+      name: input,
       experience: "",
     };
     let new_data = [...selectedSkillData];
@@ -317,19 +336,17 @@ export function CandidateSkills(props) {
     setSearchText("");
   };
 
-  const customOption = ({ innerProps, label }) => (
-    <div>
-      {/* {label} */}
-      {/* {skillsList?.length > 0 && ( */}
-      <div
-        className="float-end"
-        style={{ marginLeft: "5px", color: "blue", cursor: "pointer" }}
-      >
-        (Add)
-      </div>
-      {/* )} */}
-    </div>
-  );
+  const formatCreateLabel = (inputValue) => {
+    if (skillExist && inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new skill - <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
+    }
+  };
 
   return (
     <div>
@@ -337,7 +354,7 @@ export function CandidateSkills(props) {
         <Card className="main-card mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Skills
-            <div className="ms-auto me-2">
+            <div className="float-end me-2 ms-auto">
               <Label
                 className="link-text"
                 onClick={(evt) => setPersonalModal(true)}
@@ -348,16 +365,6 @@ export function CandidateSkills(props) {
           </CardHeader>
 
           <CardBody className="scroll-area-md">
-            {/* <div className="mb-3">
-              <strong className="card-title-text">Skills</strong>
-              <Label
-                className="float-end  link-text"
-                onClick={(evt) => setPersonalModal(true)}
-              >
-                Add
-              </Label>
-            </div> */}
-
             {!loader ? (
               <div>
                 {getResponse?.length > 0 ? (
@@ -427,18 +434,19 @@ export function CandidateSkills(props) {
                         Skills <span style={{ color: "red" }}>* </span>
                       </Label>
 
-                      <AsyncSelect
+                      <AsyncCreatableSelect
+                        id="skills"
                         name="skills"
-                        placeholder="Search to select"
+                        isMulti
+                        isClearable
+                        cacheOptions
                         loadOptions={loadOptions}
-                        isMulti={true}
                         value={skillsMultiple}
                         onChange={(evt) => onSelectSkillsDropdown(evt)}
-                        styles={{
-                          borderColor: mustHaveValidation
-                            ? "#d92550 !important"
-                            : "",
-                        }}
+                        formatCreateLabel={formatCreateLabel}
+                        isSearchable
+                        placeholder="Search to select"
+                        onCreateOption={addNewSkill}
                       />
 
                       {mustHaveValidation === true && (
@@ -446,88 +454,76 @@ export function CandidateSkills(props) {
                       )}
                     </FormGroup>
                   </Col>
-                  <Col>
-                    {skillsList?.length === 0 && searchText !== "" && (
-                      <Label
-                        style={{ marginTop: "30px" }}
-                        className="fw-semi-bold nav-link"
-                        onClick={() => addNewSkill()}
-                      >
-                        Add
-                      </Label>
-                    )}
-                  </Col>
+                </Row>
+                <Row className="mt-2">
+                  {skillsMultiple?.map((item, index) => (
+                    <div>
+                      <Row>
+                        <Col md={4}>
+                          <FormGroup>
+                            <Label for={"skillsInput"} className="fw-semi-bold">
+                              Selected Skill
+                            </Label>
+                            <Input
+                              type="text"
+                              name="skillSelected"
+                              id="skillSelected"
+                              disabled={true}
+                              value={item.label}
+                            ></Input>
+                          </FormGroup>
+                        </Col>
 
-                  <Row className="mt-2">
-                    {skillsMultiple?.map((item) => (
-                      <div>
-                        <Row>
-                          <Col md={4}>
+                        <Col md={4}>
+                          <div>
                             <FormGroup>
                               <Label
-                                for={"skillsInput"}
+                                for={"experienceLevel"}
                                 className="fw-semi-bold"
                               >
-                                Selected Skill
+                                Experience level
                               </Label>
+
                               <Input
-                                type="text"
-                                name="skillSelected"
-                                id="skillSelected"
-                                disabled={true}
-                                value={item.label}
-                              ></Input>
+                                id={"experienceLevel"}
+                                name={"experienceLevel"}
+                                type={"select"}
+                                onChange={(evt) =>
+                                  onSelectExperience(
+                                    item,
+                                    evt.target.value,
+                                    index
+                                  )
+                                }
+                              >
+                                <option key={0}>Select experience level</option>
+                                {experienceLevelOption?.length > 0 &&
+                                  experienceLevelOption?.map((options) => (
+                                    <option
+                                      selected={options.id == item.experience}
+                                      key={options.id}
+                                      value={options.id}
+                                    >
+                                      {options.name}
+                                    </option>
+                                  ))}
+                              </Input>
                             </FormGroup>
-                          </Col>
-
-                          <Col md={4}>
-                            <div>
-                              <FormGroup>
-                                <Label
-                                  for={"experienceLevel"}
-                                  className="fw-semi-bold"
-                                >
-                                  Experience level
-                                </Label>
-
-                                <Input
-                                  id={"experienceLevel"}
-                                  name={"experienceLevel"}
-                                  type={"select"}
-                                  onChange={(evt) =>
-                                    onSelectExperience(item, evt.target.value)
-                                  }
-                                >
-                                  <option key={0}>
-                                    Select experience level
-                                  </option>
-                                  {experienceLevelOption?.length > 0 &&
-                                    experienceLevelOption?.map((options) => (
-                                      <option
-                                        selected={options.id == item.experience}
-                                        key={options.id}
-                                        value={options.id}
-                                      >
-                                        {options.name}
-                                      </option>
-                                    ))}
-                                </Input>
-                              </FormGroup>
-                            </div>
-                          </Col>
-                          <Col>
-                            <div
-                              onClick={() => removeSkills(item)}
-                              className="nav-link"
-                            >
-                              remove
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                    ))}
-                  </Row>
+                          </div>
+                        </Col>
+                        <Col>
+                          <Label
+                            onClick={() => removeSkills(item, index)}
+                            className="skills-remove"
+                          >
+                            remove
+                          </Label>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
                 </Row>
+
                 <Row>
                   <Label className="fw-semi-bold">
                     Add any of these popular skills
@@ -565,41 +561,6 @@ export function CandidateSkills(props) {
         </div>
       ) : (
         <></>
-      )}
-
-      {isNewSkill && (
-        <Modal className="modal-reject-align profile-view" isOpen={isNewSkill}>
-          <ModalHeader>Add new skills</ModalHeader>
-          <ModalBody>
-            <Form onSubmit={(e) => addNewSkill(e)}>
-              <FormGroup>
-                <Label
-                  for={"newSkill"}
-                  className="fw-semi-bold"
-                  value={searchText}
-                >
-                  Skill
-                </Label>
-                <Input type="text" name="newSkill" id="newSkill"></Input>
-              </FormGroup>
-
-              <Row>
-                <Col className="d-flex justify-content-center">
-                  <Button className="me-2 accept-modal-btn" type="submit">
-                    Add
-                  </Button>
-
-                  <Button
-                    className="me-2 accept-modal-btn"
-                    onClick={(evt) => setNewSkill(false)}
-                  >
-                    Close
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </ModalBody>
-        </Modal>
       )}
 
       <Modal className="modal-reject-align profile-view" isOpen={success}>

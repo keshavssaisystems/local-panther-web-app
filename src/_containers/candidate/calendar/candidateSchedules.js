@@ -11,6 +11,7 @@ import { scheduleInterviewActions } from "_store";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import "./calendar.scss";
+import { faLessThanEqual } from "@fortawesome/free-solid-svg-icons";
 
 export function CandidateSchedules() {
   const dispatch = useDispatch();
@@ -22,7 +23,15 @@ export function CandidateSchedules() {
     const day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
-
+  const views = {
+    month: true,
+    week: true,
+    day: true,
+    agenda: true, // Add or modify views as needed
+  };
+  const messages = {
+    agenda: "Schedule", // Change the label for Agenda to Schedule
+  };
   useEffect(() => {
     // Get the current date
     const currentDate = new Date();
@@ -94,7 +103,9 @@ export function CandidateSchedules() {
         start: new Date(startDate),
         end: new Date(endDate),
         color:
-          upcomingInterview?.interviewstatusid !== 0
+          upcomingInterview?.isreschedulerequested === true
+            ? "#2f479b"
+            : upcomingInterview?.interviewstatusid !== 0
             ? upcomingInterview?.interviewstatusid === 1
               ? "#30b1ff"
               : "#6c757d"
@@ -204,29 +215,48 @@ export function CandidateSchedules() {
             <Card>
               <CardBody className="scheduled-calender">
                 <div className="text-end">
-                  <div className="mb-3 me-0 badge badge-color-yellow">P</div> No
-                  response
-                  <div className="ms-3 mb-3 me-1 badge badge-color-green">
-                    P
-                  </div>
-                  Accepted interview{" "}
-                  <div className="ms-3 mb-3 me-0 badge badge-color-red">P</div>{" "}
-                  Rejected interview
-                  <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
-                    P
-                  </div>{" "}
-                  Interview completed
-                  <div className="ms-3 mb-3 me-0 badge badge-color-grey">
-                    P
-                  </div>{" "}
-                  Not joined
+                  <span className="legend">
+                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
+                    No response
+                  </span>
+                  <span className="legend">
+                    <div className="ms-3 mb-3 me-1 badge badge-color-green">
+                      P
+                    </div>
+                    Accepted interview{" "}
+                  </span>
+                  <span className="legend">
+                    <div className="ms-3 mb-3 me-0 badge badge-color-red">
+                      P
+                    </div>{" "}
+                    Rejected interview
+                  </span>
+                  <span className="legend">
+                    <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                      P
+                    </div>{" "}
+                    Interview completed
+                  </span>
+                  <span className="legend">
+                    <div className="ms-3 mb-3 me-0 badge badge-color-grey">
+                      P
+                    </div>{" "}
+                    Not joined
+                  </span>
+                  <span className="legend">
+                    <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
+                      P
+                    </div>{" "}
+                    Requested for reschedule
+                  </span>
                 </div>
                 <Calendar
                   localizer={localizer}
                   events={upData}
+                  views={views}
+                  messages={messages}
                   startAccessor="start"
                   endAccessor="end"
-                  views={["month", "week", "day", "agenda"]}
                   // popup
                   eventPropGetter={(upData) => {
                     const backgroundColor = upData.color

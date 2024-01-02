@@ -73,7 +73,24 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
       )}`;
     }
   };
-
+  const returnEducation = () => {
+    if (jobDetail && jobDetail?.jobLevelofedulcationDtos?.length > 0) {
+      return jobDetail?.jobLevelofedulcationDtos
+        .map((item) => item.levelofeducation)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
+  const returnStudy = () => {
+    if (jobDetail && jobDetail?.jobFieldofstudyDtos?.length > 0) {
+      return jobDetail?.jobFieldofstudyDtos
+        .map((item) => item.fieldofstudy)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
   const returnJobType = () => {
     let jobTypeString = [];
     if (
@@ -221,7 +238,11 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         <Card className="card-shadow-primary profile-responsive card-border mb-3">
           <DetailsHeader
             heading={jobDetail.jobtitle}
-            subHeading={jobDetail.companyname}
+            subHeading={
+              jobDetail.subsidiaryid !== 0
+                ? jobDetail.companyname + " (" + jobDetail?.subsidiaryname + ")"
+                : jobDetail.companyname
+            }
             location={returnAddress()}
             // ApplyButton={type !== "Open"}
             // jobId={jobDetail.jobid}
@@ -290,6 +311,33 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
             heading={"Address"}
             detail={returnAddress()}
             iconId={10}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Level of education"}
+            detail={returnEducation()}
+            iconId={11}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Field of study"}
+            detail={returnStudy()}
+            iconId={13}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Certifications"}
+            detail={
+              jobDetail?.certifications === "" ? "-" : jobDetail?.certifications
+            }
+            iconId={12}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Authorized to work in United States"}
+            detail={jobDetail?.authorizedtoworkinus === true ? "Yes" : "No"}
+            iconId={9}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Sponsorship is required"}
+            detail={jobDetail?.sponsorshiprequiured === true ? "Yes" : "No"}
+            iconId={9}
           />
           <HeadingAndDetailWithoutIcon
             heading={"Job Description"}

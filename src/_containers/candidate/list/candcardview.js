@@ -15,7 +15,6 @@ import {
   BsBriefcase,
   BsListStars,
   BsFillFlagFill,
-  BsHandThumbsUp,
   BsXCircle,
   BsQuestionCircle,
   BsCheckCircle,
@@ -27,6 +26,7 @@ import "./candidatelist.scss";
 import "./candcardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import { ScorePopup } from "_components/list/scorePopup";
+import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
 
 export function CandCardView({
   name,
@@ -42,6 +42,8 @@ export function CandCardView({
   additionalData,
   onCandidateActions,
 }) {
+  const [rejectReasonModal, setRejectReasonModal] = useState(false);
+
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -62,7 +64,9 @@ export function CandCardView({
     skillsData =
       skillsData.length > 35 ? skillsData.slice(0, 35 - 1) + "…" : skillsData;
   }
-
+  const closeModal = function () {
+    setRejectReasonModal(false);
+  };
   const returnPayment = () => {
     if (
       additionalData?.jobPaymentBenefitDtos &&
@@ -92,8 +96,8 @@ export function CandCardView({
     }
   };
 
-  const onBtnClick = (type) => {
-    onCandidateActions(type, additionalData.candidaterecommendedjobid);
+  const onBtnClick = (type, reason) => {
+    onCandidateActions(type, additionalData.candidaterecommendedjobid, reason);
   };
   const [button, setButton] = useState(false);
   return (
@@ -107,11 +111,19 @@ export function CandCardView({
             <Row>
               <Col md="12">
                 <Row className="mb-2">
-                  <Col md="7">
+                  <Col xs={7} sm={7} md="7" lg={7} xl={7} xxl={7}>
                     <div className="job-title">{name}</div>
                     <div className="muted-name">{customer}</div>
                   </Col>
-                  <Col className="right-align">
+                  <Col
+                    xs={5}
+                    sm={5}
+                    md="5"
+                    lg={5}
+                    xl={5}
+                    xxl={5}
+                    className="right-align"
+                  >
                     {additionalData.avgscore ? (
                       <>
                         <Dropdown
@@ -253,7 +265,7 @@ export function CandCardView({
                       title="Reject"
                       className="btn-icon mb-1"
                       color="primary"
-                      onClick={() => onBtnClick("rejected")}
+                      onClick={() => setRejectReasonModal(true)}
                       size="sm"
                     >
                       Reject <BsXCircle></BsXCircle>
@@ -276,6 +288,14 @@ export function CandCardView({
           </CardBody>
         </Card>
       </div>
+      {rejectReasonModal && (
+        <RejectReasonModal
+          isRMOpen={rejectReasonModal}
+          callBack={(reason) => onBtnClick("rejected", reason)}
+          callBackError={() => closeModal()}
+          title={"rejection"}
+        />
+      )}
     </>
   );
 }

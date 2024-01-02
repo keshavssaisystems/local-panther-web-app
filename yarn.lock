@@ -11787,6 +11787,13 @@
   dependencies:
     "lodash" "^4.17.21"
 
+"react-responsive-pagination@^2.3.0":
+  "integrity" "sha512-F/4EMEvgU20fB9r2AZv9xhiv2K+IGvBVAdYMkf7nqNU/BtK5QqeE9A0EkCUHOXJXJXol9k1u0NIFXobHad/7jg=="
+  "resolved" "https://registry.npmjs.org/react-responsive-pagination/-/react-responsive-pagination-2.3.0.tgz"
+  "version" "2.3.0"
+  dependencies:
+    "prop-types" "^15.8.1"
+
 "react-responsive-tabs@^4.4.3":
   "integrity" "sha512-AicjCIuIlB0isTnIiFplRzk4UVEohGYZjdXkWUXrI70aqX6Iw4UZxvgUnuYeT4b2k/1YVBxgndSwxBBCgYGcmg=="
   "resolved" "https://registry.npmjs.org/react-responsive-tabs/-/react-responsive-tabs-4.4.3.tgz"

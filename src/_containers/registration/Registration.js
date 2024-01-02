@@ -546,8 +546,14 @@ export function Registration() {
             lg="7"
             md="12"
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
+            style={{ overflow: "auto" }}
           >
-            <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
+            <Col
+              lg="9"
+              md="10"
+              sm="12"
+              className="mx-auto app-login-box me-2 ms-2"
+            >
               <div className="">
                 <img src={logo} alt="logo" className="logo mb-2" />
               </div>
@@ -565,7 +571,7 @@ export function Registration() {
                   </Label>
 
                   {registrationType.map((item, index) => (
-                    <Col md={3} lg={2} sm={2}>
+                    <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
                       <FormGroup check style={{ marginLeft: "5px" }}>
                         <Input
                           style={{ fontSize: "18px" }}
@@ -589,7 +595,7 @@ export function Registration() {
                     <Link to="/login">
                       <Button
                         style={{ background: "#2F2E2E" }}
-                        className=" btn-text"
+                        className=" btn-text me-2"
                         size="lg"
                       >
                         Back
@@ -605,7 +611,7 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="jobprofile" className="input-label">
-                            Job Profile <span className="text-danger">*</span>
+                            Job profile <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
@@ -811,7 +817,7 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="confirmPassword" className="input-label">
-                            Confirm Password{" "}
+                            Confirm password{" "}
                             <span className="text-danger">*</span>
                           </Label>
                           <InputGroup>
