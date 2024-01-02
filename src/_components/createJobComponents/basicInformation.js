@@ -524,7 +524,7 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="openPositions" className="fw-semi-bold">
-                Number of position<span style={{ color: "red" }}>* </span>
+                Number of positions<span style={{ color: "red" }}>* </span>
               </Label>
               <Input
                 id={"openPositions"}
