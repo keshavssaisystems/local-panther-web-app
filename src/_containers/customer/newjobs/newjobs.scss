@@ -72,3 +72,19 @@
     padding-bottom: 0px;
   }
 }
+
+.close-job-popup{
+  .reject-reason-text {
+    font-family: Capitana;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: #2f2e2e;
+  }
+  .reject-modal-btn {
+    background-color: #2f479b !important;
+    width: auto !important;
+  }
+}
