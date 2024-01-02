@@ -233,7 +233,7 @@ export function PreScreenApplicant({
                         color="danger"
                         className="custom-question-validation"
                       >
-                        Your input contains the restricted word '{" "}
+                        Your input contains the flagged word '{" "}
                         <b>{restrictionWord1.toString()}</b> '.
                       </FormText>
                     )}
@@ -242,7 +242,7 @@ export function PreScreenApplicant({
                         color="danger"
                         className="custom-question-validation"
                       >
-                        Your input contains the restricted word '{" "}
+                        Your input contains the flagged word '{" "}
                         <b>{restrictionWord2.toString()}</b> '.
                       </FormText>
                     )}
@@ -251,7 +251,7 @@ export function PreScreenApplicant({
                         color="danger"
                         className="custom-question-validation"
                       >
-                        Your input contains the restricted word '{" "}
+                        Your input contains the flagged word '{" "}
                         <b>{restrictionWord3.toString()}</b> '.
                       </FormText>
                     )}
@@ -333,7 +333,7 @@ export function PreScreenApplicant({
             color="danger"
             className="d-flex align-items-center justify-content-center"
           >
-            Please remove restricted words from custom questions
+            Please remove flagged words from custom questions
           </FormText>
         )}
         <Button color="primary" className="float-end mb-3">
