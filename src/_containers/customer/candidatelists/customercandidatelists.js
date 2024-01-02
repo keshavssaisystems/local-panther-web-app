@@ -22,7 +22,11 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
-import { getProfileActions, dropdownActions } from "_store";
+import {
+  getProfileActions,
+  dropdownActions,
+  scheduleInterviewActions,
+} from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
 
@@ -70,6 +74,7 @@ export const CustomerCandidateLists = (props) => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
     dispatch(customerCandidateListsActions.getDurationOptions());
+    dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
