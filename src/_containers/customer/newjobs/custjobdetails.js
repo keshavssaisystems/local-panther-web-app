@@ -555,10 +555,24 @@ export function CustJobDetail({
               iconId={9}
             />
             <HeadingAndDetailWithDiv
-              heading={"Sponsorship is required"}
+              heading={"Willing to sponsor"}
               detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
               iconId={9}
             />
+            <HeadingAndDetailWithDiv
+              heading={"Security clearance required"}
+              detail={
+                jobDetail?.issecurityclearancerequired === true ? "Yes" : "No"
+              }
+              iconId={14}
+            />
+            {jobDetail?.issecurityclearancerequired === true && (
+              <HeadingAndDetailWithDiv
+                heading={"Security Clearance"}
+                detail={jobDetail?.securityclearance}
+                iconId={14}
+              />
+            )}
             <HeadingAndDetailWithoutIcon
               heading={"Job Description"}
               detail={jobDetail.description}

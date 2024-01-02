@@ -128,6 +128,7 @@ export function CreateJobWizard({ type }) {
     await dispatch(dropdownActions.getPreScreenQuestionThunk());
     await dispatch(dropdownActions?.getFieldOfStudyThunk());
     await dispatch(dropdownActions?.getLevelOFEducationThunk());
+    await dispatch(dropdownActions.getSecurityClearanceListThunk());
     await dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
     );

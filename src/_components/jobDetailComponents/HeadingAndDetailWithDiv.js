@@ -14,6 +14,7 @@ import {
   BsMortarboard,
   BsPostcard,
   BsJournalBookmark,
+  BsShieldCheck,
 } from "react-icons/bs";
 import { Col, Row } from "reactstrap";
 
@@ -37,6 +38,7 @@ export function HeadingAndDetailWithDiv({ heading, detail, iconId }) {
               {iconId === 11 && <BsMortarboard />}
               {iconId === 12 && <BsPostcard />}
               {iconId === 13 && <BsJournalBookmark />}
+              {iconId === 14 && <BsShieldCheck />}
             </div>
           </Col>
           <Col className="padding-demo-2">
