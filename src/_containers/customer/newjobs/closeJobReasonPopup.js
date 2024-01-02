@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import { useSelector } from "react-redux";
 import errorIcon from "assets/utils/images/error_icon.png";
+import "./newjobs.scss";
 
 export const CloseJobReasonPopup = ({
   isOpen,
@@ -37,10 +38,7 @@ export const CloseJobReasonPopup = ({
     }
   };
   return (
-    <Modal
-      className="prescreen-modal modal-dialog-reject-align"
-      isOpen={isOpen}
-    >
+    <Modal className="close-job-popup" isOpen={isOpen}>
       <Card>
         <CardBody>
           <div className="d-flex justify-content-center mb-3">
