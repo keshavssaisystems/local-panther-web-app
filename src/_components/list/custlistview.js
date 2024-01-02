@@ -955,14 +955,28 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "22%",
+              width: "17%",
             },
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "40%",
+              width: "33%",
+            },
+            {
+              name: <span className="table-title">Applied date</span>,
+              selector: (row) =>
+                getTimezoneDateTime(
+                  moment(row?.candidateapplydatetime).format(
+                    "YYYY-MM-DD HH:MM:SS"
+                  ),
+                  "MM/DD/YYYY"
+                ),
+
+              ignoreRowClick: true,
+              button: true,
+              width: "15%",
             },
             // {
             //   name: <span className="table-title">Location</span>,
@@ -1052,7 +1066,7 @@ export const CustCandidateListView = (props) => {
                 ),
               ignoreRowClick: true,
               button: true,
-              width: "18%",
+              width: "15%",
             },
             {
               name: <span className="table-title">Interest</span>,
