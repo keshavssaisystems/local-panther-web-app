@@ -253,8 +253,8 @@ export function BasicInformation({
   const [addressValidation, setAddressValidation] = useState(false);
   const [securityClearence, setSecurityClearence] = useState(
     prevStep === 3
-      ? preValue.sponsorshiprequiured
-      : previousValue.sponsorshiprequiured
+      ? preValue.issecurityclearancerequired
+      : previousValue.issecurityclearancerequired
   );
   const getFormValidation = (event) => {
     event.preventDefault();
@@ -730,7 +730,7 @@ export function BasicInformation({
                 onChange={(e) => setSecurityClearence(e.target.checked)}
               />{" "}
               {"  "}
-              <Label for="sponsorshiprequiured" className="fw-semi-bold">
+              <Label for="issecurityclearancerequired" className="fw-semi-bold">
                 Security clearance required
               </Label>
             </FormGroup>
@@ -738,7 +738,7 @@ export function BasicInformation({
           {securityClearence === true && (
             <Col md={6} lg={3}>
               <FormGroup>
-                <Label for="sponsorshiprequiured" className="fw-semi-bold">
+                <Label for="securityclearance" className="fw-semi-bold">
                   Security clearance
                 </Label>
                 <Input
