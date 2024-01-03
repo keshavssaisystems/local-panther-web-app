@@ -249,7 +249,7 @@ export const CandListView = (props) => {
     } else if (props.type === "rejected") {
       return (
         <ButtonGroup>
-          {row?.customerrecommendedjobstatusid === 5 && (
+          {/* {row?.customerrecommendedjobstatusid === 5 && (
             <Button
               size="sm"
               title="Accept offer"
@@ -267,7 +267,7 @@ export const CandListView = (props) => {
             >
               <img src={customerIcons?.list_accept} alt="list apply"></img>
             </Button>
-          )}
+          )} */}
           {row?.customerrecommendedjobstatusid !== 5 &&
             row?.customerrecommendedjobstatusid !== 6 && (
               <>
@@ -318,43 +318,6 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
         </ButtonGroup>
-      );
-    }
-  };
-  const getPay = (data) => {
-    let maxAmount = new Intl.NumberFormat("en-US").format(
-      data.jobPaymentBenefitDtos[0]?.maximumamount
-    );
-    let minAmount = new Intl.NumberFormat("en-US").format(
-      data.jobPaymentBenefitDtos[0]?.minimumamount
-    );
-    if (minAmount !== "" && maxAmount !== "") {
-      return (
-        "$" +
-        minAmount +
-        " - $" +
-        maxAmount +
-        " ( " +
-        data.jobPaymentBenefitDtos[0]?.payperiodtype +
-        " ) "
-      );
-    }
-    if (minAmount !== "" && maxAmount === "") {
-      return (
-        "$" +
-        minAmount +
-        " (" +
-        data.jobPaymentBenefitDtos[0]?.payperiodtype +
-        ") "
-      );
-    }
-    if (minAmount === "" && maxAmount !== "") {
-      return (
-        "$" +
-        data.jobPaymentBenefitDtos[0]?.maximumamount +
-        " (" +
-        data.jobPaymentBenefitDtos[0]?.payperiodtype +
-        ") "
       );
     }
   };
@@ -622,7 +585,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "25%",
+            width: "20%",
           },
 
           {
@@ -645,31 +608,80 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
-
           {
-            name: <span className="table-title">Experience</span>,
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
             cell: (row) => (
               <span
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.salary === 0
+                    ? "-"
+                    : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
                 }
               >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    )}
               </span>
             ),
             selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.startdate === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.jobOfferDtos[0]?.startdate,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.jobOfferDtos[0]?.startdate,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.jobOfferDtos[0]?.startdate,
+                    "MM/DD/YYYY"
+                  ),
             sortable: true,
             width: "10%",
           },
@@ -770,7 +782,7 @@ export const CandListView = (props) => {
             id: "Title",
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "22%",
+            width: "25%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -779,38 +791,80 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "13%",
-          },
-          {
-            name: <span className="table-title">Pay</span>,
-            id: "pay",
-            selector: (row) => getPay(row),
-
-            sortable: true,
             width: "15%",
           },
           {
-            name: <span className="table-title">Experience</span>,
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
             cell: (row) => (
               <span
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.salary === 0
+                    ? "-"
+                    : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
                 }
               >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    )}
               </span>
             ),
             selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.startdate === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.jobOfferDtos[0]?.startdate,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.jobOfferDtos[0]?.startdate,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.jobOfferDtos[0]?.startdate,
+                    "MM/DD/YYYY"
+                  ),
             sortable: true,
             width: "10%",
           },
@@ -893,7 +947,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "34%",
+            width: "24%",
           },
 
           {
@@ -918,29 +972,78 @@ export const CandListView = (props) => {
             sortable: true,
             width: "15%",
           },
-
           {
-            name: <span className="table-title">Experience</span>,
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
             cell: (row) => (
               <span
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.salary === 0
+                    ? "-"
+                    : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
                 }
               >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    )}
               </span>
             ),
             selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.startdate === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.jobOfferDtos[0]?.startdate,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.jobOfferDtos[0]?.startdate,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.jobOfferDtos[0]?.startdate,
+                    "MM/DD/YYYY"
+                  ),
             sortable: true,
             width: "10%",
           },

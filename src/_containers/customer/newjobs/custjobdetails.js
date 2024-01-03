@@ -533,7 +533,11 @@ export function CustJobDetail({
             />
             <HeadingAndDetailWithDiv
               heading={"Address"}
-              detail={returnAddress()}
+              detail={
+                jobDetail?.locationaddress === ""
+                  ? "-"
+                  : jobDetail?.locationaddress
+              }
               iconId={10}
             />
             <HeadingAndDetailWithDiv
