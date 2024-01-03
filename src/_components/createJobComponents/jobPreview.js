@@ -290,7 +290,7 @@ export default function JobPreview({ previewData, editdata }) {
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
-                    Willing to Sponsor
+                    Willing to sponsor
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
@@ -307,7 +307,7 @@ export default function JobPreview({ previewData, editdata }) {
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
-                    Security Clearance Required
+                    Security clearance required
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
@@ -326,7 +326,7 @@ export default function JobPreview({ previewData, editdata }) {
                 <Col md={6} lg={3}>
                   <div className="detail-padding">
                     <h6 className="mb-0 job-heading-custom">
-                      Security Clearance
+                      Security clearance
                     </h6>
                     <p className="mb-0 mt-1 mr-1">{securityClearenceData}</p>
                   </div>
@@ -403,7 +403,7 @@ export default function JobPreview({ previewData, editdata }) {
             <Row>
               <Col md={6} lg={3}>
                 <div className="detail-padding">
-                  <h6 className="mb-0 job-heading-custom">Job Type</h6>
+                  <h6 className="mb-0 job-heading-custom">Job type</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.experienceSchedule === undefined ||
                     previewData.experienceSchedule.jobType === undefined
@@ -464,7 +464,7 @@ export default function JobPreview({ previewData, editdata }) {
         </Col>
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
-            Payments & benefits
+            Compensation & benefits
           </p>
           <div className="information-section">
             <Row>

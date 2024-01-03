@@ -88,8 +88,8 @@ export default function PublishJobStep({
           </div>
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
-            Your job with <b>{reqData.basicInformation.jobTitle}</b> has
-            successfully {type === "edit" ? "updated" : "created"} & saved as
+            Your job with <b>{reqData.basicInformation.jobTitle}</b> has been
+            successfully {type === "edit" ? "updated" : "created"} & saved as a
             draft!
           </div>
           <div className="mt-3 mb-3" />
