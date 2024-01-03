@@ -160,6 +160,15 @@ export const getCloseJobReasonListThunk = createAsyncThunk(
   }
 );
 
+// getFlaggedWordsListThunk thunk
+export const getFlaggedWordsListThunk = createAsyncThunk(
+  `${name}/getFlaggedWordsListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=flaggedword`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const dropdownSlice = createSlice({
   name,
@@ -181,6 +190,7 @@ const dropdownSlice = createSlice({
     subsidiaryList: [],
     securityClearanceList: [],
     closeJobReasonList: [],
+    flaggedWordsList: [],
     loading: false,
   },
   reducers: {},
@@ -388,6 +398,17 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getFlaggedWordsListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getFlaggedWordsListThunk.fulfilled]: (state, action) => {
+      state.flaggedWordsList = action.payload.data;
+      state.loading = false;
+    },
+    [getFlaggedWordsListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -412,6 +433,7 @@ export const dropdownActions = {
   getSubsidiaryListThunk,
   getSecurityClearanceListThunk,
   getCloseJobReasonListThunk,
+  getFlaggedWordsListThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;
