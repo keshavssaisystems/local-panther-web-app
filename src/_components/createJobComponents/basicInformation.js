@@ -833,7 +833,7 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="fieldofstudiesids" className="fw-semi-bold">
-                Field of Study
+                Field of study
               </Label>
               <Select
                 defaultValue={studyData}
