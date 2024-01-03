@@ -1533,7 +1533,10 @@ export const CustCandidateListView = (props) => {
     );
     form.append("Isfinaloffer", finaloffer);
     form.append("Salary", pay);
-    form.append("Startdate", startdate);
+    form.append(
+      "Startdate",
+      moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
+    );
 
     axios
       .post(

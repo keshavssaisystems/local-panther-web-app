@@ -108,7 +108,6 @@ export const CustomerUploadOffer = (props) => {
                 Start date<span style={{ color: "red" }}>* </span>
               </Label>
               <DatePicker
-                dateFormat={"yyyy-MM-dd"}
                 name="startdate"
                 placeholderText="From"
                 className="form-control"
