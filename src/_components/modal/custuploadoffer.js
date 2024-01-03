@@ -53,8 +53,21 @@ export const CustomerUploadOffer = (props) => {
       setPayErr(pay === "");
       return false;
     } else if (fileName !== "" && startDate !== " " && pay !== "") {
-      props.uploadOfferDoc(file, startDate, pay, finalOffer);
+      props.uploadOfferDoc(
+        file,
+        startDate,
+        pay.replaceAll(",", ""),
+        finalOffer
+      );
     }
+  };
+
+  const setPayVal = (e) => {
+    setPayErr(e.target.value === "");
+    let val = new Intl.NumberFormat("en-US").format(
+      e.target.value.replaceAll(",", "")
+    );
+    setPay(val);
   };
 
   return (
@@ -79,8 +92,9 @@ export const CustomerUploadOffer = (props) => {
                   id={"pay"}
                   name={"pay"}
                   type={"text"}
+                  value={pay}
                   invalid={false}
-                  onChange={(e) => setPay(e.target.value)}
+                  onChange={(e) => setPayVal(e)}
                 />
               </InputGroup>
               {payErr && (
@@ -103,6 +117,7 @@ export const CustomerUploadOffer = (props) => {
                 showYearDropdown
                 onChange={(date) => {
                   setStartDate(date);
+                  setStartDateErr(date === "");
                 }}
               />
               {startDateErr && (
@@ -147,7 +162,9 @@ export const CustomerUploadOffer = (props) => {
             <Input
               type="checkbox"
               value={finalOffer}
-              onChange={(e) => setFinalOffer(e.target.value)}
+              onChange={(e) => {
+                setFinalOffer(e.target.checked);
+              }}
             />
             <Label className="ps-1"> Is final offer</Label>
           </Col>

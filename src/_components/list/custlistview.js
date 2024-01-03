@@ -306,6 +306,22 @@ export const CustCandidateListView = (props) => {
     } else if (props.type === "offers") {
       return (
         <ButtonGroup>
+          {row.jobOfferDtos &&
+          row.jobOfferDtos.length > 0 &&
+          !row.jobOfferDtos[0].isfinaloffer ? (
+            <Button
+              // outline
+              size="sm"
+              title="Re-extend offer"
+              onClick={() => onAcceptClick(row)}
+              className="btn-icon"
+              color="success"
+            >
+              <img src={customerIcons.list_accept} alt="list accept"></img>
+            </Button>
+          ) : (
+            <></>
+          )}
           <Button
             // outline
             size="sm"
@@ -356,7 +372,23 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_schedule} alt="list maybe"></img>
           </Button>
-          <Button
+          {row.jobOfferDtos &&
+          row.jobOfferDtos.length > 0 &&
+          !row.jobOfferDtos[0].isfinaloffer ? (
+            <Button
+              // outline
+              size="sm"
+              title="Re-extend offer"
+              onClick={() => onAcceptClick(row)}
+              className="btn-icon"
+              color="success"
+            >
+              <img src={customerIcons.list_accept} alt="list accept"></img>
+            </Button>
+          ) : (
+            <></>
+          )}
+          {/* <Button
             // outline
             size="sm"
             title="Make offer"
@@ -365,7 +397,7 @@ export const CustCandidateListView = (props) => {
             color="success"
           >
             <img src={customerIcons.list_accept} alt="list accept"></img>
-          </Button>
+          </Button> */}
 
           {/* <Button
             // outline
