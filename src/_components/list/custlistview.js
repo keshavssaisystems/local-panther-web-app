@@ -21,6 +21,9 @@ import { BsFillInfoCircleFill, BsFileEarmarkPdf } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import customerIcons from "assets/utils/images/customer";
+import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
+import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
+import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
@@ -926,14 +929,48 @@ export const CustCandidateListView = (props) => {
               cell: (row) =>
                 row?.jobOfferDtos?.length > 0 ? (
                   <>
-                    <BsFileEarmarkPdf
-                      className={"icon-pointer"}
-                      size={"23px"}
-                      title="Click to view offer"
-                      onClick={() =>
-                        window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                      }
-                    />
+                    {row?.jobOfferDtos?.length === 2 && (
+                      <>
+                        <img
+                          src={previousOffer}
+                          alt="list maybe"
+                          className={"icon-pointer me-2"}
+                          width={"20px"}
+                          title="Previous Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                    {row?.isfinaloffer === true && (
+                      <>
+                        <img
+                          src={finalOffer}
+                          alt="list maybe"
+                          className={"icon-pointer me-2"}
+                          width={"20px"}
+                          title="Final Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                    {row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                   </>
                 ) : (
                   <> - </>
