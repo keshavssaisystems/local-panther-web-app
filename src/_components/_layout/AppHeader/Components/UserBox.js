@@ -37,7 +37,7 @@ import { SuccessPopUp } from "_components/common/successPopUp";
 import { settingsActions } from "_store";
 import cx from "classnames";
 import Switch from "react-switch";
-import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 export function UserBox() {
@@ -82,7 +82,7 @@ export function UserBox() {
   if (!authUser) return null;
 
   const deactivate = async function (reason) {
-    if (reason === "") {
+    if (reason === 0) {
       return;
     }
     let id = JSON.parse(localStorage.getItem("userDetails"))?.UserId;
@@ -91,7 +91,7 @@ export function UserBox() {
       deactivateduserlogid: 0,
       deactivationdate: new Date().toISOString(),
       isactive: false,
-      deactivationreason: reason,
+      deactivationreasonid: reason,
     };
 
     let response = await dispatch(settingsActions.deactivateUser({ id, data }));
@@ -338,7 +338,7 @@ export function UserBox() {
         </ModalBody>
       </Modal>
       {rejectReasonModal && (
-        <RejectReasonModal
+        <DeactivateReasonModal
           isRMOpen={rejectReasonModal}
           callBack={(e) => deactivate(e)}
           callBackError={() => closeModal()}

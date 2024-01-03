@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { custJobListActions, createjobActions } from "_store";
+import { custJobListActions, createjobActions, dropdownActions } from "_store";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { custListPageSize } from "_helpers/constants";
@@ -49,6 +49,7 @@ export const CustJobList = () => {
   useEffect(() => {
     if (jobList.length > 0) {
       dispatch(custJobListActions.getJobDetail({ jobId: jobList[0].jobid }));
+      dispatch(dropdownActions.getCloseJobReasonListThunk());
     }
   }, [jobList]);
 
@@ -94,8 +95,9 @@ export const CustJobList = () => {
     getSelectedJob(jobId);
   };
   const closeJob = (event) => {
-    let jobId = event;
+    let jobId = event.jobId;
     let payload = {
+      closedjobreasonid: event.closedjobreasonid,
       currentUserId: localStorage.getItem("userId"),
     };
     dispatch(createjobActions.getCloseJobThunk({ jobId, payload }));

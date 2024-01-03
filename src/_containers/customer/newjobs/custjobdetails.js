@@ -22,6 +22,7 @@ import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
 import { ShareSocial } from "react-share-social";
+import { CloseJobReasonPopup } from "./closeJobReasonPopup";
 
 export function CustJobDetail({
   jobDetails,
@@ -452,9 +453,14 @@ export function CustJobDetail({
                         )}
                       {jobDetail.isclosed === true && !isShare && (
                         <Col md={4} lg={4} className="right-align">
-                          <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
+                          <div className="mb-1 me-3 mt-2 badge bg-danger text-normal">
                             Job closed
                           </div>
+                          {jobDetail?.closedjobreasonid !== 0 && (
+                            <div className="me-3">
+                              <b>Reason -</b> {jobDetail?.closedjobreason}
+                            </div>
+                          )}
                         </Col>
                       )}
                     </>
@@ -527,7 +533,11 @@ export function CustJobDetail({
             />
             <HeadingAndDetailWithDiv
               heading={"Address"}
-              detail={returnAddress()}
+              detail={
+                jobDetail?.locationaddress === ""
+                  ? "-"
+                  : jobDetail?.locationaddress
+              }
               iconId={10}
             />
             <HeadingAndDetailWithDiv
@@ -555,10 +565,24 @@ export function CustJobDetail({
               iconId={9}
             />
             <HeadingAndDetailWithDiv
-              heading={"Sponsorship is required"}
+              heading={"Willing to sponsor"}
               detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
               iconId={9}
             />
+            <HeadingAndDetailWithDiv
+              heading={"Security clearance required"}
+              detail={
+                jobDetail?.issecurityclearancerequired === true ? "Yes" : "No"
+              }
+              iconId={14}
+            />
+            {jobDetail?.issecurityclearancerequired === true && (
+              <HeadingAndDetailWithDiv
+                heading={"Security Clearance"}
+                detail={jobDetail?.securityclearance}
+                iconId={14}
+              />
+            )}
             <HeadingAndDetailWithoutIcon
               heading={"Job Description"}
               detail={jobDetail.description}
@@ -669,23 +693,13 @@ export function CustJobDetail({
         ></SweetAlert>
       )}
       {closeConfirmation === true && (
-        <SweetAlert
-          warning
-          showCancel
-          confirmBtnText="Yes, close job!"
-          confirmBtnBsStyle="danger"
-          cancelBtnText="No"
-          cancelBtnBsStyle="secondary"
-          title="Are you sure?"
-          onConfirm={(e) => {
-            closeJob(jobDetail.jobid);
-            setCloseConfirmation(false);
-          }}
-          onCancel={() => setCloseConfirmation(false)}
-          focusCancelBtn
-        >
-          You really want to close the {jobDetail.jobtitle} job !
-        </SweetAlert>
+        <CloseJobReasonPopup
+          isOpen={closeConfirmation}
+          onClose={() => setCloseConfirmation(false)}
+          title={jobDetail?.jobtitle}
+          jobid={jobDetail?.jobid}
+          setCloseJob={(e) => closeJob(e)}
+        />
       )}
     </>
   );

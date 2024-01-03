@@ -466,6 +466,14 @@ export function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/job-list-applied"
+            element={
+              <PrivateRoute>
+                <CandidateList type={"applied"} />
+              </PrivateRoute>
+            }
+          />
 
           <Route
             path="/job-list-interview"
