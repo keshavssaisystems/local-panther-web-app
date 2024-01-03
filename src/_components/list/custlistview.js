@@ -306,6 +306,22 @@ export const CustCandidateListView = (props) => {
     } else if (props.type === "offers") {
       return (
         <ButtonGroup>
+          {row.jobOfferDtos &&
+          row.jobOfferDtos.length > 0 &&
+          !row.jobOfferDtos[0].isfinaloffer ? (
+            <Button
+              // outline
+              size="sm"
+              title="Re-extend offer"
+              onClick={() => onAcceptClick(row)}
+              className="btn-icon"
+              color="success"
+            >
+              <img src={customerIcons.list_accept} alt="list accept"></img>
+            </Button>
+          ) : (
+            <></>
+          )}
           <Button
             // outline
             size="sm"
@@ -356,7 +372,23 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_schedule} alt="list maybe"></img>
           </Button>
-          <Button
+          {row.jobOfferDtos &&
+          row.jobOfferDtos.length > 0 &&
+          !row.jobOfferDtos[0].isfinaloffer ? (
+            <Button
+              // outline
+              size="sm"
+              title="Re-extend offer"
+              onClick={() => onAcceptClick(row)}
+              className="btn-icon"
+              color="success"
+            >
+              <img src={customerIcons.list_accept} alt="list accept"></img>
+            </Button>
+          ) : (
+            <></>
+          )}
+          {/* <Button
             // outline
             size="sm"
             title="Make offer"
@@ -365,7 +397,7 @@ export const CustCandidateListView = (props) => {
             color="success"
           >
             <img src={customerIcons.list_accept} alt="list accept"></img>
-          </Button>
+          </Button> */}
 
           {/* <Button
             // outline
@@ -1478,7 +1510,7 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const onUploadOfferDoc = (file) => {
+  const onUploadOfferDoc = (file, startdate, pay, finaloffer) => {
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
       : "";
@@ -1499,6 +1531,9 @@ export const CustCandidateListView = (props) => {
       "CurrentUserId",
       JSON.parse(localStorage.getItem("userDetails")).UserId
     );
+    form.append("Isfinaloffer", finaloffer);
+    form.append("Salary", pay);
+    form.append("Startdate", startdate);
 
     axios
       .post(
@@ -1638,7 +1673,9 @@ export const CustCandidateListView = (props) => {
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
             onClose={() => setShowUploadOfferModal(false)}
-            uploadOfferDoc={(file) => onUploadOfferDoc(file)}
+            uploadOfferDoc={(file, startdate, pay, finaloffer) =>
+              onUploadOfferDoc(file, startdate, pay, finaloffer)
+            }
           />
         ) : (
           <></>
