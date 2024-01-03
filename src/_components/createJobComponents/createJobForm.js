@@ -269,7 +269,9 @@ export default function CreateJob({
                 aria-expanded={accordion[2]}
                 aria-controls="collapseThree"
               >
-                <h5 className="m-0 p-0 fw-semi-bold">Payments & benefits</h5>
+                <h5 className="m-0 p-0 fw-semi-bold">
+                  Compensation & benefits
+                </h5>
               </Button>
             </CardHeader>
             <Collapse
