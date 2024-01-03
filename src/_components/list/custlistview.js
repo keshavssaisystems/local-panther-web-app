@@ -1454,7 +1454,7 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const onUploadOfferDoc = (file) => {
+  const onUploadOfferDoc = (file, startdate, pay, finaloffer) => {
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
       : "";
@@ -1475,6 +1475,9 @@ export const CustCandidateListView = (props) => {
       "CurrentUserId",
       JSON.parse(localStorage.getItem("userDetails")).UserId
     );
+    form.append("Isfinaloffer", finaloffer);
+    form.append("Salary", pay);
+    form.append("Startdate", startdate);
 
     axios
       .post(
@@ -1614,7 +1617,9 @@ export const CustCandidateListView = (props) => {
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
             onClose={() => setShowUploadOfferModal(false)}
-            uploadOfferDoc={(file) => onUploadOfferDoc(file)}
+            uploadOfferDoc={(file, startdate, pay, finaloffer) =>
+              onUploadOfferDoc(file, startdate, pay, finaloffer)
+            }
           />
         ) : (
           <></>
