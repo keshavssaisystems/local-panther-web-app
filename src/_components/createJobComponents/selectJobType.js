@@ -75,7 +75,7 @@ export default function SelectJobType({
                   onClick={(e) => onButtonClick(e)}
                 />
                 <Label for="new" check className="radio-label-custom">
-                  Create a new job posting
+                  Create new job posting
                 </Label>
                 {"  "}
                 <p className="mt-0 mb-2 text-muted-custom">Beginning a new</p>
