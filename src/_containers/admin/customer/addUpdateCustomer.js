@@ -78,19 +78,20 @@ export const AddUpdateCustomer = ({
 
   const handleInputChange = (event, check) => {
     let data = { ...editData };
-    if (check === "prefix") {
-      data.prefix = event.target.value;
-      if (data.prefix === "") {
-        setPrefixValidation(true);
-      } else {
-        if (data.prefix.length < 2) {
-          setPrefixMinLengthValidation(true);
-        } else {
-          setPrefixMinLengthValidation(false);
-        }
-        setPrefixValidation(false);
-      }
-    } else if (check === "company") {
+    // if (check === "prefix") {
+    //   data.prefix = event.target.value;
+    //   if (data.prefix === "") {
+    //     setPrefixValidation(true);
+    //   } else {
+    //     if (data.prefix.length < 2) {
+    //       setPrefixMinLengthValidation(true);
+    //     } else {
+    //       setPrefixMinLengthValidation(false);
+    //     }
+    //     setPrefixValidation(false);
+    //   }
+    // } else
+    if (check === "company") {
       data.company = parseInt(event.target.value);
       if (data.company === 0) {
         setCompanyValidation(true);
@@ -144,9 +145,9 @@ export const AddUpdateCustomer = ({
       ? setCompanyValidation(true)
       : setCompanyValidation(false);
 
-    event.target.elements.prefix.value === ""
-      ? setPrefixValidation(true)
-      : setPrefixValidation(false);
+    // event.target.elements.prefix.value === ""
+    //   ? setPrefixValidation(true)
+    //   : setPrefixValidation(false);
 
     event.target.elements.firstname.value === ""
       ? setFirstNameValidation(true)
@@ -201,7 +202,7 @@ export const AddUpdateCustomer = ({
       companyid: Number(event.target.elements.companyname.value),
       userid: 0,
       userroleid: 2,
-      title: event.target.elements.prefix.value,
+      title: "", //event.target.elements.prefix.value
       firstname: event.target.elements.firstname.value,
       lastname: event.target.elements.lastname.value,
       email: event.target.elements.email.value,
@@ -290,7 +291,7 @@ export const AddUpdateCustomer = ({
                 </FormGroup>
               </Col>
 
-              <Col md={6}>
+              {/* <Col md={6}>
                 <FormGroup>
                   <Label for="prefix">
                     Prefix <span style={{ color: "red" }}>* </span>
@@ -317,7 +318,7 @@ export const AddUpdateCustomer = ({
                     </FormText>
                   )}
                 </FormGroup>
-              </Col>
+              </Col> */}
 
               <Col md={6}>
                 <FormGroup>
