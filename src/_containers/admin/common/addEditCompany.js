@@ -44,7 +44,15 @@ export const AddEditCompany = (props) => {
     (state) => state?.addCustomer ?? {}
   );
 
-  const { openModal, entity, isAddMode, data, setIsAddMode, onClose } = props;
+  const {
+    openModal,
+    entity,
+    isAddMode,
+    data,
+    setIsAddMode,
+    onClose,
+    isViewMode,
+  } = props;
   const logourl = data?.logourl;
   const [editData, setEditData] = useState(data);
 
@@ -360,7 +368,11 @@ export const AddEditCompany = (props) => {
     >
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
-          {isAddMode ? "Add new company" : "Edit company"}
+          {isViewMode
+            ? "View company details"
+            : isAddMode
+            ? "Add new company"
+            : "Edit company"}
         </strong>
       </ModalHeader>
       <ModalBody>
@@ -375,6 +387,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="text"
                     name="company"
+                    disabled={isViewMode}
                     defaultValue={isAddMode ? "" : data?.companyname}
                     onInput={(e) => handleInputChange(e, "company")}
                     placeholder="Enter company"
@@ -395,6 +408,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="text"
                     name="industry"
+                    disabled={isViewMode}
                     onInput={(e) => handleInputChange(e, "industry")}
                     placeholder="Enter industry"
                     maxLength={200}
@@ -409,6 +423,7 @@ export const AddEditCompany = (props) => {
                   <Label for="description">Description</Label>
                   <Input
                     type="textarea"
+                    disabled={isViewMode}
                     name="description"
                     id="description"
                     maxLength={250}
@@ -429,6 +444,7 @@ export const AddEditCompany = (props) => {
                   <Input
                     type="select"
                     name="employee"
+                    disabled={isViewMode}
                     id="employee"
                     placeholder="company..."
                     className={`form-control placeholder-name`}
@@ -457,6 +473,7 @@ export const AddEditCompany = (props) => {
                   <Label for="phone">Phone</Label>
                   <InputMask
                     mask="(999)-999-9999"
+                    disabled={isViewMode}
                     type="text"
                     name="phone"
                     maxLength={50}
@@ -473,6 +490,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="email"
                     name="email"
+                    disabled={isViewMode}
                     onInput={(e) => handleInputChange(e, "email")}
                     defaultValue={isAddMode ? "" : data?.contactemail}
                     maxLength={50}
@@ -493,6 +511,7 @@ export const AddEditCompany = (props) => {
                   </Label>
                   <AsyncSelect
                     name="city"
+                    isDisabled={isViewMode}
                     placeholder="Search to select"
                     placeholderText="search"
                     loadOptions={loadOptions}
@@ -531,6 +550,7 @@ export const AddEditCompany = (props) => {
                   </Label>
                   <AsyncSelect
                     name="country"
+                    isDisabled={isViewMode}
                     placeholder="Select country"
                     placeholderText="search"
                     isMulti={false}
@@ -563,6 +583,7 @@ export const AddEditCompany = (props) => {
                   <InputMask
                     mask="99999"
                     type="text"
+                    disabled={isViewMode}
                     name="zipcode"
                     maxLength={50}
                     onInput={(e) => handleInputChange(e, "zipcode")}
@@ -583,6 +604,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="text"
                     name="address"
+                    disabled={isViewMode}
                     defaultValue={isAddMode ? "" : data?.address}
                     onInput={(e) => handleInputChange(e, "address")}
                     placeholder="Enter address"
@@ -592,25 +614,27 @@ export const AddEditCompany = (props) => {
                 </FormGroup>
               </Col>
               <Col md={12}>
-                <div className="dropzone-wrapper dropzone-wrapper-sm">
-                  <Dropzone
-                    onDrop={(e) => onDrop(e)}
-                    onFileDialogCancel={onCancel}
-                  >
-                    {({ getRootProps, getInputProps }) => (
-                      <div {...getRootProps()}>
-                        <input {...getInputProps()} />
-                        <div className="dropzone-content">
-                          <p>Upload logo</p>
-                          <p>
-                            Try dropping some files here, or click to select
-                            files to upload.
-                          </p>
+                {!isViewMode && (
+                  <div className="dropzone-wrapper dropzone-wrapper-sm">
+                    <Dropzone
+                      onDrop={(e) => onDrop(e)}
+                      onFileDialogCancel={onCancel}
+                    >
+                      {({ getRootProps, getInputProps }) => (
+                        <div {...getRootProps()}>
+                          <input {...getInputProps()} />
+                          <div className="dropzone-content">
+                            <p>Upload logo</p>
+                            <p>
+                              Try dropping some files here, or click to select
+                              files to upload.
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </Dropzone>
-                </div>
+                      )}
+                    </Dropzone>
+                  </div>
+                )}
               </Col>
             </Row>
             {selectedFile !== "" && (
@@ -627,16 +651,17 @@ export const AddEditCompany = (props) => {
                 </div>
               </Col>
             )}
-            <Col></Col>
-            <Button
-              className="mt-3 float-end"
-              type="submit"
-              color="primary"
-              disabled={formState.isSubmitting}
-            >
-              {/* {isAddMode ? "Submit" : "Update"} */}
-              Submit
-            </Button>
+            {!isViewMode && (
+              <Button
+                className="mt-3 float-end"
+                type="submit"
+                color="primary"
+                disabled={formState.isSubmitting}
+              >
+                {/* {isAddMode ? "Submit" : "Update"} */}
+                Submit
+              </Button>
+            )}
           </Form>
         </Row>
       </ModalBody>

@@ -64,10 +64,14 @@ export const CustomerUploadOffer = (props) => {
 
   const setPayVal = (e) => {
     setPayErr(e.target.value === "");
-    let val = new Intl.NumberFormat("en-US").format(
-      e.target.value.replaceAll(",", "")
-    );
-    setPay(val);
+    if (isNaN(e.target.value.replaceAll(",", "")) === true) {
+      setPayErr(true);
+    } else {
+      let val = new Intl.NumberFormat("en-US").format(
+        e.target.value.replaceAll(",", "")
+      );
+      setPay(val);
+    }
   };
 
   return (
@@ -84,7 +88,7 @@ export const CustomerUploadOffer = (props) => {
           <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <FormGroup>
               <Label for={"pay"} className="fw-semi-bold">
-                Pay<span style={{ color: "red" }}>* </span>
+                Salary<span style={{ color: "red" }}>* </span>
               </Label>
               <InputGroup>
                 <InputGroupText>$</InputGroupText>
@@ -93,25 +97,29 @@ export const CustomerUploadOffer = (props) => {
                   name={"pay"}
                   type={"text"}
                   value={pay}
+                  placeholder={"Enter salary"}
                   invalid={false}
                   onChange={(e) => setPayVal(e)}
                 />
               </InputGroup>
               {payErr && (
-                <FormText color="danger">Please enter pay amount</FormText>
+                <FormText color="danger">
+                  Please enter valid salary amount
+                </FormText>
               )}
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={4} xxl={4}>
+          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <FormGroup>
               <Label for={"pay"} className="fw-semi-bold">
                 Start date<span style={{ color: "red" }}>* </span>
               </Label>
               <DatePicker
                 name="startdate"
-                placeholderText="From"
+                placeholderText="Select start date"
                 className="form-control"
                 selected={startDate}
+                minDate={new Date()}
                 showMonthDropdown
                 showYearDropdown
                 onChange={(date) => {
@@ -146,7 +154,7 @@ export const CustomerUploadOffer = (props) => {
             </div>
             <div className="pt-2">
               <strong className="content-title">
-                <span className="me-2">{fileName}</span>
+                <span className="me-2 mt-1 mb-1">{fileName}</span>
               </strong>
               {fileError ? (
                 <FormText color="danger">

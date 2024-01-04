@@ -205,4 +205,28 @@
       cursor: pointer;
     }
   }
+  .register-division{
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #CED4DA);
+    background: var(--White, #FFF);
+  }
+  .register-paragraph{
+    color: var(--grey, #979797);
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 150%;
+    margin-left: 28px;
+    margin-right: 28px;
+  }
+  .register-link{
+    color: var(--blue, #2F479B);
+    font-family: Capitana;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 150%;
+    text-decoration-line: underline;
+  }
 }

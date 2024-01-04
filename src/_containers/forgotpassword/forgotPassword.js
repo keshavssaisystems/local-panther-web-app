@@ -111,7 +111,7 @@ export function ForgotPassword() {
 
               <p className="mb-2 mt-4 title-text">Forgot Password?</p>
               <p className="mb-3 header-text">
-                Enter your registered Email id to reset the password
+                Enter your registered Email to reset the password
               </p>
               <div>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -125,7 +125,7 @@ export function ForgotPassword() {
                           type="email"
                           name="Email"
                           id="email"
-                          placeholder="Enter email id"
+                          placeholder="Enter email"
                           {...register("email")}
                           className={`text-field-input placeholder-text form-control ${
                             errors.email
