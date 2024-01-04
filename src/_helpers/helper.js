@@ -464,3 +464,13 @@ export const getBasePayMask = (basePayValue) => {
     return "999,999,999";
   }
 };
+
+export const findRestrictedWords = (wordsArray, question) => {
+  let wordArrayData = [];
+  const regex = new RegExp(wordsArray.join("|"), "gi");
+  wordArrayData = question.match(regex) || [];
+  return {
+    wordsArray: wordArrayData,
+    wordsCount: wordArrayData?.length,
+  };
+};

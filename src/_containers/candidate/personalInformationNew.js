@@ -489,7 +489,7 @@ export function PersonalInformationNew(props) {
                   <Col md={4}>
                     <FormGroup>
                       <Label for="gender" className="input-label">
-                        Birth date
+                      Date of Birth
                       </Label>
                       <InputGroup>
                         <div className="input-group-text">

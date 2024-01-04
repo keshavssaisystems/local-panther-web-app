@@ -36,6 +36,9 @@ export default function PublishJobStep({
       levelofeducationids: reqData.basicInformation.levelofeducationids,
       certifications: reqData.basicInformation.certifications,
       subsidiaryid: reqData.basicInformation.subsidiaryid,
+      issecurityclearancerequired:
+        reqData.basicInformation.issecurityclearancerequired,
+      securityclearanceid: reqData.basicInformation.securityclearance,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,
@@ -85,8 +88,8 @@ export default function PublishJobStep({
           </div>
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
-            Your job with <b>{reqData.basicInformation.jobTitle}</b> has
-            successfully {type === "edit" ? "updated" : "created"} & saved as
+            Your job with <b>{reqData.basicInformation.jobTitle}</b> has been
+            successfully {type === "edit" ? "updated" : "created"} & saved as a
             draft!
           </div>
           <div className="mt-3 mb-3" />
