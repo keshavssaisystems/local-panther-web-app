@@ -1187,7 +1187,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
             selector: (row) => row.jobid,
             sortable: true,
-            width: "8%",
+            width: "6%",
           },
           {
             name: <span className="table-title">Title</span>,
@@ -1195,7 +1195,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "34%",
+            width: "29%",
           },
 
           {
@@ -1244,8 +1244,24 @@ export const CandListView = (props) => {
                 ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
                 : "-",
             sortable: true,
+            width: "8%",
+          },
+
+          {
+            name: <span className="table-title">Applied date</span>,
+            selector: (row) =>
+              getTimezoneDateTime(
+                moment(row?.candidateapplydatetime).format(
+                  "YYYY-MM-DD HH:MM:SS"
+                ),
+                "MM/DD/YYYY"
+              ),
+
+            ignoreRowClick: true,
+            button: true,
             width: "10%",
           },
+
           {
             name: <span className="table-title">Pre-screen</span>,
             cell: (row) =>
@@ -1268,7 +1284,7 @@ export const CandListView = (props) => {
               ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "9%",
           },
 
           {
