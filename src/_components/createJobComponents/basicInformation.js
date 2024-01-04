@@ -113,9 +113,9 @@ export function BasicInformation({
         ? ""
         : data.noOfPostions,
     jobLocation:
-      data === undefined || data.jobLocation === undefined
+      data === undefined || data?.jobLocation === undefined
         ? ""
-        : data.jobLocation,
+        : data?.jobLocation,
     address:
       data === undefined || data.address === undefined ? "" : data.address,
     cityId: data === undefined || data.cityId === undefined ? "" : data.cityId,
