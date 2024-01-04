@@ -23,9 +23,11 @@ export function PreScreenApplicant({
     (state) => state.dropdown.flaggedWordsList
   );
   let wordArray = [];
-  flaggedWordList.forEach((element) => {
-    wordArray.push(element.name);
-  });
+  if (flaggedWordList?.length > 0) {
+    flaggedWordList.forEach((element) => {
+      wordArray.push(element.name);
+    });
+  }
   let prevDataArr = [];
   if (prevStep === 1 && previousData.length > 0) {
     previousData.forEach((element) => {
@@ -153,32 +155,34 @@ export function PreScreenApplicant({
   };
 
   const checkRestrictedWord = (fieldName, string) => {
-    if (fieldName === "custom_question_1") {
-      let restrictedWords = findRestrictedWords(wordArray, string);
-      restrictedWords.wordsCount > 0
-        ? setRestrictionValidation1(true)
-        : setRestrictionValidation1(false);
-      restrictedWords.wordsCount > 0
-        ? setRestrictionWord1(restrictedWords.wordsArray)
-        : setRestrictionWord1([]);
-    }
-    if (fieldName === "custom_question_2") {
-      let restrictedWords = findRestrictedWords(wordArray, string);
-      restrictedWords.wordsCount > 0
-        ? setRestrictionValidation2(true)
-        : setRestrictionValidation2(false);
-      restrictedWords.wordsCount > 0
-        ? setRestrictionWord2(restrictedWords.wordsArray)
-        : setRestrictionWord2([]);
-    }
-    if (fieldName === "custom_question_3") {
-      let restrictedWords = findRestrictedWords(wordArray, string);
-      restrictedWords.wordsCount > 0
-        ? setRestrictionValidation3(true)
-        : setRestrictionValidation3(false);
-      restrictedWords.wordsCount > 0
-        ? setRestrictionWord3(restrictedWords.wordsArray)
-        : setRestrictionWord3([]);
+    if (wordArray.length > 0) {
+      if (fieldName === "custom_question_1") {
+        let restrictedWords = findRestrictedWords(wordArray, string);
+        restrictedWords.wordsCount > 0
+          ? setRestrictionValidation1(true)
+          : setRestrictionValidation1(false);
+        restrictedWords.wordsCount > 0
+          ? setRestrictionWord1(restrictedWords.wordsArray)
+          : setRestrictionWord1([]);
+      }
+      if (fieldName === "custom_question_2") {
+        let restrictedWords = findRestrictedWords(wordArray, string);
+        restrictedWords.wordsCount > 0
+          ? setRestrictionValidation2(true)
+          : setRestrictionValidation2(false);
+        restrictedWords.wordsCount > 0
+          ? setRestrictionWord2(restrictedWords.wordsArray)
+          : setRestrictionWord2([]);
+      }
+      if (fieldName === "custom_question_3") {
+        let restrictedWords = findRestrictedWords(wordArray, string);
+        restrictedWords.wordsCount > 0
+          ? setRestrictionValidation3(true)
+          : setRestrictionValidation3(false);
+        restrictedWords.wordsCount > 0
+          ? setRestrictionWord3(restrictedWords.wordsArray)
+          : setRestrictionWord3([]);
+      }
     }
   };
 
