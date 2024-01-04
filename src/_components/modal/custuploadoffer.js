@@ -64,10 +64,14 @@ export const CustomerUploadOffer = (props) => {
 
   const setPayVal = (e) => {
     setPayErr(e.target.value === "");
-    let val = new Intl.NumberFormat("en-US").format(
-      e.target.value.replaceAll(",", "")
-    );
-    setPay(val);
+    if (isNaN(e.target.value.replaceAll(",", "")) === true) {
+      setPayErr(true);
+    } else {
+      let val = new Intl.NumberFormat("en-US").format(
+        e.target.value.replaceAll(",", "")
+      );
+      setPay(val);
+    }
   };
 
   return (
@@ -99,7 +103,9 @@ export const CustomerUploadOffer = (props) => {
                 />
               </InputGroup>
               {payErr && (
-                <FormText color="danger">Please enter salary amount</FormText>
+                <FormText color="danger">
+                  Please enter valid salary amount
+                </FormText>
               )}
             </FormGroup>
           </Col>
