@@ -55,6 +55,7 @@ import CustomerDashboard from "_containers/customer/dashboard/customerDashboard"
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
+import { FlaggedWord } from "_containers/admin/masters/flaggedWords";
 
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
@@ -156,6 +157,15 @@ export function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="masters/flagged-words"
+            element={
+              <PrivateRoute>
+                <FlaggedWord />
+              </PrivateRoute>
+            }
+          />
+
           <Route
             path="masters/subsidiary"
             element={

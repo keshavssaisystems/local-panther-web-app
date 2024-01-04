@@ -566,7 +566,7 @@ export function PersonalInformation(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".png",
+    accept: ".png,.jpeg,.jpg",
   });
 
   const addEditProfileImage = function (acceptedFiles) {
