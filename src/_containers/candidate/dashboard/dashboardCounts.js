@@ -36,7 +36,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2 mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-alternate"} />
                     <i
@@ -48,7 +48,7 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Matched jobs</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.matchedcandidate : 0}</div>
                       </div>
@@ -76,7 +76,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-primary"} />
                     <i className={"lnr-calendar-full text-primary"} />
@@ -84,10 +84,8 @@ export function DashboardCounts() {
                 </Col>
                 <Col>
                   <div className="widget-chart-content">
-                    <div className="widget-title opacity-5 ">
-                      Interviews scheduled
-                    </div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                    <div className="widget-title opacity-5 ">Interviews</div>
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.interveiwSchedule : 0}</div>
                       </div>
@@ -116,7 +114,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-info"} />
                     <i className={"lnr-bullhorn text-info"} />
@@ -128,7 +126,7 @@ export function DashboardCounts() {
                       Offer
                       {/* <span style={{ visibility: "hidden" }}>12345</span> */}
                     </div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.offersforcandidate : 0}</div>
                       </div>
@@ -157,7 +155,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2 mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-success"} />
                     <i className={"lnr-thumbs-up text-success"} />
@@ -166,7 +164,7 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Accepted</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.acceptedbycandidate : 0}</div>
                       </div>
@@ -194,7 +192,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-danger"} />
                     <i className={"lnr-user text-danger"} />
@@ -203,7 +201,7 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Rejected</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex ">
                         <div>{counts ? counts.rejectedbycandidate : 0}</div>
                       </div>
@@ -232,7 +230,7 @@ export function DashboardCounts() {
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-warning"} />
 
@@ -247,7 +245,7 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Applied</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex ">
                         <div>{counts ? counts.appliedcount : 0}</div>
                       </div>
