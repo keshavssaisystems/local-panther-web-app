@@ -18,6 +18,8 @@ const customerIcons = {
   view_cv_icon: require("./view_cv_icon.svg").default,
   list_delete: require("./bin-solid.svg").default,
   list_edit: require("./pencil-soild.svg").default,
+  audio_icon: require("./audio-icon.svg").default,
+  video_icon: require("./camera-video.svg").default,
 };
 
 export default customerIcons;

@@ -444,6 +444,9 @@ function createExtraReducers() {
                     prescreenquestionid: data.prescreenquestionid,
                     error: false,
                     answer: data.answer,
+                    customquestionanswertype: data?.customquestionanswertype
+                      ? data.customquestionanswertype
+                      : "",
                   };
                 }
               );

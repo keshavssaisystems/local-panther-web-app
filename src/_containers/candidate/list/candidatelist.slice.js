@@ -291,6 +291,9 @@ const candidateList = createSlice({
               prescreenquestionid: data.prescreenquestionid,
               error: false,
               answer: "",
+              customquestionanswertype: data?.customquestionanswertype
+                ? data.customquestionanswertype
+                : "",
             };
           }
         );
@@ -338,6 +341,9 @@ const candidateList = createSlice({
               prescreenquestionid: data.prescreenquestionid,
               error: false,
               answer: data.answer,
+              customquestionanswertype: data?.customquestionanswertype
+                ? data.customquestionanswertype
+                : "",
             };
           }
         );
