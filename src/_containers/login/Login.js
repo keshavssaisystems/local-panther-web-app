@@ -300,12 +300,26 @@ export function Login() {
                     </Col>
                     <Col></Col>
                   </Row> */}
-
-                    <p className="mt-3 d-flex justify-content-center align-items-center">
-                      <Link to="/registration" className="forgot-pwd-text">
-                        Not a member yet?
-                      </Link>
-                    </p>
+                    <div className="mt-4 register-division">
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        We are thrilled to have you join the OpenWorX community!
+                        To ensure a high-quality professional community we
+                        kindly ask you to register by uploading or creating your
+                        profile.
+                      </p>
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        Looking forward to connecting and engaging with you in
+                        this vibrant community! If you have any questions or
+                        need assistance with the registration process, feel free
+                        to reach out. Thanks for being part of OpenWorX!
+                      </p>
+                      <p className="mt-3 d-flex register-paragraph">
+                        Become Part of the OpenWorX Community;{"  "}
+                        <Link to="/registration" className="ms-1 register-link">
+                          <u>Register Here</u>
+                        </Link>
+                      </p>
+                    </div>
                   </div>
                 </Col>
               </Col>

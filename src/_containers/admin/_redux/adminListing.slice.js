@@ -178,6 +178,52 @@ export const verifyCustomer = createAsyncThunk(
   }
 );
 
+export const getFlaggedWords = createAsyncThunk(
+  `${name}/getFlaggedWords`,
+  async (payload = {}) => {
+    const GET_SKILL_STATS = `${baseUrl}/FlaggedWord/filterList?${new URLSearchParams(
+      payload
+    )}`;
+    return await fetchWrapper.get(GET_SKILL_STATS);
+  }
+);
+
+export const addFlaggedWords = createAsyncThunk(
+  `${name}/addFlaggedWords`,
+  async (payload = {}) => {
+    const GET_SKILL_STATS = `${baseUrl}/FlaggedWord`;
+    return await fetchWrapper.post(GET_SKILL_STATS, payload);
+  }
+);
+
+export const updateFlaggedWords = createAsyncThunk(
+  `${name}/updateFlaggedWords`,
+  async ({ id, payload }) => {
+    const GET_SKILL_STATS = `${baseUrl}/FlaggedWord/${id}`;
+    return await fetchWrapper.put(GET_SKILL_STATS, payload);
+  }
+);
+
+export const deleteFlaggedWords = createAsyncThunk(
+  `${name}/deleteFlaggedWords`,
+  async (id) => {
+    const GET_SKILL_STATS = `${baseUrl}/FlaggedWord/${id}`;
+    return await fetchWrapper.delete(GET_SKILL_STATS);
+  }
+);
+
+export const getFlaggedWordList = createAsyncThunk(
+  "user/getFlaggedWordList",
+  async () => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=flaggedword`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -190,6 +236,7 @@ const adminListingSlice = createSlice({
     industryCompanyMapping: [],
     rolesList: [],
     menuList: [],
+    flaggedWordList: [],
     totalRecords: 0,
   },
   reducers: {
@@ -449,6 +496,70 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    [getFlaggedWords.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getFlaggedWords.fulfilled]: (state, { payload = {} }) => {
+      const { data } = payload;
+      state.loading = false;
+      state.data = data?.flaggedWordDtoList;
+      state.totalRecords = data.totalRows;
+    },
+    [getFlaggedWords.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [addFlaggedWords.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [addFlaggedWords.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [addFlaggedWords.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [updateFlaggedWords.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateFlaggedWords.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateFlaggedWords.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [deleteFlaggedWords.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [deleteFlaggedWords.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [deleteFlaggedWords.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+
+    [getFlaggedWordList.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getFlaggedWordList.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+      state.flaggedWordList = payload ? payload : [];
+    },
+    [getFlaggedWordList.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -474,6 +585,11 @@ export const adminListingActions = {
   updateSkills,
   deleteSkills,
   verifyCustomer,
+  getFlaggedWords,
+  addFlaggedWords,
+  updateFlaggedWords,
+  deleteFlaggedWords,
+  getFlaggedWordList,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

@@ -27,7 +27,7 @@ export function BasicInformation({
   customerDetails,
 }) {
   let jobLocationRaw =
-    prevStep === 3 ? data.joblocationid : previousData.joblocationid;
+    prevStep === 3 ? data?.joblocationid : previousData?.joblocationid;
   const [jobLocationOption, setJobLocationOption] = useState(
     jobLocationRaw === undefined ? 0 : jobLocationRaw
   );
@@ -113,9 +113,9 @@ export function BasicInformation({
         ? ""
         : data.noOfPostions,
     jobLocation:
-      data === undefined || data.jobLocation === undefined
+      data === undefined || data?.jobLocation === undefined
         ? ""
-        : data.jobLocation,
+        : data?.jobLocation,
     address:
       data === undefined || data.address === undefined ? "" : data.address,
     cityId: data === undefined || data.cityId === undefined ? "" : data.cityId,
@@ -171,9 +171,9 @@ export function BasicInformation({
         ? ""
         : previousData.noofopenposition,
     jobLocation:
-      previousData === undefined || previousData.joblocationid === undefined
+      previousData === undefined || previousData?.joblocationid === undefined
         ? ""
-        : previousData.joblocationid,
+        : previousData?.joblocationid,
     address:
       previousData === undefined || previousData.locationaddress === undefined
         ? ""

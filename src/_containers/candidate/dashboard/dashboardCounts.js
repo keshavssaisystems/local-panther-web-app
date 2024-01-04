@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Card } from "reactstrap";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
+import appliedIcon from "assets/utils/images/applied_icon.svg";
 
 export function DashboardCounts() {
   const counts = useSelector(
@@ -19,7 +20,7 @@ export function DashboardCounts() {
   return (
     <>
       <Row>
-        <Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -30,11 +31,12 @@ export function DashboardCounts() {
             }
             style={{
               cursor: counts.matchedcandidate === 0 ? "not-allowed" : "pointer",
+              height: "68%",
             }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2 mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-alternate"} />
                     <i
@@ -46,8 +48,8 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Matched jobs</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                      <div className="widget-chart-flex align-items-center">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.matchedcandidate : 0}</div>
                       </div>
                     </div>
@@ -57,7 +59,7 @@ export function DashboardCounts() {
             </div>
           </Card>
         </Col>
-        <Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -69,11 +71,12 @@ export function DashboardCounts() {
             style={{
               cursor:
                 counts.interveiwSchedule === 0 ? "not-allowed" : "pointer",
+              height: "68%",
             }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-primary"} />
                     <i className={"lnr-calendar-full text-primary"} />
@@ -81,11 +84,9 @@ export function DashboardCounts() {
                 </Col>
                 <Col>
                   <div className="widget-chart-content">
-                    <div className="widget-title opacity-5 ">
-                      Interviews scheduled
-                    </div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                      <div className="widget-chart-flex align-items-center">
+                    <div className="widget-title opacity-5 ">Interviews</div>
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.interveiwSchedule : 0}</div>
                       </div>
                     </div>
@@ -96,7 +97,7 @@ export function DashboardCounts() {
           </Card>
         </Col>
 
-        <Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -108,11 +109,12 @@ export function DashboardCounts() {
             style={{
               cursor:
                 counts.offersforcandidate === 0 ? "not-allowed" : "pointer",
+              height: "68%",
             }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-info"} />
                     <i className={"lnr-bullhorn text-info"} />
@@ -121,10 +123,11 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">
-                      Offer<span style={{ visibility: "hidden" }}>1235</span>
+                      Offer
+                      {/* <span style={{ visibility: "hidden" }}>12345</span> */}
                     </div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                      <div className="widget-chart-flex align-items-center">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.offersforcandidate : 0}</div>
                       </div>
                     </div>
@@ -135,7 +138,7 @@ export function DashboardCounts() {
           </Card>
         </Col>
 
-        <Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -147,11 +150,12 @@ export function DashboardCounts() {
             style={{
               cursor:
                 counts.acceptedbycandidate === 0 ? "not-allowed" : "pointer",
+              height: "68%",
             }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2 mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-success"} />
                     <i className={"lnr-thumbs-up text-success"} />
@@ -160,8 +164,8 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Accepted</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                      <div className="widget-chart-flex align-items-center">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex align-items-center ">
                         <div>{counts ? counts.acceptedbycandidate : 0}</div>
                       </div>
                     </div>
@@ -171,7 +175,7 @@ export function DashboardCounts() {
             </div>
           </Card>
         </Col>
-        <Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -183,11 +187,12 @@ export function DashboardCounts() {
             style={{
               cursor:
                 counts.rejectedbycandidate === 0 ? "not-allowed" : "pointer",
+              height: "68%",
             }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-danger"} />
                     <i className={"lnr-user text-danger"} />
@@ -196,8 +201,8 @@ export function DashboardCounts() {
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Rejected</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                      <div className="widget-chart-flex align-items-center">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex ">
                         <div>{counts ? counts.rejectedbycandidate : 0}</div>
                       </div>
                     </div>
@@ -208,7 +213,7 @@ export function DashboardCounts() {
           </Card>
         </Col>
 
-        <Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -220,21 +225,28 @@ export function DashboardCounts() {
             style={{
               cursor:
                 counts.rejectedbycandidate === 0 ? "not-allowed" : "pointer",
+              height: "68%",
             }}
           >
             <div className="widget-chat-wrapper-outer">
               <Row>
-                <Col md="4" className="me-2">
+                <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-warning"} />
-                    <i className={"lnr-user text-warning"} />
+
+                    <img
+                      className="d-flex justify-content-center"
+                      src={appliedIcon}
+                      style={{ marginLeft: "13px", marginRight: "13px" }}
+                      alt="applied-icon"
+                    />
                   </div>
                 </Col>
                 <Col>
                   <div className="widget-chart-content">
                     <div className="widget-title opacity-5 ">Applied</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-0 w-100">
-                      <div className="widget-chart-flex align-items-center">
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex ">
                         <div>{counts ? counts.appliedcount : 0}</div>
                       </div>
                     </div>
