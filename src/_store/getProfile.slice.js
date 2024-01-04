@@ -62,6 +62,7 @@ const initialState = {
   },
 
   pronounList: [],
+  reasonList: [],
   profileData: {
     personalInfo: {},
     resumeInfo: {},
@@ -100,6 +101,18 @@ export const getPronoun = createAsyncThunk(
     const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Common/GetCommonDropdown?searchText=pronounsname`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
+export const getReasonList = createAsyncThunk(
+  "user/getReasonList",
+  async () => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=deactivateaccountreason`
     );
 
     return response.data; // Assuming your API response has a "data" property
@@ -248,6 +261,16 @@ const getProfileSlice = createSlice({
       })
       .addCase(getPronoun.rejected, (state, action) => {
         state.error = action.error;
+      })
+
+      .addCase(getReasonList.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(getReasonList.fulfilled, (state, action) => {
+        state.reasonList = action.payload;
+      })
+      .addCase(getReasonList.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -257,5 +280,6 @@ export const getProfileActions = {
   ...getProfileSlice.actions,
   getCandidate, // Export the async action
   getPronoun,
+  getReasonList,
 };
 export const getProfileReducer = getProfileSlice.reducer;

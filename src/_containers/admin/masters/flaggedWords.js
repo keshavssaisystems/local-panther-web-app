@@ -22,16 +22,20 @@ import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addSkills,
-  updateSkills,
-} from "_containers/admin/_redux/adminListing.slice";
-import SweetAlert from "react-bootstrap-sweetalert";
-import {
-  getSkills,
-  deleteSkills,
+  addFlaggedWords,
+  updateFlaggedWords,
 } from "_containers/admin/_redux/adminListing.slice";
 
-export const Skills = () => {
+import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
+import SweetAlert from "react-bootstrap-sweetalert";
+import {
+  getFlaggedWords,
+  deleteFlaggedWords,
+  getFlaggedWordList,
+} from "_containers/admin/_redux/adminListing.slice";
+
+export const FlaggedWord = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({ skillname: "" });
@@ -45,6 +49,7 @@ export const Skills = () => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(getFlaggedWordList());
     getSkillsList(pageSize, pageNo);
   }, []);
 
@@ -60,83 +65,63 @@ export const Skills = () => {
 
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
-  let title = "Skills";
+  const flaggedWordList = useSelector(
+    (state) => state.adminListing?.flaggedWordList
+  );
+  let title = "Flagged Words";
   let icon = companyLogo;
   let columns = [
     {
-      name: "Skill name",
-      id: "skillname",
-      selector: (row) => row.skillname,
+      name: "Word",
+      id: "word",
+      selector: (row) => row.word,
       sortable: true,
     },
 
     {
       name: "Status",
-      id: "skillstatusid",
-      selector: (row) =>
-        row.skillstatusid === 0
-          ? "Pending"
-          : row.skillstatusid === 1
-          ? "Approved"
-          : "Rejected",
+      id: "isactive",
+      selector: (row) => (row.isactive ? "Active" : "In active"),
       sortable: true,
     },
 
+    {
+      name: "Created on",
+      id: "createddate",
+      selector: (row) =>
+        getTimezoneDateTime(
+          moment(row?.createddate).format("YYYY-MM-DD HH:MM:SS"),
+          "MM/DD/YYYY"
+        ),
+      sortable: true,
+    },
     {
       name: "Action",
       cell: (row) => (
         <div className="d-block w-100 list-btn-group">
           <ButtonGroup>
-            {row.userroleid === 1 && (
-              <Button
-                // outline
-                size="sm"
-                title="Edit skill"
-                className=" btn-icon"
-                // color="info"
-                style={{ background: "#545cd8", border: "#545cd8" }}
-                onClick={(evt) => handleRowClick(row, "edit")}
-              >
-                <img src={customerIcons?.list_edit} alt="list approve"></img>
-              </Button>
-            )}
+            <Button
+              // outline
+              size="sm"
+              title="Edit word"
+              className=" btn-icon"
+              // color="info"
+              style={{ background: "#545cd8", border: "#545cd8" }}
+              onClick={(evt) => handleRowClick(row, "edit")}
+            >
+              <img src={customerIcons?.list_edit} alt="list approve"></img>
+            </Button>
 
             <Button
               // outline
               size="sm"
-              title="delete skill"
+              title="delete word"
               className="btn-icon"
               color="danger"
               onClick={() => deleteConfirm(row, "user")}
             >
               <img src={customerIcons?.list_delete} alt="list approve"></img>
             </Button>
-
-            {row.skillstatusid === 0 && row.userroleid !== 1 && (
-              <Button
-                // outline
-                size="sm"
-                title="Approve skill"
-                className="btn-icon"
-                color="success"
-                onClick={() => onApprove(row, true)}
-              >
-                <img src={customerIcons?.list_accept} alt="list apply"></img>
-              </Button>
-            )}
-
-            {row.skillstatusid === 0 && row.userroleid !== 1 && (
-              <Button
-                // outline
-                size="sm"
-                title="Reject skill"
-                className="btn-icon"
-                color="warning"
-                onClick={() => onApprove(row, false)}
-              >
-                <img src={customerIcons?.list_reject} alt="list reject"></img>
-              </Button>
-            )}
           </ButtonGroup>
         </div>
       ),
@@ -157,7 +142,7 @@ export const Skills = () => {
     setPageNo(page);
     setLoading(true);
     await dispatch(
-      getSkills({
+      getFlaggedWords({
         pageSize: pageSize,
         isActive: true,
         pageNumber: page,
@@ -170,7 +155,7 @@ export const Skills = () => {
     setPageSize(pagesize);
     setLoading(true);
     await dispatch(
-      getSkills({
+      getFlaggedWords({
         pageSize: pagesize,
         isActive: true,
         pageNumber: pageNo,
@@ -184,7 +169,7 @@ export const Skills = () => {
     setSelectedRowData(row);
     setOpenModal(true);
     let obj = { ...editData };
-    obj.skillname = row.skillname;
+    obj.word = row.word;
     setEditData(obj);
   };
 
@@ -215,34 +200,8 @@ export const Skills = () => {
       urlParams.skillStatusId = status;
     }
 
-    await dispatch(getSkills(urlParams));
+    await dispatch(getFlaggedWords(urlParams));
     setLoading(false);
-  };
-
-  const onApprove = (row, check) => {
-    setIsAddMode(false);
-    let payload = {
-      skillid: isAddMode ? 0 : row?.skillid,
-      skillname: row.skillname,
-      type: "skill",
-      ispopular: true,
-      isactive: true,
-      skillstatusid: 0,
-      skillstatusupdateddate: new Date().toISOString(),
-      skillstatusupdatedby: parseInt(
-        JSON.parse(localStorage.getItem("userDetails"))?.UserId
-      ),
-      currentuserid: Number(
-        JSON.parse(localStorage.getItem("userDetails"))?.UserId
-      ),
-    };
-
-    if (check) {
-      payload.skillstatusid = 1;
-    } else {
-      payload.skillstatusid = 2;
-    }
-    postData(payload, payload.skillid);
   };
 
   const onStatusSelect = async (check) => {
@@ -270,7 +229,7 @@ export const Skills = () => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
-    await dispatch(getSkills(urlParams));
+    await dispatch(getFlaggedWords(urlParams));
     setLoading(false);
   };
 
@@ -297,7 +256,7 @@ export const Skills = () => {
       setStatus(2);
     }
 
-    await dispatch(getSkills(urlParams));
+    await dispatch(getFlaggedWords(urlParams));
     setLoading(false);
   };
 
@@ -319,9 +278,9 @@ export const Skills = () => {
   const postData = async (payload, id) => {
     let res;
     if (isAddMode) {
-      res = await dispatch(addSkills(payload));
+      res = await dispatch(addFlaggedWords(payload));
     } else {
-      res = await dispatch(updateSkills({ id, payload }));
+      res = await dispatch(updateFlaggedWords({ id, payload }));
     }
 
     setOpenModal(false);
@@ -351,8 +310,8 @@ export const Skills = () => {
 
   const deleteSkillData = async function () {
     let response;
-    let id = selectedRowData.skillid;
-    response = await dispatch(deleteSkills(id));
+    let id = selectedRowData.flaggedwordid;
+    response = await dispatch(deleteFlaggedWords(id));
     if (response.payload) {
       setIsDelete(false);
       setSuccess(true);
@@ -385,26 +344,22 @@ export const Skills = () => {
   const getValidation = (event) => {
     event.preventDefault();
     setSave(true);
-    event.target.elements.skill.value === ""
+    event.target.elements.word.value === ""
       ? setskillValidation(true)
       : setskillValidation(false);
 
-    if (event.target.elements.skill.value !== "") {
+    if (event.target.elements.word.value !== "") {
       setSave(false);
 
       let payload = {
-        skillid: isAddMode ? 0 : selectedRowData?.skillid,
-        skillname: event.target.elements.skill.value,
-        type: "skill",
-        ispopular: true,
+        flaggedwordid: isAddMode ? 0 : selectedRowData?.flaggedwordid,
+        word: event.target.elements.word.value,
         isactive: true,
-        skillstatusid: 1,
-        skillstatusupdateddate: new Date().toISOString(),
-        skillstatusupdatedby: JSON.parse(localStorage.getItem("userDetails"))
-          ?.UserId,
-        currentuserid: JSON.parse(localStorage.getItem("userDetails"))?.UserId,
+        currentUserId: Number(
+          JSON.parse(localStorage.getItem("userDetails"))?.UserId
+        ),
       };
-      postData(payload, payload.skillid);
+      postData(payload, payload.flaggedwordid);
     }
   };
 
@@ -420,7 +375,7 @@ export const Skills = () => {
               <Row>
                 <Col md={12}>
                   <Row className="mb-3">
-                    <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
+                    {/* <Col xxl={3} xl={3} md={12} lg={4} sm={12} xs={12}>
                       <FormGroup>
                         <Input
                           type="select"
@@ -428,14 +383,18 @@ export const Skills = () => {
                           defaultValue="Active"
                           onChange={(e) => onStatusSelect(e.target.value)}
                         >
-                          <option value={0}>All skills</option>
-                          <option value={1}>Approved</option>
-                          <option value={2}>Pending</option>
-                          <option value={3}>Rejected</option>
+                          <option value={0}>All flagged words</option>
+
+                          {flaggedWordList?.length > 0 &&
+                            flaggedWordList?.map((options) => (
+                              <option key={options.id} value={options.id}>
+                                {options.name}
+                              </option>
+                            ))}
                         </Input>
                       </FormGroup>
-                    </Col>
-                    <Col xxl={9} xl={9} md={12} lg={8} sm={12} xs={12}>
+                    </Col> */}
+                    <Col xxl={12} xl={12} md={12} lg={12} sm={12} xs={12}>
                       <Button
                         style={{ background: "#2f479b" }}
                         color={"primary"}
@@ -443,7 +402,7 @@ export const Skills = () => {
                         type="submit"
                         onClick={(e) => addModal()}
                       >
-                        Add skill
+                        Add flagged word
                       </Button>
                       <div
                         className={cx(
@@ -505,7 +464,7 @@ export const Skills = () => {
           backdrop={"static"}
         >
           <ModalHeader toggle={() => onClose()} charCode="Y">
-            {isAddMode ? "Add new skill" : "Edit skill"}
+            {isAddMode ? "Add new flagged word" : "Edit flagged word"}
           </ModalHeader>
           <ModalBody>
             <Row>
@@ -513,14 +472,14 @@ export const Skills = () => {
                 <Col>
                   <FormGroup>
                     <Label for="skill">
-                      Skill <span style={{ color: "red" }}>* </span>
+                      Word <span style={{ color: "red" }}>* </span>
                     </Label>
                     <input
                       type="text"
-                      name="skill"
-                      defaultValue={editData?.skillname}
+                      name="word"
+                      defaultValue={editData?.word}
                       onInput={(e) => handleInputChange(e.target.value)}
-                      placeholder="Enter skill"
+                      placeholder="Enter flagged word"
                       className={`field-input placeholder-text form-control ${
                         save && skillValidation
                           ? "is-invalid error-text"
@@ -529,7 +488,7 @@ export const Skills = () => {
                       maxLength={50}
                     />
                     <div className="invalid-feedback">
-                      {save && skillValidation ? "Skill is required" : ""}
+                      {save && skillValidation ? "Word is required" : ""}
                     </div>
                   </FormGroup>
                 </Col>
@@ -577,7 +536,7 @@ export const Skills = () => {
 
       {isDelete && (
         <SweetAlert
-          title={"Are you sure want to delete the skill!!"}
+          title={"Are you sure want to delete the flagged word!!"}
           type="warning"
           showConfirm={false}
         >

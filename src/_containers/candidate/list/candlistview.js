@@ -17,7 +17,9 @@ import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { getTimezoneDateTime } from "_helpers/helper";
-import { BsFileEarmarkPdf } from "react-icons/bs";
+import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
+import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
+import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
@@ -249,7 +251,7 @@ export const CandListView = (props) => {
     } else if (props.type === "rejected") {
       return (
         <ButtonGroup>
-          {row?.customerrecommendedjobstatusid === 5 && (
+          {/* {row?.customerrecommendedjobstatusid === 5 && (
             <Button
               size="sm"
               title="Accept offer"
@@ -267,7 +269,7 @@ export const CandListView = (props) => {
             >
               <img src={customerIcons?.list_accept} alt="list apply"></img>
             </Button>
-          )}
+          )} */}
           {row?.customerrecommendedjobstatusid !== 5 &&
             row?.customerrecommendedjobstatusid !== 6 && (
               <>
@@ -318,43 +320,6 @@ export const CandListView = (props) => {
             <img src={customerIcons?.list_reject} alt="list reject"></img>
           </Button>
         </ButtonGroup>
-      );
-    }
-  };
-  const getPay = (data) => {
-    let maxAmount = new Intl.NumberFormat("en-US").format(
-      data.jobPaymentBenefitDtos[0]?.maximumamount
-    );
-    let minAmount = new Intl.NumberFormat("en-US").format(
-      data.jobPaymentBenefitDtos[0]?.minimumamount
-    );
-    if (minAmount !== "" && maxAmount !== "") {
-      return (
-        "$" +
-        minAmount +
-        " - $" +
-        maxAmount +
-        " ( " +
-        data.jobPaymentBenefitDtos[0]?.payperiodtype +
-        " ) "
-      );
-    }
-    if (minAmount !== "" && maxAmount === "") {
-      return (
-        "$" +
-        minAmount +
-        " (" +
-        data.jobPaymentBenefitDtos[0]?.payperiodtype +
-        ") "
-      );
-    }
-    if (minAmount === "" && maxAmount !== "") {
-      return (
-        "$" +
-        data.jobPaymentBenefitDtos[0]?.maximumamount +
-        " (" +
-        data.jobPaymentBenefitDtos[0]?.payperiodtype +
-        ") "
       );
     }
   };
@@ -622,7 +587,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "25%",
+            width: "20%",
           },
 
           {
@@ -645,31 +610,80 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
+            width: "10%",
           },
-
           {
-            name: <span className="table-title">Experience</span>,
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
             cell: (row) => (
               <span
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.salary === 0
+                    ? "-"
+                    : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
                 }
               >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    )}
               </span>
             ),
             selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.startdate === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.jobOfferDtos[0]?.startdate,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.jobOfferDtos[0]?.startdate,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.jobOfferDtos[0]?.startdate,
+                    "MM/DD/YYYY"
+                  ),
             sortable: true,
             width: "10%",
           },
@@ -770,7 +784,7 @@ export const CandListView = (props) => {
             id: "Title",
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "22%",
+            width: "25%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -779,38 +793,80 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "13%",
-          },
-          {
-            name: <span className="table-title">Pay</span>,
-            id: "pay",
-            selector: (row) => getPay(row),
-
-            sortable: true,
             width: "15%",
           },
           {
-            name: <span className="table-title">Experience</span>,
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
             cell: (row) => (
               <span
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.salary === 0
+                    ? "-"
+                    : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
                 }
               >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    )}
               </span>
             ),
             selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.startdate === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.jobOfferDtos[0]?.startdate,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.jobOfferDtos[0]?.startdate,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.jobOfferDtos[0]?.startdate,
+                    "MM/DD/YYYY"
+                  ),
             sortable: true,
             width: "10%",
           },
@@ -843,14 +899,48 @@ export const CandListView = (props) => {
             cell: (row) =>
               row?.jobOfferDtos?.length > 0 ? (
                 <>
-                  <BsFileEarmarkPdf
-                    className="icon-pointer"
-                    size={"23px"}
-                    title="Click to view offer"
-                    onClick={() =>
-                      window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                    }
-                  />
+                  {row?.jobOfferDtos?.length === 2 && (
+                    <>
+                      <img
+                        src={previousOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Previous Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === true && (
+                    <>
+                      <img
+                        src={finalOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Final Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === false && (
+                    <>
+                      <img
+                        src={currentOffer}
+                        alt="list maybe"
+                        className={"icon-pointer"}
+                        width={"20px"}
+                        title="New Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
                 </>
               ) : (
                 <> - </>
@@ -893,7 +983,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "34%",
+            width: "24%",
           },
 
           {
@@ -918,29 +1008,78 @@ export const CandListView = (props) => {
             sortable: true,
             width: "15%",
           },
-
           {
-            name: <span className="table-title">Experience</span>,
+            name: <span className="table-title">Offered salary</span>,
+            id: "pay",
             cell: (row) => (
               <span
                 title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.salary === 0
+                    ? "-"
+                    : "$ " +
+                      new Intl.NumberFormat("en-US").format(
+                        row?.jobOfferDtos[0]?.salary
+                      )
                 }
               >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.salary === 0
+                  ? "-"
+                  : "$ " +
+                    new Intl.NumberFormat("en-US").format(
+                      row?.jobOfferDtos[0]?.salary
+                    )}
               </span>
             ),
             selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.salary === 0
+                ? "-"
+                : "$ " +
+                  new Intl.NumberFormat("en-US").format(
+                    row?.jobOfferDtos[0]?.salary
+                  ),
+            sortable: true,
+            width: "10%",
+          },
+          {
+            name: <span className="table-title">Start date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobOfferDtos === null
+                    ? "-"
+                    : row?.jobOfferDtos[0]?.startdate === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.jobOfferDtos[0]?.startdate,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.jobOfferDtos === null
+                  ? "-"
+                  : row?.jobOfferDtos[0]?.startdate === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.jobOfferDtos[0]?.startdate,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobOfferDtos === null
+                ? "-"
+                : row?.jobOfferDtos[0]?.startdate === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.jobOfferDtos[0]?.startdate,
+                    "MM/DD/YYYY"
+                  ),
             sortable: true,
             width: "10%",
           },
@@ -973,14 +1112,48 @@ export const CandListView = (props) => {
             cell: (row) =>
               row?.jobOfferDtos?.length > 0 ? (
                 <>
-                  <BsFileEarmarkPdf
-                    className="icon-pointer"
-                    size={"23px"}
-                    title="Click to view offer"
-                    onClick={() =>
-                      window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                    }
-                  />
+                  {row?.jobOfferDtos?.length === 2 && (
+                    <>
+                      <img
+                        src={previousOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Previous Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === true && (
+                    <>
+                      <img
+                        src={finalOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Final Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === false && (
+                    <>
+                      <img
+                        src={currentOffer}
+                        alt="list maybe"
+                        className={"icon-pointer"}
+                        width={"20px"}
+                        title="New Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
                 </>
               ) : (
                 <> - </>
@@ -1014,7 +1187,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
             selector: (row) => row.jobid,
             sortable: true,
-            width: "8%",
+            width: "6%",
           },
           {
             name: <span className="table-title">Title</span>,
@@ -1022,7 +1195,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "34%",
+            width: "29%",
           },
 
           {
@@ -1071,8 +1244,24 @@ export const CandListView = (props) => {
                 ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
                 : "-",
             sortable: true,
+            width: "8%",
+          },
+
+          {
+            name: <span className="table-title">Applied date</span>,
+            selector: (row) =>
+              getTimezoneDateTime(
+                moment(row?.candidateapplydatetime).format(
+                  "YYYY-MM-DD HH:MM:SS"
+                ),
+                "MM/DD/YYYY"
+              ),
+
+            ignoreRowClick: true,
+            button: true,
             width: "10%",
           },
+
           {
             name: <span className="table-title">Pre-screen</span>,
             cell: (row) =>
@@ -1095,7 +1284,7 @@ export const CandListView = (props) => {
               ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "9%",
           },
 
           {

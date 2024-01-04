@@ -26,6 +26,12 @@ export function BasicInformation({
   bIFormSubmitted,
   customerDetails,
 }) {
+  let jobLocationRaw =
+    prevStep === 3 ? data.joblocationid : previousData.joblocationid;
+  const [jobLocationOption, setJobLocationOption] = useState(
+    jobLocationRaw === undefined ? 0 : jobLocationRaw
+  );
+
   const fieldOfStudyOption = useSelector(
     (state) => state.dropdown.fieldOfStudyList
   );
@@ -34,6 +40,9 @@ export function BasicInformation({
   );
   const subsidiaryOption = useSelector(
     (state) => state.dropdown.subsidiaryList
+  );
+  const securityClearanceOptions = useSelector(
+    (state) => state.dropdown.securityClearanceList
   );
 
   let educationOptions = levelOfEducationOption.map(
@@ -142,6 +151,14 @@ export function BasicInformation({
       data === undefined || data.subsidiaryid === undefined
         ? ""
         : data.subsidiaryid,
+    issecurityclearancerequired:
+      data === undefined || data.issecurityclearancerequired === undefined
+        ? ""
+        : data.issecurityclearancerequired,
+    securityclearanceid:
+      data === undefined || data.securityclearanceid === undefined
+        ? ""
+        : data.securityclearanceid,
   });
   const [previousValue, setPreviousValue] = useState({
     companyId: "",
@@ -211,6 +228,16 @@ export function BasicInformation({
       previousData === undefined || previousData.subsidiaryid === undefined
         ? ""
         : previousData.subsidiaryid,
+    issecurityclearancerequired:
+      previousData === undefined ||
+      previousData.issecurityclearancerequired === undefined
+        ? ""
+        : previousData.issecurityclearancerequired,
+    securityclearanceid:
+      previousData === undefined ||
+      previousData.securityclearanceid === undefined
+        ? ""
+        : previousData.securityclearanceid,
   });
   const [descriptionData, setDescriptionData] = useState(
     prevStep === 3 && preValue.description !== ""
@@ -227,6 +254,13 @@ export function BasicInformation({
   const [countryOnchange, setCountryOnChange] = useState(false);
   const [descriptionValidation, setDescriptionValidation] = useState(false);
   const [zipCodeValidation, setZipCodeValidation] = useState(false);
+  const [addressValidation, setAddressValidation] = useState(false);
+  const [securityValidation, setSecurityValidation] = useState(false);
+  const [securityClearence, setSecurityClearence] = useState(
+    prevStep === 3
+      ? preValue.issecurityclearancerequired
+      : previousValue.issecurityclearancerequired
+  );
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -245,9 +279,44 @@ export function BasicInformation({
     event.target.elements.zipCode.value === ""
       ? setZipCodeValidation(true)
       : setZipCodeValidation(false);
+    event.target.elements.address.value === ""
+      ? setAddressValidation(true)
+      : setAddressValidation(false);
+    event.target.elements.issecurityclearancerequired.checked === true &&
+    Number(event.target.elements.securityclearance.value) === 0
+      ? setSecurityValidation(true)
+      : setSecurityValidation(false);
     descriptionData === ""
       ? setDescriptionValidation(true)
       : setDescriptionValidation(false);
+    let checkJobLocationCondition = false;
+    if (
+      Number(jobLocationOption) === 2 &&
+      event.target.elements.address.value !== ""
+    ) {
+      checkJobLocationCondition = true;
+    } else if (
+      Number(jobLocationOption) === 3 &&
+      event.target.elements.address.value !== ""
+    ) {
+      checkJobLocationCondition = true;
+    } else if (
+      Number(jobLocationOption) === 1 ||
+      Number(jobLocationOption) === 0
+    ) {
+      checkJobLocationCondition = true;
+    }
+    let checkSecurity = false;
+    if (
+      event.target.elements.issecurityclearancerequired.checked === true &&
+      Number(event.target.elements.securityclearance.value) !== 0
+    ) {
+      checkSecurity = true;
+    } else if (
+      event.target.elements.issecurityclearancerequired.checked === false
+    ) {
+      checkSecurity = true;
+    }
     if (
       event.target.elements.companyName.value !== "" &&
       event.target.elements.jobTitle.value !== "" &&
@@ -255,7 +324,9 @@ export function BasicInformation({
       event.target.elements.zipCode.value !== "" &&
       event.target.elements.city.value !==
         "undefined, undefined, undefined, undefined" &&
-      descriptionData !== ""
+      descriptionData !== "" &&
+      checkJobLocationCondition === true &&
+      checkSecurity === true
     ) {
       saveData(event);
     }
@@ -305,6 +376,13 @@ export function BasicInformation({
       fieldofstudiesOption: fieldOfStudyOption,
       subsidiaryid: eventData.target.elements.subsidiaryid.value,
       subsidiaryOption: subsidiaryOption,
+      issecurityclearancerequired:
+        eventData.target.elements.issecurityclearancerequired.checked,
+      securityclearance:
+        eventData?.target?.elements?.securityclearance?.value === undefined
+          ? 0
+          : eventData?.target?.elements?.securityclearance?.value,
+      securityclearanceOptions: securityClearanceOptions,
     };
     postData(data);
     setPreValue(data);
@@ -446,7 +524,7 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="openPositions" className="fw-semi-bold">
-                Number of position<span style={{ color: "red" }}>* </span>
+                Number of positions<span style={{ color: "red" }}>* </span>
               </Label>
               <Input
                 id={"openPositions"}
@@ -474,7 +552,12 @@ export function BasicInformation({
               <Label for="jobLocation" className="fw-semi-bold">
                 Job location
               </Label>
-              <Input id={"jobLocation"} name={"jobLocation"} type={"select"}>
+              <Input
+                id={"jobLocation"}
+                name={"jobLocation"}
+                type={"select"}
+                onChange={(e) => setJobLocationOption(e.target.value)}
+              >
                 <option key={0} value={0}>
                   Select job location
                 </option>
@@ -498,7 +581,11 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="address" className="fw-semi-bold">
-                Address
+                Address{" "}
+                {Number(jobLocationOption) !== 1 &&
+                  Number(jobLocationOption) !== 0 && (
+                    <span style={{ color: "red" }}>* </span>
+                  )}
               </Label>
               <Input
                 id={"address"}
@@ -509,7 +596,20 @@ export function BasicInformation({
                   prevStep === 3 ? preValue.address : previousValue.address
                 }
                 maxLength={100}
+                invalid={
+                  addressValidation &&
+                  Number(jobLocationOption) !== 1 &&
+                  Number(jobLocationOption) !== 0
+                    ? true
+                    : false
+                }
+                onChange={() => setAddressValidation(false)}
               />
+              {addressValidation &&
+                Number(jobLocationOption) !== 1 &&
+                Number(jobLocationOption) !== 0 && (
+                  <FormText color="danger">Please enter address</FormText>
+                )}
             </FormGroup>
           </Col>
         </Row>
@@ -651,10 +751,68 @@ export function BasicInformation({
               />{" "}
               {"  "}
               <Label for="sponsorshiprequiured" className="fw-semi-bold">
-                Sponsorship is required
+                Willing to sponsor
               </Label>
             </FormGroup>
           </Col>
+          <Col md={6} lg={3}>
+            <FormGroup className="mt-4">
+              <Input
+                id={"issecurityclearancerequired"}
+                name={"issecurityclearancerequired"}
+                type={"checkbox"}
+                defaultChecked={
+                  prevStep === 3
+                    ? preValue.issecurityclearancerequired
+                    : previousValue.issecurityclearancerequired
+                }
+                onChange={(e) => setSecurityClearence(e.target.checked)}
+              />{" "}
+              {"  "}
+              <Label for="issecurityclearancerequired" className="fw-semi-bold">
+                Security clearance required
+              </Label>
+            </FormGroup>
+          </Col>
+          {securityClearence === true && (
+            <Col md={6} lg={3}>
+              <FormGroup>
+                <Label for="securityclearance" className="fw-semi-bold">
+                  Security clearance<span style={{ color: "red" }}>* </span>
+                </Label>
+                <Input
+                  id={"securityclearance"}
+                  name={"securityclearance"}
+                  type={"select"}
+                  invalid={securityValidation ? true : false}
+                  onChange={() => setSecurityValidation(false)}
+                >
+                  <option key={0} value={0}>
+                    Select security clearance
+                  </option>
+                  {securityClearanceOptions.length > 0 &&
+                    securityClearanceOptions.map((options) => (
+                      <option
+                        key={options.id}
+                        value={options.id}
+                        selected={
+                          prevStep === 3
+                            ? preValue.securityclearanceid
+                            : previousValue.securityclearanceid === options.id
+                        }
+                      >
+                        {options.name}
+                      </option>
+                    ))}
+                </Input>
+                {securityValidation === true && (
+                  <FormText color="danger">
+                    Please select security clearence
+                  </FormText>
+                )}
+              </FormGroup>
+            </Col>
+          )}
         </Row>
         <Row>
           <Col md={6} lg={3}>
@@ -675,7 +833,7 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="fieldofstudiesids" className="fw-semi-bold">
-                Field of Study
+                Field of study
               </Label>
               <Select
                 defaultValue={studyData}

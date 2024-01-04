@@ -566,7 +566,7 @@ export function PersonalInformation(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".png",
+    accept: ".png,.jpeg,.jpg",
   });
 
   const addEditProfileImage = function (acceptedFiles) {
@@ -856,7 +856,8 @@ export function PersonalInformation(props) {
                   <Row className="mb-3">
                     <Col className="col-6">
                       <Label for="firstname" className="fw-semi-bold">
-                        Job profile <span className="required-icon">*</span>
+                        Desired/Current Job profile{" "}
+                        <span className="required-icon">*</span>
                       </Label>
                       <input
                         type="text"
@@ -1117,7 +1118,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Birth year
+                          Date of Birth
                         </Label>
 
                         <InputGroup>

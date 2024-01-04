@@ -55,11 +55,12 @@ import CustomerDashboard from "_containers/customer/dashboard/customerDashboard"
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
+import { FlaggedWord } from "_containers/admin/masters/flaggedWords";
 
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
 import { ToastContainer, toast } from "react-toastify";
-import { Row } from "reactstrap";
+import { Row, Button } from "reactstrap";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
@@ -76,13 +77,28 @@ export function App() {
     if (authUser) {
       updatePushNotifications();
       messaging.onMessage((payload) => {
-        console.log(payload);
+        let isProfilePage = window.location.pathname.indexOf("/profile") !== -1;
         toast(
           <Row>
             <p>
               <b>{payload.notification.title}</b>
             </p>
             <p>{payload.notification.body}</p>
+            {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
+              <p>
+                Updated resume data available
+                <Button
+                  color="link"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
+                  REFRESH
+                </Button>
+              </p>
+            ) : (
+              <></>
+            )}
           </Row>,
           {
             position: "bottom-right",
@@ -141,6 +157,15 @@ export function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="masters/flagged-words"
+            element={
+              <PrivateRoute>
+                <FlaggedWord />
+              </PrivateRoute>
+            }
+          />
+
           <Route
             path="masters/subsidiary"
             element={
@@ -338,10 +363,7 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
-          <Route
-            path="/candidate-list/liked"
-            element={<CustomerCandidateLists type={"liked"} />}
-          />
+
           <Route
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}
@@ -451,6 +473,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CandidateList type={"matched"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/job-list-applied"
+            element={
+              <PrivateRoute>
+                <CandidateList type={"applied"} />
               </PrivateRoute>
             }
           />

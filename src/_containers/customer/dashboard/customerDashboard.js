@@ -54,11 +54,9 @@ export default function CustomerDashboard() {
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
-  console.log(dashboardCounts);
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
-  console.log(dashboardGraphData);
   const dashboardJobsDataCount = useSelector(
     (state) => state.customerDashboard.dashboardJobsDataCount
   );
@@ -82,7 +80,7 @@ export default function CustomerDashboard() {
       count: dashboardCounts.newcandidatelikedcount,
       className: "success",
       icon: "lnr-thumbs-up",
-      path: "/candidate-list/liked",
+      path: "/customer-candidate-liked/0",
     },
     {
       title: "Matched candidate pending to review",
