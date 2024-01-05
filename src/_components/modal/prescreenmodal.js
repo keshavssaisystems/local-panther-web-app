@@ -12,6 +12,7 @@ import {
   FormText,
 } from "reactstrap";
 import customerIcons from "assets/utils/images/customer";
+import Loader from "react-loaders";
 import "./prescreen.scss";
 
 export const PrescreenModal = (props) => {
@@ -131,111 +132,133 @@ export const PrescreenModal = (props) => {
         </h3>
       </ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
-        {props.preScreenType === "pending" ? (
-          <>
-            {formData.length > 0 ? (
-              <>
-                {formData.map((data, index) => {
-                  return (
-                    <Row key={data.prescreenquestion}>
-                      <Label>
-                        <b className="modal-title">{data.prescreenquestion}</b>
-                      </Label>
-                      {data.iscustomquestion ? (
-                        <>{returnAV(data, index)}</>
-                      ) : (
-                        <Row sm={2} md={2} lg={2} xl={2}>
-                          <Col sm={4} md={4} lg={2} xl={2}>
-                            <Label check>
-                              <Input
-                                checked={data.answer === "Yes"}
-                                type="radio"
-                                value={"Yes"}
-                                onChange={(e) => onInputUpdate(e, index)}
-                              />{" "}
-                              Yes
-                            </Label>{" "}
-                          </Col>
-                          <Col>
-                            <Label>
-                              <Input
-                                checked={data.answer === "No"}
-                                type="radio"
-                                value={"No"}
-                                onChange={(e) => onInputUpdate(e, index)}
-                              />{" "}
-                              No
-                            </Label>
-                          </Col>
-                          {data.error ? (
-                            <FormText color="danger">
-                              Please select answer
-                            </FormText>
-                          ) : (
-                            <></>
-                          )}
-                        </Row>
-                      )}
-                    </Row>
-                  );
-                })}
-              </>
-            ) : (
-              <></>
-            )}
-          </>
+        {props?.loading ? (
+          <div className="prescreen-loading-div">
+            <Loader
+              type="line-scale-pulse-out-rapid"
+              className="d-flex justify-content-center"
+            />
+          </div>
         ) : (
           <>
             {" "}
-            {formData.length > 0 ? (
+            {props.preScreenType === "pending" ? (
               <>
-                {formData.map((data, index) => {
-                  return (
-                    <Row key={data.prescreenquestion}>
-                      <Label>
-                        <b className="modal-title">{data.prescreenquestion}</b>
-                      </Label>
-                      {data.iscustomquestion &&
-                      data.customquestionanswertype !== "Text" ? (
-                        <>
-                          {data.customquestionanswertype === "Audio" ? (
-                            <div style={{ cursor: "pointer" }} className="pb-2">
-                              <img
-                                title={"Download prescreen audio"}
-                                height={20}
-                                width={20}
-                                src={customerIcons.audio_icon}
-                                onClick={() => window.open(data.answer)}
-                              />
-                            </div>
+                {formData.length > 0 ? (
+                  <>
+                    {formData.map((data, index) => {
+                      return (
+                        <Row key={data.prescreenquestion}>
+                          <Label>
+                            <b className="modal-title">
+                              {data.prescreenquestion}
+                            </b>
+                          </Label>
+                          {data.iscustomquestion ? (
+                            <>{returnAV(data, index)}</>
                           ) : (
-                            <div style={{ cursor: "pointer" }} className="pb-2">
-                              <img
-                                title={"Download prescreen video"}
-                                height={20}
-                                width={20}
-                                src={customerIcons.video_icon}
-                                onClick={() => window.open(data.answer)}
-                              />
-                            </div>
+                            <Row sm={2} md={2} lg={2} xl={2}>
+                              <Col sm={4} md={4} lg={2} xl={2}>
+                                <Label check>
+                                  <Input
+                                    checked={data.answer === "Yes"}
+                                    type="radio"
+                                    value={"Yes"}
+                                    onChange={(e) => onInputUpdate(e, index)}
+                                  />{" "}
+                                  Yes
+                                </Label>{" "}
+                              </Col>
+                              <Col>
+                                <Label>
+                                  <Input
+                                    checked={data.answer === "No"}
+                                    type="radio"
+                                    value={"No"}
+                                    onChange={(e) => onInputUpdate(e, index)}
+                                  />{" "}
+                                  No
+                                </Label>
+                              </Col>
+                              {data.error ? (
+                                <FormText color="danger">
+                                  Please select answer
+                                </FormText>
+                              ) : (
+                                <></>
+                              )}
+                            </Row>
                           )}
-                        </>
-                      ) : (
-                        <Label>
-                          <div
-                            className="mb-2 me-2 badge bg-light modal-badge"
-                            style={{ textTransform: "unset" }}
-                          >
-                            {data.answer}
-                          </div>
-                        </Label>
-                      )}
-                    </Row>
-                  );
-                })}
+                        </Row>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <></>
+                )}
               </>
             ) : (
-              <></>
+              <>
+                {" "}
+                {formData.length > 0 ? (
+                  <>
+                    {formData.map((data, index) => {
+                      return (
+                        <Row key={data.prescreenquestion}>
+                          <Label>
+                            <b className="modal-title">
+                              {data.prescreenquestion}
+                            </b>
+                          </Label>
+                          {data.iscustomquestion &&
+                          data.customquestionanswertype !== "Text" ? (
+                            <>
+                              {data.customquestionanswertype === "Audio" ? (
+                                <div
+                                  style={{ cursor: "pointer" }}
+                                  className="pb-2"
+                                >
+                                  <img
+                                    title={"Download prescreen audio"}
+                                    height={20}
+                                    width={20}
+                                    src={customerIcons.audio_icon}
+                                    onClick={() => window.open(data.answer)}
+                                  />
+                                </div>
+                              ) : (
+                                <div
+                                  style={{ cursor: "pointer" }}
+                                  className="pb-2"
+                                >
+                                  <img
+                                    title={"Download prescreen video"}
+                                    height={20}
+                                    width={20}
+                                    src={customerIcons.video_icon}
+                                    onClick={() => window.open(data.answer)}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <Label>
+                              <div
+                                className="mb-2 me-2 badge bg-light modal-badge"
+                                style={{ textTransform: "unset" }}
+                              >
+                                {data.answer}
+                              </div>
+                            </Label>
+                          )}
+                        </Row>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <></>
+                )}
+              </>
             )}
           </>
         )}

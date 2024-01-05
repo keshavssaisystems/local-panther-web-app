@@ -45,6 +45,7 @@ export const CustCandidateListView = (props) => {
   const [showJDModal, setShowJDModal] = useState(false);
   const [showIRSModal, setShowIRSModal] = useState(false);
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
+  const [offerUploadLoading, setOfferUploadLoading] = useState(false);
 
   const dispatch = useDispatch();
   const durationOptions = useSelector(
@@ -1548,6 +1549,7 @@ export const CustCandidateListView = (props) => {
   };
 
   const onUploadOfferDoc = (file, startdate, pay, finaloffer) => {
+    setOfferUploadLoading(true);
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
       : "";
@@ -1582,6 +1584,7 @@ export const CustCandidateListView = (props) => {
         config
       )
       .then((result) => {
+        setOfferUploadLoading(false);
         if (result.data.statusCode == 200) {
           setShowUploadOfferModal(false);
           props.showSweetAlert({
@@ -1596,7 +1599,9 @@ export const CustCandidateListView = (props) => {
           });
         }
       })
-      .catch((error) => {});
+      .catch((error) => {
+        setOfferUploadLoading(false);
+      });
   };
 
   return (
@@ -1716,6 +1721,7 @@ export const CustCandidateListView = (props) => {
             uploadOfferDoc={(file, startdate, pay, finaloffer) =>
               onUploadOfferDoc(file, startdate, pay, finaloffer)
             }
+            loading={offerUploadLoading}
           />
         ) : (
           <></>
