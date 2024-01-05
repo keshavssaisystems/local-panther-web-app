@@ -360,20 +360,12 @@ export const CandListView = (props) => {
     props.type === "interview"
       ? [
           {
-            name: <span className="table-title">Job Id</span>,
-            id: "Job Id",
-            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
-            selector: (row) => row.jobid,
-            sortable: true,
-            width: "8%",
-          },
-          {
             name: <span className="table-title">Title</span>,
             id: "Title",
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "18%",
+            width: "26%",
           },
 
           {
@@ -574,20 +566,12 @@ export const CandListView = (props) => {
       : props.type === "rejected"
       ? [
           {
-            name: <span className="table-title">Job Id</span>,
-            id: "Job Id",
-            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
-            selector: (row) => row.jobid,
-            sortable: true,
-            width: "10%",
-          },
-          {
             name: <span className="table-title">Title</span>,
             id: "Title",
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "20%",
+            width: "30%",
           },
 
           {
@@ -772,19 +756,11 @@ export const CandListView = (props) => {
       : props.type === "offers"
       ? [
           {
-            name: <span className="table-title">Job Id</span>,
-            id: "Job Id",
-            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
-            selector: (row) => row.jobid,
-            sortable: true,
-            width: "8%",
-          },
-          {
             name: <span className="table-title">Title</span>,
             id: "Title",
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "25%",
+            width: "33%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -970,20 +946,12 @@ export const CandListView = (props) => {
       : props.type === "accepted"
       ? [
           {
-            name: <span className="table-title">Job Id</span>,
-            id: "Job Id",
-            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
-            selector: (row) => row.jobid,
-            sortable: true,
-            width: "8%",
-          },
-          {
             name: <span className="table-title">Title</span>,
             id: "Title",
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "24%",
+            width: "32%",
           },
 
           {
@@ -1182,20 +1150,12 @@ export const CandListView = (props) => {
         ]
       : [
           {
-            name: <span className="table-title">Job Id</span>,
-            id: "Job Id",
-            cell: (row) => <span title={row.jobid}>{row.jobid}</span>,
-            selector: (row) => row.jobid,
-            sortable: true,
-            width: "6%",
-          },
-          {
             name: <span className="table-title">Title</span>,
             id: "Title",
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "29%",
+            width: "35%",
           },
 
           {
