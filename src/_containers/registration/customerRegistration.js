@@ -92,10 +92,10 @@ export function CustomerRegistration() {
   // form validation rules
   const validationSchema = Yup.object().shape({
     companyid: Yup.string().required("Company is required"),
-    jobprofile: Yup.string()
-      .required("Prefix is required")
-      .min(2, "Please enter minimum 2 characters")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid profile"),
+    // jobprofile: Yup.string()
+    //   .required("Prefix is required")
+    //   .min(2, "Please enter minimum 2 characters")
+    //   .matches(/^[A-Za-z ]*$/, "Please enter valid profile"),
 
     firstName: Yup.string()
       .required("First name is required")
@@ -150,7 +150,7 @@ export function CustomerRegistration() {
       companyid: parseInt(formData.companyid),
       userid: 0,
       userroleid: 2,
-      title: formData.jobprofile,
+      title: "",
       firstname: formData.firstName,
       lastname: formData.lastName,
       email: formData.email,
@@ -199,12 +199,12 @@ export function CustomerRegistration() {
       data = "company";
     }
 
-    if (
-      formDetails.jobprofile === "" ||
-      !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
-    ) {
-      data = data !== "" ? data + ", title" : "title";
-    }
+    // if (
+    //   formDetails.jobprofile === "" ||
+    //   !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
+    // ) {
+    //   data = data !== "" ? data + ", title" : "title";
+    // }
     if (
       formDetails.firstName === "" ||
       !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
@@ -595,7 +595,7 @@ export function CustomerRegistration() {
             </FormGroup>
           </Col>
 
-          <Col md={6}>
+          {/* <Col md={6}>
             <FormGroup>
               <Label for="jobprofile" className="input-label">
                 Prefix <span className="text-danger">*</span>
@@ -613,7 +613,7 @@ export function CustomerRegistration() {
               />
               <FormFeedback>{errors.jobprofile?.message}</FormFeedback>
             </FormGroup>
-          </Col>
+          </Col> */}
         </Row>
 
         <Row>
@@ -671,7 +671,7 @@ export function CustomerRegistration() {
                   className={`form-control placeholder-name ${
                     errors.email ? "is-invalid" : ""
                   }`}
-                  onClick={(e) => handleFormData("email", e.target.value)}
+                  onInput={(e) => handleFormData("email", e.target.value)}
                   autoComplete="off"
                   maxLength={70}
                 />
@@ -883,7 +883,7 @@ export function CustomerRegistration() {
           <CardBody>
             <div className="justify-content-center align-items-center text-center mb-4">
               <div className="font-size-lg fw-normal">
-                <p className="otp-header-text">We sent you OTP</p>
+                <p className="otp-header-text">We sent you verification code</p>
               </div>
 
               <div className="font-size-md  fw-normal">
@@ -915,10 +915,16 @@ export function CustomerRegistration() {
               <Row>
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    Don't received OTP?
+                    Don't received verification code?
+                  </div>
+                </Col>
+              </Row>
+              <Row className="mt-1">
+                <Col>
+                  <div className="ms-auto d-flex justify-content-center align-items-center">
                     {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
-                        Resend OTP in
+                        Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
                         seconds
                       </span>
@@ -928,7 +934,7 @@ export function CustomerRegistration() {
                         onClick={() => resendOTP("mobile")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
-                        Resend otp
+                        Resend verification code
                       </a>
                     )}
                   </div>
@@ -951,7 +957,7 @@ export function CustomerRegistration() {
                 style={{ background: "#2f479b" }}
                 onClick={() => verifyMobileOTPDetails()}
               >
-                Verify OTP
+                Verify
               </Button>
             </div>
           </CardFooter>
@@ -967,11 +973,11 @@ export function CustomerRegistration() {
           <CardBody>
             <div className="justify-content-center align-items-center text-center mb-4">
               <div className="font-size-lg fw-semi-bold">
-                <p className="otp-header-text">We sent you OTP</p>
+                <p className="otp-header-text">We sent you verification code</p>
               </div>
 
               <div className="font-size-md  fw-normal">
-                Please, enter it below to verify your phone
+                Please, enter it below to verify your email
               </div>
               <div style={{ color: "#545cd8" }}>{getValues("email")}</div>
             </div>
@@ -999,10 +1005,17 @@ export function CustomerRegistration() {
               <Row>
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    Don't received OTP?
+                    Don't received verification code?
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="mt-1">
+                <Col>
+                  <div className="ms-auto d-flex justify-content-center align-items-center">
                     {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
-                        Resend OTP in
+                        Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
                         seconds
                       </span>
@@ -1012,7 +1025,7 @@ export function CustomerRegistration() {
                         onClick={() => resendOTP("email")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
-                        Resend otp
+                        Resend verification code
                       </a>
                     )}
                   </div>
@@ -1035,7 +1048,7 @@ export function CustomerRegistration() {
                 style={{ background: "#2f479b" }}
                 onClick={() => verifyEmailOTPDetails()}
               >
-                Verify OTP
+                Verify
               </Button>
             </div>
           </CardFooter>

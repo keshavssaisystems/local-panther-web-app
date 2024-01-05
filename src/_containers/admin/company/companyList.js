@@ -10,6 +10,7 @@ import {
   FormGroup,
   Input,
   Button,
+  ButtonGroup,
 } from "reactstrap";
 import "_containers/admin/common/adminListing.scss";
 import cx from "classnames";
@@ -21,11 +22,14 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
 import { Nav, NavItem, PopoverBody } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import customerIcons from "assets/utils/images/customer";
+import { FaEye } from "react-icons/fa";
 
 export const CompanyList = () => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsViewMode] = useState(false);
   const [isAddMode, setIsAddMode] = useState(false);
   const [editData, setEditData] = useState({});
   const [pageNo, setPageNo] = useState(1);
@@ -57,19 +61,8 @@ export const CompanyList = () => {
     {
       name: "Company",
       id: "name",
-      cell: (row) => (
-        <div
-          className="editrow"
-          onClick={(e) => {
-            setEditData(row);
-            setOpenModal(true);
-            setIsAddMode(false);
-            setIsEdit(true);
-          }}
-        >
-          {row.companyname}
-        </div>
-      ),
+      selector: (row) => row.companyname,
+
       sortable: true,
     },
     {
@@ -119,6 +112,49 @@ export const CompanyList = () => {
       selector: (row) => row.industry,
       sortable: true,
     },
+    {
+      name: "Action",
+      cell: (row) => (
+        <div>
+          <ButtonGroup>
+            <Button
+              // outline
+              size="sm"
+              title="Edit company"
+              className="btn-icon"
+              color="warning"
+              onClick={(e) => {
+                setEditData(row);
+                setOpenModal(true);
+                setIsAddMode(false);
+                setIsEdit(true);
+                setIsViewMode(false);
+              }}
+            >
+              <img src={customerIcons?.list_edit} alt="list approve"></img>
+            </Button>
+
+            <Button
+              // outline
+              size="sm"
+              title="View company"
+              className="btn-icon"
+              color="info"
+              onClick={(e) => {
+                setEditData(row);
+                setOpenModal(true);
+                setIsAddMode(false);
+                setIsEdit(false);
+                setIsViewMode(true);
+              }}
+            >
+              <FaEye style={{ fontSize: "18px" }} />
+            </Button>
+          </ButtonGroup>
+        </div>
+      ),
+      sortable: false,
+    },
   ];
 
   const customStyles = {
@@ -147,6 +183,7 @@ export const CompanyList = () => {
       statename: "",
     };
     setIsAddMode(true);
+    setIsViewMode(false);
     setIsEdit(false);
     setEditData(obj);
     setOpenModal(true);
@@ -410,6 +447,7 @@ export const CompanyList = () => {
           onClose={() => closeModal(false)}
           postData={(e) => postData(e)}
           isAddMode={isAddMode}
+          isViewMode={isView}
           data={editData}
           putData={(e) => putData(e)}
         />

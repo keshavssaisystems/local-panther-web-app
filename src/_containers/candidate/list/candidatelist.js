@@ -14,6 +14,7 @@ import { JobDetailModal } from "_components/modal/jobdetailmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { NoDataFound } from "_components/common/nodatafound";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
+import axios from "axios";
 import "./candidatelist.scss";
 import {
   customerCandidateListsActions,
@@ -390,28 +391,111 @@ export const CandidateList = (props) => {
   };
 
   const onSendPrescreenData = async (formData) => {
-    let newData = formData.map((data) => {
-      return {
-        jobcandidateprescreenapplicationid: 0,
-        jobprescreenapplicationid: data.jobprescreenapplicationid,
-        jobid: data.jobid,
-        candidateid: parseInt(
-          JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
-        ),
-        answer: data.answer,
-        isactive: data.isactive,
-        currentUserId: parseInt(
-          JSON.parse(localStorage.getItem("userDetails")).UserId
-        ),
-      };
-    });
+    let nonFileData = formData
+      .filter((data) => {
+        return (
+          !data.iscustomquestion || data.customquestionanswertype === "Text"
+        );
+      })
+      .map((data) => {
+        return {
+          jobcandidateprescreenapplicationid: 0,
+          jobprescreenapplicationid: data.jobprescreenapplicationid,
+          jobid: data.jobid,
+          candidateid: parseInt(
+            JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+          ),
+          answer: data.answer,
+          isactive: data.isactive,
+          currentUserId: parseInt(
+            JSON.parse(localStorage.getItem("userDetails")).UserId
+          ),
+        };
+      });
+
+    let fileData = formData
+      .filter((data) => {
+        return (
+          data.iscustomquestion && data.customquestionanswertype !== "Text"
+        );
+      })
+      .map((data) => {
+        return {
+          jobcandidateprescreenapplicationid: 0,
+          jobprescreenapplicationid: data.jobprescreenapplicationid,
+          jobid: data.jobid,
+          candidateid: parseInt(
+            JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+          ),
+          answer: data.answer,
+          isactive: data.isactive,
+          currentUserId: parseInt(
+            JSON.parse(localStorage.getItem("userDetails")).UserId
+          ),
+        };
+      });
+
     let res = await dispatch(
-      candidateListActions.postJobPrescreenApplication(newData)
+      candidateListActions.postJobPrescreenApplication(nonFileData)
     );
 
     if (res.payload.statusCode === 201) {
-      setShowPSModal(false);
-      showSweetAlert({ title: res.payload.message, type: "success" });
+      const authData = localStorage.getItem("token")
+        ? localStorage.getItem("token")
+        : "";
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${authData}`,
+        },
+      };
+      if (fileData?.length > 0) {
+        fileData.forEach(async (i, index) => {
+          const form = new FormData();
+          form.append("jobcandidateprescreenapplicationid", 0);
+          form.append("jobprescreenapplicationid", i.jobprescreenapplicationid);
+          form.append("Jobid", i.jobid);
+          form.append(
+            "Candidateid",
+            parseInt(
+              JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+            )
+          );
+          form.append(
+            "currentUserId",
+            JSON.parse(localStorage.getItem("userDetails")).UserId
+          );
+          form.append("Answerfile", i.answer);
+          form.append("Isactive", i.isactive);
+
+          const res = await axios
+            .post(
+              `${process.env.REACT_APP_PANTHER_URL}/api/JobCandidatePrescreenApplication/CandidatePrecreenAnswerFileUpload`,
+              form,
+              config
+            )
+            .then((result) => {
+              if (result.data.statusCode == 204) {
+                if (fileData.length - 1 === index) {
+                  setShowPSModal(false);
+                  showSweetAlert({
+                    title: result.data.message,
+                    type: "success",
+                  });
+                }
+              } else {
+                showSweetAlert({
+                  title: result.data.message || result.data.status,
+                  type: "danger",
+                });
+              }
+            })
+            .catch((error) => {});
+        });
+      } else {
+        setShowPSModal(false);
+        showSweetAlert({ title: res.payload.message, type: "success" });
+      }
     } else {
       showSweetAlert({
         title: res.payload.message || res.payload.status,

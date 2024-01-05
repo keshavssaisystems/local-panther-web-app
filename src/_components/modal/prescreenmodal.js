@@ -11,6 +11,7 @@ import {
   Input,
   FormText,
 } from "reactstrap";
+import customerIcons from "assets/utils/images/customer";
 import "./prescreen.scss";
 
 export const PrescreenModal = (props) => {
@@ -43,9 +44,78 @@ export const PrescreenModal = (props) => {
 
   const onInputUpdate = (e, index) => {
     let data = [...formData];
-    data[index]["answer"] = e.target.value;
+    data[index]["answer"] =
+      e?.target?.files && e.target.files.length > 0
+        ? e.target.files[0]
+        : e.target.value;
     data[index].error = e.target.value === "";
     setFormData(data);
+  };
+
+  const returnAV = (data, index) => {
+    return (
+      <>
+        {data.customquestionanswertype === "Audio" ? (
+          <>
+            {" "}
+            <Label for="exampleFile">Audio File</Label>
+            <Input
+              type="file"
+              name="file"
+              id="exampleFile"
+              // value={data.answer}
+              onChange={(e) => onInputUpdate(e, index)}
+              invalid={data.error}
+              accept="audio/x-m4a,audio/*"
+            />{" "}
+            {data.error ? (
+              <FormText color="danger">Please upload audio file</FormText>
+            ) : (
+              <></>
+            )}
+          </>
+        ) : (
+          <>
+            {data.customquestionanswertype === "Video" ? (
+              <>
+                {" "}
+                <Label for="exampleFile">Video File</Label>
+                <Input
+                  type="file"
+                  name="file"
+                  id="exampleFile"
+                  // value={data.answer}
+                  onChange={(e) => onInputUpdate(e, index)}
+                  invalid={data.error}
+                  accept="video/mp4,video/x-m4v,video/*"
+                />{" "}
+                {data.error ? (
+                  <FormText color="danger">Please upload video file</FormText>
+                ) : (
+                  <></>
+                )}
+              </>
+            ) : (
+              <>
+                <Label>
+                  <Input
+                    type="text"
+                    value={data.answer}
+                    onChange={(e) => onInputUpdate(e, index)}
+                    invalid={data.error}
+                  />
+                </Label>
+                {data.error ? (
+                  <FormText color="danger">Please provide answer</FormText>
+                ) : (
+                  <></>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </>
+    );
   };
 
   return (
@@ -72,23 +142,7 @@ export const PrescreenModal = (props) => {
                         <b className="modal-title">{data.prescreenquestion}</b>
                       </Label>
                       {data.iscustomquestion ? (
-                        <>
-                          <Label>
-                            <Input
-                              type="text"
-                              value={data.answer}
-                              onChange={(e) => onInputUpdate(e, index)}
-                              invalid={data.error}
-                            />
-                          </Label>
-                          {data.error ? (
-                            <FormText color="danger">
-                              Please provide answer
-                            </FormText>
-                          ) : (
-                            <></>
-                          )}
-                        </>
+                        <>{returnAV(data, index)}</>
                       ) : (
                         <Row sm={2} md={2} lg={2} xl={2}>
                           <Col sm={4} md={4} lg={2} xl={2}>
@@ -141,14 +195,41 @@ export const PrescreenModal = (props) => {
                       <Label>
                         <b className="modal-title">{data.prescreenquestion}</b>
                       </Label>
-                      <Label>
-                        <div
-                          className="mb-2 me-2 badge bg-light modal-badge"
-                          style={{ textTransform: "unset" }}
-                        >
-                          {data.answer}
-                        </div>
-                      </Label>
+                      {data.iscustomquestion &&
+                      data.customquestionanswertype !== "Text" ? (
+                        <>
+                          {data.customquestionanswertype === "Audio" ? (
+                            <div style={{ cursor: "pointer" }} className="pb-2">
+                              <img
+                                title={"Download prescreen audio"}
+                                height={20}
+                                width={20}
+                                src={customerIcons.audio_icon}
+                                onClick={() => window.open(data.answer)}
+                              />
+                            </div>
+                          ) : (
+                            <div style={{ cursor: "pointer" }} className="pb-2">
+                              <img
+                                title={"Download prescreen video"}
+                                height={20}
+                                width={20}
+                                src={customerIcons.video_icon}
+                                onClick={() => window.open(data.answer)}
+                              />
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <Label>
+                          <div
+                            className="mb-2 me-2 badge bg-light modal-badge"
+                            style={{ textTransform: "unset" }}
+                          >
+                            {data.answer}
+                          </div>
+                        </Label>
+                      )}
                     </Row>
                   );
                 })}
