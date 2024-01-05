@@ -318,7 +318,7 @@ export function ResumeDetails(props) {
                 </Row>
                 <Row>
                   <div className="file-info mt-2">
-                    Support formats: pdf upto 5 MB
+                    Support formats: pdf up to 5 MB
                   </div>
                 </Row>
                 <Row>
