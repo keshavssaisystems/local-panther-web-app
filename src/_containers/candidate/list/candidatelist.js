@@ -35,7 +35,7 @@ export const CandidateList = (props) => {
   const [preScreenType, setPreScreenType] = useState("");
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleId, setRescheduleId] = useState("");
-
+  const [preScreenLoading, setPreScreenLoading] = useState(false);
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
   const [showAlert, SetShowAlert] = useState({
@@ -391,6 +391,7 @@ export const CandidateList = (props) => {
   };
 
   const onSendPrescreenData = async (formData) => {
+    setPreScreenLoading(true);
     let nonFileData = formData
       .filter((data) => {
         return (
@@ -477,6 +478,7 @@ export const CandidateList = (props) => {
             .then((result) => {
               if (result.data.statusCode == 204) {
                 if (fileData.length - 1 === index) {
+                  setPreScreenLoading(false);
                   setShowPSModal(false);
                   showSweetAlert({
                     title: result.data.message,
@@ -484,6 +486,7 @@ export const CandidateList = (props) => {
                   });
                 }
               } else {
+                setPreScreenLoading(false);
                 showSweetAlert({
                   title: result.data.message || result.data.status,
                   type: "danger",
@@ -493,10 +496,12 @@ export const CandidateList = (props) => {
             .catch((error) => {});
         });
       } else {
+        setPreScreenLoading(false);
         setShowPSModal(false);
         showSweetAlert({ title: res.payload.message, type: "success" });
       }
     } else {
+      setPreScreenLoading(false);
       showSweetAlert({
         title: res.payload.message || res.payload.status,
         type: "danger",
@@ -1277,6 +1282,7 @@ export const CandidateList = (props) => {
                 data={prescreenQues}
                 sendFormData={(data) => onSendPrescreenData(data)}
                 preScreenType={preScreenType}
+                loading={preScreenLoading}
               ></PrescreenModal>
             </>
           ) : (
