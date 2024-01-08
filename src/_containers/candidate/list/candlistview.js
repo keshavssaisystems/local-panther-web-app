@@ -365,7 +365,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "26%",
+            width: "22%",
           },
 
           {
@@ -546,13 +546,37 @@ export const CandListView = (props) => {
             width: "11%",
           },
           {
+            name: <span className="table-title">Pre-screen</span>,
+            cell: (row) =>
+              row.candidateprescreenstatus === "NA" ? (
+                "-"
+              ) : row.candidateprescreenstatus === "Pending" ? (
+                <Button
+                  onClick={() => onPrescreenClick("pending", row)}
+                  color="link"
+                >
+                  <u>Pending</u>
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => onPrescreenClick("completed", row)}
+                  color="link"
+                >
+                  <u>Completed</u>
+                </Button>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "8%",
+          },
+          {
             name: <span className="table-title">Interest</span>,
             cell: (row) => (
               <div className="list-btn-group">{renderButtons(row)}</div>
             ),
             ignoreRowClick: true,
             button: true,
-            width: "15%",
+            width: "11%",
           },
           {
             name: <span className="table-title">Action</span>,
