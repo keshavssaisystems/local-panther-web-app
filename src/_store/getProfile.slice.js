@@ -14,11 +14,11 @@ const initialState = {
     ethnicityDropdown: "",
     eligibilityDropDown: [
       {
-        id: 0,
+        id: 1,
         name: "Authorized to work in the US",
       },
       {
-        id: 1,
+        id: 2,
         name: "Sponsorship required",
       },
     ],

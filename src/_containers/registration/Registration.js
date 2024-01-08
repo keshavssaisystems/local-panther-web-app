@@ -475,11 +475,15 @@ export function Registration() {
           nextInput.focus();
         }
       }
+
       if (e === "") {
         const prevInput = document.getElementById(`mobile-${index - 1}`);
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails();
       }
     }
     if (check === "email") {
@@ -501,6 +505,9 @@ export function Registration() {
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails();
       }
     }
   };
