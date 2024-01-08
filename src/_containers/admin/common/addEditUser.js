@@ -30,11 +30,7 @@ export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
   const dispatch = useDispatch();
-  const rolesList = useSelector((state) =>
-    state.adminListing.rolesList?.filter(
-      (x) => x?.userroleid !== 2 && x?.userroleid !== 3
-    )
-  );
+  const rolesList = useSelector((state) => state.adminListing.rolesList);
 
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
   const phoneRegExp =
@@ -216,7 +212,6 @@ export const AddEditUser = (props) => {
 
   useEffect(() => {
     if (!isAddMode) {
-      console.log("NG This is EDIT mode !!!");
       // set default to state, city, companyname
       const formFields = [
         "prefix",
@@ -275,8 +270,14 @@ export const AddEditUser = (props) => {
                         selected={options.userroleid === roleId}
                         key={options.userroleid}
                         value={options.userroleid}
+                        style={{
+                          display:
+                            options.userroleid === 2 || options.userroleid === 3
+                              ? "none"
+                              : "",
+                        }}
                       >
-                        {options.rolename}
+                        <div>{options.rolename}</div>
                       </option>
                     ))}
                 </Input>

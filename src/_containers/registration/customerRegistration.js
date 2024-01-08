@@ -508,6 +508,9 @@ export function CustomerRegistration() {
           prevInput.focus();
         }
       }
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails();
+      }
     }
     if (check === "email") {
       new_data[index] = e;
@@ -528,6 +531,9 @@ export function CustomerRegistration() {
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails();
       }
     }
   };
