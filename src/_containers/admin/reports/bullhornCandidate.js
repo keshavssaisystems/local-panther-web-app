@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import Loader from "react-loaders";
+import Loader from "react-loaders";
 import { Col, Row, Card, CardBody, Button, ButtonGroup } from "reactstrap";
 import { getBullhornCandidateReportThunk } from "../_redux/report.slice";
 import PageTitle from "_components/common/pagetitle";
@@ -13,15 +13,12 @@ import customerIcons from "assets/utils/images/customer";
 export function BullhornCandidate({ title }) {
   const [pageSize, setPageSize] = useState(10);
   const [pageNo, setPageNo] = useState(1);
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     getBullhornData(pageSize, pageNo);
   }, []);
   const getBullhornData = async (pageSize, pageNo) => {
-    setLoading(true);
     await dispatch(getBullhornCandidateReportThunk({ pageSize, pageNo }));
-    setLoading(false);
   };
   const bullhornData = useSelector((state) => state?.adminReportReducer ?? {});
   let data =
@@ -30,18 +27,13 @@ export function BullhornCandidate({ title }) {
       ? []
       : bullhornData?.bullhornCandidateData?.bullhornCandidateStagingList;
   const totalRecords = bullhornData?.bullhornCandidateData?.totalRows;
+  let loading =
+    bullhornData?.bullhornLoading === undefined
+      ? true
+      : bullhornData?.bullhornLoading;
   const columns = [
     {
       name: <span className="table-title">Bullhorn Id</span>,
-      cell: (row) => (
-        <span
-          className="table-cell"
-          key={row.candidateid}
-          title={row.candidateid}
-        >
-          {row.candidateid}
-        </span>
-      ),
       sortable: true,
       selector: (row) => row.candidateid,
       minWidth: "8%",
@@ -173,12 +165,12 @@ export function BullhornCandidate({ title }) {
     },
   };
 
-  const handlePerRowsChange = (pagesize) => {
+  const handlePerRowsChange = async (pagesize) => {
     setPageSize(pagesize);
     getBullhornData(pagesize, pageNo);
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = async (page) => {
     setPageNo(page);
     getBullhornData(pageSize, page);
   };
@@ -190,33 +182,33 @@ export function BullhornCandidate({ title }) {
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
             <CardBody>
-              {/* {loading ? (
+              {loading ? (
                 <Loader
                   type="line-scale-pulse-out-rapid"
                   className="d-flex justify-content-center"
                 />
-              ) : ( */}
-              <>
-                {data.length > 0 ? (
-                  <DataTable
-                    columns={columns}
-                    data={data}
-                    fixedHeader
-                    pagination
-                    progressPending={loading}
-                    customStyles={customStyles}
-                    paginationServer
-                    paginationTotalRows={totalRecords}
-                    onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
-                    onChangePage={(e) => handlePageChange(e)}
-                  />
-                ) : (
-                  <Row className="center-align ">
-                    <NoDataFound></NoDataFound>
-                  </Row>
-                )}
-              </>
-              {/* )} */}
+              ) : (
+                <>
+                  {data.length > 0 ? (
+                    <DataTable
+                      columns={columns}
+                      data={data}
+                      fixedHeader
+                      pagination
+                      progressPending={loading}
+                      customStyles={customStyles}
+                      paginationServer
+                      paginationTotalRows={totalRecords}
+                      onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                      onChangePage={(e) => handlePageChange(e)}
+                    />
+                  ) : (
+                    <Row className="center-align ">
+                      <NoDataFound></NoDataFound>
+                    </Row>
+                  )}
+                </>
+              )}
             </CardBody>
           </Card>
         </Col>
