@@ -359,9 +359,9 @@ export function CustomerRegistration() {
         setMessage("Phone number verified");
       } else {
         otp_new.mobile = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -395,9 +395,9 @@ export function CustomerRegistration() {
         setMessage("Email verified");
       } else {
         otp_new.email = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }

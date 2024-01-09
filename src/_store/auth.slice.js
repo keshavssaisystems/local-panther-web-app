@@ -182,7 +182,7 @@ const authSlice = createSlice({
       history.navigate("/registration-success");
     },
     [registerThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [forgotPasswordThunk.pending]: (state, { payload }) => {
@@ -190,7 +190,7 @@ const authSlice = createSlice({
     },
     [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => {},
     [forgotPasswordThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [userRegisterThunk.pending]: (state, { payload }) => {
@@ -198,14 +198,14 @@ const authSlice = createSlice({
     },
     [userRegisterThunk.fulfilled]: (state, { payload = {} }) => {},
     [userRegisterThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
     [verifyOTPThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
     [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => {},
     [verifyOTPThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [userRegisterThunkNew.pending]: (state, { payload }) => {
@@ -213,7 +213,7 @@ const authSlice = createSlice({
     },
     [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => {},
     [userRegisterThunkNew.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
     [generateToken.pending]: (state, { payload }) => {
       state.error = null;
@@ -229,7 +229,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     [registerCustomer.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [getShareJobDetails.pending]: (state, { payload }) => {
