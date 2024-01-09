@@ -5,7 +5,8 @@ import { TodoList } from "./todoList";
 import { UpcomingInterviews } from "./upcomingInterviews";
 import { Alerts } from "./alerts";
 import { JobsList } from "./jobsList";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   candidateDashboardActions,
   candidateListActions,
@@ -14,14 +15,16 @@ import {
   customerDashboardActions,
 } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import infoIcon from "assets/utils/images/yellow-info-big.svg";
 
 export function CandidateDashboard() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   let candidateId = JSON.parse(
     localStorage.getItem("userDetails")
   ).InternalUserId;
   let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
-
+  const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -58,6 +61,9 @@ export function CandidateDashboard() {
     dispatch(dropdownActions.getShiftThunk2());
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
+    dispatch(
+      candidateDashboardActions.getCandidateSkillsListThunk({ candidateId })
+    );
   };
 
   const onDeleteNotification = async (id) => {
@@ -127,6 +133,15 @@ export function CandidateDashboard() {
     data.description = "Are you sure want to delete this notification?";
     SetConfAlert(data);
   };
+  let isloginCompleteCheck = localStorage.getItem("isloginComplete");
+  const skillsData = useSelector(
+    (state) => state.candidateDashboard.availableSkills
+  );
+  useEffect(() => {
+    if (skillsData?.totalRows === 0 && isloginCompleteCheck === null) {
+      setShowProfilePrompt(true);
+    }
+  }, [skillsData, isloginCompleteCheck]);
 
   return (
     <>
@@ -181,6 +196,40 @@ export function CandidateDashboard() {
           {confAlert.description}
         </SweetAlert>
       </>
+      <div className="profile-prompt">
+        <SweetAlert
+          custom
+          show={showProfilePrompt}
+          onConfirm={() => {
+            localStorage.setItem("isloginComplete", true);
+            setShowProfilePrompt(false);
+            navigate("/profile");
+          }}
+          onCancel={() => {
+            localStorage.setItem("isloginComplete", true);
+            setShowProfilePrompt(false);
+          }}
+          cancelBtnText={"Remind me later"}
+          confirmBtnText="Update"
+          showCancel
+          customIcon={infoIcon}
+        >
+          <p className="candidate-profile-prompt">
+            “Enhance your experience and find the best job matches by updating
+            your <span className="candidate-profile-prompt-bold">Skills</span>,
+            <span className="candidate-profile-prompt-bold">
+              Qualifications
+            </span>
+            , and{" "}
+            <span className="candidate-profile-prompt-bold">
+              Education details
+            </span>
+            , and uploading your{" "}
+            <span className="candidate-profile-prompt-bold">latest resume</span>{" "}
+            to your profile.”
+          </p>
+        </SweetAlert>
+      </div>
     </>
   );
 }
