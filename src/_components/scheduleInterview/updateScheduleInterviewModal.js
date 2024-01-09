@@ -24,7 +24,6 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  console.log(interviewData);
   const newdate = new Date(
     getTimezoneDateTime(
       moment(interviewData?.scheduledate),
@@ -267,9 +266,7 @@ export function UpdateScheduleInterviewModal({
                                         ? interviewData
                                             ?.scheduledInterviewDtos[0]
                                             .scheduledate
-                                        : interviewData
-                                            ?.scheduledInterviewDtos[0]
-                                            ?.scheduledate
+                                        : interviewData?.scheduledate
                                     ).format("YYYY-MM-DD") +
                                       " " +
                                       (interviewData?.scheduledInterviewDtos &&
@@ -278,9 +275,7 @@ export function UpdateScheduleInterviewModal({
                                         ? interviewData
                                             ?.scheduledInterviewDtos[0]
                                             .starttime
-                                        : interviewData
-                                            ?.scheduledInterviewDtos[0]
-                                            ?.starttime)
+                                        : interviewData?.starttime)
                                   ).format("YYYY-MM-DD hh:mm A"),
                                   "hh:mm A"
                                 )
@@ -406,11 +401,9 @@ export function UpdateScheduleInterviewModal({
                       .interviewaddress !== ""
                       ? interviewData?.scheduledInterviewDtos[0]
                           .interviewaddress
-                      : interviewData?.scheduledInterviewDtos[0]
-                          ?.interviewaddress === ""
+                      : interviewData?.interviewaddress === ""
                       ? "-"
-                      : interviewData?.scheduledInterviewDtos[0]
-                          ?.interviewaddress}
+                      : interviewData?.interviewaddress}
                   </p>
                 </div>
               )}
@@ -423,11 +416,9 @@ export function UpdateScheduleInterviewModal({
                     .messagetocandidate !== ""
                     ? interviewData?.scheduledInterviewDtos[0]
                         .messagetocandidate
-                    : interviewData?.scheduledInterviewDtos[0]
-                        ?.messagetocandidate === ""
+                    : interviewData?.messagetocandidate === ""
                     ? "-"
-                    : interviewData?.scheduledInterviewDtos[0]
-                        ?.messagetocandidate}
+                    : interviewData?.messagetocandidate}
                 </p>
               </div>
               <div className="detail-padding">
@@ -439,11 +430,9 @@ export function UpdateScheduleInterviewModal({
                     .intervieweremailids !== ""
                     ? interviewData?.scheduledInterviewDtos[0]
                         .intervieweremailids
-                    : interviewData?.scheduledInterviewDtos[0]
-                        ?.intervieweremailids === ""
+                    : interviewData?.intervieweremailids === ""
                     ? "-"
-                    : interviewData?.scheduledInterviewDtos[0]
-                        ?.intervieweremailids}
+                    : interviewData?.intervieweremailids}
                 </p>
               </div>
               <div className="detail-padding">
@@ -457,11 +446,9 @@ export function UpdateScheduleInterviewModal({
                     .textremaindernumbers !== ""
                     ? interviewData?.scheduledInterviewDtos[0]
                         .textremaindernumbers
-                    : interviewData?.scheduledInterviewDtos[0]
-                        ?.textremaindernumbers === ""
+                    : interviewData?.textremaindernumbers === ""
                     ? "-"
-                    : interviewData?.scheduledInterviewDtos[0]
-                        ?.textremaindernumbers}
+                    : interviewData?.textremaindernumbers}
                 </p>
               </div>
             </Col>

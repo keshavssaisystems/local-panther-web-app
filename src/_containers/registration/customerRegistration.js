@@ -336,11 +336,11 @@ export function CustomerRegistration() {
     SetShowAlert(data);
   };
 
-  const verifyMobileOTPDetails = async function () {
+  const verifyMobileOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.mobile !== "") {
-      otpDetails.phoneotp = otp.mobile;
+    let otp_new = data;
+    if (otp_new.mobile !== "") {
+      otpDetails.phoneotp = otp_new.mobile;
       otpDetails.emailotp = null;
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -370,13 +370,13 @@ export function CustomerRegistration() {
     }
   };
 
-  const verifyEmailOTPDetails = async function () {
+  const verifyEmailOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.email !== "") {
+    let otp_new = data;
+    if (otp_new.email !== "") {
       new_data.email = true;
       otpDetails.phoneotp = null;
-      otpDetails.emailotp = otp.email;
+      otpDetails.emailotp = otp_new.email;
 
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -509,7 +509,7 @@ export function CustomerRegistration() {
         }
       }
       if (otp_new.mobile.length === 6) {
-        verifyMobileOTPDetails();
+        verifyMobileOTPDetails(otp_new);
       }
     }
     if (check === "email") {
@@ -533,7 +533,7 @@ export function CustomerRegistration() {
         }
       }
       if (otp_new.email.length === 6) {
-        verifyEmailOTPDetails();
+        verifyEmailOTPDetails(otp_new);
       }
     }
   };
@@ -961,7 +961,7 @@ export function CustomerRegistration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyMobileOTPDetails()}
+                onClick={() => verifyMobileOTPDetails(otp)}
               >
                 Verify
               </Button>
@@ -1052,7 +1052,7 @@ export function CustomerRegistration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyEmailOTPDetails()}
+                onClick={() => verifyEmailOTPDetails(otp)}
               >
                 Verify
               </Button>
