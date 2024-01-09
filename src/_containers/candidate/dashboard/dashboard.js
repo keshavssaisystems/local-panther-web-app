@@ -218,6 +218,7 @@ export function CandidateDashboard() {
             “Enhance your experience and find the best job matches by updating
             your <span className="candidate-profile-prompt-bold">Skills</span>,
             <span className="candidate-profile-prompt-bold">
+              {" "}
               Qualifications
             </span>
             , and{" "}
