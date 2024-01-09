@@ -127,32 +127,32 @@ export function BullhornCandidate({ title }) {
         row.isreadytoworkimmediately === false ? "No" : "Yes",
       minWidth: "8%",
     },
-    {
-      name: <span className="table-title">Send invitation</span>,
-      cell: (row) => (
-        <>
-          <ButtonGroup>
-            <Button
-              size="sm"
-              title="Send Invitation"
-              className="btn-icon"
-              color="success"
-            >
-              <img src={customerIcons?.list_accept} alt="list apply"></img>
-            </Button>
-            <Button
-              size="sm"
-              title="Resend Invitation"
-              className="btn-icon"
-              color="warning"
-            >
-              <img src={customerIcons?.list_accept} alt="list apply"></img>
-            </Button>
-          </ButtonGroup>
-        </>
-      ),
-      minWidth: "7%",
-    },
+    // {
+    //   name: <span className="table-title">Send invitation</span>,
+    //   cell: (row) => (
+    //     <>
+    //       <ButtonGroup>
+    //         <Button
+    //           size="sm"
+    //           title="Send Invitation"
+    //           className="btn-icon"
+    //           color="success"
+    //         >
+    //           <img src={customerIcons?.list_accept} alt="list apply"></img>
+    //         </Button>
+    //         <Button
+    //           size="sm"
+    //           title="Resend Invitation"
+    //           className="btn-icon"
+    //           color="warning"
+    //         >
+    //           <img src={customerIcons?.list_accept} alt="list apply"></img>
+    //         </Button>
+    //       </ButtonGroup>
+    //     </>
+    //   ),
+    //   minWidth: "7%",
+    // },
   ];
   const customStyles = {
     headCells: {
