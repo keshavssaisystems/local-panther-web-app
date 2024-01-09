@@ -66,6 +66,7 @@ import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
 import { SubsidaryList } from "_containers/admin/masters/subsidary";
+import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -288,6 +289,10 @@ export function App() {
           <Route
             path="/report/non-published-jobs/:id"
             element={<NonPublishedJobs title={"Non Published Jobs"} />}
+          />
+          <Route
+            path="/report/bullhorn-candidate-report/16"
+            element={<BullhornCandidate title={"Bullhorn Candidate Report"} />}
           />
         </>
       );
