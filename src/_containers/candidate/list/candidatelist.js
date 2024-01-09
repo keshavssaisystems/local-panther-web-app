@@ -642,7 +642,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Our advanced AI matching system efficiently reviews
                       candidate profiles and job requirements to connect
                       candidates with the best job opportunities. By using this
@@ -767,7 +767,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A job record may be marked with questions or doubts,
                       indicating uncertain applications due to a lack of
                       information, qualifications, and locations. These jobs may
@@ -847,7 +847,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Applied jobs are those that users submit applications for
                       through the platform. They are marked as applied and are
                       stored in a separate section of the profile. The user can
@@ -925,7 +925,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A scheduled interview is an appointment with a customer to
                       discuss qualifications for a job, typically in person, by
                       phone, or video, after the initial screening process.
@@ -1002,7 +1002,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       An accepted job is when candidates agree to the terms of
                       the offer and confirm their intention to work for the
                       customer, securing the job and preparing to start working.
@@ -1079,7 +1079,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A rejected job refers to a decision to decline an offer or
                       a customer rescinding it, indicating that the individual
                       has decided not to work for the customer or has changed
@@ -1157,7 +1157,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       An offer is a formal proposal from a customer, detailing
                       job details, salary, benefits, start date, and work hours,
                       indicating successful completion of the interview process.

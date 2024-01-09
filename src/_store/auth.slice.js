@@ -92,6 +92,14 @@ export const logoutThunk = createAsyncThunk(
   }
 );
 
+export const putRegisterCustomer = createAsyncThunk(
+  `${name}/putRegisterCustomer`,
+  async ({ payload, userRegistrationId }) => {
+    const PUT_REG_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCustomer/${userRegistrationId}`;
+    return await fetchWrapper.put(PUT_REG_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -232,6 +240,15 @@ const authSlice = createSlice({
       state.error = action.error;
     },
 
+    [putRegisterCustomer.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [putRegisterCustomer.fulfilled]: (state, { payload = {} }) => {
+      state.error = null;
+    },
+    [putRegisterCustomer.rejected]: (state, action) => {
+      state.error = action.error;
+    },
     [getShareJobDetails.pending]: (state, { payload }) => {
       state.shareJobDetail = [];
     },
@@ -282,6 +299,7 @@ export const authActions = {
   registerCustomer,
   getShareJobDetails,
   logoutThunk,
+  putRegisterCustomer,
 };
 
 export const authReducer = authSlice.reducer;
