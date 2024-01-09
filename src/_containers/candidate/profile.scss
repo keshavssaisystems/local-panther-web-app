@@ -24,6 +24,15 @@
     margin: 0 auto !important;
     float: none;
   }
+  .current-emp-text {
+    color: var(--grey, #979797);
+    font-family: Capitana;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 16px; /* 123.077% */
+    margin-left: 10px;
+  }
   .profile-img {
     min-width: 100px !important;
     min-height: 130px !important;

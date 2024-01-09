@@ -156,7 +156,7 @@ const getProfileSlice = createSlice({
             organization.length > 0 ? organization[0].company : "Not Working",
           eligibility: state.dropdownLists.eligibilityDropDown.find(
             (x) => x.id == filter_data.employmenteligiblity
-          ).name,
+          )?.name,
           readyToWork: filter_data.isreadytoworkimmediately ? "Yes" : "No",
           phonenumber: filter_data.phonenumber,
           email: filter_data.email,
@@ -183,6 +183,7 @@ const getProfileSlice = createSlice({
           employmenteligiblity: filter_data.employmenteligiblity,
           address: filter_data.address,
           isreadytoworkimmediately: filter_data.isreadytoworkimmediately,
+          isexcludemycurrentemployer: filter_data.isexcludemycurrentemployer,
           isactive: true,
           userid: 0,
           currentUserId: 0,
