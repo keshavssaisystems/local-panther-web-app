@@ -83,6 +83,14 @@ export const readNotification = createAsyncThunk(
     return await fetchWrapper.post(READ_NOTI_END_POINT);
   }
 );
+export const getCandidateSkillsListThunk = createAsyncThunk(
+  `${name}/getCandidateSkillsListThunk`,
+  async ({ candidateId }) => {
+    const READ_NOTI_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CandidateSkill?candidateId=${candidateId}&isActive=true&pageSize=10&pageNumber=1
+    `;
+    return await fetchWrapper.get(READ_NOTI_END_POINT);
+  }
+);
 
 // Create the slice
 const candidateDashboardSlice = createSlice({
@@ -98,6 +106,7 @@ const candidateDashboardSlice = createSlice({
     alertsLoader: false,
     schedulesLoader: false,
     jobsLoader: false,
+    availableSkills: [],
   },
   reducers: {},
 
@@ -221,6 +230,13 @@ const candidateDashboardSlice = createSlice({
     [readNotification.rejected]: (state, action) => {
       // state.alertsLoader = false;
     },
+    [getCandidateSkillsListThunk.pending]: (state) => {},
+    [getCandidateSkillsListThunk.fulfilled]: (state, action) => {
+      state.availableSkills = action.payload.data;
+    },
+    [getCandidateSkillsListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -237,6 +253,7 @@ export const candidateDashboardActions = {
   getLatestJobs,
   deleteNotifications,
   readNotification,
+  getCandidateSkillsListThunk,
 };
 
 export const candidateDashboardReducer = candidateDashboardSlice.reducer;
