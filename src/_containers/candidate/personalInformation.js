@@ -123,6 +123,8 @@ export function PersonalInformation(props) {
       isreadytoworkimmediately:
         selectedCandidate.personalInfo.isreadytoworkimmediately,
       address: selectedCandidate.personalInfo.address,
+      isexcludemycurrentemployer:
+        selectedCandidate.personalInfo.isexcludemycurrentemployer,
       city: [
         {
           value: selectedCandidate.personalInfo.cityid,
@@ -335,8 +337,10 @@ export function PersonalInformation(props) {
     return maskedPhoneNumber;
   }
 
-  async function onSubmit(e) {
-    e.preventDefault();
+  async function onSubmit(e, currentEmployer) {
+    if (e !== "") {
+      e.preventDefault();
+    }
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
     if (new_data.city[0]?.value == 0) {
@@ -382,6 +386,7 @@ export function PersonalInformation(props) {
         currentUserId: userDetails.UserId,
         jobprofile: new_data.jobprofile,
         pronounid: new_data.pronoun[0]?.value,
+        isexcludemycurrentemployer: currentEmployer,
       };
 
       let response = await dispatch(
@@ -395,6 +400,13 @@ export function PersonalInformation(props) {
       }
       setContactModal(false);
     }
+  }
+
+  function onChangeCurrentEmployer(value) {
+    let new_data = { ...getResponse };
+    new_data.isexcludemycurrentemployer = value;
+    setGetResponse(new_data);
+    onSubmit("", value);
   }
 
   const checkCityValid = function () {
@@ -634,7 +646,7 @@ export function PersonalInformation(props) {
             <div>
               {selectedCandidate.personalInfo.email ? (
                 <Row className="g-0">
-                  <Col sm="12" md="12" xl="6" className=" mb-0">
+                  <Col Col sm="12" md="12" xl="4" className=" mb-0">
                     <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
                       <div className="icon-wrapper rounded-circle profile-img">
                         <img
@@ -690,7 +702,10 @@ export function PersonalInformation(props) {
                               <Label className="candidate-label mb-0">
                                 Employment eligibility:{" "}
                                 <strong className="content-text">
-                                  {selectedCandidate.personalInfo.eligibility}
+                                  {!selectedCandidate.personalInfo.eligibility
+                                    ? "NA"
+                                    : selectedCandidate.personalInfo
+                                        .eligibility}
                                 </strong>
                               </Label>
                             </Col>
@@ -708,13 +723,13 @@ export function PersonalInformation(props) {
                     </div>
                   </Col>
 
-                  <Col sm="12" md="12" xl="6" className="">
-                    <div className="m-3 float-end">
+                  <Col Col sm="12" md="12" xl="4" className="">
+                    {/* <div className="m-3 float-end">
                       <BsPencil
                         className="edit-icon"
                         onClick={(evt) => setContactModal(true)}
                       />
-                    </div>
+                    </div> */}
                     <Row>
                       <Row className="mt-4">
                         <Col className="mb-2 mt-2">
@@ -760,7 +775,7 @@ export function PersonalInformation(props) {
                       </Row>
                     </Row>
                   </Col>
-                  {/* <Col sm="12" md="12" xl="3" className="mt-3">
+                  <Col sm="12" md="12" xl="4" className="mt-3">
                     <div className="me-3 float-end">
                       <BsPencil
                         className="edit-icon"
@@ -769,20 +784,27 @@ export function PersonalInformation(props) {
                     </div>
                     <Row className="mt-3">
                       <Row>
-                        {selectedCandidate.personalInfo.dob ? (
-                          <Col className="mb-2">
-                            <div>
-                              <BsBalloon className="personal-sec-icon me-2" />
-                              <span className="content-text mt-3">
-                                {formatDate(selectedCandidate.personalInfo.dob)}
-                              </span>
-                            </div>
-                          </Col>
-                        ) : (
-                          <></>
-                        )}
+                        <FormGroup check>
+                          <Input
+                            name="currentEmployer"
+                            type="checkbox"
+                            checked={getResponse.isexcludemycurrentemployer}
+                            onChange={(evt) =>
+                              onChangeCurrentEmployer(
+                                !getResponse.isexcludemycurrentemployer
+                              )
+                            }
+                          />{" "}
+                          <Label className="content-text">
+                            Exclude current employer
+                          </Label>
+                        </FormGroup>
                       </Row>
-                      <Row>
+                      <p className="current-emp-text">
+                        If checked, you won't see job openings at your current
+                        employer
+                      </p>
+                      {/* <Row>
                         <Col className="mb-2">
                           {selectedCandidate.personalInfo.gender !== "" ? (
                             <div>
@@ -824,9 +846,9 @@ export function PersonalInformation(props) {
                             <></>
                           )}
                         </Col>
-                      </Row>
+                      </Row> */}
                     </Row>
-                  </Col> */}
+                  </Col>
                 </Row>
               ) : (
                 <></>
@@ -852,7 +874,11 @@ export function PersonalInformation(props) {
             </ModalHeader>
             <ModalBody>
               {getResponse ? (
-                <Form onSubmit={(evt) => onSubmit(evt)}>
+                <Form
+                  onSubmit={(evt) =>
+                    onSubmit(evt, getResponse.isexcludemycurrentemployer)
+                  }
+                >
                   <Row className="mb-3">
                     <Col className="col-6">
                       <Label for="firstname" className="fw-semi-bold">
