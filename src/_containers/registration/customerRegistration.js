@@ -57,9 +57,11 @@ export function CustomerRegistration() {
 
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListPublicThunk());
+    dispatch(dropdownActions.getEmployeeCountThunk());
   }, []);
 
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
+  const employeeList = useSelector((state) => state.dropdown.employeeList);
 
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
@@ -184,7 +186,8 @@ export function CustomerRegistration() {
         !companyCountry ||
         !companyEmail ||
         !companyZip ||
-        !companyEmp
+        !companyEmp ||
+        companyEmp === "0"
       ) {
         setCompanyNameErr(!companyName);
         setCompanyAddrErr(!companyAddr);
@@ -193,7 +196,7 @@ export function CustomerRegistration() {
         setCompanyCountryErr(!companyCountry);
         setCompanyEmailErr(!companyEmail);
         setCompanyZipErr(!companyZip);
-        setCompanyEmpErr(!companyEmp);
+        setCompanyEmpErr(!companyEmp || companyEmp === "0");
         return;
       } else {
         let cityId = String(companyCity.value);
@@ -211,7 +214,9 @@ export function CustomerRegistration() {
           lastname: formData.lastName,
           email: formData.email,
           password: formData.password,
-          phonenumber: formData.phoneNumber,
+          phonenumber: formData.phoneNumber
+            ? formData.phoneNumber.replace(/\D/g, "")
+            : "",
           address: "",
           zipcode: "",
           cityid: Number(formData.cityid),
@@ -224,7 +229,9 @@ export function CustomerRegistration() {
             companyid: 0,
             companyname: companyName,
             noofemployees: companyEmp,
-            companycontactphonenumber: companyPhone,
+            companycontactphonenumber: companyPhone
+              ? companyPhone.replace(/\D/g, "")
+              : "",
             companycontactemail: companyEmail,
             companyaddress: companyAddr,
             companycityid: cityId,
@@ -259,7 +266,9 @@ export function CustomerRegistration() {
         lastname: formData.lastName,
         email: formData.email,
         password: formData.password,
-        phonenumber: formData.phoneNumber,
+        phonenumber: formData.phoneNumber
+          ? formData.phoneNumber.replace(/\D/g, "")
+          : "",
         address: "",
         zipcode: "",
         cityid: Number(formData.cityid),
@@ -876,8 +885,8 @@ export function CustomerRegistration() {
                     No. of Employees <span className="text-danger">*</span>
                   </Label>
                   <InputGroup>
-                    <input
-                      type="number"
+                    <Input
+                      type="select"
                       name="companyemployees"
                       id="companyemployees"
                       placeholder="Enter no. of employees"
@@ -887,15 +896,29 @@ export function CustomerRegistration() {
                       }`}
                       onChange={(e) => {
                         setCompanyEmp(e.target.value);
-                        setCompanyEmpErr(e.target.value === "");
+                        setCompanyEmpErr(
+                          e.target.value === "" || e.target.value === "0"
+                        );
                       }}
                       autoComplete="off"
                       maxLength={70}
-                    />
+                    >
+                      <option key={0} value={0}>
+                        Select no of employee
+                      </option>
+                      {employeeList?.length > 0 &&
+                        employeeList?.map((options) => (
+                          <option key={options.id} value={options.id}>
+                            {options.name}
+                          </option>
+                        ))}
+                    </Input>
 
                     <FormFeedback>
                       {" "}
-                      {companyEmpErr ? "Please enter number of employees." : ""}
+                      {companyEmpErr
+                        ? "Please select number of employees."
+                        : ""}
                     </FormFeedback>
                   </InputGroup>
                 </FormGroup>
@@ -988,8 +1011,9 @@ export function CustomerRegistration() {
                     Zipcode <span className="text-danger">*</span>
                   </Label>
                   <InputGroup>
-                    <input
+                    <InputMask
                       type="text"
+                      mask="99999"
                       name="companyzip"
                       id="companyzip"
                       placeholder="Enter company zip code"
