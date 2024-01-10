@@ -69,7 +69,7 @@ export const AddEditUser = (props) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const validationSchema = Yup.object().shape({
-    prefix: Yup.string().required("Prefix is required"),
+    // prefix: Yup.string().required("Prefix is required"),
     firstname: Yup.string().required("First name is required"),
     middlename: Yup.string(),
     lastname: Yup.string().required("Last name is required"),
@@ -106,7 +106,7 @@ export const AddEditUser = (props) => {
 
     let form = new FormData();
 
-    form.append("Prefix", payload.prefix);
+    form.append("Prefix", "");
     form.append("Firstname", payload.firstname);
     form.append("Middlename", payload.middlename);
     form.append("Lastname", payload.lastname);
@@ -287,7 +287,7 @@ export const AddEditUser = (props) => {
               </FormGroup>
             </Col>
 
-            <Col md={6}>
+            {/* <Col md={6}>
               <FormGroup>
                 <Label for="prefix" className="fw-semi-bold">
                   Prefix <span style={{ color: "red" }}>* </span>
@@ -307,7 +307,7 @@ export const AddEditUser = (props) => {
                   {errors?.prefix?.message}
                 </div>
               </FormGroup>
-            </Col>
+            </Col> */}
             <Col md={6}>
               <FormGroup>
                 <Label for="firstname">
