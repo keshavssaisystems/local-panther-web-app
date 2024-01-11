@@ -9,17 +9,17 @@ const range = (len) => {
 };
 
 const newPerson = () => {
-  const statusChance = Math.random();
+  const statusChance = 1;
   return {
-    name: namor.generate({ words: 1}),
-    age: Math.floor(Math.random() * 30),
-    visits: Math.floor(Math.random() * 100),
-    progress: Math.floor(Math.random() * 100),
+    name: namor.generate({ words: 1 }),
+    age: Math.floor(1 * 30),
+    visits: Math.floor(1 * 100),
+    progress: Math.floor(1 * 100),
     status:
-      statusChance > 0.75 
+      statusChance > 0.75
         ? "Accepted"
         : statusChance > 0.66
-          ? "No response"
+        ? "No response"
         : statusChance > 0.33
         ? "followup"
         : "onHold",

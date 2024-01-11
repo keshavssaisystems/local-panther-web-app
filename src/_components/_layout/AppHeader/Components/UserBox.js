@@ -227,17 +227,13 @@ export function UserBox() {
                       <PerfectScrollbar>
                         <Nav vertical>
                           <NavItem className="mb-1">
-                            <NavLink
-                              href="javascript:void(0)"
-                              onClick={() => setChangePwd(true)}
-                            >
+                            <NavLink onClick={() => setChangePwd(true)}>
                               Change password
                             </NavLink>
                           </NavItem>
                           {Number(localStorage.getItem("userroleid")) !== 1 && (
                             <NavItem>
                               <NavLink
-                                href="javascript:void(0)"
                                 onClick={() => [setDeactivateConfirm(true)]}
                               >
                                 Deactivate account
@@ -245,7 +241,7 @@ export function UserBox() {
                             </NavItem>
                           )}
                           <NavItem>
-                            <NavLink href="javascript:void(0)">
+                            <NavLink>
                               Notifications
                               <Switch
                                 onChange={() => toggleNotification(!isToggleOn)}

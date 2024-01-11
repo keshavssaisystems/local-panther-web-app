@@ -1355,7 +1355,7 @@ export function CustomerRegistration() {
                       </span>
                     ) : (
                       <a
-                        href="javascript:void(0)"
+                        href="#"
                         onClick={() => resendOTP("mobile")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
@@ -1446,7 +1446,7 @@ export function CustomerRegistration() {
                       </span>
                     ) : (
                       <a
-                        href="javascript:void(0)"
+                        href="#"
                         onClick={() => resendOTP("email")}
                         className="btn-lg btn btn-link otp-link-label"
                       >

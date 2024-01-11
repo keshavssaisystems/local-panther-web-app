@@ -113,7 +113,7 @@ export function TodoList(props) {
 
           <div className="btn-actions-pane-right text-capitalize">
             <a
-              href="javascript:void(0)"
+              href="#"
               onClick={(e) => addNotes("add", "", e)}
               className="btn-lg btn btn-link add-label"
             >

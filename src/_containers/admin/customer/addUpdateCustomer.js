@@ -250,7 +250,7 @@ export const AddUpdateCustomer = ({
                   {!isEdit && (
                     <a
                       className="float-end"
-                      href="javascript:void(0)"
+                      href="#"
                       onClick={() => setCompanyModal(true)}
                     >
                       {" "}
