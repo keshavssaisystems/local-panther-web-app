@@ -381,6 +381,7 @@ export function CustomerRegistration() {
       isactive: true,
       currentuserid: 0,
       type: "phone",
+      userroleid: 2,
     };
     let response;
     if (check === "phone") {
