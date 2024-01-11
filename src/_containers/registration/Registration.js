@@ -242,6 +242,7 @@ export function Registration() {
       isactive: true,
       currentuserid: 0,
       type: "phone",
+      userroleid: 3,
     };
     let response;
     if (check === "phone") {
