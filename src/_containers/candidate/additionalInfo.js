@@ -95,7 +95,7 @@ export function AdditionalInformation(props) {
     setDeleteConfirm(true);
   };
 
-  async function deleteAdditionalInfo() {
+  async function deleteAdditionalInfo(event) {
     let response = await dispatch(
       additionalInfoDetailsSlice.deleteadditionalInfoThunk(deleteId)
     );

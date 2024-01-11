@@ -253,7 +253,7 @@ export default function JobPreview({ previewData, editdata }) {
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
                     previewData.basicInformation.stateName === undefined
-                      ? "US"
+                      ? "-"
                       : "US"}
                   </p>
                 </div>

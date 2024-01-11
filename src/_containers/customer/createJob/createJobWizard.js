@@ -228,7 +228,7 @@ export function CreateJobWizard({ type }) {
           companyId={customerDetails.companyid}
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
-          publishJob={(e) => publishNewJob(e)}
+          publishJob={() => publishNewJob()}
           jobId={type === "edit" ? selectedJobDetailsForEdit[0]?.jobid : 0}
           type={type}
         />
@@ -287,7 +287,7 @@ export function CreateJobWizard({ type }) {
   };
   const handleKeyDown = (evt) => {
     if (evt.which === 13) {
-      this.next();
+      next();
     }
   };
   const next = () => {

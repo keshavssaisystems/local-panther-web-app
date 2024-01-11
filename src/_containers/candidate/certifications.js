@@ -74,7 +74,7 @@ export function CertificationDetails(props) {
     setDeleteConfirm(true);
   };
 
-  const deleteQualification = async function () {
+  const deleteQualification = async function (event) {
     let response = await dispatch(
       certificateDetailsSlice.deletecertificateThunk(deleteId)
     );

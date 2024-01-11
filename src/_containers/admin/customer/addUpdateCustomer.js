@@ -219,7 +219,7 @@ export const AddUpdateCustomer = ({
     isEdit === true ? putData(data) : postData(data);
   };
 
-  const closeCompanyModal = () => {
+  const closeCompanyModal = (event) => {
     dispatch(dropdownActions.getCompanyListThunk());
     setCompanyModal(false);
   };

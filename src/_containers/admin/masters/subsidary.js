@@ -150,7 +150,7 @@ export const SubsidaryList = (props) => {
     setOpenModal(true);
   };
 
-  const closeModal = () => {
+  const closeModal = (event) => {
     setOpenModal(false);
     getSubsidaryList(pageSize, pageNo);
   };

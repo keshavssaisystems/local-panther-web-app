@@ -69,7 +69,7 @@ export function TodoList(props) {
     }
     setModal(true);
   };
-  const deleteToDo = async function () {
+  const deleteToDo = async function (event) {
     setDeleteConfirm(false);
     let id = deleteId;
     let response = await dispatch(candidateDashboardActions.deleteToDo({ id }));

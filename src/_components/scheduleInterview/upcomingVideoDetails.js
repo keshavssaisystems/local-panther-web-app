@@ -383,7 +383,7 @@ export function UpcomingVideoDetails({
               className="mb-2 mr-2 btn-transition"
               color="primary"
               size={"sm"}
-              onClick={(e) => downloadInterviewGuide(e)}
+              onClick={() => downloadInterviewGuide()}
             >
               {" "}
               Download interview guide{" "}
@@ -515,7 +515,7 @@ export function UpcomingVideoDetails({
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
           title="Are you sure?"
-          onConfirm={(e) => cancelSchedule(e)}
+          onConfirm={() => cancelSchedule()}
           onCancel={() => setShowCancelPopup(false)}
           focusCancelBtn
         >
@@ -537,7 +537,7 @@ export function UpcomingVideoDetails({
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
           title="Are you sure?"
-          onConfirm={(e) => acceptSchedule(e)}
+          onConfirm={() => acceptSchedule()}
           onCancel={() => setShowAcceptPopup(false)}
           focusCancelBtn
         >
@@ -559,7 +559,7 @@ export function UpcomingVideoDetails({
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
           title="Are you sure?"
-          onConfirm={(e) => rejectSchedule(e)}
+          onConfirm={() => rejectSchedule()}
           onCancel={() => setShowRejectPopup(false)}
           focusCancelBtn
         >

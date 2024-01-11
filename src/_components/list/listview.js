@@ -12,12 +12,6 @@ import {
   Col,
   Button,
 } from "reactstrap";
-import {
-  IoIosCheckmark,
-  IoIosClose,
-  IoIosThumbsUp,
-  IoIosHelp,
-} from "react-icons/io";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleInterviewModal";
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
@@ -344,7 +338,7 @@ export const CandidateListView = (props) => {
       );
     }
   };
-  const renderButtonsForCustomView = () => {
+  const renderButtonsForCustomView = (props) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
         <Row xs={4} sm={4} md={4} lg={4} xl={4} noGutters>
@@ -674,7 +668,7 @@ export const CandidateListView = (props) => {
     props.onActionClick(candidaterecommendedjobid, type);
   };
 
-  const onCloseRejSModal = () => {
+  const onCloseRejSModal = (event) => {
     setShowRejSModal(false);
     props.updateList();
   };

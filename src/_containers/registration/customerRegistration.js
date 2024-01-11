@@ -1104,7 +1104,7 @@ export function CustomerRegistration() {
                   <Button
                     className="grp-btn"
                     color="light"
-                    onClick={() => validateOTP("email", errors)}
+                    onClick={() => validateOTP("email")}
                   >
                     Verify
                   </Button>
@@ -1156,7 +1156,7 @@ export function CustomerRegistration() {
                   <Button
                     className="grp-btn"
                     color="light"
-                    onClick={() => validateOTP("phone", errors)}
+                    onClick={() => validateOTP("phone")}
                   >
                     Verify
                   </Button>

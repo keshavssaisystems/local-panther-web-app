@@ -99,7 +99,7 @@ export default function PublishJobStep({
                 color="primary"
                 size="lg"
                 className="btn-shadow btn-wide"
-                onClick={(e) => createNewJob(e)}
+                onClick={() => createNewJob()}
               >
                 Create new job
               </Button>{" "}
