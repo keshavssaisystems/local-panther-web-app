@@ -148,6 +148,7 @@ export const AdminListing = ({ entity }) => {
                 "switch-on": row.isactive,
                 "switch-off": !row.isactive,
               })}
+              size="sm"
             >
               <input type="checkbox" />
               <span className="switch-left">ON</span>

@@ -57,9 +57,11 @@ export function CustomerRegistration() {
 
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListPublicThunk());
+    dispatch(dropdownActions.getEmployeeCountThunk());
   }, []);
 
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
+  const employeeList = useSelector((state) => state.dropdown.employeeList);
 
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
@@ -68,6 +70,7 @@ export function CustomerRegistration() {
   const authUser = useSelector((x) => x?.auth?.token);
   const [message, setMessage] = useState("");
   const [countryList, setCountryList] = useState([]);
+  const [compCountryList, setCompCountryList] = useState([]);
   const [cityReqError, setCityReqError] = useState(false);
   const [otp, setOtp] = useState({
     mobile: "",
@@ -81,6 +84,33 @@ export function CustomerRegistration() {
   const [showOtpForm, setOtpForm] = useState(false);
   const [showEmailOtp, setEmailForm] = useState(false);
   const [companyValue, setCompanyValue] = useState(1);
+
+  const [companyName, setCompanyName] = useState("");
+  const [companyNameErr, setCompanyNameErr] = useState(false);
+  const [companyEmail, setCompanyEmail] = useState("");
+  const [companyEmailErr, setCompanyEmailErr] = useState(false);
+  const [companyPhone, setCompanyPhone] = useState("");
+  const [companyPhoneErr, setCompanyPhoneErr] = useState(false);
+  const [companyEmp, setCompanyEmp] = useState("");
+  const [companyEmpErr, setCompanyEmpErr] = useState(false);
+  const [companyAddr, setCompanyAddr] = useState("");
+  const [companyAddrErr, setCompanyAddrErr] = useState(false);
+  const [companyCity, setCompanyCity] = useState("");
+  const [companyCityErr, setCompanyCityErr] = useState(false);
+  const [companyCountry, setCompanyCountry] = useState("");
+  const [companyCountryErr, setCompanyCountryErr] = useState(false);
+  const [companyZip, setCompanyZip] = useState("");
+  const [companyZipErr, setCompanyZipErr] = useState(false);
+  // const [newCompanyDetails, setNewCompanyDetails] = useState({
+  //   companyname: { value: "", error: false },
+  //   companyemail: { value: "", error: false },
+  //   companyphone: { value: "", error: false },
+  //   companyemployees: { value: "", error: false },
+  //   companyaddress: { value: "", error: false },
+  //   companycity: { value: "", error: false },
+  //   companycountry: { value: "", error: false },
+  //   companyzip: { value: "", error: false },
+  // });
 
   useEffect(() => {
     // redirect to home if already logged in
@@ -135,6 +165,7 @@ export function CustomerRegistration() {
     useForm(formOptions);
   const { errors, isSubmitting } = formState;
   const [cityList, setCityList] = useState([]);
+  const [compCityList, setCompCityList] = useState([]);
   const [postData, setPostData] = useState({});
 
   async function onSubmit(formData) {
@@ -145,37 +176,122 @@ export function CustomerRegistration() {
       });
       return;
     }
-    let payload = {
-      customerid: 0,
-      companyid: parseInt(formData.companyid),
-      userid: 0,
-      userroleid: 2,
-      title: "",
-      firstname: formData.firstName,
-      lastname: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-      phonenumber: formData.phoneNumber,
-      address: "",
-      zipcode: "",
-      cityid: Number(formData.cityid),
-      stateid: Number(formData.stateid),
-      countryid: 1,
-      isactive: true,
-      customerstatusid: 0,
-      currentUserId: 0,
-    };
+    let userRegistrationId = otpDetails.userregistrationid;
+    if (companyValue == "-1") {
+      if (
+        !companyName ||
+        !companyAddr ||
+        !companyCity ||
+        !companyPhone ||
+        !companyCountry ||
+        !companyEmail ||
+        !companyZip ||
+        !companyEmp ||
+        companyEmp === "0"
+      ) {
+        setCompanyNameErr(!companyName);
+        setCompanyAddrErr(!companyAddr);
+        setCompanyCityErr(!companyCity);
+        setCompanyPhoneErr(!companyPhone);
+        setCompanyCountryErr(!companyCountry);
+        setCompanyEmailErr(!companyEmail);
+        setCompanyZipErr(!companyZip);
+        setCompanyEmpErr(!companyEmp || companyEmp === "0");
+        return;
+      } else {
+        let cityId = String(companyCity.value);
+        let stateId = String(
+          compCityList?.find((x) => x.cityid === companyCity.value)?.stateid
+        );
 
-    let response = await dispatch(authActions.registerCustomer(payload));
-    if (!response.payload) {
-      setMessage(response.error.message);
+        let payload = {
+          customerid: 0,
+          companyid: 0,
+          userid: 0,
+          userroleid: 2,
+          title: "",
+          firstname: formData.firstName,
+          lastname: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          phonenumber: formData.phoneNumber
+            ? formData.phoneNumber.replace(/\D/g, "")
+            : "",
+          address: "",
+          zipcode: "",
+          cityid: Number(formData.cityid),
+          stateid: Number(formData.stateid),
+          countryid: 1,
+          isactive: true,
+          customerstatusid: 0,
+          currentUserId: 0,
+          userCompany: {
+            companyid: 0,
+            companyname: companyName,
+            noofemployees: companyEmp,
+            companycontactphonenumber: companyPhone
+              ? companyPhone.replace(/\D/g, "")
+              : "",
+            companycontactemail: companyEmail,
+            companyaddress: companyAddr,
+            companycityid: cityId,
+            companystateid: stateId,
+            companycountryid: 1,
+            companyzipcode: companyZip,
+          },
+        };
 
-      showSweetAlert({
-        title: response.error.message,
-        type: "error",
-      });
+        let response = await dispatch(
+          authActions.putRegisterCustomer({ payload, userRegistrationId })
+        );
+        if (!response.payload) {
+          setMessage(response.error.message);
+
+          showSweetAlert({
+            title: response.error.message,
+            type: "error",
+          });
+        } else {
+          history.navigate("/registration-success");
+        }
+      }
     } else {
-      history.navigate("/registration-success");
+      let payload = {
+        customerid: 0,
+        companyid: parseInt(formData.companyid),
+        userid: 0,
+        userroleid: 2,
+        title: "",
+        firstname: formData.firstName,
+        lastname: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        phonenumber: formData.phoneNumber
+          ? formData.phoneNumber.replace(/\D/g, "")
+          : "",
+        address: "",
+        zipcode: "",
+        cityid: Number(formData.cityid),
+        stateid: Number(formData.stateid),
+        countryid: 1,
+        isactive: true,
+        customerstatusid: 0,
+        currentUserId: 0,
+      };
+
+      let response = await dispatch(
+        authActions.putRegisterCustomer({ payload, userRegistrationId })
+      );
+      if (!response.payload) {
+        setMessage(response.error.message);
+
+        showSweetAlert({
+          title: response.error.message,
+          type: "error",
+        });
+      } else {
+        history.navigate("/registration-success");
+      }
     }
   }
 
@@ -336,11 +452,11 @@ export function CustomerRegistration() {
     SetShowAlert(data);
   };
 
-  const verifyMobileOTPDetails = async function () {
+  const verifyMobileOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.mobile !== "") {
-      otpDetails.phoneotp = otp.mobile;
+    let otp_new = data;
+    if (otp_new.mobile !== "") {
+      otpDetails.phoneotp = otp_new.mobile;
       otpDetails.emailotp = null;
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -359,9 +475,9 @@ export function CustomerRegistration() {
         setMessage("Phone number verified");
       } else {
         otp_new.mobile = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -370,13 +486,13 @@ export function CustomerRegistration() {
     }
   };
 
-  const verifyEmailOTPDetails = async function () {
+  const verifyEmailOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.email !== "") {
+    let otp_new = data;
+    if (otp_new.email !== "") {
       new_data.email = true;
       otpDetails.phoneotp = null;
-      otpDetails.emailotp = otp.email;
+      otpDetails.emailotp = otp_new.email;
 
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -395,9 +511,9 @@ export function CustomerRegistration() {
         setMessage("Email verified");
       } else {
         otp_new.email = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -445,6 +561,20 @@ export function CustomerRegistration() {
     return filter_data;
   };
 
+  const compLoadOptions = async function (inputValue) {
+    const { data = [] } = await getLocationFilter(inputValue);
+    setCompCityList(data);
+
+    let filter_data = data.map(({ cityid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.location + ", " + rest.statename}`,
+      };
+    });
+
+    return filter_data;
+  };
+
   useEffect(() => {
     let country_response;
     country_response = cityList.map(({ countryid: value, ...rest }) => {
@@ -466,8 +596,41 @@ export function CustomerRegistration() {
       setCountryList(data);
     }
   }, [cityList]);
+
+  useEffect(() => {
+    let comp_country_response;
+    comp_country_response = compCityList.map(
+      ({ countryid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.countryname}`,
+        };
+      }
+    );
+
+    let data = [];
+    if (comp_country_response.length > 0) {
+      data = Array.from(
+        new Set(comp_country_response.map((item) => item.id))
+      ).map((id) => {
+        return comp_country_response.find((item) => item.id === id);
+      });
+      setCompCountryList(data);
+    } else {
+      setCompCountryList(data);
+    }
+  }, [compCityList]);
+
   const checkCityValid = function () {
     if (cityList?.length === 0) {
+      setCityReqError(true);
+    } else {
+      setCityReqError(false);
+    }
+  };
+
+  const checkCompCityValid = function () {
+    if (compCityList?.length === 0) {
       setCityReqError(true);
     } else {
       setCityReqError(false);
@@ -508,6 +671,9 @@ export function CustomerRegistration() {
           prevInput.focus();
         }
       }
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails(otp_new);
+      }
     }
     if (check === "email") {
       new_data[index] = e;
@@ -528,6 +694,9 @@ export function CustomerRegistration() {
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails(otp_new);
       }
     }
   };
@@ -581,6 +750,7 @@ export function CustomerRegistration() {
                 onChange={(e) => onSelectCompanyDropdown(e.target.value)}
               >
                 <option value={0}>Select company</option>
+                <option value={-1}>New</option>
                 {companyDropdown?.length > 0 &&
                   companyDropdown?.map((options) => (
                     <option key={options.companyid} value={options.companyid}>
@@ -615,7 +785,261 @@ export function CustomerRegistration() {
             </FormGroup>
           </Col> */}
         </Row>
+        {companyValue == "-1" ? (
+          <Card>
+            <Row className="ms-1 me-1">
+              <Col md={12}>
+                <h5>Company Details</h5>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companyname" className="input-label">
+                    Company name <span className="text-danger">*</span>
+                  </Label>
+                  <input
+                    type="text"
+                    name="companyname"
+                    id="companyname"
+                    placeholder="Enter company name"
+                    // {...register("companyname")}
+                    className={`form-control placeholder-name ${
+                      companyNameErr ? "is-invalid" : ""
+                    }`}
+                    maxLength={50}
+                    onChange={(e) => {
+                      setCompanyName(e.target.value);
+                      setCompanyNameErr(e.target.value === "");
+                    }}
+                  />
+                  <FormFeedback>
+                    {companyNameErr ? "Please enter company name." : ""}
+                  </FormFeedback>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companyemail" className="input-label">
+                    Company Email <span className="text-danger">*</span>
+                  </Label>
+                  <InputGroup>
+                    <input
+                      type="email"
+                      name="companyemail"
+                      id="companyemail"
+                      placeholder="Enter email id"
+                      // {...register("email")}
+                      className={`form-control placeholder-name ${
+                        companyEmailErr ? "is-invalid" : ""
+                      }`}
+                      onChange={(e) => {
+                        setCompanyEmail(e.target.value);
+                        setCompanyEmailErr(e.target.value === "");
+                      }}
+                      autoComplete="off"
+                      maxLength={70}
+                    />
 
+                    <FormFeedback>
+                      {" "}
+                      {companyEmailErr ? "Please enter company email." : ""}
+                    </FormFeedback>
+                  </InputGroup>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companyphone" className="input-label">
+                    Company Phone <span className="text-danger">*</span>
+                  </Label>
+
+                  <InputGroup>
+                    <InputMask
+                      placeholder="Enter phone number"
+                      type="text"
+                      mask="(999)-999-9999"
+                      name="companyphone"
+                      id="companyphone"
+                      // disabled={validated.mobile}
+                      // {...register("phoneNumber")}
+                      className={`form-control placeholder-name ${
+                        companyPhoneErr ? "is-invalid" : ""
+                      }`}
+                      maxLength={20}
+                      onChange={(e) => {
+                        setCompanyPhone(e.target.value);
+                        setCompanyPhoneErr(e.target.value === "");
+                      }}
+                    />
+
+                    <FormFeedback>
+                      {companyPhoneErr
+                        ? "Please enter company phone number."
+                        : ""}
+                    </FormFeedback>
+                  </InputGroup>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companyemployees" className="input-label">
+                    No. of Employees <span className="text-danger">*</span>
+                  </Label>
+                  <InputGroup>
+                    <Input
+                      type="select"
+                      name="companyemployees"
+                      id="companyemployees"
+                      placeholder="Enter no. of employees"
+                      // {...register("email")}
+                      className={`form-control placeholder-name ${
+                        companyEmpErr ? "is-invalid" : ""
+                      }`}
+                      onChange={(e) => {
+                        setCompanyEmp(e.target.value);
+                        setCompanyEmpErr(
+                          e.target.value === "" || e.target.value === "0"
+                        );
+                      }}
+                      autoComplete="off"
+                      maxLength={70}
+                    >
+                      <option key={0} value={0}>
+                        Select no of employee
+                      </option>
+                      {employeeList?.length > 0 &&
+                        employeeList?.map((options) => (
+                          <option key={options.id} value={options.id}>
+                            {options.name}
+                          </option>
+                        ))}
+                    </Input>
+
+                    <FormFeedback>
+                      {" "}
+                      {companyEmpErr
+                        ? "Please select number of employees."
+                        : ""}
+                    </FormFeedback>
+                  </InputGroup>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companyaddress" className="input-label">
+                    Address <span className="text-danger">*</span>
+                  </Label>
+                  <InputGroup>
+                    <input
+                      type="text"
+                      name="companyaddress"
+                      id="companyaddress"
+                      placeholder="Enter company address"
+                      // {...register("email")}
+                      className={`form-control placeholder-name ${
+                        companyAddrErr ? "is-invalid" : ""
+                      }`}
+                      onChange={(e) => {
+                        setCompanyAddr(e.target.value);
+                        setCompanyAddrErr(e.target.value === "");
+                      }}
+                      autoComplete="off"
+                      maxLength={200}
+                    />
+
+                    <FormFeedback>
+                      {" "}
+                      {companyAddrErr ? "Please enter company address." : ""}
+                    </FormFeedback>
+                  </InputGroup>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companycity" className="fw-semi-bold">
+                    City, State <span className="text-danger">* </span>
+                  </Label>
+                  <AsyncSelect
+                    name="companycity"
+                    placeholder="Search to select"
+                    placeholderText="search"
+                    loadOptions={compLoadOptions}
+                    isMulti={false}
+                    className={`placeholder-name ${
+                      companyCityErr ? "async-border-red" : "async-no-error"
+                    }`}
+                    // {...register("cityid")}
+                    onChange={(e) => {
+                      setCompanyCity(e);
+                      setCompanyCityErr(!e);
+                      console.log(e);
+                    }}
+                  />
+                  <div className="async-error-text">
+                    {companyCityErr ? "Please select city and state." : ""}
+                  </div>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companycountry" className="fw-semi-bold">
+                    Country <span className="text-danger">* </span>
+                  </Label>
+                  <AsyncSelect
+                    name="companycountry"
+                    placeholder="Select country"
+                    placeholderText="search"
+                    isMulti={false}
+                    className={`placeholder-name ${
+                      companyCountryErr ? "async-border-red" : ""
+                    }`}
+                    // {...register("countryid")}
+                    defaultOptions={compCountryList}
+                    onChange={(e) => {
+                      setCompanyCountry(e);
+                      setCompanyCountryErr(!e);
+                    }}
+                    onMenuOpen={() => checkCompCityValid()}
+                  />
+                  <div className="async-error-text">
+                    {companyCountryErr ? "Please select country." : ""}
+                  </div>
+                </FormGroup>
+              </Col>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="companyzip" className="input-label">
+                    Zipcode <span className="text-danger">*</span>
+                  </Label>
+                  <InputGroup>
+                    <InputMask
+                      type="text"
+                      mask="99999"
+                      name="companyzip"
+                      id="companyzip"
+                      placeholder="Enter company zip code"
+                      // {...register("email")}
+                      className={`form-control placeholder-name ${
+                        companyZipErr ? "is-invalid" : ""
+                      }`}
+                      onChange={(e) => {
+                        setCompanyZip(e.target.value);
+                        setCompanyZipErr(e.target.value === "");
+                      }}
+                      autoComplete="off"
+                      maxLength={70}
+                    />
+                    <FormFeedback>
+                      {" "}
+                      {companyZipErr ? "Please enter zipcode." : ""}
+                    </FormFeedback>
+                  </InputGroup>
+                </FormGroup>
+              </Col>
+            </Row>
+          </Card>
+        ) : (
+          <></>
+        )}
         <Row>
           <Col md={6}>
             <FormGroup>
@@ -955,7 +1379,7 @@ export function CustomerRegistration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyMobileOTPDetails()}
+                onClick={() => verifyMobileOTPDetails(otp)}
               >
                 Verify
               </Button>
@@ -1046,7 +1470,7 @@ export function CustomerRegistration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyEmailOTPDetails()}
+                onClick={() => verifyEmailOTPDetails(otp)}
               >
                 Verify
               </Button>

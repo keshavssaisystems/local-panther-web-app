@@ -634,7 +634,7 @@ export function CustJobDetail({
             ) : (
               <></>
             )}
-            {!isModal ? (
+            {/* {!isModal ? (
               <CardFooter>
                 Share:{" "}
                 <ShareSocial
@@ -659,7 +659,7 @@ export function CustJobDetail({
               </CardFooter>
             ) : (
               <></>
-            )}
+            )} */}
             {isShare ? (
               <>
                 <CardFooter>

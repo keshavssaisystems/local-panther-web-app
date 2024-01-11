@@ -6,10 +6,11 @@ import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsH
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
   let jobDetail = {};
-  let skillArray = [];
   let skillsData = "-";
   const shiftsOption = useSelector((state) => state.dropdown.shift);
   const workScheduleOptions = useSelector(
@@ -254,6 +255,18 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           <div className="heading-title">
             <h6 className="job-main-heading mb-0">Job details</h6>
           </div>
+          <HeadingAndDetailWithDiv
+            heading={"Job posted on"}
+            detail={getTimezoneDateTime(
+              moment(
+                jobDetail?.publisheddate === null
+                  ? jobDetail?.jobcreatedatetime
+                  : jobDetail?.publisheddate
+              ).format("YYYY-MM-DD"),
+              "MM/DD/YYYY"
+            )}
+            iconId={3}
+          />
           <HeadingAndDetailWithDiv
             heading={"Job Type"}
             detail={returnJobType()}

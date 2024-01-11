@@ -313,11 +313,11 @@ export function Registration() {
     SetShowAlert(data);
   };
 
-  const verifyMobileOTPDetails = async function () {
+  const verifyMobileOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.mobile !== "") {
-      otpDetails.phoneotp = otp.mobile;
+    let otp_new = data;
+    if (otp_new.mobile !== "") {
+      otpDetails.phoneotp = otp_new.mobile;
       otpDetails.emailotp = null;
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -336,9 +336,9 @@ export function Registration() {
         setMessage("Phone number verified");
       } else {
         otp_new.mobile = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -347,13 +347,13 @@ export function Registration() {
     }
   };
 
-  const verifyEmailOTPDetails = async function () {
+  const verifyEmailOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.email !== "") {
+    let otp_new = data;
+    if (otp_new.email !== "") {
       new_data.email = true;
       otpDetails.phoneotp = null;
-      otpDetails.emailotp = otp.email;
+      otpDetails.emailotp = otp_new.email;
 
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -372,9 +372,9 @@ export function Registration() {
         setMessage("Email verified");
       } else {
         otp_new.email = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -475,11 +475,15 @@ export function Registration() {
           nextInput.focus();
         }
       }
+
       if (e === "") {
         const prevInput = document.getElementById(`mobile-${index - 1}`);
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails(otp_new);
       }
     }
     if (check === "email") {
@@ -501,6 +505,9 @@ export function Registration() {
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails(otp_new);
       }
     }
   };
@@ -1022,7 +1029,7 @@ export function Registration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyMobileOTPDetails()}
+                onClick={() => verifyMobileOTPDetails(otp)}
               >
                 Verify
               </Button>
@@ -1113,9 +1120,9 @@ export function Registration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyEmailOTPDetails()}
+                onClick={() => verifyEmailOTPDetails(otp)}
               >
-                Verify verification code
+                Verify
               </Button>
             </div>
           </CardFooter>
