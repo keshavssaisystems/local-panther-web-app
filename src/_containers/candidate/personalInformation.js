@@ -1267,7 +1267,7 @@ export function PersonalInformation(props) {
                     <Button
                       type="button"
                       className="close-btn"
-                      onClick={() => closeModal(false)}
+                      onClick={() => closeModal()}
                     >
                       Close
                     </Button>

@@ -1633,13 +1633,13 @@ export const CustCandidateListView = (props) => {
             type={selectedIDData.format}
             onClose={() => onCloseIdModal()}
             interviewDetail={selectedIDData}
-            postNotesData={(e) => onCloseIdModal(e)}
-            postInviteData={(e) => onCloseIdModal(e)}
-            cancelScheduleData={(e) => onCloseIdModal(e)}
-            editScheduledInterview={(e) => onCloseIdModal(e)}
-            postMessageData={(e) => onCloseIdModal(e)}
-            acceptInterview={(e) => onCloseIdModal(e)}
-            rejectInterview={(e) => onCloseIdModal(e)}
+            postNotesData={() => onCloseIdModal()}
+            postInviteData={() => onCloseIdModal()}
+            cancelScheduleData={() => onCloseIdModal()}
+            editScheduledInterview={() => onCloseIdModal()}
+            postMessageData={() => onCloseIdModal()}
+            acceptInterview={() => onCloseIdModal()}
+            rejectInterview={() => onCloseIdModal()}
             fromCustList={true}
           />
         ) : (

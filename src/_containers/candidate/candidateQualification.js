@@ -64,7 +64,7 @@ export function CandidateQualification(props) {
     setDeleteConfirm(true);
   };
 
-  const closeModal = function () {
+  const closeModal = function (event) {
     setDeleteConfirm(false);
     setSuccess(false);
     setError(false);
@@ -332,7 +332,7 @@ export function CandidateQualification(props) {
                 <Col className="d-flex justify-content-center">
                   <Button
                     className="me-2 accept-modal-btn"
-                    onClick={(evt) => closeModal()}
+                    onClick={(evt) => closeModal(false)}
                   >
                     OK
                   </Button>

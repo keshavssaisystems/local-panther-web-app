@@ -79,7 +79,7 @@ export function CandidateEducation(props) {
     setDeleteConfirm(true);
   };
 
-  const deleteQualification = async function () {
+  const deleteQualification = async function (event) {
     let response = await dispatch(
       educationDetailsSlice.deleteEducationThunk(deleteId)
     );
@@ -350,7 +350,7 @@ export function CandidateEducation(props) {
                   </Button>
                   <Button
                     className="success-close-btn"
-                    onClick={(evt) => closeModal(false)}
+                    onClick={(evt) => closeModal()}
                   >
                     NO
                   </Button>

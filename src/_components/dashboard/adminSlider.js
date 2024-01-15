@@ -92,7 +92,7 @@ export function AdminSlider({ data }) {
   return (
     <>
       <Card className="mb-3 admin-slider">
-        <div className=" mb-2 mt-3 ms-4 main-title">Upcoming interviews</div>
+        <div className=" mb-2 mt-3 ms-4 main-title">Upcoming Interviews</div>
         <CardBody>
           {data?.length > 0 && (
             <Slider {...settings}>

@@ -203,7 +203,7 @@ export default function CreateJob({
                 aria-expanded={accordion[0]}
                 aria-controls="collapseOne"
               >
-                <h5 className="m-0 p-0 fw-semi-bold">Basic information</h5>
+                <h5 className="m-0 p-0 fw-semi-bold">Basic Information</h5>
               </Button>
             </CardHeader>
             <Collapse
@@ -235,7 +235,7 @@ export default function CreateJob({
                 aria-expanded={accordion[1]}
                 aria-controls="collapseTwo"
               >
-                <h5 className="m-0 p-0 fw-semi-bold">Experience & schedules</h5>
+                <h5 className="m-0 p-0 fw-semi-bold">Experience & Schedules</h5>
               </Button>
             </CardHeader>
             <Collapse
@@ -270,7 +270,7 @@ export default function CreateJob({
                 aria-controls="collapseThree"
               >
                 <h5 className="m-0 p-0 fw-semi-bold">
-                  Compensation & benefits
+                  Compensation & Benefits
                 </h5>
               </Button>
             </CardHeader>
@@ -300,7 +300,7 @@ export default function CreateJob({
                 aria-expanded={accordion[3]}
                 aria-controls="collapseFour"
               >
-                <h5 className="m-0 p-0 fw-semi-bold">Key qualification</h5>
+                <h5 className="m-0 p-0 fw-semi-bold">Key Qualification</h5>
               </Button>
             </CardHeader>
             <Collapse
@@ -328,7 +328,7 @@ export default function CreateJob({
                 aria-expanded={accordion[4]}
                 aria-controls="collapseFive"
               >
-                <h5 className="m-0 p-0 fw-semi-bold">Pre-screen applicants</h5>
+                <h5 className="m-0 p-0 fw-semi-bold">Pre-screen Applicants</h5>
               </Button>
             </CardHeader>
             <Collapse

@@ -87,7 +87,7 @@ export function ProfilePDF(props) {
     setGetResponse(filtered_data);
   }, [get_response]);
 
-  const generatePDF = function () {
+  const generatePDF = function (event) {
     const content = componentRef.current;
 
     if (content) {

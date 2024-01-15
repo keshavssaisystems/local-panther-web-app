@@ -50,7 +50,7 @@ export const FlaggedWord = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFlaggedWordList());
-    getSkillsList(pageSize, pageNo);
+    getSkillsList();
   }, []);
 
   const [success, setSuccess] = useState(false);
@@ -164,7 +164,7 @@ export const FlaggedWord = () => {
     setLoading(false);
   };
 
-  const handleRowClick = async (row) => {
+  const handleRowClick = async (row, event) => {
     setIsAddMode(false);
     setSelectedRowData(row);
     setOpenModal(true);
@@ -242,16 +242,16 @@ export const FlaggedWord = () => {
       pageNumber: pageNo,
     };
 
-    if (status === 1) {
+    if (Number(status) === 1) {
       urlParams.skillStatusId = 1;
       setStatus(1);
     }
-    if (status === 0) {
+    if (Number(status) === 0) {
       urlParams.skillStatusId = 0;
       setStatus(0);
     }
 
-    if (status === 2) {
+    if (Number(status) === 2) {
       urlParams.skillStatusId = 2;
       setStatus(2);
     }

@@ -174,7 +174,7 @@ export function AdminCalendar({ title }) {
       start: firstDate,
       end: lastDate,
       companyId: customerId ? customerId : "",
-      candidateId: candidateId ? candidateId : "",
+      candidateId2: candidateId ? candidateId : "",
     });
   };
 
