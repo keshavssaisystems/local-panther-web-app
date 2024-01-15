@@ -97,6 +97,9 @@ export function ExperienceAndSchedules({
     postData(data);
     setPreValue(data);
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
     esFormSubmitted(true);
   };
   const getJobType = (jobTypeArray) => {

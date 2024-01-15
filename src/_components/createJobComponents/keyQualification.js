@@ -127,6 +127,9 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
     }
     postData(data);
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
   };
 
   const addNewSkill = () => {
