@@ -1,8 +1,6 @@
 .score-popup{
-    font-family: "Capitana";
     .nav-item-header-custom{
         color: var(--Font-dark-grey, #2F2E2E);
-        font-family: Capitana;
         font-size: 14px;
         font-style: normal;
         font-weight: 500;
@@ -17,7 +15,6 @@
     }
     .popup-note{
         color: var(--grey, #979797);
-        font-family: Capitana;
         font-size: 11px;
         font-style: italic;
         font-weight: 400;
@@ -35,7 +32,6 @@
         background: var(--theme-secondary, #6C757D);
         color: var(--gray-white, var(--White, #FFF));
         text-align: center;
-        font-family: Capitana;
         font-size: 12px;
         font-style: normal;
         font-weight: 500;

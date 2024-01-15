@@ -706,7 +706,7 @@ export function Registration() {
                               <Button
                                 className="grp-btn"
                                 color="light"
-                                onClick={() => validateOTP("email", errors)}
+                                onClick={() => validateOTP("email")}
                               >
                                 Verify
                               </Button>
@@ -762,7 +762,7 @@ export function Registration() {
                               <Button
                                 className="grp-btn"
                                 color="light"
-                                onClick={() => validateOTP("phone", errors)}
+                                onClick={() => validateOTP("phone")}
                               >
                                 Verify
                               </Button>
@@ -1005,7 +1005,7 @@ export function Registration() {
                       </span>
                     ) : (
                       <a
-                        href="javascript:void(0)"
+                        href="#"
                         onClick={() => resendOTP("mobile")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
@@ -1096,7 +1096,7 @@ export function Registration() {
                       </span>
                     ) : (
                       <a
-                        href="javascript:void(0)"
+                        href="#"
                         onClick={() => resendOTP("email")}
                         className="btn-lg btn btn-link otp-link-label"
                       >

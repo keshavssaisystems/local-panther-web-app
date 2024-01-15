@@ -219,7 +219,7 @@ export const AddUpdateCustomer = ({
     isEdit === true ? putData(data) : postData(data);
   };
 
-  const closeCompanyModal = () => {
+  const closeCompanyModal = (event) => {
     dispatch(dropdownActions.getCompanyListThunk());
     setCompanyModal(false);
   };
@@ -250,7 +250,7 @@ export const AddUpdateCustomer = ({
                   {!isEdit && (
                     <a
                       className="float-end"
-                      href="javascript:void(0)"
+                      href="#"
                       onClick={() => setCompanyModal(true)}
                     >
                       {" "}

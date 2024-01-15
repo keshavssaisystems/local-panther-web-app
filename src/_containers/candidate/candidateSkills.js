@@ -550,7 +550,7 @@ export function CandidateSkills(props) {
                   <Button
                     type="button"
                     className="close-btn"
-                    onClick={() => closeModal(false)}
+                    onClick={() => closeModal()}
                   >
                     Close
                   </Button>
