@@ -152,6 +152,9 @@ export function PreScreenApplicant({
       customAnserType: customAnswer === "" ? "Audio" : customAnswer,
     });
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
   };
 
   const checkRestrictedWord = (fieldName, string) => {

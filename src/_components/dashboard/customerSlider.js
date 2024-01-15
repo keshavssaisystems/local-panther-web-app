@@ -94,7 +94,7 @@ export function CustomerSlider({ data }) {
     <>
       <div className="customer-slider">
         <div className=" mb-2 main-title">
-          <i className="lnr-calendar-full"></i> {"  "}Upcoming interviews
+          <i className="lnr-calendar-full"></i> {"  "}Upcoming Interviews
         </div>
       </div>
       <Card className="mb-3 customer-slider">

@@ -149,7 +149,7 @@ export default function JobPreview({ previewData, editdata }) {
       <Row className="mt-4">
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3 mb-2">
-            Basic information
+            Basic Information
           </p>
           <div className="information-section">
             <Row>
@@ -397,7 +397,7 @@ export default function JobPreview({ previewData, editdata }) {
         </Col>
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
-            Experience & schedules
+            Experience & Schedules
           </p>
           <div className="information-section">
             <Row>
@@ -464,7 +464,7 @@ export default function JobPreview({ previewData, editdata }) {
         </Col>
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
-            Compensation & benefits
+            Compensation & Benefits
           </p>
           <div className="information-section">
             <Row>
@@ -512,7 +512,7 @@ export default function JobPreview({ previewData, editdata }) {
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
-                    Compensation package
+                    Compensation Package
                   </h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.paymentBenifits === undefined ||
@@ -540,7 +540,7 @@ export default function JobPreview({ previewData, editdata }) {
         </Col>
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
-            Key qualifications
+            Key Qualifications
           </p>
           <div className="information-section">
             <Row>
@@ -582,7 +582,7 @@ export default function JobPreview({ previewData, editdata }) {
         </Col>
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
-            Pre-screen applicants
+            Pre-screen Applicants
           </p>
           <div className="information-section">
             <Row>

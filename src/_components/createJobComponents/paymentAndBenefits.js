@@ -76,6 +76,9 @@ export function PaymentAndBenefits({
     };
     postData(data);
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
   };
   return (
     <>

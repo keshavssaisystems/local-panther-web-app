@@ -102,7 +102,7 @@ export function CustJobCard({
                 <FiMapPin /> {location}
               </p>
               <p className="job-details">
-                <BsBriefcase /> Work Experience:{" "}
+                <BsBriefcase /> Work experience:{" "}
                 {additionalData?.jobExperienceScheduleDtos &&
                 additionalData?.jobExperienceScheduleDtos[0]?.experiencelevel
                   ? additionalData?.jobExperienceScheduleDtos[0]

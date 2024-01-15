@@ -484,7 +484,7 @@ export function UpcomingVideoDetails({
         </div>
         {interviewDetails?.suggestedquestion !== "" && (
           <div className="p-3 suggested-question">
-            <h6 className="fw-bold">Suggested Questions</h6>
+            <h6 className="fw-bold">Suggested questions</h6>
             {suggestedQuestionArray?.length > 0 &&
               suggestedQuestionArray?.map((suggestedQuestion) => (
                 <>

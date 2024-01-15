@@ -387,6 +387,9 @@ export function BasicInformation({
     postData(data);
     setPreValue(data);
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
     bIFormSubmitted(true);
   };
   const loadOptions = async (inputValue) => {
