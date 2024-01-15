@@ -316,7 +316,7 @@ export function CreateJobWizard({ type }) {
   return (
     <>
       <PageTitle
-        heading={type === "edit" ? "Edit job" : "Create new job"}
+        heading={type === "edit" ? "Edit job" : "Create New Job"}
         icon={titlelogo}
       />
       <Row>

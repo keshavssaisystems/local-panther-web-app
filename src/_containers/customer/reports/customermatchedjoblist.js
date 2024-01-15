@@ -285,7 +285,7 @@ export function CustomerReportMatchedCandidate() {
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem header>Download Report</DropdownItem>
+                    <DropdownItem header>Download report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
                         exportToExcel(
@@ -317,7 +317,7 @@ export function CustomerReportMatchedCandidate() {
                         setJobId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Job</option>
+                      <option value={""}>Select a job</option>
                       {jobDropDownList?.length > 0 ? (
                         jobDropDownList.map((data) => (
                           <option value={data.jobid} key={data.jobid}>

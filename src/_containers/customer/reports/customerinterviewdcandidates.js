@@ -82,7 +82,7 @@ export function CustomerReportInterviewedCandidates() {
     if (interviewedCandidateList?.length > 0) {
       let filteredData = interviewedCandidateList.map((data) => {
         return {
-          "Candidate Name": data.candidatename,
+          "Candidate name": data.candidatename,
           Title: data.jobtitle,
           "Interviewed date": data.scheduledate
             ? getTimezoneDateTime(
@@ -189,7 +189,7 @@ export function CustomerReportInterviewedCandidates() {
     //   minWidth: "100px",
     // },
     {
-      name: <span className="table-title">Candidate Name</span>,
+      name: <span className="table-title">Candidate name</span>,
       cell: (row) => (
         <span className="table-cell" title={row.candidatename}>
           <Button
@@ -336,7 +336,7 @@ export function CustomerReportInterviewedCandidates() {
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem header>Download Report</DropdownItem>
+                    <DropdownItem header>Download report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
                         exportToExcel(
@@ -368,7 +368,7 @@ export function CustomerReportInterviewedCandidates() {
                         setCandidateId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Candidate</option>
+                      <option value={""}>Select a candidate</option>
                       {candidateDropDownList?.length > 0 ? (
                         candidateDropDownList.map((data) => (
                           <option
@@ -399,7 +399,7 @@ export function CustomerReportInterviewedCandidates() {
                         setJobId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Job</option>
+                      <option value={""}>Select a job</option>
                       {jobDropDownList?.length > 0 ? (
                         jobDropDownList.map((data) => (
                           <option value={data.jobid} key={data.jobid}>
