@@ -937,8 +937,8 @@ export function Registration() {
                   <div>
                     <h3 className="slider-title">Experts In Human Capital</h3>
                     <p className="m-5 slider-content">
-                      What makes The Panther Group the ideal career partner? We
-                      focus on what you want most from your career!
+                      What makes The OpenWorX community the ideal career
+                      partner? We focus on what you want most from your career!
                     </p>
                   </div>
                 </div>
