@@ -617,13 +617,13 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="jobprofile" className="input-label">
-                            Job profile <span className="text-danger">*</span>
+                            Job Profile <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
                             name="jobprofile"
                             id="jobprofile"
-                            placeholder="Enter job profile"
+                            placeholder="Enter Job Profile"
                             {...register("jobprofile")}
                             className={`form-control placeholder-name ${
                               errors.jobprofile ? "is-invalid" : ""
@@ -641,13 +641,13 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="firstName" className="input-label">
-                            First name <span className="text-danger">*</span>
+                            First Name <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
                             name="firstName"
                             id="firstName"
-                            placeholder="Enter first name"
+                            placeholder="Enter First Name"
                             {...register("firstName")}
                             className={`form-control placeholder-name ${
                               errors.firstName ? "is-invalid" : ""
@@ -662,13 +662,13 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="lastName" className="input-label">
-                            Last name <span className="text-danger">*</span>
+                            Last Name <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
                             name="lastName"
                             id="lastName"
-                            placeholder="Enter last name"
+                            placeholder="Enter Last Name"
                             {...register("lastName")}
                             className={`form-control placeholder-name ${
                               errors.lastName ? "is-invalid" : ""
@@ -690,7 +690,7 @@ export function Registration() {
                               type="email"
                               name="email"
                               id="email"
-                              placeholder="Enter email id"
+                              placeholder="Enter Email"
                               {...register("email")}
                               className={`form-control placeholder-name ${
                                 errors.email ? "is-invalid" : ""
@@ -743,7 +743,7 @@ export function Registration() {
 
                           <InputGroup>
                             <InputMask
-                              placeholder="Enter phone number"
+                              placeholder="Enter Phone Number"
                               type="text"
                               mask="(999)-999-9999"
                               name="phoneNumber"
@@ -799,7 +799,7 @@ export function Registration() {
                           </Label>
                           <InputGroup>
                             <input
-                              placeholder="Enter password"
+                              placeholder="Enter Password"
                               name="password"
                               type={showPassword ? "text" : "password"}
                               id="password"
@@ -823,13 +823,13 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="confirmPassword" className="input-label">
-                            Confirm password{" "}
+                            Confirm Password{" "}
                             <span className="text-danger">*</span>
                           </Label>
                           <InputGroup>
                             <input
                               type={showConfirm ? "text" : "password"}
-                              placeholder="Enter confirm password"
+                              placeholder="Enter Confirm Password"
                               name="confirmPassword"
                               id="confirmPassword"
                               {...register("confirmPassword")}
@@ -882,7 +882,7 @@ export function Registration() {
                           </Label>
                           <AsyncSelect
                             name="country"
-                            placeholder="Select country"
+                            placeholder="Select Country"
                             placeholderText="search"
                             isMulti={false}
                             className={`placeholder-name ${

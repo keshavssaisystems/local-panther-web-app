@@ -387,7 +387,7 @@ export const CompanyList = () => {
                         type="submit"
                         onClick={(e) => addModal()}
                       >
-                        Add company
+                        Add Company
                       </Button>
                       <div
                         className={cx(

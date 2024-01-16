@@ -206,7 +206,7 @@ export function Login() {
                             </Label>
                             <InputGroup>
                               <input
-                                placeholder="Enter password"
+                                placeholder="Enter Password"
                                 name="password"
                                 type={showPassword ? "text" : "password"}
                                 id="password"
@@ -229,7 +229,7 @@ export function Login() {
                                 to="/forgot-password"
                                 className="text-primary forgot-pwd-text me-3 "
                               >
-                                Forgot password?
+                                Forgot Password?
                               </Link>
 
                               <Button

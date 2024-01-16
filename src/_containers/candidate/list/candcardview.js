@@ -169,7 +169,7 @@ export function CandCardView({
                       <BsBriefcase />
                     </Col>
                     <Col md="11" lg="11">
-                      <b>Work Experience</b>
+                      <b>Work experience</b>
                       <p>
                         {additionalData?.jobExperienceScheduleDtos &&
                         additionalData?.jobExperienceScheduleDtos[0]
