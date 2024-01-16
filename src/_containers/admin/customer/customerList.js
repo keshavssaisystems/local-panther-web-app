@@ -157,7 +157,7 @@ export const CustomerList = () => {
             <Button
               // outline
               size="sm"
-              title="Edit customer"
+              title="Edit Customer"
               className="btn-icon"
               color="warning"
               onClick={(e) => {
@@ -518,7 +518,7 @@ export const CustomerList = () => {
                     type="submit"
                     onClick={(e) => addModal()}
                   >
-                    Add customer
+                    Add Customer
                   </Button>
                 </Col>
               </Row>

@@ -443,7 +443,7 @@ export const Skills = () => {
                         type="submit"
                         onClick={(e) => addModal()}
                       >
-                        Add skill
+                        Add Skill
                       </Button>
                       <div
                         className={cx(

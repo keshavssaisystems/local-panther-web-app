@@ -486,7 +486,7 @@ export const AdminListing = ({ entity }) => {
       <Row>
         <Col md="12">
           <PageTitle
-            heading={entity === "roles" ? "Menu mapping" : title}
+            heading={entity === "roles" ? "Menu Mapping" : title}
             icon={icon}
           />
         </Col>
@@ -655,9 +655,9 @@ export const AdminListing = ({ entity }) => {
               <strong className="card-title-text">
                 {!isAddMode
                   ? viewMode
-                    ? "View user"
-                    : `Edit user`
-                  : `Add new user`}
+                    ? "View Vser"
+                    : `Edit User`
+                  : `Add New User`}
               </strong>
             </ModalHeader>
             <ModalBody>
