@@ -369,10 +369,10 @@ export const AddEditCompany = (props) => {
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
           {isViewMode
-            ? "View company details"
+            ? "View Company Details"
             : isAddMode
-            ? "Add new company"
-            : "Edit company"}
+            ? "Add New Company"
+            : "Edit Company"}
         </strong>
       </ModalHeader>
       <ModalBody>

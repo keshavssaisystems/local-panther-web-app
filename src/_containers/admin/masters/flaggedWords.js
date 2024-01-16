@@ -402,7 +402,7 @@ export const FlaggedWord = () => {
                         type="submit"
                         onClick={(e) => addModal()}
                       >
-                        Add flagged word
+                        Add Flagged Word
                       </Button>
                       <div
                         className={cx(

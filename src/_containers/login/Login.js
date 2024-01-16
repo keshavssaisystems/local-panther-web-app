@@ -143,8 +143,9 @@ export function Login() {
                       <div className="login-slider-title">
                         <p>Experts In Human Capital</p>
                         <p className="login-slider-text m-5">
-                          What makes The Panther Group the ideal career partner?
-                          We focus on what you want most from your career!
+                          What makes The OpenWorX community the ideal career
+                          partner? We focus on what you want most from your
+                          career!
                         </p>
                       </div>
                     </div>
@@ -205,7 +206,7 @@ export function Login() {
                             </Label>
                             <InputGroup>
                               <input
-                                placeholder="Enter password"
+                                placeholder="Enter Password"
                                 name="password"
                                 type={showPassword ? "text" : "password"}
                                 id="password"
@@ -228,7 +229,7 @@ export function Login() {
                                 to="/forgot-password"
                                 className="text-primary forgot-pwd-text me-3 "
                               >
-                                Forgot password?
+                                Forgot Password?
                               </Link>
 
                               <Button
