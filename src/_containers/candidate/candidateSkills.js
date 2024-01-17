@@ -462,7 +462,7 @@ export function CandidateSkills(props) {
                         <Col md={4}>
                           <FormGroup>
                             <Label for={"skillsInput"} className="fw-semi-bold">
-                              Selected Skill
+                              Selected skill
                             </Label>
                             <Input
                               type="text"

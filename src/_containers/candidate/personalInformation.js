@@ -870,7 +870,7 @@ export function PersonalInformation(props) {
             isOpen={isContactModal}
           >
             <ModalHeader toggle={() => close()} charCode="Y">
-              <strong className="card-title-text">Contact information</strong>
+              <strong className="card-title-text">Contact Information</strong>
             </ModalHeader>
             <ModalBody>
               {getResponse ? (
@@ -882,7 +882,7 @@ export function PersonalInformation(props) {
                   <Row className="mb-3">
                     <Col className="col-6">
                       <Label for="firstname" className="fw-semi-bold">
-                        Desired/Current Job profile{" "}
+                        Desired/Current job profile{" "}
                         <span className="required-icon">*</span>
                       </Label>
                       <input
@@ -1117,7 +1117,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Zip code
+                          Zipcode
                         </Label>
                         <input
                           type="text"
@@ -1128,7 +1128,7 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("zip", evt.target.value)
                           }
-                          placeholder="Enter zip zode"
+                          placeholder="Enter zipcode"
                           className="field-input placeholder-text form-control input-text"
                         />
                       </FormGroup>
@@ -1217,7 +1217,7 @@ export function PersonalInformation(props) {
                   </Row>
 
                   <Row>
-                    <div className="mb-1 fw-bold">Employment eligibility</div>
+                    <div className="mb-1 fw-bold">Employment Eligibility</div>
                     <hr />
                   </Row>
 
@@ -1346,7 +1346,7 @@ export function PersonalInformation(props) {
               <img src={errorIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              Please select City to filter
+              Please select city to filter
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
