@@ -750,7 +750,7 @@ export function CustomerRegistration() {
                 }`}
                 onChange={(e) => onSelectCompanyDropdown(e.target.value)}
               >
-                <option value={0}>Select company</option>
+                <option value={0}>Select Company</option>
                 <option value={-1}>New</option>
                 {companyDropdown?.length > 0 &&
                   companyDropdown?.map((options) => (
@@ -795,13 +795,13 @@ export function CustomerRegistration() {
               <Col md={6}>
                 <FormGroup>
                   <Label for="companyname" className="input-label">
-                    Company name <span className="text-danger">*</span>
+                    Company Name <span className="text-danger">*</span>
                   </Label>
                   <input
                     type="text"
                     name="companyname"
                     id="companyname"
-                    placeholder="Enter company name"
+                    placeholder="Enter Company Name"
                     // {...register("companyname")}
                     className={`form-control placeholder-name ${
                       companyNameErr ? "is-invalid" : ""
@@ -827,7 +827,7 @@ export function CustomerRegistration() {
                       type="email"
                       name="companyemail"
                       id="companyemail"
-                      placeholder="Enter email id"
+                      placeholder="Enter Email"
                       // {...register("email")}
                       className={`form-control placeholder-name ${
                         companyEmailErr ? "is-invalid" : ""
@@ -855,7 +855,7 @@ export function CustomerRegistration() {
 
                   <InputGroup>
                     <InputMask
-                      placeholder="Enter phone number"
+                      placeholder="Enter Phone Number"
                       type="text"
                       mask="(999)-999-9999"
                       name="companyphone"
@@ -890,7 +890,7 @@ export function CustomerRegistration() {
                       type="select"
                       name="companyemployees"
                       id="companyemployees"
-                      placeholder="Enter no. of employees"
+                      placeholder="Enter No. of Employees"
                       // {...register("email")}
                       className={`form-control placeholder-name ${
                         companyEmpErr ? "is-invalid" : ""
@@ -934,7 +934,7 @@ export function CustomerRegistration() {
                       type="text"
                       name="companyaddress"
                       id="companyaddress"
-                      placeholder="Enter company address"
+                      placeholder="Enter Company Address"
                       // {...register("email")}
                       className={`form-control placeholder-name ${
                         companyAddrErr ? "is-invalid" : ""
@@ -987,7 +987,7 @@ export function CustomerRegistration() {
                   </Label>
                   <AsyncSelect
                     name="companycountry"
-                    placeholder="Select country"
+                    placeholder="Select Country"
                     placeholderText="search"
                     isMulti={false}
                     className={`placeholder-name ${
@@ -1017,7 +1017,7 @@ export function CustomerRegistration() {
                       mask="99999"
                       name="companyzip"
                       id="companyzip"
-                      placeholder="Enter company zip code"
+                      placeholder="Enter Company Zipcode"
                       // {...register("email")}
                       className={`form-control placeholder-name ${
                         companyZipErr ? "is-invalid" : ""
@@ -1045,13 +1045,13 @@ export function CustomerRegistration() {
           <Col md={6}>
             <FormGroup>
               <Label for="firstName" className="input-label">
-                First name <span className="text-danger">*</span>
+                First Name <span className="text-danger">*</span>
               </Label>
               <input
                 type="text"
                 name="firstName"
                 id="firstName"
-                placeholder="Enter first name"
+                placeholder="Enter First Name"
                 {...register("firstName")}
                 className={`form-control placeholder-name ${
                   errors.firstName ? "is-invalid" : ""
@@ -1064,13 +1064,13 @@ export function CustomerRegistration() {
           <Col md={6}>
             <FormGroup>
               <Label for="lastName" className="input-label">
-                Last name <span className="text-danger">*</span>
+                Last Name <span className="text-danger">*</span>
               </Label>
               <input
                 type="text"
                 name="lastName"
                 id="lastName"
-                placeholder="Enter last name"
+                placeholder="Enter Last Name"
                 {...register("lastName")}
                 className={`form-control placeholder-name ${
                   errors.lastName ? "is-invalid" : ""
@@ -1091,7 +1091,7 @@ export function CustomerRegistration() {
                   name="email"
                   id="email"
                   disabled={validated.email}
-                  placeholder="Enter email id"
+                  placeholder="Enter Email"
                   {...register("email")}
                   className={`form-control placeholder-name ${
                     errors.email ? "is-invalid" : ""
@@ -1139,7 +1139,7 @@ export function CustomerRegistration() {
 
               <InputGroup>
                 <InputMask
-                  placeholder="Enter phone number"
+                  placeholder="Enter Phone Number"
                   type="text"
                   mask="(999)-999-9999"
                   name="phoneNumber"
@@ -1189,7 +1189,7 @@ export function CustomerRegistration() {
               </Label>
               <InputGroup>
                 <input
-                  placeholder="Enter password"
+                  placeholder="Enter Password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   id="password"
@@ -1209,12 +1209,12 @@ export function CustomerRegistration() {
           <Col md={6}>
             <FormGroup>
               <Label for="confirmPassword" className="input-label">
-                Confirm password <span className="text-danger">*</span>
+                Confirm Password <span className="text-danger">*</span>
               </Label>
               <InputGroup>
                 <input
                   type={showConfirm ? "text" : "password"}
-                  placeholder="Enter confirm password"
+                  placeholder="Enter Confirm Password"
                   name="confirmPassword"
                   id="confirmPassword"
                   {...register("confirmPassword")}
@@ -1263,7 +1263,7 @@ export function CustomerRegistration() {
               </Label>
               <AsyncSelect
                 name="country"
-                placeholder="Select country"
+                placeholder="Select Country"
                 placeholderText="search"
                 isMulti={false}
                 className={`placeholder-name ${

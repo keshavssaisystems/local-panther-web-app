@@ -417,7 +417,7 @@ export const SubsidaryList = (props) => {
                     type="submit"
                     onClick={(e) => addModal()}
                   >
-                    Add subsidiary
+                    Add Subsidiary
                   </Button>
                   <div
                     className={cx(

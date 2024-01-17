@@ -85,6 +85,7 @@
 
     &.form-wizard-step-done {
       em {
+        font-family: 'Linearicons-Free';
         @extend .lnr-checkmark-circle !optional;
         background: $success;
         overflow: hidden;

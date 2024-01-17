@@ -128,7 +128,7 @@ export function AdminDashboard() {
             analyiticalCounts?.LastDayInterviewScheduled
           ? "text-success"
           : "text-danger",
-      title: "Today's interviews",
+      title: "Today's Interviews",
       apiVariable:
         analyiticalCounts?.TodaysInterviewScheduled +
         ", " +
@@ -162,7 +162,7 @@ export function AdminDashboard() {
             analyiticalCounts?.Past7DaysInterview
           ? "text-success"
           : "text-danger",
-      title: "Upcoming interviews",
+      title: "Upcoming Interviews",
       apiVariable:
         analyiticalCounts?.Upcoming7DaysInterview +
         ", " +
@@ -196,7 +196,7 @@ export function AdminDashboard() {
             analyiticalCounts?.Past30DaysInterview
           ? "text-success"
           : "text-danger",
-      title: "Interviews history",
+      title: "Interviews History",
       apiVariable:
         analyiticalCounts?.Upcoming30DaysInterview +
         ", " +
@@ -230,7 +230,7 @@ export function AdminDashboard() {
             analyiticalCounts?.Past30to60DaysCandidateRegistration
           ? "text-success"
           : "text-danger",
-      title: "New candidates registrations",
+      title: "New Candidates Registrations",
       apiVariable:
         analyiticalCounts?.Past30DaysCandidateRegistration +
         ", " +
