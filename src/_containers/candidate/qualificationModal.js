@@ -711,7 +711,7 @@ export function QualificationModal(props) {
                     checked={item.iscurrentlyworking}
                   />{" "}
                   <Label check className="fw-semi-bold">
-                    Currently Working
+                    Currently working
                   </Label>
                 </FormGroup>
               </Col>

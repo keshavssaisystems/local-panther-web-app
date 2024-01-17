@@ -750,7 +750,7 @@ export function CustomerRegistration() {
                 }`}
                 onChange={(e) => onSelectCompanyDropdown(e.target.value)}
               >
-                <option value={0}>Select company</option>
+                <option value={0}>Select Company</option>
                 <option value={-1}>New</option>
                 {companyDropdown?.length > 0 &&
                   companyDropdown?.map((options) => (

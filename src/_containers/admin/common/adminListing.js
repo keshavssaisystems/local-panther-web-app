@@ -548,7 +548,7 @@ export const AdminListing = ({ entity }) => {
                     className="input-group-text float-end mt-1"
                     onClick={() => onAddClick()}
                   >
-                    Add user
+                    Add User
                   </Button>
                   <div
                     className={cx(
