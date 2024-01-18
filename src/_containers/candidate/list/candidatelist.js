@@ -136,7 +136,7 @@ export const CandidateList = (props) => {
     getJobDetails(e);
   };
 
-  const onApplyClickBtn = () => {
+  const onApplyClickBtn = (eventData) => {
     let rec = candidateJobList.find(
       (data) => data.jobid === jobDetail[0].jobid
     );

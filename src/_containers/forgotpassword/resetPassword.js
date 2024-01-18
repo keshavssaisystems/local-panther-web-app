@@ -63,8 +63,8 @@ export function ResetPassword() {
                   <div className="login-slider-title">
                     <p>Experts In Human Capital</p>
                     <p className="login-slider-text m-5">
-                      What makes The Panther Group the ideal career partner? We
-                      focus on what you want most from your career!
+                      What makes The OpenWorX community the ideal career
+                      partner? We focus on what you want most from your career!
                     </p>
                   </div>
                 </div>

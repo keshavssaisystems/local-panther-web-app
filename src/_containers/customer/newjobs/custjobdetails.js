@@ -476,22 +476,22 @@ export function CustJobDetail({
               </div>
             )}
             <div className="heading-title">
-              <h6 className="job-main-heading mb-0">Job details</h6>
+              <h6 className="job-main-heading mb-0">Job Details</h6>
             </div>
             <HeadingAndDetailWithDiv
-              heading={"Job Type"}
+              heading={"Job type"}
               detail={returnJobType()}
               iconId={5}
             />
             <HeadingAndDetailWithDiv
-              heading={"Job Location"}
+              heading={"Job location"}
               detail={
                 jobDetail?.joblocation === "" ? "-" : jobDetail?.joblocation
               }
               iconId={5}
             />
             <HeadingAndDetailWithDiv
-              heading={"Shift & Schedule"}
+              heading={"Shift & schedule"}
               detail={returnShift() + ", " + returnSchedule()}
               iconId={3}
             />
@@ -578,17 +578,17 @@ export function CustJobDetail({
             />
             {jobDetail?.issecurityclearancerequired === true && (
               <HeadingAndDetailWithDiv
-                heading={"Security Clearance"}
+                heading={"Security clearance"}
                 detail={jobDetail?.securityclearance}
                 iconId={14}
               />
             )}
             <HeadingAndDetailWithoutIcon
-              heading={"Job Description"}
+              heading={"Job description"}
               detail={jobDetail.description}
             />
             <HeadingAndDetailWithoutIcon
-              heading={"About Company"}
+              heading={"About company"}
               detail={jobDetail.companydetails}
             />
             <HeadingAndDetailWithoutIcon

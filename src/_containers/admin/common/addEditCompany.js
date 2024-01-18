@@ -77,8 +77,6 @@ export const AddEditCompany = (props) => {
     }
   }, []);
 
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
@@ -369,10 +367,10 @@ export const AddEditCompany = (props) => {
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
           {isViewMode
-            ? "View company details"
+            ? "View Company Details"
             : isAddMode
-            ? "Add new company"
-            : "Edit company"}
+            ? "Add New Company"
+            : "Edit Company"}
         </strong>
       </ModalHeader>
       <ModalBody>

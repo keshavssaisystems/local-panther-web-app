@@ -20,7 +20,6 @@ import { dropdownActions, addCustomerActions } from "_store";
 import { getCompanies } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
-import { Nav, NavItem, PopoverBody } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import customerIcons from "assets/utils/images/customer";
 import { FaEye } from "react-icons/fa";
@@ -195,7 +194,7 @@ export const CompanyList = () => {
     }
   };
 
-  const closeModal = () => {
+  const closeModal = (event) => {
     setOpenModal(false);
     dispatch(
       getCompanies({
@@ -388,7 +387,7 @@ export const CompanyList = () => {
                         type="submit"
                         onClick={(e) => addModal()}
                       >
-                        Add company
+                        Add Company
                       </Button>
                       <div
                         className={cx(

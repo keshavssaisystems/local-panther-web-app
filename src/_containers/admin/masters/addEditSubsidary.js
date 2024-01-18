@@ -245,7 +245,7 @@ export const AddEditSubsidary = (props) => {
     >
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
-          {isAddMode ? "Add new subsidiary" : "Edit subsidiary"}
+          {isAddMode ? "Add New Subsidiary" : "Edit Subsidiary"}
         </strong>
       </ModalHeader>
       <ModalBody>

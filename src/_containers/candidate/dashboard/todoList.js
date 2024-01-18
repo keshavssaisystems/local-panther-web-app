@@ -69,7 +69,7 @@ export function TodoList(props) {
     }
     setModal(true);
   };
-  const deleteToDo = async function () {
+  const deleteToDo = async function (event) {
     setDeleteConfirm(false);
     let id = deleteId;
     let response = await dispatch(candidateDashboardActions.deleteToDo({ id }));
@@ -113,7 +113,7 @@ export function TodoList(props) {
 
           <div className="btn-actions-pane-right text-capitalize">
             <a
-              href="javascript:void(0)"
+              href="#"
               onClick={(e) => addNotes("add", "", e)}
               className="btn-lg btn btn-link add-label"
             >
