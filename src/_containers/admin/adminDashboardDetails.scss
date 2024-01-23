@@ -1,6 +1,49 @@
-.admin-dashboard-details{
-    .card{
-        height: 90%
-    }
-    
+.admin-dashboard-details {
+  .card {
+    height: 90%;
+  }
+}
+
+.admin-upload-data {
+  .upload-excel {
+    color: #2f479b;
+    font-family: Capitana;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 100% */
+    vertical-align: middle;
+  }
+
+  .excel-border {
+    border-radius: 4px;
+    border-color: #2f479b;
+    background: transparent;
+    //   margin-left: 10px;
+    width: auto;
+    height: auto;
+  }
+
+  .upload-data-btn {
+    border-radius: 4px;
+    border: 1px solid var(--blue, #2f479b);
+    background: var(--blue, #2f479b);
+  }
+
+  .upload-btn-text {
+    color: var(--White, #fff);
+    font-family: Capitana;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 100% */
+  }
+  .upload-error-text {
+    color: #d92550;
+    font-family: Capitana;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 16px; /* 123.077% */
+  }
 }
