@@ -14,6 +14,7 @@ const sideBarIcons = {
   roles: require("./roles.svg").default,
   users: require("./users.svg").default,
   close: require("./close.svg").default,
+  uploaddata: require("./uploadmenu.svg").default,
 };
 
 export default sideBarIcons;

@@ -5,8 +5,10 @@ import { fetchWrapper } from "_helpers";
 const initialState = {
   user: {
     data: [],
-    resumeTemplateList: [], // Initialize with an empty array
+    resumeTemplateList: [],
+    // Initialize with an empty array
   },
+  excelTemplate: "",
   error: null,
 };
 
@@ -17,6 +19,18 @@ export const getResumeTemplate = createAsyncThunk(
     const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Common/GetCommonDropdown?searchText=resumetemplate`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
+export const getExcelTemplate = createAsyncThunk(
+  "resume/getExcelTemplate",
+  async () => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=datatemplate`
     );
 
     return response.data; // Assuming your API response has a "data" property
@@ -47,6 +61,16 @@ const resumeTemplateSlice = createSlice({
       })
       .addCase(getResumeTemplate.rejected, (state, action) => {
         state.error = action.error;
+      })
+
+      .addCase(getExcelTemplate.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(getExcelTemplate.fulfilled, (state, action) => {
+        state.excelTemplate = action.payload[0].name; // Update the state properly
+      })
+      .addCase(getExcelTemplate.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -55,5 +79,6 @@ const resumeTemplateSlice = createSlice({
 export const resumeTemplateActions = {
   ...resumeTemplateSlice.actions,
   getResumeTemplate, // Export the async action
+  getExcelTemplate,
 };
 export const resumeTemplateReducer = resumeTemplateSlice.reducer;
