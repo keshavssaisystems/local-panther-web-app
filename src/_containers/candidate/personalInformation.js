@@ -102,6 +102,7 @@ export function PersonalInformation(props) {
     stateError: false,
   });
 
+  const [save, setSave] = useState(false);
   const [citySelect, setCitySelect] = useState("");
   const [stateSelect, setStateSelect] = useState("");
   const [countrySelect, setCountrySelect] = useState("");
@@ -338,11 +339,26 @@ export function PersonalInformation(props) {
   }
 
   async function onSubmit(e, currentEmployer) {
-    if (e !== "") {
-      e.preventDefault();
-    }
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
+    if (e !== "") {
+      setSave(true);
+      e.preventDefault();
+
+      if (
+        new_data.jobprofile === "" ||
+        !new_data.jobprofile ||
+        new_data.firstname === "" ||
+        new_data.lastname === "" ||
+        new_data.phonenumber === "" ||
+        new_data.email === "" ||
+        new_data.cityid == 0 ||
+        new_data.employmenteligiblity === 0
+      ) {
+        return;
+      }
+    }
+
     if (new_data.city[0]?.value == 0) {
       errors.cityError = true;
     } else {
@@ -354,52 +370,38 @@ export function PersonalInformation(props) {
       return;
     }
 
-    if (
-      new_data.jobprofile === "" ||
-      !new_data.jobprofile ||
-      new_data.firstname === "" ||
-      new_data.lastname === "" ||
-      new_data.phonenumber === "" ||
-      new_data.email === "" ||
-      new_data.cityid == 0
-    ) {
-      return;
-    } else {
-      let post_data = {
-        candidateid: userDetails.InternalUserId,
-        email: new_data.email,
-        phonenumber: new_data.phonenumber,
-        firstname: new_data.firstname,
-        lastname: new_data.lastname,
-        genderid: new_data.gender[0]?.value,
-        cityid: new_data.city[0]?.value,
-        stateid: new_data.state[0]?.value,
-        countryid: new_data.country[0]?.value,
-        zipcode: new_data.zipcode,
-        ethnicityid: new_data.ethinicity[0]?.value,
-        employmenteligiblity: new_data.employmenteligiblity,
-        isreadytoworkimmediately: new_data.isreadytoworkimmediately,
-        isactive: true,
-        dob: new_data.dob,
-        address: new_data.address,
-        userid: userDetails.UserId,
-        currentUserId: userDetails.UserId,
-        jobprofile: new_data.jobprofile,
-        pronounid: new_data.pronoun[0]?.value,
-        isexcludemycurrentemployer: currentEmployer,
-      };
+    let post_data = {
+      candidateid: userDetails.InternalUserId,
+      email: new_data.email,
+      phonenumber: new_data.phonenumber,
+      firstname: new_data.firstname,
+      lastname: new_data.lastname,
+      genderid: new_data.gender[0]?.value,
+      cityid: new_data.city[0]?.value,
+      stateid: new_data.state[0]?.value,
+      countryid: new_data.country[0]?.value,
+      zipcode: new_data.zipcode,
+      ethnicityid: new_data.ethinicity[0]?.value,
+      employmenteligiblity: new_data.employmenteligiblity,
+      isreadytoworkimmediately: new_data.isreadytoworkimmediately,
+      isactive: true,
+      dob: new_data.dob,
+      address: new_data.address,
+      userid: userDetails.UserId,
+      currentUserId: userDetails.UserId,
+      jobprofile: new_data.jobprofile,
+      pronounid: new_data.pronoun[0]?.value,
+      isexcludemycurrentemployer: currentEmployer,
+    };
 
-      let response = await dispatch(
-        profileActions.insertPersonalInfo(post_data)
-      );
-      if (response.payload) {
-        setSuccess(true);
-        setMessage(response.payload.message);
-      } else {
-        setError(true);
-      }
-      setContactModal(false);
+    let response = await dispatch(profileActions.insertPersonalInfo(post_data));
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
     }
+    setContactModal(false);
   }
 
   function onChangeCurrentEmployer(value) {
@@ -442,6 +444,7 @@ export function PersonalInformation(props) {
     setRequiredErros(errors);
     setContactModal(false);
     setEditImg(false);
+    setSave(false);
     // props.onCallBack();
   };
   const closeModal = function () {
@@ -463,6 +466,7 @@ export function PersonalInformation(props) {
     setContactModal(false);
     setSuccess(false);
     setError(false);
+    setSave(false);
     props.onCallBack();
   };
 
@@ -870,7 +874,7 @@ export function PersonalInformation(props) {
             isOpen={isContactModal}
           >
             <ModalHeader toggle={() => close()} charCode="Y">
-              <strong className="card-title-text">Contact information</strong>
+              <strong className="card-title-text">Contact Information</strong>
             </ModalHeader>
             <ModalBody>
               {getResponse ? (
@@ -882,7 +886,7 @@ export function PersonalInformation(props) {
                   <Row className="mb-3">
                     <Col className="col-6">
                       <Label for="firstname" className="fw-semi-bold">
-                        Desired/Current Job profile{" "}
+                        Desired/Current job profile{" "}
                         <span className="required-icon">*</span>
                       </Label>
                       <input
@@ -1117,7 +1121,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Zip code
+                          Zipcode
                         </Label>
                         <input
                           type="text"
@@ -1128,7 +1132,7 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("zip", evt.target.value)
                           }
-                          placeholder="Enter zip zode"
+                          placeholder="Enter zipcode"
                           className="field-input placeholder-text form-control input-text"
                         />
                       </FormGroup>
@@ -1217,8 +1221,10 @@ export function PersonalInformation(props) {
                   </Row>
 
                   <Row>
-                    <div className="mb-1 fw-bold">Employment eligibility</div>
-                    <hr />
+                    <div className="mb-1 fw-bold">
+                      Employment Eligibility{" "}
+                      <span className="required-icon">*</span>
+                    </div>
                   </Row>
 
                   <Row>
@@ -1234,6 +1240,14 @@ export function PersonalInformation(props) {
                             onClick={(evt) =>
                               onHandleInputChange("authorization", item.id)
                             }
+                            style={{
+                              borderColor:
+                                save &&
+                                (getResponse.employmenteligiblity === 0 ||
+                                  !getResponse.employmenteligiblity)
+                                  ? "#d92550"
+                                  : "",
+                            }}
                           />
                           <Label check className="fw-semi-bold">
                             {item.name}
@@ -1242,6 +1256,14 @@ export function PersonalInformation(props) {
                       </Col>
                     ))}
                   </Row>
+                  <div className="error-class">
+                    {save &&
+                    (getResponse.employmenteligiblity === 0 ||
+                      !getResponse.employmenteligiblity)
+                      ? "Employment eligibility is required"
+                      : ""}
+                  </div>
+                  <hr />
                   <Row>
                     <Col>
                       <FormGroup check>
@@ -1346,7 +1368,7 @@ export function PersonalInformation(props) {
               <img src={errorIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              Please select City to filter
+              Please select city to filter
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}

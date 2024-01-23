@@ -374,7 +374,10 @@ export function BasicInformation({
       certifications: eventData.target.elements.certifications.value,
       levelofeducationOption: levelOfEducationOption,
       fieldofstudiesOption: fieldOfStudyOption,
-      subsidiaryid: eventData.target.elements.subsidiaryid.value,
+      subsidiaryid:
+        eventData?.target?.elements?.subsidiaryid?.value === undefined
+          ? 0
+          : eventData?.target?.elements?.subsidiaryid?.value,
       subsidiaryOption: subsidiaryOption,
       issecurityclearancerequired:
         eventData.target.elements.issecurityclearancerequired.checked,
