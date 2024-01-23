@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
-
+import { UploadData } from "_containers/admin/uploadData";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
@@ -244,6 +244,14 @@ export function App() {
           <Route
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
+          />
+          <Route
+            path="/upload-data"
+            element={
+              <PrivateRoute>
+                <UploadData />
+              </PrivateRoute>
+            }
           />
           <Route path="/report" element={<OpenJobs title={"Open Jobs"} />} />
           <Route
