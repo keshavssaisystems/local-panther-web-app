@@ -25,7 +25,7 @@ export const getpaymentCurrencyType = createAsyncThunk(
 export const postPaymentBillingDetails = createAsyncThunk(
   `${name}/postPaymentBillingDetails`,
   async (payload) => {
-    const GET_PAY_BILL_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=currency`;
+    const GET_PAY_BILL_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/BillingDetail`;
     return await fetchWrapper.post(GET_PAY_BILL_END_POINT, payload);
   }
 );

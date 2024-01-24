@@ -9,6 +9,7 @@ import {
   Form,
   FormFeedback,
   InputGroup,
+  FormText,
 } from "reactstrap";
 import InputMask from "react-input-mask";
 import { useForm } from "react-hook-form";
@@ -25,6 +26,9 @@ import {
   formatCVC,
 } from "./paymenthelper";
 import { useParams } from "react-router-dom";
+import SweetAlert from "react-bootstrap-sweetalert";
+import Payment from "payment";
+import { history } from "_helpers";
 import "./payment.scss";
 
 export const PaymentDetails = () => {
@@ -43,15 +47,24 @@ export const PaymentDetails = () => {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCVV] = useState("");
   const [name, setName] = useState("");
+  const [cardNumberErr, setCardNumberErr] = useState(false);
+  const [expiryErr, setExpiryErr] = useState(false);
+  const [invalidExp, setInvalidExp] = useState(false);
+  const [cvvErr, setCVVErr] = useState(false);
+  const [validCard, setValidCard] = useState(false);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
 
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const userDetails = useSelector((state) => state.payment.userDetails);
   const currencyType = useSelector((state) => state.payment.currencyType);
 
   const schema = Yup.object().shape({
-    name: Yup.string()
-      .required("First name is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
+    name: Yup.string().required("First name is required"),
     email: Yup.string()
       .required("Email is required")
       .matches(
@@ -78,6 +91,7 @@ export const PaymentDetails = () => {
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListPublicThunk());
     dispatch(paymentActions.getpaymentCurrencyType());
+    setValue("currency", 1);
   }, []);
 
   useEffect(() => {
@@ -158,10 +172,15 @@ export const PaymentDetails = () => {
     if (e.target.name === "name") {
       setName(e.target.value);
     } else if (e.target.name === "cardnumber") {
+      setCardNumberErr(e.target.value === "");
       setCardNumber(formatCreditCardNumber(e.target.value));
     } else if (e.target.name === "expiry") {
-      setExpiry(formatExpirationDate(e.target.value));
+      let exp = formatExpirationDate(e.target.value);
+      setInvalidExp(!Payment.fns.validateCardExpiry(exp));
+      setExpiryErr(e.target.value === "");
+      setExpiry(formatExpirationDate(exp));
     } else if (e.target.name === "cvv") {
+      setCVVErr(e.target.value === "");
       setCVV(formatCVC(e.target.value));
     }
   };
@@ -180,15 +199,32 @@ export const PaymentDetails = () => {
   };
 
   const handleCallback = (issuer, isValid) => {
-    // if (isValid) {
     setIssuer(issuer);
-    // }
+    setValidCard(isValid);
   };
   const onSameCustomer = (e) => {
     setSameAsCust(e.target.checked);
   };
 
   const onSubmit = async (formData) => {
+    if (
+      cardnumber === "" ||
+      cvv === "" ||
+      expiry === "" ||
+      invalidExp ||
+      !validCard
+    ) {
+      if (!validCard) {
+        showSweetAlert({
+          title: "Please enter valid card details.",
+          type: "error",
+        });
+      }
+      setCardNumberErr(cardnumber === "");
+      setCVVErr(cvv === "");
+      setExpiryErr(expiry === "");
+      return;
+    }
     let payload = {
       billingdetailid: 0,
       customerid: id,
@@ -203,15 +239,52 @@ export const PaymentDetails = () => {
       countryid: formData.countryid,
       currencyid: formData.currency,
       creditcardtypeid: 0,
-      creditcardnumber: "string",
-      expirydate: "string",
-      securitycode: "string",
+      creditcardnumber: cardnumber,
+      expirydate: expiry,
+      securitycode: cvv,
       currentUserId: 0,
     };
+
+    let response = await dispatch(
+      paymentActions.postPaymentBillingDetails(payload)
+    );
+
+    if (!response.payload) {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    } else {
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    }
   };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+
+  const navigateToLogin = () => {
+    history.navigate("/login");
+  };
+
   return (
     <Row>
       <Form onSubmit={handleSubmit(onSubmit)}>
+        {/* onSubmit={handleSubmit(onSubmit)} */}
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
           <h3 className="mt-2 pay-title">Billing Contact</h3>
         </Col>
@@ -232,22 +305,24 @@ export const PaymentDetails = () => {
         <Row>
           <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <FormGroup>
-              <Label for="firstName" className="input-label">
+              <Label for="name" className="input-label">
                 Name <span className="text-danger">*</span>
               </Label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                placeholder="Enter Name"
-                {...register("name")}
-                className={`form-control placeholder-name ${
-                  errors.name ? "is-invalid" : ""
-                }`}
-                maxLength={50}
-                onChange={(e) => setCardDetails(e)}
-              />
-              <FormFeedback>{errors.name?.message}</FormFeedback>
+              <InputGroup>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  placeholder="Enter Name"
+                  {...register("name")}
+                  className={`form-control placeholder-name ${
+                    errors.name ? "is-invalid" : ""
+                  }`}
+                  maxLength={50}
+                  onChange={(e) => setCardDetails(e)}
+                />
+                <FormFeedback>{errors.name?.message}</FormFeedback>
+              </InputGroup>
             </FormGroup>
           </Col>
           <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
@@ -501,19 +576,29 @@ export const PaymentDetails = () => {
                   onChange={(e) => setCardDetails(e)}
                   // maxLength={20}
                 /> */}
-                <input
+                <Input
                   type="tel"
                   name="cardnumber"
                   id={"cardnumber"}
-                  className="form-control"
+                  className={`form-control placeholder-name ${
+                    cardNumberErr || (!validCard && cardnumber !== "")
+                      ? "is-invalid"
+                      : ""
+                  }`}
                   placeholder="Card Number"
                   pattern="[\d| ]{16,22}"
-                  required
+                  // required
                   value={cardnumber}
                   onChange={(e) => setCardDetails(e)}
                 />
 
-                {/* <FormFeedback>{errors.cardnumber?.message}</FormFeedback> */}
+                <FormFeedback>
+                  {cardNumberErr
+                    ? "Card number is required"
+                    : !validCard && cardnumber !== ""
+                    ? "Invalid card number"
+                    : ""}
+                </FormFeedback>
               </InputGroup>
             </FormGroup>
           </Col>
@@ -541,15 +626,23 @@ export const PaymentDetails = () => {
                   type="tel"
                   name="expiry"
                   id="expiry"
-                  className="form-control"
-                  placeholder="Valid Thru"
+                  className={`form-control placeholder-name ${
+                    expiryErr || invalidExp ? "is-invalid" : ""
+                  }`}
+                  placeholder="MM/YY"
                   pattern="\d\d/\d\d"
-                  required
+                  // required
                   value={expiry}
                   onChange={(e) => setCardDetails(e)}
                   // onFocus={this.handleInputFocus}
                 />
-                {/* <FormFeedback>{errors.expiry?.message}</FormFeedback> */}
+                <FormFeedback>
+                  {expiryErr || invalidExp
+                    ? invalidExp
+                      ? "Invalid Expiry"
+                      : "Expiry is required"
+                    : ""}
+                </FormFeedback>
               </InputGroup>
             </FormGroup>
           </Col>
@@ -579,15 +672,27 @@ export const PaymentDetails = () => {
                   type="tel"
                   name="cvv"
                   id="cvv"
-                  className="form-control"
-                  placeholder="CVC"
+                  className={`form-control placeholder-name ${
+                    cvvErr ? "is-invalid" : ""
+                  }`}
+                  placeholder="CVV"
                   pattern="\d{3,4}"
-                  required
+                  // required
                   value={cvv}
                   onChange={(e) => setCardDetails(e)}
                 />
+                <FormFeedback>
+                  {cvvErr ? "Security code is required" : ""}
+                </FormFeedback>
               </InputGroup>
             </FormGroup>
+          </Col>
+          <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+            {validCard ? (
+              <FormText color="success">Valid Card</FormText>
+            ) : (
+              <></>
+            )}
           </Col>
         </Row>
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
@@ -605,18 +710,33 @@ export const PaymentDetails = () => {
           xxl={12}
           style={{ textAlign: "end" }}
         >
-          <Button color="primary">Agreed & Submit</Button>
+          <Button color="primary" className="btn-text">
+            Agreed & Submit
+          </Button>
         </Col>
       </Form>
       <div style={{ display: "none" }}>
         <Cards
-          number={cardnumber}
+          number={cardnumber ? cardnumber.replaceAll(" ", "") : ""}
           expiry={expiry}
           cvc={cvv}
           name={name}
           callback={({ issuer }, isValid) => handleCallback(issuer, isValid)}
         />
       </div>
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          showConfirm={showAlert.type === "success"}
+          showCancel
+          type={showAlert.type}
+          onConfirm={() => navigateToLogin()}
+          onCancel={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </Row>
   );
 };
