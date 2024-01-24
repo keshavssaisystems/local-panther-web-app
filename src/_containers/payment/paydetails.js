@@ -204,6 +204,14 @@ export const PaymentDetails = () => {
   };
   const onSameCustomer = (e) => {
     setSameAsCust(e.target.checked);
+    if (!e.target.checked) {
+      setValue("name", "");
+      setValue("companyid", "");
+      setCompanyValue("");
+      setValue("email", "");
+      setValue("phoneNumber", "");
+      setValue("zipcode", "");
+    }
   };
 
   const onSubmit = async (formData) => {
@@ -289,11 +297,7 @@ export const PaymentDetails = () => {
           <h3 className="mt-2 pay-title">Billing Contact</h3>
         </Col>
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-          <Input
-            disabled={sameAsCust}
-            type="checkbox"
-            onChange={(e) => onSameCustomer(e)}
-          ></Input>
+          <Input type="checkbox" onChange={(e) => onSameCustomer(e)}></Input>
           <Label className="ms-1 same-as-cust">Same as customer</Label>
         </Col>
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
@@ -409,7 +413,7 @@ export const PaymentDetails = () => {
               </Label>
               <AsyncSelect
                 name="city"
-                placeholder="Search to select"
+                placeholder="Search to Select"
                 placeholderText="search"
                 loadOptions={loadOptions}
                 isMulti={false}
@@ -431,7 +435,7 @@ export const PaymentDetails = () => {
           <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <FormGroup>
               <Label for="zipcode" className="input-label">
-                Zip code <span className="text-danger">*</span>
+                Zip Code <span className="text-danger">*</span>
               </Label>
               <InputGroup>
                 <InputMask
@@ -439,7 +443,7 @@ export const PaymentDetails = () => {
                   mask="99999"
                   name="zipcode"
                   id="zipcode"
-                  placeholder="Enter Company Zipcode"
+                  placeholder="Enter Zip Code"
                   {...register("zipcode")}
                   className={`form-control placeholder-name ${
                     errors.zipcode ? "is-invalid" : ""
@@ -559,7 +563,7 @@ export const PaymentDetails = () => {
           <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <FormGroup>
               <Label for="cardnumber" className="input-label">
-                Card number <span className="text-danger">*</span>
+                Card Number <span className="text-danger">*</span>
               </Label>
 
               <InputGroup>
@@ -605,7 +609,7 @@ export const PaymentDetails = () => {
           <Col xs={12} sm={12} md={12} lg={3} xl={3} xxl={3}>
             <FormGroup>
               <Label for="expiry" className="input-label">
-                Expiry date <span className="text-danger">*</span>
+                Expiry Date <span className="text-danger">*</span>
               </Label>
 
               <InputGroup>
@@ -649,7 +653,7 @@ export const PaymentDetails = () => {
           <Col xs={12} sm={12} md={12} lg={3} xl={3} xxl={3}>
             <FormGroup>
               <Label for="cvv" className="input-label">
-                Security code <span className="text-danger">*</span>
+                Security Code <span className="text-danger">*</span>
               </Label>
 
               <InputGroup>
@@ -727,13 +731,17 @@ export const PaymentDetails = () => {
       <>
         {" "}
         <SweetAlert
+          showCancel
+          showConfirm={showAlert.type === "success"}
           title={showAlert.title}
           show={showAlert.show}
-          showConfirm={showAlert.type === "success"}
-          showCancel
+          confirmBtnText="Ok"
+          confirmBtnBsStyle="primary"
+          cancelBtnBsStyle="dark"
           type={showAlert.type}
           onConfirm={() => navigateToLogin()}
           onCancel={() => closeSweetAlert()}
+          focusCancelBtn
         />
         {showAlert.description}
       </>
