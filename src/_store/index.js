@@ -57,6 +57,7 @@ import { monthReducer } from "./dropDownMonth.slice";
 import { yearReducer } from "./dropDownYear.slice";
 import { candidateDashboardReducer } from "./dashboard.slice";
 import { SettingsReducer } from "./settings.slice";
+import { paymentReducer } from "_containers/payment/payment.slice";
 
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
@@ -115,6 +116,7 @@ export * from "./dropDownMonth.slice";
 export * from "./dropDownYear.slice";
 export * from "./dashboard.slice";
 export * from "./settings.slice";
+export * from "../_containers/payment/payment.slice";
 
 // export all customer slice fn
 export * from "_containers/customer/reports/customerreport.slice";
@@ -177,5 +179,6 @@ export const store = configureStore({
     yearList: yearReducer,
     candidateDashboard: candidateDashboardReducer,
     getSettings: SettingsReducer,
+    payment: paymentReducer,
   },
 });

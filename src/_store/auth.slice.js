@@ -244,6 +244,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     [putRegisterCustomer.fulfilled]: (state, { payload = {} }) => {
+      localStorage.setItem("iscustomerreg", payload?.data?.customerid);
       state.error = null;
     },
     [putRegisterCustomer.rejected]: (state, action) => {
