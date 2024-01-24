@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
-
+import { UploadData } from "_containers/admin/uploadData";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
@@ -67,6 +67,7 @@ import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
 import { SubsidaryList } from "_containers/admin/masters/subsidary";
 import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
+import { Payment } from "_containers/payment/payment";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -244,6 +245,14 @@ export function App() {
           <Route
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
+          />
+          <Route
+            path="/upload-data"
+            element={
+              <PrivateRoute>
+                <UploadData />
+              </PrivateRoute>
+            }
           />
           <Route path="/report" element={<OpenJobs title={"Open Jobs"} />} />
           <Route
@@ -690,6 +699,7 @@ export function App() {
                 path="/job-detail/:id"
                 element={<ShareJobDetails authUser={authUser} />}
               />
+              <Route path="/payment/:id" element={<Payment />} />
             </Routes>
           </div>
           {authUser && <AppFooter />}
