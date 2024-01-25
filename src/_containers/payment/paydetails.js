@@ -10,6 +10,7 @@ import {
   FormFeedback,
   InputGroup,
   FormText,
+  InputGroupText,
 } from "reactstrap";
 import InputMask from "react-input-mask";
 import { useForm } from "react-hook-form";
@@ -47,6 +48,8 @@ export const PaymentDetails = () => {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCVV] = useState("");
   const [name, setName] = useState("");
+  const [cardholder, setCardHolder] = useState("");
+  const [cardholderErr, setCardHolderErr] = useState(false);
   const [cardNumberErr, setCardNumberErr] = useState(false);
   const [expiryErr, setExpiryErr] = useState(false);
   const [invalidExp, setInvalidExp] = useState(false);
@@ -169,6 +172,7 @@ export const PaymentDetails = () => {
   };
 
   const setCardDetails = (e) => {
+    debugger;
     if (e.target.name === "name") {
       setName(e.target.value);
     } else if (e.target.name === "cardnumber") {
@@ -182,6 +186,9 @@ export const PaymentDetails = () => {
     } else if (e.target.name === "cvv") {
       setCVVErr(e.target.value === "");
       setCVV(formatCVC(e.target.value));
+    } else if (e.target.name === "cardholder") {
+      setCardHolderErr(e.target.value === "");
+      setCardHolder(e.target.value);
     }
   };
 
@@ -220,7 +227,8 @@ export const PaymentDetails = () => {
       cvv === "" ||
       expiry === "" ||
       invalidExp ||
-      !validCard
+      !validCard ||
+      cardholder === ""
     ) {
       if (!validCard) {
         showSweetAlert({
@@ -231,6 +239,7 @@ export const PaymentDetails = () => {
       setCardNumberErr(cardnumber === "");
       setCVVErr(cvv === "");
       setExpiryErr(expiry === "");
+      setCardHolderErr(cardholder === "");
       return;
     }
     let payload = {
@@ -251,6 +260,7 @@ export const PaymentDetails = () => {
       expirydate: expiry,
       securitycode: cvv,
       currentUserId: 0,
+      cardholdername: cardholder,
     };
 
     let response = await dispatch(
@@ -522,64 +532,94 @@ export const PaymentDetails = () => {
         </Col>
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
           <img
-            src={paymentIcons.card}
-            alt="payment card"
-            className={issuer === "unknown" ? "card-border me-2" : "me-2"}
-            width={32}
-            height={22}
-          ></img>
-          <img
             src={paymentIcons.master}
             alt="payment master card"
-            className={issuer === "mastercard" ? "card-border me-2" : "me-2"}
+            className={"me-2"}
             width={32}
             height={22}
           ></img>
           <img
             src={paymentIcons.amex}
             alt="payment amex card"
-            className={
-              issuer === "american-express" ? "card-border me-2" : "me-2"
-            }
+            className={"me-2"}
             width={32}
             height={22}
           ></img>
           <img
             src={paymentIcons.visa}
             alt="payment visa card"
-            className={issuer === "visa" ? "card-border me-2" : "me-2"}
+            className={"me-2"}
             width={32}
             height={22}
           ></img>
           <img
             src={paymentIcons.discover}
             alt="payment discover card"
-            className={issuer === "discover" ? "card-border me-2" : "me-2"}
+            className={"me-2"}
             width={32}
             height={22}
           ></img>
         </Col>
         <Row>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col xs={12} sm={12} md={12} lg={6} xl={4} xxl={4}>
             <FormGroup>
               <Label for="cardnumber" className="input-label">
                 Card Number <span className="text-danger">*</span>
               </Label>
-
               <InputGroup>
-                {/* <InputMask
-                  placeholder="Enter Card Number"
-                  type="text"
-                  mask="9999 9999 9999 9999"
-                  name="cardnumber"
-                  id="cardnumber"
-                  {...register("cardnumber")}
-                  className={`form-control placeholder-name ${
-                    errors.cardnumber ? "is-invalid" : ""
-                  }`}
-                  onChange={(e) => setCardDetails(e)}
-                  // maxLength={20}
-                /> */}
+                <InputGroupText>
+                  {issuer === "unknown" ? (
+                    <img
+                      src={paymentIcons.card}
+                      alt="payment card"
+                      width={32}
+                      height={22}
+                    ></img>
+                  ) : (
+                    <></>
+                  )}
+                  {issuer === "mastercard" ? (
+                    <img
+                      src={paymentIcons.master}
+                      alt="payment master card"
+                      width={32}
+                      height={22}
+                    ></img>
+                  ) : (
+                    <></>
+                  )}
+                  {issuer === "american-express" ? (
+                    <img
+                      src={paymentIcons.amex}
+                      alt="payment amex card"
+                      width={32}
+                      height={22}
+                    ></img>
+                  ) : (
+                    <></>
+                  )}
+                  {issuer === "visa" ? (
+                    <img
+                      src={paymentIcons.visa}
+                      alt="payment visa card"
+                      width={32}
+                      height={22}
+                    ></img>
+                  ) : (
+                    <></>
+                  )}
+                  {issuer === "discover" ? (
+                    <img
+                      src={paymentIcons.discover}
+                      alt="payment discover card"
+                      className={"me-2"}
+                      width={32}
+                      height={22}
+                    ></img>
+                  ) : (
+                    <></>
+                  )}
+                </InputGroupText>
                 <Input
                   type="tel"
                   name="cardnumber"
@@ -591,7 +631,6 @@ export const PaymentDetails = () => {
                   }`}
                   placeholder="Card Number"
                   pattern="[\d| ]{16,22}"
-                  // required
                   value={cardnumber}
                   onChange={(e) => setCardDetails(e)}
                 />
@@ -606,26 +645,13 @@ export const PaymentDetails = () => {
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={3} xl={3} xxl={3}>
+          <Col xs={12} sm={12} md={12} lg={3} xl={2} xxl={2}>
             <FormGroup>
               <Label for="expiry" className="input-label">
                 Expiry Date <span className="text-danger">*</span>
               </Label>
 
               <InputGroup>
-                {/* <InputMask
-                  placeholder="MM/YY"
-                  mask="99/99"
-                  type="text"
-                  name="expiry"
-                  id="expiry"
-                  {...register("expiry")}
-                  className={`form-control placeholder-name ${
-                    errors.expiry ? "is-invalid" : ""
-                  }`}
-                  onChange={(e) => setCardDetails(e)}
-                  // maxLength={20}
-                /> */}
                 <input
                   type="tel"
                   name="expiry"
@@ -635,10 +661,8 @@ export const PaymentDetails = () => {
                   }`}
                   placeholder="MM/YY"
                   pattern="\d\d/\d\d"
-                  // required
                   value={expiry}
                   onChange={(e) => setCardDetails(e)}
-                  // onFocus={this.handleInputFocus}
                 />
                 <FormFeedback>
                   {expiryErr || invalidExp
@@ -650,28 +674,13 @@ export const PaymentDetails = () => {
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={3} xl={3} xxl={3}>
+          <Col xs={12} sm={12} md={12} lg={3} xl={2} xxl={2}>
             <FormGroup>
               <Label for="cvv" className="input-label">
-                Security Code <span className="text-danger">*</span>
+                CVV <span className="text-danger">*</span>
               </Label>
 
               <InputGroup>
-                {/* <InputMask
-                  placeholder="CVV"
-                  type="text"
-                  mask="9999"
-                  name="cvv"
-                  id="cvv"
-                  {...register("cvv")}
-                  className={`form-control placeholder-name ${
-                    errors.cvv ? "is-invalid" : ""
-                  }`}
-                  onChange={(e) => setCardDetails(e)}
-                  // maxLength={20}
-                />
-
-                <FormFeedback>{errors.cvv?.message}</FormFeedback> */}
                 <input
                   type="tel"
                   name="cvv"
@@ -681,12 +690,34 @@ export const PaymentDetails = () => {
                   }`}
                   placeholder="CVV"
                   pattern="\d{3,4}"
-                  // required
                   value={cvv}
                   onChange={(e) => setCardDetails(e)}
                 />
+                <FormFeedback>{cvvErr ? "CVV is required" : ""}</FormFeedback>
+              </InputGroup>
+            </FormGroup>
+          </Col>
+          <Col xs={12} sm={12} md={12} lg={6} xl={4} xxl={4}>
+            <FormGroup>
+              <Label for="cardnumber" className="input-label">
+                Cardholder Name <span className="text-danger">*</span>
+              </Label>
+              <InputGroup>
+                <Input
+                  type="text"
+                  name="cardholder"
+                  id={"cardholder"}
+                  className={`form-control placeholder-name ${
+                    cardholderErr ? "is-invalid" : ""
+                  }`}
+                  placeholder="Enter Cardholder Name"
+                  value={cardholder}
+                  onChange={(e) => setCardDetails(e)}
+                  maxLength={50}
+                />
+
                 <FormFeedback>
-                  {cvvErr ? "Security code is required" : ""}
+                  {cardholderErr ? "Cardholder name is required" : ""}
                 </FormFeedback>
               </InputGroup>
             </FormGroup>
