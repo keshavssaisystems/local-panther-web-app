@@ -118,56 +118,45 @@ export const CustomerList = () => {
 
       cell: (row) => (
         <div>
-          <div
-            title="Active/Inactive user"
-            className="switch has-switch  me-1"
-            data-on-label="ON"
-            data-off-label="OFF"
-            style={{ verticalAlign: "bottom", cursor: "pointer" }}
-            onClick={() => toggleNotification(!row.isactive, row)}
-          >
+          {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
             <div
-              className={cx("switch-animate", {
-                "switch-on": row.isactive,
-                "switch-off": !row.isactive,
-              })}
+              title="Active/Inactive user"
+              className="switch has-switch  me-1"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+              onClick={() => toggleNotification(!row.isactive, row)}
             >
-              <input type="checkbox" />
-              <span className="switch-left">ON</span>
-              <label>&nbsp;</label>
-              <span className="switch-right">OFF</span>
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isactive,
+                  "switch-off": !row.isactive,
+                })}
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
             </div>
-          </div>
+          )}
           <ButtonGroup>
-            {/* <BsPencil
-            title="Edit user"
-            style={{
-              fontSize: "21px",
-              verticalAlign: "middle",
-              cursor: "pointer",
-            }}
-            className="edit-icon me-1"
-            onClick={(e) => {
-              setEditData(row);
-              setOpenModal(true);
-              setIsEdit(true);
-            }}
-          /> */}
-
-            <Button
-              // outline
-              size="sm"
-              title="Edit Customer"
-              className="btn-icon"
-              color="warning"
-              onClick={(e) => {
-                setEditData(row);
-                setOpenModal(true);
-                setIsEdit(true);
-              }}
-            >
-              <img src={customerIcons?.list_edit} alt="list approve"></img>
-            </Button>
+            {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
+              <Button
+                // outline
+                size="sm"
+                title="Edit Customer"
+                className="btn-icon"
+                color="warning"
+                onClick={(e) => {
+                  setEditData(row);
+                  setOpenModal(true);
+                  setIsEdit(true);
+                }}
+              >
+                <img src={customerIcons?.list_edit} alt="list approve"></img>
+              </Button>
+            )}
 
             {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
               <Button
