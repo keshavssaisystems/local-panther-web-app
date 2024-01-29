@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 
@@ -10,7 +10,12 @@ import "./registrationsuccess.scss";
 
 import logo from "../../assets/utils/images/panther-logo.png";
 
-export function RegistrationSuccess() {
+export const RegistrationSuccess = () => {
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("iscustomerreg");
+    };
+  });
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -45,6 +50,20 @@ export function RegistrationSuccess() {
                 </span> */}
               </h6>
               <div className="mt-4">
+                {localStorage.getItem("iscustomerreg") ? (
+                  <>
+                    <Link
+                      to={`/payment/${localStorage.getItem("iscustomerreg")}`}
+                    >
+                      <Button color="dark" className=" btn-text" size="lg">
+                        Add Billing Details
+                      </Button>
+                    </Link>
+                    <span className="ms-2 me-2">or</span>{" "}
+                  </>
+                ) : (
+                  <></>
+                )}
                 <Link to="/login">
                   <Button color="primary" className=" btn-text" size="lg">
                     Proceed to login
@@ -79,4 +98,4 @@ export function RegistrationSuccess() {
       </div>
     </>
   );
-}
+};

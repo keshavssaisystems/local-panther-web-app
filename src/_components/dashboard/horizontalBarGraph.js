@@ -86,7 +86,7 @@ export function HorizonatalBarGraph({ graphData }) {
                 Candidate Interview's
               </div>
               <span className="text-muted mt-1 ms-4">
-                Accepted, Scheduled & rejected
+                Accepted, Scheduled & Rejected
               </span>
             </Col>
           </Row>
