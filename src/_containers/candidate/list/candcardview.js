@@ -293,7 +293,7 @@ export function CandCardView({
           isRMOpen={rejectReasonModal}
           callBack={(reason) => onBtnClick("rejected", reason)}
           callBackError={() => closeModal()}
-          title={"rejection"}
+          title={"withdrawing your Application"}
         />
       )}
     </>

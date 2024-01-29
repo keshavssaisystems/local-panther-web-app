@@ -292,7 +292,7 @@ export const CustomerCandidateLists = (props) => {
                 toggle("scheduled");
               }}
             >
-              Scheduled
+              Interviews
             </Button>
             <Button
               color="primary"

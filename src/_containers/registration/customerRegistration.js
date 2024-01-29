@@ -274,7 +274,7 @@ export function CustomerRegistration() {
         cityid: Number(formData.cityid),
         stateid: Number(formData.stateid),
         countryid: 1,
-        isactive: true,
+        isactive: false,
         customerstatusid: 0,
         currentUserId: 0,
       };
@@ -378,7 +378,7 @@ export function CustomerRegistration() {
       emailotp: null,
       emailotpgeneratedate: null,
       isemailverify: false,
-      isactive: true,
+      isactive: false,
       currentuserid: 0,
       type: "phone",
       userroleid: 2,
