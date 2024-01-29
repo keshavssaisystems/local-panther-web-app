@@ -38,7 +38,7 @@ Providers.globalProvider = new Msal2Provider({
   scopes: ["Calendars.Read"],
 });
 
-export function ScheduleInterview() {
+export function ScheduleInterview({ fromDashboard }) {
   const dispatch = useDispatch();
   const localizer = momentLocalizer(moment);
   const [msLogin, setMsLogin] = useState(false);
@@ -192,7 +192,7 @@ export function ScheduleInterview() {
     setUpdateSuccess(true);
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
   };
-  const [toggleVar, setToggleVar] = useState("availabilty");
+  const [toggleVar, setToggleVar] = useState(fromDashboard);
   const toggle = (tab) => {
     if (toggleVar !== tab) {
       setToggleVar(tab);

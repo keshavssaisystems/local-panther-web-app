@@ -1121,7 +1121,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Zipcode
+                          Zip code
                         </Label>
                         <input
                           type="text"
@@ -1132,7 +1132,7 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("zip", evt.target.value)
                           }
-                          placeholder="Enter zipcode"
+                          placeholder="Enter zip code"
                           className="field-input placeholder-text form-control input-text"
                         />
                       </FormGroup>

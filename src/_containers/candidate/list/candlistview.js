@@ -20,6 +20,7 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
+import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
@@ -793,7 +794,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
+            width: "22%",
           },
           {
             name: <span className="table-title">Offered salary</span>,
@@ -870,30 +871,30 @@ export const CandListView = (props) => {
             sortable: true,
             width: "10%",
           },
-          {
-            name: <span className="table-title">Pre-screen</span>,
-            cell: (row) =>
-              row.candidateprescreenstatus === "NA" ? (
-                "-"
-              ) : row.candidateprescreenstatus === "Pending" ? (
-                <Button
-                  onClick={() => onPrescreenClick("pending", row)}
-                  color="link"
-                >
-                  <u>Pending</u>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => onPrescreenClick("completed", row)}
-                  color="link"
-                >
-                  <u>Completed</u>
-                </Button>
-              ),
-            ignoreRowClick: true,
-            button: true,
-            width: "10%",
-          },
+          // {
+          //   name: <span className="table-title">Pre-screen</span>,
+          //   cell: (row) =>
+          //     row.candidateprescreenstatus === "NA" ? (
+          //       "-"
+          //     ) : row.candidateprescreenstatus === "Pending" ? (
+          //       <Button
+          //         onClick={() => onPrescreenClick("pending", row)}
+          //         color="link"
+          //       >
+          //         <u>Pending</u>
+          //       </Button>
+          //     ) : (
+          //       <Button
+          //         onClick={() => onPrescreenClick("completed", row)}
+          //         color="link"
+          //       >
+          //         <u>Completed</u>
+          //       </Button>
+          //     ),
+          //   ignoreRowClick: true,
+          //   button: true,
+          //   width: "10%",
+          // },
           {
             name: <span className="table-title">Offer</span>,
             cell: (row) =>
@@ -927,20 +928,36 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === false && (
-                    <>
-                      <img
-                        src={currentOffer}
-                        alt="list maybe"
-                        className={"icon-pointer"}
-                        width={"20px"}
-                        title="New Offer - Click to view offer"
-                        onClick={() =>
-                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                        }
-                      ></img>
-                    </>
-                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                 </>
               ) : (
                 <> - </>
@@ -956,7 +973,7 @@ export const CandListView = (props) => {
             ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "13%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -998,7 +1015,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
+            width: "22%",
           },
           {
             name: <span className="table-title">Offered salary</span>,
@@ -1075,30 +1092,30 @@ export const CandListView = (props) => {
             sortable: true,
             width: "10%",
           },
-          {
-            name: <span className="table-title">Pre-screen</span>,
-            cell: (row) =>
-              row.candidateprescreenstatus === "NA" ? (
-                "-"
-              ) : row.candidateprescreenstatus === "Pending" ? (
-                <Button
-                  onClick={() => onPrescreenClick("pending", row)}
-                  color="link"
-                >
-                  <u>Pending</u>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => onPrescreenClick("completed", row)}
-                  color="link"
-                >
-                  <u>Completed</u>
-                </Button>
-              ),
-            ignoreRowClick: true,
-            button: true,
-            width: "10%",
-          },
+          // {
+          //   name: <span className="table-title">Pre-screen</span>,
+          //   cell: (row) =>
+          //     row.candidateprescreenstatus === "NA" ? (
+          //       "-"
+          //     ) : row.candidateprescreenstatus === "Pending" ? (
+          //       <Button
+          //         onClick={() => onPrescreenClick("pending", row)}
+          //         color="link"
+          //       >
+          //         <u>Pending</u>
+          //       </Button>
+          //     ) : (
+          //       <Button
+          //         onClick={() => onPrescreenClick("completed", row)}
+          //         color="link"
+          //       >
+          //         <u>Completed</u>
+          //       </Button>
+          //     ),
+          //   ignoreRowClick: true,
+          //   button: true,
+          //   width: "10%",
+          // },
           {
             name: <span className="table-title">Offer</span>,
             cell: (row) =>
@@ -1132,27 +1149,43 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === false && (
-                    <>
-                      <img
-                        src={currentOffer}
-                        alt="list maybe"
-                        className={"icon-pointer"}
-                        width={"20px"}
-                        title="New Offer - Click to view offer"
-                        onClick={() =>
-                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                        }
-                      ></img>
-                    </>
-                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                 </>
               ) : (
                 <> - </>
               ),
             ignoreRowClick: true,
             button: true,
-            width: "7%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Interest</span>,
