@@ -370,7 +370,7 @@ export function CreateJobWizard({ type }) {
                                 id="Tooltip-1"
                                 style={nextBtn ? {} : { display: "none" }}
                               >
-                                Continue
+                                Continue & Save
                               </Button>
                               <UncontrolledTooltip
                                 placement="top"
