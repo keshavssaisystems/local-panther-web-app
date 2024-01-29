@@ -158,7 +158,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
                         ? "Accepted"
                         : interviewDetail?.isrejected === true
                         ? "Rejected"
-                        : "No response from candidate"}
+                        : "You have not responded"}
                     </p>
                   </div>
                   {interviewDetail?.isreschedulerequested === false && (

@@ -30,9 +30,14 @@ import { useParams } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import Payment from "payment";
 import { history } from "_helpers";
+import { Link } from "react-router-dom";
 import "./payment.scss";
 
-export const PaymentDetails = () => {
+export const PaymentDetails = ({
+  isAdmin = false,
+  selectedCustomer = {},
+  onClose,
+}) => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [companyValue, setCompanyValue] = useState(0);
@@ -81,6 +86,7 @@ export const PaymentDetails = () => {
     zipcode: Yup.string().required("Zip code is required"),
     countryid: Yup.string().required("Country is required"),
     currency: Yup.string().required("Currency is required"),
+    address: Yup.string().required("Address is required"),
     // cardnumber: Yup.string().required("Card number is required"),
     // expiry: Yup.string().required("Expiry date is required"),
     // cvv: Yup.string().required("Security code is required"),
@@ -104,20 +110,30 @@ export const PaymentDetails = () => {
   }, [id, sameAsCust]);
   useEffect(() => {
     if (userDetails?.customerid) {
-      setValue("name", userDetails.firstname + " " + userDetails.lastname);
-      setValue("companyid", String(userDetails.companyid));
-      setCompanyValue(userDetails.companyid);
-      setValue("email", userDetails.email);
-      setValue("phoneNumber", userDetails.phonenumber);
-      setValue("zipcode", userDetails.zipcode);
-      // setValue("cityid", userDetails.cityid);
-      // setValue("stateid", userDetails.stateid);
-      // setValue("countryid", userDetails.countryid);
-
-      setValue("currency", 1);
-      setCurrencyValue(1);
+      setDetails(userDetails);
     }
   }, [userDetails]);
+
+  useEffect(() => {
+    if (selectedCustomer?.customerid) {
+      setDetails(selectedCustomer);
+    }
+  }, [selectedCustomer]);
+
+  const setDetails = (userDetails) => {
+    setValue("name", userDetails.firstname + " " + userDetails.lastname);
+    setValue("companyid", String(userDetails.companyid));
+    setCompanyValue(userDetails.companyid);
+    setValue("email", userDetails.email);
+    setValue("phoneNumber", userDetails.phonenumber);
+    setValue("zipcode", userDetails.zipcode);
+    // setValue("cityid", userDetails.cityid);
+    // setValue("stateid", userDetails.stateid);
+    // setValue("countryid", userDetails.countryid);
+
+    setValue("currency", 1);
+    setCurrencyValue(1);
+  };
   useEffect(() => {
     let country_response;
     country_response = cityList.map(({ countryid: value, ...rest }) => {
@@ -172,7 +188,6 @@ export const PaymentDetails = () => {
   };
 
   const setCardDetails = (e) => {
-    debugger;
     if (e.target.name === "name") {
       setName(e.target.value);
     } else if (e.target.name === "cardnumber") {
@@ -249,17 +264,19 @@ export const PaymentDetails = () => {
       phonenumber: formData.phoneNumber,
       companyid: formData.companyid,
       email: formData.email,
-      address: "",
+      address: formData.address,
       cityid: formData.cityid,
       stateid: formData.stateid,
       zipcode: formData.zipcode,
       countryid: formData.countryid,
       currencyid: formData.currency,
-      creditcardtypeid: 0,
+      creditcardtypeid: 1,
       creditcardnumber: cardnumber,
       expirydate: expiry,
       securitycode: cvv,
-      currentUserId: 0,
+      currentUserId: localStorage.getItem("userId")
+        ? Number(localStorage.getItem("userId"))
+        : 0,
       cardholdername: cardholder,
     };
 
@@ -288,6 +305,9 @@ export const PaymentDetails = () => {
     SetShowAlert(data);
   };
   const closeSweetAlert = () => {
+    if (isAdmin) {
+      onClose();
+    }
     let data = { ...showAlert };
     data.title = "";
     data.type = "";
@@ -296,7 +316,13 @@ export const PaymentDetails = () => {
   };
 
   const navigateToLogin = () => {
-    history.navigate("/login");
+    if (!isAdmin) {
+      history.navigate("/login");
+    } else {
+      if (isAdmin) {
+        onClose();
+      }
+    }
   };
 
   return (
@@ -306,16 +332,26 @@ export const PaymentDetails = () => {
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
           <h3 className="mt-2 pay-title">Billing Contact</h3>
         </Col>
-        <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-          <Input type="checkbox" onChange={(e) => onSameCustomer(e)}></Input>
-          <Label className="ms-1 same-as-cust">Same as customer</Label>
-        </Col>
-        <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-          <span className="sub-text">
-            If this box is checked, pre-populate the data from the Customer
-            details
-          </span>
-        </Col>
+        {isAdmin ? <hr /> : <></>}
+        {!isAdmin ? (
+          <>
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+              <Input
+                type="checkbox"
+                onChange={(e) => onSameCustomer(e)}
+              ></Input>
+              <Label className="ms-1 same-as-cust">Same as customer</Label>
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+              <span className="sub-text">
+                If this box is checked, pre-populate the data from the Customer
+                details
+              </span>
+            </Col>
+          </>
+        ) : (
+          <></>
+        )}
         <Row>
           <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <FormGroup>
@@ -413,6 +449,29 @@ export const PaymentDetails = () => {
                 />
 
                 <FormFeedback>{errors.phoneNumber?.message}</FormFeedback>
+              </InputGroup>
+            </FormGroup>
+          </Col>
+          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+            <FormGroup>
+              <Label for="address" className="input-label">
+                Address <span className="text-danger">*</span>
+              </Label>
+
+              <InputGroup>
+                <input
+                  placeholder="Add address"
+                  type="textarea"
+                  name="address"
+                  id="address"
+                  {...register("address")}
+                  className={`form-control placeholder-name ${
+                    errors.address ? "is-invalid" : ""
+                  }`}
+                  // maxLength={20}
+                />
+
+                <FormFeedback>{errors.address?.message}</FormFeedback>
               </InputGroup>
             </FormGroup>
           </Col>
@@ -530,6 +589,7 @@ export const PaymentDetails = () => {
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
           <h3 className="mt-2 pay-title">Payment Details</h3>
         </Col>
+        {isAdmin ? <hr /> : <></>}
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
           <img
             src={paymentIcons.master}
@@ -736,6 +796,7 @@ export const PaymentDetails = () => {
             are delivered.
           </span>
         </Col>
+        {isAdmin ? <hr /> : <></>}
         <Col
           xs={12}
           sm={12}
@@ -745,9 +806,34 @@ export const PaymentDetails = () => {
           xxl={12}
           style={{ textAlign: "end" }}
         >
-          <Button color="primary" className="btn-text">
-            Agreed & Submit
-          </Button>
+          {" "}
+          <InputGroup>
+            {!isAdmin ? (
+              <Link to="/login" style={{ borderBottom: "1px solid #545cd8" }}>
+                Return to Sign In Page
+              </Link>
+            ) : (
+              <>
+                {" "}
+                <Button
+                  type="cancel"
+                  color="primary"
+                  outline
+                  className="btn-text"
+                  onClick={(e) => {
+                    onClose();
+                    e.preventDefault();
+                  }}
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
+
+            <Button color="primary" type="submit" className="btn-text ms-4">
+              {!isAdmin ? "Agreed & Submit" : "Save"}
+            </Button>
+          </InputGroup>
         </Col>
       </Form>
       <div style={{ display: "none" }}>

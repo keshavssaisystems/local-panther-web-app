@@ -28,6 +28,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
 import customerIcons from "assets/utils/images/customer";
 import { BsPencil } from "react-icons/bs";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
 export const CustomerList = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -44,6 +45,9 @@ export const CustomerList = () => {
 
   const [pageNo, setPageNo] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(0);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
@@ -103,6 +107,23 @@ export const CustomerList = () => {
       sortable: true,
     },
     {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button disabled color="link">
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
+    },
+    {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
@@ -118,56 +139,45 @@ export const CustomerList = () => {
 
       cell: (row) => (
         <div>
-          <div
-            title="Active/Inactive user"
-            className="switch has-switch  me-1"
-            data-on-label="ON"
-            data-off-label="OFF"
-            style={{ verticalAlign: "bottom", cursor: "pointer" }}
-            onClick={() => toggleNotification(!row.isactive, row)}
-          >
+          {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
             <div
-              className={cx("switch-animate", {
-                "switch-on": row.isactive,
-                "switch-off": !row.isactive,
-              })}
+              title="Active/Inactive user"
+              className="switch has-switch  me-1"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+              onClick={() => toggleNotification(!row.isactive, row)}
             >
-              <input type="checkbox" />
-              <span className="switch-left">ON</span>
-              <label>&nbsp;</label>
-              <span className="switch-right">OFF</span>
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isactive,
+                  "switch-off": !row.isactive,
+                })}
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
             </div>
-          </div>
+          )}
           <ButtonGroup>
-            {/* <BsPencil
-            title="Edit user"
-            style={{
-              fontSize: "21px",
-              verticalAlign: "middle",
-              cursor: "pointer",
-            }}
-            className="edit-icon me-1"
-            onClick={(e) => {
-              setEditData(row);
-              setOpenModal(true);
-              setIsEdit(true);
-            }}
-          /> */}
-
-            <Button
-              // outline
-              size="sm"
-              title="Edit Customer"
-              className="btn-icon"
-              color="warning"
-              onClick={(e) => {
-                setEditData(row);
-                setOpenModal(true);
-                setIsEdit(true);
-              }}
-            >
-              <img src={customerIcons?.list_edit} alt="list approve"></img>
-            </Button>
+            {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
+              <Button
+                // outline
+                size="sm"
+                title="Edit Customer"
+                className="btn-icon"
+                color="warning"
+                onClick={(e) => {
+                  setEditData(row);
+                  setOpenModal(true);
+                  setIsEdit(true);
+                }}
+              >
+                <img src={customerIcons?.list_edit} alt="list approve"></img>
+              </Button>
+            )}
 
             {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
               <Button
@@ -421,6 +431,16 @@ export const CustomerList = () => {
     getCustomerDetails(pageSize, page);
   };
 
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    getCustomerDetails(pageSize, pageNo);
+  };
+
   return (
     <>
       <Row>
@@ -577,6 +597,16 @@ export const CustomerList = () => {
           />
           {showAlert.description}
         </>
+      )}
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
       )}
     </>
   );
