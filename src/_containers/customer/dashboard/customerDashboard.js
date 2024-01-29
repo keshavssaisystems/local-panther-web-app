@@ -32,7 +32,7 @@ export default function CustomerDashboard() {
         res?.payload?.data?.billingdetailstatus !== undefined &&
         res?.payload?.data?.billingdetailstatus
       ) {
-        setShowRemModal(true);
+        // setShowRemModal(true);
       }
     }
   };
