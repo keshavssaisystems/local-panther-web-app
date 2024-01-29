@@ -4,6 +4,7 @@ const paymentIcons = {
   discover: require("./Discover.svg").default,
   visa: require("./Visa.svg").default,
   card: require("./card.svg").default,
+  info: require("./info.svg").default,
 };
 
 export default paymentIcons;

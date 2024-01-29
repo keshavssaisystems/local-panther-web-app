@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { WidgetCard } from "_components/dashboard/widgetCard";
@@ -13,18 +13,28 @@ import {
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
 import moment from "moment/moment";
+import { BillDetailRemModal } from "_components/modal/billdetailremmodal";
 
 export default function CustomerDashboard() {
+  const [showRemModal, setShowRemModal] = useState(false);
   const dispatch = useDispatch();
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
   };
   const getCompanyDetails = async function () {
-    await dispatch(
+    let res = await dispatch(
       createjobActions.getCustomerDetailsThunk(
         JSON.parse(localStorage.getItem("userDetails")).InternalUserId
       )
     );
+    if (res?.payload?.statusCode === 200) {
+      if (
+        res?.payload?.data?.billingdetailstatus !== undefined &&
+        res?.payload?.data?.billingdetailstatus
+      ) {
+        setShowRemModal(true);
+      }
+    }
   };
   const getDashboardJobsDataCount = async function () {
     await dispatch(
@@ -60,6 +70,7 @@ export default function CustomerDashboard() {
   const dashboardJobsDataCount = useSelector(
     (state) => state.customerDashboard.dashboardJobsDataCount
   );
+
   let cardOptions = [
     {
       title: "Open jobs",
@@ -113,6 +124,16 @@ export default function CustomerDashboard() {
           graphData={dashboardJobsDataCount.customerDashboardJobDataCountList}
         />
       </div>
+      <>
+        {showRemModal ? (
+          <BillDetailRemModal
+            isOpen={showRemModal}
+            onClose={() => setShowRemModal(false)}
+          ></BillDetailRemModal>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

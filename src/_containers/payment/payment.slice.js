@@ -7,7 +7,7 @@ const name = "payment";
 export const getCustomerUserDetails = createAsyncThunk(
   `${name}/getCustomerUserDetails`,
   async (id) => {
-    const GET_CUST_USER_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Customer/CustomerInfoById/${id}`;
+    const GET_CUST_USER_END_POINT = `${process.env.REACT_APP_NEW_API_URL}Customer/CustomerInfoById/${id}`;
     return await fetchWrapper.get(GET_CUST_USER_END_POINT);
   }
 );
@@ -16,7 +16,7 @@ export const getCustomerUserDetails = createAsyncThunk(
 export const getpaymentCurrencyType = createAsyncThunk(
   `${name}/getpaymentCurrencyType`,
   async () => {
-    const GET_PAY_CURR_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/Common/GetCommonDropdown?searchText=currency`;
+    const GET_PAY_CURR_END_POINT = `${process.env.REACT_APP_NEW_API_URL}Common/GetCommonDropdown?searchText=currency`;
     return await fetchWrapper.get(GET_PAY_CURR_END_POINT);
   }
 );
@@ -25,7 +25,7 @@ export const getpaymentCurrencyType = createAsyncThunk(
 export const postPaymentBillingDetails = createAsyncThunk(
   `${name}/postPaymentBillingDetails`,
   async (payload) => {
-    const GET_PAY_BILL_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/BillingDetail`;
+    const GET_PAY_BILL_END_POINT = `${process.env.REACT_APP_NEW_API_URL}BillingDetail`;
     return await fetchWrapper.post(GET_PAY_BILL_END_POINT, payload);
   }
 );
