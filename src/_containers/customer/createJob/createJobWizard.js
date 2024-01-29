@@ -328,6 +328,7 @@ export function CreateJobWizard({ type }) {
                 className="main-heading main-wizard-container"
               >
                 <ol className="forms-wizard">{renderSteps()}</ol>
+                compState : {compState}
                 {steps[compState].component}
                 {compState !== 3 && (
                   <>
@@ -345,7 +346,7 @@ export function CreateJobWizard({ type }) {
                             Previous
                           </Button>
                         )}
-                        {(compState !== 1 || jobType !== "new_template") && (
+                        {compState !== 1 && (
                           <Button
                             color="primary"
                             className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
