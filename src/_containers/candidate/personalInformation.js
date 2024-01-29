@@ -1148,7 +1148,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Date of Birth
+                          Date of birth
                         </Label>
 
                         <InputGroup>
