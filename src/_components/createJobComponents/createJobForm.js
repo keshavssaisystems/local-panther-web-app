@@ -92,7 +92,7 @@ export default function CreateJob({
     JobDataForPreview(data);
     setSetFormData(data);
   };
-  useEffect(() => {
+  useEffect((e) => {
     if (type === "previous_template" || type === "recommendation_template") {
       let data = {
         basicInformation: {
