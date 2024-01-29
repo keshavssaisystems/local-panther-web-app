@@ -20,8 +20,12 @@ export const PaymentModal = (props) => {
       fade={true}
     >
       <ModalHeader toggle={() => props.onClose()}>Payment Details</ModalHeader>
-      <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
-        <PaymentDetails></PaymentDetails>
+      <ModalBody style={{ maxHeight: "80vh", overflow: "auto" }}>
+        <PaymentDetails
+          isAdmin={true}
+          selectedCustomer={props.selectedCustomer}
+          onClose={() => props.onClose()}
+        ></PaymentDetails>
       </ModalBody>
       {/* <ModalFooter>
         <Button color="primary" onClick={() => props.onClose()}>

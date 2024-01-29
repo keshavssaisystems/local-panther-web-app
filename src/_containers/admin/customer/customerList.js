@@ -28,6 +28,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
 import customerIcons from "assets/utils/images/customer";
 import { BsPencil } from "react-icons/bs";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
 export const CustomerList = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -44,6 +45,9 @@ export const CustomerList = () => {
 
   const [pageNo, setPageNo] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(0);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
@@ -101,6 +105,23 @@ export const CustomerList = () => {
       selector: (row) =>
         row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
       sortable: true,
+    },
+    {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button disabled color="link">
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
     },
     {
       name: "Email",
@@ -410,6 +431,16 @@ export const CustomerList = () => {
     getCustomerDetails(pageSize, page);
   };
 
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    getCustomerDetails(pageSize, pageNo);
+  };
+
   return (
     <>
       <Row>
@@ -566,6 +597,16 @@ export const CustomerList = () => {
           />
           {showAlert.description}
         </>
+      )}
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
       )}
     </>
   );
