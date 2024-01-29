@@ -24,6 +24,7 @@ import customerIcons from "assets/utils/images/customer";
 import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
+import newoffer from "assets/utils/images/job-detail-icons/newoffer.svg";
 import "./custlistview.scss";
 import moment from "moment";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
@@ -951,27 +952,55 @@ export const CustCandidateListView = (props) => {
                           alt="list maybe"
                           className={"icon-pointer me-2"}
                           width={"20px"}
-                          title="Final Offer - Click to view offer"
+                          title={
+                            props.type === "accepted"
+                              ? "Click to view offer"
+                              : "Final Offer - Click to view offer"
+                          }
                           onClick={() =>
                             window.open(row?.jobOfferDtos[0]?.offerfilepath)
                           }
                         ></img>
                       </>
                     )}
-                    {row?.isfinaloffer === false && (
-                      <>
-                        <img
-                          src={currentOffer}
-                          alt="list maybe"
-                          className={"icon-pointer"}
-                          width={"20px"}
-                          title="New Offer - Click to view offer"
-                          onClick={() =>
-                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                          }
-                        ></img>
-                      </>
-                    )}
+                    {row?.jobOfferDtos?.length === 1 &&
+                      row?.isfinaloffer === false && (
+                        <>
+                          <img
+                            src={currentOffer}
+                            alt="list maybe"
+                            className={"icon-pointer"}
+                            width={"20px"}
+                            title={
+                              props.type === "accepted"
+                                ? "Click to view offer"
+                                : "New Offer - Click to view offer"
+                            }
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
+                    {row?.jobOfferDtos?.length === 2 &&
+                      row?.isfinaloffer === false && (
+                        <>
+                          <img
+                            src={newoffer}
+                            alt="list maybe"
+                            className={"icon-pointer"}
+                            width={"20px"}
+                            title={
+                              props.type === "accepted"
+                                ? "Click to view offer"
+                                : "New Offer - Click to view offer"
+                            }
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
                   </>
                 ) : (
                   <> - </>

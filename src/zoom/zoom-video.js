@@ -30,7 +30,7 @@ export const ZoomVideoScreen = (props) => {
     userName: "",
     sessionPasscode: "",
     role: "",
-    features: ["video", "audio", "users", "chat"],
+    features: ["video", "audio", "users", "chat", "share", "settings"],
   };
 
   // let token = generateSignature(ZOOM_APP_KEY, ZOOM_APP_SECRET, id, 1, id, name);

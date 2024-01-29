@@ -336,7 +336,15 @@ export function App() {
             path="/scheduled-interview"
             element={
               <PrivateRoute>
-                <ScheduleInterview />
+                <ScheduleInterview fromDashboard="calendar" />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/scheduled-interview#upcoming"
+            element={
+              <PrivateRoute>
+                <ScheduleInterview fromDashboard="upcoming" />
               </PrivateRoute>
             }
           />
