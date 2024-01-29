@@ -2,14 +2,21 @@ import React from "react";
 import { Card, CardBody, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
 import "./dashboard.scss";
+import { useNavigate } from "react-router-dom";
 
 export function HorizonatalBarGraph({ graphData }) {
+  const navigate = useNavigate();
   let options = {
     chart: {
       fontFamily: "Capitana",
       stacked: true,
       toolbar: {
         show: false,
+      },
+      events: {
+        click: () => {
+          navigate("/scheduled-interview");
+        },
       },
     },
     grid: {

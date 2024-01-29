@@ -20,6 +20,7 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
+import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
@@ -927,20 +928,36 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === false && (
-                    <>
-                      <img
-                        src={currentOffer}
-                        alt="list maybe"
-                        className={"icon-pointer"}
-                        width={"20px"}
-                        title="New Offer - Click to view offer"
-                        onClick={() =>
-                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                        }
-                      ></img>
-                    </>
-                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                 </>
               ) : (
                 <> - </>
@@ -1132,20 +1149,36 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === false && (
-                    <>
-                      <img
-                        src={currentOffer}
-                        alt="list maybe"
-                        className={"icon-pointer"}
-                        width={"20px"}
-                        title="New Offer - Click to view offer"
-                        onClick={() =>
-                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                        }
-                      ></img>
-                    </>
-                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                 </>
               ) : (
                 <> - </>
