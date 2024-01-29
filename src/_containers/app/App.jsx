@@ -699,7 +699,10 @@ export function App() {
                 path="/job-detail/:id"
                 element={<ShareJobDetails authUser={authUser} />}
               />
-              <Route path="/payment/:id" element={<Payment />} />
+              <Route
+                path="/payment/:id"
+                element={<Payment authUser={authUser} />}
+              />
             </Routes>
           </div>
           {authUser && <AppFooter />}

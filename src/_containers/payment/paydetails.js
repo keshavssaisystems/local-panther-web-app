@@ -37,6 +37,8 @@ export const PaymentDetails = ({
   isAdmin = false,
   selectedCustomer = {},
   onClose,
+  isViewMode = false,
+  authUser,
 }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -807,33 +809,51 @@ export const PaymentDetails = ({
           style={{ textAlign: "end" }}
         >
           {" "}
-          <InputGroup>
-            {!isAdmin ? (
-              <Link to="/login" style={{ borderBottom: "1px solid #545cd8" }}>
-                Return to Sign In Page
-              </Link>
-            ) : (
-              <>
-                {" "}
-                <Button
-                  type="cancel"
-                  color="primary"
-                  outline
-                  className="btn-text"
-                  onClick={(e) => {
-                    onClose();
-                    e.preventDefault();
-                  }}
-                >
-                  Cancel
-                </Button>
-              </>
-            )}
-
-            <Button color="primary" type="submit" className="btn-text ms-4">
-              {!isAdmin ? "Agreed & Submit" : "Save"}
+          {userDetails?.billingdetailstatus ||
+          selectedCustomer?.billingdetailstatus ? (
+            <Button
+              type="cancel"
+              color="danger"
+              outline
+              className="btn-text me-2"
+              onClick={(e) => {
+                onClose();
+                e.preventDefault();
+              }}
+            >
+              Delete
             </Button>
-          </InputGroup>
+          ) : (
+            <></>
+          )}
+          {!isAdmin && !authUser ? (
+            <Link
+              to="/login"
+              className="me-2"
+              style={{ borderBottom: "1px solid #545cd8" }}
+            >
+              Return to Sign In Page
+            </Link>
+          ) : (
+            <>
+              {" "}
+              <Button
+                type="cancel"
+                color="primary"
+                outline
+                className="btn-text"
+                onClick={(e) => {
+                  onClose();
+                  e.preventDefault();
+                }}
+              >
+                Cancel
+              </Button>
+            </>
+          )}
+          <Button color="primary" type="submit" className="btn-text ms-2">
+            {!isAdmin && !authUser ? "Agreed & Submit" : "Save"}
+          </Button>
         </Col>
       </Form>
       <div style={{ display: "none" }}>

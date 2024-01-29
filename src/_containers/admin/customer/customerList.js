@@ -112,7 +112,7 @@ export const CustomerList = () => {
       selector: (row) => (
         <>
           {row.billingdetailstatus ? (
-            <Button disabled color="link">
+            <Button color="link" onClick={() => onViewBilling(row)}>
               <span style={{ textDecoration: "underline" }}>View</span>
             </Button>
           ) : (
@@ -432,6 +432,11 @@ export const CustomerList = () => {
   };
 
   const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
     setSelectedCustomer(row);
     setOpenBDModal(true);
   };
