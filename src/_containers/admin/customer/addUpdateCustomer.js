@@ -213,7 +213,7 @@ export const AddUpdateCustomer = ({
       cityid: Number(locationData.cityId),
       stateid: Number(locationData.stateId),
       countryid: 1,
-      isactive: true,
+      isactive: isEdit ? editData?.isactive : true,
       currentUserId: Number(localStorage.getItem("userId")),
     };
     isEdit === true ? putData(data) : postData(data);

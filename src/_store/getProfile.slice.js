@@ -109,10 +109,10 @@ export const getPronoun = createAsyncThunk(
 
 export const getReasonList = createAsyncThunk(
   "user/getReasonList",
-  async () => {
+  async (input) => {
     const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
-      `${baseUrl}/Common/GetCommonDropdown?searchText=deactivateaccountreason`
+      `${baseUrl}/Common/GetCommonDropdown?searchText=${input}`
     );
 
     return response.data; // Assuming your API response has a "data" property
