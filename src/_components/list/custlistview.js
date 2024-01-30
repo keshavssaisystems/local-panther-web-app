@@ -679,21 +679,89 @@ export const CustCandidateListView = (props) => {
               width: "12%",
             },
             {
-              name: <span className="table-title">Pre-Screen</span>,
+              name: <span className="table-title">Offer</span>,
               cell: (row) =>
-                row.candidateprescreenstatus === "NA" ? (
-                  "-"
-                ) : row.candidateprescreenstatus === "Pending" ? (
-                  <Button disabled color="link">
-                    <u>Pending</u>
-                  </Button>
+                row?.jobOfferDtos?.length > 0 ? (
+                  <>
+                    {row?.jobOfferDtos?.length === 2 && (
+                      <>
+                        <img
+                          src={previousOffer}
+                          alt="list maybe"
+                          className={"icon-pointer me-2"}
+                          width={"20px"}
+                          title="Previous Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                    {row?.isfinaloffer === true && (
+                      <>
+                        <img
+                          src={finalOffer}
+                          alt="list maybe"
+                          className={"icon-pointer me-2"}
+                          width={"20px"}
+                          title={
+                            props.type === "accepted"
+                              ? "Click to view offer"
+                              : "Final Offer - Click to view offer"
+                          }
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                    {row?.jobOfferDtos?.length === 1 &&
+                      row?.isfinaloffer === false && (
+                        <>
+                          <img
+                            src={
+                              props.type === "accepted"
+                                ? finalOffer
+                                : currentOffer
+                            }
+                            alt="list maybe"
+                            className={"icon-pointer"}
+                            width={"20px"}
+                            title={
+                              props.type === "accepted"
+                                ? "Click to view accepted offer"
+                                : "New Offer - Click to view offer"
+                            }
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
+                    {row?.jobOfferDtos?.length === 2 &&
+                      row?.isfinaloffer === false && (
+                        <>
+                          <img
+                            src={
+                              props.type === "accepted" ? finalOffer : newoffer
+                            }
+                            alt="list maybe"
+                            className={"icon-pointer"}
+                            width={"20px"}
+                            title={
+                              props.type === "accepted"
+                                ? "Click to view accepted offer"
+                                : "New Offer - Click to view offer"
+                            }
+                            onClick={() =>
+                              window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                            }
+                          ></img>
+                        </>
+                      )}
+                  </>
                 ) : (
-                  <Button
-                    onClick={() => props.onPrescreenClick("completed", row)}
-                    color="link"
-                  >
-                    <u>Completed</u>
-                  </Button>
+                  <> - </>
                 ),
               ignoreRowClick: true,
               button: true,
@@ -822,14 +890,14 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "15%",
+              width: "20%",
             },
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "25%",
+              width: "30%",
             },
             {
               name: <span className="table-title">Offered salary</span>,
@@ -905,27 +973,27 @@ export const CustCandidateListView = (props) => {
               sortable: true,
               width: "12%",
             },
-            {
-              name: <span className="table-title">Pre-Screen</span>,
-              cell: (row) =>
-                row.candidateprescreenstatus === "NA" ? (
-                  "-"
-                ) : row.candidateprescreenstatus === "Pending" ? (
-                  <Button disabled color="link">
-                    <u>Pending</u>
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => props.onPrescreenClick("completed", row)}
-                    color="link"
-                  >
-                    <u>Completed</u>
-                  </Button>
-                ),
-              ignoreRowClick: true,
-              button: true,
-              width: "10%",
-            },
+            // {
+            //   name: <span className="table-title">Pre-Screen</span>,
+            //   cell: (row) =>
+            //     row.candidateprescreenstatus === "NA" ? (
+            //       "-"
+            //     ) : row.candidateprescreenstatus === "Pending" ? (
+            //       <Button disabled color="link">
+            //         <u>Pending</u>
+            //       </Button>
+            //     ) : (
+            //       <Button
+            //         onClick={() => props.onPrescreenClick("completed", row)}
+            //         color="link"
+            //       >
+            //         <u>Completed</u>
+            //       </Button>
+            //     ),
+            //   ignoreRowClick: true,
+            //   button: true,
+            //   width: "10%",
+            // },
             {
               name: <span className="table-title">Offer</span>,
               cell: (row) =>
@@ -967,13 +1035,17 @@ export const CustCandidateListView = (props) => {
                       row?.isfinaloffer === false && (
                         <>
                           <img
-                            src={currentOffer}
+                            src={
+                              props.type === "accepted"
+                                ? finalOffer
+                                : currentOffer
+                            }
                             alt="list maybe"
                             className={"icon-pointer"}
                             width={"20px"}
                             title={
                               props.type === "accepted"
-                                ? "Click to view offer"
+                                ? "Click to view accepted offer"
                                 : "New Offer - Click to view offer"
                             }
                             onClick={() =>
@@ -986,13 +1058,15 @@ export const CustCandidateListView = (props) => {
                       row?.isfinaloffer === false && (
                         <>
                           <img
-                            src={newoffer}
+                            src={
+                              props.type === "accepted" ? finalOffer : newoffer
+                            }
                             alt="list maybe"
                             className={"icon-pointer"}
                             width={"20px"}
                             title={
                               props.type === "accepted"
-                                ? "Click to view offer"
+                                ? "Click to view accepted offer"
                                 : "New Offer - Click to view offer"
                             }
                             onClick={() =>
