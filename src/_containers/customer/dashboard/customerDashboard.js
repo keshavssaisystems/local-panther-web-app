@@ -30,9 +30,9 @@ export default function CustomerDashboard() {
     if (res?.payload?.statusCode === 200) {
       if (
         res?.payload?.data?.billingdetailstatus !== undefined &&
-        res?.payload?.data?.billingdetailstatus
+        !res?.payload?.data?.billingdetailstatus
       ) {
-        // setShowRemModal(true);
+        setShowRemModal(true);
       }
     }
   };

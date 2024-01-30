@@ -23,6 +23,7 @@ import {
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -1291,13 +1292,12 @@ export const CandidateList = (props) => {
         </>
         <>
           {showRescheduleModal ? (
-            <CandRescheduleModal
-              isOpen={showRescheduleModal}
-              onClose={() => {
-                setShowRescheduleModal(false);
-              }}
-              onSubmitReschedule={(data) => onSendRescheduleData(data)}
-            ></CandRescheduleModal>
+            <DeactivateReasonModal
+              isRMOpen={showRescheduleModal}
+              callBack={(data) => onSendRescheduleData(data)}
+              callBackError={() => setShowRescheduleModal()}
+              title={"rescheduling"}
+            ></DeactivateReasonModal>
           ) : (
             <></>
           )}

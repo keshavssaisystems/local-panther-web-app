@@ -655,7 +655,7 @@ export const AdminListing = ({ entity }) => {
               <strong className="card-title-text">
                 {!isAddMode
                   ? viewMode
-                    ? "View Vser"
+                    ? "View User"
                     : `Edit User`
                   : `Add New User`}
               </strong>
