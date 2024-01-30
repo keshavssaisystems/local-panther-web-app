@@ -48,6 +48,15 @@ export const deleteBillingDetails = createAsyncThunk(
   }
 );
 
+// get card type dropdown
+export const getCardTypeDrpDwn = createAsyncThunk(
+  `${name}/getCardTypeDrpDwn`,
+  async () => {
+    const GET_CARD_TYPE_END_POINT = `${process.env.REACT_APP_NEW_API_URL}Common/GetCommonDropdown?searchText=creditcardtype`;
+    return await fetchWrapper.get(GET_CARD_TYPE_END_POINT);
+  }
+);
+
 // Create the slice
 const paymentSlice = createSlice({
   name,
@@ -57,8 +66,19 @@ const paymentSlice = createSlice({
     userDetails: [],
     currencyType: [],
     billingDetails: [],
+    cardType: [],
   },
-  reducers: {},
+  reducers: {
+    updateUserDetails: (state, { payload }) => {
+      state.userDetails = payload;
+    },
+    clearBillingData: (state) => {
+      state.billingDetails = [];
+    },
+    clearUserData: (state) => {
+      state.userDetails = [];
+    },
+  },
 
   extraReducers: {
     // user details
@@ -106,6 +126,14 @@ const paymentSlice = createSlice({
     [deleteBillingDetails.rejected]: (state, action) => {
       state.loading = false;
     },
+    // currency dropdown
+    [getCardTypeDrpDwn.pending]: (state) => {
+      state.cardType = [];
+    },
+    [getCardTypeDrpDwn.fulfilled]: (state, action) => {
+      state.cardType = action?.payload?.data;
+    },
+    [getCardTypeDrpDwn.rejected]: (state, action) => {},
   },
 });
 
@@ -117,6 +145,7 @@ export const paymentActions = {
   postPaymentBillingDetails,
   getBillingDetails,
   deleteBillingDetails,
+  getCardTypeDrpDwn,
 };
 
 export const paymentReducer = paymentSlice.reducer;

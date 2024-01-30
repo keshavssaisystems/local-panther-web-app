@@ -46,7 +46,7 @@ export const CustomerList = () => {
   const [pageNo, setPageNo] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [openBDModal, setOpenBDModal] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(0);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -444,6 +444,7 @@ export const CustomerList = () => {
   const onCloseBDModal = () => {
     setOpenBDModal(false);
     getCustomerDetails(pageSize, pageNo);
+    setSelectedCustomer([]);
   };
 
   return (

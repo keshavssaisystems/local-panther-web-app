@@ -144,7 +144,7 @@ export function App() {
             }
           />
           <Route
-            path="/customers"
+            path="/employers"
             element={
               <PrivateRoute>
                 <CustomerList />

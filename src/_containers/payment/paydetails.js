@@ -37,7 +37,6 @@ export const PaymentDetails = ({
   isAdmin = false,
   selectedCustomer = {},
   onClose,
-  isViewMode = false,
   authUser,
 }) => {
   const dispatch = useDispatch();
@@ -62,6 +61,7 @@ export const PaymentDetails = ({
   const [invalidExp, setInvalidExp] = useState(false);
   const [cvvErr, setCVVErr] = useState(false);
   const [validCard, setValidCard] = useState(false);
+  const [deletedCard, setDeletedCard] = useState(false);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -72,7 +72,8 @@ export const PaymentDetails = ({
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const userDetails = useSelector((state) => state.payment.userDetails);
   const currencyType = useSelector((state) => state.payment.currencyType);
-
+  const billingDetails = useSelector((state) => state.payment.billingDetails);
+  const cardType = useSelector((state) => state.payment.cardType);
   const schema = Yup.object().shape({
     name: Yup.string().required("First name is required"),
     email: Yup.string()
@@ -100,8 +101,15 @@ export const PaymentDetails = ({
   const { errors } = formState;
 
   useEffect(() => {
+    dispatch(paymentActions.clearUserData());
     dispatch(dropdownActions.getCompanyListPublicThunk());
     dispatch(paymentActions.getpaymentCurrencyType());
+    dispatch(paymentActions.getCardTypeDrpDwn());
+
+    return () => {
+      dispatch(paymentActions.clearBillingData());
+      dispatch(paymentActions.clearUserData());
+    };
     setValue("currency", 1);
   }, []);
 
@@ -113,15 +121,31 @@ export const PaymentDetails = ({
   useEffect(() => {
     if (userDetails?.customerid) {
       setDetails(userDetails);
+      if (userDetails?.billingdetailstatus && (authUser || isAdmin)) {
+        dispatch(paymentActions.getBillingDetails(userDetails?.customerid));
+      }
     }
   }, [userDetails]);
 
   useEffect(() => {
     if (selectedCustomer?.customerid) {
-      setDetails(selectedCustomer);
+      dispatch(paymentActions.updateUserDetails(selectedCustomer));
     }
   }, [selectedCustomer]);
 
+  useEffect(() => {
+    if (billingDetails?.billingdetailid) {
+      setCardData(billingDetails);
+    }
+  }, [billingDetails]);
+  const setCardData = (billingDetails) => {
+    // setCardNumber(formatCreditCardNumber(billingDetails?.creditcardnumber));
+    setCardNumber(billingDetails?.creditcardnumber);
+    setExpiry(formatExpirationDate(billingDetails?.expirydate));
+    // setCVV(formatCVC(billingDetails?.securitycode));
+    setCVV(billingDetails?.securitycode);
+    setCardHolder(billingDetails?.cardholdername);
+  };
   const setDetails = (userDetails) => {
     setValue("name", userDetails.firstname + " " + userDetails.lastname);
     setValue("companyid", String(userDetails.companyid));
@@ -224,6 +248,7 @@ export const PaymentDetails = ({
 
   const handleCallback = (issuer, isValid) => {
     setIssuer(issuer);
+    console.log(issuer);
     setValidCard(isValid);
   };
   const onSameCustomer = (e) => {
@@ -259,9 +284,19 @@ export const PaymentDetails = ({
       setCardHolderErr(cardholder === "");
       return;
     }
+    let cardTypeNumber = 0;
+
+    if (cardType.length > 0) {
+      await cardType.map((data) => {
+        if (data.name.toLowerCase() === issuer.replaceAll("-", " ")) {
+          cardTypeNumber = data.id;
+        }
+      });
+    }
+
     let payload = {
       billingdetailid: 0,
-      customerid: id,
+      customerid: userDetails?.customerid ? userDetails.customerid : id,
       name: formData.name,
       phonenumber: formData.phoneNumber,
       companyid: formData.companyid,
@@ -272,7 +307,7 @@ export const PaymentDetails = ({
       zipcode: formData.zipcode,
       countryid: formData.countryid,
       currencyid: formData.currency,
-      creditcardtypeid: 1,
+      creditcardtypeid: cardTypeNumber,
       creditcardnumber: cardnumber,
       expirydate: expiry,
       securitycode: cvv,
@@ -292,6 +327,7 @@ export const PaymentDetails = ({
         type: "error",
       });
     } else {
+      setDeletedCard(false);
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -307,7 +343,7 @@ export const PaymentDetails = ({
     SetShowAlert(data);
   };
   const closeSweetAlert = () => {
-    if (isAdmin) {
+    if (isAdmin && !deletedCard) {
       onClose();
     }
     let data = { ...showAlert };
@@ -318,12 +354,43 @@ export const PaymentDetails = ({
   };
 
   const navigateToLogin = () => {
-    if (!isAdmin) {
+    if (!isAdmin && !deletedCard) {
       history.navigate("/login");
     } else {
-      if (isAdmin) {
+      if (isAdmin && !deletedCard) {
         onClose();
       }
+    }
+    closeSweetAlert();
+  };
+
+  const onDeleteCard = async () => {
+    let response = await dispatch(
+      paymentActions.deleteBillingDetails(billingDetails.billingdetailid)
+    );
+
+    if (!response.payload) {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    } else {
+      setDeletedCard(true);
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+      let data = { ...userDetails };
+      data.billingdetailstatus = false;
+      setCardNumber("");
+      setExpiry("");
+      setCVV("");
+      setCardHolder("");
+      setCardHolderErr(false);
+      setExpiryErr(false);
+      setCVVErr(false);
+      setCardNumberErr(false);
+      dispatch(paymentActions.updateUserDetails(data));
     }
   };
 
@@ -355,7 +422,14 @@ export const PaymentDetails = ({
           <></>
         )}
         <Row>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="name" className="input-label">
                 Name <span className="text-danger">*</span>
@@ -377,7 +451,14 @@ export const PaymentDetails = ({
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="companyid" className="input-label">
                 Company <span className="text-danger">*</span>
@@ -408,7 +489,14 @@ export const PaymentDetails = ({
               </FormFeedback>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="email" className="input-label">
                 Email <span className="text-danger">*</span>
@@ -430,7 +518,14 @@ export const PaymentDetails = ({
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="phoneNumber" className="input-label">
                 Phone <span className="text-danger">*</span>
@@ -477,7 +572,14 @@ export const PaymentDetails = ({
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 City, State <span className="text-danger">* </span>
@@ -503,7 +605,14 @@ export const PaymentDetails = ({
               </div>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="zipcode" className="input-label">
                 Zip Code <span className="text-danger">*</span>
@@ -809,15 +918,14 @@ export const PaymentDetails = ({
           style={{ textAlign: "end" }}
         >
           {" "}
-          {userDetails?.billingdetailstatus ||
-          selectedCustomer?.billingdetailstatus ? (
+          {userDetails?.billingdetailstatus ? (
             <Button
               type="cancel"
               color="danger"
               outline
               className="btn-text me-2"
               onClick={(e) => {
-                onClose();
+                onDeleteCard();
                 e.preventDefault();
               }}
             >
@@ -851,9 +959,13 @@ export const PaymentDetails = ({
               </Button>
             </>
           )}
-          <Button color="primary" type="submit" className="btn-text ms-2">
-            {!isAdmin && !authUser ? "Agreed & Submit" : "Save"}
-          </Button>
+          {!userDetails?.billingdetailstatus ? (
+            <Button color="primary" type="submit" className="btn-text ms-2">
+              {!isAdmin && !authUser ? "Agreed & Submit" : "Save"}
+            </Button>
+          ) : (
+            <></>
+          )}
         </Col>
       </Form>
       <div style={{ display: "none" }}>

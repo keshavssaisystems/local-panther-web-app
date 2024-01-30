@@ -6,6 +6,7 @@ import bg1 from "../../assets/utils/images/login.png";
 import { PaymentDetails } from "./paydetails";
 import paymentIcons from "assets/utils/images/payment";
 import PageTitle from "_components/common/pagetitle";
+import { history } from "_helpers";
 import "./payment.scss";
 
 export const Payment = ({ authUser }) => {
@@ -23,7 +24,7 @@ export const Payment = ({ authUser }) => {
   };
 
   const onClose = () => {
-    //
+    history.navigate("/");
   };
   return (
     <>
@@ -47,8 +48,8 @@ export const Payment = ({ authUser }) => {
               style={{ overflow: "auto" }}
             >
               <Col
-                lg="9"
-                md="10"
+                lg={authUser ? "11" : "9"}
+                md={authUser ? "11" : "10"}
                 sm="12"
                 className="mx-auto app-login-box me-2 ms-2"
               >

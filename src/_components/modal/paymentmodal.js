@@ -13,7 +13,7 @@ import { PaymentDetails } from "_containers/payment/paydetails";
 export const PaymentModal = (props) => {
   return (
     <Modal
-      size="lg"
+      size="xl"
       toggle={() => props.onClose()}
       isOpen={props.isOpen}
       backdrop={true}
