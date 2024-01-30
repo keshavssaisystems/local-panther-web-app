@@ -81,7 +81,7 @@ export function AppHeader({
                   {userroleid === 1
                     ? "Admin"
                     : userroleid === 2
-                    ? "Customer"
+                    ? "Employer"
                     : "Candidate"}
                 </h4>
               </div>
