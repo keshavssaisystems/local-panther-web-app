@@ -67,6 +67,7 @@ import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
 import { SubsidaryList } from "_containers/admin/masters/subsidary";
 import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
+import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
 
 export function App() {
@@ -303,6 +304,11 @@ export function App() {
             path="/report/bullhorn-candidate-report/16"
             element={<BullhornCandidate title={"Bullhorn Candidate Report"} />}
           />
+
+          <Route
+            path="/report/ats-candidates/:id"
+            element={<ATSCandidate title={"ATS Candidate Report"} />}
+          />
         </>
       );
     } else if (userroleid === 2) {
@@ -336,7 +342,15 @@ export function App() {
             path="/scheduled-interview"
             element={
               <PrivateRoute>
-                <ScheduleInterview />
+                <ScheduleInterview fromDashboard="calendar" />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/scheduled-interview#upcoming"
+            element={
+              <PrivateRoute>
+                <ScheduleInterview fromDashboard="upcoming" />
               </PrivateRoute>
             }
           />

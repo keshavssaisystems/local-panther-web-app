@@ -80,11 +80,11 @@ export default function CustomerDashboard() {
       path: "/job-list",
     },
     {
-      title: "Pending interview",
-      count: dashboardCounts.pendinginterviewschedulescount,
+      title: "Upcoming interview",
+      count: dashboardCounts.upcominginterviewcount,
       className: "info",
       icon: "lnr-calendar-full",
-      path: "/scheduled-interview",
+      path: "/scheduled-interview#upcoming",
     },
     {
       title: "Liked candidates",
