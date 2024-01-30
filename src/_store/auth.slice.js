@@ -156,14 +156,14 @@ const authSlice = createSlice({
         "userroleid",
         decodedData.role.toLowerCase() === "admin"
           ? 1
-          : decodedData.role.toLowerCase() === "customer"
+          : decodedData.role.toLowerCase() === "employer"
           ? 2
           : 3
       );
       state.userroleid =
         decodedData.role.toLowerCase() === "admin"
           ? 1
-          : decodedData.role.toLowerCase() === "customer"
+          : decodedData.role.toLowerCase() === "employer"
           ? 2
           : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));

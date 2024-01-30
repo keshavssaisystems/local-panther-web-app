@@ -234,7 +234,7 @@ export const AddUpdateCustomer = ({
     >
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
-          {isEdit === true ? "Edit" : "Add"} Customer
+          {isEdit === true ? "Edit" : "Add"} Employer
         </strong>
       </ModalHeader>
       <ModalBody>

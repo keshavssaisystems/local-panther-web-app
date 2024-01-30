@@ -65,7 +65,7 @@ export const CustomerList = () => {
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
 
-  let title = "Customers";
+  let title = "Employers";
   let icon = companyLogo;
   let columns = [
     {
@@ -129,7 +129,7 @@ export const CustomerList = () => {
       sortable: true,
     },
     {
-      name: "Customer status",
+      name: "Employer status",
       selector: (row) => row.customerstatus,
       sortable: true,
     },
@@ -166,7 +166,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Edit Customer"
+                title="Edit employer"
                 className="btn-icon"
                 color="warning"
                 onClick={(e) => {
@@ -183,7 +183,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Accept customer"
+                title="Accept employer"
                 className="btn-icon"
                 color="success"
                 onClick={() => onApprove(row, true)}
@@ -196,7 +196,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Reject customer"
+                title="Reject employer"
                 className="btn-icon"
                 color="danger"
                 onClick={() => onApprove(row, false)}
@@ -544,7 +544,7 @@ export const CustomerList = () => {
                     type="submit"
                     onClick={(e) => addModal()}
                   >
-                    Add Customer
+                    Add employer
                   </Button>
                 </Col>
               </Row>
