@@ -46,7 +46,7 @@ export const CustomerList = () => {
   const [pageNo, setPageNo] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [openBDModal, setOpenBDModal] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(0);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -112,7 +112,7 @@ export const CustomerList = () => {
       selector: (row) => (
         <>
           {row.billingdetailstatus ? (
-            <Button disabled color="link">
+            <Button color="link" onClick={() => onViewBilling(row)}>
               <span style={{ textDecoration: "underline" }}>View</span>
             </Button>
           ) : (
@@ -436,9 +436,15 @@ export const CustomerList = () => {
     setOpenBDModal(true);
   };
 
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
   const onCloseBDModal = () => {
     setOpenBDModal(false);
     getCustomerDetails(pageSize, pageNo);
+    setSelectedCustomer([]);
   };
 
   return (

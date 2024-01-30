@@ -1,8 +1,15 @@
 import React from "react";
 import { Modal, ModalBody, Button } from "reactstrap";
 import paymentIcons from "assets/utils/images/payment";
-
+import { history } from "_helpers";
 export const BillDetailRemModal = (props) => {
+  const onRedirectPage = () => {
+    let userId = localStorage.getItem("userId")
+      ? Number(localStorage.getItem("userId"))
+      : 0;
+    history.navigate("/payment/" + userId);
+    props.onClose();
+  };
   return (
     <Modal
       size="lg"
@@ -32,7 +39,7 @@ export const BillDetailRemModal = (props) => {
           >
             Remind me later
           </Button>
-          <Button color="primary" onClick={() => props.onClose()}>
+          <Button color="primary" onClick={() => onRedirectPage()}>
             Update
           </Button>
         </div>
