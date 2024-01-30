@@ -409,11 +409,11 @@ export const PaymentDetails = ({
                 type="checkbox"
                 onChange={(e) => onSameCustomer(e)}
               ></Input>
-              <Label className="ms-1 same-as-cust">Same as customer</Label>
+              <Label className="ms-1 same-as-cust">Same as employer</Label>
             </Col>
             <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
               <span className="sub-text">
-                If this box is checked, pre-populate the data from the Customer
+                If this box is checked, pre-populate the data from the Employer
                 details
               </span>
             </Col>
