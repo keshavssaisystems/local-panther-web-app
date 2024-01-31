@@ -302,6 +302,11 @@ export const PaymentDetails = ({
       setValue("email", "");
       setValue("phoneNumber", "");
       setValue("zipcode", "");
+      setValue("cityid", "");
+      setCityValue("");
+      setValue("stateid", "");
+      setValue("countryid", "");
+      setCountryValue("");
     }
   };
 
