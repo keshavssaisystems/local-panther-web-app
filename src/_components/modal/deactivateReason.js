@@ -23,7 +23,9 @@ export const DeactivateReasonModal = (props) => {
       getProfileActions.getReasonList(
         props.title === "rescheduling"
           ? "InterviewRescheduleReason"
-          : "deactivateaccountreason"
+          : props.title === "deactivating account"
+          ? "deactivateaccountreason"
+          : "rejectionreason"
       )
     );
   }, []);
@@ -42,7 +44,9 @@ export const DeactivateReasonModal = (props) => {
       setSave(true);
       return false;
     }
-    props.callBack(props.title === "rescheduling" ? reasonText : reason);
+    props.callBack(
+      props.title === "deactivating account" ? reason : reasonText
+    );
   };
   return (
     <Modal
