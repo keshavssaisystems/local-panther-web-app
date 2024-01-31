@@ -45,9 +45,10 @@ export const PaymentDetails = ({
   const [currencyValue, setCurrencyValue] = useState(1);
   const [sameAsCust, setSameAsCust] = useState(false);
   const [cityList, setCityList] = useState([]);
+
   const [countryList, setCountryList] = useState([]);
-  const [countryValue, setCountryValue] = useState(0);
-  const [cityValue, setCityValue] = useState(0);
+  const [countryValue, setCountryValue] = useState("");
+  const [cityValue, setCityValue] = useState("");
   const [cityReqError, setCityReqError] = useState(false);
   const [issuer, setIssuer] = useState("unknown");
   const [cardnumber, setCardNumber] = useState("");
@@ -75,7 +76,7 @@ export const PaymentDetails = ({
   const billingDetails = useSelector((state) => state.payment.billingDetails);
   const cardType = useSelector((state) => state.payment.cardType);
   const schema = Yup.object().shape({
-    name: Yup.string().required("First name is required"),
+    name: Yup.string().required("Name is required"),
     email: Yup.string()
       .required("Email is required")
       .matches(
@@ -153,12 +154,44 @@ export const PaymentDetails = ({
     setValue("email", userDetails.email);
     setValue("phoneNumber", userDetails.phonenumber);
     setValue("zipcode", userDetails.zipcode);
-    // setValue("cityid", userDetails.cityid);
-    // setValue("stateid", userDetails.stateid);
-    // setValue("countryid", userDetails.countryid);
+    // let cityData = [
+    //   // {
+    //   {
+    //     value: userDetails.cityid,
+    //     label: `${userDetails.cityname + ", " + userDetails.statename}`,
+    //   },
+    //   //   cityid: userDetails.cityid,
+    //   //   countryid: userDetails.countryid,
+    //   //   countryname: userDetails.countryname,
+    //   //   location: userDetails.cityname,
+    //   //   stateid: userDetails.stateid,
+    //   //   statename: userDetails.statename,
+    //   //   zipcode: null,
+    //   // },
+    // ];
+    // setDefaultCityList(cityData);
 
+    // let countryData = [
+    //   {
+    //     value: userDetails.countryid,
+    //     label: userDetails.countryname,
+    //   },
+    // ];
+    // setCountryList(countryData);
     setValue("currency", 1);
     setCurrencyValue(1);
+
+    setValue("cityid", String(userDetails.cityid));
+    setCityValue({
+      value: userDetails.cityid,
+      label: `${userDetails.cityname + ", " + userDetails.statename}`,
+    });
+    setValue("stateid", userDetails.stateid);
+    setValue("countryid", String(userDetails.countryid));
+    setCountryValue({
+      value: userDetails.countryid,
+      label: `${userDetails.countryname}`,
+    });
   };
   useEffect(() => {
     let country_response;
@@ -176,8 +209,16 @@ export const PaymentDetails = ({
           return country_response.find((item) => item.id === id);
         }
       );
+
+      setCountryValue(data[0]);
+      setValue("countryid", String(data[0].value));
       setCountryList(data);
     } else {
+      if (data.length > 0) {
+        setCountryValue(data[0]);
+        setValue("countryid", String(data[0].value));
+      }
+
       setCountryList(data);
     }
   }, [cityList]);
@@ -202,13 +243,14 @@ export const PaymentDetails = ({
         label: `${rest.location + ", " + rest.statename}`,
       };
     });
-
+    // setDefaultCityList(filter_data);
     return filter_data;
   };
 
   const setAsyncSelectValue = (data) => {
+    console.log(data);
     setValue("cityid", String(data.value));
-    setCityValue(data.value);
+    setCityValue(data);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
   };
@@ -234,7 +276,7 @@ export const PaymentDetails = ({
   };
 
   const onSelectCountryDropdown = (data) => {
-    setCountryValue(data.value);
+    setCountryValue(data);
     setValue("countryid", String(data.value));
   };
 
@@ -328,6 +370,9 @@ export const PaymentDetails = ({
       });
     } else {
       setDeletedCard(false);
+      if (authUser) {
+        dispatch(paymentActions.updateShowBilling(true));
+      }
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -376,6 +421,7 @@ export const PaymentDetails = ({
       });
     } else {
       setDeletedCard(true);
+      dispatch(paymentActions.updateShowBilling(false));
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -590,8 +636,9 @@ export const PaymentDetails = ({
                 placeholderText="search"
                 loadOptions={loadOptions}
                 isMulti={false}
+                value={cityValue}
                 className={`placeholder-name ${
-                  errors.cityid && cityValue === 0
+                  errors.cityid && !cityValue?.value
                     ? "async-border-red"
                     : "async-no-error"
                 }`}
@@ -599,7 +646,7 @@ export const PaymentDetails = ({
                 onChange={(e) => setAsyncSelectValue(e)}
               />
               <div className="async-error-text">
-                {errors.cityid && cityValue === 0
+                {errors.cityid && !cityValue?.value
                   ? "City, State is required"
                   : ""}
               </div>
@@ -644,8 +691,9 @@ export const PaymentDetails = ({
                 placeholder="Select Country"
                 placeholderText="search"
                 isMulti={false}
+                value={countryValue}
                 className={`placeholder-name ${
-                  errors.countryid && countryValue === 0
+                  errors.countryid && !countryValue?.value
                     ? "async-border-red"
                     : ""
                 }`}
@@ -655,7 +703,7 @@ export const PaymentDetails = ({
                 onMenuOpen={() => checkCityValid()}
               />
               <div className="async-error-text">
-                {errors.countryid && countryValue === 0
+                {errors.countryid && !countryValue?.value
                   ? "Country is required"
                   : ""}
               </div>
@@ -853,7 +901,7 @@ export const PaymentDetails = ({
 
               <InputGroup>
                 <input
-                  type="tel"
+                  type="password"
                   name="cvv"
                   id="cvv"
                   className={`form-control placeholder-name ${
@@ -862,6 +910,7 @@ export const PaymentDetails = ({
                   placeholder="CVV"
                   pattern="\d{3,4}"
                   value={cvv}
+                  data-inputmask="****"
                   onChange={(e) => setCardDetails(e)}
                 />
                 <FormFeedback>{cvvErr ? "CVV is required" : ""}</FormFeedback>
