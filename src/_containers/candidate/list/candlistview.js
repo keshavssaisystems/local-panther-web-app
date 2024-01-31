@@ -21,6 +21,7 @@ import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
@@ -1328,12 +1329,19 @@ export const CandListView = (props) => {
         className="cust-list-view"
       />
       {rejectReasonModal && (
-        <RejectReasonModal
+        // <RejectReasonModal
+        //   isRMOpen={rejectReasonModal}
+        //   callBack={(e) => submitReject(e)}
+        //   callBackError={() => closeModal()}
+        //   title={title}
+        // />
+
+        <DeactivateReasonModal
           isRMOpen={rejectReasonModal}
           callBack={(e) => submitReject(e)}
           callBackError={() => closeModal()}
           title={title}
-        />
+        ></DeactivateReasonModal>
       )}
       <>
         {" "}
