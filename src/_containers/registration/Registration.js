@@ -63,7 +63,7 @@ export function Registration() {
     },
     {
       id: 2,
-      name: "Customer",
+      name: "Employer",
     },
   ]);
   const [selected, setSelected] = useState(0);

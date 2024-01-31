@@ -213,7 +213,7 @@ export const AddUpdateCustomer = ({
       cityid: Number(locationData.cityId),
       stateid: Number(locationData.stateId),
       countryid: 1,
-      isactive: true,
+      isactive: isEdit ? editData?.isactive : true,
       currentUserId: Number(localStorage.getItem("userId")),
     };
     isEdit === true ? putData(data) : postData(data);
@@ -234,7 +234,7 @@ export const AddUpdateCustomer = ({
     >
       <ModalHeader toggle={() => onClose()}>
         <strong className="card-title-text">
-          {isEdit === true ? "Edit" : "Add"} Customer
+          {isEdit === true ? "Edit" : "Add"} Employer
         </strong>
       </ModalHeader>
       <ModalBody>

@@ -4,19 +4,19 @@ import Chart from "react-apexcharts";
 
 export function StackBarChart({ graphData }) {
   const stackValues = [
-    "Accepted",
+    "Matched",
     "Applied",
     "Interviews",
-    "Matched",
     "Offer",
+    "Accepted",
     "Rejected",
   ];
   const stackValuesKey = {
-    Accepted: "acceptedcount",
+    Matched: "matchedcount",
     Applied: "appliedcount",
     Interviews: "interviewcount",
-    Matched: "matchedcount",
     Offer: "offerscount",
+    Accepted: "acceptedcount",
     Rejected: "rejectedcount",
   };
   let mainArray = {
@@ -54,9 +54,10 @@ export function StackBarChart({ graphData }) {
   }
   let baroptions = {
     chart: {
-      type: "line",
+      type: "bar",
       height: 380,
       width: "90%",
+      stacked: true,
       toolbar: {
         show: false,
       },
@@ -64,20 +65,27 @@ export function StackBarChart({ graphData }) {
     },
     plotOptions: {
       bar: {
+        horizontal: false,
+        endingShape: "rounded",
+        hideZeroBarsWhenGrouped: false,
         columnWidth: "30%",
+        dataLabels: {
+          total: {
+            enabled: true,
+          },
+        },
       },
     },
-    stroke: {
-      curve: "smooth",
-      width: 3,
+    dataLabels: {
+      enabled: true,
     },
     colors: [
-      "#26E7A6",
+      "#26A0FB",
       "#FEBC3B",
       "#8B75D7",
       "#FB6900",
+      "#26E7A6",
       "#B44BB0",
-      "#26A0FB",
       "#FF6178",
     ],
     series: seriesDataArray,
@@ -109,12 +117,15 @@ export function StackBarChart({ graphData }) {
           return value.toFixed(0);
         },
       },
+      yaxis: {
+        min: "-1",
+      },
     },
   };
   return (
     <>
       <Card className="mb-3">
-        <CardBody className="pt-0">
+        <CardBody className="pt-4">
           <Chart
             options={baroptions}
             series={baroptions.series}
