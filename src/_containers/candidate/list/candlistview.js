@@ -21,6 +21,7 @@ import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
@@ -696,7 +697,77 @@ export const CandListView = (props) => {
             sortable: true,
             width: "10%",
           },
-
+          {
+            name: <span className="table-title">Offer</span>,
+            cell: (row) =>
+              row?.jobOfferDtos?.length > 0 ? (
+                <>
+                  {row?.jobOfferDtos?.length === 2 && (
+                    <>
+                      <img
+                        src={previousOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Previous Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === true && (
+                    <>
+                      <img
+                        src={finalOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Final Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                </>
+              ) : (
+                <> - </>
+              ),
+            ignoreRowClick: true,
+            button: true,
+            width: "8%",
+          },
           {
             name: <span className="table-title">Status</span>,
             cell: (row) => (
@@ -1119,7 +1190,7 @@ export const CandListView = (props) => {
                         alt="list maybe"
                         className={"icon-pointer me-2"}
                         width={"20px"}
-                        title="Final Offer - Click to view offer"
+                        title="Click to view accepted offer"
                         onClick={() =>
                           window.open(row?.jobOfferDtos[0]?.offerfilepath)
                         }
@@ -1130,11 +1201,11 @@ export const CandListView = (props) => {
                     row?.isfinaloffer === false && (
                       <>
                         <img
-                          src={currentOffer}
+                          src={finalOffer}
                           alt="list maybe"
                           className={"icon-pointer"}
                           width={"20px"}
-                          title="Click to view offer"
+                          title="Click to view accepted offer"
                           onClick={() =>
                             window.open(row?.jobOfferDtos[0]?.offerfilepath)
                           }
@@ -1145,11 +1216,11 @@ export const CandListView = (props) => {
                     row?.isfinaloffer === false && (
                       <>
                         <img
-                          src={newOffer}
+                          src={finalOffer}
                           alt="list maybe"
                           className={"icon-pointer"}
                           width={"20px"}
-                          title="Click to view offer"
+                          title="Click to view accepted offer"
                           onClick={() =>
                             window.open(row?.jobOfferDtos[0]?.offerfilepath)
                           }
@@ -1328,12 +1399,19 @@ export const CandListView = (props) => {
         className="cust-list-view"
       />
       {rejectReasonModal && (
-        <RejectReasonModal
+        // <RejectReasonModal
+        //   isRMOpen={rejectReasonModal}
+        //   callBack={(e) => submitReject(e)}
+        //   callBackError={() => closeModal()}
+        //   title={title}
+        // />
+
+        <DeactivateReasonModal
           isRMOpen={rejectReasonModal}
           callBack={(e) => submitReject(e)}
           callBackError={() => closeModal()}
           title={title}
-        />
+        ></DeactivateReasonModal>
       )}
       <>
         {" "}
