@@ -168,12 +168,7 @@ export function PersonalInformation(props) {
           label: selectedCandidate.personalInfo.pronounname,
         },
       ],
-      availabilitytowork: [
-        {
-          value: selectedCandidate.personalInfo.availabilityId,
-          label: selectedCandidate.personalInfo.availabilityName,
-        },
-      ],
+      availabilitytowork: selectedCandidate.personalInfo.availabilitytowork,
       isactive: true,
       userid: 0,
       currentUserId: 0,
