@@ -430,6 +430,10 @@ export const CustCandidateListView = (props) => {
     }
   };
 
+  const onShowOHModal = (row) => {
+    props.onShowOHModal(row);
+  };
+
   const renderMenu = (candidateid, row) => {
     return (
       <div className="d-block w-100 text-center">
@@ -460,6 +464,16 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate details</span>
             </DropdownItem>
+            {props.type === "offers" ||
+            props.type === "accepted" ||
+            props.type === "rejected" ? (
+              <DropdownItem onClick={() => onShowOHModal(row)}>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Offer history</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>

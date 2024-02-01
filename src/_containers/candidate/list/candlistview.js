@@ -53,6 +53,10 @@ export const CandListView = (props) => {
   const onShowModal = (row, type) => {
     props.showModal(row, type);
   };
+
+  const onShowOHModal = (row) => {
+    props.onShowOHModal(row);
+  };
   const renderButtons = (row) => {
     if (props.type === "liked") {
       return (
@@ -341,6 +345,17 @@ export const CandListView = (props) => {
               <span>Job details</span>
             </DropdownItem>
 
+            {props.type === "offers" ||
+            props.type === "accepted" ||
+            props.type === "rejected" ? (
+              <DropdownItem onClick={() => onShowOHModal(row)}>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Offer history</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
+
             {props.type === "interview" &&
             row?.scheduledInterviewDtos &&
             row?.scheduledInterviewDtos.length > 0 &&
@@ -367,9 +382,18 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "22%",
+            width: "20%",
           },
 
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "14%",
+          },
           {
             name: <span className="table-title">Location</span>,
             cell: (row) => (
@@ -390,33 +414,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
-          },
-
-          {
-            name: <span className="table-title">Experience</span>,
-            cell: (row) => (
-              <span
-                title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
-                }
-              >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
-              </span>
-            ),
-            selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
-            sortable: true,
-            width: "10%",
+            width: "13%",
           },
           {
             name: <span className="table-title">Scheduled</span>,
@@ -597,7 +595,16 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "30%",
+            width: "20%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
           },
 
           {
@@ -833,7 +840,16 @@ export const CandListView = (props) => {
             id: "Title",
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "33%",
+            width: "28%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -842,7 +858,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "22%",
+            width: "17%",
           },
           {
             name: <span className="table-title">Offered salary</span>,
@@ -1040,9 +1056,17 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "32%",
+            width: "27%",
           },
-
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
           {
             name: <span className="table-title">Location</span>,
             cell: (row) => (
@@ -1063,7 +1087,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "22%",
+            width: "17%",
           },
           {
             name: <span className="table-title">Offered salary</span>,
@@ -1260,9 +1284,17 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "35%",
+            width: "25%",
           },
-
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
           {
             name: <span className="table-title">Location</span>,
             cell: (row) => (

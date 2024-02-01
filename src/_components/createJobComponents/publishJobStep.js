@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function PublishJobStep({
   companyId,
@@ -11,6 +12,7 @@ export default function PublishJobStep({
   type,
 }) {
   const navigate = useNavigate();
+
   useEffect(() => {
     let main = {
       jobId: jobId,
@@ -52,7 +54,7 @@ export default function PublishJobStep({
         },
       ],
       jobKeyQualificationDtos:
-        reqData.keyQualification.length === undefined
+        reqData?.keyQualification?.length === undefined
           ? null
           : reqData.keyQualification,
       jobPaymentBenefitDtos: [
@@ -76,6 +78,7 @@ export default function PublishJobStep({
   const createNewJob = () => {
     window.location.reload(false);
   };
+  const billingStatus = useSelector((state) => state?.payment?.showBilling);
   return (
     <>
       <div className="form-wizard-content">
@@ -104,14 +107,25 @@ export default function PublishJobStep({
                 Create new job
               </Button>{" "}
               {"   "}
-              <Button
-                color="success"
-                size="lg"
-                className="btn-shadow btn-wide"
-                onClick={(e) => publishJob(true)}
-              >
-                Publish job
-              </Button>
+              {billingStatus === true ? (
+                <Button
+                  color="success"
+                  size="lg"
+                  className="btn-shadow btn-wide"
+                  onClick={(e) => publishJob(true)}
+                >
+                  Publish job
+                </Button>
+              ) : (
+                <Button
+                  color="success"
+                  size="lg"
+                  className="btn-shadow btn-wide"
+                  onClick={(e) => navigate(`/job-list`)}
+                >
+                  Back to job list
+                </Button>
+              )}
             </div>
           ) : (
             <div className="text-center">

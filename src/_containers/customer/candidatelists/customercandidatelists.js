@@ -29,6 +29,7 @@ import {
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
+import { OfferHistory } from "_components/modal/offerhistorymoal";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -45,6 +46,7 @@ export const CustomerCandidateLists = (props) => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showPSModal, setShowPSModal] = useState(false);
   const [preScreenType, setPreScreenType] = useState("");
+  const [oHModal, setOHModal] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -68,6 +70,10 @@ export const CustomerCandidateLists = (props) => {
 
   const prescreenQues = useSelector(
     (state) => state.customerCandidateList.prescreenQues
+  );
+
+  const custOfferHistory = useSelector(
+    (state) => state.customerCandidateList.custOfferHistory
   );
 
   useEffect(() => {
@@ -212,6 +218,18 @@ export const CustomerCandidateLists = (props) => {
 
     setPreScreenType(type);
     setShowPSModal(true);
+  };
+
+  const onShowOHModal = async (row) => {
+    let res = await dispatch(
+      customerCandidateListsActions.getCustOfferHistory(
+        row.candidaterecommendedjobid
+      )
+    );
+    if (res?.payload?.statusCode === 204) {
+      setOHModal(true);
+    } else {
+    }
   };
 
   return (
@@ -505,6 +523,7 @@ export const CustomerCandidateLists = (props) => {
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -661,6 +680,7 @@ export const CustomerCandidateLists = (props) => {
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -740,6 +760,7 @@ export const CustomerCandidateLists = (props) => {
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -821,6 +842,7 @@ export const CustomerCandidateLists = (props) => {
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -900,6 +922,7 @@ export const CustomerCandidateLists = (props) => {
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -980,6 +1003,7 @@ export const CustomerCandidateLists = (props) => {
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1052,6 +1076,17 @@ export const CustomerCandidateLists = (props) => {
               preScreenType={preScreenType}
             ></PrescreenModal>
           </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {oHModal ? (
+          <OfferHistory
+            isOpen={oHModal}
+            onClose={() => setOHModal(false)}
+            offerHistory={custOfferHistory}
+          ></OfferHistory>
         ) : (
           <></>
         )}
