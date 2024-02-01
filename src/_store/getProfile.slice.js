@@ -63,6 +63,8 @@ const initialState = {
 
   pronounList: [],
   reasonList: [],
+  distanceList: [],
+  availabilityList: [],
   profileData: {
     personalInfo: {},
     resumeInfo: {},
@@ -113,6 +115,30 @@ export const getReasonList = createAsyncThunk(
     const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Common/GetCommonDropdown?searchText=${input}`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
+export const getDistanceDetails = createAsyncThunk(
+  "user/getDistanceDetails",
+  async (input) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=${input}`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
+
+export const getAvailability = createAsyncThunk(
+  "user/getAvailability",
+  async (input) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Common/GetCommonDropdown?searchText=availabilitytowork`
     );
 
     return response.data; // Assuming your API response has a "data" property
@@ -189,6 +215,7 @@ const getProfileSlice = createSlice({
           currentUserId: 0,
           pronounname: filter_data.pronounname,
           pronounid: filter_data.pronounid,
+          availabilitytowork: filter_data.availabilitytowork,
         };
         let new_data = { ...state.profileData };
         new_data.personalInfo = data;
@@ -240,6 +267,7 @@ const getProfileSlice = createSlice({
             label: filter_data.pronounname,
           },
         ];
+        dropdown_selected.selectedAvailability = filter_data.availabilitytowork;
 
         state.dropdownLists = dropdown_selected;
         state.profileImage = localStorage.getItem("profileImage");
@@ -272,6 +300,40 @@ const getProfileSlice = createSlice({
       })
       .addCase(getReasonList.rejected, (state, action) => {
         state.error = action.error;
+      })
+
+      .addCase(getDistanceDetails.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(getDistanceDetails.fulfilled, (state, action) => {
+        let data = action.payload;
+
+        state.distanceList = data.map(({ id: value, ...rest }) => {
+          return {
+            value,
+            label: rest.name,
+          };
+        });
+      })
+      .addCase(getDistanceDetails.rejected, (state, action) => {
+        state.error = action.error;
+      })
+
+      .addCase(getAvailability.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(getAvailability.fulfilled, (state, action) => {
+        let data = action.payload;
+
+        state.availabilityList = data.map(({ id: value, ...rest }) => {
+          return {
+            value,
+            label: rest.name,
+          };
+        });
+      })
+      .addCase(getAvailability.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -282,5 +344,7 @@ export const getProfileActions = {
   getCandidate, // Export the async action
   getPronoun,
   getReasonList,
+  getDistanceDetails,
+  getAvailability,
 };
 export const getProfileReducer = getProfileSlice.reducer;

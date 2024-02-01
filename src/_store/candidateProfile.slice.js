@@ -86,6 +86,7 @@ function personalInfoInsertActions() {
         jobprofile,
         pronounid,
         isexcludemycurrentemployer,
+        availabilitytowork,
       }) =>
         await fetchWrapper.put(`${baseUrl}/api/Candidate/${candidateid}`, {
           candidateid,
@@ -108,6 +109,7 @@ function personalInfoInsertActions() {
           jobprofile,
           pronounid,
           isexcludemycurrentemployer,
+          availabilitytowork,
         })
     );
   }
