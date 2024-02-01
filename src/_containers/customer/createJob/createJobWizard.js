@@ -209,8 +209,7 @@ export function CreateJobWizard({ type }) {
             type === "edit" ? selectedJobDetailsForEdit[0] : jobDetail
           }
           JobDataForPreview={(e) => getDataForPreview(e)}
-          bIFormSubmitted={(e) => getBIStatus(e)}
-          esFormSubmitted={(e) => getESStatus(e)}
+          nextPage={(e) => nextPage(e)}
           customerDetails={customerDetails}
         />
       ),
@@ -272,6 +271,9 @@ export function CreateJobWizard({ type }) {
       };
     }
   };
+  const nextPage = () => {
+    next();
+  };
   const [previousBtn, setPreviousButton] = useState(false);
   const [nextBtn, setNextButton] = useState(true);
   const [compState, setCompState] = useState(type === "add" ? 0 : 1);
@@ -328,11 +330,10 @@ export function CreateJobWizard({ type }) {
                 className="main-heading main-wizard-container"
               >
                 <ol className="forms-wizard">{renderSteps()}</ol>
-                compState : {compState}
                 {steps[compState].component}
                 {compState !== 3 && (
                   <>
-                    <div className="divider" />
+                    {compState !== 1 && <div className="divider" />}
                     <div className="clearfix">
                       <div style={true ? {} : { display: "none" }}>
                         {compState !== 1 && (
@@ -361,7 +362,7 @@ export function CreateJobWizard({ type }) {
                               : "Continue"}
                           </Button>
                         )}
-                        {compState === 1 &&
+                        {/* {compState === 1 &&
                           jobType === "new_template" &&
                           (BIStatus === false || ESStatus === false) && (
                             <>
@@ -388,8 +389,8 @@ export function CreateJobWizard({ type }) {
                                 Section
                               </UncontrolledTooltip>
                             </>
-                          )}
-                        {compState === 1 &&
+                          )} */}
+                        {/* {compState === 1 &&
                           jobType === "new_template" &&
                           BIStatus === true &&
                           ESStatus === true && (
@@ -403,7 +404,7 @@ export function CreateJobWizard({ type }) {
                                 Continue
                               </Button>
                             </>
-                          )}
+                          )} */}
                       </div>
                     </div>
                   </>
