@@ -55,7 +55,6 @@ export function UploadData(props) {
     axios
       .post(`${url}/api/ATSCandidateData`, form, config)
       .then((result) => {
-        debugger;
         if (result.data) {
           if (result.data.statusId === 200) {
             setSuccess(true);
@@ -71,7 +70,6 @@ export function UploadData(props) {
   };
 
   const onDrop = (acceptedFiles) => {
-    debugger;
     setFormatError(false);
     setError(false);
     let name = acceptedFiles[0].name.replace(/^.*[\\\/]/, "");

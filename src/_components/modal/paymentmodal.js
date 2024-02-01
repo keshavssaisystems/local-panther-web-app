@@ -9,6 +9,7 @@ import {
   ModalHeader,
 } from "reactstrap";
 import { PaymentDetails } from "_containers/payment/paydetails";
+import "../../_containers/payment/payment.scss";
 
 export const PaymentModal = (props) => {
   return (
@@ -17,6 +18,7 @@ export const PaymentModal = (props) => {
       toggle={() => props.onClose()}
       isOpen={props.isOpen}
       backdrop={true}
+      className="payment-cont"
       fade={true}
     >
       <ModalHeader toggle={() => props.onClose()}>Payment Details</ModalHeader>
