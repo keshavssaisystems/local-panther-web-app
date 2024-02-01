@@ -25,7 +25,7 @@ export function ScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
-  const [videoModeCheck, setVideoModeCheck] = useState(1);
+  const [videoModeCheck, setVideoModeCheck] = useState(0);
   const [timeOption, setTimeOption] = useState([]);
   const [formatButton, setFormatButton] = useState(1);
   const [modal, setModal] = useState(false);
@@ -338,11 +338,12 @@ export function ScheduleInterviewModal({
                         type="radio"
                         name="videoMode"
                         id="appVideoCall"
+                        defaultChecked
                         value={"in-app-video"}
                         onClick={() => onVideoModeChange(0)}
                       />{" "}
                       <Label for="appVideoCall" className="fw-semi-bold">
-                        App video call
+                        Built In app
                       </Label>
                     </Col>
                   </Row>
@@ -353,7 +354,6 @@ export function ScheduleInterviewModal({
                         name="videoMode"
                         id="thirdPartyVideo"
                         value={"third-party-video"}
-                        defaultChecked
                         onClick={() => onVideoModeChange(1)}
                         onChange={() => onVideoModeChange(1)}
                       />{" "}
