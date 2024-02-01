@@ -4,8 +4,8 @@ import paymentIcons from "assets/utils/images/payment";
 import { history } from "_helpers";
 export const BillDetailRemModal = (props) => {
   const onRedirectPage = () => {
-    let userId = localStorage.getItem("userId")
-      ? Number(localStorage.getItem("userId"))
+    let userId = localStorage.getItem("userDetails")
+      ? Number(JSON.parse(localStorage.getItem("userDetails")).InternalUserId)
       : 0;
     history.navigate("/payment/" + userId);
     props.onClose();

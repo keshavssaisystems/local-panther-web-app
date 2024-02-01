@@ -31,4 +31,9 @@
     border-color: #d92550;
     background-color: unset;
   }
+
+  .disable-ip > div {
+    background: #e9ecef;
+    pointer-events: none;
+  }
 }
