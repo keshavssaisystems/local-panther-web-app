@@ -48,6 +48,7 @@ import {
   profileActions,
   jobPreferenceDetailsActions,
   getProfileActions,
+  getZipLocation,
 } from "_store";
 import { getLocationFilter } from "_store";
 
@@ -59,6 +60,9 @@ export function PersonalInformation(props) {
   const genderList = useSelector((state) => state.gender.genderList);
   const raceList = useSelector((state) => state.ethnicity.ethnicityList);
   const pronounList = useSelector((state) => state.getProfile.pronounList);
+  const availabilityList = useSelector(
+    (state) => state.getProfile.availabilityList
+  );
   const eligibilityList_temp = useSelector(
     (state) => state.getProfile.dropdownLists.eligibilityDropDown
   );
@@ -105,9 +109,10 @@ export function PersonalInformation(props) {
   const [save, setSave] = useState(false);
   const [citySelect, setCitySelect] = useState("");
   const [stateSelect, setStateSelect] = useState("");
-  const [countrySelect, setCountrySelect] = useState("");
+  const [countrySelect, setCountrySelect] = useState([]);
   const [raceSelect, setRaceSelect] = useState("");
   const [pronounSelect, setPronounSelect] = useState("");
+  const [availabilitySelect, setAvailabilitySelect] = useState([]);
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
     let data = {
@@ -163,7 +168,12 @@ export function PersonalInformation(props) {
           label: selectedCandidate.personalInfo.pronounname,
         },
       ],
-
+      availabilitytowork: [
+        {
+          value: selectedCandidate.personalInfo.availabilityId,
+          label: selectedCandidate.personalInfo.availabilityName,
+        },
+      ],
       isactive: true,
       userid: 0,
       currentUserId: 0,
@@ -210,7 +220,19 @@ export function PersonalInformation(props) {
       pronounData.push(selectedCandidate.selectedDropDown?.selectedPronoun[0]);
       setPronounSelect(pronounData);
     }
-  }, [selectedCandidate]);
+
+    if (availabilityList) {
+      if (selectedCandidate.selectedDropDown?.selectedAvailability === "") {
+        let availability = availabilityList?.filter(
+          (x) =>
+            x.label ===
+            "selectedCandidate.selectedDropDown?.selectedAvailability"
+        );
+
+        setAvailabilitySelect(availability);
+      }
+    }
+  }, [selectedCandidate, availabilityList]);
 
   const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
@@ -257,6 +279,9 @@ export function PersonalInformation(props) {
         label: cityList.find((x) => x.cityid == data.value)?.statename,
       },
     ];
+    if (data.zipcode) {
+      get_data.zipcode = data.zipcode;
+    }
 
     get_data.state = obj;
     setGetResponse(get_data);
@@ -311,6 +336,17 @@ export function PersonalInformation(props) {
     setGetResponse(get_data);
   };
 
+  const onSelectAvailability = (data) => {
+    let new_data = [];
+    new_data.push(data);
+    setAvailabilitySelect(new_data);
+
+    let get_data = { ...getResponse };
+
+    get_data.availabilitytowork = data.label;
+    setGetResponse(get_data);
+  };
+
   const onSelectGenderDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
@@ -346,8 +382,8 @@ export function PersonalInformation(props) {
       e.preventDefault();
 
       if (
-        new_data.jobprofile === "" ||
-        !new_data.jobprofile ||
+        // new_data.jobprofile === "" ||
+        // !new_data.jobprofile ||
         new_data.firstname === "" ||
         new_data.lastname === "" ||
         new_data.phonenumber === "" ||
@@ -389,9 +425,10 @@ export function PersonalInformation(props) {
       address: new_data.address,
       userid: userDetails.UserId,
       currentUserId: userDetails.UserId,
-      jobprofile: new_data.jobprofile,
+      jobprofile: "",
       pronounid: new_data.pronoun[0]?.value,
       isexcludemycurrentemployer: currentEmployer,
+      availabilitytowork: new_data.availabilitytowork,
     };
 
     let response = await dispatch(profileActions.insertPersonalInfo(post_data));
@@ -498,6 +535,7 @@ export function PersonalInformation(props) {
       setCountryList(data);
     }
   }, [cityList]);
+
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -507,12 +545,30 @@ export function PersonalInformation(props) {
       return {
         value,
         label: `${rest.location + ", " + rest.statename}`,
+        zipcode: rest.zipcode?.[0],
       };
     });
 
     setLocation(filter_data);
     return filter_data;
   };
+
+  const getZipLocationData = async function (inputValue) {
+    const { data = [] } = await getLocationFilter(inputValue);
+    setCityList(data);
+
+    let filter_data = data.map(({ cityid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.location + ", " + rest.statename}`,
+        zipcode: rest.zipcode,
+      };
+    });
+    setCitySelect(filter_data);
+    setCountrySelect([{ value: 1, label: "USA" }]);
+    setLocation(filter_data);
+  };
+
   const onHandleInputChange = function (check, data) {
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
@@ -541,6 +597,9 @@ export function PersonalInformation(props) {
       }
     } else if (check === "zip") {
       new_data.zipcode = data;
+      if (data.length === 5) {
+        getZipLocationData(data);
+      }
     } else if (check === "authorization") {
       new_data.employmenteligiblity = data;
     } else if (check === "work") {
@@ -686,11 +745,11 @@ export function PersonalInformation(props) {
                               </span>
                             )}
                           </strong>
-                          {selectedCandidate.personalInfo.jobprofile && (
+                          {/* {selectedCandidate.personalInfo.position && (
                             <p className="widget-description text-focus content-text mt-0">
-                              {selectedCandidate.personalInfo.jobprofile}
+                              {selectedCandidate.personalInfo.position}
                             </p>
-                          )}
+                          )} */}
                           <p className="candidate-label mt-0 mb-0">
                             {selectedCandidate.personalInfo.organization !=
                               "Not Working" &&
@@ -715,9 +774,12 @@ export function PersonalInformation(props) {
                             </Col>
                             <Col>
                               <Label className="candidate-label mt-0">
-                                Ready to work immediately:{" "}
+                                Availability to work:{" "}
                                 <strong className="content-text">
-                                  {selectedCandidate.personalInfo.readyToWork}{" "}
+                                  {
+                                    selectedCandidate.personalInfo
+                                      .availabilitytowork
+                                  }{" "}
                                 </strong>
                               </Label>
                             </Col>
@@ -883,7 +945,7 @@ export function PersonalInformation(props) {
                     onSubmit(evt, getResponse.isexcludemycurrentemployer)
                   }
                 >
-                  <Row className="mb-3">
+                  {/* <Row className="mb-3">
                     <Col className="col-6">
                       <Label for="firstname" className="fw-semi-bold">
                         Desired/Current job profile{" "}
@@ -913,7 +975,7 @@ export function PersonalInformation(props) {
                           : ""}
                       </div>
                     </Col>
-                  </Row>
+                  </Row> */}
 
                   <Row>
                     <div className="mb-1 fw-bold">Contact</div>
@@ -1127,7 +1189,7 @@ export function PersonalInformation(props) {
                           type="text"
                           name="zipCode"
                           id="zipCode"
-                          maxLength={50}
+                          maxLength={5}
                           value={getResponse.zipcode}
                           onInput={(evt) =>
                             onHandleInputChange("zip", evt.target.value)
@@ -1264,7 +1326,7 @@ export function PersonalInformation(props) {
                       : ""}
                   </div>
                   <hr />
-                  <Row>
+                  {/* <Row>
                     <Col>
                       <FormGroup check>
                         <Input
@@ -1278,6 +1340,28 @@ export function PersonalInformation(props) {
                         <Label className="fw-semi-bold">
                           Ready to work immediately{" "}
                         </Label>
+                      </FormGroup>
+                    </Col>
+                  </Row> */}
+
+                  <Row>
+                    <Col md={4}>
+                      <FormGroup>
+                        <Label for="zipCode" className="fw-semi-bold">
+                          Availability to work
+                        </Label>
+                        <AsyncSelect
+                          name="distance"
+                          placeholder="Select"
+                          defaultOptions={availabilityList}
+                          isMulti={false}
+                          value={
+                            availabilitySelect?.length > 0
+                              ? availabilitySelect
+                              : ""
+                          }
+                          onChange={(evt) => onSelectAvailability(evt)}
+                        />
                       </FormGroup>
                     </Col>
                   </Row>
