@@ -226,7 +226,6 @@ export function JobPreferences(props) {
         setGetResponse(filtered_data);
       }
       setDetails(data);
-
       if (distanceList) {
         let data = distanceList.filter(
           (x) => x.label === get_response?.[0]?.traveldistance
@@ -398,7 +397,6 @@ export function JobPreferences(props) {
       new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
 
       new_data[0].anywhereonlynear = 0;
-      setDistanceSelect([]);
     } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
     } else if (check === "near") {
@@ -516,7 +514,11 @@ export function JobPreferences(props) {
         minimumbasepay: rest.minimumbasepay,
         willingtorelocate: rest.willingtorelocate,
         anywhereonlynear: parseInt(rest.anywhereonlynear),
-        locationids: rest.locationids,
+        locationids:
+          parseInt(rest.anywhereonlynear) === 1 ||
+          parseInt(rest.anywhereonlynear) === 0
+            ? ""
+            : rest.locationids,
         desiredworktypeids: rest.desiredworktypeids,
         isactive: rest.isactive,
         currentUserId: parseInt(userDetails?.UserId ?? 0),
@@ -954,26 +956,54 @@ export function JobPreferences(props) {
                     <hr />
                   </Row>
                   <Row>
-                    <Col>
-                      <FormGroup check>
-                        <Input
-                          name="relocate"
-                          id="relocate"
-                          onChange={(evt) =>
-                            onHandleInputChange(
-                              "relocate",
-                              !parentItem.willingtorelocate
-                            )
-                          }
-                          type="checkbox"
-                          checked={parentItem.willingtorelocate}
-                        />{" "}
-                        <Label check className="fw-semi-bold">
-                          Willing to Relocate
-                        </Label>
-                      </FormGroup>
-                    </Col>
+                    <Label check className="fw-semi-bold">
+                      Willing to Relocate
+                    </Label>
                   </Row>
+
+                  <div>
+                    <Row className="mt-2 mb-2">
+                      <Col md={4}>
+                        <FormGroup check>
+                          <Input
+                            name="no_relocate"
+                            id="no_relocate"
+                            onChange={(evt) =>
+                              onHandleInputChange(
+                                "relocate",
+                                !parentItem.willingtorelocate
+                              )
+                            }
+                            type="radio"
+                            checked={!parentItem.willingtorelocate}
+                          />{" "}
+                          <Label check className="fw-semi-bold">
+                            No
+                          </Label>
+                        </FormGroup>
+                      </Col>
+
+                      <Col md={4}>
+                        <FormGroup check>
+                          <Input
+                            name="relocate"
+                            id="relocate"
+                            onChange={(evt) =>
+                              onHandleInputChange(
+                                "relocate",
+                                !parentItem.willingtorelocate
+                              )
+                            }
+                            type="radio"
+                            checked={parentItem.willingtorelocate}
+                          />{" "}
+                          <Label check className="fw-semi-bold">
+                            Yes
+                          </Label>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  </div>
 
                   {parentItem.willingtorelocate ? (
                     <div>
@@ -1013,43 +1043,39 @@ export function JobPreferences(props) {
                           </FormGroup>
                         </Col>
                       </Row>
-                      <Row>
-                        <Col md={4}>
-                          <FormGroup>
-                            <Label for="city" className="fw-semi-bold">
-                              City, State
-                              {parentItem.anywhereonlynear == 2 ? (
+                      {parentItem.anywhereonlynear == 2 && (
+                        <Row className="mt-2">
+                          <Col md={4}>
+                            <FormGroup>
+                              <Label for="city" className="fw-semi-bold">
+                                City, State
                                 <span className="required-icon"> *</span>
-                              ) : (
-                                ""
-                              )}
-                            </Label>
-                            <AsyncSelect
-                              name="location"
-                              placeholder="Search to select"
-                              loadOptions={loadOptions}
-                              isMulti={true}
-                              value={selectedLocation}
-                              onChange={(evt) =>
-                                onHandleInputChange("location", evt)
-                              }
-                              className={`placeholder-name ${
-                                parentItem.anywhereonlynear == 2 &&
-                                selectedLocation.length === 0
-                                  ? "async-border-red"
-                                  : ""
-                              }`}
-                            />
+                              </Label>
+                              <AsyncSelect
+                                name="location"
+                                placeholder="Search to select"
+                                loadOptions={loadOptions}
+                                isMulti={true}
+                                value={selectedLocation}
+                                onChange={(evt) =>
+                                  onHandleInputChange("location", evt)
+                                }
+                                className={`placeholder-name ${
+                                  selectedLocation.length === 0
+                                    ? "async-border-red"
+                                    : ""
+                                }`}
+                              />
 
-                            <div className="async-error-text">
-                              {parentItem.anywhereonlynear == 2 &&
-                              selectedLocation.length === 0
-                                ? "Location is required"
-                                : ""}
-                            </div>
-                          </FormGroup>
-                        </Col>
-                      </Row>
+                              <div className="async-error-text">
+                                {selectedLocation.length === 0
+                                  ? "Location is required"
+                                  : ""}
+                              </div>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
                     </div>
                   ) : (
                     <></>
