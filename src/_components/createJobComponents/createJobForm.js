@@ -54,6 +54,12 @@ export default function CreateJob({
     setAccordion(state);
   };
   useEffect((e) => {
+    if (type === "new_template" && previousStep !== 3) {
+      setZipcodeCityState({
+        value: "",
+        label: "Search city or zipcode",
+      });
+    }
     if (type === "previous_template" || type === "recommendation_template") {
       console.log(previousData);
       let data = {
@@ -152,6 +158,17 @@ export default function CreateJob({
             : previousData?.jobPrescreenApplicationDtos,
       };
       JobDataForPreview(data);
+      setZipcodeCityState({
+        value:
+          previousData?.cityid +
+          ", " +
+          previousData?.stateid +
+          ", " +
+          previousData?.cityname +
+          ", " +
+          previousData?.statename,
+        label: previousData?.cityname + ", " + previousData?.statename,
+      });
     }
   }, []);
 
@@ -314,9 +331,9 @@ export default function CreateJob({
         : jobData.basicInformation.issecurityclearancerequired,
     securityclearanceid:
       jobData.basicInformation === undefined ||
-      jobData.basicInformation.securityclearanceid === undefined
+      jobData.basicInformation.securityclearance === undefined
         ? ""
-        : jobData.basicInformation.securityclearanceid,
+        : jobData.basicInformation.securityclearance,
     jobType:
       jobData.experienceSchedule === undefined ||
       jobData.experienceSchedule.jobType === undefined
@@ -505,7 +522,24 @@ export default function CreateJob({
     jobLocationRaw === undefined ? 0 : jobLocationRaw
   );
   useEffect(() => {
-    if (previousStep === 3 && jobData.keyQualification.length > 0) {
+    if (previousStep === 3) {
+      setZipcodeCityState({
+        value:
+          jobData?.basicInformation?.cityId +
+          ", " +
+          jobData?.basicInformation?.stateId +
+          ", " +
+          jobData?.basicInformation?.cityName +
+          ", " +
+          jobData?.basicInformation?.stateName,
+        label:
+          jobData?.basicInformation?.cityName +
+          ", " +
+          jobData?.basicInformation?.stateName,
+      });
+    }
+
+    if (previousStep === 3 && jobData?.keyQualification?.length > 0) {
       let new_array1 = [];
       let new_array2 = [];
       jobData.keyQualification.forEach((element) => {
@@ -902,6 +936,10 @@ export default function CreateJob({
     if (inputValue.length > 0) {
       const { data = [] } = await getLocation(inputValue);
       return data.map(({ cityid: value, ...rest }) => {
+        setZipcodeCityState({
+          value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
+          label: `${rest.location}, ${rest.statename}`,
+        });
         return {
           value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
           label: `${rest.location}, ${rest.statename}`,
@@ -909,15 +947,15 @@ export default function CreateJob({
       });
     }
   };
+
   const loadOptionsByZip = async (inputValue) => {
-    if (inputValue.length > 4) {
+    if (inputValue.length > 3) {
       const { data = [] } = await getLocation(inputValue);
       return data.map(({ cityid: value, ...rest }) => {
         setZipcodeCityState({
           value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
           label: `${rest.location}, ${rest.statename}`,
         });
-        console.log(zipcodeCityState);
       });
     }
   };
@@ -1411,42 +1449,43 @@ export default function CreateJob({
                         <AsyncSelect
                           name={"city"}
                           placeholder="Search city or zipcode"
-                          defaultValue={
-                            zipcodeChange === true
-                              ? zipcodeCityState
-                              : type === "new_template" && previousStep !== 3
-                              ? {
-                                  value: "",
-                                  label: "Search city or zipcode",
-                                }
-                              : {
-                                  value:
-                                    previousStep === 3
-                                      ? jobData?.basicInformation?.cityId +
-                                        ", " +
-                                        jobData?.basicInformation?.stateId +
-                                        ", " +
-                                        jobData?.basicInformation?.cityName +
-                                        ", " +
-                                        jobData?.basicInformation?.stateName
-                                      : previousData?.cityid +
-                                        ", " +
-                                        previousData?.stateid +
-                                        ", " +
-                                        previousData?.cityname +
-                                        ", " +
-                                        previousData?.statename,
-                                  label:
-                                    previousStep === 3
-                                      ? jobData?.basicInformation?.cityName +
-                                        ", " +
-                                        jobData?.basicInformation?.stateName
-                                      : previousData?.cityname +
-                                        ", " +
-                                        previousData?.statename,
-                                }
-                            // previousValue.statename
-                          }
+                          // defaultValue={
+                          //   type === "new_template" && previousStep !== 3
+                          //     ? {
+                          //         value: "",
+                          //         label: "Search city or zipcode",
+                          //       }
+                          //     : previousStep === 3
+                          //     ? {
+                          //         value:
+                          //           jobData?.basicInformation?.cityId +
+                          //           ", " +
+                          //           jobData?.basicInformation?.stateId +
+                          //           ", " +
+                          //           jobData?.basicInformation?.cityName +
+                          //           ", " +
+                          //           jobData?.basicInformation?.stateName,
+                          //         label:
+                          //           jobData?.basicInformation?.cityName +
+                          //           ", " +
+                          //           jobData?.basicInformation?.stateName,
+                          //       }
+                          //     : {
+                          //         value:
+                          //           previousData?.cityid +
+                          //           ", " +
+                          //           previousData?.stateid +
+                          //           ", " +
+                          //           previousData?.cityname +
+                          //           ", " +
+                          //           previousData?.statename,
+                          //         label:
+                          //           previousData?.cityname +
+                          //           ", " +
+                          //           previousData?.statename,
+                          //       }
+                          // }
+                          value={zipcodeCityState}
                           loadOptions={loadOptions}
                           isMulti={false}
                           styles={customStyles}
@@ -1470,13 +1509,7 @@ export default function CreateJob({
                           name={"country"}
                           type={"text"}
                           readOnly
-                          value={
-                            type === "new_template" && previousStep !== 3
-                              ? ""
-                              : countryOnchange === false
-                              ? previousValue.countryName
-                              : "US"
-                          }
+                          value={"US"}
                           placeholder="Select country"
                         />
                       </FormGroup>
