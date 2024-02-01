@@ -127,6 +127,9 @@ export function CandidateSchedules() {
   const [popupType, setPopupType] = useState("Video");
   const onCloseIdModal = () => {
     setOpenModal(false);
+  };
+  const closeModal = () => {
+    setOpenModal(false);
     // Get the current date
     const currentDate = new Date();
 
@@ -315,6 +318,7 @@ export function CandidateSchedules() {
                   onCloseIdModal();
                 }}
                 isOpen={openModal}
+                closeModaBox={() => closeModal()}
               ></InterViewDetailModal>
             </>
           ) : (

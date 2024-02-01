@@ -168,12 +168,7 @@ export function PersonalInformation(props) {
           label: selectedCandidate.personalInfo.pronounname,
         },
       ],
-      availabilitytowork: [
-        {
-          value: selectedCandidate.personalInfo.availabilityId,
-          label: selectedCandidate.personalInfo.availabilityName,
-        },
-      ],
+      availabilitytowork: selectedCandidate.personalInfo.availabilitytowork,
       isactive: true,
       userid: 0,
       currentUserId: 0,
@@ -220,13 +215,10 @@ export function PersonalInformation(props) {
       pronounData.push(selectedCandidate.selectedDropDown?.selectedPronoun[0]);
       setPronounSelect(pronounData);
     }
-
     if (availabilityList) {
-      if (selectedCandidate.selectedDropDown?.selectedAvailability === "") {
+      if (selectedCandidate?.personalInfo?.availabilitytowork !== "") {
         let availability = availabilityList?.filter(
-          (x) =>
-            x.label ===
-            "selectedCandidate.selectedDropDown?.selectedAvailability"
+          (x) => x.label === selectedCandidate.personalInfo?.availabilitytowork
         );
 
         setAvailabilitySelect(availability);
@@ -776,10 +768,11 @@ export function PersonalInformation(props) {
                               <Label className="candidate-label mt-0">
                                 Availability to work:{" "}
                                 <strong className="content-text">
-                                  {
-                                    selectedCandidate.personalInfo
-                                      .availabilitytowork
-                                  }{" "}
+                                  {selectedCandidate.personalInfo
+                                    .availabilitytowork === ""
+                                    ? "NA"
+                                    : selectedCandidate.personalInfo
+                                        .availabilitytowork}{" "}
                                 </strong>
                               </Label>
                             </Col>
