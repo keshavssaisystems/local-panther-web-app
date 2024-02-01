@@ -2200,9 +2200,7 @@ export default function CreateJob({
                           isMulti={true}
                           styles={customStyles}
                           value={
-                            type === "new_template" && previousStep !== 3
-                              ? ""
-                              : previousStep === 3
+                            previousStep === 3
                               ? keyQualificationArr1
                               : prevKeyQualificationArr1
                           }
@@ -2227,9 +2225,7 @@ export default function CreateJob({
                           isMulti={true}
                           styles={customStyles}
                           value={
-                            type === "new_template" && previousStep !== 3
-                              ? ""
-                              : previousStep === 3
+                            previousStep === 3
                               ? keyQualificationArr2
                               : prevKeyQualificationArr2
                           }
