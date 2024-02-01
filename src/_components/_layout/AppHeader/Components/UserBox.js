@@ -278,9 +278,7 @@ export function UserBox() {
                                     userDetail.InternalUserId
                                   )}`}
                                 >
-                                  {showBilling
-                                    ? "View Billing contact details"
-                                    : "Add Billing contact details"}
+                                  Billing contact details
                                 </Link>
                               </NavLink>
                             </NavItem>
