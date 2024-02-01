@@ -64,7 +64,7 @@ export function ChatList({ list }) {
                   <tr>
                     <td className="text-center align-middle">
                       Start a chat with{" "}
-                      {userRole === 2 ? "candidates" : "customers"}
+                      {userRole === 2 ? "candidates" : "employers"}
                     </td>
                   </tr>
                 </tbody>

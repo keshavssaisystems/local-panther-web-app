@@ -37,6 +37,7 @@ export const PaymentDetails = ({
   isAdmin = false,
   selectedCustomer = {},
   onClose,
+  authUser,
 }) => {
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -44,9 +45,10 @@ export const PaymentDetails = ({
   const [currencyValue, setCurrencyValue] = useState(1);
   const [sameAsCust, setSameAsCust] = useState(false);
   const [cityList, setCityList] = useState([]);
+
   const [countryList, setCountryList] = useState([]);
-  const [countryValue, setCountryValue] = useState(0);
-  const [cityValue, setCityValue] = useState(0);
+  const [countryValue, setCountryValue] = useState("");
+  const [cityValue, setCityValue] = useState("");
   const [cityReqError, setCityReqError] = useState(false);
   const [issuer, setIssuer] = useState("unknown");
   const [cardnumber, setCardNumber] = useState("");
@@ -60,6 +62,7 @@ export const PaymentDetails = ({
   const [invalidExp, setInvalidExp] = useState(false);
   const [cvvErr, setCVVErr] = useState(false);
   const [validCard, setValidCard] = useState(false);
+  const [deletedCard, setDeletedCard] = useState(false);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -70,9 +73,10 @@ export const PaymentDetails = ({
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const userDetails = useSelector((state) => state.payment.userDetails);
   const currencyType = useSelector((state) => state.payment.currencyType);
-
+  const billingDetails = useSelector((state) => state.payment.billingDetails);
+  const cardType = useSelector((state) => state.payment.cardType);
   const schema = Yup.object().shape({
-    name: Yup.string().required("First name is required"),
+    name: Yup.string().required("Name is required"),
     email: Yup.string()
       .required("Email is required")
       .matches(
@@ -98,8 +102,15 @@ export const PaymentDetails = ({
   const { errors } = formState;
 
   useEffect(() => {
+    dispatch(paymentActions.clearUserData());
     dispatch(dropdownActions.getCompanyListPublicThunk());
     dispatch(paymentActions.getpaymentCurrencyType());
+    dispatch(paymentActions.getCardTypeDrpDwn());
+
+    return () => {
+      dispatch(paymentActions.clearBillingData());
+      dispatch(paymentActions.clearUserData());
+    };
     setValue("currency", 1);
   }, []);
 
@@ -111,15 +122,31 @@ export const PaymentDetails = ({
   useEffect(() => {
     if (userDetails?.customerid) {
       setDetails(userDetails);
+      if (userDetails?.billingdetailstatus && (authUser || isAdmin)) {
+        dispatch(paymentActions.getBillingDetails(userDetails?.customerid));
+      }
     }
   }, [userDetails]);
 
   useEffect(() => {
     if (selectedCustomer?.customerid) {
-      setDetails(selectedCustomer);
+      dispatch(paymentActions.updateUserDetails(selectedCustomer));
     }
   }, [selectedCustomer]);
 
+  useEffect(() => {
+    if (billingDetails?.billingdetailid) {
+      setCardData(billingDetails);
+    }
+  }, [billingDetails]);
+  const setCardData = (billingDetails) => {
+    // setCardNumber(formatCreditCardNumber(billingDetails?.creditcardnumber));
+    setCardNumber(billingDetails?.creditcardnumber);
+    setExpiry(formatExpirationDate(billingDetails?.expirydate));
+    // setCVV(formatCVC(billingDetails?.securitycode));
+    setCVV(billingDetails?.securitycode);
+    setCardHolder(billingDetails?.cardholdername);
+  };
   const setDetails = (userDetails) => {
     setValue("name", userDetails.firstname + " " + userDetails.lastname);
     setValue("companyid", String(userDetails.companyid));
@@ -127,12 +154,44 @@ export const PaymentDetails = ({
     setValue("email", userDetails.email);
     setValue("phoneNumber", userDetails.phonenumber);
     setValue("zipcode", userDetails.zipcode);
-    // setValue("cityid", userDetails.cityid);
-    // setValue("stateid", userDetails.stateid);
-    // setValue("countryid", userDetails.countryid);
+    // let cityData = [
+    //   // {
+    //   {
+    //     value: userDetails.cityid,
+    //     label: `${userDetails.cityname + ", " + userDetails.statename}`,
+    //   },
+    //   //   cityid: userDetails.cityid,
+    //   //   countryid: userDetails.countryid,
+    //   //   countryname: userDetails.countryname,
+    //   //   location: userDetails.cityname,
+    //   //   stateid: userDetails.stateid,
+    //   //   statename: userDetails.statename,
+    //   //   zipcode: null,
+    //   // },
+    // ];
+    // setDefaultCityList(cityData);
 
+    // let countryData = [
+    //   {
+    //     value: userDetails.countryid,
+    //     label: userDetails.countryname,
+    //   },
+    // ];
+    // setCountryList(countryData);
     setValue("currency", 1);
     setCurrencyValue(1);
+
+    setValue("cityid", String(userDetails.cityid));
+    setCityValue({
+      value: userDetails.cityid,
+      label: `${userDetails.cityname + ", " + userDetails.statename}`,
+    });
+    setValue("stateid", userDetails.stateid);
+    setValue("countryid", String(userDetails.countryid));
+    setCountryValue({
+      value: userDetails.countryid,
+      label: `${userDetails.countryname}`,
+    });
   };
   useEffect(() => {
     let country_response;
@@ -150,8 +209,16 @@ export const PaymentDetails = ({
           return country_response.find((item) => item.id === id);
         }
       );
+
+      setCountryValue(data[0]);
+      setValue("countryid", String(data[0].value));
       setCountryList(data);
     } else {
+      if (data.length > 0) {
+        setCountryValue(data[0]);
+        setValue("countryid", String(data[0].value));
+      }
+
       setCountryList(data);
     }
   }, [cityList]);
@@ -176,13 +243,14 @@ export const PaymentDetails = ({
         label: `${rest.location + ", " + rest.statename}`,
       };
     });
-
+    // setDefaultCityList(filter_data);
     return filter_data;
   };
 
   const setAsyncSelectValue = (data) => {
+    console.log(data);
     setValue("cityid", String(data.value));
-    setCityValue(data.value);
+    setCityValue(data);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
   };
@@ -208,7 +276,7 @@ export const PaymentDetails = ({
   };
 
   const onSelectCountryDropdown = (data) => {
-    setCountryValue(data.value);
+    setCountryValue(data);
     setValue("countryid", String(data.value));
   };
 
@@ -222,6 +290,7 @@ export const PaymentDetails = ({
 
   const handleCallback = (issuer, isValid) => {
     setIssuer(issuer);
+    console.log(issuer);
     setValidCard(isValid);
   };
   const onSameCustomer = (e) => {
@@ -233,6 +302,11 @@ export const PaymentDetails = ({
       setValue("email", "");
       setValue("phoneNumber", "");
       setValue("zipcode", "");
+      setValue("cityid", "");
+      setCityValue("");
+      setValue("stateid", "");
+      setValue("countryid", "");
+      setCountryValue("");
     }
   };
 
@@ -257,9 +331,19 @@ export const PaymentDetails = ({
       setCardHolderErr(cardholder === "");
       return;
     }
+    let cardTypeNumber = 0;
+
+    if (cardType.length > 0) {
+      await cardType.map((data) => {
+        if (data.name.toLowerCase() === issuer.replaceAll("-", " ")) {
+          cardTypeNumber = data.id;
+        }
+      });
+    }
+
     let payload = {
       billingdetailid: 0,
-      customerid: id,
+      customerid: userDetails?.customerid ? userDetails.customerid : id,
       name: formData.name,
       phonenumber: formData.phoneNumber,
       companyid: formData.companyid,
@@ -270,7 +354,7 @@ export const PaymentDetails = ({
       zipcode: formData.zipcode,
       countryid: formData.countryid,
       currencyid: formData.currency,
-      creditcardtypeid: 1,
+      creditcardtypeid: cardTypeNumber,
       creditcardnumber: cardnumber,
       expirydate: expiry,
       securitycode: cvv,
@@ -290,6 +374,10 @@ export const PaymentDetails = ({
         type: "error",
       });
     } else {
+      setDeletedCard(false);
+      if (authUser) {
+        dispatch(paymentActions.updateShowBilling(true));
+      }
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -305,7 +393,7 @@ export const PaymentDetails = ({
     SetShowAlert(data);
   };
   const closeSweetAlert = () => {
-    if (isAdmin) {
+    if (isAdmin && !deletedCard) {
       onClose();
     }
     let data = { ...showAlert };
@@ -316,12 +404,44 @@ export const PaymentDetails = ({
   };
 
   const navigateToLogin = () => {
-    if (!isAdmin) {
+    if (!isAdmin && !deletedCard) {
       history.navigate("/login");
     } else {
-      if (isAdmin) {
+      if (isAdmin && !deletedCard) {
         onClose();
       }
+    }
+    closeSweetAlert();
+  };
+
+  const onDeleteCard = async () => {
+    let response = await dispatch(
+      paymentActions.deleteBillingDetails(billingDetails.billingdetailid)
+    );
+
+    if (!response.payload) {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    } else {
+      setDeletedCard(true);
+      dispatch(paymentActions.updateShowBilling(false));
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+      let data = { ...userDetails };
+      data.billingdetailstatus = false;
+      setCardNumber("");
+      setExpiry("");
+      setCVV("");
+      setCardHolder("");
+      setCardHolderErr(false);
+      setExpiryErr(false);
+      setCVVErr(false);
+      setCardNumberErr(false);
+      dispatch(paymentActions.updateUserDetails(data));
     }
   };
 
@@ -340,11 +460,11 @@ export const PaymentDetails = ({
                 type="checkbox"
                 onChange={(e) => onSameCustomer(e)}
               ></Input>
-              <Label className="ms-1 same-as-cust">Same as customer</Label>
+              <Label className="ms-1 same-as-cust">Same as employer</Label>
             </Col>
             <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
               <span className="sub-text">
-                If this box is checked, pre-populate the data from the Customer
+                If this box is checked, pre-populate the data from the Employer
                 details
               </span>
             </Col>
@@ -353,7 +473,14 @@ export const PaymentDetails = ({
           <></>
         )}
         <Row>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="name" className="input-label">
                 Name <span className="text-danger">*</span>
@@ -375,7 +502,14 @@ export const PaymentDetails = ({
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="companyid" className="input-label">
                 Company <span className="text-danger">*</span>
@@ -406,7 +540,14 @@ export const PaymentDetails = ({
               </FormFeedback>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="email" className="input-label">
                 Email <span className="text-danger">*</span>
@@ -428,7 +569,14 @@ export const PaymentDetails = ({
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="phoneNumber" className="input-label">
                 Phone <span className="text-danger">*</span>
@@ -475,7 +623,14 @@ export const PaymentDetails = ({
               </InputGroup>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 City, State <span className="text-danger">* </span>
@@ -486,8 +641,9 @@ export const PaymentDetails = ({
                 placeholderText="search"
                 loadOptions={loadOptions}
                 isMulti={false}
+                value={cityValue}
                 className={`placeholder-name ${
-                  errors.cityid && cityValue === 0
+                  errors.cityid && !cityValue?.value
                     ? "async-border-red"
                     : "async-no-error"
                 }`}
@@ -495,13 +651,20 @@ export const PaymentDetails = ({
                 onChange={(e) => setAsyncSelectValue(e)}
               />
               <div className="async-error-text">
-                {errors.cityid && cityValue === 0
+                {errors.cityid && !cityValue?.value
                   ? "City, State is required"
                   : ""}
               </div>
             </FormGroup>
           </Col>
-          <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+          <Col
+            xs={12}
+            sm={12}
+            md={12}
+            lg={6}
+            xl={authUser ? 3 : 6}
+            xxl={authUser ? 3 : 6}
+          >
             <FormGroup>
               <Label for="zipcode" className="input-label">
                 Zip Code <span className="text-danger">*</span>
@@ -533,8 +696,9 @@ export const PaymentDetails = ({
                 placeholder="Select Country"
                 placeholderText="search"
                 isMulti={false}
+                value={countryValue}
                 className={`placeholder-name ${
-                  errors.countryid && countryValue === 0
+                  errors.countryid && !countryValue?.value
                     ? "async-border-red"
                     : ""
                 }`}
@@ -544,7 +708,7 @@ export const PaymentDetails = ({
                 onMenuOpen={() => checkCityValid()}
               />
               <div className="async-error-text">
-                {errors.countryid && countryValue === 0
+                {errors.countryid && !countryValue?.value
                   ? "Country is required"
                   : ""}
               </div>
@@ -742,7 +906,7 @@ export const PaymentDetails = ({
 
               <InputGroup>
                 <input
-                  type="tel"
+                  type="password"
                   name="cvv"
                   id="cvv"
                   className={`form-control placeholder-name ${
@@ -751,6 +915,7 @@ export const PaymentDetails = ({
                   placeholder="CVV"
                   pattern="\d{3,4}"
                   value={cvv}
+                  data-inputmask="****"
                   onChange={(e) => setCardDetails(e)}
                 />
                 <FormFeedback>{cvvErr ? "CVV is required" : ""}</FormFeedback>
@@ -807,33 +972,54 @@ export const PaymentDetails = ({
           style={{ textAlign: "end" }}
         >
           {" "}
-          <InputGroup>
-            {!isAdmin ? (
-              <Link to="/login" style={{ borderBottom: "1px solid #545cd8" }}>
-                Return to Sign In Page
-              </Link>
-            ) : (
-              <>
-                {" "}
-                <Button
-                  type="cancel"
-                  color="primary"
-                  outline
-                  className="btn-text"
-                  onClick={(e) => {
-                    onClose();
-                    e.preventDefault();
-                  }}
-                >
-                  Cancel
-                </Button>
-              </>
-            )}
-
-            <Button color="primary" type="submit" className="btn-text ms-4">
-              {!isAdmin ? "Agreed & Submit" : "Save"}
+          {userDetails?.billingdetailstatus ? (
+            <Button
+              type="cancel"
+              color="danger"
+              outline
+              className="btn-text me-2"
+              onClick={(e) => {
+                onDeleteCard();
+                e.preventDefault();
+              }}
+            >
+              Delete
             </Button>
-          </InputGroup>
+          ) : (
+            <></>
+          )}
+          {!isAdmin && !authUser ? (
+            <Link
+              to="/login"
+              className="me-2"
+              style={{ borderBottom: "1px solid #545cd8" }}
+            >
+              Return to Sign In Page
+            </Link>
+          ) : (
+            <>
+              {" "}
+              <Button
+                type="cancel"
+                color="primary"
+                outline
+                className="btn-text"
+                onClick={(e) => {
+                  onClose();
+                  e.preventDefault();
+                }}
+              >
+                Cancel
+              </Button>
+            </>
+          )}
+          {!userDetails?.billingdetailstatus ? (
+            <Button color="primary" type="submit" className="btn-text ms-2">
+              {!isAdmin && !authUser ? "Agreed & Submit" : "Save"}
+            </Button>
+          ) : (
+            <></>
+          )}
         </Col>
       </Form>
       <div style={{ display: "none" }}>

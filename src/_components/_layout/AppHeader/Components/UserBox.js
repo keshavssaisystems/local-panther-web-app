@@ -31,7 +31,7 @@ import city3 from "../../../../assets/utils/images/dropdown-header/city3.jpg";
 import avatar1 from "../../../../assets/utils/images/avatars/1.jpg";
 import "react-toastify/dist/ReactToastify.css";
 import errorIcon from "../../../../assets/utils/images/error_icon.png";
-import { authActions } from "_store";
+import { authActions, createjobActions, paymentActions } from "_store";
 import { ChangePassword } from "../../../common/changePassword";
 import { SuccessPopUp } from "_components/common/successPopUp";
 import { settingsActions } from "_store";
@@ -39,9 +39,11 @@ import cx from "classnames";
 import Switch from "react-switch";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { Link } from "react-router-dom";
 
 export function UserBox() {
   const authUser = useSelector((x) => x?.auth?.token);
+  const showBilling = useSelector((x) => x?.payment?.showBilling);
   const [userDetail, setUserDetail] = useState({});
   const [deactivateConfirm, setDeactivateConfirm] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -59,7 +61,9 @@ export function UserBox() {
   });
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
   const personalInfo_temp = localStorage.getItem("profileImage");
+
   const [profileImg, setProfileImg] = useState("");
+  // const [showBilling, setShowBilling] = useState(false);
   const dispatch = useDispatch();
   const logout = () => {
     let userLoginInfoId = localStorage.getItem("userLoginInfoId");
@@ -72,12 +76,38 @@ export function UserBox() {
   useEffect(() => {
     const detail = JSON.parse(localStorage.getItem("userDetails")) || {};
     setUserDetail({ ...detail });
+
+    if (Number(detail.UserroleId) === 2) {
+      getCompanyDetails();
+    }
   }, []);
   const [changePwd, setChangePwd] = useState(false);
+  const getCompanyDetails = async function () {
+    let res = await dispatch(
+      createjobActions.getCustomerDetailsThunk(
+        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+      )
+    );
 
+    if (res?.payload?.statusCode === 200) {
+      let roleId = localStorage.getItem("userroleid")
+        ? Number(localStorage.getItem("userroleid"))
+        : 0;
+      if (
+        res?.payload?.data?.billingdetailstatus !== undefined &&
+        res?.payload?.data?.billingdetailstatus &&
+        roleId === 2
+      ) {
+        dispatch(paymentActions.updateShowBilling(true));
+      } else {
+        dispatch(paymentActions.updateShowBilling(false));
+      }
+    }
+  };
   useEffect(() => {
     setProfileImg(personalInfo_temp);
   }, [personalInfo_temp]);
+
   // only show nav when logged in
   if (!authUser) return null;
 
@@ -237,6 +267,21 @@ export function UserBox() {
                                 onClick={() => [setDeactivateConfirm(true)]}
                               >
                                 Deactivate account
+                              </NavLink>
+                            </NavItem>
+                          )}
+                          {Number(localStorage.getItem("userroleid")) === 2 && (
+                            <NavItem>
+                              <NavLink>
+                                <Link
+                                  to={`/payment/${Number(
+                                    userDetail.InternalUserId
+                                  )}`}
+                                >
+                                  {showBilling
+                                    ? "View Billing contact details"
+                                    : "Add Billing contact details"}
+                                </Link>
                               </NavLink>
                             </NavItem>
                           )}
