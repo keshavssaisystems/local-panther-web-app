@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Button, CardFooter } from "reactstrap";
+import {
+  Card,
+  Col,
+  Row,
+  Button,
+  CardFooter,
+  UncontrolledTooltip,
+} from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import Loader from "react-loaders";
@@ -39,6 +46,7 @@ export function CustJobDetail({
   const workScheduleOptions = useSelector(
     (state) => state.dropdown.workSchedule
   );
+  const billingStatus = useSelector((state) => state?.payment?.showBilling);
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   let loading = true;
   let jobDetail = {};
@@ -47,10 +55,6 @@ export function CustJobDetail({
   if (jobDetails.length > 0) {
     loading = false;
     jobDetail = jobDetails[0];
-    // jobDetail?.jobKeyQualificationDtos !== undefined &&
-    //   jobDetail?.jobKeyQualificationDtos.map((skills) =>
-    //     skillArray.push(skills.skillname)
-    //   );
     if (
       jobDetail?.jobKeyQualificationDtos &&
       jobDetail?.jobKeyQualificationDtos?.length > 0
@@ -422,16 +426,35 @@ export function CustJobDetail({
                           >
                             <FiEdit className="mb-1" /> Edit job
                           </Button>
-                          <Button
-                            color="primary"
-                            className={"me-3 mt-3"}
-                            onClick={(e) => {
-                              setPublishSuccess(true);
-                              publishJob(jobDetail.jobid);
-                            }}
-                          >
-                            <FiCheckSquare className="mb-1" /> Publish job
-                          </Button>
+                          {billingStatus === true && (
+                            <Button
+                              color="primary"
+                              className={"me-3 mt-3"}
+                              onClick={(e) => {
+                                setPublishSuccess(true);
+                                publishJob(jobDetail.jobid);
+                              }}
+                            >
+                              <FiCheckSquare className="mb-1" /> Publish job
+                            </Button>
+                          )}
+                          {billingStatus === false && (
+                            <>
+                              <Button
+                                color="primary"
+                                className={"me-3 mt-3 btn-mute"}
+                                id="publishButton"
+                              >
+                                <FiCheckSquare className="mb-1" /> Publish job
+                              </Button>
+                              <UncontrolledTooltip
+                                placement="bottom"
+                                target={"publishButton"}
+                              >
+                                Please add billing details to publish job
+                              </UncontrolledTooltip>
+                            </>
+                          )}
                         </Col>
                       ) : (
                         <></>
