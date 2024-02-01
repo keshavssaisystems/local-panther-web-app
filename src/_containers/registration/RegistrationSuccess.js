@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 
-import bg3 from "../../assets/utils/images/originals/citynights.jpg";
+import bg1 from "../../assets/utils/images/login.png";
 
 import { Col, Row, Button } from "reactstrap";
 
@@ -75,19 +75,18 @@ export const RegistrationSuccess = () => {
           <Col lg="5" className="d-xs-none">
             <div className="slider-light">
               <Slider {...sliderSettings}>
-                <div className="h-100 d-flex justify-content-center align-items-center bg-premium-dark">
+                <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
                   <div
                     className="slide-img-bg"
                     style={{
-                      backgroundImage: "url(" + bg3 + ")",
+                      backgroundImage: "url(" + bg1 + ")",
                     }}
                   />
-                  <div className="slider-content">
-                    <h3>Scalable, Modular, Consistent</h3>
-                    <p>
-                      Easily exclude the components you don't require.
-                      Lightweight, consistent Bootstrap based styles across all
-                      elements and components
+                  <div>
+                    <h3 className="slider-title">Experts In Human Capital</h3>
+                    <p className="m-5 slider-content">
+                      What makes The OpenWorX community the ideal career
+                      partner? We focus on what you want most from your career!
                     </p>
                   </div>
                 </div>
