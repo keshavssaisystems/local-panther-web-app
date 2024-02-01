@@ -1022,7 +1022,7 @@ export const CustCandidateListView = (props) => {
                           width={"20px"}
                           title={
                             props.type === "accepted"
-                              ? "Click to view offer"
+                              ? "Click to view accepted offer"
                               : "Final Offer - Click to view offer"
                           }
                           onClick={() =>

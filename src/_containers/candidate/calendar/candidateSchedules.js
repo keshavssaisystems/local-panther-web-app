@@ -127,6 +127,29 @@ export function CandidateSchedules() {
   const [popupType, setPopupType] = useState("Video");
   const onCloseIdModal = () => {
     setOpenModal(false);
+    // Get the current date
+    const currentDate = new Date();
+
+    // Get the first day of the current month
+    const firstDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+
+    // Get the last day of the current month
+    const lastDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+    const formattedFirstDay = formatDate(firstDayOfMonth);
+    const formattedLastDay = formatDate(lastDayOfMonth);
+    getUpcomingData({
+      candidateId: userDetails.InternalUserId,
+      start: formattedFirstDay,
+      end: formattedLastDay,
+    });
   };
   const handleSelectEvent = useCallback((event) => {
     setPopupData(event.data);

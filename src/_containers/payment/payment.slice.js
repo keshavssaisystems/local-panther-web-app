@@ -67,6 +67,7 @@ const paymentSlice = createSlice({
     currencyType: [],
     billingDetails: [],
     cardType: [],
+    showBilling: false,
   },
   reducers: {
     updateUserDetails: (state, { payload }) => {
@@ -77,6 +78,9 @@ const paymentSlice = createSlice({
     },
     clearUserData: (state) => {
       state.userDetails = [];
+    },
+    updateShowBilling: (state, { payload }) => {
+      state.showBilling = payload;
     },
   },
 

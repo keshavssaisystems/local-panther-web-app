@@ -152,7 +152,7 @@ export function HiringManager({ title }) {
       minWidth: "250px",
     },
     {
-      name: <span className="table-title">Customer</span>,
+      name: <span className="table-title">Employer</span>,
       cell: (row) => (
         <span className="table-cell" title={row?.customername}>
           {row?.customername}

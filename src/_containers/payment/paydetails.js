@@ -43,11 +43,14 @@ export const PaymentDetails = ({
   const { id } = useParams();
   const [companyValue, setCompanyValue] = useState(0);
   const [currencyValue, setCurrencyValue] = useState(1);
-  const [sameAsCust, setSameAsCust] = useState(false);
+  const [sameAsCust, setSameAsCust] = useState(
+    authUser ? authUser : selectedCustomer?.billingdetailstatus
+  );
   const [cityList, setCityList] = useState([]);
+
   const [countryList, setCountryList] = useState([]);
-  const [countryValue, setCountryValue] = useState(0);
-  const [cityValue, setCityValue] = useState(0);
+  const [countryValue, setCountryValue] = useState("");
+  const [cityValue, setCityValue] = useState("");
   const [cityReqError, setCityReqError] = useState(false);
   const [issuer, setIssuer] = useState("unknown");
   const [cardnumber, setCardNumber] = useState("");
@@ -62,6 +65,8 @@ export const PaymentDetails = ({
   const [cvvErr, setCVVErr] = useState(false);
   const [validCard, setValidCard] = useState(false);
   const [deletedCard, setDeletedCard] = useState(false);
+  const [disableSAC, setDisableSAC] = useState(false);
+
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -75,7 +80,7 @@ export const PaymentDetails = ({
   const billingDetails = useSelector((state) => state.payment.billingDetails);
   const cardType = useSelector((state) => state.payment.cardType);
   const schema = Yup.object().shape({
-    name: Yup.string().required("First name is required"),
+    name: Yup.string().required("Name is required"),
     email: Yup.string()
       .required("Email is required")
       .matches(
@@ -105,22 +110,31 @@ export const PaymentDetails = ({
     dispatch(dropdownActions.getCompanyListPublicThunk());
     dispatch(paymentActions.getpaymentCurrencyType());
     dispatch(paymentActions.getCardTypeDrpDwn());
-
+    setValue("currency", 1);
+    // setSameAsCust(
+    //   selectedCustomer?.billingdetailstatus
+    //     ? selectedCustomer?.billingdetailstatus
+    //     : false
+    // );
     return () => {
       dispatch(paymentActions.clearBillingData());
       dispatch(paymentActions.clearUserData());
     };
-    setValue("currency", 1);
   }, []);
 
   useEffect(() => {
-    if (id && sameAsCust) {
-      dispatch(paymentActions.getCustomerUserDetails(id));
+    if ((id || selectedCustomer?.customerid) && sameAsCust) {
+      dispatch(
+        paymentActions.getCustomerUserDetails(
+          id || selectedCustomer?.customerid
+        )
+      );
     }
   }, [id, sameAsCust]);
   useEffect(() => {
     if (userDetails?.customerid) {
       setDetails(userDetails);
+      setDisableSAC(userDetails?.billingdetailstatus);
       if (userDetails?.billingdetailstatus && (authUser || isAdmin)) {
         dispatch(paymentActions.getBillingDetails(userDetails?.customerid));
       }
@@ -129,7 +143,10 @@ export const PaymentDetails = ({
 
   useEffect(() => {
     if (selectedCustomer?.customerid) {
-      dispatch(paymentActions.updateUserDetails(selectedCustomer));
+      setDisableSAC(selectedCustomer?.billingdetailstatus);
+      if (selectedCustomer?.billingdetailstatus) {
+        dispatch(paymentActions.updateUserDetails(selectedCustomer));
+      }
     }
   }, [selectedCustomer]);
 
@@ -140,10 +157,13 @@ export const PaymentDetails = ({
   }, [billingDetails]);
   const setCardData = (billingDetails) => {
     // setCardNumber(formatCreditCardNumber(billingDetails?.creditcardnumber));
-    setCardNumber(billingDetails?.creditcardnumber);
+    let cardnumber = "XXXX XXXX XXXX " + billingDetails?.creditcardnumber;
+    setCardNumber(cardnumber);
+    setCardNumberErr(false);
+    setValidCard(true);
     setExpiry(formatExpirationDate(billingDetails?.expirydate));
     // setCVV(formatCVC(billingDetails?.securitycode));
-    setCVV(billingDetails?.securitycode);
+    setCVV(billingDetails?.securitycode ? billingDetails?.securitycode : "***");
     setCardHolder(billingDetails?.cardholdername);
   };
   const setDetails = (userDetails) => {
@@ -151,14 +171,47 @@ export const PaymentDetails = ({
     setValue("companyid", String(userDetails.companyid));
     setCompanyValue(userDetails.companyid);
     setValue("email", userDetails.email);
+    setValue("address", userDetails.address);
     setValue("phoneNumber", userDetails.phonenumber);
     setValue("zipcode", userDetails.zipcode);
-    // setValue("cityid", userDetails.cityid);
-    // setValue("stateid", userDetails.stateid);
-    // setValue("countryid", userDetails.countryid);
+    // let cityData = [
+    //   // {
+    //   {
+    //     value: userDetails.cityid,
+    //     label: `${userDetails.cityname + ", " + userDetails.statename}`,
+    //   },
+    //   //   cityid: userDetails.cityid,
+    //   //   countryid: userDetails.countryid,
+    //   //   countryname: userDetails.countryname,
+    //   //   location: userDetails.cityname,
+    //   //   stateid: userDetails.stateid,
+    //   //   statename: userDetails.statename,
+    //   //   zipcode: null,
+    //   // },
+    // ];
+    // setDefaultCityList(cityData);
 
+    // let countryData = [
+    //   {
+    //     value: userDetails.countryid,
+    //     label: userDetails.countryname,
+    //   },
+    // ];
+    // setCountryList(countryData);
     setValue("currency", 1);
     setCurrencyValue(1);
+
+    setValue("cityid", String(userDetails.cityid));
+    setCityValue({
+      value: userDetails.cityid,
+      label: `${userDetails.cityname + ", " + userDetails.statename}`,
+    });
+    setValue("stateid", userDetails.stateid);
+    setValue("countryid", String(userDetails.countryid));
+    setCountryValue({
+      value: userDetails.countryid,
+      label: `${userDetails.countryname}`,
+    });
   };
   useEffect(() => {
     let country_response;
@@ -176,8 +229,16 @@ export const PaymentDetails = ({
           return country_response.find((item) => item.id === id);
         }
       );
+
+      setCountryValue(data[0]);
+      setValue("countryid", String(data[0].value));
       setCountryList(data);
     } else {
+      if (data.length > 0) {
+        setCountryValue(data[0]);
+        setValue("countryid", String(data[0].value));
+      }
+
       setCountryList(data);
     }
   }, [cityList]);
@@ -202,13 +263,14 @@ export const PaymentDetails = ({
         label: `${rest.location + ", " + rest.statename}`,
       };
     });
-
+    // setDefaultCityList(filter_data);
     return filter_data;
   };
 
   const setAsyncSelectValue = (data) => {
+    console.log(data);
     setValue("cityid", String(data.value));
-    setCityValue(data.value);
+    setCityValue(data);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
   };
@@ -234,7 +296,7 @@ export const PaymentDetails = ({
   };
 
   const onSelectCountryDropdown = (data) => {
-    setCountryValue(data.value);
+    setCountryValue(data);
     setValue("countryid", String(data.value));
   };
 
@@ -248,19 +310,33 @@ export const PaymentDetails = ({
 
   const handleCallback = (issuer, isValid) => {
     setIssuer(issuer);
-    console.log(issuer);
-    setValidCard(isValid);
+    if (userDetails?.billingdetailstatus) {
+      setValidCard(true);
+    } else {
+      setValidCard(isValid);
+    }
   };
   const onSameCustomer = (e) => {
     setSameAsCust(e.target.checked);
     if (!e.target.checked) {
-      setValue("name", "");
-      setValue("companyid", "");
-      setCompanyValue("");
-      setValue("email", "");
-      setValue("phoneNumber", "");
-      setValue("zipcode", "");
+      clearFormData();
     }
+  };
+
+  const clearFormData = () => {
+    setValue("name", "");
+    setValue("companyid", "");
+    setCompanyValue("");
+    setValue("email", "");
+    setValue("phoneNumber", "");
+    setValue("zipcode", "");
+    setValue("cityid", "");
+    setCityValue("");
+    setValue("stateid", "");
+    setValue("countryid", "");
+    setCountryValue("");
+    setValue("address", "");
+    dispatch(paymentActions.updateUserDetails({}));
   };
 
   const onSubmit = async (formData) => {
@@ -328,6 +404,9 @@ export const PaymentDetails = ({
       });
     } else {
       setDeletedCard(false);
+      if (authUser) {
+        dispatch(paymentActions.updateShowBilling(true));
+      }
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -376,6 +455,7 @@ export const PaymentDetails = ({
       });
     } else {
       setDeletedCard(true);
+      dispatch(paymentActions.updateShowBilling(false));
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -390,7 +470,9 @@ export const PaymentDetails = ({
       setExpiryErr(false);
       setCVVErr(false);
       setCardNumberErr(false);
-      dispatch(paymentActions.updateUserDetails(data));
+
+      setSameAsCust(false);
+      clearFormData();
     }
   };
 
@@ -402,25 +484,27 @@ export const PaymentDetails = ({
           <h3 className="mt-2 pay-title">Billing Contact</h3>
         </Col>
         {isAdmin ? <hr /> : <></>}
-        {!isAdmin ? (
-          <>
-            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-              <Input
-                type="checkbox"
-                onChange={(e) => onSameCustomer(e)}
-              ></Input>
-              <Label className="ms-1 same-as-cust">Same as employer</Label>
-            </Col>
-            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-              <span className="sub-text">
-                If this box is checked, pre-populate the data from the Employer
-                details
-              </span>
-            </Col>
-          </>
-        ) : (
-          <></>
-        )}
+
+        <>
+          <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+            <Input
+              type="checkbox"
+              checked={sameAsCust}
+              disabled={userDetails?.billingdetailstatus}
+              onChange={(e) => onSameCustomer(e)}
+            ></Input>
+            <Label disabled={disableSAC} className="ms-1 same-as-cust">
+              Same as employer
+            </Label>
+          </Col>
+          <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+            <span className="sub-text">
+              If this box is checked, pre-populate the data from the Employer
+              details
+            </span>
+          </Col>
+        </>
+
         <Row>
           <Col
             xs={12}
@@ -438,6 +522,7 @@ export const PaymentDetails = ({
                 <input
                   type="text"
                   name="name"
+                  disabled={userDetails?.billingdetailstatus}
                   id="name"
                   placeholder="Enter Name"
                   {...register("name")}
@@ -468,6 +553,7 @@ export const PaymentDetails = ({
                 name="companyid"
                 {...register("companyid")}
                 value={companyValue}
+                disabled={userDetails?.billingdetailstatus}
                 className={`form-control placeholder-name ${
                   errors.companyid && companyValue === 0 ? "is-invalid" : ""
                 }`}
@@ -507,6 +593,7 @@ export const PaymentDetails = ({
                   name="email"
                   id="email"
                   placeholder="Enter Email"
+                  disabled={userDetails?.billingdetailstatus}
                   {...register("email")}
                   className={`form-control placeholder-name ${
                     errors.email ? "is-invalid" : ""
@@ -536,6 +623,7 @@ export const PaymentDetails = ({
                   placeholder="Enter Phone Number"
                   type="text"
                   mask="(999)-999-9999"
+                  disabled={userDetails?.billingdetailstatus}
                   name="phoneNumber"
                   id="phoneNumber"
                   {...register("phoneNumber")}
@@ -560,6 +648,7 @@ export const PaymentDetails = ({
                   placeholder="Add address"
                   type="textarea"
                   name="address"
+                  disabled={userDetails?.billingdetailstatus}
                   id="address"
                   {...register("address")}
                   className={`form-control placeholder-name ${
@@ -590,16 +679,17 @@ export const PaymentDetails = ({
                 placeholderText="search"
                 loadOptions={loadOptions}
                 isMulti={false}
+                value={cityValue}
                 className={`placeholder-name ${
-                  errors.cityid && cityValue === 0
+                  errors.cityid && !cityValue?.value
                     ? "async-border-red"
                     : "async-no-error"
-                }`}
+                } ${userDetails?.billingdetailstatus ? "disable-ip" : ""}`}
                 {...register("cityid")}
                 onChange={(e) => setAsyncSelectValue(e)}
               />
               <div className="async-error-text">
-                {errors.cityid && cityValue === 0
+                {errors.cityid && !cityValue?.value
                   ? "City, State is required"
                   : ""}
               </div>
@@ -622,6 +712,7 @@ export const PaymentDetails = ({
                   type="text"
                   mask="99999"
                   name="zipcode"
+                  disabled={userDetails?.billingdetailstatus}
                   id="zipcode"
                   placeholder="Enter Zip Code"
                   {...register("zipcode")}
@@ -644,18 +735,19 @@ export const PaymentDetails = ({
                 placeholder="Select Country"
                 placeholderText="search"
                 isMulti={false}
+                value={countryValue}
                 className={`placeholder-name ${
-                  errors.countryid && countryValue === 0
+                  errors.countryid && !countryValue?.value
                     ? "async-border-red"
-                    : ""
-                }`}
+                    : "async-no-error"
+                } ${userDetails?.billingdetailstatus ? "disable-ip" : ""}`}
                 {...register("countryid")}
                 defaultOptions={countryList}
                 onChange={(e) => onSelectCountryDropdown(e)}
                 onMenuOpen={() => checkCityValid()}
               />
               <div className="async-error-text">
-                {errors.countryid && countryValue === 0
+                {errors.countryid && !countryValue?.value
                   ? "Country is required"
                   : ""}
               </div>
@@ -671,6 +763,7 @@ export const PaymentDetails = ({
                 type="select"
                 name="currency"
                 id="currency"
+                disabled={userDetails?.billingdetailstatus}
                 placeholder="Select Currency"
                 {...register("currency")}
                 className={`form-control placeholder-name ${
@@ -802,6 +895,7 @@ export const PaymentDetails = ({
                   }`}
                   placeholder="Card Number"
                   pattern="[\d| ]{16,22}"
+                  disabled={userDetails?.billingdetailstatus}
                   value={cardnumber}
                   onChange={(e) => setCardDetails(e)}
                 />
@@ -833,6 +927,7 @@ export const PaymentDetails = ({
                   placeholder="MM/YY"
                   pattern="\d\d/\d\d"
                   value={expiry}
+                  disabled={userDetails?.billingdetailstatus}
                   onChange={(e) => setCardDetails(e)}
                 />
                 <FormFeedback>
@@ -853,8 +948,9 @@ export const PaymentDetails = ({
 
               <InputGroup>
                 <input
-                  type="tel"
+                  type="password"
                   name="cvv"
+                  disabled={userDetails?.billingdetailstatus}
                   id="cvv"
                   className={`form-control placeholder-name ${
                     cvvErr ? "is-invalid" : ""
@@ -862,6 +958,7 @@ export const PaymentDetails = ({
                   placeholder="CVV"
                   pattern="\d{3,4}"
                   value={cvv}
+                  data-inputmask="****"
                   onChange={(e) => setCardDetails(e)}
                 />
                 <FormFeedback>{cvvErr ? "CVV is required" : ""}</FormFeedback>
@@ -881,6 +978,7 @@ export const PaymentDetails = ({
                   className={`form-control placeholder-name ${
                     cardholderErr ? "is-invalid" : ""
                   }`}
+                  disabled={userDetails?.billingdetailstatus}
                   placeholder="Enter Cardholder Name"
                   value={cardholder}
                   onChange={(e) => setCardDetails(e)}
