@@ -52,7 +52,7 @@ export default function PublishJobStep({
         },
       ],
       jobKeyQualificationDtos:
-        reqData.keyQualification.length === undefined
+        reqData?.keyQualification?.length === undefined
           ? null
           : reqData.keyQualification,
       jobPaymentBenefitDtos: [

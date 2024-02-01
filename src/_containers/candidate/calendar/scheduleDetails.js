@@ -22,7 +22,12 @@ import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { scheduleInterviewActions, candidateListActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
+export function ScheduleDetails({
+  interviewDetail,
+  onClose,
+  closeModaBox,
+  isAdmin = false,
+}) {
   const dispatch = useDispatch();
   const interviewGuideLink = useSelector(
     (state) => state.scheduleInterview?.interviewGuideList
@@ -149,7 +154,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
           type: "danger",
         });
       }
-      onClose();
+      closeModal();
     }
     if (type === "rejectInterview") {
       let payload = {
@@ -169,7 +174,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
           type: "danger",
         });
       }
-      onClose();
+      closeModal();
     }
     if (type === "rescheduleInterview") {
       setShowRescheduleModal(true);
@@ -209,7 +214,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
         type: "danger",
       });
     }
-    onClose();
+    closeModal();
   };
   return (
     <>
@@ -384,41 +389,52 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
                           </p>
                         </div>
                       )}
-                      {!isAdmin ? (
+                      {moment(interviewDetail?.scheduledate).format(
+                        "YYYY-MM-DD"
+                      ) >= moment().format("YYYY-MM-DD") ? (
                         <>
-                          {" "}
-                          {interviewDetail?.isappvideocall === false &&
-                            interviewDetail?.format === "Video" &&
-                            interviewDetail?.isactive === true &&
-                            interviewDetail?.isrejected === false && (
-                              <div className="p-custom">
-                                <p className="mb-0">
-                                  <a
-                                    href={interviewDetail.videolink}
-                                    target={"_blank"}
-                                    rel="noreferrer"
-                                  >
-                                    Click here to join
-                                  </a>{" "}
-                                  the interview
-                                </p>
-                              </div>
-                            )}
-                          {interviewDetail.isappvideocall === true &&
-                            interviewDetail?.format === "Video" &&
-                            interviewDetail?.isactive === true &&
-                            interviewDetail?.isrejected === false && (
-                              <div className="p-custom">
-                                <p className="mb-0">
-                                  <a href="/">
-                                    <NavLink to={`/video-screen/${id}`} exact>
-                                      Click here to join
-                                    </NavLink>
-                                  </a>{" "}
-                                  the in-app interview
-                                </p>
-                              </div>
-                            )}
+                          {!isAdmin ? (
+                            <>
+                              {" "}
+                              {interviewDetail?.isappvideocall === false &&
+                                interviewDetail?.format === "Video" &&
+                                interviewDetail?.isactive === true &&
+                                interviewDetail?.isrejected === false && (
+                                  <div className="p-custom">
+                                    <p className="mb-0">
+                                      <a
+                                        href={interviewDetail.videolink}
+                                        target={"_blank"}
+                                        rel="noreferrer"
+                                      >
+                                        Click here to join
+                                      </a>{" "}
+                                      the interview
+                                    </p>
+                                  </div>
+                                )}
+                              {interviewDetail.isappvideocall === true &&
+                                interviewDetail?.format === "Video" &&
+                                interviewDetail?.isactive === true &&
+                                interviewDetail?.isrejected === false && (
+                                  <div className="p-custom">
+                                    <p className="mb-0">
+                                      <a href="/">
+                                        <NavLink
+                                          to={`/video-screen/${id}`}
+                                          exact
+                                        >
+                                          Click here to join
+                                        </NavLink>
+                                      </a>{" "}
+                                      the in-app interview
+                                    </p>
+                                  </div>
+                                )}
+                            </>
+                          ) : (
+                            <></>
+                          )}
                         </>
                       ) : (
                         <></>

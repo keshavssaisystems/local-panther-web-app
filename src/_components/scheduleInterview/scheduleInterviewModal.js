@@ -229,6 +229,7 @@ export function ScheduleInterviewModal({
                       dateFormat="MM/dd/yyyy"
                       placeholderText="Eg. mm/dd/yyyy"
                       name={"scheduleDate"}
+                      minDate={new Date()}
                     />
                     {scheduleDateValidation === true && (
                       <FormText color="danger">Please enter date</FormText>
