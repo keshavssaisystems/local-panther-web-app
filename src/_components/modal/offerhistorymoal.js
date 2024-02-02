@@ -19,9 +19,9 @@ export const OfferHistory = (props) => {
       backdrop={true}
       fade={true}
     >
-      <ModalHeader
-        toggle={() => props.onClose()}
-      >{`Offer History - ${props.companyname}`}</ModalHeader>
+      <ModalHeader toggle={() => props.onClose()}>{`Offer History - ${
+        props.name ? props.name : ""
+      }`}</ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
         {props?.offerHistory && props?.offerHistory?.length > 0 ? (
           <OfferHistTable offerHistory={props?.offerHistory} />
