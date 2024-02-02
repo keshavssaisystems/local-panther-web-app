@@ -47,6 +47,7 @@ export const CandidateList = (props) => {
     description: "",
   });
   const [oHModal, setOHModal] = useState(false);
+  const [companyName, setCompanyName] = useState("");
 
   const candidateJobList = useSelector(
     (state) => state.candidateListReducer.candidateJobList
@@ -546,7 +547,12 @@ export const CandidateList = (props) => {
 
     if (res?.payload?.statusCode === 204) {
       setOHModal(true);
+      setCompanyName(row.companyname);
     } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
     }
   };
 
@@ -1332,8 +1338,12 @@ export const CandidateList = (props) => {
           {oHModal ? (
             <OfferHistory
               isOpen={oHModal}
-              onClose={() => setOHModal(false)}
+              onClose={() => {
+                setOHModal(false);
+                setCompanyName("");
+              }}
               offerHistory={offerHistory}
+              name={companyName}
             ></OfferHistory>
           ) : (
             <></>
