@@ -18,6 +18,15 @@ export const OfferHistTable = (props) => {
           New offer
         </div>
       );
+    } else if (index === 0 && props?.activeTab === "accepted") {
+      return (
+        <div
+          style={{ textTransform: "unset" }}
+          className="mb-2 me-2 badge bg-success rounded-pill"
+        >
+          Accepted offer
+        </div>
+      );
     } else if (index === 0) {
       return (
         <div
@@ -41,6 +50,17 @@ export const OfferHistTable = (props) => {
 
   const returnOffer = (row, index) => {
     if (index === 0 && row?.isfinaloffer) {
+      return (
+        <img
+          src={finalOffer}
+          alt="final offer"
+          className={"icon-pointer me-2"}
+          width={"20px"}
+          title="Final Offer - Click to view offer"
+          onClick={() => window.open(row?.offerfilepath)}
+        ></img>
+      );
+    } else if (index === 0 && props?.activeTab === "accepted") {
       return (
         <img
           src={finalOffer}

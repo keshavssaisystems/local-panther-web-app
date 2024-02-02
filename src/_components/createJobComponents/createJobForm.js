@@ -18,11 +18,12 @@ import "./createJob.scss";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import InputMask from "react-input-mask";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getLocation, getSkillsFilter } from "_store";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
 import { BsPlusSquare } from "react-icons/bs";
+import { locationActions } from "_store";
 
 export default function CreateJob({
   shiftsOption,
@@ -41,6 +42,10 @@ export default function CreateJob({
   customerDetails,
   nextPage,
 }) {
+  const dispatch = useDispatch();
+  const getLocationData = function (locationData) {
+    dispatch(locationActions.getLocation(locationData));
+  };
   const [accordion, setAccordion] = useState([
     true,
     false,
@@ -159,6 +164,17 @@ export default function CreateJob({
       };
       JobDataForPreview(data);
       setZipcodeCityState({
+        value:
+          previousData?.cityid +
+          ", " +
+          previousData?.stateid +
+          ", " +
+          previousData?.cityname +
+          ", " +
+          previousData?.statename,
+        label: previousData?.cityname + ", " + previousData?.statename,
+      });
+      getLocationDetails({
         value:
           previousData?.cityid +
           ", " +
@@ -677,7 +693,7 @@ export default function CreateJob({
       ];
     });
   };
-
+  const [zipCodeFromCityState, setZipCodeFromCityState] = useState(false);
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.companyName.value === ""
@@ -928,7 +944,6 @@ export default function CreateJob({
       preScreen: questionArr,
       preCustomScreen: customAnswer === "" ? "Audio" : customAnswer,
     };
-    console.log(data);
     JobDataForPreview(data);
     nextPage(true);
   };
@@ -937,6 +952,10 @@ export default function CreateJob({
       const { data = [] } = await getLocation(inputValue);
       return data.map(({ cityid: value, ...rest }) => {
         setZipcodeCityState({
+          value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
+          label: `${rest.location}, ${rest.statename}`,
+        });
+        getLocationDetails({
           value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
           label: `${rest.location}, ${rest.statename}`,
         });
@@ -956,13 +975,20 @@ export default function CreateJob({
           value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
           label: `${rest.location}, ${rest.statename}`,
         });
+        getLocationDetails({
+          value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
+          label: `${rest.location}, ${rest.statename}`,
+        });
       });
     }
   };
-  const getLocationDetails = (event) => {
+  const getLocationDetails = (event, cityState = false) => {
     setCityValidation(false);
     let locationSplit = event.value.split(", ");
     setCountryOnChange(true);
+    if (cityState) {
+      getZipCodeData(locationSplit[2] + "%2C%20" + locationSplit[3]);
+    }
     setStateData({
       cityId: locationSplit[0],
       stateId: locationSplit[1],
@@ -970,6 +996,14 @@ export default function CreateJob({
       stateName: locationSplit[3],
     });
   };
+
+  const getZipCodeData = (locationData) => {
+    dispatch(locationActions.getLocation(locationData));
+    setZipCodeFromCityState(true);
+  };
+  const locationZipCode = useSelector(
+    (state) => state.location?.location[0]?.zipcode[0]
+  );
   const setupDescriptionData = (event) => {
     setDescriptionData(event);
     setDescriptionValidation(false);
@@ -1222,6 +1256,44 @@ export default function CreateJob({
       }
     }
   };
+  let securityClearenceRaw =
+    type === "new_template" && previousStep !== 3
+      ? 0
+      : previousStep === 3
+      ? preValue.securityclearanceid
+      : previousValue.securityclearanceid;
+  useEffect(() => {
+    if (previousStep === 3) {
+      setZipcodeCityState({
+        value:
+          jobData?.basicInformation?.cityId +
+          ", " +
+          jobData?.basicInformation?.stateId +
+          ", " +
+          jobData?.basicInformation?.cityName +
+          ", " +
+          jobData?.basicInformation?.stateName,
+        label:
+          jobData?.basicInformation?.cityName +
+          ", " +
+          jobData?.basicInformation?.stateName,
+      });
+      getLocationDetails({
+        value:
+          jobData?.basicInformation?.cityId +
+          ", " +
+          jobData?.basicInformation?.stateId +
+          ", " +
+          jobData?.basicInformation?.cityName +
+          ", " +
+          jobData?.basicInformation?.stateName,
+        label:
+          jobData?.basicInformation?.cityName +
+          ", " +
+          jobData?.basicInformation?.stateName,
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -1385,11 +1457,14 @@ export default function CreateJob({
                                 key={options.id}
                                 value={options.id}
                                 selected={
-                                  type === "new_template" && previousStep !== 3
-                                    ? 0
-                                    : previousStep === 3
-                                    ? preValue.jobLocation
-                                    : previousValue.jobLocation === options.id
+                                  Number(
+                                    type === "new_template" &&
+                                      previousStep !== 3
+                                      ? 0
+                                      : previousStep === 3
+                                      ? preValue.jobLocation
+                                      : previousValue.jobLocation
+                                  ) === Number(options.id)
                                 }
                               >
                                 {options.name}
@@ -1449,47 +1524,11 @@ export default function CreateJob({
                         <AsyncSelect
                           name={"city"}
                           placeholder="Search city or zipcode"
-                          // defaultValue={
-                          //   type === "new_template" && previousStep !== 3
-                          //     ? {
-                          //         value: "",
-                          //         label: "Search city or zipcode",
-                          //       }
-                          //     : previousStep === 3
-                          //     ? {
-                          //         value:
-                          //           jobData?.basicInformation?.cityId +
-                          //           ", " +
-                          //           jobData?.basicInformation?.stateId +
-                          //           ", " +
-                          //           jobData?.basicInformation?.cityName +
-                          //           ", " +
-                          //           jobData?.basicInformation?.stateName,
-                          //         label:
-                          //           jobData?.basicInformation?.cityName +
-                          //           ", " +
-                          //           jobData?.basicInformation?.stateName,
-                          //       }
-                          //     : {
-                          //         value:
-                          //           previousData?.cityid +
-                          //           ", " +
-                          //           previousData?.stateid +
-                          //           ", " +
-                          //           previousData?.cityname +
-                          //           ", " +
-                          //           previousData?.statename,
-                          //         label:
-                          //           previousData?.cityname +
-                          //           ", " +
-                          //           previousData?.statename,
-                          //       }
-                          // }
                           value={zipcodeCityState}
                           loadOptions={loadOptions}
                           isMulti={false}
                           styles={customStyles}
-                          onChange={(e) => getLocationDetails(e)}
+                          onChange={(e) => getLocationDetails(e, true)}
                           className={
                             cityValidation === true ? "async-border-red" : ""
                           }
@@ -1530,7 +1569,18 @@ export default function CreateJob({
                           mask={"99999"}
                           maskChar={null}
                           defaultValue={
-                            type === "new_template" && previousStep !== 3
+                            zipCodeFromCityState === true
+                              ? locationZipCode
+                              : type === "new_template" && previousStep !== 3
+                              ? ""
+                              : previousStep === 3
+                              ? preValue.zipcode
+                              : previousValue.zipcode
+                          }
+                          value={
+                            zipCodeFromCityState === true
+                              ? locationZipCode
+                              : type === "new_template" && previousStep !== 3
                               ? ""
                               : previousStep === 3
                               ? preValue.zipcode
@@ -1540,12 +1590,12 @@ export default function CreateJob({
                             loadOptionsByZip(e.target.value);
                             setZipcodeChange(true);
                           }}
-                          value={
-                            stateData.stateName === undefined ||
-                            stateOnchange === false
-                              ? previousValue.zipCode
-                              : stateData.stateName
-                          }
+                          // value={
+                          //   stateData.stateName === undefined ||
+                          //   stateOnchange === false
+                          //     ? previousValue.zipCode
+                          //     : stateData.stateName
+                          // }
                           placeholder="Enter zip code"
                         />
                         {zipCodeValidation === true && (
@@ -1678,13 +1728,8 @@ export default function CreateJob({
                                   key={options.id}
                                   value={options.id}
                                   selected={
-                                    type === "new_template" &&
-                                    previousStep !== 3
-                                      ? 0
-                                      : previousStep === 3
-                                      ? preValue.securityclearanceid
-                                      : previousValue.securityclearanceid ===
-                                        options.id
+                                    Number(securityClearenceRaw) ===
+                                    Number(options.id)
                                   }
                                 >
                                   {options.name}

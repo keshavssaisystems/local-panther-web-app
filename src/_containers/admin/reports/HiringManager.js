@@ -95,7 +95,7 @@ export function HiringManager({ title }) {
       let filteredData = data.map((rec) => {
         return {
           Company: rec?.companyname,
-          Customer: rec?.customername,
+          Employer: rec?.customername,
           Email: rec?.email,
           Phone: rec?.phonenumber ? USPhoneNumber(rec.phonenumber) : "",
           Address: rec?.address,

@@ -1344,6 +1344,7 @@ export const CandidateList = (props) => {
               }}
               offerHistory={offerHistory}
               name={companyName}
+              activeTab={activeTab}
             ></OfferHistory>
           ) : (
             <></>

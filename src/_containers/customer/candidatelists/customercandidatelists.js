@@ -1096,6 +1096,7 @@ export const CustomerCandidateLists = (props) => {
             }}
             offerHistory={custOfferHistory}
             name={candidateName}
+            activeTab={activeTab}
           ></OfferHistory>
         ) : (
           <></>
