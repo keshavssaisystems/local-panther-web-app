@@ -47,6 +47,7 @@ export const CustomerCandidateLists = (props) => {
   const [showPSModal, setShowPSModal] = useState(false);
   const [preScreenType, setPreScreenType] = useState("");
   const [oHModal, setOHModal] = useState(false);
+  const [candidateName, setCandidateName] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -228,7 +229,12 @@ export const CustomerCandidateLists = (props) => {
     );
     if (res?.payload?.statusCode === 204) {
       setOHModal(true);
+      setCandidateName(row.firstname + " " + row.lastname);
     } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
     }
   };
 
@@ -1084,8 +1090,12 @@ export const CustomerCandidateLists = (props) => {
         {oHModal ? (
           <OfferHistory
             isOpen={oHModal}
-            onClose={() => setOHModal(false)}
+            onClose={() => {
+              setOHModal(false);
+              setCandidateName("");
+            }}
             offerHistory={custOfferHistory}
+            name={candidateName}
           ></OfferHistory>
         ) : (
           <></>
