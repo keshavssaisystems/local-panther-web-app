@@ -538,6 +538,8 @@ export function PersonalInformation(props) {
         value,
         label: `${rest.location + ", " + rest.statename}`,
         zipcode: rest.zipcode?.[0],
+        stateid: rest.stateid,
+        statename: rest.statename,
       };
     });
 
@@ -548,17 +550,38 @@ export function PersonalInformation(props) {
   const getZipLocationData = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
     setCityList(data);
-
     let filter_data = data.map(({ cityid: value, ...rest }) => {
       return {
         value,
         label: `${rest.location + ", " + rest.statename}`,
         zipcode: rest.zipcode,
+        stateid: rest.stateid,
+        statename: rest.statename,
       };
     });
     setCitySelect(filter_data);
     setCountrySelect([{ value: 1, label: "USA" }]);
     setLocation(filter_data);
+
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: filter_data?.[0]?.value,
+        label: filter_data?.[0]?.label,
+      },
+    ];
+
+    get_data.city = new_array;
+    get_data.zipcode = inputValue;
+    let obj = [
+      {
+        value: filter_data?.[0]?.stateid,
+        label: filter_data?.[0]?.statename,
+      },
+    ];
+
+    get_data.state = obj;
+    setGetResponse(get_data);
   };
 
   const onHandleInputChange = function (check, data) {
