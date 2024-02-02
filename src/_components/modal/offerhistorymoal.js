@@ -24,7 +24,10 @@ export const OfferHistory = (props) => {
       }`}</ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
         {props?.offerHistory && props?.offerHistory?.length > 0 ? (
-          <OfferHistTable offerHistory={props?.offerHistory} />
+          <OfferHistTable
+            offerHistory={props?.offerHistory}
+            activeTab={props?.activeTab}
+          />
         ) : (
           <div style={{ textAlign: "center" }}>
             No offers history to display.
