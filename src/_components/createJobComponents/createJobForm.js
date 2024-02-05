@@ -43,9 +43,6 @@ export default function CreateJob({
   nextPage,
 }) {
   const dispatch = useDispatch();
-  const getLocationData = function (locationData) {
-    dispatch(locationActions.getLocation(locationData));
-  };
   const [accordion, setAccordion] = useState([
     true,
     false,
@@ -96,27 +93,27 @@ export default function CreateJob({
         experienceSchedule: {
           jobType:
             previousData?.jobExperienceScheduleDtos === null ||
-            previousData?.jobExperienceScheduleDtos.length === 0
+            previousData?.jobExperienceScheduleDtos?.length === 0
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.jobtypes,
           workSchedule:
             previousData?.jobExperienceScheduleDtos === null ||
-            previousData?.jobExperienceScheduleDtos.length === 0
+            previousData?.jobExperienceScheduleDtos?.length === 0
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.workschedules,
           shift:
             previousData?.jobExperienceScheduleDtos === null ||
-            previousData?.jobExperienceScheduleDtos.length === 0
+            previousData?.jobExperienceScheduleDtos?.length === 0
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.shifts,
           experienceLevel:
             previousData?.jobExperienceScheduleDtos === null ||
-            previousData?.jobExperienceScheduleDtos.length === 0
+            previousData?.jobExperienceScheduleDtos?.length === 0
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.experiencelevelid,
           hiringTimeline:
             previousData?.jobExperienceScheduleDtos === null ||
-            previousData?.jobExperienceScheduleDtos.length === 0
+            previousData?.jobExperienceScheduleDtos?.length === 0
               ? ""
               : previousData?.jobExperienceScheduleDtos[0]?.hiringtimelineid,
           shiftsOption: shiftsOption,
@@ -128,27 +125,27 @@ export default function CreateJob({
         paymentBenifits: {
           payPeriodType:
             previousData?.jobPaymentBenefitDtos === null ||
-            previousData?.jobPaymentBenefitDtos.length === 0
+            previousData?.jobPaymentBenefitDtos?.length === 0
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.payperiodtypeid,
           minimumAmount:
             previousData?.jobPaymentBenefitDtos === null ||
-            previousData?.jobPaymentBenefitDtos.length === 0
+            previousData?.jobPaymentBenefitDtos?.length === 0
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.minimumamount,
           maximumAmount:
             previousData?.jobPaymentBenefitDtos === null ||
-            previousData?.jobPaymentBenefitDtos.length === 0
+            previousData?.jobPaymentBenefitDtos?.length === 0
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.maximumamount,
           compensationPackage:
             previousData?.jobPaymentBenefitDtos === null ||
-            previousData?.jobPaymentBenefitDtos.length === 0
+            previousData?.jobPaymentBenefitDtos?.length === 0
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.compensationpackage,
           benefits:
             previousData?.jobPaymentBenefitDtos === null ||
-            previousData?.jobPaymentBenefitDtos.length === 0
+            previousData?.jobPaymentBenefitDtos?.length === 0
               ? ""
               : previousData?.jobPaymentBenefitDtos[0]?.benefits,
           payPeriodTypeOption: payPeriodTypeOption,
@@ -987,7 +984,8 @@ export default function CreateJob({
     let locationSplit = event.value.split(", ");
     setCountryOnChange(true);
     if (cityState) {
-      getZipCodeData(locationSplit[2] + "%2C%20" + locationSplit[3]);
+      setZipCodeFromCityState(false);
+      getZipCodeData(locationSplit[0]);
     }
     setStateData({
       cityId: locationSplit[0],
@@ -997,13 +995,14 @@ export default function CreateJob({
     });
   };
 
-  const getZipCodeData = (locationData) => {
-    dispatch(locationActions.getLocation(locationData));
+  const getZipCodeData = async (locationData) => {
+    await dispatch(locationActions.getLocation(locationData));
     setZipCodeFromCityState(true);
   };
   const locationZipCode = useSelector(
-    (state) => state.location?.location[0]?.zipcode[0]
+    (state) => state.location?.location[0]?.name
   );
+  console.log(zipCodeFromCityState);
   const setupDescriptionData = (event) => {
     setDescriptionData(event);
     setDescriptionValidation(false);
@@ -1553,58 +1552,76 @@ export default function CreateJob({
                         />
                       </FormGroup>
                     </Col>
-                    <Col md={6} lg={3}>
-                      <FormGroup>
-                        <Label for="zipCode" className="fw-semi-bold">
-                          Zip code<span style={{ color: "red" }}>* </span>
-                        </Label>
-                        <InputMask
-                          className={
-                            zipCodeValidation === true
-                              ? "is-invalid form-control"
-                              : "form-control "
-                          }
-                          id={"zipCode"}
-                          name={"zipCode"}
-                          mask={"99999"}
-                          maskChar={null}
-                          defaultValue={
-                            zipCodeFromCityState === true
-                              ? locationZipCode
-                              : type === "new_template" && previousStep !== 3
-                              ? ""
-                              : previousStep === 3
-                              ? preValue.zipcode
-                              : previousValue.zipcode
-                          }
-                          value={
-                            zipCodeFromCityState === true
-                              ? locationZipCode
-                              : type === "new_template" && previousStep !== 3
-                              ? ""
-                              : previousStep === 3
-                              ? preValue.zipcode
-                              : previousValue.zipcode
-                          }
-                          onChange={(e) => {
-                            loadOptionsByZip(e.target.value);
-                            setZipcodeChange(true);
-                          }}
-                          // value={
-                          //   stateData.stateName === undefined ||
-                          //   stateOnchange === false
-                          //     ? previousValue.zipCode
-                          //     : stateData.stateName
-                          // }
-                          placeholder="Enter zip code"
-                        />
-                        {zipCodeValidation === true && (
-                          <FormText color="danger">
-                            Please enter zip code
-                          </FormText>
-                        )}
-                      </FormGroup>
-                    </Col>
+                    {zipCodeFromCityState === true && (
+                      <Col md={6} lg={3}>
+                        <FormGroup>
+                          <Label for="zipCode" className="fw-semi-bold">
+                            Zip code<span style={{ color: "red" }}>* </span>
+                          </Label>
+                          <InputMask
+                            className={
+                              zipCodeValidation === true
+                                ? "is-invalid form-control"
+                                : "form-control "
+                            }
+                            id={"zipCode"}
+                            name={"zipCode"}
+                            mask={"99999"}
+                            maskChar={null}
+                            defaultValue={locationZipCode}
+                            onChange={(e) => {
+                              loadOptionsByZip(e.target.value);
+                              setZipcodeChange(true);
+                              setZipCodeFromCityState(false);
+                            }}
+                            placeholder="Enter zip code"
+                          />
+                          {zipCodeValidation === true && (
+                            <FormText color="danger">
+                              Please enter zip code
+                            </FormText>
+                          )}
+                        </FormGroup>
+                      </Col>
+                    )}
+                    {zipCodeFromCityState === false && (
+                      <Col md={6} lg={3}>
+                        <FormGroup>
+                          <Label for="zipCode" className="fw-semi-bold">
+                            Zip code<span style={{ color: "red" }}>* </span>
+                          </Label>
+                          <InputMask
+                            className={
+                              zipCodeValidation === true
+                                ? "is-invalid form-control"
+                                : "form-control "
+                            }
+                            id={"zipCode"}
+                            name={"zipCode"}
+                            mask={"99999"}
+                            maskChar={null}
+                            defaultValue={
+                              type === "new_template" && previousStep !== 3
+                                ? ""
+                                : previousStep === 3
+                                ? preValue.zipcode
+                                : previousValue.zipcode
+                            }
+                            onChange={(e) => {
+                              loadOptionsByZip(e.target.value);
+                              setZipcodeChange(true);
+                              setZipCodeFromCityState(false);
+                            }}
+                            placeholder="Enter zip code"
+                          />
+                          {zipCodeValidation === true && (
+                            <FormText color="danger">
+                              Please enter zip code
+                            </FormText>
+                          )}
+                        </FormGroup>
+                      </Col>
+                    )}
                   </Row>
                   <Row>
                     <Col md={6} lg={3}>
