@@ -26,6 +26,7 @@ export function CustJobCard({
   customer,
   additionalData,
 }) {
+  console.log(additionalData);
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -139,7 +140,21 @@ export function CustJobCard({
               <Row>
                 <Col md={12} lg={9}>
                   <div className="muted-name mt-2">
-                    Posted {getTimezoneDateTimeForNow(moment(createdDate))}
+                    {additionalData.isdraft ? (
+                      <>
+                        {" "}
+                        Drafted {getTimezoneDateTimeForNow(
+                          moment(createdDate)
+                        )}{" "}
+                      </>
+                    ) : (
+                      <>
+                        Posted{" "}
+                        {getTimezoneDateTimeForNow(
+                          moment(additionalData?.publisheddate)
+                        )}
+                      </>
+                    )}
                   </div>
                 </Col>
                 <Col md={12} lg={3} className="mt-2 right-align"></Col>

@@ -39,7 +39,7 @@ function createExtraActions() {
       `${name}/getLocation`,
       async (searchText) =>
         await fetchWrapper.get(
-          `${baseUrl}/Common/GetLocation?searchText=${searchText}`
+          `${baseUrl}/Common/GetCommonDropdown?searchText=zipcode&commonId=${searchText}`
         )
     );
   }
