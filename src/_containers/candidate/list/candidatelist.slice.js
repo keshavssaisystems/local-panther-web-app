@@ -150,8 +150,10 @@ export const updateRescheduleReason = createAsyncThunk(
 export const getAcceptedJobListThunk = createAsyncThunk(
   `${name}/getAcceptedJobListThunk`,
   async () => {
-    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetCandidateJobAcceptedList/22`;
+    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetCandidateJobAcceptedList/${internalUserId}`;
     return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
+  }
+);
 
 // get candidate offer history
 export const getCandidateOfferHistory = createAsyncThunk(
@@ -159,7 +161,6 @@ export const getCandidateOfferHistory = createAsyncThunk(
   async (id) => {
     const OFFER_HISTORY_END_POINT = `${process.env.REACT_APP_NEW_API_URL}JobOffer/GetByCandidateId/${id}`;
     return await fetchWrapper.get(OFFER_HISTORY_END_POINT);
-
   }
 );
 
@@ -396,7 +397,6 @@ const candidateList = createSlice({
       state.offerHistory = payload.data;
     },
     [getCandidateOfferHistory.rejected]: (state, action) => {},
-
   },
 });
 
