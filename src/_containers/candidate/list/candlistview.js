@@ -60,6 +60,10 @@ export const CandListView = (props) => {
   const onShowModal = (row, type) => {
     props.showModal(row, type);
   };
+
+  const onShowOHModal = (row) => {
+    props.onShowOHModal(row);
+  };
   const renderButtons = (row) => {
     if (props.type === "liked") {
       return (
@@ -371,6 +375,17 @@ export const CandListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Job details</span>
             </DropdownItem>
+
+            {props.type === "offers" ||
+            props.type === "accepted" ||
+            props.type === "rejected" ? (
+              <DropdownItem onClick={() => onShowOHModal(row)}>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Offer history</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
 
             {props.type === "interview" &&
             row?.scheduledInterviewDtos &&

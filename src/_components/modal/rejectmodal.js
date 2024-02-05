@@ -19,7 +19,11 @@ export const RejectModal = (props) => {
   const [save, setSave] = useState(false);
 
   const onAddComment = (evt) => {
-    setReason(evt);
+    let reasonText = props?.rejectDrpDwnList?.find(
+      (x) => x.id === Number(evt)
+    )?.name;
+
+    setReason(reasonText);
   };
 
   const onSubmitReject = () => {
@@ -53,7 +57,7 @@ export const RejectModal = (props) => {
                   <Label className="reject-modal-label" for="exampleText">
                     Reason <span style={{ color: "red" }}>* </span>
                   </Label>
-                  <Input
+                  {/* <Input
                     type="textarea"
                     className="dropdown-placeholder"
                     placeholder="Enter reason here"
@@ -66,10 +70,32 @@ export const RejectModal = (props) => {
                       borderColor:
                         save && reason === "" ? "#ff0000" : "#ced4da",
                     }}
-                  />
-                  <span className="dropdown-placeholder float-end">
+                  /> */}
+
+                  <Input
+                    id="reason"
+                    name="reason"
+                    type="select"
+                    onChange={(evt) => onAddComment(evt.target.value)}
+                    style={{
+                      borderColor:
+                        save && reason === "" ? "#ff0000" : "#ced4da",
+                    }}
+                  >
+                    <option key={0} value={0}>
+                      Select reason
+                    </option>
+                    {props?.rejectDrpDwnList?.length > 0 &&
+                      props?.rejectDrpDwnList?.map((options) => (
+                        <option key={options.id} value={options.id}>
+                          {options.name}
+                        </option>
+                      ))}
+                  </Input>
+
+                  {/* <span className="dropdown-placeholder float-end">
                     {reason ? reason.length : 0}/100
-                  </span>
+                  </span> */}
                   {save && reason === "" ? (
                     <p className="filter-info-text">Reason is required</p>
                   ) : (
