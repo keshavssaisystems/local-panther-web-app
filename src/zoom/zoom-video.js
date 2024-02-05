@@ -35,6 +35,21 @@ export const ZoomVideoScreen = (props) => {
 
   // let token = generateSignature(ZOOM_APP_KEY, ZOOM_APP_SECRET, id, 1, id, name);
   const sessionContainer = document.getElementById("sessionContainer");
+  const keyDownHandler = (event) => {
+    if (event.key === "Enter") {
+      let sendBtn = document.getElementsByClassName("msger-send-btn");
+      if (sendBtn?.length > 0) {
+        sendBtn[0].click();
+      }
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("keydown", keyDownHandler);
+    return () => {
+      document.removeEventListener("keydown", keyDownHandler);
+    };
+  }, []);
+
   useEffect(() => {
     if (sessionData.length === 0) {
       getToken();
