@@ -24,6 +24,7 @@ import {
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
+import { OfferHistory } from "_components/modal/offerhistorymoal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -45,6 +46,8 @@ export const CandidateList = (props) => {
     title: "",
     description: "",
   });
+  const [oHModal, setOHModal] = useState(false);
+  const [companyName, setCompanyName] = useState("");
 
   const candidateJobList = useSelector(
     (state) => state.candidateListReducer.candidateJobList
@@ -64,6 +67,11 @@ export const CandidateList = (props) => {
   const prescreenQues = useSelector(
     (state) => state.candidateListReducer.prescreenQues
   );
+
+  const offerHistory = useSelector(
+    (state) => state.candidateListReducer.offerHistory
+  );
+
   const handlePageChange = (page) => {
     setPageNo(page);
     toggle(activeTab, page);
@@ -77,6 +85,7 @@ export const CandidateList = (props) => {
     if (candidateJobList?.length > 0 && activeTab === "matched") {
       getJobDetails(candidateJobList[0].jobid);
     }
+    dispatch(candidateListActions.getAcceptedJobListThunk());
     //make api call for first selected
   }, [candidateJobList]);
 
@@ -131,6 +140,9 @@ export const CandidateList = (props) => {
     };
 
     dispatch(candidateListActions.getRecommendedJobList(candObj));
+    if (candidateRecommendedJobStatusId === 7) {
+      dispatch(candidateListActions.getAcceptedJobListThunk());
+    }
   };
 
   const getSelectedJob = (e) => {
@@ -529,7 +541,23 @@ export const CandidateList = (props) => {
       });
     }
   };
+  const onShowOHModal = async (row) => {
+    let res = await dispatch(
+      candidateListActions.getCandidateOfferHistory(
+        row.candidaterecommendedjobid
+      )
+    );
 
+    if (res?.payload?.statusCode === 204) {
+      setOHModal(true);
+      setCompanyName(row.companyname);
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
   return (
     <>
       <Row className="cand-list-cont">
@@ -809,6 +837,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -887,6 +916,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -964,6 +994,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -1041,6 +1072,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -1119,6 +1151,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -1196,6 +1229,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -1298,6 +1332,22 @@ export const CandidateList = (props) => {
               callBackError={() => setShowRescheduleModal()}
               title={"rescheduling"}
             ></DeactivateReasonModal>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {oHModal ? (
+            <OfferHistory
+              isOpen={oHModal}
+              onClose={() => {
+                setOHModal(false);
+                setCompanyName("");
+              }}
+              offerHistory={offerHistory}
+              name={companyName}
+              activeTab={activeTab}
+            ></OfferHistory>
           ) : (
             <></>
           )}

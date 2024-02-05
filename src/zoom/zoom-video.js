@@ -83,7 +83,9 @@ export const ZoomVideoScreen = (props) => {
       setSessionData(data);
     } else {
       showSweetAlert({
-        title: "Something went wrong, please try later!!",
+        title: response?.error?.message
+          ? response?.error?.message
+          : "Something went wrong, please try later!!",
         type: "error",
       });
     }
