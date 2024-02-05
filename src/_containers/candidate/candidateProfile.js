@@ -95,6 +95,7 @@ export function CandidateProfile() {
 
   useEffect(() => {
     loadPage();
+    dispatch(getProfileActions.getAvailability());
   }, []);
 
   const loadPage = async function () {

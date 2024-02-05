@@ -156,14 +156,14 @@ const authSlice = createSlice({
         "userroleid",
         decodedData.role.toLowerCase() === "admin"
           ? 1
-          : decodedData.role.toLowerCase() === "customer"
+          : decodedData.role.toLowerCase() === "employer"
           ? 2
           : 3
       );
       state.userroleid =
         decodedData.role.toLowerCase() === "admin"
           ? 1
-          : decodedData.role.toLowerCase() === "customer"
+          : decodedData.role.toLowerCase() === "employer"
           ? 2
           : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
@@ -244,6 +244,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     [putRegisterCustomer.fulfilled]: (state, { payload = {} }) => {
+      localStorage.setItem("iscustomerreg", payload?.data?.customerid);
       state.error = null;
     },
     [putRegisterCustomer.rejected]: (state, action) => {

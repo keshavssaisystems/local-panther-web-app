@@ -19,14 +19,24 @@ export const DeactivateReasonModal = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getProfileActions.getReasonList());
+    dispatch(
+      getProfileActions.getReasonList(
+        props.title === "rescheduling"
+          ? "InterviewRescheduleReason"
+          : props.title === "deactivating account"
+          ? "deactivateaccountreason"
+          : "rejectionreason"
+      )
+    );
   }, []);
   const [reason, setReason] = useState(0);
+  const [reasonText, setReasonText] = useState(0);
   const [save, setSave] = useState(false);
   const reasonList = useSelector((state) => state.getProfile.reasonList);
 
   const handleReasonSelect = (data) => {
     setReason(Number(data));
+    setReasonText(reasonList?.find((x) => x.id === Number(data))?.name);
   };
 
   const onSubmitReject = () => {
@@ -34,7 +44,9 @@ export const DeactivateReasonModal = (props) => {
       setSave(true);
       return false;
     }
-    props.callBack(reason);
+    props.callBack(
+      props.title === "deactivating account" ? reason : reasonText
+    );
   };
   return (
     <Modal
@@ -65,24 +77,6 @@ export const DeactivateReasonModal = (props) => {
                       *
                     </span>
                   </Label>
-                  {/* <Input
-                    type="textarea"
-                    className="dropdown-placeholder"
-                    style={{
-                      borderColor:
-                        save && reason === "" ? "#ff0000" : "#ced4da",
-                    }}
-                    placeholder="Enter reason"
-                    onInput={(evt) => setReason(evt.target.value)}
-                    name="text"
-                    maxLength={100}
-                    id="exampleText"
-                    value={reason}
-                  />
-                  <span className="dropdown-placeholder float-end">
-                    {reason ? reason.length : 0}/100
-                  </span> */}
-
                   <Input
                     id="reason"
                     name="reason"
@@ -91,7 +85,6 @@ export const DeactivateReasonModal = (props) => {
                     style={{
                       borderColor: save && reason === 0 ? "#ff0000" : "#ced4da",
                     }}
-                    className="dropdown-placeholder"
                   >
                     <option key={0} value={0}>
                       Select reason

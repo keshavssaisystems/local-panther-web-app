@@ -28,6 +28,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
 import customerIcons from "assets/utils/images/customer";
 import { BsPencil } from "react-icons/bs";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
 export const CustomerList = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -44,6 +45,9 @@ export const CustomerList = () => {
 
   const [pageNo, setPageNo] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListThunk());
@@ -61,7 +65,7 @@ export const CustomerList = () => {
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
 
-  let title = "Customers";
+  let title = "Employers";
   let icon = companyLogo;
   let columns = [
     {
@@ -103,12 +107,29 @@ export const CustomerList = () => {
       sortable: true,
     },
     {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button color="link" onClick={() => onViewBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
+    },
+    {
       name: "Email",
       selector: (row) => row.email,
       sortable: true,
     },
     {
-      name: "Customer status",
+      name: "Employer status",
       selector: (row) => row.customerstatus,
       sortable: true,
     },
@@ -118,62 +139,51 @@ export const CustomerList = () => {
 
       cell: (row) => (
         <div>
-          <div
-            title="Active/Inactive user"
-            className="switch has-switch  me-1"
-            data-on-label="ON"
-            data-off-label="OFF"
-            style={{ verticalAlign: "bottom", cursor: "pointer" }}
-            onClick={() => toggleNotification(!row.isactive, row)}
-          >
+          {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
             <div
-              className={cx("switch-animate", {
-                "switch-on": row.isactive,
-                "switch-off": !row.isactive,
-              })}
+              title="Active/Inactive user"
+              className="switch has-switch  me-1"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+              onClick={() => toggleNotification(!row.isactive, row)}
             >
-              <input type="checkbox" />
-              <span className="switch-left">ON</span>
-              <label>&nbsp;</label>
-              <span className="switch-right">OFF</span>
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isactive,
+                  "switch-off": !row.isactive,
+                })}
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
             </div>
-          </div>
+          )}
           <ButtonGroup>
-            {/* <BsPencil
-            title="Edit user"
-            style={{
-              fontSize: "21px",
-              verticalAlign: "middle",
-              cursor: "pointer",
-            }}
-            className="edit-icon me-1"
-            onClick={(e) => {
-              setEditData(row);
-              setOpenModal(true);
-              setIsEdit(true);
-            }}
-          /> */}
-
-            <Button
-              // outline
-              size="sm"
-              title="Edit Customer"
-              className="btn-icon"
-              color="warning"
-              onClick={(e) => {
-                setEditData(row);
-                setOpenModal(true);
-                setIsEdit(true);
-              }}
-            >
-              <img src={customerIcons?.list_edit} alt="list approve"></img>
-            </Button>
+            {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
+              <Button
+                // outline
+                size="sm"
+                title="Edit employer"
+                className="btn-icon"
+                color="warning"
+                onClick={(e) => {
+                  setEditData(row);
+                  setOpenModal(true);
+                  setIsEdit(true);
+                }}
+              >
+                <img src={customerIcons?.list_edit} alt="list approve"></img>
+              </Button>
+            )}
 
             {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
               <Button
                 // outline
                 size="sm"
-                title="Accept customer"
+                title="Accept employer"
                 className="btn-icon"
                 color="success"
                 onClick={() => onApprove(row, true)}
@@ -186,7 +196,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Reject customer"
+                title="Reject employer"
                 className="btn-icon"
                 color="danger"
                 onClick={() => onApprove(row, false)}
@@ -421,6 +431,22 @@ export const CustomerList = () => {
     getCustomerDetails(pageSize, page);
   };
 
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    getCustomerDetails(pageSize, pageNo);
+    setSelectedCustomer([]);
+  };
+
   return (
     <>
       <Row>
@@ -518,7 +544,7 @@ export const CustomerList = () => {
                     type="submit"
                     onClick={(e) => addModal()}
                   >
-                    Add Customer
+                    Add employer
                   </Button>
                 </Col>
               </Row>
@@ -577,6 +603,16 @@ export const CustomerList = () => {
           />
           {showAlert.description}
         </>
+      )}
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
       )}
     </>
   );

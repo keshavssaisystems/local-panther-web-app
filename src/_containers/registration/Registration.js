@@ -63,7 +63,7 @@ export function Registration() {
     },
     {
       id: 2,
-      name: "Customer",
+      name: "Employer",
     },
   ]);
   const [selected, setSelected] = useState(0);
@@ -96,10 +96,10 @@ export function Registration() {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    jobprofile: Yup.string()
-      .required("Job profile is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
-      .min(3, "Job profile must be at least 3 characters"),
+    // jobprofile: Yup.string()
+    //   .required("Job profile is required")
+    //   .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
+    //   .min(3, "Job profile must be at least 3 characters"),
 
     firstName: Yup.string()
       .required("First name is required")
@@ -176,12 +176,12 @@ export function Registration() {
     let formDetails = getValues();
     let data = { ...field };
     data = "";
-    if (
-      formDetails.jobprofile === "" ||
-      !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
-    ) {
-      data = "job profile";
-    }
+    // if (
+    //   formDetails.jobprofile === "" ||
+    //   !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
+    // ) {
+    //   data = "job profile";
+    // }
     if (
       formDetails.firstName === "" ||
       !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
@@ -613,7 +613,7 @@ export function Registration() {
               <div className="mt-5">
                 {selected === 1 && (
                   <Form onSubmit={handleSubmit(onSubmit)}>
-                    <Row>
+                    {/* <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="jobprofile" className="input-label">
@@ -635,7 +635,7 @@ export function Registration() {
                           </FormFeedback>
                         </FormGroup>
                       </Col>
-                    </Row>
+                    </Row> */}
 
                     <Row>
                       <Col md={6}>

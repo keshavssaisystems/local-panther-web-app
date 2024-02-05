@@ -401,7 +401,7 @@ export function BasicInformation({
       return data.map(({ cityid: value, ...rest }) => {
         return {
           value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
-          label: `${rest.location}`,
+          label: `${rest.location}, ${rest.statename}`,
         };
       });
     }
@@ -623,32 +623,38 @@ export function BasicInformation({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
-                City<span style={{ color: "red" }}>* </span>
+                City, State<span style={{ color: "red" }}>* </span>
               </Label>
               <AsyncSelect
                 name={"city"}
-                placeholder="Search city"
+                placeholder="Search city or zipcode"
                 defaultValue={
-                  {
-                    value:
-                      prevStep === 3
-                        ? data?.cityId +
-                          ", " +
-                          data?.stateId +
-                          ", " +
-                          data?.cityName +
-                          ", " +
-                          data?.stateName
-                        : previousData?.cityid +
-                          ", " +
-                          previousData?.stateid +
-                          ", " +
-                          previousData?.cityname +
-                          ", " +
-                          previousData?.statename,
-                    label:
-                      prevStep === 3 ? data?.cityName : previousData?.cityname,
-                  }
+                  prevStep === 1
+                    ? {
+                        label: "",
+                      }
+                    : {
+                        value:
+                          prevStep === 3
+                            ? data?.cityId +
+                              ", " +
+                              data?.stateId +
+                              ", " +
+                              data?.cityName +
+                              ", " +
+                              data?.stateName
+                            : previousData?.cityid +
+                              ", " +
+                              previousData?.stateid +
+                              ", " +
+                              previousData?.cityname +
+                              ", " +
+                              previousData?.statename,
+                        label:
+                          prevStep === 3
+                            ? data?.cityName
+                            : previousData?.cityname,
+                      }
                   // previousValue.statename
                 }
                 loadOptions={loadOptions}
@@ -662,7 +668,7 @@ export function BasicInformation({
               )}
             </FormGroup>
           </Col>
-          <Col md={6} lg={3}>
+          {/* <Col md={6} lg={3}>
             <FormGroup>
               <Label for="city" className="fw-semi-bold">
                 State
@@ -680,7 +686,7 @@ export function BasicInformation({
                 placeholder="Select state"
               />
             </FormGroup>
-          </Col>
+          </Col> */}
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="country" className="fw-semi-bold">
@@ -716,6 +722,7 @@ export function BasicInformation({
                 defaultValue={
                   prevStep === 3 ? preValue.zipcode : previousValue.zipcode
                 }
+                onChange={(e) => loadOptions(e.target.value)}
                 placeholder="Enter zip code"
               />
               {zipCodeValidation === true && (

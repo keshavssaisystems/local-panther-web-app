@@ -10,6 +10,7 @@ import {
   DropdownToggle,
   Button,
   ButtonGroup,
+  UncontrolledTooltip,
 } from "reactstrap";
 import SweetAlert from "react-bootstrap-sweetalert";
 
@@ -20,11 +21,18 @@ import { getTimezoneDateTime } from "_helpers/helper";
 import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
+import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
+import { getAcceptedListUniqueData } from "_helpers/helper";
+import { useSelector } from "react-redux";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
     props.onCandidateActions(type, candidaterecommendedjobid, reason);
   };
+  const acceptedList = useSelector(
+    (state) => state.candidateListReducer.acceptedJobList?.data
+  );
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
   const [candidaterecommendedjobid, setRecommendedJobId] = useState(0);
   const [rejectType, setRejectType] = useState("");
@@ -35,7 +43,8 @@ export const CandListView = (props) => {
     title: "",
     description: "",
   });
-
+  const acceptedListData = getAcceptedListUniqueData(acceptedList);
+  console.log(acceptedListData);
   const rejectReason = (rejectTitle, type, candidaterecommendedjobid) => {
     setTitle(rejectTitle);
     setRejectType(type);
@@ -50,6 +59,10 @@ export const CandListView = (props) => {
 
   const onShowModal = (row, type) => {
     props.showModal(row, type);
+  };
+
+  const onShowOHModal = (row) => {
+    props.onShowOHModal(row);
   };
   const renderButtons = (row) => {
     if (props.type === "liked") {
@@ -251,25 +264,6 @@ export const CandListView = (props) => {
     } else if (props.type === "rejected") {
       return (
         <ButtonGroup>
-          {/* {row?.customerrecommendedjobstatusid === 5 && (
-            <Button
-              size="sm"
-              title="Accept offer"
-              className="btn-icon"
-              color="success"
-              onClick={
-                () =>
-                  rejectReason(
-                    "reaccepting",
-                    "reaccepted",
-                    row.candidaterecommendedjobid
-                  )
-                // onBtnClick("accepted", row.candidaterecommendedjobid)
-              }
-            >
-              <img src={customerIcons?.list_accept} alt="list apply"></img>
-            </Button>
-          )} */}
           {row?.customerrecommendedjobstatusid !== 5 &&
             row?.customerrecommendedjobstatusid !== 6 && (
               <>
@@ -291,18 +285,61 @@ export const CandListView = (props) => {
     } else if (props.type === "offers") {
       return (
         <ButtonGroup>
-          <Button
-            // outline
-            size="sm"
-            title="Accept offer"
-            className="btn-icon"
-            color="success"
-            onClick={() =>
-              onBtnClick("accepted", row.candidaterecommendedjobid)
-            }
-          >
-            <img src={customerIcons?.list_accept} alt="list apply"></img>
-          </Button>
+          {acceptedListData.companyIds.includes(row?.companyid) && (
+            <>
+              <Button
+                size="sm"
+                className="btn-icon btn-mute"
+                color="success"
+                id="offerAcceptButton"
+              >
+                <img src={customerIcons?.list_accept} alt="list apply"></img>
+              </Button>
+              <UncontrolledTooltip
+                placement="bottom"
+                target={"offerAcceptButton"}
+              >
+                Already accepted a job from this employer. Can't accept job!
+              </UncontrolledTooltip>
+            </>
+          )}
+          {!acceptedListData.companyIds.includes(row?.companyid) &&
+            acceptedListData.jobAcceptPermission === false && (
+              <>
+                <Button
+                  size="sm"
+                  className="btn-icon btn-mute"
+                  color="success"
+                  id="offerAcceptButton"
+                >
+                  <img src={customerIcons?.list_accept} alt="list apply"></img>
+                </Button>
+                <UncontrolledTooltip
+                  placement="bottom"
+                  target={"offerAcceptButton"}
+                >
+                  Already accepted a full time or direct hiring job. Can't
+                  accept job!
+                </UncontrolledTooltip>
+              </>
+            )}
+          {!acceptedListData.companyIds.includes(row?.companyid) &&
+            acceptedListData.jobAcceptPermission === true && (
+              <>
+                <Button
+                  // outline
+                  size="sm"
+                  title="Accept offer"
+                  className="btn-icon"
+                  color="success"
+                  onClick={() =>
+                    onBtnClick("accepted", row.candidaterecommendedjobid)
+                  }
+                >
+                  <img src={customerIcons?.list_accept} alt="list apply"></img>
+                </Button>
+              </>
+            )}
           <Button
             // outline
             size="sm"
@@ -339,6 +376,17 @@ export const CandListView = (props) => {
               <span>Job details</span>
             </DropdownItem>
 
+            {props.type === "offers" ||
+            props.type === "accepted" ||
+            props.type === "rejected" ? (
+              <DropdownItem onClick={() => onShowOHModal(row)}>
+                <i className="dropdown-icon lnr-layers"></i>
+                <span>Offer history</span>
+              </DropdownItem>
+            ) : (
+              <></>
+            )}
+
             {props.type === "interview" &&
             row?.scheduledInterviewDtos &&
             row?.scheduledInterviewDtos.length > 0 &&
@@ -365,9 +413,18 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "22%",
+            width: "20%",
           },
 
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "14%",
+          },
           {
             name: <span className="table-title">Location</span>,
             cell: (row) => (
@@ -388,33 +445,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
-          },
-
-          {
-            name: <span className="table-title">Experience</span>,
-            cell: (row) => (
-              <span
-                title={
-                  row?.jobExperienceScheduleDtos &&
-                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                    : "-"
-                }
-              >
-                {row?.jobExperienceScheduleDtos &&
-                row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                  : "-"}
-              </span>
-            ),
-            selector: (row) =>
-              row?.jobExperienceScheduleDtos &&
-              row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
-                : "-",
-            sortable: true,
-            width: "10%",
+            width: "13%",
           },
           {
             name: <span className="table-title">Scheduled</span>,
@@ -595,7 +626,16 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "30%",
+            width: "20%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
           },
 
           {
@@ -696,24 +736,71 @@ export const CandListView = (props) => {
             width: "10%",
           },
           {
-            name: <span className="table-title">Pre-screen</span>,
+            name: <span className="table-title">Offer</span>,
             cell: (row) =>
-              row.candidateprescreenstatus === "NA" ? (
-                "-"
-              ) : row.candidateprescreenstatus === "Pending" ? (
-                <Button
-                  onClick={() => onPrescreenClick("pending", row)}
-                  color="link"
-                >
-                  <u>Pending</u>
-                </Button>
+              row?.jobOfferDtos?.length > 0 ? (
+                <>
+                  {row?.jobOfferDtos?.length === 2 && (
+                    <>
+                      <img
+                        src={previousOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Previous Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[1]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.isfinaloffer === true && (
+                    <>
+                      <img
+                        src={finalOffer}
+                        alt="list maybe"
+                        className={"icon-pointer me-2"}
+                        width={"20px"}
+                        title="Final Offer - Click to view offer"
+                        onClick={() =>
+                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                        }
+                      ></img>
+                    </>
+                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                </>
               ) : (
-                <Button
-                  onClick={() => onPrescreenClick("completed", row)}
-                  color="link"
-                >
-                  <u>Completed</u>
-                </Button>
+                <> - </>
               ),
             ignoreRowClick: true,
             button: true,
@@ -784,7 +871,16 @@ export const CandListView = (props) => {
             id: "Title",
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "33%",
+            width: "28%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
           },
           {
             name: <span className="table-title">Location</span>,
@@ -793,7 +889,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
+            width: "17%",
           },
           {
             name: <span className="table-title">Offered salary</span>,
@@ -870,30 +966,30 @@ export const CandListView = (props) => {
             sortable: true,
             width: "10%",
           },
-          {
-            name: <span className="table-title">Pre-screen</span>,
-            cell: (row) =>
-              row.candidateprescreenstatus === "NA" ? (
-                "-"
-              ) : row.candidateprescreenstatus === "Pending" ? (
-                <Button
-                  onClick={() => onPrescreenClick("pending", row)}
-                  color="link"
-                >
-                  <u>Pending</u>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => onPrescreenClick("completed", row)}
-                  color="link"
-                >
-                  <u>Completed</u>
-                </Button>
-              ),
-            ignoreRowClick: true,
-            button: true,
-            width: "10%",
-          },
+          // {
+          //   name: <span className="table-title">Pre-screen</span>,
+          //   cell: (row) =>
+          //     row.candidateprescreenstatus === "NA" ? (
+          //       "-"
+          //     ) : row.candidateprescreenstatus === "Pending" ? (
+          //       <Button
+          //         onClick={() => onPrescreenClick("pending", row)}
+          //         color="link"
+          //       >
+          //         <u>Pending</u>
+          //       </Button>
+          //     ) : (
+          //       <Button
+          //         onClick={() => onPrescreenClick("completed", row)}
+          //         color="link"
+          //       >
+          //         <u>Completed</u>
+          //       </Button>
+          //     ),
+          //   ignoreRowClick: true,
+          //   button: true,
+          //   width: "10%",
+          // },
           {
             name: <span className="table-title">Offer</span>,
             cell: (row) =>
@@ -927,20 +1023,36 @@ export const CandListView = (props) => {
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === false && (
-                    <>
-                      <img
-                        src={currentOffer}
-                        alt="list maybe"
-                        className={"icon-pointer"}
-                        width={"20px"}
-                        title="New Offer - Click to view offer"
-                        onClick={() =>
-                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                        }
-                      ></img>
-                    </>
-                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={currentOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={newOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="New Offer - Click to view offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                 </>
               ) : (
                 <> - </>
@@ -956,7 +1068,7 @@ export const CandListView = (props) => {
             ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "13%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -975,9 +1087,17 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "32%",
+            width: "23%",
           },
-
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
           {
             name: <span className="table-title">Location</span>,
             cell: (row) => (
@@ -998,7 +1118,7 @@ export const CandListView = (props) => {
                 ? row.cityname + ", " + row.statename
                 : "",
             sortable: true,
-            width: "15%",
+            width: "17%",
           },
           {
             name: <span className="table-title">Offered salary</span>,
@@ -1036,7 +1156,7 @@ export const CandListView = (props) => {
                     row?.jobOfferDtos[0]?.salary
                   ),
             sortable: true,
-            width: "10%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Start date</span>,
@@ -1076,27 +1196,34 @@ export const CandListView = (props) => {
             width: "10%",
           },
           {
-            name: <span className="table-title">Pre-screen</span>,
-            cell: (row) =>
-              row.candidateprescreenstatus === "NA" ? (
-                "-"
-              ) : row.candidateprescreenstatus === "Pending" ? (
-                <Button
-                  onClick={() => onPrescreenClick("pending", row)}
-                  color="link"
-                >
-                  <u>Pending</u>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => onPrescreenClick("completed", row)}
-                  color="link"
-                >
-                  <u>Completed</u>
-                </Button>
-              ),
-            ignoreRowClick: true,
-            button: true,
+            name: <span className="table-title">Accepted date</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.candidateaccepteddatetime === null
+                    ? "-"
+                    : getTimezoneDateTime(
+                        row?.candidateaccepteddatetime,
+                        "MM/DD/YYYY"
+                      )
+                }
+              >
+                {row?.candidateaccepteddatetime === null
+                  ? "-"
+                  : getTimezoneDateTime(
+                      row?.candidateaccepteddatetime,
+                      "MM/DD/YYYY"
+                    )}
+              </span>
+            ),
+            selector: (row) =>
+              row?.candidateaccepteddatetime === null
+                ? "-"
+                : getTimezoneDateTime(
+                    row?.candidateaccepteddatetime,
+                    "MM/DD/YYYY"
+                  ),
+            sortable: true,
             width: "10%",
           },
           {
@@ -1125,34 +1252,50 @@ export const CandListView = (props) => {
                         alt="list maybe"
                         className={"icon-pointer me-2"}
                         width={"20px"}
-                        title="Final Offer - Click to view offer"
+                        title="Click to view accepted offer"
                         onClick={() =>
                           window.open(row?.jobOfferDtos[0]?.offerfilepath)
                         }
                       ></img>
                     </>
                   )}
-                  {row?.isfinaloffer === false && (
-                    <>
-                      <img
-                        src={currentOffer}
-                        alt="list maybe"
-                        className={"icon-pointer"}
-                        width={"20px"}
-                        title="New Offer - Click to view offer"
-                        onClick={() =>
-                          window.open(row?.jobOfferDtos[0]?.offerfilepath)
-                        }
-                      ></img>
-                    </>
-                  )}
+                  {row?.jobOfferDtos?.length === 1 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={finalOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view accepted offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
+                  {row?.jobOfferDtos?.length === 2 &&
+                    row?.isfinaloffer === false && (
+                      <>
+                        <img
+                          src={finalOffer}
+                          alt="list maybe"
+                          className={"icon-pointer"}
+                          width={"20px"}
+                          title="Click to view accepted offer"
+                          onClick={() =>
+                            window.open(row?.jobOfferDtos[0]?.offerfilepath)
+                          }
+                        ></img>
+                      </>
+                    )}
                 </>
               ) : (
                 <> - </>
               ),
             ignoreRowClick: true,
             button: true,
-            width: "7%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Interest</span>,
@@ -1161,7 +1304,7 @@ export const CandListView = (props) => {
             ),
             ignoreRowClick: true,
             button: true,
-            width: "10%",
+            width: "8%",
           },
           {
             name: <span className="table-title">Action</span>,
@@ -1179,9 +1322,17 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "35%",
+            width: "25%",
           },
-
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "10%",
+          },
           {
             name: <span className="table-title">Location</span>,
             cell: (row) => (
@@ -1318,12 +1469,19 @@ export const CandListView = (props) => {
         className="cust-list-view"
       />
       {rejectReasonModal && (
-        <RejectReasonModal
+        // <RejectReasonModal
+        //   isRMOpen={rejectReasonModal}
+        //   callBack={(e) => submitReject(e)}
+        //   callBackError={() => closeModal()}
+        //   title={title}
+        // />
+
+        <DeactivateReasonModal
           isRMOpen={rejectReasonModal}
           callBack={(e) => submitReject(e)}
           callBackError={() => closeModal()}
           title={title}
-        />
+        ></DeactivateReasonModal>
       )}
       <>
         {" "}

@@ -81,7 +81,7 @@ export function AdminDashboard() {
       icon: "lnr-apartment",
     },
     {
-      title: "Active customers",
+      title: "Active employers",
       count: dashboardCounts.activecustomercount,
       className: "info",
       icon: "lnr-user",
