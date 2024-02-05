@@ -165,6 +165,8 @@ export const PaymentDetails = ({
     // setCVV(formatCVC(billingDetails?.securitycode));
     setCVV(billingDetails?.securitycode ? billingDetails?.securitycode : "***");
     setCardHolder(billingDetails?.cardholdername);
+    setValue("address", billingDetails?.address);
+    setValue("zipcode", billingDetails?.zipcode);
   };
   const setDetails = (userDetails) => {
     setValue("name", userDetails.firstname + " " + userDetails.lastname);
