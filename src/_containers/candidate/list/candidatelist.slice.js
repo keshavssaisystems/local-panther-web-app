@@ -146,6 +146,15 @@ export const updateRescheduleReason = createAsyncThunk(
   }
 );
 
+// get completed getAcceptedJobListThunk thunk
+export const getAcceptedJobListThunk = createAsyncThunk(
+  `${name}/getAcceptedJobListThunk`,
+  async () => {
+    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetCandidateJobAcceptedList/${internalUserId}`;
+    return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
+  }
+);
+
 // get candidate offer history
 export const getCandidateOfferHistory = createAsyncThunk(
   `${name}/getCandidateOfferHistory`,
@@ -165,6 +174,7 @@ const candidateList = createSlice({
     jobDetail: [],
     jdLoading: false,
     prescreenQues: [],
+    acceptedJobList: [],
     offerHistory: [],
   },
   reducers: {},
@@ -368,6 +378,17 @@ const candidateList = createSlice({
     [updateRescheduleReason.pending]: (state) => {},
     [updateRescheduleReason.fulfilled]: (state, { payload = {} }) => {},
     [updateRescheduleReason.rejected]: (state, action) => {},
+    // post accepted job list
+    [getAcceptedJobListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getAcceptedJobListThunk.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.acceptedJobList = action.payload;
+    },
+    [getAcceptedJobListThunk.rejected]: (state, action) => {
+      state.loading = true;
+    },
     // update reschedule
     [getCandidateOfferHistory.pending]: (state) => {
       state.offerHistory = [];
@@ -394,6 +415,7 @@ export const candidateListActions = {
   postJobPrescreenApplication,
   getCompJobPrescreenApplication,
   updateRescheduleReason,
+  getAcceptedJobListThunk,
   getCandidateOfferHistory,
 };
 export const candidateListReducer = candidateList.reducer;

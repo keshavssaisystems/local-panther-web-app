@@ -474,3 +474,36 @@ export const findRestrictedWords = (wordsArray, question) => {
     wordsCount: wordArrayData?.length,
   };
 };
+
+export const getAcceptedListUniqueData = (acceptedList) => {
+  let companyArray = [];
+  let jobTypeArray = [];
+  if (acceptedList.length > 0) {
+    acceptedList?.forEach((element) => {
+      companyArray.push(element.companyid);
+      if (element?.jobTypesDtos?.length > 0) {
+        element?.jobTypesDtos?.forEach((jobType) => {
+          jobTypeArray.push(jobType.jobtypesid);
+        });
+      }
+    });
+    let jobAcceptPermission = true;
+    let uniqueJobType = [...new Set(jobTypeArray)];
+    if (uniqueJobType.includes(1) || uniqueJobType.includes(4)) {
+      jobAcceptPermission = false;
+    }
+    let returnArray = {
+      companyIds: [...new Set(companyArray)],
+      jobTypeIds: uniqueJobType,
+      jobAcceptPermission: jobAcceptPermission,
+    };
+    return returnArray;
+  } else {
+    let returnArray = {
+      companyIds: [],
+      jobTypeIds: [],
+      jobAcceptPermission: true,
+    };
+    return returnArray;
+  }
+};
