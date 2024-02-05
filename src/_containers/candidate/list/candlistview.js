@@ -299,7 +299,8 @@ export const CandListView = (props) => {
                 placement="bottom"
                 target={"offerAcceptButton"}
               >
-                Already accepted a job from this employer. Can't accept job!
+                You have already accepted a job from this employer; you cannot
+                accept the job!
               </UncontrolledTooltip>
             </>
           )}
@@ -318,8 +319,8 @@ export const CandListView = (props) => {
                   placement="bottom"
                   target={"offerAcceptButton"}
                 >
-                  Already accepted a full time or direct hiring job. Can't
-                  accept job!
+                  You have already accepted a full time or direct hiring job.
+                  You cannot accept the job!
                 </UncontrolledTooltip>
               </>
             )}
