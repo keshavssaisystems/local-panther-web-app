@@ -146,6 +146,15 @@ export const updateRescheduleReason = createAsyncThunk(
   }
 );
 
+// get completed getAcceptedJobListThunk thunk
+export const getAcceptedJobListThunk = createAsyncThunk(
+  `${name}/getAcceptedJobListThunk`,
+  async () => {
+    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetCandidateJobAcceptedList/22`;
+    return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
+  }
+);
+
 // Create the slice
 const candidateList = createSlice({
   name,
@@ -156,6 +165,7 @@ const candidateList = createSlice({
     jobDetail: [],
     jdLoading: false,
     prescreenQues: [],
+    acceptedJobList: [],
   },
   reducers: {},
 
@@ -358,6 +368,18 @@ const candidateList = createSlice({
     [updateRescheduleReason.pending]: (state) => {},
     [updateRescheduleReason.fulfilled]: (state, { payload = {} }) => {},
     [updateRescheduleReason.rejected]: (state, action) => {},
+
+    // post prescreen questions
+    [getAcceptedJobListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getAcceptedJobListThunk.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.acceptedJobList = action.payload;
+    },
+    [getAcceptedJobListThunk.rejected]: (state, action) => {
+      state.loading = true;
+    },
   },
 });
 
@@ -376,5 +398,6 @@ export const candidateListActions = {
   postJobPrescreenApplication,
   getCompJobPrescreenApplication,
   updateRescheduleReason,
+  getAcceptedJobListThunk,
 };
 export const candidateListReducer = candidateList.reducer;
