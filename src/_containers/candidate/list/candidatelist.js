@@ -85,6 +85,7 @@ export const CandidateList = (props) => {
     if (candidateJobList?.length > 0 && activeTab === "matched") {
       getJobDetails(candidateJobList[0].jobid);
     }
+    dispatch(candidateListActions.getAcceptedJobListThunk());
     //make api call for first selected
   }, [candidateJobList]);
 
@@ -139,6 +140,9 @@ export const CandidateList = (props) => {
     };
 
     dispatch(candidateListActions.getRecommendedJobList(candObj));
+    if (candidateRecommendedJobStatusId === 7) {
+      dispatch(candidateListActions.getAcceptedJobListThunk());
+    }
   };
 
   const getSelectedJob = (e) => {
@@ -537,7 +541,6 @@ export const CandidateList = (props) => {
       });
     }
   };
-
   const onShowOHModal = async (row) => {
     let res = await dispatch(
       candidateListActions.getCandidateOfferHistory(
@@ -555,7 +558,6 @@ export const CandidateList = (props) => {
       });
     }
   };
-
   return (
     <>
       <Row className="cand-list-cont">
