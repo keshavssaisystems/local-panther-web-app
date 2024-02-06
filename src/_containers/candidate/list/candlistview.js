@@ -44,7 +44,6 @@ export const CandListView = (props) => {
     description: "",
   });
   const acceptedListData = getAcceptedListUniqueData(acceptedList);
-  console.log(acceptedListData);
   const rejectReason = (rejectTitle, type, candidaterecommendedjobid) => {
     setTitle(rejectTitle);
     setRejectType(type);
