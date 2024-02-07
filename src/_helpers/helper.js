@@ -478,7 +478,7 @@ export const findRestrictedWords = (wordsArray, question) => {
 export const getAcceptedListUniqueData = (acceptedList) => {
   let companyArray = [];
   let jobTypeArray = [];
-  if (acceptedList.length > 0) {
+  if (acceptedList?.length > 0) {
     acceptedList?.forEach((element) => {
       companyArray.push(element.companyid);
       if (element?.jobTypesDtos?.length > 0) {
