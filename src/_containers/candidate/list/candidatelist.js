@@ -85,7 +85,10 @@ export const CandidateList = (props) => {
     if (candidateJobList?.length > 0 && activeTab === "matched") {
       getJobDetails(candidateJobList[0].jobid);
     }
-    dispatch(candidateListActions.getAcceptedJobListThunk());
+    if (candidateJobList?.length > 0 && activeTab === "offers") {
+      dispatch(candidateListActions.getAcceptedJobListThunk());
+    }
+
     //make api call for first selected
   }, [candidateJobList]);
 
