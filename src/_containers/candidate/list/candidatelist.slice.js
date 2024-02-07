@@ -197,7 +197,7 @@ const candidateList = createSlice({
     },
     [getRecommendedJobList.rejected]: (state, action) => {
       state.loading = false;
-      state.candidateJobList = { error: action.error };
+      state.candidateJobList = [];
     },
 
     // candidate like state
