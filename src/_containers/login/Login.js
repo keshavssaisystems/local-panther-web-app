@@ -91,7 +91,7 @@ export function Login() {
       // Generate Token
       const token = await messaging.getToken({
         vapidKey:
-          "BHDRlNANNHYy5hL-T7sh4uQ3gJCWKxUhXJTRHc85d4mwj51Wo_27e7XHP-W6Ix1zlqvzU9hsiSz6kGXejwG406A",
+          "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
       });
       payload.firebasetoken = token;
       dispatch(authActions.loginThunk(payload));
