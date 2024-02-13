@@ -174,9 +174,6 @@ export function PersonalInformation(props) {
       currentUserId: 0,
     };
     setGetResponse(data);
-    if (props.profileInfo.personalInfo.city != "") {
-      loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
-    }
 
     if (selectedCandidate.selectedDropDown?.selectedCountry[0]?.value != 0) {
       let countryData = [...countrySelect];
@@ -225,6 +222,12 @@ export function PersonalInformation(props) {
       }
     }
   }, [selectedCandidate, availabilityList]);
+
+  useEffect(() => {
+    if (props?.profileInfo?.personalInfo?.city !== "") {
+      loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
+    }
+  }, []);
 
   const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
