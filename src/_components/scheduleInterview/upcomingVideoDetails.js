@@ -105,7 +105,7 @@ export function UpcomingVideoDetails({
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
       " " +
       interviewDetails?.starttime,
-    "hh:mm a"
+    "hh:mm A"
   );
   let startDate =
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
@@ -117,7 +117,7 @@ export function UpcomingVideoDetails({
       : [];
   let endTime = getTimezoneDateTime(
     moment(startDate).add(durationArr[0], "m"),
-    "hh:mm a"
+    "hh:mm A"
   );
   let userId = localStorage.getItem("userId");
   const cancelSchedule = () => {
