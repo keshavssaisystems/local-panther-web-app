@@ -180,7 +180,7 @@ export function CustomerReportJobAging() {
 
   return (
     <>
-      <PageTitle heading={"Customer Aging Group Report"} icon={titlelogo} />
+      <PageTitle heading={"Employer Aging Group Report"} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">

@@ -106,7 +106,7 @@ export function ScheduleInterview({ fromDashboard }) {
     });
     getCandidateList(
       selectedJobId,
-      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().startOf("month").utc().format("YYYY-MM-DDTHH:mm:ss"),
       moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
@@ -264,7 +264,7 @@ export function ScheduleInterview({ fromDashboard }) {
     });
     getCandidateList(
       selectedJobId,
-      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().startOf("month").utc().format("YYYY-MM-DDTHH:mm:ss"),
       moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
@@ -290,7 +290,7 @@ export function ScheduleInterview({ fromDashboard }) {
     });
     getCandidateList(
       selectedJobId,
-      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().startOf("month").utc().format("YYYY-MM-DDTHH:mm:ss"),
       moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
@@ -320,7 +320,7 @@ export function ScheduleInterview({ fromDashboard }) {
     });
     getCandidateList(
       selectedJobId,
-      moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss"),
+      moment().startOf("month").utc().format("YYYY-MM-DDTHH:mm:ss"),
       moment().add("3", "months").format("YYYY-MM-DDTHH:mm:ss")
     );
   };
@@ -479,7 +479,7 @@ export function ScheduleInterview({ fromDashboard }) {
   };
   return (
     <>
-      <PageTitle heading="Interviews" icon={titlelogo} />
+      <PageTitle heading="Calendar" icon={titlelogo} />
       <Container fluid className="card-schedule-interview">
         <Row>
           <Col md="12">
