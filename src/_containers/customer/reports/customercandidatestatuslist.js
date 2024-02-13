@@ -248,7 +248,7 @@ export function CustomerReportCandidateStatus() {
   return (
     <>
       <PageTitle
-        heading={"Customer Candidate Status List Report"}
+        heading={"Employer Candidate Status List Report"}
         icon={titlelogo}
       />
       <Row>

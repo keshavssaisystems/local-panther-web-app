@@ -119,7 +119,7 @@ export function UpcomingCard({
                       moment(interview.scheduledate).format("YYYY-MM-DD") +
                         " " +
                         interview.starttime,
-                      "MM/DD/YYYY, hh:mm a"
+                      "MM/DD/YYYY, hh:mm A"
                     )}
                   </p>
                   <p className="job-details">
