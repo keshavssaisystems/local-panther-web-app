@@ -290,14 +290,11 @@ export const CandListView = (props) => {
                 size="sm"
                 className="btn-icon btn-mute"
                 color="success"
-                id="offerAcceptButton"
+                id="offerDisable"
               >
                 <img src={customerIcons?.list_accept} alt="list apply"></img>
               </Button>
-              <UncontrolledTooltip
-                placement="bottom"
-                target={"offerAcceptButton"}
-              >
+              <UncontrolledTooltip placement="bottom" target={"offerDisable"}>
                 You have already accepted a job from this employer; you cannot
                 accept the job!
               </UncontrolledTooltip>
@@ -966,30 +963,6 @@ export const CandListView = (props) => {
             sortable: true,
             width: "10%",
           },
-          // {
-          //   name: <span className="table-title">Pre-screen</span>,
-          //   cell: (row) =>
-          //     row.candidateprescreenstatus === "NA" ? (
-          //       "-"
-          //     ) : row.candidateprescreenstatus === "Pending" ? (
-          //       <Button
-          //         onClick={() => onPrescreenClick("pending", row)}
-          //         color="link"
-          //       >
-          //         <u>Pending</u>
-          //       </Button>
-          //     ) : (
-          //       <Button
-          //         onClick={() => onPrescreenClick("completed", row)}
-          //         color="link"
-          //       >
-          //         <u>Completed</u>
-          //       </Button>
-          //     ),
-          //   ignoreRowClick: true,
-          //   button: true,
-          //   width: "10%",
-          // },
           {
             name: <span className="table-title">Offer</span>,
             cell: (row) =>

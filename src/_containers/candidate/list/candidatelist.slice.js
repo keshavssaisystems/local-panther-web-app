@@ -149,8 +149,8 @@ export const updateRescheduleReason = createAsyncThunk(
 // get completed getAcceptedJobListThunk thunk
 export const getAcceptedJobListThunk = createAsyncThunk(
   `${name}/getAcceptedJobListThunk`,
-  async () => {
-    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetCandidateJobAcceptedList/${internalUserId}`;
+  async (userId) => {
+    const GET_COMP_PRESCREEN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/CandidateRecommendedJob/GetCandidateJobAcceptedList/${userId}`;
     return await fetchWrapper.get(GET_COMP_PRESCREEN_END_POINT);
   }
 );
