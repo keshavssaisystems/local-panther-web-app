@@ -347,7 +347,6 @@ export function QualificationModal(props) {
   };
 
   const handleInputChange = function (check, index, data) {
-    debugger;
     let new_data = [...formDetails];
 
     if (check === "title") {
