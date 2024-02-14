@@ -28,7 +28,8 @@ import { OfferHistory } from "_components/modal/offerhistorymoal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
-
+  const internalUserId =
+    JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId ?? 0;
   const [showJDModal, setShowJDModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -86,7 +87,7 @@ export const CandidateList = (props) => {
       getJobDetails(candidateJobList[0].jobid);
     }
     if (candidateJobList?.length > 0 && activeTab === "offers") {
-      dispatch(candidateListActions.getAcceptedJobListThunk());
+      dispatch(candidateListActions.getAcceptedJobListThunk(internalUserId));
     }
 
     //make api call for first selected
@@ -144,7 +145,7 @@ export const CandidateList = (props) => {
 
     dispatch(candidateListActions.getRecommendedJobList(candObj));
     if (candidateRecommendedJobStatusId === 7) {
-      dispatch(candidateListActions.getAcceptedJobListThunk());
+      dispatch(candidateListActions.getAcceptedJobListThunk(internalUserId));
     }
   };
 
