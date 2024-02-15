@@ -704,8 +704,7 @@ export const CandListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )
                 }
@@ -714,8 +713,7 @@ export const CandListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     )}
               </span>
@@ -725,10 +723,7 @@ export const CandListView = (props) => {
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
-                : getTimezoneDateTime(
-                    row?.jobOfferDtos[0]?.startdate,
-                    "MM/DD/YYYY"
-                  ),
+                : moment(row?.jobOfferDtos[0]?.startdate).format("MM/DD/YYYY"),
             sortable: true,
             width: "10%",
           },
@@ -935,8 +930,7 @@ export const CandListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )
                 }
@@ -945,8 +939,7 @@ export const CandListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     )}
               </span>
@@ -956,10 +949,7 @@ export const CandListView = (props) => {
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
-                : getTimezoneDateTime(
-                    row?.jobOfferDtos[0]?.startdate,
-                    "MM/DD/YYYY"
-                  ),
+                : moment(row?.jobOfferDtos[0]?.startdate).format("MM/DD/YYYY"),
             sortable: true,
             width: "10%",
           },
@@ -1140,8 +1130,7 @@ export const CandListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )
                 }
@@ -1150,8 +1139,7 @@ export const CandListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     )}
               </span>
@@ -1161,10 +1149,7 @@ export const CandListView = (props) => {
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
-                : getTimezoneDateTime(
-                    row?.jobOfferDtos[0]?.startdate,
-                    "MM/DD/YYYY"
-                  ),
+                : moment(row?.jobOfferDtos[0]?.startdate).format("MM/DD/YYYY"),
             sortable: true,
             width: "10%",
           },

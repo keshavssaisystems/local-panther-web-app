@@ -664,8 +664,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : getTimezoneDateTime(
-                          row?.jobOfferDtos[0]?.startdate,
+                      : moment(row?.jobOfferDtos[0]?.startdate).format(
                           "MM/DD/YYYY"
                         )
                   }
@@ -674,8 +673,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )}
                 </span>
@@ -685,8 +683,7 @@ export const CustCandidateListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     ),
               sortable: true,
@@ -959,8 +956,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : getTimezoneDateTime(
-                          row?.jobOfferDtos[0]?.startdate,
+                      : moment(row?.jobOfferDtos[0]?.startdate).format(
                           "MM/DD/YYYY"
                         )
                   }
@@ -969,8 +965,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )}
                 </span>
@@ -980,34 +975,12 @@ export const CustCandidateListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     ),
               sortable: true,
               width: "12%",
             },
-            // {
-            //   name: <span className="table-title">Pre-Screen</span>,
-            //   cell: (row) =>
-            //     row.candidateprescreenstatus === "NA" ? (
-            //       "-"
-            //     ) : row.candidateprescreenstatus === "Pending" ? (
-            //       <Button disabled color="link">
-            //         <u>Pending</u>
-            //       </Button>
-            //     ) : (
-            //       <Button
-            //         onClick={() => props.onPrescreenClick("completed", row)}
-            //         color="link"
-            //       >
-            //         <u>Completed</u>
-            //       </Button>
-            //     ),
-            //   ignoreRowClick: true,
-            //   button: true,
-            //   width: "10%",
-            // },
             {
               name: <span className="table-title">Offer</span>,
               cell: (row) =>
