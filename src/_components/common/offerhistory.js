@@ -1,12 +1,14 @@
 import React from "react";
 import DataTable from "react-data-table-component";
-import { Row, Col, Button } from "reactstrap";
+import { Row, Col } from "reactstrap";
 import moment from "moment";
 import memoize from "memoize-one";
 import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
 import previousOffer from "assets/utils/images/job-detail-icons/previousoffer.svg";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import "./offerhistory.scss";
+import { getTimezoneDateTime } from "_helpers/helper";
+
 export const OfferHistTable = (props) => {
   const returnStatus = (row, index) => {
     if (index === 0 && row?.isfinaloffer) {
@@ -101,15 +103,31 @@ export const OfferHistTable = (props) => {
       name: <span className="table-title">Generated date</span>,
       id: "Generated date",
       cell: (row) =>
-        row?.createddate ? moment(row?.createddate).format("MM/DD/YYYY") : "-",
-      selector: (row) => (row?.createddate ? row?.createddate : "-"),
+        row?.createddate
+          ? getTimezoneDateTime(
+              moment(row?.createddate).format("MM/DD/YYYY"),
+              "MM/DD/YYYY"
+            )
+          : "-",
+      selector: (row) =>
+        row?.createddate
+          ? getTimezoneDateTime(row?.createddate, "MM/DD/YYYY")
+          : "-",
     },
     {
       name: <span className="table-title">Start date</span>,
       id: "Start date",
       cell: (row) =>
-        row?.startdate ? moment(row?.startdate).format("MM/DD/YYYY") : "-",
-      selector: (row) => (row?.startdate ? row?.startdate : "-"),
+        row?.startdate
+          ? getTimezoneDateTime(
+              moment(row?.startdate).format("MM/DD/YYYY"),
+              "MM/DD/YYYY"
+            )
+          : "-",
+      selector: (row) =>
+        row?.startdate
+          ? getTimezoneDateTime(row?.startdate, "MM/DD/YYYY")
+          : "-",
     },
 
     {
