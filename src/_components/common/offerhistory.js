@@ -115,7 +115,10 @@ export const OfferHistTable = (props) => {
     {
       name: <span className="table-title">Salary</span>,
       id: "Salary",
-      cell: (row) => (row?.salary ? `$${row?.salary}` : "-"),
+      cell: (row) =>
+        row?.salary
+          ? `$${new Intl.NumberFormat("en-US").format(row?.salary)}`
+          : "-",
       selector: (row) => (row?.salary ? row?.salary : "-"),
     },
 
