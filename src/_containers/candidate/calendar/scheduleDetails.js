@@ -72,7 +72,7 @@ export function ScheduleDetails({
     moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
       " " +
       interviewDetail?.starttime,
-    "hh:mm a"
+    "hh:mm A"
   );
   let startDate =
     moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
@@ -84,7 +84,7 @@ export function ScheduleDetails({
       : [];
   let endTime = getTimezoneDateTime(
     moment(startDate).add(durationArr[0], "m"),
-    "hh:mm a"
+    "hh:mm A"
   );
   const getText = function (data) {
     let text = "";
