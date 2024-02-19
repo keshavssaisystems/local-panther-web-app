@@ -1009,7 +1009,7 @@ export function CustomerRegistration() {
               <Col md={6}>
                 <FormGroup>
                   <Label for="companyzip" className="input-label">
-                    Zipcode <span className="text-danger">*</span>
+                    Zip code <span className="text-danger">*</span>
                   </Label>
                   <InputGroup>
                     <InputMask
@@ -1017,7 +1017,7 @@ export function CustomerRegistration() {
                       mask="99999"
                       name="companyzip"
                       id="companyzip"
-                      placeholder="Enter Company Zipcode"
+                      placeholder="Enter Company Zip Code"
                       // {...register("email")}
                       className={`form-control placeholder-name ${
                         companyZipErr ? "is-invalid" : ""
@@ -1031,7 +1031,7 @@ export function CustomerRegistration() {
                     />
                     <FormFeedback>
                       {" "}
-                      {companyZipErr ? "Please enter zipcode." : ""}
+                      {companyZipErr ? "Please enter zip code." : ""}
                     </FormFeedback>
                   </InputGroup>
                 </FormGroup>
