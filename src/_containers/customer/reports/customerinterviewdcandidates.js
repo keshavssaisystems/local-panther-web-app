@@ -317,7 +317,7 @@ export function CustomerReportInterviewedCandidates() {
   return (
     <>
       <PageTitle
-        heading={"Customer Interviewed Candidates Report"}
+        heading={"Employer Interviewed Candidates Report"}
         icon={titlelogo}
       />
       <Row className="cust-report-job-cont">
@@ -346,7 +346,11 @@ export function CustomerReportInterviewedCandidates() {
                         )
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>

@@ -96,13 +96,14 @@ export function CandidateProfile() {
   useEffect(() => {
     loadPage();
     dispatch(getProfileActions.getAvailability());
+    dispatch(getProfileActions.getPronoun());
   }, []);
 
   const loadPage = async function () {
     await getPersonalDetails();
     await getDropdownLists();
   };
-  dispatch(getProfileActions.getPronoun());
+
   let popular_skills = [];
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());

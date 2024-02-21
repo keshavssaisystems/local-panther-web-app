@@ -6,13 +6,13 @@ importScripts(
 );
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCwJ9XU5LfjGXkD77q6MwsPkvz5QdLUHKY",
-  authDomain: "panther-test-8cd56.firebaseapp.com",
-  projectId: "panther-test-8cd56",
-  storageBucket: "panther-test-8cd56.appspot.com",
-  messagingSenderId: "275858738478",
-  appId: "1:275858738478:web:b191ac1830f73fb7fe7ebf",
-  measurementId: "G-41FNE7FGNE",
+  apiKey: "AIzaSyBkc5ZFqejClCiGb8NavO2bvTuU0YwSCPU", 
+  authDomain: "openworx-e54f7.firebaseapp.com", 
+  projectId: "openworx-e54f7", 
+  storageBucket: "openworx-e54f7.appspot.com", 
+  messagingSenderId: "534510481965", 
+  appId: "1:534510481965:web:6bbbd4c282f9d52f577ea4", 
+  measurementId: "G-K5T2MCQPGY"
 };
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();

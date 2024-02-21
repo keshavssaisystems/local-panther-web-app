@@ -1,6 +1,6 @@
 import React from "react";
 import DataTable from "react-data-table-component";
-import { Row, Col, Button } from "reactstrap";
+import { Row, Col } from "reactstrap";
 import moment from "moment";
 import memoize from "memoize-one";
 import finalOffer from "assets/utils/images/job-detail-icons/finaloffer.svg";
@@ -115,7 +115,10 @@ export const OfferHistTable = (props) => {
     {
       name: <span className="table-title">Salary</span>,
       id: "Salary",
-      cell: (row) => (row?.salary ? `$${row?.salary}` : "-"),
+      cell: (row) =>
+        row?.salary
+          ? `$${new Intl.NumberFormat("en-US").format(row?.salary)}`
+          : "-",
       selector: (row) => (row?.salary ? row?.salary : "-"),
     },
 

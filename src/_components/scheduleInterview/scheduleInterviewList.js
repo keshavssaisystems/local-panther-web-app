@@ -74,7 +74,7 @@ export function ScheduleInterviewList({
       selector: (row) =>
         getTimezoneDateTime(
           moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
-          "MM/DD/YYYY h:mm a"
+          "MM/DD/YYYY h:mm A"
         ),
       width: "20%",
     },

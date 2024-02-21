@@ -664,8 +664,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : getTimezoneDateTime(
-                          row?.jobOfferDtos[0]?.startdate,
+                      : moment(row?.jobOfferDtos[0]?.startdate).format(
                           "MM/DD/YYYY"
                         )
                   }
@@ -674,8 +673,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )}
                 </span>
@@ -685,8 +683,7 @@ export const CustCandidateListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     ),
               sortable: true,
@@ -959,8 +956,7 @@ export const CustCandidateListView = (props) => {
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
-                      : getTimezoneDateTime(
-                          row?.jobOfferDtos[0]?.startdate,
+                      : moment(row?.jobOfferDtos[0]?.startdate).format(
                           "MM/DD/YYYY"
                         )
                   }
@@ -969,8 +965,7 @@ export const CustCandidateListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : getTimezoneDateTime(
-                        row?.jobOfferDtos[0]?.startdate,
+                    : moment(row?.jobOfferDtos[0]?.startdate).format(
                         "MM/DD/YYYY"
                       )}
                 </span>
@@ -980,34 +975,12 @@ export const CustCandidateListView = (props) => {
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : getTimezoneDateTime(
-                      row?.jobOfferDtos[0]?.startdate,
+                  : moment(row?.jobOfferDtos[0]?.startdate).format(
                       "MM/DD/YYYY"
                     ),
               sortable: true,
               width: "12%",
             },
-            // {
-            //   name: <span className="table-title">Pre-Screen</span>,
-            //   cell: (row) =>
-            //     row.candidateprescreenstatus === "NA" ? (
-            //       "-"
-            //     ) : row.candidateprescreenstatus === "Pending" ? (
-            //       <Button disabled color="link">
-            //         <u>Pending</u>
-            //       </Button>
-            //     ) : (
-            //       <Button
-            //         onClick={() => props.onPrescreenClick("completed", row)}
-            //         color="link"
-            //       >
-            //         <u>Completed</u>
-            //       </Button>
-            //     ),
-            //   ignoreRowClick: true,
-            //   button: true,
-            //   width: "10%",
-            // },
             {
               name: <span className="table-title">Offer</span>,
               cell: (row) =>
@@ -1308,76 +1281,6 @@ export const CustCandidateListView = (props) => {
             sortable: true,
             width: "27%",
           },
-          // {
-          //   name: <span className="table-title">Location</span>,
-          //   cell: (row) => (
-          //     <span
-          //       title={
-          //         row?.recommendedationCandidateShortList &&
-          //         row.recommendedationCandidateShortList?.length > 0
-          //           ? (row?.recommendedationCandidateShortList[0].cityname
-          //               ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-          //               : "") +
-          //             "" +
-          //             (row.recommendedationCandidateShortList[0].statename
-          //               ? row.recommendedationCandidateShortList[0].statename
-          //               : "")
-          //           : ""
-          //       }
-          //     >
-          //       {row?.recommendedationCandidateShortList &&
-          //       row.recommendedationCandidateShortList?.length > 0
-          //         ? (row?.recommendedationCandidateShortList[0].cityname
-          //             ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-          //             : "") +
-          //           "" +
-          //           (row.recommendedationCandidateShortList[0].statename
-          //             ? row.recommendedationCandidateShortList[0].statename
-          //             : "")
-          //         : ""}
-          //     </span>
-          //   ),
-          //   selector: (row) =>
-          //     row?.recommendedationCandidateShortList &&
-          //     row.recommendedationCandidateShortList?.length > 0
-          //       ? (row?.recommendedationCandidateShortList[0].cityname
-          //           ? `${row?.recommendedationCandidateShortList[0].cityname}, `
-          //           : "") +
-          //         "" +
-          //         (row.recommendedationCandidateShortList[0].statename
-          //           ? row.recommendedationCandidateShortList[0].statename
-          //           : "")
-          //       : "",
-          //   sortable: true,
-          //   width: "13%",
-          // },
-
-          // {
-          //   name: <span className="table-title">Experience</span>,
-          //   cell: (row) => (
-          //     <span
-          //       title={
-          //         row?.recommendedationCandidateShortList &&
-          //         row?.recommendedationCandidateShortList.length > 0
-          //           ? row?.recommendedationCandidateShortList[0]?.experience
-          //           : "-"
-          //       }
-          //     >
-          //       {row?.recommendedationCandidateShortList &&
-          //       row?.recommendedationCandidateShortList.length > 0
-          //         ? row?.recommendedationCandidateShortList[0]?.experience
-          //         : "-"}
-          //     </span>
-          //   ),
-          //   selector: (row) =>
-          //     row?.recommendedationCandidateShortList &&
-          //     row?.recommendedationCandidateShortList.length > 0
-          //       ? row?.recommendedationCandidateShortList[0]?.experience
-          //       : "-",
-          //   sortable: true,
-          //   width: "10%",
-          // },
-
           {
             name: <span className="table-title">Scheduled</span>,
             sortable: true,

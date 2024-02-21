@@ -363,7 +363,7 @@ export const updateMonthstoYears = (months) => {
 
 export const getTimezoneDateTime = (
   dateTime,
-  format = "MM/DD/YYYY hh:mm a"
+  format = "MM/DD/YYYY hh:mm A"
 ) => {
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return moment.utc(dateTime).tz(systemTimeZone).format(format);

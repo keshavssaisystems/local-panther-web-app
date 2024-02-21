@@ -278,7 +278,7 @@ export function CustomerReportJobList() {
 
   return (
     <>
-      <PageTitle heading={"Customer Job List Report"} icon={titlelogo} />
+      <PageTitle heading={"Employer Job List Report"} icon={titlelogo} />
       <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
@@ -301,7 +301,11 @@ export function CustomerReportJobList() {
                         exportToExcel(excelData, "customerJobsReport", true)
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
