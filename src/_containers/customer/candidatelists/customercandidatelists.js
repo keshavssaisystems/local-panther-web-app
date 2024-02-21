@@ -152,7 +152,7 @@ export const CustomerCandidateLists = (props) => {
       )}`
     );
   };
-  let successMessage = "Candidate status updated successfully!!!";
+  let successMessage = "Candidate status updated successfully!";
   const onActionClick = async (evt, type) => {
     if (type === "like") {
       let res = await dispatch(
