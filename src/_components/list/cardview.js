@@ -87,7 +87,7 @@ export const CandidateCardView = (props) => {
     if (res.payload.statusCode === 201) {
       setShowSchdIntSModal(false);
       props.showSweetAlert({
-        title: "Interview scheduled successfully!!!",
+        title: "Interview scheduled successfully!",
         type: "success",
       });
 

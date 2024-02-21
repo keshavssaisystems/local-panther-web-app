@@ -711,7 +711,7 @@ export function CustJobDetail({
       {publishSuccess === true && (
         <SweetAlert
           success
-          title="Job published successfully!!!"
+          title="Job published successfully!"
           onConfirm={(e) => setPublishSuccess(false)}
         ></SweetAlert>
       )}
