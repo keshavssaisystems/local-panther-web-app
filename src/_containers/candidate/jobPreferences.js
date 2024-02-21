@@ -399,6 +399,9 @@ export function JobPreferences(props) {
       new_data[0].anywhereonlynear = 0;
     } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
+      let new_array = [...selectedLocation];
+      new_array = [];
+      setSelectedLocation(new_array);
     } else if (check === "near") {
       new_data[0].anywhereonlynear = 2;
     } else if (check === "location") {
