@@ -105,17 +105,30 @@ export function CandidateSchedules() {
           end: new Date(endDate),
           color:
             upcomingInterview?.isreschedulerequested === true
-              ? "#2f479b"
+              ? "rgb(215 174 255 / 50%)"
               : upcomingInterview?.interviewstatusid !== 0
               ? upcomingInterview?.interviewstatusid === 1
-                ? "#30b1ff"
-                : "#6c757d"
+                ? "rgb(143 208 255 / 50%)"
+                : "rgb(202 202 202 / 50%)"
               : upcomingInterview.isaccepted === true &&
                 upcomingInterview.isrejected === false
-              ? "green"
+              ? "rgb(137 222 178 / 50%)"
               : upcomingInterview.isrejected === true
-              ? "red"
-              : "#f7b924",
+              ? "rgb(255 143 143 / 50%)"
+              : "rgb(250 219 145 / 50%)",
+          textcolor:
+            upcomingInterview?.isreschedulerequested === true
+              ? "#2D0059"
+              : upcomingInterview?.interviewstatusid !== 0
+              ? upcomingInterview?.interviewstatusid === 1
+                ? "#004271"
+                : "#2D2D2D"
+              : upcomingInterview.isaccepted === true &&
+                upcomingInterview.isrejected === false
+              ? "#005027"
+              : upcomingInterview.isrejected === true
+              ? "#520000"
+              : "#5C4100",
         };
         upData.push(interviewData);
       }
@@ -244,36 +257,36 @@ export function CandidateSchedules() {
               <CardBody className="scheduled-calender">
                 <div className="text-end">
                   <span className="legend">
-                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
+                    <div className="mb-3 me-0 badge badge-color-yellow">..</div>{" "}
                     No response
                   </span>
                   <span className="legend">
                     <div className="ms-3 mb-3 me-1 badge badge-color-green">
-                      P
+                      ..
                     </div>
                     Accepted interview{" "}
                   </span>
                   {/* <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-red">
-                      P
+                      ..
                     </div>{" "}
                     Rejected interview
                   </span> */}
                   <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
-                      P
+                      ..
                     </div>{" "}
                     Interview completed
                   </span>
                   <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-grey">
-                      P
+                      ..
                     </div>{" "}
                     Not joined
                   </span>
                   <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
-                      P
+                      ..
                     </div>{" "}
                     Requested for reschedule
                   </span>
@@ -290,8 +303,15 @@ export function CandidateSchedules() {
                     const backgroundColor = upData.color
                       ? upData.color
                       : "blue";
+                    const color = upData.textcolor;
                     const fontSize = "0.8rem";
-                    return { style: { backgroundColor, fontSize } };
+                    return {
+                      style: {
+                        backgroundColor,
+                        fontSize,
+                        color,
+                      },
+                    };
                   }}
                   onSelectEvent={(evt) => handleSelectEvent(evt)}
                   onRangeChange={handleNavigate}
