@@ -1,6 +1,8 @@
 import React from "react";
-import { Card, CardBody } from "reactstrap";
+import { Card, CardBody, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
+import { NoDataFound } from "_components/common/nodatafound";
+import "./dashboard.scss";
 
 export function StackBarChart({ graphData }) {
   const stackValues = [
@@ -124,16 +126,30 @@ export function StackBarChart({ graphData }) {
   };
   return (
     <>
-      <Card className="mb-3">
-        <CardBody className="pt-4">
-          <Chart
-            options={baroptions}
-            series={baroptions.series}
-            type={baroptions.chart.type}
-            height={baroptions.chart.height}
-            width={baroptions.chart.width}
-          />
-        </CardBody>
+      <Card className="mb-3 stackchart">
+        {graphData?.length > 0 && (
+          <CardBody className="pt-4">
+            <Chart
+              options={baroptions}
+              series={baroptions.series}
+              type={baroptions.chart.type}
+              height={baroptions.chart.height}
+              width={baroptions.chart.width}
+            />
+          </CardBody>
+        )}
+        {graphData?.length === 0 && (
+          <>
+            <Row
+              style={{ textAlign: "center" }}
+              className="center-middle-align"
+            >
+              <Col>
+                <NoDataFound></NoDataFound>
+              </Col>
+            </Row>
+          </>
+        )}
       </Card>
     </>
   );

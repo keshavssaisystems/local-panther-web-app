@@ -629,7 +629,7 @@ export default function CreateJob({
   const [isLabelVisible, setLabelVisibility] = useState(true);
   const [keyQualificationArr1, setKeyQual1] = useState([]);
   const [keyQualificationArr2, setKeyQual2] = useState([]);
-  const [stateOnchange, setStateOnChange] = useState(false);
+  const [keyQualicationChange, setKeyQualifucationChange] = useState(false);
   const flaggedWordList = useSelector(
     (state) => state.dropdown.flaggedWordsList
   );
@@ -2262,12 +2262,19 @@ export default function CreateJob({
                           isMulti={true}
                           styles={customStyles}
                           value={
-                            previousStep === 3
+                            type === "new_template" &&
+                            previousStep !== 3 &&
+                            keyQualicationChange === false
+                              ? []
+                              : previousStep === 3
                               ? keyQualificationArr1
                               : prevKeyQualificationArr1
                           }
                           onKeyDown={(e) => handleKeyDown(e)}
-                          onChange={(evt) => onSelectSkillsDropdown(evt)}
+                          onChange={(evt) => {
+                            onSelectSkillsDropdown(evt);
+                            setKeyQualifucationChange(true);
+                          }}
                           formatCreateLabel={formatCreateLabel}
                           onCreateOption={addNewSkill}
                         />
@@ -2287,7 +2294,11 @@ export default function CreateJob({
                           isMulti={true}
                           styles={customStyles}
                           value={
-                            previousStep === 3
+                            type === "new_template" &&
+                            previousStep !== 3 &&
+                            keyQualicationChange === false
+                              ? []
+                              : previousStep === 3
                               ? keyQualificationArr2
                               : prevKeyQualificationArr2
                           }

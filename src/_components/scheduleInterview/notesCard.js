@@ -36,7 +36,7 @@ export function NotesCard({ interviewNotes, interviewId, postNotesData }) {
                 {showSuccessMessage === true && (
                   <p className="float-end">
                     <FormText color="success">
-                      Notes updated successfully!!!
+                      Notes updated successfully!
                     </FormText>
                   </p>
                 )}
