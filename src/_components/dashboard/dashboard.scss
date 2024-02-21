@@ -285,3 +285,11 @@
         letter-spacing: -0.2px;
     }
 }
+.stackchart{
+    .center-middle-align{
+        min-height: 12vh !important;
+        display: flex;
+        justify-content: center;
+        align-items: normal !important;
+    }
+}

@@ -161,7 +161,7 @@ export const CandidateList = (props) => {
       onCandidateCardActions("applied", rec?.candidaterecommendedjobid);
     }
   };
-  let successMessage = "Job status updated successfully!!!";
+  let successMessage = "Job status updated successfully!";
 
   const onCandidateCardActions = async (
     type,

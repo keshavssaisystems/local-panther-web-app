@@ -122,7 +122,7 @@ export const AddEditCustomer = (props) => {
     dispatch(getCompaniesList());
 
     if (!isAddMode) {
-      console.log("NG This is EDIT mode !!!");
+      console.log("NG This is EDIT mode");
       // set default to state, city, companyname
       const formFields = [
         "firstname",

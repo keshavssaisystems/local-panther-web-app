@@ -37,7 +37,7 @@ export function InviteToInterviewCard({ interviewId, postInviteData }) {
                 {showSuccessMessage === true && (
                   <p className="float-end">
                     <FormText color="success">
-                      Interviewer list updated successfully!!!
+                      Interviewer list updated successfully!
                     </FormText>
                   </p>
                 )}

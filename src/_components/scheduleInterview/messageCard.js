@@ -36,7 +36,7 @@ export function MessageCard({ interviewId, postMessageData }) {
                 {showSuccessMessage === true && (
                   <p className="float-end">
                     <FormText color="success">
-                      Interviewer list updated successfully!!!
+                      Interviewer list updated successfully!
                     </FormText>
                   </p>
                 )}

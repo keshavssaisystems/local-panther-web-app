@@ -1273,6 +1273,91 @@ export const CandListView = (props) => {
             width: "6%",
           },
         ]
+      : props.type === "maybe"
+      ? [
+          {
+            name: <span className="table-title">Title</span>,
+            id: "Title",
+            cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
+            selector: (row) => row.jobtitle,
+            sortable: true,
+            width: "40%",
+          },
+          {
+            name: <span className="table-title">Employer</span>,
+            cell: (row) => (
+              <span title={row.companyname}>{row.companyname}</span>
+            ),
+            selector: (row) => row.companyname,
+            sortable: true,
+            width: "14%",
+          },
+          {
+            name: <span className="table-title">Location</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row.cityname && row.statename
+                    ? row.cityname + ", " + row.statename
+                    : ""
+                }
+              >
+                {row.cityname && row.statename
+                  ? row.cityname + ", " + row.statename
+                  : ""}
+              </span>
+            ),
+            selector: (row) =>
+              row.cityname && row.statename
+                ? row.cityname + ", " + row.statename
+                : "",
+            sortable: true,
+            width: "15%",
+          },
+
+          {
+            name: <span className="table-title">Experience</span>,
+            cell: (row) => (
+              <span
+                title={
+                  row?.jobExperienceScheduleDtos &&
+                  row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                    : "-"
+                }
+              >
+                {row?.jobExperienceScheduleDtos &&
+                row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                  : "-"}
+              </span>
+            ),
+            selector: (row) =>
+              row?.jobExperienceScheduleDtos &&
+              row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                ? row?.jobExperienceScheduleDtos[0]?.experiencelevel
+                : "-",
+            sortable: true,
+            width: "8%",
+          },
+          {
+            name: <span className="table-title">Interest</span>,
+            cell: (row) => (
+              <div className="list-btn-group">{renderButtons(row)}</div>
+            ),
+            ignoreRowClick: true,
+            button: true,
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Action</span>,
+            cell: (row) => <>{renderMenu(row)}</>,
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+            width: "8%",
+          },
+        ]
       : [
           {
             name: <span className="table-title">Title</span>,

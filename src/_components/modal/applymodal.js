@@ -11,10 +11,9 @@ export const ApplyModal = (props) => {
             <img src={successIcon} alt="success-icon" />
           </div>
           <div className="mb-0 d-flex justify-content-center success-modal-text">
-            You have successfully applied...!!!
+            You have successfully applied...!
           </div>
           <div>
-            
             <Row>
               <Col className="d-flex justify-content-center interview-btn">
                 <Button
@@ -24,7 +23,6 @@ export const ApplyModal = (props) => {
                 >
                   Ok
                 </Button>
-               
               </Col>
             </Row>
           </div>
