@@ -212,6 +212,7 @@ export const CandListView = (props) => {
                       </>
                     )}
                   {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
+                    row?.scheduledInterviewDtos[0]?.isrejected === false &&
                     row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
                       <Button
                         size="sm"
@@ -1281,7 +1282,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "40%",
+            width: "35%",
           },
           {
             name: <span className="table-title">Employer</span>,
@@ -1290,7 +1291,7 @@ export const CandListView = (props) => {
             ),
             selector: (row) => row.companyname,
             sortable: true,
-            width: "14%",
+            width: "10%",
           },
           {
             name: <span className="table-title">Location</span>,
