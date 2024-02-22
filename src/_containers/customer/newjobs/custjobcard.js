@@ -8,7 +8,6 @@ import {
   IoIosHelp,
 } from "react-icons/io";
 import { BsBriefcase, BsListStars, BsFillFlagFill } from "react-icons/bs";
-import moment from "moment/moment";
 import customerIcons from "../../../assets/utils/images/customer";
 import { getTimezoneDateTimeForNow } from "_helpers/helper";
 import "../../../_components/job/job.scss";
@@ -26,7 +25,6 @@ export function CustJobCard({
   customer,
   additionalData,
 }) {
-  console.log(additionalData);
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -141,17 +139,12 @@ export function CustJobCard({
                 <Col md={12} lg={9}>
                   <div className="muted-name mt-2">
                     {additionalData.isdraft ? (
-                      <>
-                        {" "}
-                        Drafted {getTimezoneDateTimeForNow(
-                          moment(createdDate)
-                        )}{" "}
-                      </>
+                      <> Drafted {getTimezoneDateTimeForNow(createdDate)} </>
                     ) : (
                       <>
                         Posted{" "}
                         {getTimezoneDateTimeForNow(
-                          moment(additionalData?.publisheddate)
+                          additionalData?.publisheddate
                         )}
                       </>
                     )}

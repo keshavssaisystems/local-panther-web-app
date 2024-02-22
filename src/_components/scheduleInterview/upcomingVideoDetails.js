@@ -453,7 +453,7 @@ export function UpcomingVideoDetails({
           )}
         </div>
         <div className="p-3 pb-0">
-          <h6 className="fw-bold">Application questions</h6>
+          <h6 className="fw-bold">Pre-screen Questions</h6>
           {preQuestions.length > 0 &&
             preQuestions?.map((preQue) => (
               <>
@@ -463,12 +463,12 @@ export function UpcomingVideoDetails({
             ))}
           {preQuestions.length === 0 && (
             <p className="mb-0 ">
-              <i> - No application question added</i>
+              <i> - No pre-screen question added</i>
             </p>
           )}
         </div>
         <div className="p-3 ">
-          <h6 className="fw-bold">Pre-screen</h6>
+          <h6 className="fw-bold">Pre-screen Custom Questions</h6>
           {customQuestion.length > 0 &&
             customQuestion?.map((preQue) => (
               <>
@@ -484,7 +484,7 @@ export function UpcomingVideoDetails({
         </div>
         {interviewDetails?.suggestedquestion !== "" && (
           <div className="p-3 suggested-question">
-            <h6 className="fw-bold">Suggested questions</h6>
+            <h6 className="fw-bold">Suggested Questions</h6>
             {suggestedQuestionArray?.length > 0 &&
               suggestedQuestionArray?.map((suggestedQuestion) => (
                 <>

@@ -104,123 +104,19 @@ export function PersonalInformation(props) {
     phoneError: false,
     cityError: false,
     stateError: false,
+    countryError: false,
   });
 
   const [save, setSave] = useState(false);
-  const [citySelect, setCitySelect] = useState("");
-  const [stateSelect, setStateSelect] = useState("");
+  const [citySelect, setCitySelect] = useState([]);
+  const [stateSelect, setStateSelect] = useState([]);
   const [countrySelect, setCountrySelect] = useState([]);
-  const [raceSelect, setRaceSelect] = useState("");
-  const [pronounSelect, setPronounSelect] = useState("");
+  const [raceSelect, setRaceSelect] = useState([]);
+  const [pronounSelect, setPronounSelect] = useState([]);
   const [availabilitySelect, setAvailabilitySelect] = useState([]);
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
-    let data = {
-      jobprofile: selectedCandidate.personalInfo.jobprofile,
-      firstname: selectedCandidate.personalInfo.firstname,
-      lastname: selectedCandidate.personalInfo.lastname,
-      email: selectedCandidate.personalInfo.email,
-      phonenumber: selectedCandidate.personalInfo.phonenumber,
-      zipcode: selectedCandidate.personalInfo.zipcode,
-      employmenteligiblity: selectedCandidate.personalInfo.employmenteligiblity,
-      dob: selectedCandidate.personalInfo.dob
-        ? extractDatePart(selectedCandidate.personalInfo.dob)
-        : null,
-      isreadytoworkimmediately:
-        selectedCandidate.personalInfo.isreadytoworkimmediately,
-      address: selectedCandidate.personalInfo.address,
-      isexcludemycurrentemployer:
-        selectedCandidate.personalInfo.isexcludemycurrentemployer,
-      city: [
-        {
-          value: selectedCandidate.personalInfo.cityid,
-          label: selectedCandidate.personalInfo.cityname,
-        },
-      ],
-      state: [
-        {
-          value: selectedCandidate.personalInfo.stateid,
-          label: selectedCandidate.personalInfo.statename,
-        },
-      ],
-      country: [
-        {
-          value: selectedCandidate.personalInfo.countryid,
-          label: selectedCandidate.personalInfo.countryname,
-        },
-      ],
-
-      gender: [
-        {
-          value: selectedCandidate.personalInfo.genderid,
-          label: selectedCandidate.personalInfo.gender,
-        },
-      ],
-      ethinicity: [
-        {
-          value: selectedCandidate.personalInfo.ethnicityid,
-          label: selectedCandidate.personalInfo.ethnicity,
-        },
-      ],
-      pronoun: [
-        {
-          value: selectedCandidate.personalInfo.pronounid,
-          label: selectedCandidate.personalInfo.pronounname,
-        },
-      ],
-      availabilitytowork: selectedCandidate.personalInfo.availabilitytowork,
-      isactive: true,
-      userid: 0,
-      currentUserId: 0,
-    };
-    setGetResponse(data);
-
-    if (selectedCandidate.selectedDropDown?.selectedCountry[0]?.value != 0) {
-      let countryData = [...countrySelect];
-      countryData.push(selectedCandidate.selectedDropDown?.selectedCountry[0]);
-
-      setCountrySelect(countryData);
-    }
-
-    if (selectedCandidate.selectedDropDown?.selectedState[0]?.value != 0) {
-      let stateData = [...stateSelect];
-      stateData.push(selectedCandidate.selectedDropDown?.selectedState[0]);
-      setStateSelect(stateData);
-    }
-
-    if (selectedCandidate.selectedDropDown?.selectedCity[0]?.value != 0) {
-      let cityData = [...citySelect];
-      cityData.push(selectedCandidate.selectedDropDown?.selectedCity[0]);
-      setCitySelect(cityData);
-    }
-    if (selectedCandidate.selectedDropDown?.selectedGender[0]?.value != 0) {
-      let genderData = [...genderSelect];
-      genderData.push(selectedCandidate.selectedDropDown?.selectedGender[0]);
-      setGenderSelect(genderData);
-    }
-
-    if (selectedCandidate.selectedDropDown?.selectedEthnicity[0].value != 0) {
-      let ethnicityData = [...raceSelect];
-      ethnicityData.push(
-        selectedCandidate.selectedDropDown?.selectedEthnicity[0]
-      );
-      setRaceSelect(ethnicityData);
-    }
-
-    if (selectedCandidate.selectedDropDown?.selectedPronoun[0].value != 0) {
-      let pronounData = [...pronounSelect];
-      pronounData.push(selectedCandidate.selectedDropDown?.selectedPronoun[0]);
-      setPronounSelect(pronounData);
-    }
-    if (availabilityList) {
-      if (selectedCandidate?.personalInfo?.availabilitytowork !== "") {
-        let availability = availabilityList?.filter(
-          (x) => x.label === selectedCandidate.personalInfo?.availabilitytowork
-        );
-
-        setAvailabilitySelect(availability);
-      }
-    }
+    loadDetails();
   }, [selectedCandidate, availabilityList]);
 
   useEffect(() => {
@@ -228,6 +124,117 @@ export function PersonalInformation(props) {
       loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
     }
   }, []);
+
+  const loadDetails = () => {
+    let data = {
+      jobprofile: selectedCandidate?.personalInfo?.jobprofile,
+      firstname: selectedCandidate?.personalInfo?.firstname,
+      lastname: selectedCandidate?.personalInfo?.lastname,
+      email: selectedCandidate?.personalInfo?.email,
+      phonenumber: selectedCandidate?.personalInfo?.phonenumber,
+      zipcode: selectedCandidate?.personalInfo?.zipcode,
+      employmenteligiblity:
+        selectedCandidate?.personalInfo?.employmenteligiblity,
+      dob: selectedCandidate?.personalInfo?.dob
+        ? extractDatePart(selectedCandidate?.personalInfo?.dob)
+        : null,
+      isreadytoworkimmediately:
+        selectedCandidate?.personalInfo?.isreadytoworkimmediately,
+      address: selectedCandidate?.personalInfo?.address,
+      isexcludemycurrentemployer:
+        selectedCandidate?.personalInfo?.isexcludemycurrentemployer,
+      city: [
+        {
+          value: selectedCandidate?.personalInfo?.cityid,
+          label: selectedCandidate?.personalInfo?.city,
+        },
+      ],
+      state: [
+        {
+          value: selectedCandidate?.personalInfo?.stateid,
+          label: selectedCandidate?.personalInfo?.state,
+        },
+      ],
+      country: [
+        {
+          value: selectedCandidate?.personalInfo?.countryid,
+          label: selectedCandidate?.personalInfo?.country,
+        },
+      ],
+
+      gender: [
+        {
+          value: selectedCandidate?.personalInfo?.genderid,
+          label: selectedCandidate?.personalInfo?.gender,
+        },
+      ],
+      ethinicity: [
+        {
+          value: selectedCandidate?.personalInfo?.ethnicityid,
+          label: selectedCandidate?.personalInfo?.ethnicity,
+        },
+      ],
+      pronoun: [
+        {
+          value: selectedCandidate?.personalInfo?.pronounid,
+          label: selectedCandidate?.personalInfo?.pronounname,
+        },
+      ],
+      availabilitytowork: selectedCandidate?.personalInfo?.availabilitytowork,
+      isactive: true,
+      userid: 0,
+      currentUserId: 0,
+    };
+    setGetResponse(data);
+    let countryData = data?.country;
+
+    setCountrySelect(countryData);
+
+    let stateData = data?.state;
+    setStateSelect(stateData);
+
+    let stateDetails = [
+      {
+        value: data?.city?.[0]?.value,
+        label: `${data?.city?.[0]?.label + ", " + data?.state?.[0]?.label}`,
+      },
+    ];
+
+    setCitySelect(stateDetails);
+
+    if (data?.gender?.[0]?.value === 0) {
+      setGenderSelect([]);
+    } else {
+      let genderData = data?.gender;
+      setGenderSelect(genderData);
+    }
+
+    if (data?.ethinicity?.[0]?.value === 0) {
+      setRaceSelect([]);
+    } else {
+      let ethnicityData = data?.ethinicity;
+      setRaceSelect(ethnicityData);
+    }
+
+    if (data?.pronoun?.[0]?.value === 0) {
+      setPronounSelect([]);
+    } else {
+      let pronounData = data?.pronoun;
+      setPronounSelect(pronounData);
+    }
+
+    if (availabilityList) {
+      if (data?.availabilitytowork !== "") {
+        let availability = availabilityList?.filter(
+          (x) => x.label === data?.availabilitytowork
+        );
+
+        setAvailabilitySelect(availability);
+      } else {
+        setAvailabilitySelect([]);
+      }
+    }
+  };
 
   const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
@@ -282,6 +289,11 @@ export function PersonalInformation(props) {
     setGetResponse(get_data);
   };
   const onSelectCountryDropdown = function (data) {
+    let error_data = { ...requiredErrors };
+
+    error_data.countryError = false;
+    setRequiredErros(error_data);
+
     let new_data = [];
     new_data.push(data);
     setCountrySelect(new_data);
@@ -384,7 +396,10 @@ export function PersonalInformation(props) {
         new_data.phonenumber === "" ||
         new_data.email === "" ||
         new_data.cityid == 0 ||
-        new_data.employmenteligiblity === 0
+        new_data.employmenteligiblity === 0 ||
+        new_data.zipcode === "" ||
+        new_data.gender?.[0]?.value == 0 ||
+        new_data.ethinicity?.[0]?.value == 0
       ) {
         return;
       }
@@ -396,7 +411,13 @@ export function PersonalInformation(props) {
       errors.cityError = false;
     }
 
-    if (errors.cityError) {
+    if (new_data.country[0]?.value == 0) {
+      errors.countryError = true;
+    } else {
+      errors.countryError = false;
+    }
+
+    if (errors.cityError || errors.countryError) {
       setRequiredErros(errors);
       return;
     }
@@ -458,39 +479,19 @@ export function PersonalInformation(props) {
     setDOB(extractDatePart(data));
   };
 
-  const close = function () {
-    let data = {
-      personalInfo: personalInfo_temp,
-      eligibilityList: eligibilityList_temp,
-    };
-    setSelectedCandidate(data);
-    let errors = { ...requiredErrors };
-
-    let obj = {
-      emailError: false,
-      phoneError: false,
-      cityError: false,
-      stateError: false,
-    };
-    errors = obj;
-    setRequiredErros(errors);
-    setContactModal(false);
-    setEditImg(false);
-    setSave(false);
-    // props.onCallBack();
-  };
   const closeModal = function () {
     let data = {
       personalInfo: personalInfo_temp,
       eligibilityList: eligibilityList_temp,
     };
     let errors = { ...requiredErrors };
-
+    loadDetails();
     let obj = {
       emailError: false,
       phoneError: false,
       cityError: false,
       stateError: false,
+      countryError: false,
     };
     errors = obj;
     setRequiredErros(errors);
@@ -887,7 +888,8 @@ export function PersonalInformation(props) {
                       </Row>
                       <p className="current-emp-text">
                         If checked, you won't see job openings at your current
-                        employer
+                        employer. Your current employer will not be matched to
+                        you
                       </p>
                       {/* <Row>
                         <Col className="mb-2">
@@ -954,7 +956,7 @@ export function PersonalInformation(props) {
             size="lg"
             isOpen={isContactModal}
           >
-            <ModalHeader toggle={() => close()} charCode="Y">
+            <ModalHeader toggle={() => closeModal()} charCode="Y">
               <strong className="card-title-text">Contact Information</strong>
             </ModalHeader>
             <ModalBody>
@@ -1164,7 +1166,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="country" className="fw-semi-bold">
-                          Country
+                          Country <span className="required-icon">*</span>
                         </Label>
                         <AsyncSelect
                           name="country"
@@ -1175,7 +1177,17 @@ export function PersonalInformation(props) {
                           value={countrySelect}
                           onChange={(evt) => onSelectCountryDropdown(evt)}
                           onMenuOpen={() => checkCityValid()}
+                          className={`location-dropdown ${
+                            requiredErrors.countryError === ""
+                              ? "is-invalid error-text"
+                              : ""
+                          }`}
                         />
+                        <div className="error-class">
+                          {requiredErrors.countryError
+                            ? "Country is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1202,7 +1214,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Zip code
+                          Zip code <span className="required-icon">*</span>
                         </Label>
                         <input
                           type="text"
@@ -1214,8 +1226,15 @@ export function PersonalInformation(props) {
                             onHandleInputChange("zip", evt.target.value)
                           }
                           placeholder="Enter zip code"
-                          className="field-input placeholder-text form-control input-text"
+                          className={`field-input placeholder-text form-control ${
+                            getResponse.zipcode === "" ? "is-invalid" : ""
+                          }`}
                         />
+                        <div className="invalid-feedback">
+                          {getResponse.zipcode === ""
+                            ? "Zip code is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1253,7 +1272,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Gender
+                          Gender <span className="required-icon">*</span>
                         </Label>
 
                         <AsyncSelect
@@ -1263,7 +1282,17 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={genderSelect}
                           onChange={(evt) => onSelectGenderDropdown(evt)}
+                          className={`placeholder-name ${
+                            save && getResponse?.gender?.[0]?.value == 0
+                              ? "async-border-red"
+                              : ""
+                          }`}
                         />
+                        <div className="error-class">
+                          {save && getResponse?.gender?.[0]?.value == 0
+                            ? "Gender is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1271,7 +1300,7 @@ export function PersonalInformation(props) {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="race" className="fw-semi-bold">
-                          Race/Etnicity
+                          Race/Etnicity <span className="required-icon">*</span>
                         </Label>
                         <AsyncSelect
                           name="race"
@@ -1280,7 +1309,17 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={raceSelect}
                           onChange={(evt) => onSelectRaceDropdown(evt)}
+                          className={`placeholder-name ${
+                            save && getResponse?.ethinicity?.[0]?.value == 0
+                              ? "async-border-red"
+                              : ""
+                          }`}
                         />
+                        <div className="error-class">
+                          {save && getResponse?.ethinicity?.[0]?.value == 0
+                            ? "Race/Ethnicity is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
 
@@ -1494,7 +1533,7 @@ export function PersonalInformation(props) {
       </Modal>
 
       <Modal className="modal-reject-align profile-view" isOpen={editImg}>
-        <ModalHeader toggle={() => close()} charCode="Y">
+        <ModalHeader toggle={() => closeModal()} charCode="Y">
           <strong className="card-title-text"> Profile Image Update</strong>
         </ModalHeader>
         <Card>
