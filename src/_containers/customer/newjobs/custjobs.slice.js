@@ -72,6 +72,7 @@ const custJobListSlice = createSlice({
           let publish = {
             isdraft: false,
             isclosed: false,
+            publisheddate: action?.payload?.publisheddate,
           };
           elementObject = {
             ...elementObject,
