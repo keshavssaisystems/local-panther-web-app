@@ -11,6 +11,7 @@ import { CustJobDetail } from "./custjobdetails";
 import Loader from "react-loaders";
 import { CustJobFilter } from "./custjofilter";
 import { NoDataFound } from "_components/common/nodatafound";
+import moment from "moment/moment";
 
 export const CustJobList = () => {
   const [page, setPage] = useState(1);
@@ -90,6 +91,7 @@ export const CustJobList = () => {
         jobList: jobList,
         jobDetail: jobDetail,
         jobId: jobId,
+        publisheddate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
       })
     );
     getSelectedJob(jobId);

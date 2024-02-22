@@ -25,6 +25,11 @@ export const DeactivateReasonModal = (props) => {
           ? "InterviewRescheduleReason"
           : props.title === "deactivating account"
           ? "deactivateaccountreason"
+          : props.title === "withdrawing your application" ||
+            props.title === "reject" ||
+            props.title === "interview reject" ||
+            props.title === "rejection"
+          ? "candidatewithdrawreason"
           : "rejectionreason"
       )
     );
