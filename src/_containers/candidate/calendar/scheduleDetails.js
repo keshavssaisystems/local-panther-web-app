@@ -297,6 +297,7 @@ export function ScheduleDetails({
                                 </>
                               )}
                             {interviewDetail?.isaccepted === false &&
+                              interviewDetail?.isrejected === false &&
                               interviewDetail?.interviewstatusid === 0 && (
                                 <Button
                                   size="sm"

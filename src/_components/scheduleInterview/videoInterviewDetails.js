@@ -468,7 +468,7 @@ export function VideoInterviewDetails({
         )}
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Application questions</h6>
+        <h6 className="fw-bold">Pre-screen Questions</h6>
         {preQuestions.length > 0 &&
           preQuestions?.map((preQue) => (
             <>
@@ -478,12 +478,12 @@ export function VideoInterviewDetails({
           ))}
         {preQuestions.length === 0 && (
           <p className="mb-0 ">
-            <i> - No application question added</i>
+            <i> - No pre-screen question added</i>
           </p>
         )}
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Pre-screen</h6>
+        <h6 className="fw-bold">Pre-screen Custom Questions</h6>
         {customQuestion.length > 0 &&
           customQuestion?.map((preQue) => (
             <>
