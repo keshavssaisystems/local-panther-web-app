@@ -1282,7 +1282,7 @@ export const CandListView = (props) => {
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row.jobtitle,
             sortable: true,
-            width: "35%",
+            width: "40%",
           },
           {
             name: <span className="table-title">Employer</span>,
@@ -1291,7 +1291,7 @@ export const CandListView = (props) => {
             ),
             selector: (row) => row.companyname,
             sortable: true,
-            width: "10%",
+            width: "14%",
           },
           {
             name: <span className="table-title">Location</span>,
