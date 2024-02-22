@@ -25,7 +25,6 @@ export function CustJobCard({
   customer,
   additionalData,
 }) {
-  // console.log(additionalData);
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
