@@ -186,7 +186,6 @@ export function PersonalInformation(props) {
       currentUserId: 0,
     };
     setGetResponse(data);
-    debugger;
     let countryData = data?.country;
 
     setCountrySelect(countryData);

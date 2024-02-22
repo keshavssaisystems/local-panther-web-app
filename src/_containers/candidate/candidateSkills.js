@@ -29,7 +29,7 @@ import "./profile.scss";
 import { profileSkillsActions } from "_store";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import { NoDataFound } from "_components/common/nodatafound";
+import { NoProfileData } from "_components/common/noProfileData";
 import AsyncCreatableSelect from "react-select/async-creatable";
 
 export function CandidateSkills(props) {
@@ -397,7 +397,7 @@ export function CandidateSkills(props) {
                   <Row style={{ textAlign: "center" }}>
                     <Col>
                       {" "}
-                      <NoDataFound imageSize={"25px"} />
+                      <NoProfileData imageSize={"25px"} />
                     </Col>
                   </Row>
                 )}

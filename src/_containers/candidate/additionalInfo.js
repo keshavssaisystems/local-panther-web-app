@@ -18,7 +18,7 @@ import Loader from "react-loaders";
 import "./profile.scss";
 import { AdditionalInfoModal } from "./additionalInfoModal";
 import { useSelector } from "react-redux";
-import { NoDataFound } from "_components/common/nodatafound";
+import { NoProfileData } from "_components/common/noProfileData";
 
 export function AdditionalInformation(props) {
   const dispatch = useDispatch();
@@ -115,7 +115,9 @@ export function AdditionalInformation(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             Additional information
-            {getResponse?.[0]?.summary === "" ? (
+            {getResponse?.[0]?.summary === "" &&
+            getResponse?.[0]?.additionalInfo === "" &&
+            getResponse?.[0]?.language?.length === 0 ? (
               <div className="float-end me-2 ms-auto">
                 <Label className="link-text" onClick={(evt) => edit("add")}>
                   Add
@@ -128,83 +130,69 @@ export function AdditionalInformation(props) {
           <CardBody className="scroll-area-lg">
             {!loader ? (
               <div>
-                {getResponse?.length > 0 ? (
+                {getResponse?.[0]?.summary !== "" ||
+                getResponse?.[0]?.additionalInfo !== "" ||
+                getResponse?.[0]?.language?.length > 0 ? (
                   <div>
                     {getResponse.map((item) => (
                       <div>
-                        {item.summary !== "" ? (
-                          <div>
-                            <div>
-                              <strong className="content-title">Summary</strong>
+                        {(item.additionalInfo ||
+                          item.summary ||
+                          item.language?.length > 0) && (
+                          <div className="float-end">
+                            <BsPencil
+                              className="icons"
+                              onClick={(evt) => edit("edit", item)}
+                            />{" "}
+                            <BsTrash3
+                              className="icons"
+                              onClick={() =>
+                                deleteModal(item.candidateadditioninformationid)
+                              }
+                            />
+                          </div>
+                        )}
 
-                              <div className="float-end">
-                                <BsPencil
-                                  className="icons"
-                                  onClick={(evt) => edit("edit", item)}
-                                />{" "}
-                                <BsTrash3
-                                  className="icons"
-                                  onClick={() =>
-                                    deleteModal(
-                                      item.candidateadditioninformationid
-                                    )
-                                  }
-                                />
-                              </div>
-                            </div>
-                            <div className="mt-1 card-p-text-black mb-3">
+                        {item.summary !== "" && (
+                          <div>
+                            <strong className="content-title">Summary</strong>
+                            <div className="mt-2 card-p-text-black mb-3">
                               {item.summary}
                             </div>
-                            <div>
-                              {item.additionalInfo ? (
-                                <div className="mb-3">
-                                  <Row>
-                                    <Col>
-                                      <strong className="content-title mb-1">
-                                        Additional Information
-                                      </strong>
-                                    </Col>
-                                  </Row>
-                                  <div className="mt-1 card-p-text-black">
-                                    {item.additionalInfo}
-                                  </div>
-                                </div>
-                              ) : (
-                                ""
-                              )}
-                            </div>
+                          </div>
+                        )}
 
-                            {item.language?.length > 0 ? (
-                              <div>
-                                <Row className="mb-2">
-                                  <Col>
-                                    <strong className="content-title">
-                                      Languages
-                                    </strong>
-                                  </Col>
-                                </Row>
-                                {item.language?.map((column, ind) => (
-                                  <div>
-                                    <div className="card-p-text-black mb-1">
-                                      {column.language}{" "}
-                                      {column.proficiency
-                                        ? "- " + column.proficiency
-                                        : ""}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <></>
-                            )}
+                        {item.additionalInfo ? (
+                          <div className="mb-3">
+                            <strong className="content-title">
+                              Additional Information
+                            </strong>
+
+                            <div className="mt-2 card-p-text-black">
+                              {item.additionalInfo}
+                            </div>
                           </div>
                         ) : (
-                          <Row style={{ textAlign: "center" }}>
-                            <Col>
-                              {" "}
-                              <NoDataFound imageSize={"25px"} />
-                            </Col>
-                          </Row>
+                          ""
+                        )}
+
+                        {item.language?.length > 0 ? (
+                          <div>
+                            <strong className="content-title">Languages</strong>
+
+                            {item.language?.map((column, ind) => (
+                              <div className="mt-2">
+                                <div className="card-p-text-black mb-1">
+                                  {column.language}{" "}
+                                  {column.proficiency
+                                    ? "- " + column.proficiency
+                                    : ""}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <></>
                         )}
                       </div>
                     ))}
@@ -213,7 +201,7 @@ export function AdditionalInformation(props) {
                   <Row style={{ textAlign: "center" }}>
                     <Col>
                       {" "}
-                      <NoDataFound imageSize={"25px"} />
+                      <NoProfileData imageSize={"25px"} />
                     </Col>
                   </Row>
                 )}
