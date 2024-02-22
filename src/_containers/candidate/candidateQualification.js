@@ -20,7 +20,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { QualificationModal } from "./qualificationModal";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "react-loaders";
-import { NoDataFound } from "_components/common/nodatafound";
+import { NoProfileData } from "_components/common/noProfileData";
 
 export function CandidateQualification(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
@@ -186,7 +186,7 @@ export function CandidateQualification(props) {
                       <Row style={{ textAlign: "center" }}>
                         <Col>
                           {" "}
-                          <NoDataFound imageSize={"25px"} />
+                          <NoProfileData imageSize={"25px"} />
                         </Col>
                       </Row>
                     )}

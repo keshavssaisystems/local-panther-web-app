@@ -31,8 +31,7 @@ export function AdditionalInfoModal(props) {
 
   const loadData = function () {
     let data;
-
-    if (!props.selected || props.selected?.summary === "") {
+    if (!props.selected) {
       data = {
         candidateadditioninformationid: 0,
         candidateid: userDetails.InternalUserId,
@@ -429,6 +428,11 @@ export function AdditionalInfoModal(props) {
                 className="me-2 save-btn"
                 type="button"
                 onClick={(e) => onSubmit(e)}
+                disabled={
+                  formDetails.summary === "" &&
+                  formDetails.additionalinformation === "" &&
+                  languageMultiple.length === 0
+                }
               >
                 Save
               </Button>
