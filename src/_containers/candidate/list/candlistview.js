@@ -212,6 +212,7 @@ export const CandListView = (props) => {
                       </>
                     )}
                   {row?.scheduledInterviewDtos[0]?.isaccepted === false &&
+                    row?.scheduledInterviewDtos[0]?.isrejected === false &&
                     row?.scheduledInterviewDtos[0]?.interviewstatusid === 0 && (
                       <Button
                         size="sm"
