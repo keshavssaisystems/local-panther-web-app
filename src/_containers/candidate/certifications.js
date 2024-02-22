@@ -25,7 +25,8 @@ import "./profile.scss";
 import Loader from "react-loaders";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { NoDataFound } from "_components/common/nodatafound";
+
+import { NoProfileData } from "_components/common/noProfileData";
 
 export function CertificationDetails(props) {
   const dispatch = useDispatch();
@@ -185,7 +186,7 @@ export function CertificationDetails(props) {
                           <Row style={{ textAlign: "center" }}>
                             <Col>
                               {" "}
-                              <NoDataFound imageSize={"25px"} />
+                              <NoProfileData imageSize={"25px"} />
                             </Col>
                           </Row>
                         )}
@@ -194,7 +195,7 @@ export function CertificationDetails(props) {
                       <Row style={{ textAlign: "center" }}>
                         <Col>
                           {" "}
-                          <NoDataFound imageSize={"25px"} />
+                          <NoProfileData imageSize={"25px"} />
                         </Col>
                       </Row>
                     )}
