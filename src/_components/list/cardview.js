@@ -11,7 +11,6 @@ import {
 } from "reactstrap";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { RejectModal } from "_components/modal/rejectmodal";
-import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
 import { FiMapPin } from "react-icons/fi";
 import {
   BsBriefcase,
