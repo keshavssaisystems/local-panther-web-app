@@ -33,7 +33,7 @@ import {
 
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { authActions, dropdownActions } from "_store";
+import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
@@ -55,7 +55,6 @@ export function Registration() {
     adaptiveHeight: true,
   };
   const dispatch = useDispatch();
-  const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const [registrationType, setRegistrationType] = useState([
     {
       id: 1,
@@ -137,9 +136,8 @@ export function Registration() {
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState, setValue, getValues } =
     useForm(formOptions);
-  const { errors, isSubmitting } = formState;
+  const { errors } = formState;
   const [cityList, setCityList] = useState([]);
-  const [postData, setPostData] = useState({});
 
   async function onSubmit(payload) {
     if (!validated.mobile || !validated.email) {
@@ -149,11 +147,12 @@ export function Registration() {
       });
       return;
     }
-
-    let response = await dispatch(authActions.registerThunk(payload));
+    let newPayload;
+    newPayload = payload;
+    newPayload.phoneNumber = payload?.phoneNumber?.replace(/\D/g, "");
+    let response = await dispatch(authActions.registerThunk(newPayload));
     if (!response.payload) {
       setMessage(response.error.message);
-
       showSweetAlert({
         title: response.error.message,
         type: "error",
@@ -176,12 +175,6 @@ export function Registration() {
     let formDetails = getValues();
     let data = { ...field };
     data = "";
-    // if (
-    //   formDetails.jobprofile === "" ||
-    //   !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
-    // ) {
-    //   data = "job profile";
-    // }
     if (
       formDetails.firstName === "" ||
       !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
@@ -613,30 +606,6 @@ export function Registration() {
               <div className="mt-5">
                 {selected === 1 && (
                   <Form onSubmit={handleSubmit(onSubmit)}>
-                    {/* <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="jobprofile" className="input-label">
-                            Job Profile <span className="text-danger">*</span>
-                          </Label>
-                          <input
-                            type="text"
-                            name="jobprofile"
-                            id="jobprofile"
-                            placeholder="Enter Job Profile"
-                            {...register("jobprofile")}
-                            className={`form-control placeholder-name ${
-                              errors.jobprofile ? "is-invalid" : ""
-                            }`}
-                            maxLength={200}
-                          />
-                          <FormFeedback>
-                            {errors.jobprofile?.message}
-                          </FormFeedback>
-                        </FormGroup>
-                      </Col>
-                    </Row> */}
-
                     <Row>
                       <Col md={6}>
                         <FormGroup>
