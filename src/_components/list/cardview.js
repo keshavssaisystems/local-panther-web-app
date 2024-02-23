@@ -31,6 +31,7 @@ import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { ScorePopup } from "./scorePopup";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -425,10 +426,18 @@ export const CandidateCardView = (props) => {
       </>
       <>
         {showRejSModal ? (
-          <RejectSuccessModal
-            isRejectConfOpen={showRejSModal}
-            onOkClickRejSuccess={() => onCloseRejSModal()}
-          />
+          // <RejectSuccessModal
+          //   isRejectConfOpen={showRejSModal}
+          //   onOkClickRejSuccess={() => onCloseRejSModal()}
+          // />
+          <>
+            <SweetAlert
+              title={"Candidate status updated successfully!"}
+              show={showRejSModal}
+              type={"success"}
+              onConfirm={() => onCloseRejSModal()}
+            />
+          </>
         ) : (
           <></>
         )}
