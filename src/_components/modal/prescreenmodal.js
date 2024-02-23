@@ -64,10 +64,10 @@ export const PrescreenModal = (props) => {
               type="file"
               name="file"
               id="exampleFile"
-              // value={data.answer}
               onChange={(e) => onInputUpdate(e, index)}
               invalid={data.error}
               accept="audio/x-m4a,audio/*"
+              className="mb-2"
             />{" "}
             {data.error ? (
               <FormText color="danger">Please upload audio file</FormText>
@@ -85,10 +85,10 @@ export const PrescreenModal = (props) => {
                   type="file"
                   name="file"
                   id="exampleFile"
-                  // value={data.answer}
                   onChange={(e) => onInputUpdate(e, index)}
                   invalid={data.error}
                   accept="video/mp4,video/x-m4v,video/*"
+                  className="mb-2"
                 />{" "}
                 {data.error ? (
                   <FormText color="danger">Please upload video file</FormText>
@@ -222,6 +222,7 @@ export const PrescreenModal = (props) => {
                                     title={"Download prescreen audio"}
                                     height={20}
                                     width={20}
+                                    alt="Download prescreen audio"
                                     src={customerIcons.audio_icon}
                                     onClick={() => window.open(data.answer)}
                                   />
@@ -235,6 +236,7 @@ export const PrescreenModal = (props) => {
                                     title={"Download prescreen video"}
                                     height={20}
                                     width={20}
+                                    alt="Download prescreen video"
                                     src={customerIcons.video_icon}
                                     onClick={() => window.open(data.answer)}
                                   />

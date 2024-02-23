@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,7 +17,7 @@ import { ScheduleInterviewModal } from "_components/scheduleInterview/scheduleIn
 import { InterviewDetailsModal } from "_components/scheduleInterview/interviewDetailsModal";
 import { RejectModal } from "_components/modal/rejectmodal";
 import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
-import { BsFillInfoCircleFill, BsFileEarmarkPdf } from "react-icons/bs";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
 import customerIcons from "assets/utils/images/customer";
@@ -1605,7 +1605,7 @@ export const CustCandidateListView = (props) => {
       )
       .then((result) => {
         setOfferUploadLoading(false);
-        if (result.data.statusCode == 200) {
+        if (result.data.statusCode === 200) {
           setShowUploadOfferModal(false);
           props.showSweetAlert({
             title: result.data.message,
