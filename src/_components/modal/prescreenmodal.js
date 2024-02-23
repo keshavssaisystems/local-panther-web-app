@@ -222,6 +222,7 @@ export const PrescreenModal = (props) => {
                                     title={"Download prescreen audio"}
                                     height={20}
                                     width={20}
+                                    alt="Download prescreen audio"
                                     src={customerIcons.audio_icon}
                                     onClick={() => window.open(data.answer)}
                                   />
@@ -235,6 +236,7 @@ export const PrescreenModal = (props) => {
                                     title={"Download prescreen video"}
                                     height={20}
                                     width={20}
+                                    alt="Download prescreen video"
                                     src={customerIcons.video_icon}
                                     onClick={() => window.open(data.answer)}
                                   />
