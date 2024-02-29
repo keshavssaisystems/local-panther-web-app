@@ -26,7 +26,6 @@ import Loader from "react-loaders";
 import { NoProfileData } from "_components/common/noProfileData";
 import InputMask from "react-input-mask";
 import { getBasePayMask } from "_helpers/helper";
-import { FALSE } from "sass";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
