@@ -134,7 +134,7 @@ export const AdminListing = ({ entity }) => {
       name: "Action",
       id: "isactive",
       cell: (row) => (
-        <div className="d-block w-100">
+        <div className="d-block">
           <div
             title="Active/Inactive user"
             className="switch has-switch  me-2"
@@ -148,6 +148,7 @@ export const AdminListing = ({ entity }) => {
                 "switch-on": row.isactive,
                 "switch-off": !row.isactive,
               })}
+              size="sm"
             >
               <input type="checkbox" />
               <span className="switch-left">ON</span>
@@ -206,6 +207,7 @@ export const AdminListing = ({ entity }) => {
         </div>
       ),
       sortable: false,
+      minWidth: "200px",
     },
   ];
 
@@ -484,7 +486,7 @@ export const AdminListing = ({ entity }) => {
       <Row>
         <Col md="12">
           <PageTitle
-            heading={entity === "roles" ? "Menu mapping" : title}
+            heading={entity === "roles" ? "Menu Mapping" : title}
             icon={icon}
           />
         </Col>
@@ -546,7 +548,7 @@ export const AdminListing = ({ entity }) => {
                     className="input-group-text float-end mt-1"
                     onClick={() => onAddClick()}
                   >
-                    Add user
+                    Add User
                   </Button>
                   <div
                     className={cx(
@@ -653,9 +655,9 @@ export const AdminListing = ({ entity }) => {
               <strong className="card-title-text">
                 {!isAddMode
                   ? viewMode
-                    ? "View user"
-                    : `Edit user`
-                  : `Add new user`}
+                    ? "View User"
+                    : `Edit User`
+                  : `Add New User`}
               </strong>
             </ModalHeader>
             <ModalBody>

@@ -76,6 +76,9 @@ export function PaymentAndBenefits({
     };
     postData(data);
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
   };
   return (
     <>
@@ -113,7 +116,7 @@ export function PaymentAndBenefits({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for={"minimumAmount"} className="fw-semi-bold">
-                Minimum amount
+                Minimum base pay
               </Label>
               <Input
                 id={"minimumAmount"}
@@ -125,14 +128,14 @@ export function PaymentAndBenefits({
                     ? preValue.minimumAmount
                     : previousValue.minimumAmount
                 }
-                placeholder="Enter minimum amount"
+                placeholder="Enter minimum base pay"
               />
             </FormGroup>
           </Col>
           <Col md={6} lg={3}>
             <FormGroup>
               <Label for="maximumAmount" className="fw-semi-bold">
-                Maximum amount
+                Maximum base pay
               </Label>
               <Input
                 id={"maximumAmount"}
@@ -144,7 +147,7 @@ export function PaymentAndBenefits({
                     ? preValue.maximumAmount
                     : previousValue.maximumAmount
                 }
-                placeholder="Enter maximum amount"
+                placeholder="Enter maximum base pay"
               />
             </FormGroup>
           </Col>
@@ -154,13 +157,13 @@ export function PaymentAndBenefits({
           <Col md={6} lg={6}>
             <FormGroup>
               <Label for="compensationPackage" className="fw-semi-bold">
-                Compensation package
+                Additional compensation
               </Label>
               <Input
                 id={"compensationPackage"}
                 name={"compensationPackage"}
                 type={"textarea"}
-                placeholder="Enter compensation package"
+                placeholder="Enter additional compensation"
                 defaultValue={
                   prevStep === 3
                     ? preValue.compensationPackage

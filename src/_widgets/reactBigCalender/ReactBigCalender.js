@@ -49,8 +49,15 @@ export function ReactBigCalender({
           }}
           eventPropGetter={(events) => {
             const backgroundColor = events.color ? events.color : "blue";
+            const color = events.textcolor;
             const fontSize = "0.8rem";
-            return { style: { backgroundColor, fontSize } };
+            return {
+              style: {
+                backgroundColor,
+                fontSize,
+                color,
+              },
+            };
           }}
           today={false}
           views={views}

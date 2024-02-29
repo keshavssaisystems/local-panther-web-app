@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
-import { jobPreferenceDetailsActions } from "_store";
+import { jobPreferenceDetailsActions, getProfileActions } from "_store";
 import {
   Row,
   Col,
@@ -23,9 +23,10 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import "./profile.scss";
 import { getLocationFilter } from "_store";
 import Loader from "react-loaders";
-import { NoDataFound } from "_components/common/nodatafound";
+import { NoProfileData } from "_components/common/noProfileData";
 import InputMask from "react-input-mask";
 import { getBasePayMask } from "_helpers/helper";
+import { FALSE } from "sass";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -33,7 +34,7 @@ export function JobPreferences(props) {
   const selectDate = function () {};
 
   const [jobTypes, setJobTypes] = useState([]);
-
+  const [save, setSave] = useState(false);
   const [workType, setWorkType] = useState([]);
   const [workSchedules, setWorkSchedules] = useState([]);
   const [shifts, setShiftsData] = useState([]);
@@ -44,6 +45,7 @@ export function JobPreferences(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
+  const [distanceSelect, setDistanceSelect] = useState([]);
 
   const [preferenceDetails, setDetails] = useState([]);
   const get_response = useSelector(
@@ -66,9 +68,7 @@ export function JobPreferences(props) {
   let payPeriodList = useSelector((state) => state.getPayPeriod?.user?.data);
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
-  const experienceLevelOption = useSelector(
-    (state) => state.dropdown?.experienceLevel
-  );
+  const distanceList = useSelector((state) => state.getProfile.distanceList);
   const [formDetails, setFormData] = useState({});
 
   const location = useSelector((state) => state.dropdown?.jobType);
@@ -83,6 +83,13 @@ export function JobPreferences(props) {
       name: "Specific Job Title",
     },
   ]);
+
+  const errors = useState({
+    jobTypeError: false,
+    workScheduleError: false,
+    shiftsError: false,
+    workTypeError: false,
+  });
 
   useEffect(() => {
     let data = [];
@@ -115,6 +122,7 @@ export function JobPreferences(props) {
         willingtorelocate: false,
         workschedules: "",
         workschedulestext: null,
+        traveldistance: "",
       });
       setDetails(data);
     } else {
@@ -148,6 +156,7 @@ export function JobPreferences(props) {
           willingtorelocate: get_response[0].willingtorelocate,
           workschedules: get_response[0].workschedules,
           workschedulestext: get_response[0].workschedulestext,
+          traveldistance: get_response[0].traveldistance,
         });
 
         let new_data = data[0].candidateJobtitlesDtos?.filter(
@@ -218,14 +227,22 @@ export function JobPreferences(props) {
                 : "",
             relocate: rest.willingtorelocate ? true : false,
             workType: "",
+            traveldistance: rest.traveldistance,
           };
         });
 
         setGetResponse(filtered_data);
       }
       setDetails(data);
+      if (distanceList) {
+        let data = distanceList.filter(
+          (x) => x.label === get_response?.[0]?.traveldistance
+        );
+
+        setDistanceSelect(data);
+      }
     }
-  }, [get_response]);
+  }, [get_response, distanceList]);
 
   useEffect(() => {
     if (get_response?.length > 0) {
@@ -249,7 +266,12 @@ export function JobPreferences(props) {
 
   useEffect(() => {
     loadData();
+    getDistance();
   }, []);
+
+  const getDistance = function () {
+    dispatch(getProfileActions.getDistanceDetails("traveldistance"));
+  };
 
   const loadData = function () {
     let data = {
@@ -381,8 +403,12 @@ export function JobPreferences(props) {
       );
     } else if (check === "relocate") {
       new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
+
+      new_data[0].anywhereonlynear = 0;
     } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
+      setSelectedLocation([]);
+      new_data[0].locationids = "";
     } else if (check === "near") {
       new_data[0].anywhereonlynear = 2;
     } else if (check === "location") {
@@ -390,6 +416,11 @@ export function JobPreferences(props) {
       new_array = data;
       setSelectedLocation(new_array);
       new_data[0].locationids = data.map((obj) => obj.value).join(",");
+    } else if (check === "distance") {
+      new_data[0].traveldistance = data.label;
+      let distance_new = [];
+      distance_new.push(data);
+      setDistanceSelect(distance_new);
     }
 
     setFormData(new_data);
@@ -457,35 +488,41 @@ export function JobPreferences(props) {
   }
 
   async function onSubmit(e) {
+    setSave(true);
+
     e.preventDefault();
-    const keyToCheck = "desiredworktypeids";
     let new_data = [...preferenceDetails];
-    const emptyKeyIndexes = preferenceDetails
-      .map((item, index) => (item[keyToCheck] === "" ? index : null))
-      .filter((index) => index !== null);
 
-    if (emptyKeyIndexes.length > 0) {
-      for (let i = 0; i < emptyKeyIndexes.length; i++) {
-        new_data[emptyKeyIndexes[i]].error = true;
-      }
-
-      setDetails(new_data);
+    if (
+      new_data[0].desiredworktypeids === "" ||
+      new_data[0].workschedules === "" ||
+      new_data[0].shifts === "" ||
+      new_data[0].desiredjobtypes === "" ||
+      new_data[0].payperiodtypeid == 0 ||
+      distanceSelect.length === 0 ||
+      new_data[0].minimumbasepay === ""
+    ) {
       return;
     }
+    if (new_data[0].willingtorelocate && new_data[0].anywhereonlynear === 0) {
+      return;
+    }
+
     if (
       new_data[0].anywhereonlynear === 2 &&
       (!new_data[0].locationids || new_data[0].locationids === "")
     ) {
       return;
     }
+
     let response;
 
     let data = preferenceDetails.map((rest) => {
       return {
         candidatejobpreferenceid: rest.candidatejobpreferenceid,
         candidateid: parseInt(userDetails?.InternalUserId ?? 0),
-        desiredjobtitleid: parseInt(rest.desiredjobtitleid),
-        jobtitlesids: rest.jobtitlesids,
+        // desiredjobtitleid: parseInt(rest.desiredjobtitleid),
+        // jobtitlesids: rest.jobtitlesids,
         desiredjobtypes: rest.desiredjobtypes,
         workschedules: rest.workschedules,
         shifts: rest.shifts,
@@ -493,10 +530,15 @@ export function JobPreferences(props) {
         minimumbasepay: rest.minimumbasepay,
         willingtorelocate: rest.willingtorelocate,
         anywhereonlynear: parseInt(rest.anywhereonlynear),
-        locationids: rest.locationids,
+        locationids:
+          parseInt(rest.anywhereonlynear) === 1 ||
+          parseInt(rest.anywhereonlynear) === 0
+            ? ""
+            : rest.locationids,
         desiredworktypeids: rest.desiredworktypeids,
         isactive: rest.isactive,
         currentUserId: parseInt(userDetails?.UserId ?? 0),
+        traveldistance: rest.traveldistance,
       };
     });
 
@@ -514,6 +556,7 @@ export function JobPreferences(props) {
         })
       );
     }
+    setSave(false);
     if (response.payload) {
       setSuccess(true);
       setMessage(response.payload.message);
@@ -572,7 +615,7 @@ export function JobPreferences(props) {
                     {getData.map((item, index) => (
                       <Row>
                         <Col>
-                          <Row>
+                          {/* <Row>
                             <strong>Desired job titles</strong>
                             <div>
                               {item.desiredJobTitle !== "" &&
@@ -580,17 +623,9 @@ export function JobPreferences(props) {
                                 ? item.desiredJobTitle
                                 : "-"}
                             </div>
-                          </Row>
-                          <hr />
-                          <Row>
-                            <strong>Specific job title</strong>
-                            <div>
-                              {item.specificJobTitle !== ""
-                                ? item.specificJobTitle
-                                : "-"}
-                            </div>
-                          </Row>
-                          <hr />
+                          </Row> */}
+                          {/* <hr /> */}
+
                           <Row>
                             <strong>Desired job types</strong>
                             <div>
@@ -614,15 +649,15 @@ export function JobPreferences(props) {
                             <div>{item.shifts !== "" ? item.shifts : "-"}</div>
                           </Row>
                           <hr />
-                        </Col>
-
-                        <Col>
                           <Row>
                             <strong>Desired minimum pay</strong>
 
                             <div>{item.pay !== "" ? "$" + item.pay : "-"}</div>
                           </Row>
                           <hr />
+                        </Col>
+
+                        <Col>
                           <Row>
                             <strong>Willing to relocate</strong>
                             <div>{item.relocate ? "Yes" : "No"}</div>
@@ -637,6 +672,15 @@ export function JobPreferences(props) {
                             </div>
                           </Row>
                           <hr />
+                          <Row>
+                            <strong>Distance</strong>
+                            <div>
+                              {item.traveldistance !== ""
+                                ? item.traveldistance
+                                : "-"}
+                            </div>
+                          </Row>
+                          <hr />
                         </Col>
                       </Row>
                     ))}
@@ -645,7 +689,7 @@ export function JobPreferences(props) {
                   <Row style={{ textAlign: "center" }}>
                     <Col>
                       {" "}
-                      <NoDataFound imageSize={"25px"} />
+                      <NoProfileData imageSize={"25px"} />
                     </Col>
                   </Row>
                 )}
@@ -675,55 +719,6 @@ export function JobPreferences(props) {
               {preferenceDetails?.map((parentItem, index) => (
                 <Form onSubmit={(e) => onSubmit(e)}>
                   <Row>
-                    <div className="mb-1 fw-bold">Desired job titles</div>
-                    <hr />
-                  </Row>
-                  <Row>
-                    {desiredJobType.map((item, index) => (
-                      <Col>
-                        <FormGroup check>
-                          <Input
-                            name="desiredJobType"
-                            type="radio"
-                            onChange={(evt) =>
-                              onHandleInputChange("desiredJobType", item.id)
-                            }
-                            value={parentItem.desiredjobtitleid}
-                            checked={parentItem.desiredjobtitleid == item.id}
-                          />{" "}
-                          <Label check className="fw-semi-bold">
-                            {item.name}
-                          </Label>
-                        </FormGroup>
-                      </Col>
-                    ))}
-                  </Row>
-
-                  <Row className="mt-3">
-                    <div className="mb-1 fw-bold">Add job title</div>
-                    <hr />
-                  </Row>
-                  <Row>
-                    <Col md={5}>
-                      <FormGroup>
-                        <Label for="zipCode" className="fw-semi-bold">
-                          Job Title
-                        </Label>
-                        <AsyncSelect
-                          name="jobTitle"
-                          placeholder="Select"
-                          defaultOptions={jobTitleList}
-                          // className={mustHaveValidation ? "is-invalid" : ""}
-                          isMulti={true}
-                          value={selectedTitle}
-                          onChange={(evt) =>
-                            onHandleInputChange("jobTitle", evt)
-                          }
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
                     <div className="mb-1 fw-bold">Desired job types</div>
                     <hr />
                   </Row>
@@ -749,9 +744,10 @@ export function JobPreferences(props) {
                                   )
                                 }
                                 style={{
-                                  borderColor: parentItem.error
-                                    ? "#ff0000"
-                                    : "",
+                                  borderColor:
+                                    save && parentItem.desiredworktypeids === ""
+                                      ? "#ff0000"
+                                      : "",
                                 }}
                                 checked={checkIdExists(
                                   parentItem.desiredworktypeids,
@@ -765,14 +761,16 @@ export function JobPreferences(props) {
                             </div>
                           ))}
                         <div className="filter-info-text filter-error-msg">
-                          {parentItem.error ? "Job type is required" : ""}
+                          {save && parentItem.desiredworktypeids === ""
+                            ? "Job type is required"
+                            : ""}
                         </div>
                       </FormGroup>
                     </Col>
                     <Col>
                       <FormGroup>
                         <Label for="workSchedule" className="fw-semi-bold">
-                          Work schedules
+                          Work schedules<span style={{ color: "red" }}> *</span>
                         </Label>
                         {workScheduleOptions?.length > 0 &&
                           workScheduleOptions?.map((options) => (
@@ -793,6 +791,12 @@ export function JobPreferences(props) {
                                   parentItem.workschedules,
                                   options.id
                                 )}
+                                style={{
+                                  borderColor:
+                                    save && parentItem.workschedules === ""
+                                      ? "#ff0000"
+                                      : "",
+                                }}
                               />{" "}
                               {"  "}
                               <Label check for={"workSchedule_" + options.id}>
@@ -800,12 +804,17 @@ export function JobPreferences(props) {
                               </Label>
                             </div>
                           ))}
+                        <div className="filter-info-text filter-error-msg">
+                          {save && parentItem.workschedules === ""
+                            ? "Work schedules is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                     <Col>
                       <FormGroup>
                         <Label for="shifts" className="fw-semi-bold">
-                          Shifts
+                          Shifts<span style={{ color: "red" }}> *</span>
                         </Label>
                         {shiftsOption?.length > 0 &&
                           shiftsOption?.map((options) => (
@@ -826,6 +835,12 @@ export function JobPreferences(props) {
                                   parentItem.shifts,
                                   options.id
                                 )}
+                                style={{
+                                  borderColor:
+                                    save && parentItem.shifts === ""
+                                      ? "#ff0000"
+                                      : "",
+                                }}
                               />{" "}
                               {"  "}
                               <Label check for={"shifts_" + options.id}>
@@ -833,13 +848,18 @@ export function JobPreferences(props) {
                               </Label>
                             </div>
                           ))}
+                        <div className="filter-info-text filter-error-msg">
+                          {save && parentItem.shifts === ""
+                            ? "Shifts is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
 
                     <Col>
                       <FormGroup>
                         <Label for="shifts" className="fw-semi-bold">
-                          Work Type
+                          Work Type<span style={{ color: "red" }}> *</span>
                         </Label>
                         {workTypeOption?.length > 0 &&
                           workTypeOption?.map((options) => (
@@ -860,6 +880,12 @@ export function JobPreferences(props) {
                                   parentItem.desiredjobtypes,
                                   options.id
                                 )}
+                                style={{
+                                  borderColor:
+                                    save && parentItem.desiredjobtypes === ""
+                                      ? "#ff0000"
+                                      : "",
+                                }}
                               />{" "}
                               {"  "}
                               <Label check for={"workType" + options.id}>
@@ -867,6 +893,11 @@ export function JobPreferences(props) {
                               </Label>
                             </div>
                           ))}
+                        <div className="filter-info-text filter-error-msg">
+                          {save && parentItem.desiredjobtypes === ""
+                            ? "Work type is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -880,6 +911,7 @@ export function JobPreferences(props) {
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
                           Pay period type
+                          <span style={{ color: "red" }}> *</span>
                         </Label>
                         <AsyncSelect
                           name="jobTitle"
@@ -891,13 +923,25 @@ export function JobPreferences(props) {
                           onChange={(evt) =>
                             onHandleInputChange("payType", evt)
                           }
+                          className={`placeholder-name ${
+                            save && parentItem.payperiodtypeid == 0
+                              ? "async-border-red"
+                              : ""
+                          }`}
                         />
+
+                        <div className="filter-info-text filter-error-msg">
+                          {save && parentItem.payperiodtypeid == 0
+                            ? "Pay period type is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                     <Col md={4}>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
                           Minimum base pay
+                          <span style={{ color: "red" }}> *</span>
                         </Label>
 
                         <InputGroup>
@@ -918,8 +962,19 @@ export function JobPreferences(props) {
                               setBasePayValue(evt.target.value);
                             }}
                             value={parentItem.minimumbasepay}
+                            style={{
+                              borderColor:
+                                save && parentItem.minimumbasepay === ""
+                                  ? "#ff0000"
+                                  : "",
+                            }}
                           />
                         </InputGroup>
+                        <div className="filter-info-text filter-error-msg">
+                          {save && parentItem.minimumbasepay === ""
+                            ? "Minimum base pay is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -929,40 +984,30 @@ export function JobPreferences(props) {
                     <hr />
                   </Row>
                   <Row>
-                    <Col>
-                      <FormGroup check>
-                        <Input
-                          name="relocate"
-                          id="relocate"
-                          onInput={(evt) =>
-                            onHandleInputChange(
-                              "relocate",
-                              !parentItem.willingtorelocate
-                            )
-                          }
-                          type="checkbox"
-                          checked={parentItem.willingtorelocate}
-                        />{" "}
-                        <Label check className="fw-semi-bold">
-                          Willing to Relocate
-                        </Label>
-                      </FormGroup>
-                    </Col>
+                    <Label check className="fw-semi-bold">
+                      Willing to Relocate
+                      <span style={{ color: "red" }}> *</span>
+                    </Label>
                   </Row>
-                  <Row>
-                    <Row>
+
+                  <div>
+                    <Row className="mt-2 mb-2">
                       <Col md={4}>
                         <FormGroup check>
                           <Input
-                            name="anyWhere"
-                            type="radio"
+                            name="no_relocate"
+                            id="no_relocate"
                             onChange={(evt) =>
-                              onHandleInputChange("anyWhere", evt.target.value)
+                              onHandleInputChange(
+                                "relocate",
+                                !parentItem.willingtorelocate
+                              )
                             }
-                            checked={parentItem.anywhereonlynear == 1}
+                            type="radio"
+                            checked={!parentItem.willingtorelocate}
                           />{" "}
                           <Label check className="fw-semi-bold">
-                            Anywhere
+                            No
                           </Label>
                         </FormGroup>
                       </Col>
@@ -970,58 +1015,160 @@ export function JobPreferences(props) {
                       <Col md={4}>
                         <FormGroup check>
                           <Input
-                            name="onlyNear"
-                            type="radio"
+                            name="relocate"
+                            id="relocate"
                             onChange={(evt) =>
-                              onHandleInputChange("near", evt.target.value)
+                              onHandleInputChange(
+                                "relocate",
+                                !parentItem.willingtorelocate
+                              )
                             }
-                            checked={parentItem.anywhereonlynear == 2}
+                            type="radio"
+                            checked={parentItem.willingtorelocate}
                           />{" "}
                           <Label check className="fw-semi-bold">
-                            Only near
+                            Yes
                           </Label>
                         </FormGroup>
                       </Col>
                     </Row>
+                  </div>
+
+                  {parentItem.willingtorelocate ? (
+                    <div>
+                      <Row>
+                        <Col md={4}>
+                          <FormGroup check>
+                            <Input
+                              name="anyWhere"
+                              type="radio"
+                              onChange={(evt) =>
+                                onHandleInputChange(
+                                  "anyWhere",
+                                  evt.target.value
+                                )
+                              }
+                              checked={parentItem.anywhereonlynear == 1}
+                              style={{
+                                borderColor:
+                                  save && parentItem.anywhereonlynear === 0
+                                    ? "#ff0000"
+                                    : "",
+                              }}
+                            />{" "}
+                            <Label check className="fw-semi-bold">
+                              Anywhere
+                            </Label>
+                            <div className="filter-info-text filter-error-msg">
+                              {save && parentItem.anywhereonlynear === 0
+                                ? "Relocate is required"
+                                : ""}
+                            </div>
+                          </FormGroup>
+                        </Col>
+
+                        <Col md={4}>
+                          <FormGroup check>
+                            <Input
+                              name="onlyNear"
+                              type="radio"
+                              onChange={(evt) =>
+                                onHandleInputChange("near", evt.target.value)
+                              }
+                              checked={parentItem.anywhereonlynear == 2}
+                              style={{
+                                borderColor:
+                                  save && parentItem.anywhereonlynear === 0
+                                    ? "#ff0000"
+                                    : "",
+                              }}
+                            />{" "}
+                            <Label check className="fw-semi-bold">
+                              Only near
+                            </Label>
+                            <div className="filter-info-text filter-error-msg">
+                              {save && parentItem.anywhereonlynear === 0
+                                ? "Relocate is required"
+                                : ""}
+                            </div>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      {parentItem.anywhereonlynear == 2 && (
+                        <Row className="mt-2">
+                          <Col md={4}>
+                            <FormGroup>
+                              <Label for="city" className="fw-semi-bold">
+                                City, State
+                                <span className="required-icon"> *</span>
+                              </Label>
+                              <AsyncSelect
+                                name="location"
+                                placeholder="Search to select"
+                                loadOptions={loadOptions}
+                                isMulti={true}
+                                value={selectedLocation}
+                                onChange={(evt) =>
+                                  onHandleInputChange("location", evt)
+                                }
+                                className={`placeholder-name ${
+                                  save && selectedLocation.length === 0
+                                    ? "async-border-red"
+                                    : ""
+                                }`}
+                              />
+
+                              <div className="async-error-text">
+                                {save && selectedLocation.length === 0
+                                  ? "Location is required"
+                                  : ""}
+                              </div>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  <Row>
+                    <div className="mb-1 fw-bold mt-2">
+                      Choose your preferred distance
+                    </div>
+                    <hr />
                   </Row>
+
                   <Row>
                     <Col md={4}>
                       <FormGroup>
-                        <Label for="city" className="fw-semi-bold">
-                          Location
-                          {parentItem.anywhereonlynear == 2 ? (
-                            <span className="required-icon"> *</span>
-                          ) : (
-                            ""
-                          )}
+                        <Label for="zipCode" className="fw-semi-bold">
+                          Distance<span style={{ color: "red" }}> *</span>
                         </Label>
                         <AsyncSelect
-                          name="location"
-                          placeholder="Search to select"
-                          loadOptions={loadOptions}
-                          isMulti={true}
-                          value={selectedLocation}
+                          name="distance"
+                          placeholder="Select"
+                          defaultOptions={distanceList}
+                          isMulti={false}
+                          value={
+                            distanceSelect?.length > 0 ? distanceSelect : ""
+                          }
                           onChange={(evt) =>
-                            onHandleInputChange("location", evt)
+                            onHandleInputChange("distance", evt)
                           }
                           className={`placeholder-name ${
-                            parentItem.anywhereonlynear == 2 &&
-                            selectedLocation.length === 0
+                            save && distanceSelect.length === 0
                               ? "async-border-red"
                               : ""
                           }`}
                         />
-
-                        <div className="async-error-text">
-                          {parentItem.anywhereonlynear == 2 &&
-                          selectedLocation.length === 0
-                            ? "Location is required"
+                        <div className="filter-info-text filter-error-msg">
+                          {save && distanceSelect.length === 0
+                            ? "Distance is required"
                             : ""}
                         </div>
                       </FormGroup>
                     </Col>
                   </Row>
-
                   <div className="float-end">
                     <Button className="me-2 save-btn" type="submit">
                       Save
@@ -1029,7 +1176,7 @@ export function JobPreferences(props) {
                     <Button
                       type="button"
                       className="close-btn"
-                      onClick={() => closeModal(false)}
+                      onClick={() => closeModal()}
                     >
                       Close
                     </Button>

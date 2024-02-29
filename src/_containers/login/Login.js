@@ -91,7 +91,7 @@ export function Login() {
       // Generate Token
       const token = await messaging.getToken({
         vapidKey:
-          "BHDRlNANNHYy5hL-T7sh4uQ3gJCWKxUhXJTRHc85d4mwj51Wo_27e7XHP-W6Ix1zlqvzU9hsiSz6kGXejwG406A",
+          "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
       });
       payload.firebasetoken = token;
       dispatch(authActions.loginThunk(payload));
@@ -143,8 +143,9 @@ export function Login() {
                       <div className="login-slider-title">
                         <p>Experts In Human Capital</p>
                         <p className="login-slider-text m-5">
-                          What makes The Panther Group the ideal career partner?
-                          We focus on what you want most from your career!
+                          What makes The OpenWorX community the ideal career
+                          partner? We focus on what you want most from your
+                          career!
                         </p>
                       </div>
                     </div>
@@ -205,7 +206,7 @@ export function Login() {
                             </Label>
                             <InputGroup>
                               <input
-                                placeholder="Enter password"
+                                placeholder="Enter Password"
                                 name="password"
                                 type={showPassword ? "text" : "password"}
                                 id="password"
@@ -228,7 +229,7 @@ export function Login() {
                                 to="/forgot-password"
                                 className="text-primary forgot-pwd-text me-3 "
                               >
-                                Forgot password?
+                                Forgot Password?
                               </Link>
 
                               <Button
@@ -300,12 +301,26 @@ export function Login() {
                     </Col>
                     <Col></Col>
                   </Row> */}
-
-                    <p className="mt-3 d-flex justify-content-center align-items-center">
-                      <Link to="/registration" className="forgot-pwd-text">
-                        Not a member yet?
-                      </Link>
-                    </p>
+                    <div className="mt-4 register-division">
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        We are thrilled to have you join the OpenWorX community!
+                        To ensure a high-quality professional community we
+                        kindly ask you to register by uploading or creating your
+                        profile.
+                      </p>
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        Looking forward to connecting and engaging with you in
+                        this vibrant community! If you have any questions or
+                        need assistance with the registration process, feel free
+                        to reach out. Thanks for being part of OpenWorX!
+                      </p>
+                      <p className="mt-3 d-flex register-paragraph">
+                        Become Part of the OpenWorX Community;{"  "}
+                        <Link to="/registration" className="ms-1 register-link">
+                          <u>Register Here</u>
+                        </Link>
+                      </p>
+                    </div>
                   </div>
                 </Col>
               </Col>

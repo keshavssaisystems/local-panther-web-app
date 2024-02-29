@@ -14,6 +14,7 @@
     }
   }
   .cust-btn-tabs {
+    display: block;
     .active {
       background-color: #61d097 !important;
       color: #ffffff !important;
@@ -49,6 +50,9 @@
     }
   }
 }
-.icon-pointer{
+.icon-pointer {
   cursor: pointer;
+}
+.btn-mute{
+  opacity: 0.65 !important;
 }

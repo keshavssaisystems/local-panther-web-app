@@ -65,10 +65,10 @@ export function CustomerReportJobAging() {
     if (jobAgingList?.length > 0) {
       let filteredData = jobAgingList.map((data) => {
         return {
-          "Job Code": data.jobid,
+          "Job code": data.jobid,
           Title: data.jobtitle,
           Status: data.jobstatus,
-          "No. of Days": data.noofdays,
+          "No. of days": data.noofdays,
           "Aging group": data.aginggroup,
         };
       });
@@ -116,7 +116,7 @@ export function CustomerReportJobAging() {
 
   const columns = [
     {
-      name: <span className="table-title">Job Code</span>,
+      name: <span className="table-title">Job code</span>,
       selector: (row) => row.jobid,
       cell: (row) => (
         <span className="table-cell" title={row.jobid}>
@@ -155,7 +155,7 @@ export function CustomerReportJobAging() {
       minWidth: "200px",
     },
     {
-      name: <span className="table-title">No. of Days</span>,
+      name: <span className="table-title">No. of days</span>,
       selector: (row) => row.noofdays,
       cell: (row) => (
         <span className="table-cell" title={row.noofdays}>
@@ -180,7 +180,7 @@ export function CustomerReportJobAging() {
 
   return (
     <>
-      <PageTitle heading={"Customer Aging Group Report"} icon={titlelogo} />
+      <PageTitle heading={"Employer Aging Group Report"} icon={titlelogo} />
       <Row>
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
@@ -197,13 +197,17 @@ export function CustomerReportJobAging() {
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem header>Download Report</DropdownItem>
+                    <DropdownItem header>Download report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
                         exportToExcel(excelData, "customerJobAgingReport", true)
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -225,7 +229,7 @@ export function CustomerReportJobAging() {
                         setJobId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Job</option>
+                      <option value={""}>Select a job</option>
                       {jobDropDownList?.length > 0 ? (
                         jobDropDownList.map((data) => (
                           <option value={data.jobid} key={data.jobid}>

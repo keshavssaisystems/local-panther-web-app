@@ -80,6 +80,7 @@ export function ProfilePDF(props) {
             ? rest.payperiodtype
             : "",
         relocate: rest.willingtorelocate ? true : false,
+        availabilitytowork: rest.availabilitytowork,
         workType: "",
       };
     });
@@ -87,14 +88,14 @@ export function ProfilePDF(props) {
     setGetResponse(filtered_data);
   }, [get_response]);
 
-  const generatePDF = function () {
+  const generatePDF = function (event) {
     const content = componentRef.current;
 
     if (content) {
       const pdfOptions = {
         margin: 10,
         filename:
-          personalInfo_temp?.firstname + " " + personalInfo_temp.lastname,
+          personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname,
         image: { type: "jpeg", quality: 0.98 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
@@ -151,8 +152,9 @@ export function ProfilePDF(props) {
                   <h1>
                     <strong>
                       {" "}
-                      {personalInfo_temp.firstname} {personalInfo_temp.lastname}{" "}
-                      {personalInfo_temp.pronounname !== "" && (
+                      {personalInfo_temp?.firstname}{" "}
+                      {personalInfo_temp?.lastname}{" "}
+                      {personalInfo_temp?.pronounname !== "" && (
                         <span
                           style={{
                             color: "#979797",
@@ -160,27 +162,27 @@ export function ProfilePDF(props) {
                             fontSize: "16px",
                           }}
                         >
-                          ( {personalInfo_temp.pronounname} )
+                          ( {personalInfo_temp?.pronounname} )
                         </span>
                       )}
                     </strong>
                   </h1>
                   <p>
-                    {personalInfo_temp.city}
+                    {personalInfo_temp?.city}
                     {", "}
-                    {personalInfo_temp.state}
+                    {personalInfo_temp?.state}
                   </p>
 
                   <p>
                     <span style={{ fontWeight: "600" }}>
-                      {personalInfo_temp.email}
+                      {personalInfo_temp?.email}
                     </span>
                   </p>
                   {getData?.length > 0 ? (
                     <p>
                       <span style={{ fontWeight: "600" }}>
-                        Willing to relocate:{" "}
-                        {getData[0].willingtorelocate ? "Yes" : "No"}
+                        Availability to work:{" "}
+                        {personalInfo_temp?.availabilitytowork}
                       </span>
                     </p>
                   ) : (
@@ -317,17 +319,17 @@ export function ProfilePDF(props) {
                         </li>
                       ))}
                     </ul>
-                    {personalInfo_temp.summary !== "" ? (
+                    {personalInfo_temp?.summary !== "" ? (
                       <p>
-                        <strong>Summary - </strong> {personalInfo_temp.summary}
+                        <strong>Summary - </strong> {personalInfo_temp?.summary}
                       </p>
                     ) : (
                       ""
                     )}
-                    {personalInfo_temp.additionalinformation !== "" ? (
+                    {personalInfo_temp?.additionalinformation !== "" ? (
                       <p>
                         <strong>Additional Information - </strong>{" "}
-                        {personalInfo_temp.additionalinformation}
+                        {personalInfo_temp?.additionalinformation}
                       </p>
                     ) : (
                       ""

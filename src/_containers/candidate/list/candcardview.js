@@ -27,6 +27,7 @@ import "./candcardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import { ScorePopup } from "_components/list/scorePopup";
 import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 
 export function CandCardView({
   name,
@@ -169,7 +170,7 @@ export function CandCardView({
                       <BsBriefcase />
                     </Col>
                     <Col md="11" lg="11">
-                      <b>Work Experience</b>
+                      <b>Work experience</b>
                       <p>
                         {additionalData?.jobExperienceScheduleDtos &&
                         additionalData?.jobExperienceScheduleDtos[0]
@@ -289,12 +290,19 @@ export function CandCardView({
         </Card>
       </div>
       {rejectReasonModal && (
-        <RejectReasonModal
+        // <RejectReasonModal
+        //   isRMOpen={rejectReasonModal}
+        //   callBack={(reason) => onBtnClick("rejected", reason)}
+        //   callBackError={() => closeModal()}
+        //   title={"withdrawing your application"}
+        // />
+
+        <DeactivateReasonModal
           isRMOpen={rejectReasonModal}
           callBack={(reason) => onBtnClick("rejected", reason)}
           callBackError={() => closeModal()}
-          title={"rejection"}
-        />
+          title={"withdrawing your application"}
+        ></DeactivateReasonModal>
       )}
     </>
   );

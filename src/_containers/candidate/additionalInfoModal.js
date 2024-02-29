@@ -31,8 +31,7 @@ export function AdditionalInfoModal(props) {
 
   const loadData = function () {
     let data;
-
-    if (!props.selected || props.selected?.summary === "") {
+    if (!props.selected) {
       data = {
         candidateadditioninformationid: 0,
         candidateid: userDetails.InternalUserId,
@@ -166,12 +165,7 @@ export function AdditionalInfoModal(props) {
 
   const onSubmit = async function (e) {
     e.preventDefault();
-    if (formDetails.summary === "") {
-      setFormError(true);
-      return;
-    } else {
-      setFormError(false);
-    }
+
     let postData = {
       candidateid: userDetails.InternalUserId,
       candidateadditioninformationid:
@@ -379,7 +373,7 @@ export function AdditionalInfoModal(props) {
               <Col>
                 <FormGroup>
                   <Label for="summary" className="fw-semi-bold">
-                    Summary <span className="required-icon">*</span>
+                    Summary
                   </Label>
                   <Input
                     style={{ height: "200px" }}
@@ -392,18 +386,12 @@ export function AdditionalInfoModal(props) {
                     onInput={(evt) =>
                       onHandleInputChange("summary", evt.target.value)
                     }
-                    className={`field-input placeholder-text form-control ${
-                      formDetails.error ? "is-invalid" : ""
-                    }`}
+                    className="field-input placeholder-text form-control"
                   />
                   <span className="dropdown-placeholder float-end">
                     {formDetails.summary ? formDetails.summary.length : 0}/500
                   </span>
                 </FormGroup>
-
-                <div className="error-class">
-                  {formError ? "Summary is required" : ""}
-                </div>
               </Col>
             </Row>
             <Row>
@@ -440,6 +428,11 @@ export function AdditionalInfoModal(props) {
                 className="me-2 save-btn"
                 type="button"
                 onClick={(e) => onSubmit(e)}
+                disabled={
+                  formDetails.summary === "" &&
+                  formDetails.additionalinformation === "" &&
+                  languageMultiple.length === 0
+                }
               >
                 Save
               </Button>

@@ -73,21 +73,21 @@ export function CustomerReportJobList() {
     if (jobList?.length > 0) {
       let filteredData = jobList.map((data) => {
         return {
-          "Job Code": data.jobid,
+          "Job code": data.jobid,
           Title: data.jobtitle,
           Status: data.jobstatus,
-          "No. of Positions": data.noofopenposition,
+          "No. of positions": data.noofopenposition,
           "Posted date": data.createddate
             ? moment(data.createddate).format("MM/DD/YYYY")
             : "",
-          "No. of Matched": data.matchedcandidates,
-          "No. of Liked": data.likedcandidates,
-          "No. of Maybe": data.maybecandidates,
-          "No. of Accepted": data.acceptedcandidates,
-          "No. of Rejected": data.rejectedcandidates,
-          "No. of Interviews Scheduled": data.scheduledinterviews,
-          SubsidiaryId: data?.subsidiaryid,
-          SubsidiaryName: data?.subsidiaryname,
+          "No. of matched": data.matchedcandidates,
+          "No. of liked": data.likedcandidates,
+          "No. of maybe": data.maybecandidates,
+          "No. of accepted": data.acceptedcandidates,
+          "No. of rejected": data.rejectedcandidates,
+          "No. of interviews scheduled": data.scheduledinterviews,
+          "Subsidiary id": data?.subsidiaryid,
+          "Subsidiary name": data?.subsidiaryname,
         };
       });
       setExcelData([
@@ -143,7 +143,7 @@ export function CustomerReportJobList() {
 
   const columns = [
     {
-      name: <span className="table-title">Job Code</span>,
+      name: <span className="table-title">Job code</span>,
       cell: (row) => (
         <span className="table-cell" title={row.jobid}>
           {row.jobid}
@@ -182,7 +182,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of Positions</span>,
+      name: <span className="table-title">No. of positions</span>,
       cell: (row) => (
         <span className="table-cell" title={row.noofopenposition}>
           {row.noofopenposition}
@@ -209,7 +209,7 @@ export function CustomerReportJobList() {
       minWidth: "180px",
     },
     {
-      name: <span className="table-title">No. of Matched</span>,
+      name: <span className="table-title">No. of matched</span>,
       cell: (row) => (
         <span className="table-cell" title={row.matchedcandidates}>
           {row.matchedcandidates}
@@ -220,7 +220,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of Liked</span>,
+      name: <span className="table-title">No. of liked</span>,
       cell: (row) => (
         <span className="table-cell" title={row.likedcandidates}>
           {row.likedcandidates}
@@ -231,7 +231,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of Maybe</span>,
+      name: <span className="table-title">No. of maybe</span>,
       cell: (row) => (
         <span className="table-cell" title={row.maybecandidates}>
           {row.maybecandidates}
@@ -242,7 +242,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of Accepted</span>,
+      name: <span className="table-title">No. of accepted</span>,
       cell: (row) => (
         <span className="table-cell" title={row.acceptedcandidates}>
           {row.acceptedcandidates}
@@ -253,7 +253,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of Rejected</span>,
+      name: <span className="table-title">No. of rejected</span>,
       cell: (row) => (
         <span className="table-cell" title={row.rejectedcandidates}>
           {row.rejectedcandidates}
@@ -264,7 +264,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of Interviews Scheduled</span>,
+      name: <span className="table-title">No. of interviews scheduled</span>,
       cell: (row) => (
         <span className="table-cell" title={row.scheduledinterviews}>
           {row.scheduledinterviews}
@@ -278,7 +278,7 @@ export function CustomerReportJobList() {
 
   return (
     <>
-      <PageTitle heading={"Customer Job List Report"} icon={titlelogo} />
+      <PageTitle heading={"Employer Job List Report"} icon={titlelogo} />
       <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">
@@ -295,13 +295,17 @@ export function CustomerReportJobList() {
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem header>Download Report</DropdownItem>
+                    <DropdownItem header>Download report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
                         exportToExcel(excelData, "customerJobsReport", true)
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -323,7 +327,7 @@ export function CustomerReportJobList() {
                         setSubsidiaryId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Subsidiary</option>
+                      <option value={""}>Select a subsidiary</option>
                       {subsidiaryList?.length > 0 ? (
                         subsidiaryList.map((data) => (
                           <option

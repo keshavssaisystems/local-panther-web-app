@@ -128,6 +128,8 @@ export function CreateJobWizard({ type }) {
     await dispatch(dropdownActions.getPreScreenQuestionThunk());
     await dispatch(dropdownActions?.getFieldOfStudyThunk());
     await dispatch(dropdownActions?.getLevelOFEducationThunk());
+    await dispatch(dropdownActions?.getFlaggedWordsListThunk());
+    await dispatch(dropdownActions?.getSecurityClearanceListThunk());
     await dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
     );
@@ -207,8 +209,7 @@ export function CreateJobWizard({ type }) {
             type === "edit" ? selectedJobDetailsForEdit[0] : jobDetail
           }
           JobDataForPreview={(e) => getDataForPreview(e)}
-          bIFormSubmitted={(e) => getBIStatus(e)}
-          esFormSubmitted={(e) => getESStatus(e)}
+          nextPage={(e) => nextPage(e)}
           customerDetails={customerDetails}
         />
       ),
@@ -226,7 +227,7 @@ export function CreateJobWizard({ type }) {
           companyId={customerDetails.companyid}
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
-          publishJob={(e) => publishNewJob(e)}
+          publishJob={() => publishNewJob()}
           jobId={type === "edit" ? selectedJobDetailsForEdit[0]?.jobid : 0}
           type={type}
         />
@@ -270,6 +271,9 @@ export function CreateJobWizard({ type }) {
       };
     }
   };
+  const nextPage = () => {
+    next();
+  };
   const [previousBtn, setPreviousButton] = useState(false);
   const [nextBtn, setNextButton] = useState(true);
   const [compState, setCompState] = useState(type === "add" ? 0 : 1);
@@ -285,7 +289,7 @@ export function CreateJobWizard({ type }) {
   };
   const handleKeyDown = (evt) => {
     if (evt.which === 13) {
-      this.next();
+      next();
     }
   };
   const next = () => {
@@ -314,7 +318,7 @@ export function CreateJobWizard({ type }) {
   return (
     <>
       <PageTitle
-        heading={type === "edit" ? "Edit job" : "Create new job"}
+        heading={type === "edit" ? "Edit job" : "Create New Job"}
         icon={titlelogo}
       />
       <Row>
@@ -329,7 +333,7 @@ export function CreateJobWizard({ type }) {
                 {steps[compState].component}
                 {compState !== 3 && (
                   <>
-                    <div className="divider" />
+                    {compState !== 1 && <div className="divider" />}
                     <div className="clearfix">
                       <div style={true ? {} : { display: "none" }}>
                         {compState !== 1 && (
@@ -343,7 +347,7 @@ export function CreateJobWizard({ type }) {
                             Previous
                           </Button>
                         )}
-                        {(compState !== 1 || jobType !== "new_template") && (
+                        {compState !== 1 && (
                           <Button
                             color="primary"
                             className="btn-shadow btn-wide float-end btn-pill btn-hover-shine"
@@ -358,7 +362,7 @@ export function CreateJobWizard({ type }) {
                               : "Continue"}
                           </Button>
                         )}
-                        {compState === 1 &&
+                        {/* {compState === 1 &&
                           jobType === "new_template" &&
                           (BIStatus === false || ESStatus === false) && (
                             <>
@@ -368,7 +372,7 @@ export function CreateJobWizard({ type }) {
                                 id="Tooltip-1"
                                 style={nextBtn ? {} : { display: "none" }}
                               >
-                                Continue
+                                Continue & Save
                               </Button>
                               <UncontrolledTooltip
                                 placement="top"
@@ -385,8 +389,8 @@ export function CreateJobWizard({ type }) {
                                 Section
                               </UncontrolledTooltip>
                             </>
-                          )}
-                        {compState === 1 &&
+                          )} */}
+                        {/* {compState === 1 &&
                           jobType === "new_template" &&
                           BIStatus === true &&
                           ESStatus === true && (
@@ -400,7 +404,7 @@ export function CreateJobWizard({ type }) {
                                 Continue
                               </Button>
                             </>
-                          )}
+                          )} */}
                       </div>
                     </div>
                   </>

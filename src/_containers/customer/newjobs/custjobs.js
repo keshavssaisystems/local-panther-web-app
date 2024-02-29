@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { custJobListActions, createjobActions } from "_store";
+import { custJobListActions, createjobActions, dropdownActions } from "_store";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import { custListPageSize } from "_helpers/constants";
@@ -11,6 +11,7 @@ import { CustJobDetail } from "./custjobdetails";
 import Loader from "react-loaders";
 import { CustJobFilter } from "./custjofilter";
 import { NoDataFound } from "_components/common/nodatafound";
+import moment from "moment/moment";
 
 export const CustJobList = () => {
   const [page, setPage] = useState(1);
@@ -49,6 +50,7 @@ export const CustJobList = () => {
   useEffect(() => {
     if (jobList.length > 0) {
       dispatch(custJobListActions.getJobDetail({ jobId: jobList[0].jobid }));
+      dispatch(dropdownActions.getCloseJobReasonListThunk());
     }
   }, [jobList]);
 
@@ -89,13 +91,15 @@ export const CustJobList = () => {
         jobList: jobList,
         jobDetail: jobDetail,
         jobId: jobId,
+        publisheddate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
       })
     );
     getSelectedJob(jobId);
   };
   const closeJob = (event) => {
-    let jobId = event;
+    let jobId = event.jobId;
     let payload = {
+      closedjobreasonid: event.closedjobreasonid,
       currentUserId: localStorage.getItem("userId"),
     };
     dispatch(createjobActions.getCloseJobThunk({ jobId, payload }));

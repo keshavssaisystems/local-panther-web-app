@@ -86,8 +86,8 @@ export function ForgotPassword() {
                   <div className="slider-title">
                     <p>Experts In Human Capital</p>
                     <p className="slider-text m-5">
-                      What makes The Panther Group the ideal career partner? We
-                      focus on what you want most from your career!
+                      What makes The OpenWorX community the ideal career
+                      partner? We focus on what you want most from your career!
                     </p>
                   </div>
                 </div>
@@ -111,7 +111,7 @@ export function ForgotPassword() {
 
               <p className="mb-2 mt-4 title-text">Forgot Password?</p>
               <p className="mb-3 header-text">
-                Enter your registered Email id to reset the password
+                Enter your registered Email to reset the password
               </p>
               <div>
                 <Form onSubmit={handleSubmit(onSubmit)}>
@@ -125,7 +125,7 @@ export function ForgotPassword() {
                           type="email"
                           name="Email"
                           id="email"
-                          placeholder="Enter email id"
+                          placeholder="Enter email"
                           {...register("email")}
                           className={`text-field-input placeholder-text form-control ${
                             errors.email

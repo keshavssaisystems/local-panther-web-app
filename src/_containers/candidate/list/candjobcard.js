@@ -6,10 +6,11 @@ import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsH
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import { useSelector } from "react-redux";
+import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
   let jobDetail = {};
-  let skillArray = [];
   let skillsData = "-";
   const shiftsOption = useSelector((state) => state.dropdown.shift);
   const workScheduleOptions = useSelector(
@@ -252,22 +253,34 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
             onClickApply={() => onClickApplyBtn()}
           />
           <div className="heading-title">
-            <h6 className="job-main-heading mb-0">Job details</h6>
+            <h6 className="job-main-heading mb-0">Job Details</h6>
           </div>
           <HeadingAndDetailWithDiv
-            heading={"Job Type"}
+            heading={"Job posted on"}
+            detail={getTimezoneDateTime(
+              moment(
+                jobDetail?.publisheddate === null
+                  ? jobDetail?.jobcreatedatetime
+                  : jobDetail?.publisheddate
+              ).format("YYYY-MM-DD"),
+              "MM/DD/YYYY"
+            )}
+            iconId={3}
+          />
+          <HeadingAndDetailWithDiv
+            heading={"Job type"}
             detail={returnJobType()}
             iconId={5}
           />
           <HeadingAndDetailWithDiv
-            heading={"Job Location"}
+            heading={"Job location"}
             detail={
               jobDetail?.joblocation === "" ? "-" : jobDetail?.joblocation
             }
             iconId={5}
           />
           <HeadingAndDetailWithDiv
-            heading={"Shift & Schedule"}
+            heading={"Shift & schedule"}
             detail={returnShift() + ", " + returnSchedule()}
             iconId={3}
           />
@@ -309,7 +322,11 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           />
           <HeadingAndDetailWithDiv
             heading={"Address"}
-            detail={returnAddress()}
+            detail={
+              jobDetail?.locationaddress === ""
+                ? "-"
+                : jobDetail?.locationaddress
+            }
             iconId={10}
           />
           <HeadingAndDetailWithDiv
@@ -335,16 +352,30 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
             iconId={9}
           />
           <HeadingAndDetailWithDiv
-            heading={"Sponsorship is required"}
+            heading={"Willing to sponsor"}
             detail={jobDetail?.sponsorshiprequiured === true ? "Yes" : "No"}
             iconId={9}
           />
+          <HeadingAndDetailWithDiv
+            heading={"Security clearance required"}
+            detail={
+              jobDetail?.issecurityclearancerequired === true ? "Yes" : "No"
+            }
+            iconId={14}
+          />
+          {jobDetail?.issecurityclearancerequired === true && (
+            <HeadingAndDetailWithDiv
+              heading={"Security clearance"}
+              detail={jobDetail?.securityclearance}
+              iconId={14}
+            />
+          )}
           <HeadingAndDetailWithoutIcon
-            heading={"Job Description"}
+            heading={"Job description"}
             detail={jobDetail.description}
           />
           <HeadingAndDetailWithoutIcon
-            heading={"About Company"}
+            heading={"About company"}
             detail={jobDetail.companydetails}
           />
           <HeadingAndDetailWithoutIcon

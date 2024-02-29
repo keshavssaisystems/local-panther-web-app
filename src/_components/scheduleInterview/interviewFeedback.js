@@ -37,7 +37,7 @@ export function InterviewFeedback({ interviewId, postFeedbackData }) {
               {showSuccessMessage === true && (
                 <p className="float-end">
                   <FormText color="success">
-                    Interview feedback submitted successfully!!!
+                    Interview feedback submitted successfully!
                   </FormText>
                 </p>
               )}

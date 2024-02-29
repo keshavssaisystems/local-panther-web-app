@@ -26,7 +26,6 @@
 .add-label {
   color: #2b80fd !important;
   cursor: pointer;
-  font-family: Capitana;
   font-size: 14px;
   font-weight: 400;
   line-height: 16px;
@@ -51,4 +50,39 @@
 }
 .required-error-input {
   border-color: #d92550;
+}
+.profile-prompt{
+  .candidate-profile-prompt{
+    color: var(--Font-dark-grey, #2F2E2E);
+    text-align: center;
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 150%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .candidate-profile-prompt-bold{
+    color: var(--Font-dark-grey, #2F2E2E);
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 150%;
+  }
+  .btn-primary {
+    border-radius: 4px !important;
+    background: #2F479B !important;
+  }
+  .btn-link {
+    color: var(--blue, #2F479B);
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 123.077% */
+    letter-spacing: -0.13px;
+    text-decoration-line: underline;
+  }
+  .sweet-alert {
+    width: 530px !important;
+  }
 }

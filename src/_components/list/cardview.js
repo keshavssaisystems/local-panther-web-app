@@ -11,7 +11,6 @@ import {
 } from "reactstrap";
 import { AcceptModal } from "_components/modal/acceptmodal";
 import { RejectModal } from "_components/modal/rejectmodal";
-import { RejectSuccessModal } from "_components/modal/rejectsuccessmodal";
 import { FiMapPin } from "react-icons/fi";
 import {
   BsBriefcase,
@@ -31,6 +30,7 @@ import { ProgressCircle } from "_components/common/progress";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { ScorePopup } from "./scorePopup";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
@@ -87,7 +87,7 @@ export const CandidateCardView = (props) => {
     if (res.payload.statusCode === 201) {
       setShowSchdIntSModal(false);
       props.showSweetAlert({
-        title: "Interview scheduled successfully!!!",
+        title: "Interview scheduled successfully!",
         type: "success",
       });
 
@@ -354,18 +354,6 @@ export const CandidateCardView = (props) => {
                 <BsCheckCircle />
               </Button>
             </Col> */}
-
-              <Button
-                outline
-                title="liked"
-                className="btn-icon mb-1"
-                color="primary"
-                size="sm"
-                onClick={() => onActionClick("like")}
-              >
-                Like <BsHandThumbsUp></BsHandThumbsUp>
-              </Button>
-
               <Button
                 outline
                 title="maybe"
@@ -376,18 +364,16 @@ export const CandidateCardView = (props) => {
               >
                 Maybe <BsQuestionCircle></BsQuestionCircle>
               </Button>
-
               <Button
                 outline
-                title="reject"
+                title="liked"
                 className="btn-icon mb-1"
                 color="primary"
-                onClick={() => onRejectClick()}
                 size="sm"
+                onClick={() => onActionClick("like")}
               >
-                Reject <BsXCircle></BsXCircle>
+                Like <BsHandThumbsUp></BsHandThumbsUp>
               </Button>
-
               <Button
                 outline
                 title="schedule"
@@ -397,6 +383,16 @@ export const CandidateCardView = (props) => {
                 onClick={() => onScheduleInterview()}
               >
                 <span>Schedule</span> <BsClock />
+              </Button>
+              <Button
+                outline
+                title="reject"
+                className="btn-icon mb-1"
+                color="primary"
+                onClick={() => onRejectClick()}
+                size="sm"
+              >
+                Reject <BsXCircle></BsXCircle>
               </Button>
             </ButtonGroup>
           </Row>
@@ -429,10 +425,18 @@ export const CandidateCardView = (props) => {
       </>
       <>
         {showRejSModal ? (
-          <RejectSuccessModal
-            isRejectConfOpen={showRejSModal}
-            onOkClickRejSuccess={() => onCloseRejSModal()}
-          />
+          // <RejectSuccessModal
+          //   isRejectConfOpen={showRejSModal}
+          //   onOkClickRejSuccess={() => onCloseRejSModal()}
+          // />
+          <>
+            <SweetAlert
+              title={"Candidate status updated successfully!"}
+              show={showRejSModal}
+              type={"success"}
+              onConfirm={() => onCloseRejSModal()}
+            />
+          </>
         ) : (
           <></>
         )}

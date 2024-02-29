@@ -33,7 +33,7 @@ import {
 
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { authActions, dropdownActions } from "_store";
+import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
@@ -55,7 +55,6 @@ export function Registration() {
     adaptiveHeight: true,
   };
   const dispatch = useDispatch();
-  const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const [registrationType, setRegistrationType] = useState([
     {
       id: 1,
@@ -63,7 +62,7 @@ export function Registration() {
     },
     {
       id: 2,
-      name: "Customer",
+      name: "Employer",
     },
   ]);
   const [selected, setSelected] = useState(0);
@@ -96,10 +95,10 @@ export function Registration() {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    jobprofile: Yup.string()
-      .required("Job profile is required")
-      .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
-      .min(3, "Job profile must be at least 3 characters"),
+    // jobprofile: Yup.string()
+    //   .required("Job profile is required")
+    //   .matches(/^[A-Za-z ]*$/, "Please enter valid profile")
+    //   .min(3, "Job profile must be at least 3 characters"),
 
     firstName: Yup.string()
       .required("First name is required")
@@ -137,9 +136,8 @@ export function Registration() {
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState, setValue, getValues } =
     useForm(formOptions);
-  const { errors, isSubmitting } = formState;
+  const { errors } = formState;
   const [cityList, setCityList] = useState([]);
-  const [postData, setPostData] = useState({});
 
   async function onSubmit(payload) {
     if (!validated.mobile || !validated.email) {
@@ -149,11 +147,12 @@ export function Registration() {
       });
       return;
     }
-
-    let response = await dispatch(authActions.registerThunk(payload));
+    let newPayload;
+    newPayload = payload;
+    newPayload.phoneNumber = payload?.phoneNumber?.replace(/\D/g, "");
+    let response = await dispatch(authActions.registerThunk(newPayload));
     if (!response.payload) {
       setMessage(response.error.message);
-
       showSweetAlert({
         title: response.error.message,
         type: "error",
@@ -176,12 +175,6 @@ export function Registration() {
     let formDetails = getValues();
     let data = { ...field };
     data = "";
-    if (
-      formDetails.jobprofile === "" ||
-      !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
-    ) {
-      data = "job profile";
-    }
     if (
       formDetails.firstName === "" ||
       !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
@@ -242,6 +235,7 @@ export function Registration() {
       isactive: true,
       currentuserid: 0,
       type: "phone",
+      userroleid: 3,
     };
     let response;
     if (check === "phone") {
@@ -313,11 +307,11 @@ export function Registration() {
     SetShowAlert(data);
   };
 
-  const verifyMobileOTPDetails = async function () {
+  const verifyMobileOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.mobile !== "") {
-      otpDetails.phoneotp = otp.mobile;
+    let otp_new = data;
+    if (otp_new.mobile !== "") {
+      otpDetails.phoneotp = otp_new.mobile;
       otpDetails.emailotp = null;
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -336,9 +330,9 @@ export function Registration() {
         setMessage("Phone number verified");
       } else {
         otp_new.mobile = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -347,13 +341,13 @@ export function Registration() {
     }
   };
 
-  const verifyEmailOTPDetails = async function () {
+  const verifyEmailOTPDetails = async function (data) {
     let new_data = { ...validated };
-    let otp_new = { ...otp };
-    if (otp.email !== "") {
+    let otp_new = data;
+    if (otp_new.email !== "") {
       new_data.email = true;
       otpDetails.phoneotp = null;
-      otpDetails.emailotp = otp.email;
+      otpDetails.emailotp = otp_new.email;
 
       let userRegistrationId = otpDetails.userregistrationid;
 
@@ -372,9 +366,9 @@ export function Registration() {
         setMessage("Email verified");
       } else {
         otp_new.email = "";
-        setMessage("Something went wrong");
+        setMessage(response.error.message);
         showSweetAlert({
-          title: "Something went wrong, please try later!!",
+          title: response.error.message,
           type: "error",
         });
       }
@@ -475,11 +469,15 @@ export function Registration() {
           nextInput.focus();
         }
       }
+
       if (e === "") {
         const prevInput = document.getElementById(`mobile-${index - 1}`);
         if (prevInput) {
           prevInput.focus();
         }
+      }
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails(otp_new);
       }
     }
     if (check === "email") {
@@ -502,6 +500,9 @@ export function Registration() {
           prevInput.focus();
         }
       }
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails(otp_new);
+      }
     }
   };
   const onHandleInputChange = (data) => {
@@ -509,7 +510,6 @@ export function Registration() {
   };
 
   const handleFormData = function (check, data) {
-    console.log(getValues("email"));
     if (check === "mobile") {
       if (validationSchema.fields.phoneNumber.isValidSync(data)) {
         setMobileValidError(false);
@@ -517,7 +517,6 @@ export function Registration() {
         setMobileValidError(true);
       }
     }
-
     if (check === "email") {
       if (validationSchema.fields.email.isValidSync(data)) {
         setEmailValidError(false);
@@ -610,38 +609,14 @@ export function Registration() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="jobprofile" className="input-label">
-                            Job profile <span className="text-danger">*</span>
-                          </Label>
-                          <input
-                            type="text"
-                            name="jobprofile"
-                            id="jobprofile"
-                            placeholder="Enter job profile"
-                            {...register("jobprofile")}
-                            className={`form-control placeholder-name ${
-                              errors.jobprofile ? "is-invalid" : ""
-                            }`}
-                            maxLength={200}
-                          />
-                          <FormFeedback>
-                            {errors.jobprofile?.message}
-                          </FormFeedback>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-
-                    <Row>
-                      <Col md={6}>
-                        <FormGroup>
                           <Label for="firstName" className="input-label">
-                            First name <span className="text-danger">*</span>
+                            First Name <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
                             name="firstName"
                             id="firstName"
-                            placeholder="Enter first name"
+                            placeholder="Enter First Name"
                             {...register("firstName")}
                             className={`form-control placeholder-name ${
                               errors.firstName ? "is-invalid" : ""
@@ -656,13 +631,13 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="lastName" className="input-label">
-                            Last name <span className="text-danger">*</span>
+                            Last Name <span className="text-danger">*</span>
                           </Label>
                           <input
                             type="text"
                             name="lastName"
                             id="lastName"
-                            placeholder="Enter last name"
+                            placeholder="Enter Last Name"
                             {...register("lastName")}
                             className={`form-control placeholder-name ${
                               errors.lastName ? "is-invalid" : ""
@@ -684,12 +659,12 @@ export function Registration() {
                               type="email"
                               name="email"
                               id="email"
-                              placeholder="Enter email id"
+                              placeholder="Enter Email"
                               {...register("email")}
                               className={`form-control placeholder-name ${
                                 errors.email ? "is-invalid" : ""
                               }`}
-                              onClick={(e) =>
+                              onInput={(e) =>
                                 handleFormData("email", e.target.value)
                               }
                               maxLength={50}
@@ -700,7 +675,7 @@ export function Registration() {
                               <Button
                                 className="grp-btn"
                                 color="light"
-                                onClick={() => validateOTP("email", errors)}
+                                onClick={() => validateOTP("email")}
                               >
                                 Verify
                               </Button>
@@ -737,7 +712,7 @@ export function Registration() {
 
                           <InputGroup>
                             <InputMask
-                              placeholder="Enter phone number"
+                              placeholder="Enter Phone Number"
                               type="text"
                               mask="(999)-999-9999"
                               name="phoneNumber"
@@ -756,7 +731,7 @@ export function Registration() {
                               <Button
                                 className="grp-btn"
                                 color="light"
-                                onClick={() => validateOTP("phone", errors)}
+                                onClick={() => validateOTP("phone")}
                               >
                                 Verify
                               </Button>
@@ -793,7 +768,7 @@ export function Registration() {
                           </Label>
                           <InputGroup>
                             <input
-                              placeholder="Enter password"
+                              placeholder="Enter Password"
                               name="password"
                               type={showPassword ? "text" : "password"}
                               id="password"
@@ -817,13 +792,13 @@ export function Registration() {
                       <Col md={6}>
                         <FormGroup>
                           <Label for="confirmPassword" className="input-label">
-                            Confirm password{" "}
+                            Confirm Password{" "}
                             <span className="text-danger">*</span>
                           </Label>
                           <InputGroup>
                             <input
                               type={showConfirm ? "text" : "password"}
-                              placeholder="Enter confirm password"
+                              placeholder="Enter Confirm Password"
                               name="confirmPassword"
                               id="confirmPassword"
                               {...register("confirmPassword")}
@@ -876,7 +851,7 @@ export function Registration() {
                           </Label>
                           <AsyncSelect
                             name="country"
-                            placeholder="Select country"
+                            placeholder="Select Country"
                             placeholderText="search"
                             isMulti={false}
                             className={`placeholder-name ${
@@ -931,8 +906,8 @@ export function Registration() {
                   <div>
                     <h3 className="slider-title">Experts In Human Capital</h3>
                     <p className="m-5 slider-content">
-                      What makes The Panther Group the ideal career partner? We
-                      focus on what you want most from your career!
+                      What makes The OpenWorX community the ideal career
+                      partner? We focus on what you want most from your career!
                     </p>
                   </div>
                 </div>
@@ -951,7 +926,7 @@ export function Registration() {
           <CardBody>
             <div className="justify-content-center align-items-center text-center mb-4">
               <div className="font-size-lg fw-normal">
-                <p className="otp-header-text">We sent you OTP</p>
+                <p className="otp-header-text">We sent you verification code</p>
               </div>
 
               <div className="font-size-md  fw-normal">
@@ -983,20 +958,27 @@ export function Registration() {
               <Row>
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    Don't received OTP?
+                    Don't received verification code?
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="mt-1">
+                <Col>
+                  <div className="ms-auto d-flex justify-content-center align-items-center">
                     {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
-                        Resend OTP in
+                        Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
                         seconds
                       </span>
                     ) : (
                       <a
-                        href="javascript:void(0)"
+                        href="#"
                         onClick={() => resendOTP("mobile")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
-                        Resend otp
+                        Resend verification code
                       </a>
                     )}
                   </div>
@@ -1017,9 +999,9 @@ export function Registration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyMobileOTPDetails()}
+                onClick={() => verifyMobileOTPDetails(otp)}
               >
-                Verify OTP
+                Verify
               </Button>
             </div>
           </CardFooter>
@@ -1035,11 +1017,11 @@ export function Registration() {
           <CardBody>
             <div className="justify-content-center align-items-center text-center mb-4">
               <div className="font-size-lg fw-semi-bold">
-                <p className="otp-header-text">We sent you OTP</p>
+                <p className="otp-header-text">We sent you verification code</p>
               </div>
 
               <div className="font-size-md  fw-normal">
-                Please, enter it below to verify your phone
+                Please, enter it below to verify your email
               </div>
               <div style={{ color: "#545cd8" }}>{getValues("email")}</div>
             </div>
@@ -1067,20 +1049,27 @@ export function Registration() {
               <Row>
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    Don't received OTP?
+                    Don't received verification code?
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="mt-1">
+                <Col>
+                  <div className="ms-auto d-flex justify-content-center align-items-center">
                     {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
-                        Resend OTP in
+                        Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
                         seconds
                       </span>
                     ) : (
                       <a
-                        href="javascript:void(0)"
+                        href="#"
                         onClick={() => resendOTP("email")}
                         className="btn-lg btn btn-link otp-link-label"
                       >
-                        Resend otp
+                        Resend verification code
                       </a>
                     )}
                   </div>
@@ -1101,9 +1090,9 @@ export function Registration() {
                 color="primary"
                 className="m-2"
                 style={{ background: "#2f479b" }}
-                onClick={() => verifyEmailOTPDetails()}
+                onClick={() => verifyEmailOTPDetails(otp)}
               >
-                Verify OTP
+                Verify
               </Button>
             </div>
           </CardFooter>

@@ -1,5 +1,13 @@
-import React from "react";
-import { CardHeader, Card, CardBody } from "reactstrap";
+import React, { useState } from "react";
+import {
+  CardHeader,
+  Card,
+  CardBody,
+  ButtonGroup,
+  Button,
+  Row,
+  Col,
+} from "reactstrap";
 import "../../customer/scheduleInterview/scheduleInterview.scss";
 import moment from "moment-timezone";
 import { BsFillTelephoneFill } from "react-icons/bs";
@@ -8,9 +16,19 @@ import { NavLink } from "react-router-dom";
 import { getVideoChannelId } from "_helpers/helper";
 import { BsPersonVideo2, BsPerson } from "react-icons/bs";
 import { USPhoneNumber } from "_helpers/helper";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import customerIcons from "assets/utils/images/customer";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
+import { scheduleInterviewActions, candidateListActions } from "_store";
+import SweetAlert from "react-bootstrap-sweetalert";
 
-export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
+export function ScheduleDetails({
+  interviewDetail,
+  onClose,
+  closeModaBox,
+  isAdmin = false,
+}) {
+  const dispatch = useDispatch();
   const interviewGuideLink = useSelector(
     (state) => state.scheduleInterview?.interviewGuideList
   );
@@ -54,7 +72,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
     moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
       " " +
       interviewDetail?.starttime,
-    "hh:mm a"
+    "hh:mm A"
   );
   let startDate =
     moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
@@ -66,7 +84,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
       : [];
   let endTime = getTimezoneDateTime(
     moment(startDate).add(durationArr[0], "m"),
-    "hh:mm a"
+    "hh:mm A"
   );
   const getText = function (data) {
     let text = "";
@@ -99,33 +117,217 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
     }
     return text;
   };
-
+  const [rejectReasonModal, setRejectReasonModal] = useState(false);
+  const [candidaterecommendedjobid, setRecommendedJobId] = useState(0);
+  const [rejectType, setRejectType] = useState("");
+  const [title, setTitle] = useState("");
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+  const rejectReason = (rejectTitle, type, candidaterecommendedjobid) => {
+    setTitle(rejectTitle);
+    setRejectType(type);
+    setRecommendedJobId(candidaterecommendedjobid);
+    setRejectReasonModal(true);
+  };
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [rescheduleId, setRescheduleId] = useState("");
+  const submitReject = async (comment) => {
+    setRejectReasonModal(false);
+    onBtnClick(rejectType, candidaterecommendedjobid, comment);
+  };
+  const onBtnClick = async (type, candidaterecommendedjobid, reason) => {
+    if (type === "acceptInterview") {
+      let res = await dispatch(
+        scheduleInterviewActions.acceptInterviewThunk({
+          scheduleinterviewid: candidaterecommendedjobid,
+        })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+      closeModal();
+    }
+    if (type === "rejectInterview") {
+      let payload = {
+        rejectionreason: reason,
+      };
+      let res = await dispatch(
+        scheduleInterviewActions.rejectInterviewThunk({
+          scheduleinterviewid: candidaterecommendedjobid,
+          payload: payload,
+        })
+      );
+      if (res.payload.statusCode === 204) {
+        showSweetAlert({ title: res.payload.message, type: "success" });
+      } else {
+        showSweetAlert({
+          title: res.payload.message || res.payload.status,
+          type: "danger",
+        });
+      }
+      closeModal();
+    }
+    if (type === "rescheduleInterview") {
+      setShowRescheduleModal(true);
+      setRescheduleId(candidaterecommendedjobid);
+    }
+  };
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+  const closeModal = function () {
+    setRejectReasonModal(false);
+  };
+  const onSendRescheduleData = async (data) => {
+    let res = await dispatch(
+      candidateListActions.updateRescheduleReason({
+        scheduleinterviewid: rescheduleId,
+        reschedulerequestedreason: data,
+      })
+    );
+    if (res?.payload?.statusCode === 204) {
+      setShowRescheduleModal(false);
+      showSweetAlert({ title: res.payload.message, type: "success" });
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+    closeModal();
+  };
   return (
     <>
       <Card className="scheduled-interview">
         <CardBody>
           <div className="m-1 p-1 candidate-schedule">
-            <div className="mb-3 ">
-              <span className="interview-details-title">
-                {interviewDetail.jobtitle}
-              </span>
+            <Row>
+              <Col md={8} lg={8}>
+                {" "}
+                <div>
+                  <span className="interview-details-title">
+                    {interviewDetail.jobtitle}
+                  </span>
 
-              <span className="interview-details-label">
-                {interviewDetail.companyname !== "" ||
-                interviewDetail.cityname !== "" ||
-                interviewDetail.statename !== "" ||
-                interviewDetail.countryname !== "" ? (
-                  <div className="mt-1" style={{ fontSize: "12px" }}>
-                    <i className="pe-7s-map-marker location-icon"> </i>
-                    <span className="location-text">
-                      {getText(interviewDetail)}
-                    </span>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </span>
-            </div>
+                  <span className="interview-details-label">
+                    {interviewDetail.companyname !== "" ||
+                    interviewDetail.cityname !== "" ||
+                    interviewDetail.statename !== "" ||
+                    interviewDetail.countryname !== "" ? (
+                      <div className="mt-1" style={{ fontSize: "12px" }}>
+                        <i className="pe-7s-map-marker location-icon"> </i>
+                        <span className="location-text">
+                          {getText(interviewDetail)}
+                        </span>
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </span>
+                </div>
+              </Col>
+              <Col md={4} lg={4}>
+                <div className="align-right float-end">
+                  <ButtonGroup size="sm">
+                    {interviewDetail !== undefined &&
+                    interviewDetail?.isactive === true ? (
+                      <>
+                        {interviewDetail?.isreschedulerequested === false && (
+                          <>
+                            {interviewDetail?.isrejected === false &&
+                              interviewDetail?.interviewstatusid === 0 && (
+                                <>
+                                  <Button
+                                    // outline
+                                    size="sm"
+                                    title="Reject interview"
+                                    onClick={() =>
+                                      rejectReason(
+                                        "interview reject",
+                                        "rejectInterview",
+                                        interviewDetail?.scheduleinterviewid
+                                      )
+                                    }
+                                    className="btn-icon"
+                                    color="danger"
+                                  >
+                                    <img
+                                      src={customerIcons?.list_reject}
+                                      alt="list reject"
+                                    ></img>
+                                  </Button>
+                                  <Button
+                                    // outline
+                                    size="sm"
+                                    title="Reschedule interview"
+                                    onClick={() =>
+                                      onBtnClick(
+                                        "rescheduleInterview",
+                                        interviewDetail?.scheduleinterviewid
+                                      )
+                                    }
+                                    className="btn-icon"
+                                    color="alternate"
+                                  >
+                                    <img
+                                      src={customerIcons?.list_schedule}
+                                      alt="list reschedule"
+                                    ></img>
+                                  </Button>
+                                </>
+                              )}
+                            {interviewDetail?.isaccepted === false &&
+                              interviewDetail?.isrejected === false &&
+                              interviewDetail?.interviewstatusid === 0 && (
+                                <Button
+                                  size="sm"
+                                  title="Accept interview"
+                                  className="btn-icon"
+                                  color="success"
+                                  onClick={() =>
+                                    onBtnClick(
+                                      "acceptInterview",
+                                      interviewDetail?.scheduleinterviewid
+                                    )
+                                  }
+                                >
+                                  <img
+                                    src={customerIcons?.list_accept}
+                                    alt="list accept"
+                                  ></img>
+                                </Button>
+                              )}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </ButtonGroup>
+                </div>
+              </Col>
+            </Row>
+
             <Card className="mt-3">
               <CardHeader className="card-header-tab">
                 <div className="card-header-title font-size-lg text-capitalize fw-normal">
@@ -158,7 +360,7 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
                         ? "Accepted"
                         : interviewDetail?.isrejected === true
                         ? "Rejected"
-                        : "No response from candidate"}
+                        : "You have not responded"}
                     </p>
                   </div>
                   {interviewDetail?.isreschedulerequested === false && (
@@ -188,41 +390,52 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
                           </p>
                         </div>
                       )}
-                      {!isAdmin ? (
+                      {moment(interviewDetail?.scheduledate).format(
+                        "YYYY-MM-DD"
+                      ) >= moment().format("YYYY-MM-DD") ? (
                         <>
-                          {" "}
-                          {interviewDetail?.isappvideocall === false &&
-                            interviewDetail?.format === "Video" &&
-                            interviewDetail?.isactive === true &&
-                            interviewDetail?.isrejected === false && (
-                              <div className="p-custom">
-                                <p className="mb-0">
-                                  <a
-                                    href={interviewDetail.videolink}
-                                    target={"_blank"}
-                                    rel="noreferrer"
-                                  >
-                                    Click here to join
-                                  </a>{" "}
-                                  the interview
-                                </p>
-                              </div>
-                            )}
-                          {interviewDetail.isappvideocall === true &&
-                            interviewDetail?.format === "Video" &&
-                            interviewDetail?.isactive === true &&
-                            interviewDetail?.isrejected === false && (
-                              <div className="p-custom">
-                                <p className="mb-0">
-                                  <a href="/">
-                                    <NavLink to={`/video-screen/${id}`} exact>
-                                      Click here to join
-                                    </NavLink>
-                                  </a>{" "}
-                                  the in-app interview
-                                </p>
-                              </div>
-                            )}
+                          {!isAdmin ? (
+                            <>
+                              {" "}
+                              {interviewDetail?.isappvideocall === false &&
+                                interviewDetail?.format === "Video" &&
+                                interviewDetail?.isactive === true &&
+                                interviewDetail?.isrejected === false && (
+                                  <div className="p-custom">
+                                    <p className="mb-0">
+                                      <a
+                                        href={interviewDetail.videolink}
+                                        target={"_blank"}
+                                        rel="noreferrer"
+                                      >
+                                        Click here to join
+                                      </a>{" "}
+                                      the interview
+                                    </p>
+                                  </div>
+                                )}
+                              {interviewDetail.isappvideocall === true &&
+                                interviewDetail?.format === "Video" &&
+                                interviewDetail?.isactive === true &&
+                                interviewDetail?.isrejected === false && (
+                                  <div className="p-custom">
+                                    <p className="mb-0">
+                                      <a href="/">
+                                        <NavLink
+                                          to={`/video-screen/${id}`}
+                                          exact
+                                        >
+                                          Click here to join
+                                        </NavLink>
+                                      </a>{" "}
+                                      the in-app interview
+                                    </p>
+                                  </div>
+                                )}
+                            </>
+                          ) : (
+                            <></>
+                          )}
                         </>
                       ) : (
                         <></>
@@ -288,6 +501,34 @@ export function ScheduleDetails({ interviewDetail, onClose, isAdmin = false }) {
           </div>
         </CardBody>
       </Card>
+      {rejectReasonModal && (
+        <DeactivateReasonModal
+          isRMOpen={rejectReasonModal}
+          callBack={(e) => submitReject(e)}
+          callBackError={() => closeModal()}
+          title={title}
+        ></DeactivateReasonModal>
+      )}
+      {showRescheduleModal ? (
+        <DeactivateReasonModal
+          isRMOpen={showRescheduleModal}
+          callBack={(data) => onSendRescheduleData(data)}
+          callBackError={() => setShowRescheduleModal()}
+          title={"rescheduling"}
+        ></DeactivateReasonModal>
+      ) : (
+        <></>
+      )}
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 }

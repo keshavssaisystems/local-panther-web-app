@@ -48,6 +48,7 @@ import {
   profileActions,
   jobPreferenceDetailsActions,
   getProfileActions,
+  getZipLocation,
 } from "_store";
 import { getLocationFilter } from "_store";
 
@@ -59,6 +60,9 @@ export function PersonalInformation(props) {
   const genderList = useSelector((state) => state.gender.genderList);
   const raceList = useSelector((state) => state.ethnicity.ethnicityList);
   const pronounList = useSelector((state) => state.getProfile.pronounList);
+  const availabilityList = useSelector(
+    (state) => state.getProfile.availabilityList
+  );
   const eligibilityList_temp = useSelector(
     (state) => state.getProfile.dropdownLists.eligibilityDropDown
   );
@@ -100,114 +104,137 @@ export function PersonalInformation(props) {
     phoneError: false,
     cityError: false,
     stateError: false,
+    countryError: false,
   });
 
-  const [citySelect, setCitySelect] = useState("");
-  const [stateSelect, setStateSelect] = useState("");
-  const [countrySelect, setCountrySelect] = useState("");
-  const [raceSelect, setRaceSelect] = useState("");
-  const [pronounSelect, setPronounSelect] = useState("");
+  const [save, setSave] = useState(false);
+  const [citySelect, setCitySelect] = useState([]);
+  const [stateSelect, setStateSelect] = useState([]);
+  const [countrySelect, setCountrySelect] = useState([]);
+  const [raceSelect, setRaceSelect] = useState([]);
+  const [pronounSelect, setPronounSelect] = useState([]);
+  const [availabilitySelect, setAvailabilitySelect] = useState([]);
   const [genderSelect, setGenderSelect] = useState("");
   useEffect(() => {
+    loadDetails();
+  }, [selectedCandidate, availabilityList]);
+
+  useEffect(() => {
+    if (props?.profileInfo?.personalInfo?.city !== "") {
+      loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
+    }
+  }, []);
+
+  const loadDetails = () => {
     let data = {
-      jobprofile: selectedCandidate.personalInfo.jobprofile,
-      firstname: selectedCandidate.personalInfo.firstname,
-      lastname: selectedCandidate.personalInfo.lastname,
-      email: selectedCandidate.personalInfo.email,
-      phonenumber: selectedCandidate.personalInfo.phonenumber,
-      zipcode: selectedCandidate.personalInfo.zipcode,
-      employmenteligiblity: selectedCandidate.personalInfo.employmenteligiblity,
-      dob: selectedCandidate.personalInfo.dob
-        ? extractDatePart(selectedCandidate.personalInfo.dob)
+      jobprofile: selectedCandidate?.personalInfo?.jobprofile,
+      firstname: selectedCandidate?.personalInfo?.firstname,
+      lastname: selectedCandidate?.personalInfo?.lastname,
+      email: selectedCandidate?.personalInfo?.email,
+      phonenumber: selectedCandidate?.personalInfo?.phonenumber,
+      zipcode: selectedCandidate?.personalInfo?.zipcode,
+      employmenteligiblity:
+        selectedCandidate?.personalInfo?.employmenteligiblity,
+      dob: selectedCandidate?.personalInfo?.dob
+        ? extractDatePart(selectedCandidate?.personalInfo?.dob)
         : null,
       isreadytoworkimmediately:
-        selectedCandidate.personalInfo.isreadytoworkimmediately,
-      address: selectedCandidate.personalInfo.address,
+        selectedCandidate?.personalInfo?.isreadytoworkimmediately,
+      address: selectedCandidate?.personalInfo?.address,
+      isexcludemycurrentemployer:
+        selectedCandidate?.personalInfo?.isexcludemycurrentemployer,
       city: [
         {
-          value: selectedCandidate.personalInfo.cityid,
-          label: selectedCandidate.personalInfo.cityname,
+          value: selectedCandidate?.personalInfo?.cityid,
+          label: selectedCandidate?.personalInfo?.city,
         },
       ],
       state: [
         {
-          value: selectedCandidate.personalInfo.stateid,
-          label: selectedCandidate.personalInfo.statename,
+          value: selectedCandidate?.personalInfo?.stateid,
+          label: selectedCandidate?.personalInfo?.state,
         },
       ],
       country: [
         {
-          value: selectedCandidate.personalInfo.countryid,
-          label: selectedCandidate.personalInfo.countryname,
+          value: selectedCandidate?.personalInfo?.countryid,
+          label: selectedCandidate?.personalInfo?.country,
         },
       ],
 
       gender: [
         {
-          value: selectedCandidate.personalInfo.genderid,
-          label: selectedCandidate.personalInfo.gender,
+          value: selectedCandidate?.personalInfo?.genderid,
+          label: selectedCandidate?.personalInfo?.gender,
         },
       ],
       ethinicity: [
         {
-          value: selectedCandidate.personalInfo.ethnicityid,
-          label: selectedCandidate.personalInfo.ethnicity,
+          value: selectedCandidate?.personalInfo?.ethnicityid,
+          label: selectedCandidate?.personalInfo?.ethnicity,
         },
       ],
       pronoun: [
         {
-          value: selectedCandidate.personalInfo.pronounid,
-          label: selectedCandidate.personalInfo.pronounname,
+          value: selectedCandidate?.personalInfo?.pronounid,
+          label: selectedCandidate?.personalInfo?.pronounname,
         },
       ],
-
+      availabilitytowork: selectedCandidate?.personalInfo?.availabilitytowork,
       isactive: true,
       userid: 0,
       currentUserId: 0,
     };
     setGetResponse(data);
-    if (props.profileInfo.personalInfo.city != "") {
-      loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
-    }
+    let countryData = data?.country;
 
-    if (selectedCandidate.selectedDropDown?.selectedCountry[0]?.value != 0) {
-      let countryData = [...countrySelect];
-      countryData.push(selectedCandidate.selectedDropDown?.selectedCountry[0]);
+    setCountrySelect(countryData);
 
-      setCountrySelect(countryData);
-    }
+    let stateData = data?.state;
+    setStateSelect(stateData);
 
-    if (selectedCandidate.selectedDropDown?.selectedState[0]?.value != 0) {
-      let stateData = [...stateSelect];
-      stateData.push(selectedCandidate.selectedDropDown?.selectedState[0]);
-      setStateSelect(stateData);
-    }
+    let stateDetails = [
+      {
+        value: data?.city?.[0]?.value,
+        label: `${data?.city?.[0]?.label + ", " + data?.state?.[0]?.label}`,
+      },
+    ];
 
-    if (selectedCandidate.selectedDropDown?.selectedCity[0]?.value != 0) {
-      let cityData = [...citySelect];
-      cityData.push(selectedCandidate.selectedDropDown?.selectedCity[0]);
-      setCitySelect(cityData);
-    }
-    if (selectedCandidate.selectedDropDown?.selectedGender[0]?.value != 0) {
-      let genderData = [...genderSelect];
-      genderData.push(selectedCandidate.selectedDropDown?.selectedGender[0]);
+    setCitySelect(stateDetails);
+
+    if (data?.gender?.[0]?.value === 0) {
+      setGenderSelect([]);
+    } else {
+      let genderData = data?.gender;
       setGenderSelect(genderData);
     }
 
-    if (selectedCandidate.selectedDropDown?.selectedEthnicity[0].value != 0) {
-      let ethnicityData = [...raceSelect];
-      ethnicityData.push(
-        selectedCandidate.selectedDropDown?.selectedEthnicity[0]
-      );
+    if (data?.ethinicity?.[0]?.value === 0) {
+      setRaceSelect([]);
+    } else {
+      let ethnicityData = data?.ethinicity;
       setRaceSelect(ethnicityData);
     }
 
-    if (selectedCandidate.selectedDropDown?.selectedPronoun[0].value != 0) {
-      let pronounData = [...pronounSelect];
-      pronounData.push(selectedCandidate.selectedDropDown?.selectedPronoun[0]);
+    if (data?.pronoun?.[0]?.value === 0) {
+      setPronounSelect([]);
+    } else {
+      let pronounData = data?.pronoun;
       setPronounSelect(pronounData);
     }
-  }, [selectedCandidate]);
+
+    if (availabilityList) {
+      if (data?.availabilitytowork !== "") {
+        let availability = availabilityList?.filter(
+          (x) => x.label === data?.availabilitytowork
+        );
+
+        setAvailabilitySelect(availability);
+      } else {
+        setAvailabilitySelect([]);
+      }
+    }
+  };
 
   const [cityReqError, setCityReqError] = useState(false);
   const [countryList, setCountryList] = useState([]);
@@ -254,11 +281,19 @@ export function PersonalInformation(props) {
         label: cityList.find((x) => x.cityid == data.value)?.statename,
       },
     ];
+    if (data.zipcode) {
+      get_data.zipcode = data.zipcode;
+    }
 
     get_data.state = obj;
     setGetResponse(get_data);
   };
   const onSelectCountryDropdown = function (data) {
+    let error_data = { ...requiredErrors };
+
+    error_data.countryError = false;
+    setRequiredErros(error_data);
+
     let new_data = [];
     new_data.push(data);
     setCountrySelect(new_data);
@@ -308,6 +343,17 @@ export function PersonalInformation(props) {
     setGetResponse(get_data);
   };
 
+  const onSelectAvailability = (data) => {
+    let new_data = [];
+    new_data.push(data);
+    setAvailabilitySelect(new_data);
+
+    let get_data = { ...getResponse };
+
+    get_data.availabilitytowork = data.label;
+    setGetResponse(get_data);
+  };
+
   const onSelectGenderDropdown = function (data) {
     let new_data = [];
     new_data.push(data);
@@ -335,66 +381,87 @@ export function PersonalInformation(props) {
     return maskedPhoneNumber;
   }
 
-  async function onSubmit(e) {
-    e.preventDefault();
+  async function onSubmit(e, currentEmployer) {
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
+    if (e !== "") {
+      setSave(true);
+      e.preventDefault();
+
+      if (
+        // new_data.jobprofile === "" ||
+        // !new_data.jobprofile ||
+        new_data.firstname === "" ||
+        new_data.lastname === "" ||
+        new_data.phonenumber === "" ||
+        new_data.email === "" ||
+        new_data.cityid == 0 ||
+        new_data.employmenteligiblity === 0 ||
+        new_data.zipcode === "" ||
+        new_data.gender?.[0]?.value == 0 ||
+        new_data.ethinicity?.[0]?.value == 0
+      ) {
+        return;
+      }
+    }
+
     if (new_data.city[0]?.value == 0) {
       errors.cityError = true;
     } else {
       errors.cityError = false;
     }
 
-    if (errors.cityError) {
+    if (new_data.country[0]?.value == 0) {
+      errors.countryError = true;
+    } else {
+      errors.countryError = false;
+    }
+
+    if (errors.cityError || errors.countryError) {
       setRequiredErros(errors);
       return;
     }
 
-    if (
-      new_data.jobprofile === "" ||
-      !new_data.jobprofile ||
-      new_data.firstname === "" ||
-      new_data.lastname === "" ||
-      new_data.phonenumber === "" ||
-      new_data.email === "" ||
-      new_data.cityid == 0
-    ) {
-      return;
-    } else {
-      let post_data = {
-        candidateid: userDetails.InternalUserId,
-        email: new_data.email,
-        phonenumber: new_data.phonenumber,
-        firstname: new_data.firstname,
-        lastname: new_data.lastname,
-        genderid: new_data.gender[0]?.value,
-        cityid: new_data.city[0]?.value,
-        stateid: new_data.state[0]?.value,
-        countryid: new_data.country[0]?.value,
-        zipcode: new_data.zipcode,
-        ethnicityid: new_data.ethinicity[0]?.value,
-        employmenteligiblity: new_data.employmenteligiblity,
-        isreadytoworkimmediately: new_data.isreadytoworkimmediately,
-        isactive: true,
-        dob: new_data.dob,
-        address: new_data.address,
-        userid: userDetails.UserId,
-        currentUserId: userDetails.UserId,
-        jobprofile: new_data.jobprofile,
-        pronounid: new_data.pronoun[0]?.value,
-      };
+    let post_data = {
+      candidateid: userDetails.InternalUserId,
+      email: new_data.email,
+      phonenumber: new_data.phonenumber,
+      firstname: new_data.firstname,
+      lastname: new_data.lastname,
+      genderid: new_data.gender[0]?.value,
+      cityid: new_data.city[0]?.value,
+      stateid: new_data.state[0]?.value,
+      countryid: new_data.country[0]?.value,
+      zipcode: new_data.zipcode,
+      ethnicityid: new_data.ethinicity[0]?.value,
+      employmenteligiblity: new_data.employmenteligiblity,
+      isreadytoworkimmediately: new_data.isreadytoworkimmediately,
+      isactive: true,
+      dob: new_data.dob,
+      address: new_data.address,
+      userid: userDetails.UserId,
+      currentUserId: userDetails.UserId,
+      jobprofile: "",
+      pronounid: new_data.pronoun[0]?.value,
+      isexcludemycurrentemployer: currentEmployer,
+      availabilitytowork: new_data.availabilitytowork,
+    };
 
-      let response = await dispatch(
-        profileActions.insertPersonalInfo(post_data)
-      );
-      if (response.payload) {
-        setSuccess(true);
-        setMessage(response.payload.message);
-      } else {
-        setError(true);
-      }
-      setContactModal(false);
+    let response = await dispatch(profileActions.insertPersonalInfo(post_data));
+    if (response.payload) {
+      setSuccess(true);
+      setMessage(response.payload.message);
+    } else {
+      setError(true);
     }
+    setContactModal(false);
+  }
+
+  function onChangeCurrentEmployer(value) {
+    let new_data = { ...getResponse };
+    new_data.isexcludemycurrentemployer = value;
+    setGetResponse(new_data);
+    onSubmit("", value);
   }
 
   const checkCityValid = function () {
@@ -412,38 +479,19 @@ export function PersonalInformation(props) {
     setDOB(extractDatePart(data));
   };
 
-  const close = function () {
-    let data = {
-      personalInfo: personalInfo_temp,
-      eligibilityList: eligibilityList_temp,
-    };
-    setSelectedCandidate(data);
-    let errors = { ...requiredErrors };
-
-    let obj = {
-      emailError: false,
-      phoneError: false,
-      cityError: false,
-      stateError: false,
-    };
-    errors = obj;
-    setRequiredErros(errors);
-    setContactModal(false);
-    setEditImg(false);
-    // props.onCallBack();
-  };
   const closeModal = function () {
     let data = {
       personalInfo: personalInfo_temp,
       eligibilityList: eligibilityList_temp,
     };
     let errors = { ...requiredErrors };
-
+    loadDetails();
     let obj = {
       emailError: false,
       phoneError: false,
       cityError: false,
       stateError: false,
+      countryError: false,
     };
     errors = obj;
     setRequiredErros(errors);
@@ -451,6 +499,7 @@ export function PersonalInformation(props) {
     setContactModal(false);
     setSuccess(false);
     setError(false);
+    setSave(false);
     props.onCallBack();
   };
 
@@ -482,6 +531,7 @@ export function PersonalInformation(props) {
       setCountryList(data);
     }
   }, [cityList]);
+
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -491,12 +541,53 @@ export function PersonalInformation(props) {
       return {
         value,
         label: `${rest.location + ", " + rest.statename}`,
+        zipcode: rest.zipcode?.[0],
+        stateid: rest.stateid,
+        statename: rest.statename,
       };
     });
 
     setLocation(filter_data);
     return filter_data;
   };
+
+  const getZipLocationData = async function (inputValue) {
+    const { data = [] } = await getLocationFilter(inputValue);
+    setCityList(data);
+    let filter_data = data.map(({ cityid: value, ...rest }) => {
+      return {
+        value,
+        label: `${rest.location + ", " + rest.statename}`,
+        zipcode: rest.zipcode,
+        stateid: rest.stateid,
+        statename: rest.statename,
+      };
+    });
+    setCitySelect(filter_data);
+    setCountrySelect([{ value: 1, label: "USA" }]);
+    setLocation(filter_data);
+
+    let get_data = { ...getResponse };
+    let new_array = [
+      {
+        value: filter_data?.[0]?.value,
+        label: filter_data?.[0]?.label,
+      },
+    ];
+
+    get_data.city = new_array;
+    get_data.zipcode = inputValue;
+    let obj = [
+      {
+        value: filter_data?.[0]?.stateid,
+        label: filter_data?.[0]?.statename,
+      },
+    ];
+
+    get_data.state = obj;
+    setGetResponse(get_data);
+  };
+
   const onHandleInputChange = function (check, data) {
     let new_data = { ...getResponse };
     let errors = { ...requiredErrors };
@@ -525,6 +616,9 @@ export function PersonalInformation(props) {
       }
     } else if (check === "zip") {
       new_data.zipcode = data;
+      if (data.length === 5) {
+        getZipLocationData(data);
+      }
     } else if (check === "authorization") {
       new_data.employmenteligiblity = data;
     } else if (check === "work") {
@@ -566,7 +660,7 @@ export function PersonalInformation(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".png",
+    accept: ".png,.jpeg,.jpg",
   });
 
   const addEditProfileImage = function (acceptedFiles) {
@@ -634,7 +728,7 @@ export function PersonalInformation(props) {
             <div>
               {selectedCandidate.personalInfo.email ? (
                 <Row className="g-0">
-                  <Col sm="12" md="12" xl="6" className=" mb-0">
+                  <Col Col sm="12" md="12" xl="4" className=" mb-0">
                     <div className="card no-shadow rm-border bg-transparent widget-chart text-start mb-0">
                       <div className="icon-wrapper rounded-circle profile-img">
                         <img
@@ -670,11 +764,11 @@ export function PersonalInformation(props) {
                               </span>
                             )}
                           </strong>
-                          {selectedCandidate.personalInfo.jobprofile && (
+                          {/* {selectedCandidate.personalInfo.position && (
                             <p className="widget-description text-focus content-text mt-0">
-                              {selectedCandidate.personalInfo.jobprofile}
+                              {selectedCandidate.personalInfo.position}
                             </p>
-                          )}
+                          )} */}
                           <p className="candidate-label mt-0 mb-0">
                             {selectedCandidate.personalInfo.organization !=
                               "Not Working" &&
@@ -690,15 +784,22 @@ export function PersonalInformation(props) {
                               <Label className="candidate-label mb-0">
                                 Employment eligibility:{" "}
                                 <strong className="content-text">
-                                  {selectedCandidate.personalInfo.eligibility}
+                                  {!selectedCandidate.personalInfo.eligibility
+                                    ? "NA"
+                                    : selectedCandidate.personalInfo
+                                        .eligibility}
                                 </strong>
                               </Label>
                             </Col>
                             <Col>
                               <Label className="candidate-label mt-0">
-                                Ready to work immediately:{" "}
+                                Availability to work:{" "}
                                 <strong className="content-text">
-                                  {selectedCandidate.personalInfo.readyToWork}{" "}
+                                  {selectedCandidate.personalInfo
+                                    .availabilitytowork === ""
+                                    ? "NA"
+                                    : selectedCandidate.personalInfo
+                                        .availabilitytowork}{" "}
                                 </strong>
                               </Label>
                             </Col>
@@ -708,13 +809,13 @@ export function PersonalInformation(props) {
                     </div>
                   </Col>
 
-                  <Col sm="12" md="12" xl="6" className="">
-                    <div className="m-3 float-end">
+                  <Col Col sm="12" md="12" xl="4" className="">
+                    {/* <div className="m-3 float-end">
                       <BsPencil
                         className="edit-icon"
                         onClick={(evt) => setContactModal(true)}
                       />
-                    </div>
+                    </div> */}
                     <Row>
                       <Row className="mt-4">
                         <Col className="mb-2 mt-2">
@@ -760,7 +861,7 @@ export function PersonalInformation(props) {
                       </Row>
                     </Row>
                   </Col>
-                  {/* <Col sm="12" md="12" xl="3" className="mt-3">
+                  <Col sm="12" md="12" xl="4" className="mt-3">
                     <div className="me-3 float-end">
                       <BsPencil
                         className="edit-icon"
@@ -769,20 +870,28 @@ export function PersonalInformation(props) {
                     </div>
                     <Row className="mt-3">
                       <Row>
-                        {selectedCandidate.personalInfo.dob ? (
-                          <Col className="mb-2">
-                            <div>
-                              <BsBalloon className="personal-sec-icon me-2" />
-                              <span className="content-text mt-3">
-                                {formatDate(selectedCandidate.personalInfo.dob)}
-                              </span>
-                            </div>
-                          </Col>
-                        ) : (
-                          <></>
-                        )}
+                        <FormGroup check>
+                          <Input
+                            name="currentEmployer"
+                            type="checkbox"
+                            checked={getResponse.isexcludemycurrentemployer}
+                            onChange={(evt) =>
+                              onChangeCurrentEmployer(
+                                !getResponse.isexcludemycurrentemployer
+                              )
+                            }
+                          />{" "}
+                          <Label className="content-text">
+                            Exclude current employer
+                          </Label>
+                        </FormGroup>
                       </Row>
-                      <Row>
+                      <p className="current-emp-text">
+                        If checked, you won't see job openings at your current
+                        employer. Your current employer will not be matched to
+                        you
+                      </p>
+                      {/* <Row>
                         <Col className="mb-2">
                           {selectedCandidate.personalInfo.gender !== "" ? (
                             <div>
@@ -824,9 +933,9 @@ export function PersonalInformation(props) {
                             <></>
                           )}
                         </Col>
-                      </Row>
+                      </Row> */}
                     </Row>
-                  </Col> */}
+                  </Col>
                 </Row>
               ) : (
                 <></>
@@ -847,16 +956,21 @@ export function PersonalInformation(props) {
             size="lg"
             isOpen={isContactModal}
           >
-            <ModalHeader toggle={() => close()} charCode="Y">
-              <strong className="card-title-text">Contact information</strong>
+            <ModalHeader toggle={() => closeModal()} charCode="Y">
+              <strong className="card-title-text">Contact Information</strong>
             </ModalHeader>
             <ModalBody>
               {getResponse ? (
-                <Form onSubmit={(evt) => onSubmit(evt)}>
-                  <Row className="mb-3">
+                <Form
+                  onSubmit={(evt) =>
+                    onSubmit(evt, getResponse.isexcludemycurrentemployer)
+                  }
+                >
+                  {/* <Row className="mb-3">
                     <Col className="col-6">
                       <Label for="firstname" className="fw-semi-bold">
-                        Job profile <span className="required-icon">*</span>
+                        Desired/Current job profile{" "}
+                        <span className="required-icon">*</span>
                       </Label>
                       <input
                         type="text"
@@ -882,7 +996,7 @@ export function PersonalInformation(props) {
                           : ""}
                       </div>
                     </Col>
-                  </Row>
+                  </Row> */}
 
                   <Row>
                     <div className="mb-1 fw-bold">Contact</div>
@@ -1052,7 +1166,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="country" className="fw-semi-bold">
-                          Country
+                          Country <span className="required-icon">*</span>
                         </Label>
                         <AsyncSelect
                           name="country"
@@ -1063,7 +1177,17 @@ export function PersonalInformation(props) {
                           value={countrySelect}
                           onChange={(evt) => onSelectCountryDropdown(evt)}
                           onMenuOpen={() => checkCityValid()}
+                          className={`location-dropdown ${
+                            requiredErrors.countryError === ""
+                              ? "is-invalid error-text"
+                              : ""
+                          }`}
                         />
+                        <div className="error-class">
+                          {requiredErrors.countryError
+                            ? "Country is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1090,20 +1214,27 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Zip code
+                          Zip code <span className="required-icon">*</span>
                         </Label>
                         <input
                           type="text"
                           name="zipCode"
                           id="zipCode"
-                          maxLength={50}
+                          maxLength={5}
                           value={getResponse.zipcode}
                           onInput={(evt) =>
                             onHandleInputChange("zip", evt.target.value)
                           }
-                          placeholder="Enter zip zode"
-                          className="field-input placeholder-text form-control input-text"
+                          placeholder="Enter zip code"
+                          className={`field-input placeholder-text form-control ${
+                            getResponse.zipcode === "" ? "is-invalid" : ""
+                          }`}
                         />
+                        <div className="invalid-feedback">
+                          {getResponse.zipcode === ""
+                            ? "Zip code is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1117,7 +1248,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Birth year
+                          Date of birth
                         </Label>
 
                         <InputGroup>
@@ -1141,7 +1272,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Gender
+                          Gender <span className="required-icon">*</span>
                         </Label>
 
                         <AsyncSelect
@@ -1151,7 +1282,17 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={genderSelect}
                           onChange={(evt) => onSelectGenderDropdown(evt)}
+                          className={`placeholder-name ${
+                            save && getResponse?.gender?.[0]?.value == 0
+                              ? "async-border-red"
+                              : ""
+                          }`}
                         />
+                        <div className="error-class">
+                          {save && getResponse?.gender?.[0]?.value == 0
+                            ? "Gender is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1159,7 +1300,7 @@ export function PersonalInformation(props) {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="race" className="fw-semi-bold">
-                          Race/Etnicity
+                          Race/Etnicity <span className="required-icon">*</span>
                         </Label>
                         <AsyncSelect
                           name="race"
@@ -1168,7 +1309,17 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={raceSelect}
                           onChange={(evt) => onSelectRaceDropdown(evt)}
+                          className={`placeholder-name ${
+                            save && getResponse?.ethinicity?.[0]?.value == 0
+                              ? "async-border-red"
+                              : ""
+                          }`}
                         />
+                        <div className="error-class">
+                          {save && getResponse?.ethinicity?.[0]?.value == 0
+                            ? "Race/Ethnicity is required"
+                            : ""}
+                        </div>
                       </FormGroup>
                     </Col>
 
@@ -1190,8 +1341,10 @@ export function PersonalInformation(props) {
                   </Row>
 
                   <Row>
-                    <div className="mb-1 fw-bold">Employment eligibility</div>
-                    <hr />
+                    <div className="mb-1 fw-bold">
+                      Employment Eligibility{" "}
+                      <span className="required-icon">*</span>
+                    </div>
                   </Row>
 
                   <Row>
@@ -1207,6 +1360,14 @@ export function PersonalInformation(props) {
                             onClick={(evt) =>
                               onHandleInputChange("authorization", item.id)
                             }
+                            style={{
+                              borderColor:
+                                save &&
+                                (getResponse.employmenteligiblity === 0 ||
+                                  !getResponse.employmenteligiblity)
+                                  ? "#d92550"
+                                  : "",
+                            }}
                           />
                           <Label check className="fw-semi-bold">
                             {item.name}
@@ -1215,7 +1376,15 @@ export function PersonalInformation(props) {
                       </Col>
                     ))}
                   </Row>
-                  <Row>
+                  <div className="error-class">
+                    {save &&
+                    (getResponse.employmenteligiblity === 0 ||
+                      !getResponse.employmenteligiblity)
+                      ? "Employment eligibility is required"
+                      : ""}
+                  </div>
+                  <hr />
+                  {/* <Row>
                     <Col>
                       <FormGroup check>
                         <Input
@@ -1231,6 +1400,28 @@ export function PersonalInformation(props) {
                         </Label>
                       </FormGroup>
                     </Col>
+                  </Row> */}
+
+                  <Row>
+                    <Col md={4}>
+                      <FormGroup>
+                        <Label for="zipCode" className="fw-semi-bold">
+                          Availability to work
+                        </Label>
+                        <AsyncSelect
+                          name="distance"
+                          placeholder="Select"
+                          defaultOptions={availabilityList}
+                          isMulti={false}
+                          value={
+                            availabilitySelect?.length > 0
+                              ? availabilitySelect
+                              : ""
+                          }
+                          onChange={(evt) => onSelectAvailability(evt)}
+                        />
+                      </FormGroup>
+                    </Col>
                   </Row>
 
                   <div className="float-end">
@@ -1240,7 +1431,7 @@ export function PersonalInformation(props) {
                     <Button
                       type="button"
                       className="close-btn"
-                      onClick={() => closeModal(false)}
+                      onClick={() => closeModal()}
                     >
                       Close
                     </Button>
@@ -1319,7 +1510,7 @@ export function PersonalInformation(props) {
               <img src={errorIcon} alt="success-icon" />
             </div>
             <div className="mb-0 d-flex justify-content-center rejected-success-text">
-              Please select City to filter
+              Please select city to filter
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
@@ -1342,7 +1533,7 @@ export function PersonalInformation(props) {
       </Modal>
 
       <Modal className="modal-reject-align profile-view" isOpen={editImg}>
-        <ModalHeader toggle={() => close()} charCode="Y">
+        <ModalHeader toggle={() => closeModal()} charCode="Y">
           <strong className="card-title-text"> Profile Image Update</strong>
         </ModalHeader>
         <Card>

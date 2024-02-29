@@ -22,7 +22,7 @@ import { EducationModal } from "./educationModal";
 import Loader from "react-loaders";
 
 import { BsPencil, BsTrash3 } from "react-icons/bs";
-import { NoDataFound } from "_components/common/nodatafound";
+import { NoProfileData } from "_components/common/noProfileData";
 import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
 
@@ -79,7 +79,7 @@ export function CandidateEducation(props) {
     setDeleteConfirm(true);
   };
 
-  const deleteQualification = async function () {
+  const deleteQualification = async function (event) {
     let response = await dispatch(
       educationDetailsSlice.deleteEducationThunk(deleteId)
     );
@@ -184,7 +184,7 @@ export function CandidateEducation(props) {
                     <Row style={{ textAlign: "center" }}>
                       <Col>
                         {" "}
-                        <NoDataFound imageSize={"25px"} />
+                        <NoProfileData imageSize={"25px"} />
                       </Col>
                     </Row>
                   )}
@@ -298,7 +298,7 @@ export function CandidateEducation(props) {
                       <Row style={{ textAlign: "center" }}>
                         <Col>
                           {" "}
-                          <NoDataFound imageSize={"25px"} />
+                          <NoProfileData imageSize={"25px"} />
                         </Col>
                       </Row>
                     )}
@@ -350,7 +350,7 @@ export function CandidateEducation(props) {
                   </Button>
                   <Button
                     className="success-close-btn"
-                    onClick={(evt) => closeModal(false)}
+                    onClick={(evt) => closeModal()}
                   >
                     NO
                   </Button>

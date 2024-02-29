@@ -60,38 +60,41 @@ export function Chat({ groupId, details }) {
   const [formValue, setFormValue] = useState("");
   const sendMessage = async (e) => {
     e.preventDefault();
-    await messagesRef.add({
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
-      groupId: groupId,
-      sender: localStorage.getItem("userId"),
-    });
-    setFormValue("");
-    dummy.current.scrollIntoView({ behavior: "smooth" });
-    if (messages.length < 1) {
-      await chatUserRef.add({
-        customerId: customerId,
-        customerName: customerName,
-        candidateId: candidateId,
-        candidateName: candidateName,
-        lastMessage: formValue,
-        lastMessageBy: Number(localStorage.getItem("userId")),
-        lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-        groupId: groupId,
-        seen: false,
+    let formData = formValue;
+    if (formData.trim() !== "") {
+      await messagesRef.add({
+        text: formData,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
+        groupId: groupId,
+        sender: localStorage.getItem("userId"),
       });
-    }
-    if (messages.length > 0) {
-      await chatUserRef.doc(chatList[0].id).update({
-        lastMessage: formValue,
-        lastMessageBy: Number(localStorage.getItem("userId")),
-        lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-        seen: false,
-        sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
-      });
+      dummy.current.scrollIntoView({ behavior: "smooth" });
+      setFormValue("");
+      if (messages.length < 1) {
+        await chatUserRef.add({
+          customerId: customerId,
+          customerName: customerName,
+          candidateId: candidateId,
+          candidateName: candidateName,
+          lastMessage: formData,
+          lastMessageBy: Number(localStorage.getItem("userId")),
+          lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),
+          groupId: groupId,
+          seen: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
+        });
+      }
+      if (messages.length > 0) {
+        await chatUserRef.doc(chatList[0].id).update({
+          lastMessage: formData,
+          lastMessageBy: Number(localStorage.getItem("userId")),
+          lastMessageDateTime: firebase.firestore.FieldValue.serverTimestamp(),
+          seen: false,
+          sendDate: moment.utc().format("YYYY-MM-DDTHH:mm:ss"),
+        });
+      }
     }
   };
   return (
@@ -122,6 +125,7 @@ export function Chat({ groupId, details }) {
                 value={formValue}
                 onChange={(e) => setFormValue(e.target.value)}
                 placeholder="Type your message here"
+                required
               />
             </Col>
             <Col sm={1} md={1} lg={1} className="custom-padding-button-col">

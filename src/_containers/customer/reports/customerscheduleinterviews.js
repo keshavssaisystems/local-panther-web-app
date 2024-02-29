@@ -89,15 +89,15 @@ export function CustomerReportScheduledInterviews() {
     if (schdInterviewList?.length > 0) {
       let filteredData = schdInterviewList.map((data) => {
         return {
-          "Job Code": data.jobid,
+          "Job code": data.jobid,
           Title: data.jobtitle,
           Status: data.jobstatus,
-          "Candidate Name": data.candidatename,
+          "Candidate name": data.candidatename,
           "Scheduled date": data.scheduledate
             ? moment(data.scheduledate).format("MM/DD/YYYY")
             : "",
           Interviewers: data.intervieweremailids,
-          "Meeting Status": data.meetingstatus,
+          "Meeting status": data.meetingstatus,
         };
       });
       setExcelData([
@@ -172,7 +172,7 @@ export function CustomerReportScheduledInterviews() {
 
   const columns = [
     {
-      name: <span className="table-title">Job Code</span>,
+      name: <span className="table-title">Job code</span>,
       cell: (row) => (
         <span className="table-cell" title={row.jobid}>
           {row.jobid}
@@ -211,7 +211,7 @@ export function CustomerReportScheduledInterviews() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">Candidate Name</span>,
+      name: <span className="table-title">Candidate name</span>,
       cell: (row) => (
         <span className="table-cell" title={row.candidatename}>
           <Button
@@ -263,7 +263,7 @@ export function CustomerReportScheduledInterviews() {
       minWidth: "350px",
     },
     {
-      name: <span className="table-title">Meeting Status</span>,
+      name: <span className="table-title">Meeting status</span>,
       cell: (row) => (
         <span className="table-cell" title={row.meetingstatus}>
           {row.meetingstatus}
@@ -278,7 +278,7 @@ export function CustomerReportScheduledInterviews() {
   return (
     <>
       <PageTitle
-        heading={"Customer Scheduled Interview Report"}
+        heading={"Employer Scheduled Interview Report"}
         icon={titlelogo}
       />
       <Row className="cust-report-job-cont">
@@ -297,7 +297,7 @@ export function CustomerReportScheduledInterviews() {
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem header>Download Report</DropdownItem>
+                    <DropdownItem header>Download report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
                         exportToExcel(
@@ -307,7 +307,11 @@ export function CustomerReportScheduledInterviews() {
                         )
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -340,7 +344,7 @@ export function CustomerReportScheduledInterviews() {
                         setCandidateId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Candidate</option>
+                      <option value={""}>Select a candidate</option>
                       {candidateDropDownList?.length > 0 ? (
                         candidateDropDownList.map((data) => (
                           <option
@@ -382,7 +386,7 @@ export function CustomerReportScheduledInterviews() {
                         setJobId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Job</option>
+                      <option value={""}>Select a job</option>
                       {jobDropDownList?.length > 0 ? (
                         jobDropDownList.map((data) => (
                           <option value={data.jobid} key={data.jobid}>

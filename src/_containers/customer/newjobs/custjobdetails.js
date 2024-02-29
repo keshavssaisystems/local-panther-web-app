@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Card, Col, Row, Button, CardFooter } from "reactstrap";
+import {
+  Card,
+  Col,
+  Row,
+  Button,
+  CardFooter,
+  UncontrolledTooltip,
+} from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import Loader from "react-loaders";
@@ -22,6 +29,7 @@ import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
 import { ShareSocial } from "react-share-social";
+import { CloseJobReasonPopup } from "./closeJobReasonPopup";
 
 export function CustJobDetail({
   jobDetails,
@@ -38,6 +46,7 @@ export function CustJobDetail({
   const workScheduleOptions = useSelector(
     (state) => state.dropdown.workSchedule
   );
+  const billingStatus = useSelector((state) => state?.payment?.showBilling);
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   let loading = true;
   let jobDetail = {};
@@ -46,10 +55,6 @@ export function CustJobDetail({
   if (jobDetails.length > 0) {
     loading = false;
     jobDetail = jobDetails[0];
-    // jobDetail?.jobKeyQualificationDtos !== undefined &&
-    //   jobDetail?.jobKeyQualificationDtos.map((skills) =>
-    //     skillArray.push(skills.skillname)
-    //   );
     if (
       jobDetail?.jobKeyQualificationDtos &&
       jobDetail?.jobKeyQualificationDtos?.length > 0
@@ -421,16 +426,35 @@ export function CustJobDetail({
                           >
                             <FiEdit className="mb-1" /> Edit job
                           </Button>
-                          <Button
-                            color="primary"
-                            className={"me-3 mt-3"}
-                            onClick={(e) => {
-                              setPublishSuccess(true);
-                              publishJob(jobDetail.jobid);
-                            }}
-                          >
-                            <FiCheckSquare className="mb-1" /> Publish job
-                          </Button>
+                          {billingStatus === true && (
+                            <Button
+                              color="primary"
+                              className={"me-3 mt-3"}
+                              onClick={(e) => {
+                                setPublishSuccess(true);
+                                publishJob(jobDetail.jobid);
+                              }}
+                            >
+                              <FiCheckSquare className="mb-1" /> Publish job
+                            </Button>
+                          )}
+                          {billingStatus === false && (
+                            <>
+                              <Button
+                                color="primary"
+                                className={"me-3 mt-3 btn-mute"}
+                                id="publishButton"
+                              >
+                                <FiCheckSquare className="mb-1" /> Publish job
+                              </Button>
+                              <UncontrolledTooltip
+                                placement="bottom"
+                                target={"publishButton"}
+                              >
+                                Please add billing details to publish job
+                              </UncontrolledTooltip>
+                            </>
+                          )}
                         </Col>
                       ) : (
                         <></>
@@ -452,9 +476,14 @@ export function CustJobDetail({
                         )}
                       {jobDetail.isclosed === true && !isShare && (
                         <Col md={4} lg={4} className="right-align">
-                          <div className="mb-2 me-3 mt-3 badge bg-danger text-normal">
+                          <div className="mb-1 me-3 mt-2 badge bg-danger text-normal">
                             Job closed
                           </div>
+                          {jobDetail?.closedjobreasonid !== 0 && (
+                            <div className="me-3">
+                              <b>Reason -</b> {jobDetail?.closedjobreason}
+                            </div>
+                          )}
                         </Col>
                       )}
                     </>
@@ -470,22 +499,22 @@ export function CustJobDetail({
               </div>
             )}
             <div className="heading-title">
-              <h6 className="job-main-heading mb-0">Job details</h6>
+              <h6 className="job-main-heading mb-0">Job Details</h6>
             </div>
             <HeadingAndDetailWithDiv
-              heading={"Job Type"}
+              heading={"Job type"}
               detail={returnJobType()}
               iconId={5}
             />
             <HeadingAndDetailWithDiv
-              heading={"Job Location"}
+              heading={"Job location"}
               detail={
                 jobDetail?.joblocation === "" ? "-" : jobDetail?.joblocation
               }
               iconId={5}
             />
             <HeadingAndDetailWithDiv
-              heading={"Shift & Schedule"}
+              heading={"Shift & schedule"}
               detail={returnShift() + ", " + returnSchedule()}
               iconId={3}
             />
@@ -527,7 +556,11 @@ export function CustJobDetail({
             />
             <HeadingAndDetailWithDiv
               heading={"Address"}
-              detail={returnAddress()}
+              detail={
+                jobDetail?.locationaddress === ""
+                  ? "-"
+                  : jobDetail?.locationaddress
+              }
               iconId={10}
             />
             <HeadingAndDetailWithDiv
@@ -555,16 +588,30 @@ export function CustJobDetail({
               iconId={9}
             />
             <HeadingAndDetailWithDiv
-              heading={"Sponsorship is required"}
+              heading={"Willing to sponsor"}
               detail={jobDetail.sponsorshiprequiured === true ? "Yes" : "No"}
               iconId={9}
             />
+            <HeadingAndDetailWithDiv
+              heading={"Security clearance required"}
+              detail={
+                jobDetail?.issecurityclearancerequired === true ? "Yes" : "No"
+              }
+              iconId={14}
+            />
+            {jobDetail?.issecurityclearancerequired === true && (
+              <HeadingAndDetailWithDiv
+                heading={"Security clearance"}
+                detail={jobDetail?.securityclearance}
+                iconId={14}
+              />
+            )}
             <HeadingAndDetailWithoutIcon
-              heading={"Job Description"}
+              heading={"Job description"}
               detail={jobDetail.description}
             />
             <HeadingAndDetailWithoutIcon
-              heading={"About Company"}
+              heading={"About company"}
               detail={jobDetail.companydetails}
             />
             <HeadingAndDetailWithoutIcon
@@ -610,7 +657,7 @@ export function CustJobDetail({
             ) : (
               <></>
             )}
-            {!isModal ? (
+            {/* {!isModal ? (
               <CardFooter>
                 Share:{" "}
                 <ShareSocial
@@ -635,7 +682,7 @@ export function CustJobDetail({
               </CardFooter>
             ) : (
               <></>
-            )}
+            )} */}
             {isShare ? (
               <>
                 <CardFooter>
@@ -664,28 +711,18 @@ export function CustJobDetail({
       {publishSuccess === true && (
         <SweetAlert
           success
-          title="Job published successfully!!!"
+          title="Job published successfully!"
           onConfirm={(e) => setPublishSuccess(false)}
         ></SweetAlert>
       )}
       {closeConfirmation === true && (
-        <SweetAlert
-          warning
-          showCancel
-          confirmBtnText="Yes, close job!"
-          confirmBtnBsStyle="danger"
-          cancelBtnText="No"
-          cancelBtnBsStyle="secondary"
-          title="Are you sure?"
-          onConfirm={(e) => {
-            closeJob(jobDetail.jobid);
-            setCloseConfirmation(false);
-          }}
-          onCancel={() => setCloseConfirmation(false)}
-          focusCancelBtn
-        >
-          You really want to close the {jobDetail.jobtitle} job !
-        </SweetAlert>
+        <CloseJobReasonPopup
+          isOpen={closeConfirmation}
+          onClose={() => setCloseConfirmation(false)}
+          title={jobDetail?.jobtitle}
+          jobid={jobDetail?.jobid}
+          setCloseJob={(e) => closeJob(e)}
+        />
       )}
     </>
   );

@@ -4,12 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
-import MetisMenu from "react-metismenu";
-import {
-  addRole,
-  updateMenuMapping,
-} from "_containers/admin/_redux/adminListing.slice";
-// import { getState } from '_store/dropdownstate.slice'
+import { updateMenuMapping } from "_containers/admin/_redux/adminListing.slice";
 
 import {
   Form,
@@ -17,12 +12,9 @@ import {
   Label,
   Row,
   Col,
-  FormText,
   Button,
   Input,
   Collapse,
-  CardFooter,
-  ModalFooter,
 } from "reactstrap";
 
 export const AddEditMenuMapping = (props) => {

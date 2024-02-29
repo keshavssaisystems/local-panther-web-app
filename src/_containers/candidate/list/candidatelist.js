@@ -14,6 +14,7 @@ import { JobDetailModal } from "_components/modal/jobdetailmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { NoDataFound } from "_components/common/nodatafound";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
+import axios from "axios";
 import "./candidatelist.scss";
 import {
   customerCandidateListsActions,
@@ -22,10 +23,13 @@ import {
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
+import { DeactivateReasonModal } from "_components/modal/deactivateReason";
+import { OfferHistory } from "_components/modal/offerhistorymoal";
 
 export const CandidateList = (props) => {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
-
+  const internalUserId =
+    JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId ?? 0;
   const [showJDModal, setShowJDModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState([]);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -34,7 +38,7 @@ export const CandidateList = (props) => {
   const [preScreenType, setPreScreenType] = useState("");
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleId, setRescheduleId] = useState("");
-
+  const [preScreenLoading, setPreScreenLoading] = useState(false);
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
   const [showAlert, SetShowAlert] = useState({
@@ -43,6 +47,8 @@ export const CandidateList = (props) => {
     title: "",
     description: "",
   });
+  const [oHModal, setOHModal] = useState(false);
+  const [companyName, setCompanyName] = useState("");
 
   const candidateJobList = useSelector(
     (state) => state.candidateListReducer.candidateJobList
@@ -62,6 +68,11 @@ export const CandidateList = (props) => {
   const prescreenQues = useSelector(
     (state) => state.candidateListReducer.prescreenQues
   );
+
+  const offerHistory = useSelector(
+    (state) => state.candidateListReducer.offerHistory
+  );
+
   const handlePageChange = (page) => {
     setPageNo(page);
     toggle(activeTab, page);
@@ -75,6 +86,10 @@ export const CandidateList = (props) => {
     if (candidateJobList?.length > 0 && activeTab === "matched") {
       getJobDetails(candidateJobList[0].jobid);
     }
+    if (candidateJobList?.length > 0 && activeTab === "offers") {
+      dispatch(candidateListActions.getAcceptedJobListThunk(internalUserId));
+    }
+
     //make api call for first selected
   }, [candidateJobList]);
 
@@ -129,13 +144,16 @@ export const CandidateList = (props) => {
     };
 
     dispatch(candidateListActions.getRecommendedJobList(candObj));
+    if (candidateRecommendedJobStatusId === 7) {
+      dispatch(candidateListActions.getAcceptedJobListThunk(internalUserId));
+    }
   };
 
   const getSelectedJob = (e) => {
     getJobDetails(e);
   };
 
-  const onApplyClickBtn = () => {
+  const onApplyClickBtn = (eventData) => {
     let rec = candidateJobList.find(
       (data) => data.jobid === jobDetail[0].jobid
     );
@@ -143,7 +161,7 @@ export const CandidateList = (props) => {
       onCandidateCardActions("applied", rec?.candidaterecommendedjobid);
     }
   };
-  let successMessage = "Job status updated successfully!!!";
+  let successMessage = "Job status updated successfully!";
 
   const onCandidateCardActions = async (
     type,
@@ -390,29 +408,117 @@ export const CandidateList = (props) => {
   };
 
   const onSendPrescreenData = async (formData) => {
-    let newData = formData.map((data) => {
-      return {
-        jobcandidateprescreenapplicationid: 0,
-        jobprescreenapplicationid: data.jobprescreenapplicationid,
-        jobid: data.jobid,
-        candidateid: parseInt(
-          JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
-        ),
-        answer: data.answer,
-        isactive: data.isactive,
-        currentUserId: parseInt(
-          JSON.parse(localStorage.getItem("userDetails")).UserId
-        ),
-      };
-    });
+    setPreScreenLoading(true);
+    let nonFileData = formData
+      .filter((data) => {
+        return (
+          !data.iscustomquestion || data.customquestionanswertype === "Text"
+        );
+      })
+      .map((data) => {
+        return {
+          jobcandidateprescreenapplicationid: 0,
+          jobprescreenapplicationid: data.jobprescreenapplicationid,
+          jobid: data.jobid,
+          candidateid: parseInt(
+            JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+          ),
+          answer: data.answer,
+          isactive: data.isactive,
+          currentUserId: parseInt(
+            JSON.parse(localStorage.getItem("userDetails")).UserId
+          ),
+        };
+      });
+
+    let fileData = formData
+      .filter((data) => {
+        return (
+          data.iscustomquestion && data.customquestionanswertype !== "Text"
+        );
+      })
+      .map((data) => {
+        return {
+          jobcandidateprescreenapplicationid: 0,
+          jobprescreenapplicationid: data.jobprescreenapplicationid,
+          jobid: data.jobid,
+          candidateid: parseInt(
+            JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+          ),
+          answer: data.answer,
+          isactive: data.isactive,
+          currentUserId: parseInt(
+            JSON.parse(localStorage.getItem("userDetails")).UserId
+          ),
+        };
+      });
+
     let res = await dispatch(
-      candidateListActions.postJobPrescreenApplication(newData)
+      candidateListActions.postJobPrescreenApplication(nonFileData)
     );
 
     if (res.payload.statusCode === 201) {
-      setShowPSModal(false);
-      showSweetAlert({ title: res.payload.message, type: "success" });
+      const authData = localStorage.getItem("token")
+        ? localStorage.getItem("token")
+        : "";
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Bearer ${authData}`,
+        },
+      };
+      if (fileData?.length > 0) {
+        fileData.forEach(async (i, index) => {
+          const form = new FormData();
+          form.append("jobcandidateprescreenapplicationid", 0);
+          form.append("jobprescreenapplicationid", i.jobprescreenapplicationid);
+          form.append("Jobid", i.jobid);
+          form.append(
+            "Candidateid",
+            parseInt(
+              JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+            )
+          );
+          form.append(
+            "currentUserId",
+            JSON.parse(localStorage.getItem("userDetails")).UserId
+          );
+          form.append("Answerfile", i.answer);
+          form.append("Isactive", i.isactive);
+
+          const res = await axios
+            .post(
+              `${process.env.REACT_APP_PANTHER_URL}/api/JobCandidatePrescreenApplication/CandidatePrecreenAnswerFileUpload`,
+              form,
+              config
+            )
+            .then((result) => {
+              if (result.data.statusCode == 204) {
+                if (fileData.length - 1 === index) {
+                  setPreScreenLoading(false);
+                  setShowPSModal(false);
+                  showSweetAlert({
+                    title: result.data.message,
+                    type: "success",
+                  });
+                }
+              } else {
+                setPreScreenLoading(false);
+                showSweetAlert({
+                  title: result.data.message || result.data.status,
+                  type: "danger",
+                });
+              }
+            })
+            .catch((error) => {});
+        });
+      } else {
+        setPreScreenLoading(false);
+        setShowPSModal(false);
+        showSweetAlert({ title: res.payload.message, type: "success" });
+      }
     } else {
+      setPreScreenLoading(false);
       showSweetAlert({
         title: res.payload.message || res.payload.status,
         type: "danger",
@@ -439,7 +545,23 @@ export const CandidateList = (props) => {
       });
     }
   };
+  const onShowOHModal = async (row) => {
+    let res = await dispatch(
+      candidateListActions.getCandidateOfferHistory(
+        row.candidaterecommendedjobid
+      )
+    );
 
+    if (res?.payload?.statusCode === 204) {
+      setOHModal(true);
+      setCompanyName(row.companyname);
+    } else {
+      showSweetAlert({
+        title: res.payload.message || res.payload.status,
+        type: "danger",
+      });
+    }
+  };
   return (
     <>
       <Row className="cand-list-cont">
@@ -553,7 +675,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Our advanced AI matching system efficiently reviews
                       candidate profiles and job requirements to connect
                       candidates with the best job opportunities. By using this
@@ -678,7 +800,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A job record may be marked with questions or doubts,
                       indicating uncertain applications due to a lack of
                       information, qualifications, and locations. These jobs may
@@ -719,6 +841,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -758,7 +881,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       Applied jobs are those that users submit applications for
                       through the platform. They are marked as applied and are
                       stored in a separate section of the profile. The user can
@@ -797,6 +920,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -836,7 +960,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A scheduled interview is an appointment with a customer to
                       discuss qualifications for a job, typically in person, by
                       phone, or video, after the initial screening process.
@@ -874,6 +998,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -913,7 +1038,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       An accepted job is when candidates agree to the terms of
                       the offer and confirm their intention to work for the
                       customer, securing the job and preparing to start working.
@@ -951,6 +1076,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -990,7 +1116,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       A rejected job refers to a decision to decline an offer or
                       a customer rescinding it, indicating that the individual
                       has decided not to work for the customer or has changed
@@ -1029,6 +1155,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -1068,7 +1195,7 @@ export const CandidateList = (props) => {
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
-                    <span>
+                    <span style={{ display: "flex" }}>
                       An offer is a formal proposal from a customer, detailing
                       job details, salary, benefits, start date, and work hours,
                       indicating successful completion of the interview process.
@@ -1106,6 +1233,7 @@ export const CandidateList = (props) => {
                           onPrescreenClick={(type, row) =>
                             onPrescreenClickAction(type, row)
                           }
+                          onShowOHModal={(row) => onShowOHModal(row)}
                         />
                         {totalRecords > candLPSize ? (
                           <div className="mt-2">
@@ -1193,6 +1321,7 @@ export const CandidateList = (props) => {
                 data={prescreenQues}
                 sendFormData={(data) => onSendPrescreenData(data)}
                 preScreenType={preScreenType}
+                loading={preScreenLoading}
               ></PrescreenModal>
             </>
           ) : (
@@ -1201,13 +1330,28 @@ export const CandidateList = (props) => {
         </>
         <>
           {showRescheduleModal ? (
-            <CandRescheduleModal
-              isOpen={showRescheduleModal}
+            <DeactivateReasonModal
+              isRMOpen={showRescheduleModal}
+              callBack={(data) => onSendRescheduleData(data)}
+              callBackError={() => setShowRescheduleModal()}
+              title={"rescheduling"}
+            ></DeactivateReasonModal>
+          ) : (
+            <></>
+          )}
+        </>
+        <>
+          {oHModal ? (
+            <OfferHistory
+              isOpen={oHModal}
               onClose={() => {
-                setShowRescheduleModal(false);
+                setOHModal(false);
+                setCompanyName("");
               }}
-              onSubmitReschedule={(data) => onSendRescheduleData(data)}
-            ></CandRescheduleModal>
+              offerHistory={offerHistory}
+              name={companyName}
+              activeTab={activeTab}
+            ></OfferHistory>
           ) : (
             <></>
           )}

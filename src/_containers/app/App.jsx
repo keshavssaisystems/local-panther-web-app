@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
 import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
-
+import { UploadData } from "_containers/admin/uploadData";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
@@ -55,16 +55,20 @@ import CustomerDashboard from "_containers/customer/dashboard/customerDashboard"
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
+import { FlaggedWord } from "_containers/admin/masters/flaggedWords";
 
 import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
 import { ToastContainer, toast } from "react-toastify";
-import { Row } from "reactstrap";
+import { Row, Button } from "reactstrap";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
 import { SubsidaryList } from "_containers/admin/masters/subsidary";
+import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
+import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
+import { Payment } from "_containers/payment/payment";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -76,13 +80,28 @@ export function App() {
     if (authUser) {
       updatePushNotifications();
       messaging.onMessage((payload) => {
-        console.log(payload);
+        let isProfilePage = window.location.pathname.indexOf("/profile") !== -1;
         toast(
           <Row>
             <p>
               <b>{payload.notification.title}</b>
             </p>
             <p>{payload.notification.body}</p>
+            {payload?.data?.type === "Resume_Notification" && isProfilePage ? (
+              <p>
+                Updated resume data available
+                <Button
+                  color="link"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
+                  REFRESH
+                </Button>
+              </p>
+            ) : (
+              <></>
+            )}
           </Row>,
           {
             position: "bottom-right",
@@ -126,7 +145,7 @@ export function App() {
             }
           />
           <Route
-            path="/customers"
+            path="/employers"
             element={
               <PrivateRoute>
                 <CustomerList />
@@ -141,6 +160,15 @@ export function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="masters/flagged-words"
+            element={
+              <PrivateRoute>
+                <FlaggedWord />
+              </PrivateRoute>
+            }
+          />
+
           <Route
             path="masters/subsidiary"
             element={
@@ -219,6 +247,14 @@ export function App() {
             path="/admin-customer"
             element={<OnboardCustomer></OnboardCustomer>}
           />
+          <Route
+            path="/upload-data"
+            element={
+              <PrivateRoute>
+                <UploadData />
+              </PrivateRoute>
+            }
+          />
           <Route path="/report" element={<OpenJobs title={"Open Jobs"} />} />
           <Route
             path="/report/open-jobs"
@@ -264,6 +300,15 @@ export function App() {
             path="/report/non-published-jobs/:id"
             element={<NonPublishedJobs title={"Non Published Jobs"} />}
           />
+          <Route
+            path="/report/bullhorn-candidate-report/16"
+            element={<BullhornCandidate title={"Bullhorn Candidate Report"} />}
+          />
+
+          <Route
+            path="/report/ats-candidates/:id"
+            element={<ATSCandidate title={"ATS Candidate Report"} />}
+          />
         </>
       );
     } else if (userroleid === 2) {
@@ -297,7 +342,15 @@ export function App() {
             path="/scheduled-interview"
             element={
               <PrivateRoute>
-                <ScheduleInterview />
+                <ScheduleInterview fromDashboard="calendar" />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/scheduled-interview#upcoming"
+            element={
+              <PrivateRoute>
+                <ScheduleInterview fromDashboard="upcoming" />
               </PrivateRoute>
             }
           />
@@ -338,10 +391,7 @@ export function App() {
           />
 
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
-          <Route
-            path="/candidate-list/liked"
-            element={<CustomerCandidateLists type={"liked"} />}
-          />
+
           <Route
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}
@@ -451,6 +501,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CandidateList type={"matched"} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/job-list-applied"
+            element={
+              <PrivateRoute>
+                <CandidateList type={"applied"} />
               </PrivateRoute>
             }
           />
@@ -654,6 +712,10 @@ export function App() {
               <Route
                 path="/job-detail/:id"
                 element={<ShareJobDetails authUser={authUser} />}
+              />
+              <Route
+                path="/payment/:id"
+                element={<Payment authUser={authUser} />}
               />
             </Routes>
           </div>

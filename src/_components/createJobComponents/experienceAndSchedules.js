@@ -97,6 +97,9 @@ export function ExperienceAndSchedules({
     postData(data);
     setPreValue(data);
     setSuccessMessage(true);
+    setTimeout(() => {
+      setSuccessMessage(false);
+    }, 2000);
     esFormSubmitted(true);
   };
   const getJobType = (jobTypeArray) => {
@@ -141,7 +144,7 @@ export function ExperienceAndSchedules({
           <Col md={6} lg={3}>
             <FormGroup>
               <Label className="fw-semi-bold">
-                Job Type<span style={{ color: "red" }}>* </span>
+                Job type<span style={{ color: "red" }}>* </span>
               </Label>
               {jobTypeOption.length > 0 &&
                 jobTypeOption.map((options) => (

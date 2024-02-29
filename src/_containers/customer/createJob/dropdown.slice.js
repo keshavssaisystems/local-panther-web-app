@@ -143,6 +143,31 @@ export const getSubsidiaryListThunk = createAsyncThunk(
     return await fetchWrapper.get(DROPDOWN_END_POINT);
   }
 );
+// getSecurityClearanceListThunk thunk
+export const getSecurityClearanceListThunk = createAsyncThunk(
+  `${name}/getSecurityClearanceListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=securityclearance`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
+// getCloseJobReasonListThunk thunk
+export const getCloseJobReasonListThunk = createAsyncThunk(
+  `${name}/getCloseJobReasonListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=ClosedJobReason`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
+
+// getFlaggedWordsListThunk thunk
+export const getFlaggedWordsListThunk = createAsyncThunk(
+  `${name}/getFlaggedWordsListThunk`,
+  async (payload) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=flaggedword`;
+    return await fetchWrapper.get(DROPDOWN_END_POINT, payload);
+  }
+);
 
 // Create the slice
 const dropdownSlice = createSlice({
@@ -163,6 +188,9 @@ const dropdownSlice = createSlice({
     levelOfEducationList: [],
     fieldOfStudyList: [],
     subsidiaryList: [],
+    securityClearanceList: [],
+    closeJobReasonList: [],
+    flaggedWordsList: [],
     loading: false,
   },
   reducers: {},
@@ -348,6 +376,39 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
+    [getSecurityClearanceListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getSecurityClearanceListThunk.fulfilled]: (state, action) => {
+      state.securityClearanceList = action.payload.data;
+      state.loading = false;
+    },
+    [getSecurityClearanceListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getCloseJobReasonListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getCloseJobReasonListThunk.fulfilled]: (state, action) => {
+      state.closeJobReasonList = action.payload.data;
+      state.loading = false;
+    },
+    [getCloseJobReasonListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
+    [getFlaggedWordsListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getFlaggedWordsListThunk.fulfilled]: (state, action) => {
+      state.flaggedWordsList = action.payload.data;
+      state.loading = false;
+    },
+    [getFlaggedWordsListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -370,6 +431,9 @@ export const dropdownActions = {
   getFieldOfStudyThunk,
   getLevelOFEducationThunk,
   getSubsidiaryListThunk,
+  getSecurityClearanceListThunk,
+  getCloseJobReasonListThunk,
+  getFlaggedWordsListThunk,
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

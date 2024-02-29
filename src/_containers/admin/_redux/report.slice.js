@@ -107,6 +107,15 @@ export const getADMReportSubsidiaryList = createAsyncThunk(
   }
 );
 
+// getBullhornCandidateReportThunk
+export const getBullhornCandidateReportThunk = createAsyncThunk(
+  `${name}/getBullhornCandidateReportThunk`,
+  async ({ pageSize, pageNo }) => {
+    const BULLHORN_END_POINT = `${process.env.REACT_APP_NEW_API_URL}/BullhornData/GetCandidate?pageSize=${pageSize}&pageNumber=${pageNo}&isActive=true`;
+    return await fetchWrapper.get(BULLHORN_END_POINT);
+  }
+);
+
 // Create the slice
 const adminReportSlice = createSlice({
   name,
@@ -119,6 +128,8 @@ const adminReportSlice = createSlice({
     candidateList: [],
     jobDetail: [],
     subsidiaryList: [],
+    bullhornCandidateData: [],
+    bullhornLoading: false,
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -229,6 +240,18 @@ const adminReportSlice = createSlice({
       state.subsidiaryList = payload?.data ? payload?.data : [];
     },
     [getADMReportSubsidiaryList.rejected]: (state, action) => {},
+    //
+    [getBullhornCandidateReportThunk.pending]: (state) => {
+      state.bullhornCandidateData = [];
+      state.bullhornLoading = true;
+    },
+    [getBullhornCandidateReportThunk.fulfilled]: (state, { payload = {} }) => {
+      state.bullhornCandidateData = payload?.data ? payload?.data : [];
+      state.bullhornLoading = false;
+    },
+    [getBullhornCandidateReportThunk.rejected]: (state, action) => {
+      state.bullhornLoading = true;
+    },
   },
 });
 
@@ -242,6 +265,7 @@ export const adminReportActions = {
   getCandidateDropdownList,
   getAdminReportJobDetail,
   getADMReportSubsidiaryList,
+  getBullhornCandidateReportThunk,
 };
 
 export const adminReportReducer = adminReportSlice.reducer;

@@ -266,7 +266,7 @@ export function CustomerReportMatchedCandidate() {
   return (
     <>
       <PageTitle
-        heading={"Customer Matched Candidate List by Job Report"}
+        heading={"Employer Matched Candidate List by Job Report"}
         icon={titlelogo}
       />
       <Row>
@@ -285,7 +285,7 @@ export function CustomerReportMatchedCandidate() {
                     <i className="pe-7s-menu btn-icon-wrapper" />
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-menu-shadow dropdown-menu-hover-link">
-                    <DropdownItem header>Download Report</DropdownItem>
+                    <DropdownItem header>Download report</DropdownItem>
                     <DropdownItem
                       onClick={() =>
                         exportToExcel(
@@ -295,7 +295,11 @@ export function CustomerReportMatchedCandidate() {
                         )
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>
@@ -317,7 +321,7 @@ export function CustomerReportMatchedCandidate() {
                         setJobId(e.target.value);
                       }}
                     >
-                      <option value={""}>Select a Job</option>
+                      <option value={""}>Select a job</option>
                       {jobDropDownList?.length > 0 ? (
                         jobDropDownList.map((data) => (
                           <option value={data.jobid} key={data.jobid}>

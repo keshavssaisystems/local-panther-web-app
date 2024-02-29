@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function PublishJobStep({
   companyId,
@@ -11,6 +12,7 @@ export default function PublishJobStep({
   type,
 }) {
   const navigate = useNavigate();
+
   useEffect(() => {
     let main = {
       jobId: jobId,
@@ -36,6 +38,9 @@ export default function PublishJobStep({
       levelofeducationids: reqData.basicInformation.levelofeducationids,
       certifications: reqData.basicInformation.certifications,
       subsidiaryid: reqData.basicInformation.subsidiaryid,
+      issecurityclearancerequired:
+        reqData.basicInformation.issecurityclearancerequired,
+      securityclearanceid: reqData.basicInformation.securityclearance,
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,
@@ -49,7 +54,7 @@ export default function PublishJobStep({
         },
       ],
       jobKeyQualificationDtos:
-        reqData.keyQualification.length === undefined
+        reqData?.keyQualification?.length === undefined
           ? null
           : reqData.keyQualification,
       jobPaymentBenefitDtos: [
@@ -73,6 +78,7 @@ export default function PublishJobStep({
   const createNewJob = () => {
     window.location.reload(false);
   };
+  const billingStatus = useSelector((state) => state?.payment?.showBilling);
   return (
     <>
       <div className="form-wizard-content">
@@ -85,8 +91,8 @@ export default function PublishJobStep({
           </div>
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
-            Your job with <b>{reqData.basicInformation.jobTitle}</b> has
-            successfully {type === "edit" ? "updated" : "created"} & saved as
+            Your job with <b>{reqData.basicInformation.jobTitle}</b> has been
+            successfully {type === "edit" ? "updated" : "created"} & saved as a
             draft!
           </div>
           <div className="mt-3 mb-3" />
@@ -96,19 +102,30 @@ export default function PublishJobStep({
                 color="primary"
                 size="lg"
                 className="btn-shadow btn-wide"
-                onClick={(e) => createNewJob(e)}
+                onClick={() => createNewJob()}
               >
                 Create new job
               </Button>{" "}
               {"   "}
-              <Button
-                color="success"
-                size="lg"
-                className="btn-shadow btn-wide"
-                onClick={(e) => publishJob(true)}
-              >
-                Publish job
-              </Button>
+              {billingStatus === true ? (
+                <Button
+                  color="success"
+                  size="lg"
+                  className="btn-shadow btn-wide"
+                  onClick={(e) => publishJob(true)}
+                >
+                  Publish job
+                </Button>
+              ) : (
+                <Button
+                  color="success"
+                  size="lg"
+                  className="btn-shadow btn-wide"
+                  onClick={(e) => navigate(`/job-list`)}
+                >
+                  Back to job list
+                </Button>
+              )}
             </div>
           ) : (
             <div className="text-center">

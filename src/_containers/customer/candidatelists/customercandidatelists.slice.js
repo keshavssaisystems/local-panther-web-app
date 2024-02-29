@@ -26,6 +26,7 @@ function createInitialState() {
     durationOptions: [],
     scheduledInterviewList: [],
     prescreenQues: [],
+    custOfferHistory: [],
   };
 }
 
@@ -44,6 +45,7 @@ function createExtraActions() {
     getScheduleListData: getScheduleListData(),
     getScheduleIVList: getScheduleIVList(),
     getPrescreenDetails: getPrescreenDetails(),
+    getCustOfferHistory: getCustOfferHistory(),
   };
 
   function getDrpDwnJobLists() {
@@ -223,6 +225,14 @@ function createExtraActions() {
       }
     );
   }
+
+  // get customer offer history thunk
+  function getCustOfferHistory() {
+    return createAsyncThunk(`${name}/getCustOfferHistory`, async (id) => {
+      const GET_CUST_OH_END_POINT = `${newUrl}/JobOffer/GetByCandidateId/${id}`;
+      return await fetchWrapper.get(GET_CUST_OH_END_POINT);
+    });
+  }
 }
 
 function createExtraReducers() {
@@ -239,6 +249,7 @@ function createExtraReducers() {
     getScheduleListData();
     getScheduleIVList();
     getPrescreenDetails();
+    getCustOfferHistory();
 
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
@@ -444,11 +455,25 @@ function createExtraReducers() {
                     prescreenquestionid: data.prescreenquestionid,
                     error: false,
                     answer: data.answer,
+                    customquestionanswertype: data?.customquestionanswertype
+                      ? data.customquestionanswertype
+                      : "",
                   };
                 }
               );
             state.prescreenQues = newData;
           }
+        })
+        .addCase(rejected, (state, action) => {});
+    }
+    function getCustOfferHistory() {
+      let { pending, fulfilled, rejected } = extraActions.getCustOfferHistory;
+      builder
+        .addCase(pending, (state) => {
+          state.custOfferHistory = [];
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.custOfferHistory = action?.payload?.data;
         })
         .addCase(rejected, (state, action) => {});
     }

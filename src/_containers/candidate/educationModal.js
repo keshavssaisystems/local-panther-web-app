@@ -614,7 +614,7 @@ export function EducationModal(props) {
                   value={item.education.value == 0 ? [] : item.education}
                   className="location-dropdown-education"
                   onChange={(evt) =>
-                    onHandleInputChange("levelofeducation", evt, index, index)
+                    onHandleInputChange("levelofeducation", evt, index)
                   }
                 />
 
@@ -639,7 +639,7 @@ export function EducationModal(props) {
                     }
                     className="location-dropdown-education"
                     onChange={(evt) =>
-                      onHandleInputChange("studyField", evt, index, index)
+                      onHandleInputChange("studyField", evt, index)
                     }
                   />
                 </FormGroup>

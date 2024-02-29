@@ -6,13 +6,31 @@ import {
   ModalFooter,
   ModalHeader,
   ButtonGroup,
+  Row,
+  Col,
+  Input,
+  FormGroup,
+  Label,
   FormText,
+  InputGroup,
+  InputGroupText,
 } from "reactstrap";
 import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
+import DatePicker from "react-datepicker";
+import Loader from "react-loaders";
+import "../../_components/formComponents/Form.scss";
+import "./custuploadoffer.scss";
+
 export const CustomerUploadOffer = (props) => {
   const [fileName, setFileName] = useState("");
   const [file, setFile] = useState("");
+  const [pay, setPay] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [payErr, setPayErr] = useState(false);
+  const [startDateErr, setStartDateErr] = useState(false);
+  const [finalOffer, setFinalOffer] = useState(false);
+
   const [fileError, setFileError] = useState(false);
   useEffect(() => {}, []);
   const onDrop = useCallback((acceptedFiles) => {
@@ -31,11 +49,30 @@ export const CustomerUploadOffer = (props) => {
   };
 
   const onUploadClick = () => {
-    if (fileName === "") {
-      setFileError(true);
+    if (fileName === "" || startDate === "" || pay === "") {
+      setFileError(fileName === "");
+      setStartDateErr(startDate === "");
+      setPayErr(pay === "");
       return false;
+    } else if (fileName !== "" && startDate !== " " && pay !== "") {
+      props.uploadOfferDoc(
+        file,
+        startDate,
+        pay.replaceAll(",", ""),
+        finalOffer
+      );
+    }
+  };
+
+  const setPayVal = (e) => {
+    setPayErr(e.target.value === "");
+    if (isNaN(e.target.value.replaceAll(",", "")) === true) {
+      setPayErr(true);
     } else {
-      props.uploadOfferDoc(file);
+      let val = new Intl.NumberFormat("en-US").format(
+        e.target.value.replaceAll(",", "")
+      );
+      setPay(val);
     }
   };
 
@@ -47,37 +84,110 @@ export const CustomerUploadOffer = (props) => {
       backdrop={true}
       fade={true}
     >
-      <ModalHeader toggle={() => props.onClose()}>Upload Offer</ModalHeader>
+      <ModalHeader toggle={() => props.onClose()}>Make Offer</ModalHeader>
       <ModalBody style={{ maxHeight: "75vh", overflow: "auto" }}>
-        <div className="dropzone-wrapper dropzone-wrapper-sm">
-          <Dropzone
-            onDrop={(e) => onDrop(e)}
-            onFileDialogCancel={() => onCancel()}
-          >
-            {() => (
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className="dropzone-content">
-                  <p>Upload offer for candidate</p>
-                  <p>
-                    Try dropping some files here, or click to select files to
-                    upload.
-                  </p>
-                </div>
+        {props.loading ? (
+          <div className="offer-loading-div">
+            <Loader
+              type="line-scale-pulse-out-rapid"
+              className="d-flex justify-content-center"
+            />
+          </div>
+        ) : (
+          <Row>
+            {" "}
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+              <FormGroup>
+                <Label for={"pay"} className="fw-semi-bold">
+                  Salary<span style={{ color: "red" }}>* </span>
+                </Label>
+                <InputGroup>
+                  <InputGroupText>$</InputGroupText>
+                  <Input
+                    id={"pay"}
+                    name={"pay"}
+                    type={"text"}
+                    value={pay}
+                    placeholder={"Enter salary"}
+                    invalid={false}
+                    onChange={(e) => setPayVal(e)}
+                  />
+                </InputGroup>
+                {payErr && (
+                  <FormText color="danger">
+                    Please enter valid salary amount
+                  </FormText>
+                )}
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+              <FormGroup>
+                <Label for={"pay"} className="fw-semi-bold">
+                  Start date<span style={{ color: "red" }}>* </span>
+                </Label>
+                <DatePicker
+                  name="startdate"
+                  placeholderText="Select start date"
+                  className="form-control"
+                  selected={startDate}
+                  minDate={new Date()}
+                  showMonthDropdown
+                  showYearDropdown
+                  onChange={(date) => {
+                    setStartDate(date);
+                    setStartDateErr(date === "");
+                  }}
+                />
+                {startDateErr && (
+                  <FormText color="danger">Please select start date</FormText>
+                )}
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+              <div className="dropzone-wrapper dropzone-wrapper-sm">
+                <Dropzone
+                  onDrop={(e) => onDrop(e)}
+                  onFileDialogCancel={() => onCancel()}
+                >
+                  {() => (
+                    <div {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <div className="dropzone-content">
+                        <p>Upload offer for candidate</p>
+                        <p>
+                          Try dropping some files here, or click to select files
+                          to upload.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </Dropzone>
               </div>
-            )}
-          </Dropzone>
-        </div>
-        <div className="pt-2">
-          <strong className="content-title">
-            <span className="me-2">{fileName}</span>
-          </strong>
-          {fileError ? (
-            <FormText color="danger">Please select file for upload.</FormText>
-          ) : (
-            <></>
-          )}
-        </div>
+              <div className="pt-2">
+                <strong className="content-title">
+                  <span className="me-2 mt-1 mb-1">{fileName}</span>
+                </strong>
+                {fileError ? (
+                  <FormText color="danger">
+                    Please select file for upload.
+                  </FormText>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+              <Input
+                type="checkbox"
+                value={finalOffer}
+                onChange={(e) => {
+                  setFinalOffer(e.target.checked);
+                }}
+              />
+              <Label className="ps-1"> Is final offer</Label>
+            </Col>
+          </Row>
+        )}
       </ModalBody>
       <ModalFooter>
         <ButtonGroup>

@@ -92,6 +92,14 @@ export const logoutThunk = createAsyncThunk(
   }
 );
 
+export const putRegisterCustomer = createAsyncThunk(
+  `${name}/putRegisterCustomer`,
+  async ({ payload, userRegistrationId }) => {
+    const PUT_REG_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCustomer/${userRegistrationId}`;
+    return await fetchWrapper.put(PUT_REG_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -148,14 +156,14 @@ const authSlice = createSlice({
         "userroleid",
         decodedData.role.toLowerCase() === "admin"
           ? 1
-          : decodedData.role.toLowerCase() === "customer"
+          : decodedData.role.toLowerCase() === "employer"
           ? 2
           : 3
       );
       state.userroleid =
         decodedData.role.toLowerCase() === "admin"
           ? 1
-          : decodedData.role.toLowerCase() === "customer"
+          : decodedData.role.toLowerCase() === "employer"
           ? 2
           : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
@@ -182,7 +190,7 @@ const authSlice = createSlice({
       history.navigate("/registration-success");
     },
     [registerThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [forgotPasswordThunk.pending]: (state, { payload }) => {
@@ -190,7 +198,7 @@ const authSlice = createSlice({
     },
     [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => {},
     [forgotPasswordThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [userRegisterThunk.pending]: (state, { payload }) => {
@@ -198,14 +206,14 @@ const authSlice = createSlice({
     },
     [userRegisterThunk.fulfilled]: (state, { payload = {} }) => {},
     [userRegisterThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
     [verifyOTPThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
     [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => {},
     [verifyOTPThunk.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
     [userRegisterThunkNew.pending]: (state, { payload }) => {
@@ -213,7 +221,7 @@ const authSlice = createSlice({
     },
     [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => {},
     [userRegisterThunkNew.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
     [generateToken.pending]: (state, { payload }) => {
       state.error = null;
@@ -229,9 +237,19 @@ const authSlice = createSlice({
       state.error = null;
     },
     [registerCustomer.rejected]: (state, action) => {
-      state.error = action.error;
+      state.error = null;
     },
 
+    [putRegisterCustomer.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [putRegisterCustomer.fulfilled]: (state, { payload = {} }) => {
+      localStorage.setItem("iscustomerreg", payload?.data?.customerid);
+      state.error = null;
+    },
+    [putRegisterCustomer.rejected]: (state, action) => {
+      state.error = action.error;
+    },
     [getShareJobDetails.pending]: (state, { payload }) => {
       state.shareJobDetail = [];
     },
@@ -282,6 +300,7 @@ export const authActions = {
   registerCustomer,
   getShareJobDetails,
   logoutThunk,
+  putRegisterCustomer,
 };
 
 export const authReducer = authSlice.reducer;

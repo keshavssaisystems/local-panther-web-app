@@ -95,13 +95,15 @@ export function CandidateProfile() {
 
   useEffect(() => {
     loadPage();
+    dispatch(getProfileActions.getAvailability());
+    dispatch(getProfileActions.getPronoun());
   }, []);
 
   const loadPage = async function () {
     await getPersonalDetails();
     await getDropdownLists();
   };
-  dispatch(getProfileActions.getPronoun());
+
   let popular_skills = [];
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());
@@ -138,66 +140,66 @@ export function CandidateProfile() {
       position: organization?.length > 0 ? organization[0].jobtitle : "",
       organization:
         organization?.length > 0 ? organization[0].company : "Not Working",
-      eligibility: dropdownLists.eligibilityDropDown?.find(
-        (x) => x.id == filter_data.employmenteligiblity
-      ).name,
-      readyToWork: filter_data.isreadytoworkimmediately ? "Yes" : "No",
-      phonenumber: filter_data.phonenumber,
-      email: filter_data.email,
-      state: filter_data.statename,
-      city: filter_data.cityname,
-      country: filter_data.countryname,
+      eligibility: dropdownLists?.eligibilityDropDown?.find(
+        (x) => x.id == filter_data?.employmenteligiblity
+      )?.name,
+      readyToWork: filter_data?.isreadytoworkimmediately ? "Yes" : "No",
+      phonenumber: filter_data?.phonenumber,
+      email: filter_data?.email,
+      state: filter_data?.statename,
+      city: filter_data?.cityname,
+      country: filter_data?.countryname,
       dob: new Date(),
-      gender: filter_data.gendername,
-      race: filter_data.ethnicityname,
+      gender: filter_data?.gendername,
+      race: filter_data?.ethnicityname,
 
       candidateid: 0,
-      firstname: filter_data.firstname,
-      lastname: filter_data.lastname,
-      genderid: filter_data.genderid,
-      cityid: filter_data.cityid,
-      stateid: filter_data.stateid,
-      countryid: filter_data.countryid,
-      zipcode: filter_data.zipcode,
-      ethnicityid: filter_data.ethnicityid,
-      ethnicity: filter_data.ethnicity,
-      employmenteligiblity: filter_data.employmenteligiblity,
-      isreadytoworkimmediately: filter_data.isreadytoworkimmediately,
+      firstname: filter_data?.firstname,
+      lastname: filter_data?.lastname,
+      genderid: filter_data?.genderid,
+      cityid: filter_data?.cityid,
+      stateid: filter_data?.stateid,
+      countryid: filter_data?.countryid,
+      zipcode: filter_data?.zipcode,
+      ethnicityid: filter_data?.ethnicityid,
+      ethnicity: filter_data?.ethnicity,
+      employmenteligiblity: filter_data?.employmenteligiblity,
+      isreadytoworkimmediately: filter_data?.isreadytoworkimmediately,
       isactive: true,
       userid: 0,
       currentUserId: 0,
     };
     let new_data = { ...profileData };
     new_data.personalInfo = data;
-    new_data.skillsInfo = filter_data.candidateSkillDtos;
-    new_data.resumeInfo = filter_data.candidateResumeDto;
+    new_data.skillsInfo = filter_data?.candidateSkillDtos;
+    new_data.resumeInfo = filter_data?.candidateResumeDto;
     new_data.qualificationsInfo = filter_data?.candidateQualificationsDtos;
-    new_data.educationInfo = filter_data.candidateEducationDtos;
-    new_data.certificationsInfo = filter_data.candidateCertificationDtos;
-    new_data.additionalInfo = filter_data.candidateAdditionalInformationDtos;
+    new_data.educationInfo = filter_data?.candidateEducationDtos;
+    new_data.certificationsInfo = filter_data?.candidateCertificationDtos;
+    new_data.additionalInfo = filter_data?.candidateAdditionalInformationDtos;
     setProfileData(new_data);
 
     let dropdown_selected = { ...dropdownLists };
 
     dropdown_selected.selectedCity = {
-      value: filter_data.cityid,
-      label: `${filter_data.cityname + ", " + filter_data.statename}`,
+      value: filter_data?.cityid,
+      label: `${filter_data?.cityname + ", " + filter_data?.statename}`,
     };
     dropdown_selected.selectedState = {
-      value: filter_data.stateid,
-      label: filter_data.statename,
+      value: filter_data?.stateid,
+      label: filter_data?.statename,
     };
     dropdown_selected.selectedCountry = {
-      value: filter_data.countryid,
-      label: filter_data.countryname,
+      value: filter_data?.countryid,
+      label: filter_data?.countryname,
     };
     dropdown_selected.selectedGender = {
-      value: filter_data.genderid,
-      label: filter_data.gendername,
+      value: filter_data?.genderid,
+      label: filter_data?.gendername,
     };
     dropdown_selected.selectedEthnicity = {
-      value: filter_data.ethnicityid,
-      label: filter_data.ethnicity,
+      value: filter_data?.ethnicityid,
+      label: filter_data?.ethnicity,
     };
     setDropDownLists(dropdown_selected);
   };
@@ -217,9 +219,7 @@ export function CandidateProfile() {
             />
           </Row>
           <Row>
-
             <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
-
               <ResumeDetails
                 resumeInfo={profileData.resumeInfo}
                 candidateDetails={profileData.personalInfo}
@@ -228,7 +228,6 @@ export function CandidateProfile() {
             </Col>
 
             <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
-
               <CandidateSkills
                 skillInfo={profileData.skillsInfo}
                 popularSkillData={popularSkills}
@@ -237,9 +236,7 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-
             <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
-
               <CandidateQualification
                 qualificationInfo={profileData.qualificationsInfo}
                 onCallBack={() => loadPage()}
@@ -247,7 +244,6 @@ export function CandidateProfile() {
             </Col>
 
             <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
-
               <CandidateEducation
                 educationInfo={profileData.educationInfo}
                 onCallBack={() => loadPage()}
@@ -255,9 +251,7 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-
             <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
-
               <CertificationDetails
                 certificationsInfo={profileData.certificationsInfo}
                 onCallBack={() => loadPage()}
@@ -265,7 +259,6 @@ export function CandidateProfile() {
             </Col>
 
             <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
-
               <AdditionalInformation onCallBack={() => loadPage()} />
             </Col>
           </Row>

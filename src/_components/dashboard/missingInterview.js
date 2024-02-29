@@ -12,7 +12,7 @@ export function MissingInterview({ cardOptions }) {
       <Col>
         <Card className="missed-interview">
           <div className="ms-3 mt-3 missed-interview-title">
-            Missed interviews
+            Missed Interviews
           </div>
           {cardOptions?.length > 0 && (
             <CardBody className="overflow-auto">

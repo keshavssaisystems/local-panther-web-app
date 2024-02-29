@@ -71,52 +71,67 @@ export function CandidateSchedules() {
   let upData = [];
   if (candidateSchedules !== undefined && candidateSchedules.length > 0) {
     candidateSchedules.forEach((upcomingInterview) => {
-      let startDate = getTimezoneDateTime(
-        moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-          " " +
-          upcomingInterview.starttime,
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      let startTime = getTimezoneDateTime(
-        moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-          " " +
-          upcomingInterview.starttime,
-        "hh:mm a"
-      );
-      let durationArr =
-        upcomingInterview.duration !== undefined
-          ? upcomingInterview.duration.split(" ")
-          : [];
-      let endDate = getTimezoneDateTime(
-        moment(startDate).add(durationArr[0], "m"),
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      let endTime = getTimezoneDateTime(
-        moment(startDate).add(durationArr[0], "m"),
-        "hh:mm a"
-      );
-      let interviewData = {
-        id: upcomingInterview.scheduleinterviewid,
-        data: upcomingInterview,
-        format: upcomingInterview.format,
-        title: upcomingInterview.jobtitle,
-        start: new Date(startDate),
-        end: new Date(endDate),
-        color:
-          upcomingInterview?.isreschedulerequested === true
-            ? "#2f479b"
-            : upcomingInterview?.interviewstatusid !== 0
-            ? upcomingInterview?.interviewstatusid === 1
-              ? "#30b1ff"
-              : "#6c757d"
-            : upcomingInterview.isaccepted === true &&
-              upcomingInterview.isrejected === false
-            ? "green"
-            : upcomingInterview.isrejected === true
-            ? "red"
-            : "#f7b924",
-      };
-      upData.push(interviewData);
+      if (!upcomingInterview.isrejected) {
+        let startDate = getTimezoneDateTime(
+          moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
+            " " +
+            upcomingInterview.starttime,
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        let startTime = getTimezoneDateTime(
+          moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
+            " " +
+            upcomingInterview.starttime,
+          "hh:mm a"
+        );
+        let durationArr =
+          upcomingInterview.duration !== undefined
+            ? upcomingInterview.duration.split(" ")
+            : [];
+        let endDate = getTimezoneDateTime(
+          moment(startDate).add(durationArr[0], "m"),
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        let endTime = getTimezoneDateTime(
+          moment(startDate).add(durationArr[0], "m"),
+          "hh:mm a"
+        );
+        let interviewData = {
+          id: upcomingInterview.scheduleinterviewid,
+          data: upcomingInterview,
+          format: upcomingInterview.format,
+          title: upcomingInterview.jobtitle,
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color:
+            upcomingInterview?.isreschedulerequested === true
+              ? "rgb(215 174 255 / 50%)"
+              : upcomingInterview?.interviewstatusid !== 0
+              ? upcomingInterview?.interviewstatusid === 1
+                ? "rgb(143 208 255 / 50%)"
+                : "rgb(202 202 202 / 50%)"
+              : upcomingInterview.isaccepted === true &&
+                upcomingInterview.isrejected === false
+              ? "rgb(137 222 178 / 50%)"
+              : upcomingInterview.isrejected === true
+              ? "rgb(255 143 143 / 50%)"
+              : "rgb(250 219 145 / 50%)",
+          textcolor:
+            upcomingInterview?.isreschedulerequested === true
+              ? "#2D0059"
+              : upcomingInterview?.interviewstatusid !== 0
+              ? upcomingInterview?.interviewstatusid === 1
+                ? "#004271"
+                : "#2D2D2D"
+              : upcomingInterview.isaccepted === true &&
+                upcomingInterview.isrejected === false
+              ? "#005027"
+              : upcomingInterview.isrejected === true
+              ? "#520000"
+              : "#5C4100",
+        };
+        upData.push(interviewData);
+      }
     });
   }
 
@@ -125,6 +140,32 @@ export function CandidateSchedules() {
   const [popupType, setPopupType] = useState("Video");
   const onCloseIdModal = () => {
     setOpenModal(false);
+  };
+  const closeModal = () => {
+    setOpenModal(false);
+    // Get the current date
+    const currentDate = new Date();
+
+    // Get the first day of the current month
+    const firstDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+
+    // Get the last day of the current month
+    const lastDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+    const formattedFirstDay = formatDate(firstDayOfMonth);
+    const formattedLastDay = formatDate(lastDayOfMonth);
+    getUpcomingData({
+      candidateId: userDetails.InternalUserId,
+      start: formattedFirstDay,
+      end: formattedLastDay,
+    });
   };
   const handleSelectEvent = useCallback((event) => {
     setPopupData(event.data);
@@ -216,36 +257,36 @@ export function CandidateSchedules() {
               <CardBody className="scheduled-calender">
                 <div className="text-end">
                   <span className="legend">
-                    <div className="mb-3 me-0 badge badge-color-yellow">P</div>{" "}
+                    <div className="mb-3 me-0 badge badge-color-yellow">..</div>{" "}
                     No response
                   </span>
                   <span className="legend">
                     <div className="ms-3 mb-3 me-1 badge badge-color-green">
-                      P
+                      ..
                     </div>
                     Accepted interview{" "}
                   </span>
-                  <span className="legend">
+                  {/* <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-red">
-                      P
+                      ..
                     </div>{" "}
                     Rejected interview
-                  </span>
+                  </span> */}
                   <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
-                      P
+                      ..
                     </div>{" "}
                     Interview completed
                   </span>
                   <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-grey">
-                      P
+                      ..
                     </div>{" "}
                     Not joined
                   </span>
                   <span className="legend">
                     <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
-                      P
+                      ..
                     </div>{" "}
                     Requested for reschedule
                   </span>
@@ -262,8 +303,15 @@ export function CandidateSchedules() {
                     const backgroundColor = upData.color
                       ? upData.color
                       : "blue";
+                    const color = upData.textcolor;
                     const fontSize = "0.8rem";
-                    return { style: { backgroundColor, fontSize } };
+                    return {
+                      style: {
+                        backgroundColor,
+                        fontSize,
+                        color,
+                      },
+                    };
                   }}
                   onSelectEvent={(evt) => handleSelectEvent(evt)}
                   onRangeChange={handleNavigate}
@@ -290,6 +338,7 @@ export function CandidateSchedules() {
                   onCloseIdModal();
                 }}
                 isOpen={openModal}
+                closeModaBox={() => closeModal()}
               ></InterViewDetailModal>
             </>
           ) : (

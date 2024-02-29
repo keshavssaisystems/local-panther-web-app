@@ -8,7 +8,6 @@ import {
   IoIosHelp,
 } from "react-icons/io";
 import { BsBriefcase, BsListStars, BsFillFlagFill } from "react-icons/bs";
-import moment from "moment/moment";
 import customerIcons from "../../../assets/utils/images/customer";
 import { getTimezoneDateTimeForNow } from "_helpers/helper";
 import "../../../_components/job/job.scss";
@@ -102,7 +101,7 @@ export function CustJobCard({
                 <FiMapPin /> {location}
               </p>
               <p className="job-details">
-                <BsBriefcase /> Work Experience:{" "}
+                <BsBriefcase /> Work experience:{" "}
                 {additionalData?.jobExperienceScheduleDtos &&
                 additionalData?.jobExperienceScheduleDtos[0]?.experiencelevel
                   ? additionalData?.jobExperienceScheduleDtos[0]
@@ -139,7 +138,16 @@ export function CustJobCard({
               <Row>
                 <Col md={12} lg={9}>
                   <div className="muted-name mt-2">
-                    Posted {getTimezoneDateTimeForNow(moment(createdDate))}
+                    {additionalData.isdraft ? (
+                      <> Drafted {getTimezoneDateTimeForNow(createdDate)} </>
+                    ) : (
+                      <>
+                        Posted{" "}
+                        {getTimezoneDateTimeForNow(
+                          additionalData?.publisheddate
+                        )}
+                      </>
+                    )}
                   </div>
                 </Col>
                 <Col md={12} lg={3} className="mt-2 right-align"></Col>

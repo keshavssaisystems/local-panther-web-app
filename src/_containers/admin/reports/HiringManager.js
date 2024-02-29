@@ -95,7 +95,7 @@ export function HiringManager({ title }) {
       let filteredData = data.map((rec) => {
         return {
           Company: rec?.companyname,
-          Customer: rec?.customername,
+          Employer: rec?.customername,
           Email: rec?.email,
           Phone: rec?.phonenumber ? USPhoneNumber(rec.phonenumber) : "",
           Address: rec?.address,
@@ -152,7 +152,7 @@ export function HiringManager({ title }) {
       minWidth: "250px",
     },
     {
-      name: <span className="table-title">Customer</span>,
+      name: <span className="table-title">Employer</span>,
       cell: (row) => (
         <span className="table-cell" title={row?.customername}>
           {row?.customername}
@@ -233,7 +233,11 @@ export function HiringManager({ title }) {
                         )
                       }
                     >
-                      <FontAwesomeIcon className="pe-2" icon={faFileExcel} />
+                      <FontAwesomeIcon
+                        className="pe-2"
+                        icon={faFileExcel}
+                        style={{ boxSizing: "content-box" }}
+                      />
                       <span>Excel</span>
                     </DropdownItem>
                   </DropdownMenu>

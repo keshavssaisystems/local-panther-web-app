@@ -1,7 +1,5 @@
 .login-container {
-  font-family: Capitana;
   .login-slider-title {
-    font-family: Capitana !important;
     font-size: 31px;
     font-weight: 700;
     line-height: 31px;
@@ -10,7 +8,6 @@
     color: #ffffff;
   }
   .login-slider-content {
-    font-family: Capitana !important;
     font-size: 20px;
     font-weight: 400;
     line-height: 28px;
@@ -29,7 +26,7 @@
     background-size: 100% auto !important;
   }
   .input-label {
-    font-family: Capitana;
+
     font-size: 14px;
     font-weight: 400;
     line-height: 16px;
@@ -45,17 +42,14 @@
 
   .title-text {
     color: #2f479b;
-    font-family: Capitana;
     font-size: 25px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
-    color: #2f479b;
   }
 
   .input-label {
     color: #2f2e2e;
-    font-family: Capitana;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -64,7 +58,6 @@
   }
 
   .placeholder-text {
-    font-family: Capitana;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -75,19 +68,16 @@
 
   .forgot-pwd-text {
     color: #2f479b;
-    font-family: Capitana;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     text-decoration-line: underline;
     border-bottom: solid 1px;
-    color: #2f479b;
   }
 
   .btn-text {
     color: #fff;
-    font-family: Capitana;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -108,7 +98,6 @@
 
   .error-text {
     color: #ff406d;
-    font-family: Capitana;
     font-size: 13px;
     font-style: normal;
     font-weight: 300;
@@ -148,7 +137,7 @@
   .login-slider-title {
     color: #fff;
     text-align: center;
-    font-family: Capitana;
+
     font-size: 31px;
     font-style: normal;
     font-weight: 700;
@@ -160,7 +149,7 @@
   .login-slider-text {
     color: #fff;
     text-align: center;
-    font-family: Capitana;
+
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
@@ -194,7 +183,7 @@
     }
     .btn-text {
       color: #fff;
-      font-family: Capitana;
+  
       font-size: 16px;
       font-weight: 500;
       line-height: 16px;
@@ -204,5 +193,27 @@
       background: #2f479b;
       cursor: pointer;
     }
+  }
+  .register-division{
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #CED4DA);
+    background: var(--White, #FFF);
+  }
+  .register-paragraph{
+    color: var(--grey, #979797);
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 150%;
+    margin-left: 28px;
+    margin-right: 28px;
+  }
+  .register-link{
+    color: var(--blue, #2F479B);
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 150%;
+    text-decoration-line: underline;
   }
 }

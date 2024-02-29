@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col } from "reactstrap";
 import { StackBarChart } from "_components/dashboard/stackBarChart";
 import { WidgetCard } from "_components/dashboard/widgetCard";
@@ -13,18 +13,28 @@ import {
 import { HorizonatalBarGraph } from "_components/dashboard/horizontalBarGraph";
 import { CustomerSlider } from "_components/dashboard/customerSlider";
 import moment from "moment/moment";
+import { BillDetailRemModal } from "_components/modal/billdetailremmodal";
 
 export default function CustomerDashboard() {
+  const [showRemModal, setShowRemModal] = useState(false);
   const dispatch = useDispatch();
   const getDashboardCounts = async function () {
     await dispatch(customerDashboardActions.getCustomerDashboardThunk());
   };
   const getCompanyDetails = async function () {
-    await dispatch(
+    let res = await dispatch(
       createjobActions.getCustomerDetailsThunk(
         JSON.parse(localStorage.getItem("userDetails")).InternalUserId
       )
     );
+    if (res?.payload?.statusCode === 200) {
+      if (
+        res?.payload?.data?.billingdetailstatus !== undefined &&
+        !res?.payload?.data?.billingdetailstatus
+      ) {
+        setShowRemModal(true);
+      }
+    }
   };
   const getDashboardJobsDataCount = async function () {
     await dispatch(
@@ -54,14 +64,13 @@ export default function CustomerDashboard() {
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts
   );
-  console.log(dashboardCounts);
   const dashboardGraphData = useSelector(
     (state) => state.customerDashboard.dashboardGraphData
   );
-  console.log(dashboardGraphData);
   const dashboardJobsDataCount = useSelector(
     (state) => state.customerDashboard.dashboardJobsDataCount
   );
+
   let cardOptions = [
     {
       title: "Open jobs",
@@ -71,18 +80,18 @@ export default function CustomerDashboard() {
       path: "/job-list",
     },
     {
-      title: "Pending interview",
-      count: dashboardCounts.pendinginterviewschedulescount,
+      title: "Upcoming interview",
+      count: dashboardCounts.upcominginterviewcount,
       className: "info",
       icon: "lnr-calendar-full",
-      path: "/scheduled-interview",
+      path: "/scheduled-interview#upcoming",
     },
     {
       title: "Liked candidates",
       count: dashboardCounts.newcandidatelikedcount,
       className: "success",
       icon: "lnr-thumbs-up",
-      path: "/candidate-list/liked",
+      path: "/customer-candidate-liked/0",
     },
     {
       title: "Matched candidate pending to review",
@@ -115,6 +124,16 @@ export default function CustomerDashboard() {
           graphData={dashboardJobsDataCount.customerDashboardJobDataCountList}
         />
       </div>
+      <>
+        {showRemModal ? (
+          <BillDetailRemModal
+            isOpen={showRemModal}
+            onClose={() => setShowRemModal(false)}
+          ></BillDetailRemModal>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

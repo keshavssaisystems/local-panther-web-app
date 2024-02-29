@@ -32,6 +32,11 @@ export function QualificationModal(props) {
   const loading = useSelector((state) => state.getProfile.loader);
   const [check, setCheck] = useState(props.check);
 
+  const todayDate = {
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear(),
+  };
+
   const [formDetails, setFormData] = useState([]);
   const [location, setLocation] = useState([]);
 
@@ -711,94 +716,11 @@ export function QualificationModal(props) {
                     checked={item.iscurrentlyworking}
                   />{" "}
                   <Label check className="fw-semi-bold">
-                    Currently Working
+                    Currently working
                   </Label>
                 </FormGroup>
               </Col>
             </Row>
-
-            {/* <Row className="mt-2">
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="fromDate" className="fw-semi-bold">
-                    From <span className="required-icon">*</span>
-                  </Label>
-                  <InputGroup>
-                    <div className="input-group-text">
-                      <FontAwesomeIcon icon={faCalendarAlt} />
-                    </div>
-                    <DatePicker
-                      name="fromDate"
-                      id="fromDate"
-                      dateFormat="MM/yyyy"
-                      placeholderText="MM/YYYY"
-                      showMonthYearPicker
-                      autoComplete="off"
-                      className={`field-input placeholder-text form-control ${
-                        item.fromDateReq ? "is-invalid" : ""
-                      }`}
-                      selected={
-                        item.startdate
-                          ? new Date(item.startdate)
-                          : item.startdate
-                      }
-                      showYearDropdown={true}
-                      onChange={(evt) =>
-                        handleInputChange("fromDate", index, evt)
-                      }
-                    />
-                  </InputGroup>
-                  <div className="filter-info-text filter-error-msg">
-                    {item.fromDateReq ? "From date is required" : ""}
-                  </div>
-                  <div className="filter-info-text filter-error-msg">
-                    {item.fromDateValid && !item.fromDateReq
-                      ? "From date should be less than to date"
-                      : ""}
-                  </div>
-                </FormGroup>
-              </Col>
-              <Col md={4}>
-                <FormGroup>
-                  <Label for="toDate" className="fw-semi-bold">
-                    To <span className="required-icon">*</span>
-                  </Label>
-                  <InputGroup
-                    style={{ borderColor: item.toDateReq ? "#d92550" : "" }}
-                  >
-                    <div className="input-group-text">
-                      <FontAwesomeIcon icon={faCalendarAlt} />
-                    </div>
-                    <DatePicker
-                      name="toDate"
-                      id="toDate"
-                      autoComplete="off"
-                      className={`field-input placeholder-text form-control ${
-                        item.toDateReq ? "is-invalid" : ""
-                      }`}
-                      disabled={item.iscurrentlyworking}
-                      dateFormat="MM/yyyy"
-                      placeholderText="MM/YYYY"
-                      showMonthYearPicker
-                      scrollableYearDropdown
-                      selected={
-                        item.enddate ? new Date(item.enddate) : item.enddate
-                      }
-                      showYearDropdown={true}
-                      onChange={(evt) =>
-                        handleInputChange("toDate", index, evt)
-                      }
-                    />
-                  </InputGroup>
-                  <div className="filter-info-text filter-error-msg">
-                    {item.toDateReq ? "To date is required" : ""}
-                  </div>
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-             
-            </Row> */}
 
             <Row className="mt-2 fw-semi-bold">
               <Label for="fromDate" className="fw-semi-bold">
@@ -901,6 +823,10 @@ export function QualificationModal(props) {
                           selected={options.id == item.toDateSelect?.month}
                           key={options.id}
                           value={options.id}
+                          disabled={
+                            !item.iscurrentlyworking &&
+                            options.id > todayDate?.month
+                          }
                         >
                           {options.name}
                         </option>
@@ -932,6 +858,10 @@ export function QualificationModal(props) {
                           selected={options.name == item.toDateSelect?.year}
                           key={options.id}
                           value={options.id}
+                          disabled={
+                            !item.iscurrentlyworking &&
+                            options.name > todayDate?.year
+                          }
                         >
                           {options.name}
                         </option>

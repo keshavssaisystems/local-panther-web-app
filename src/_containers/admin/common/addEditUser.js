@@ -30,15 +30,9 @@ export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
   const dispatch = useDispatch();
-  const rolesList = useSelector((state) =>
-    state.adminListing.rolesList?.filter(
-      (x) => x?.userroleid !== 2 && x?.userroleid !== 3
-    )
-  );
+  const rolesList = useSelector((state) => state.adminListing.rolesList);
 
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   /*
   companyid
@@ -73,7 +67,7 @@ export const AddEditUser = (props) => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const validationSchema = Yup.object().shape({
-    prefix: Yup.string().required("Prefix is required"),
+    // prefix: Yup.string().required("Prefix is required"),
     firstname: Yup.string().required("First name is required"),
     middlename: Yup.string(),
     lastname: Yup.string().required("Last name is required"),
@@ -110,7 +104,7 @@ export const AddEditUser = (props) => {
 
     let form = new FormData();
 
-    form.append("Prefix", payload.prefix);
+    form.append("Prefix", "");
     form.append("Firstname", payload.firstname);
     form.append("Middlename", payload.middlename);
     form.append("Lastname", payload.lastname);
@@ -216,7 +210,6 @@ export const AddEditUser = (props) => {
 
   useEffect(() => {
     if (!isAddMode) {
-      console.log("NG This is EDIT mode !!!");
       // set default to state, city, companyname
       const formFields = [
         "prefix",
@@ -275,8 +268,14 @@ export const AddEditUser = (props) => {
                         selected={options.userroleid === roleId}
                         key={options.userroleid}
                         value={options.userroleid}
+                        style={{
+                          display:
+                            options.userroleid === 2 || options.userroleid === 3
+                              ? "none"
+                              : "",
+                        }}
                       >
-                        {options.rolename}
+                        <div>{options.rolename}</div>
                       </option>
                     ))}
                 </Input>
@@ -286,7 +285,7 @@ export const AddEditUser = (props) => {
               </FormGroup>
             </Col>
 
-            <Col md={6}>
+            {/* <Col md={6}>
               <FormGroup>
                 <Label for="prefix" className="fw-semi-bold">
                   Prefix <span style={{ color: "red" }}>* </span>
@@ -306,7 +305,7 @@ export const AddEditUser = (props) => {
                   {errors?.prefix?.message}
                 </div>
               </FormGroup>
-            </Col>
+            </Col> */}
             <Col md={6}>
               <FormGroup>
                 <Label for="firstname">

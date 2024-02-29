@@ -5,9 +5,9 @@ import "./dashboard.scss";
 
 export function DonutChart({ graphData }) {
   let total = graphData?.accepted + graphData?.scheduled + graphData?.rejected;
-  let acceptedPercentage = (graphData?.accepted / total) * 100 ?? 0;
-  let rejectedPercentage = (graphData?.rejected / total) * 100 ?? 0;
-  let scheduledPercentage = (graphData?.scheduled / total) * 100 ?? 0;
+  let acceptedPercentage = (graphData?.accepted / total) * 100;
+  let rejectedPercentage = (graphData?.rejected / total) * 100;
+  let scheduledPercentage = (graphData?.scheduled / total) * 100;
   let options = {
     chart: {
       type: "donut",
@@ -60,7 +60,7 @@ export function DonutChart({ graphData }) {
                 Candidate's
               </div>
               <span className="text-muted mt-1 ms-4">
-                Accepted, scheduled & rejected
+                Accepted, scheduled & Rejected
               </span>
             </Col>
           </Row>

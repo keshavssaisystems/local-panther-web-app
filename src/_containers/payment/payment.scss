@@ -1,0 +1,39 @@
+.payment-cont {
+  .pay-title {
+    color: #2f479b;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .page-title {
+    color: #2f479b;
+  }
+
+  .same-as-cust {
+    color: #212529;
+    font-weight: 500;
+    font-size: 16px;
+  }
+
+  .sub-text {
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 400;
+    color: #979797;
+  }
+
+  .card-border {
+    border: 2px solid black;
+  }
+
+  .btn-outline-danger {
+    color: #d92550;
+    border-color: #d92550;
+    background-color: unset;
+  }
+
+  .disable-ip > div {
+    background: #e9ecef;
+    pointer-events: none;
+  }
+}

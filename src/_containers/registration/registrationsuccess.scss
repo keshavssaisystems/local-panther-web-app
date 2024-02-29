@@ -5,9 +5,32 @@
     top: 200px;
     left: 156px;
   }
-
+  .slider-title {
+    font-size: 31px;
+    font-weight: 700;
+    line-height: 31px;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: #ffffff;
+  }
+  .slider-content {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: #ffffff;
+  }
+  .bg-plum-plate {
+    background: url("../../assets/utils/images/login.png"), no-repeat,
+      linear-gradient(
+        180deg,
+        rgba(47, 71, 155, 0) 0%,
+        rgba(47, 71, 155, 0.9) 64.95%
+      ) !important;
+    background-size: 100% auto !important;
+  }
   .succese-text {
-    font-family: Capitana;
     font-size: 25px;
     font-weight: 600;
     line-height: 34px;
@@ -16,7 +39,6 @@
     color: #2f479b;
   }
   .success-msg {
-    font-family: Capitana;
     font-size: 25px;
     font-weight: 400;
     line-height: 34px;
@@ -35,13 +57,14 @@
   }
   .btn-text {
     color: #fff;
-    font-family: Capitana;
     font-size: 16px;
     font-weight: 500;
     line-height: 16px;
     letter-spacing: -0.01em;
     text-align: left;
     padding: 12px, 20px, 12px, 20px;
+  }
+  .btn-primary {
     background: #2f479b;
   }
 }

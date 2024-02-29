@@ -29,7 +29,6 @@
     background: #2f479b;
   }
   .forms-wizard li.form-wizard-step-done em {
-    font-family: "Linearicons-Free";
     background: #2f479b;
     overflow: hidden;
   }
@@ -39,7 +38,6 @@
   span {
     color: var(--Font-dark-grey, #2f2e2e);
     text-align: center;
-    font-family: Capitana;
     font-size: 13px;
     font-style: normal;
     font-weight: 400;
@@ -72,3 +70,24 @@
     padding-bottom: 0px;
   }
 }
+
+.close-job-popup{
+  .reject-reason-text {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: #2f2e2e;
+  }
+  .reject-modal-btn {
+    background-color: #2f479b !important;
+    width: auto !important;
+  }
+}
+  .btn-mute{
+      color: #fff;
+      background-color: #545cd8;
+      border-color: #545cd8;
+      opacity: 0.65 !important;
+  }

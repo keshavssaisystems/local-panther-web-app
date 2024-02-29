@@ -113,7 +113,7 @@ export function VideoInterviewDetails({
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
       " " +
       interviewDetails?.starttime,
-    "hh:mm a"
+    "hh:mm A"
   );
   let startDate =
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
@@ -125,7 +125,7 @@ export function VideoInterviewDetails({
       : [];
   let endTime = getTimezoneDateTime(
     moment(startDate).add(durationArr[0], "m"),
-    "hh:mm a"
+    "hh:mm A"
   );
   let userId = localStorage.getItem("userId");
   const cancelSchedule = () => {
@@ -407,7 +407,7 @@ export function VideoInterviewDetails({
                 className="mb-2 mr-2 btn-transition"
                 color="primary"
                 size={"sm"}
-                onClick={(e) => downloadInterviewGuide(e)}
+                onClick={() => downloadInterviewGuide()}
               >
                 {" "}
                 Download interview guide{" "}
@@ -468,7 +468,7 @@ export function VideoInterviewDetails({
         )}
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Application questions</h6>
+        <h6 className="fw-bold">Pre-screen Questions</h6>
         {preQuestions.length > 0 &&
           preQuestions?.map((preQue) => (
             <>
@@ -478,12 +478,12 @@ export function VideoInterviewDetails({
           ))}
         {preQuestions.length === 0 && (
           <p className="mb-0 ">
-            <i> - No application question added</i>
+            <i> - No pre-screen question added</i>
           </p>
         )}
       </div>
       <div className="p-3">
-        <h6 className="fw-bold">Pre-screen</h6>
+        <h6 className="fw-bold">Pre-screen Custom Questions</h6>
         {customQuestion.length > 0 &&
           customQuestion?.map((preQue) => (
             <>
@@ -530,7 +530,7 @@ export function VideoInterviewDetails({
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
           title="Are you sure?"
-          onConfirm={(e) => cancelSchedule(e)}
+          onConfirm={() => cancelSchedule()}
           onCancel={() => setShowCancelPopup(false)}
           focusCancelBtn
         >
@@ -552,7 +552,7 @@ export function VideoInterviewDetails({
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
           title="Are you sure?"
-          onConfirm={(e) => acceptSchedule(e)}
+          onConfirm={() => acceptSchedule()}
           onCancel={() => setShowAcceptPopup(false)}
           focusCancelBtn
         >
@@ -574,7 +574,7 @@ export function VideoInterviewDetails({
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
           title="Are you sure?"
-          onConfirm={(e) => rejectSchedule(e)}
+          onConfirm={() => rejectSchedule()}
           onCancel={() => setShowRejectPopup(false)}
           focusCancelBtn
         >

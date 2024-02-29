@@ -28,7 +28,7 @@ function createInitialState() {
 }
 
 function createExtraActions() {
-  const baseUrl = `${process.env.REACT_APP_MASTER_API_URL}/api`;
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
 
   return {
     getLocation: getLocation(),
@@ -39,7 +39,7 @@ function createExtraActions() {
       `${name}/getLocation`,
       async (searchText) =>
         await fetchWrapper.get(
-          `${baseUrl}/Common/GetLocation?searchText=${searchText}`
+          `${baseUrl}/Common/GetCommonDropdown?searchText=zipcode&commonId=${searchText}`
         )
     );
   }
