@@ -1,6 +1,6 @@
 {
-    "name": "panther-18",
-    "version": "0.1.4",
+    "name": "openworx",
+    "version": "0.1.5",
     "private": true,
     "scripts": {
         "start": "react-scripts start",
