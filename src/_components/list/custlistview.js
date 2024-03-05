@@ -1742,6 +1742,7 @@ export const CustCandidateListView = (props) => {
               onUploadOfferDoc(file, startdate, pay, finaloffer)
             }
             loading={offerUploadLoading}
+            data={selectedRowData}
           />
         ) : (
           <></>

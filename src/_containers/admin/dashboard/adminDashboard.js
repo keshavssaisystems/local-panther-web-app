@@ -15,6 +15,7 @@ import { OpenJobsGraph } from "_components/dashboard/openJobsGraph";
 import { AdminSlider } from "_components/dashboard/adminSlider";
 import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
+import custDashIcons from "assets/utils/images/customer/dashboard";
 
 export function AdminDashboard() {
   const dispatch = useDispatch();
@@ -78,25 +79,25 @@ export function AdminDashboard() {
       title: "Active companies",
       count: dashboardCounts.activecompanycount,
       className: "primary",
-      icon: "lnr-apartment",
+      icon: custDashIcons.activeclient,
     },
     {
       title: "Active employers",
       count: dashboardCounts.activecustomercount,
       className: "info",
-      icon: "lnr-user",
+      icon: custDashIcons.activeemployees,
     },
     {
       title: "Active candidates",
       count: dashboardCounts.activecandidatecount,
       className: "danger",
-      icon: "lnr-users",
+      icon: custDashIcons.activecandidates,
     },
     {
       title: "Open jobs",
       count: dashboardCounts.openjobcount,
       className: "success",
-      icon: "lnr-briefcase",
+      icon: custDashIcons.openjobs,
     },
   ];
   let dashCardUI = [
@@ -246,7 +247,7 @@ export function AdminDashboard() {
             <Statistics graphData={statisticsData} />
           </Col>
           <Col sm="12" md="6" lg="6">
-            <WidgetCard cardOptions={cardOptions} />
+            <WidgetCard cardOptions={cardOptions} showIcons={true} />
           </Col>
         </Row>
         <Row>
