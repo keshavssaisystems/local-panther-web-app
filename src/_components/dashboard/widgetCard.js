@@ -3,7 +3,11 @@ import { Card, Col, Row } from "reactstrap";
 import "./dashboard.scss";
 import { useNavigate } from "react-router-dom";
 
-export function WidgetCard({ cardOptions }) {
+export function WidgetCard({
+  cardOptions,
+  threeCols = false,
+  showIcons = false,
+}) {
   const navigate = useNavigate();
   const redirectPath = (link) => {
     navigate(link);
@@ -15,7 +19,11 @@ export function WidgetCard({ cardOptions }) {
           <div className="grid-menu grid-menu-2col">
             <Row className="g-0">
               {cardOptions.map((options, index) => (
-                <Col sm="6" key={index}>
+                <Col
+                  sm={threeCols ? "4" : "6"}
+                  key={index}
+                  className={threeCols && (index + 1) % 2 ? "" : "right-border"}
+                >
                   <div
                     className="widget-chart widget-chart-hover"
                     onClick={(e) => redirectPath(options?.path)}
@@ -24,9 +32,15 @@ export function WidgetCard({ cardOptions }) {
                       <div
                         className={"icon-wrapper-bg bg-" + options.className}
                       />
-                      <i
-                        className={options.icon + " text-" + options.className}
-                      />
+                      {showIcons ? (
+                        <img src={options.icon} />
+                      ) : (
+                        <i
+                          className={
+                            options.icon + " text-" + options.className
+                          }
+                        />
+                      )}
                     </div>
                     <div className="widget-numbers">{options.count}</div>
                     <div className="widget-subheading">{options.title}</div>
