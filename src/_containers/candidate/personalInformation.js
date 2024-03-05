@@ -404,14 +404,12 @@ export function PersonalInformation(props) {
         return;
       }
     }
-
-    if (new_data.city[0]?.value == 0) {
+    if (new_data?.city?.length === 0 || new_data.city[0]?.value == 0) {
       errors.cityError = true;
     } else {
       errors.cityError = false;
     }
-
-    if (new_data.country[0]?.value == 0) {
+    if (new_data?.country?.length === 0 || new_data.country[0]?.value == 0) {
       errors.countryError = true;
     } else {
       errors.countryError = false;
@@ -563,28 +561,44 @@ export function PersonalInformation(props) {
         statename: rest.statename,
       };
     });
-    setCitySelect(filter_data);
-    setCountrySelect([{ value: 1, label: "USA" }]);
-    setLocation(filter_data);
-
     let get_data = { ...getResponse };
-    let new_array = [
-      {
-        value: filter_data?.[0]?.value,
-        label: filter_data?.[0]?.label,
-      },
-    ];
-
-    get_data.city = new_array;
     get_data.zipcode = inputValue;
-    let obj = [
-      {
-        value: filter_data?.[0]?.stateid,
-        label: filter_data?.[0]?.statename,
-      },
-    ];
+    if (filter_data?.length > 0) {
+      setCitySelect(filter_data);
+      setCountrySelect([{ value: 1, label: "USA" }]);
+      setLocation(filter_data);
 
-    get_data.state = obj;
+      let error_data = { ...requiredErrors };
+      error_data.cityError = false;
+      error_data.stateError = false;
+      error_data.countryError = false;
+      setRequiredErros(error_data);
+      let new_array = [
+        {
+          value: filter_data?.[0]?.value,
+          label: filter_data?.[0]?.label,
+        },
+      ];
+
+      get_data.city = new_array;
+
+      let obj = [
+        {
+          value: filter_data?.[0]?.stateid,
+          label: filter_data?.[0]?.statename,
+        },
+      ];
+
+      get_data.state = obj;
+      get_data.country = [{ value: 1, label: "USA" }];
+    } else {
+      setCitySelect([]);
+      setCountrySelect([]);
+      setLocation([]);
+      get_data.city = [];
+      get_data.state = [];
+      get_data.country = [];
+    }
     setGetResponse(get_data);
   };
 
@@ -1151,9 +1165,7 @@ export function PersonalInformation(props) {
                           defaultOptions={locationData}
                           onChange={(evt) => onSelectCityDropdown(evt)}
                           className={`location-dropdown ${
-                            requiredErrors.cityError == ""
-                              ? "is-invalid error-text"
-                              : ""
+                            requiredErrors.cityError ? "async-border-red" : ""
                           }`}
                         />
                         <div className="error-class">
@@ -1178,8 +1190,8 @@ export function PersonalInformation(props) {
                           onChange={(evt) => onSelectCountryDropdown(evt)}
                           onMenuOpen={() => checkCityValid()}
                           className={`location-dropdown ${
-                            requiredErrors.countryError === ""
-                              ? "is-invalid error-text"
+                            requiredErrors.countryError
+                              ? "async-border-red"
                               : ""
                           }`}
                         />
