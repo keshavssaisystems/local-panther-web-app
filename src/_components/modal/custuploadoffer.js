@@ -49,10 +49,15 @@ export const CustomerUploadOffer = (props) => {
   };
 
   const onUploadClick = () => {
-    if (fileName === "" || startDate === "" || pay === "") {
+    if (
+      fileName === "" ||
+      startDate === "" ||
+      pay === "" ||
+      parseInt(pay) === 0
+    ) {
       setFileError(fileName === "");
       setStartDateErr(startDate === "");
-      setPayErr(pay === "");
+      setPayErr(pay === "" || parseInt(pay) === 0);
       return false;
     } else if (fileName !== "" && startDate !== " " && pay !== "") {
       props.uploadOfferDoc(
@@ -65,15 +70,8 @@ export const CustomerUploadOffer = (props) => {
   };
 
   const setPayVal = (e) => {
-    setPayErr(e.target.value === "");
-    if (isNaN(e.target.value.replaceAll(",", "")) === true) {
-      setPayErr(true);
-    } else {
-      let val = new Intl.NumberFormat("en-US").format(
-        e.target.value.replaceAll(",", "")
-      );
-      setPay(val);
-    }
+    setPay(e.target.value);
+    setPayErr(e.target.value === "" || parseInt(e.target.value) === 0);
   };
 
   return (
@@ -106,8 +104,10 @@ export const CustomerUploadOffer = (props) => {
                   <Input
                     id={"pay"}
                     name={"pay"}
-                    type={"text"}
+                    type={"number"}
                     value={pay}
+                    step={"any"}
+                    min={0}
                     placeholder={"Enter salary"}
                     invalid={false}
                     onChange={(e) => setPayVal(e)}
