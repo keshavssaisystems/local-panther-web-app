@@ -423,6 +423,7 @@ export function ScheduleDetails({
                                       <a href="/">
                                         <NavLink
                                           to={`/video-screen/${id}`}
+                                          target="_blank"
                                           exact
                                         >
                                           Click here to join

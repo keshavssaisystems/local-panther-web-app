@@ -84,7 +84,8 @@ export function AdminSlider({ data }) {
   };
   const navigate = useNavigate();
   const navigateTo = (link) => {
-    navigate(`/video-screen/${link}`);
+    window.open(`/video-screen/${link}`, "_blank");
+    // navigate(`/video-screen/${link}`);
   };
   const navigateToThirdPartyLink = (link) => {
     window.open(`${link}`, "_blank", "rel=noopener noreferrer");

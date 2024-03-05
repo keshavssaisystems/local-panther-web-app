@@ -369,7 +369,7 @@ export function VideoInterviewDetails({
                 <div className="p-custom">
                   <p className="mb-0">
                     <a href="/" onClick={(e) => toggle()}>
-                      <NavLink to={`/video-screen/${id}`} exact>
+                      <NavLink to={`/video-screen/${id}`} target="_blank" exact>
                         Click here to join
                       </NavLink>
                     </a>{" "}
