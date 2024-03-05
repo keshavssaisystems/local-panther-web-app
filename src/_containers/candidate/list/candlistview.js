@@ -683,7 +683,10 @@ export const CandListView = (props) => {
                   : "$ " +
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
-                    )}
+                    ) +
+                    (row?.jobPaymentBenefitDtos?.length > 0
+                      ? " - " + row?.jobPaymentBenefitDtos[0].payperiodtype
+                      : "")}
               </span>
             ),
             selector: (row) =>
@@ -909,7 +912,10 @@ export const CandListView = (props) => {
                   : "$ " +
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
-                    )}
+                    ) +
+                    (row?.jobPaymentBenefitDtos?.length > 0
+                      ? " - " + row?.jobPaymentBenefitDtos[0].payperiodtype
+                      : "")}
               </span>
             ),
             selector: (row) =>
@@ -1109,7 +1115,10 @@ export const CandListView = (props) => {
                   : "$ " +
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
-                    )}
+                    ) +
+                    (row?.jobPaymentBenefitDtos?.length > 0
+                      ? " - " + row?.jobPaymentBenefitDtos[0].payperiodtype
+                      : "")}
               </span>
             ),
             selector: (row) =>

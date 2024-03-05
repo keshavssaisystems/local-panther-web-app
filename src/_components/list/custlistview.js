@@ -1568,7 +1568,7 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const onUploadOfferDoc = (file, startdate, pay, finaloffer) => {
+  const onUploadOfferDoc = (file, startdate, pay, finaloffer, payType) => {
     setOfferUploadLoading(true);
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
@@ -1592,6 +1592,7 @@ export const CustCandidateListView = (props) => {
     );
     form.append("Isfinaloffer", finaloffer);
     form.append("Salary", pay);
+    form.append("Payperiodtype", payType);
     form.append(
       "Startdate",
       moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
@@ -1738,8 +1739,8 @@ export const CustCandidateListView = (props) => {
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
             onClose={() => setShowUploadOfferModal(false)}
-            uploadOfferDoc={(file, startdate, pay, finaloffer) =>
-              onUploadOfferDoc(file, startdate, pay, finaloffer)
+            uploadOfferDoc={(file, startdate, pay, finaloffer, payType) =>
+              onUploadOfferDoc(file, startdate, pay, finaloffer, payType)
             }
             loading={offerUploadLoading}
             data={selectedRowData}
