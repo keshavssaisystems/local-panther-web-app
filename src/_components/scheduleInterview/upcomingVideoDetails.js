@@ -278,7 +278,7 @@ export function UpcomingVideoDetails({
           </CardHeader>
           <CardBody>
             <div>
-              {interviewDetails?.interviewstatusid === 0 && (
+              {/* {interviewDetails?.interviewstatusid === 0 && (
                 <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
                   <UncontrolledButtonDropdown>
                     <DropdownToggle
@@ -301,7 +301,7 @@ export function UpcomingVideoDetails({
                     </DropdownMenu>
                   </UncontrolledButtonDropdown>
                 </div>
-              )}
+              )} */}
               <div className="p-custom">
                 <p className="mb-0">
                   {scheduled} at {startTime} to {endTime} ({" "}
@@ -366,7 +366,7 @@ export function UpcomingVideoDetails({
               </div>
             </div>
           </CardBody>
-          <CardFooter className="d-block text-left">
+          <CardFooter className="d-block text-left right-align">
             <Button
               outline={!showNotes}
               className="mb-2 mr-2 btn-transition"
@@ -412,6 +412,26 @@ export function UpcomingVideoDetails({
                 >
                   {" "}
                   Interview feedback{" "}
+                </Button>
+                <Button
+                  outline={!feedbackModal}
+                  className="mb-2 mr-2 btn-transition"
+                  color="primary"
+                  size={"sm"}
+                  onClick={(e) => setShowEditScheduleModal(true)}
+                >
+                  {" "}
+                  Reschedule{" "}
+                </Button>
+                <Button
+                  outline={!feedbackModal}
+                  className="mb-2 mr-2 btn-transition"
+                  color="primary"
+                  size={"sm"}
+                  onClick={(e) => setShowCancelPopup(true)}
+                >
+                  {" "}
+                  Cancel{" "}
                 </Button>
               </>
             )}

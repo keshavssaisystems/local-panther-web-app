@@ -23,6 +23,7 @@ import "../../_components/formComponents/Form.scss";
 import "./custuploadoffer.scss";
 
 export const CustomerUploadOffer = (props) => {
+  debugger;
   const [fileName, setFileName] = useState("");
   const [file, setFile] = useState("");
   const [pay, setPay] = useState("");
