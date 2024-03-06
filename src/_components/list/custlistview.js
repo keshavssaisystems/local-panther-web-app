@@ -640,7 +640,11 @@ export const CustCandidateListView = (props) => {
                     : "$ " +
                       new Intl.NumberFormat("en-US").format(
                         row?.jobOfferDtos[0]?.salary
-                      )}
+                      ) +
+                      (row?.jobOfferDtos?.length > 0 &&
+                      row?.jobOfferDtos[0]?.payperiodtype !== ""
+                        ? " - " + row?.jobOfferDtos[0].payperiodtype
+                        : "")}
                 </span>
               ),
               selector: (row) =>
@@ -932,7 +936,11 @@ export const CustCandidateListView = (props) => {
                     : "$ " +
                       new Intl.NumberFormat("en-US").format(
                         row?.jobOfferDtos[0]?.salary
-                      )}
+                      ) +
+                      (row?.jobOfferDtos?.length > 0 &&
+                      row?.jobOfferDtos[0]?.payperiodtype !== ""
+                        ? " - " + row?.jobOfferDtos[0].payperiodtype
+                        : "")}
                 </span>
               ),
               selector: (row) =>
