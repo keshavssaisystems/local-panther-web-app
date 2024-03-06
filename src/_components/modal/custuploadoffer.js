@@ -44,8 +44,8 @@ export const CustomerUploadOffer = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props?.data?.jobOfferDtos?.length > 0) {
-      setPayType(props?.data?.jobOfferDtos[0].payperiodtype);
+    if (props?.data?.jobPaymentBenefitDtos?.length > 0) {
+      setPayType(props?.data?.jobPaymentBenefitDtos[0].payperiodtype);
     }
   }, [props.data]);
 
