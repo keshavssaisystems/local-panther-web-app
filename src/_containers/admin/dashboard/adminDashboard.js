@@ -16,6 +16,7 @@ import { AdminSlider } from "_components/dashboard/adminSlider";
 import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
 import custDashIcons from "assets/utils/images/customer/dashboard";
+import { ApprovalPendingList } from "_components/dashboard/approvalPendingList";
 
 export function AdminDashboard() {
   const dispatch = useDispatch();
@@ -267,6 +268,7 @@ export function AdminDashboard() {
             />
           </Col>
         </Row>
+        <ApprovalPendingList />
       </div>
     </>
   );
