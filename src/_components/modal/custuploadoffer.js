@@ -44,8 +44,8 @@ export const CustomerUploadOffer = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props?.data?.jobPaymentBenefitDtos?.length > 0) {
-      setPayType(props?.data?.jobPaymentBenefitDtos[0].payperiodtype);
+    if (props?.data?.jobOfferDtos?.length > 0) {
+      setPayType(props?.data?.jobOfferDtos[0].payperiodtype);
     }
   }, [props.data]);
 
@@ -123,7 +123,35 @@ export const CustomerUploadOffer = (props) => {
           <Row>
             {" "}
             <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
-              <Label className="fw-semi-bold">Pay period type</Label>
+              <FormGroup>
+                <Label for={"pay"} className="fw-semi-bold">
+                  Salary<span style={{ color: "red" }}>* </span>
+                </Label>
+                <InputGroup>
+                  <InputGroupText>$</InputGroupText>
+                  <Input
+                    id={"pay"}
+                    name={"pay"}
+                    type={"number"}
+                    value={pay}
+                    step={"any"}
+                    min={0}
+                    placeholder={"Enter salary"}
+                    invalid={false}
+                    onChange={(e) => setPayVal(e)}
+                  />
+                </InputGroup>
+                {payErr && (
+                  <FormText color="danger">
+                    Please enter valid salary amount
+                  </FormText>
+                )}
+              </FormGroup>
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
+              <Label className="fw-semi-bold">
+                Pay period type <span style={{ color: "red" }}>* </span>
+              </Label>
               <Input
                 id={"payPeriodType"}
                 name={"payPeriodType"}
@@ -149,32 +177,6 @@ export const CustomerUploadOffer = (props) => {
                   Please select pay period type
                 </FormText>
               )}
-            </Col>
-            <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
-              <FormGroup>
-                <Label for={"pay"} className="fw-semi-bold">
-                  Salary<span style={{ color: "red" }}>* </span>
-                </Label>
-                <InputGroup>
-                  <InputGroupText>$</InputGroupText>
-                  <Input
-                    id={"pay"}
-                    name={"pay"}
-                    type={"number"}
-                    value={pay}
-                    step={"any"}
-                    min={0}
-                    placeholder={"Enter salary"}
-                    invalid={false}
-                    onChange={(e) => setPayVal(e)}
-                  />
-                </InputGroup>
-                {payErr && (
-                  <FormText color="danger">
-                    Please enter valid salary amount
-                  </FormText>
-                )}
-              </FormGroup>
             </Col>
             <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
               <FormGroup>
