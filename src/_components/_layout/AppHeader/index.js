@@ -87,11 +87,7 @@ export function AppHeader({
               </div>
               <div className="app-header-right">
                 {userroleid !== 1 && <ChatCounter />}
-                {userroleid !== 3 ? (
-                  <NotificationCounter></NotificationCounter>
-                ) : (
-                  <></>
-                )}
+                <NotificationCounter></NotificationCounter>
                 <UserBox />
               </div>
             </>
