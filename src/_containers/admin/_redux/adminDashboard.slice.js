@@ -40,6 +40,15 @@ export const getDashboardAnalyticsCountThunk = createAsyncThunk(
   }
 );
 
+// getEmployerApprovalPendingListThunk
+export const getEmployerApprovalPendingListThunk = createAsyncThunk(
+  `${name}/getEmployerApprovalPendingListThunk`,
+  async ({ pageSize, pageNo }) => {
+    const FETCH_STATISTICS = `${process.env.REACT_APP_NEW_API_URL}Customer/Get?isActive=false&pageSize=${pageSize}&pageNumber=${pageNo}&customerStatusId=1`;
+    return await fetchWrapper.get(FETCH_STATISTICS);
+  }
+);
+
 // Create the slice
 const adminDashboardSlice = createSlice({
   name,
@@ -55,6 +64,7 @@ const adminDashboardSlice = createSlice({
     statisticsData: [],
     dashboardCountMidLoading: false,
     dashboardCountMidDetails: [],
+    employerApprovalPendingList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -122,6 +132,17 @@ const adminDashboardSlice = createSlice({
       state.dashboardCountMidLoading = false;
       state.error = action.error;
     },
+    [getEmployerApprovalPendingListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getEmployerApprovalPendingListThunk.fulfilled]: (state, action) => {
+      state.employerApprovalPendingList = action.payload.data;
+      state.loading = false;
+    },
+    [getEmployerApprovalPendingListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    },
   },
 });
 
@@ -132,6 +153,7 @@ export const adminDashboardSliceActions = {
   getDashboardCountThunk,
   getAdminChartStatisticsDataThunk,
   getDashboardAnalyticsCountThunk,
+  getEmployerApprovalPendingListThunk,
 };
 // export const { fetchScores } = adminDashboardSlice.actions;
 export const adminDashboardReducer = adminDashboardSlice.reducer;
