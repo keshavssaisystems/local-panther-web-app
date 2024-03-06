@@ -304,3 +304,18 @@
     align-items: normal !important;
   }
 }
+.approval-pending-list{
+  min-height: 657px;
+  .stats-title {
+    color: var(--Font-dark-grey, #2f2e2e);
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 100%; /* 18px */
+    letter-spacing: -0.18px;
+  }
+  .approval-icon{
+    color: #2F479B;
+    font-size: 20px;
+  }
+}
