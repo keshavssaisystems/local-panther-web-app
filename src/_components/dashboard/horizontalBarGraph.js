@@ -71,7 +71,7 @@ export function HorizonatalBarGraph({ graphData }) {
   };
   return (
     <>
-      <Card className="mb-3 chart-fixed-height">
+      <Card className="mb-3 chart-fixed-height" style={{ height: "356px" }}>
         <CardBody className="p-0">
           <Row>
             <Col xxl={1} xl={2} lg={2} md={2} sm={1} xs={1}>
