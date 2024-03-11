@@ -66,15 +66,15 @@ export function JobsList(props) {
           title={
             (row?.cityname ? `${row?.cityname}, ` : "") +
             "" +
-            (row.statename
-              ? row.recommendedationCandidateShortList[0].statename
+            (row?.recommendedationCandidateShortList?.length > 0
+              ? row?.recommendedationCandidateShortList[0]?.statename
               : "")
           }
         >
           {(row?.cityname ? `${row?.cityname}, ` : "") +
             "" +
-            (row.statename
-              ? row.recommendedationCandidateShortList[0].statename
+            (row?.recommendedationCandidateShortList?.length > 0
+              ? row?.recommendedationCandidateShortList[0]?.statename
               : "")}
         </span>
       ),
