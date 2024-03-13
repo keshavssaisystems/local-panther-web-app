@@ -175,13 +175,13 @@ export function QualificationModal(props) {
           year: "",
         },
       });
-      if (props.selected.cityname != "") {
-        loadOptions(props.selected.cityname.slice(0, 3));
+      if (props.selected.cityname !== "") {
+        loadOptions(props?.selected?.cityname?.slice(0, 3));
       }
 
       if (props.selected.startdate) {
         let year = new Date(props.selected.startdate).getFullYear();
-        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
+        let selectedYear = yearList?.find((x) => x.name === Number(year))?.name;
 
         data[0].fromDateSelect.month = Number(
           new Date(props.selected.startdate).getMonth() + 1
@@ -190,7 +190,7 @@ export function QualificationModal(props) {
       }
       if (props.selected.enddate) {
         let year = new Date(props.selected.enddate).getFullYear();
-        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
+        let selectedYear = yearList?.find((x) => x.name === Number(year))?.name;
 
         data[0].toDateSelect.month = Number(
           new Date(props.selected.enddate).getMonth() + 1
@@ -233,7 +233,7 @@ export function QualificationModal(props) {
     }
   }, [cityList]);
   const loadOptions = async function (inputValue) {
-    if (inputValue != "") {
+    if (inputValue !== "") {
       const { data = [] } = await getLocationFilter(inputValue);
 
       setFilterData(data);
@@ -246,7 +246,7 @@ export function QualificationModal(props) {
       if (location_details.length > 0) {
         let new_data = [...cityList];
         let filtered_data = location_details.find(
-          (x) => x.value == props.selected.cityid
+          (x) => x.value === props.selected.cityid
         );
         new_data.push(filtered_data);
         setCityList(new_data);
@@ -281,14 +281,14 @@ export function QualificationModal(props) {
       valid = false;
     }
     if (
-      new_data[index - 1].fromDateSelect.month == "" ||
+      new_data[index - 1].fromDateSelect.month === "" ||
       !new_data[index - 1].fromDateSelect.month
     ) {
       new_data[index - 1].fromDateReq = true;
       valid = false;
     }
     if (
-      new_data[index - 1].fromDateSelect.year == "" ||
+      new_data[index - 1].fromDateSelect.year === "" ||
       !new_data[index - 1].fromDateSelect.year
     ) {
       new_data[index - 1].fromYearReq = true;
@@ -296,7 +296,7 @@ export function QualificationModal(props) {
     }
 
     if (
-      new_data[index - 1].toDateSelect.month == "" ||
+      new_data[index - 1].toDateSelect.month === "" ||
       !new_data[index - 1].toDateSelect.month
     ) {
       new_data[index - 1].toDateReq = true;

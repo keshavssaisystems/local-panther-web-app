@@ -248,7 +248,7 @@ export function calculateExperience(fromDate, toDate) {
 export const getDate = function (data) {
   let text = "";
   if (data?.startdate && !data?.startdate?.includes("1900")) {
-    text = formatDate(data?.startdate);
+    text = formatDateQualification(data?.startdate);
 
     if (data?.enddate && !data?.enddate?.includes("1900")) {
       text += " to " + formatDateQualification(data.enddate);
@@ -263,29 +263,29 @@ export const getEducText = function (data) {
   let text = "";
   if (data.school !== "") {
     text = data.school;
-    if (data.cityname !== "") {
+    if (data.cityname !== null && data.cityname !== "") {
       text += ", " + data.cityname;
     }
-    if (data.statename !== "") {
+    if (data.statename !== null && data.statename !== "") {
       text += ", " + data.statename;
     }
-    if (data.countryname !== "") {
+    if (data.countryname !== null && data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.cityname !== "") {
+  } else if (data.cityname !== null && data.cityname !== "") {
     text = data.cityname;
-    if (data.statename !== "") {
+    if (data.statename !== null && data.statename !== "") {
       text += ", " + data.statename;
     }
-    if (data.countryname !== "") {
+    if (data.countryname !== null && data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.statename !== "") {
+  } else if (data.statename !== null && data.statename !== "") {
     text = data.statename;
-    if (data.countryname !== "") {
+    if (data.countryname !== null && data.countryname !== "") {
       text += ", " + data.countryname;
     }
-  } else if (data.countryname !== "") {
+  } else if (data.countryname !== null && data.countryname !== "") {
     text = data.countryname;
     text += data.countryname;
   }
