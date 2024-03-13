@@ -365,7 +365,9 @@ export const getTimezoneDateTime = (
   dateTime,
   format = "MM/DD/YYYY hh:mm A"
 ) => {
+  console.log(moment.utc(dateTime).format(format));
   const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  console.log(systemTimeZone);
   return moment.utc(dateTime).tz(systemTimeZone).format(format);
 };
 export const getTimezoneDateTimeForNow = (dateTime) => {

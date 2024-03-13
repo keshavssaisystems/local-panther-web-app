@@ -98,11 +98,9 @@ export const AlertModal = (props) => {
                                   >
                                     Posted{" "}
                                     {getTimezoneDateTimeForNow(
-                                      moment(
-                                        item.modifieddate
-                                          ? item.modifieddate
-                                          : item.createddate
-                                      )
+                                      item.modifieddate
+                                        ? item.modifieddate
+                                        : item.createddate
                                     )}
                                   </div>
                                 </div>
