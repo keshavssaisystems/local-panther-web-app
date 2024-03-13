@@ -67,7 +67,7 @@ export function EducationModal(props) {
 
   const loadData = function () {
     let data = [];
-    if (check == "add") {
+    if (check === "add") {
       data.push({
         candidateeducationid: 0,
         error: false,
@@ -153,11 +153,11 @@ export function EducationModal(props) {
         },
         iscurrentlystudying: props.selected.iscurrentlystudying,
         startdate:
-          props.selected.startdate != "" && props.selected.startdate
+          props.selected.startdate !== "" && props.selected.startdate
             ? extractDatePart(props.selected.startdate)
             : null,
         enddate:
-          props.selected.enddate != "" && props.selected.enddate
+          props.selected.enddate !== "" && props.selected.enddate
             ? extractDatePart(props.selected.enddate)
             : null,
         isactive: props.selected.isactive,
@@ -180,7 +180,7 @@ export function EducationModal(props) {
 
       if (props.selected.startdate) {
         let year = new Date(props.selected.startdate).getFullYear();
-        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
+        let selectedYear = yearList?.find((x) => x.name === Number(year))?.name;
 
         data[0].fromDateSelect.month = Number(
           new Date(props.selected.startdate).getMonth() + 1
@@ -189,7 +189,7 @@ export function EducationModal(props) {
       }
       if (props.selected.enddate) {
         let year = new Date(props.selected.enddate).getFullYear();
-        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
+        let selectedYear = yearList?.find((x) => x.name === Number(year))?.name;
 
         data[0].toDateSelect.month = Number(
           new Date(props.selected.enddate).getMonth() + 1
@@ -197,7 +197,7 @@ export function EducationModal(props) {
         data[0].toDateSelect.year = selectedYear;
       }
 
-      loadOptions(props.selected.cityname.slice(0, 3));
+      loadOptions(props?.selected?.cityname?.slice(0, 3));
     }
     setFormData(data);
   };
@@ -249,7 +249,7 @@ export function EducationModal(props) {
 
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
-    if (inputValue != "") {
+    if (inputValue !== "") {
       const { data = [] } = await getLocationFilter(inputValue);
       setCityList(data);
 
@@ -266,7 +266,7 @@ export function EducationModal(props) {
 
   const addMoreTabs = function (index) {
     let new_data = [...formDetails];
-    if (new_data[index - 1].education.value == 0) {
+    if (new_data[index - 1].education.value === 0) {
       new_data[index - 1].error = true;
       setFormData(new_data);
       return;
@@ -351,8 +351,8 @@ export function EducationModal(props) {
       new_data[index].city = dropdown;
 
       let obj_new = {
-        value: cityList.find((x) => x.cityid == data.value)?.stateid,
-        label: cityList.find((x) => x.cityid == data.value)?.statename,
+        value: cityList.find((x) => x.cityid === data.value)?.stateid,
+        label: cityList.find((x) => x.cityid === data.value)?.statename,
       };
       new_data[index].state = obj_new;
     } else if (check === "state") {
@@ -373,10 +373,10 @@ export function EducationModal(props) {
         let year = new Date().getFullYear();
 
         new_data[index].toDateSelect.month = monthList.find(
-          (x) => x.id == month
+          (x) => x.id === month
         )?.id;
         new_data[index].toDateSelect.year = yearList.find(
-          (x) => x.name == year
+          (x) => x.name === year
         )?.name;
 
         if (
@@ -415,7 +415,7 @@ export function EducationModal(props) {
         }
 
         new_data[index].fromDateSelect.year = yearList?.find(
-          (x) => x.id == Number(data)
+          (x) => x.id === Number(data)
         )?.name;
       }
 
@@ -436,7 +436,7 @@ export function EducationModal(props) {
           new_data[index].toMonthReq = true;
         }
         new_data[index].toDateSelect.year = yearList?.find(
-          (x) => x.id == Number(data)
+          (x) => x.id === Number(data)
         )?.name;
       }
 
@@ -458,7 +458,7 @@ export function EducationModal(props) {
         }
 
         new_data[index].fromDateSelect.month = monthList?.find(
-          (x) => x.id == Number(data)
+          (x) => x.id === Number(data)
         )?.name;
       }
 
