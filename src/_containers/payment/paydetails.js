@@ -315,12 +315,22 @@ export const PaymentDetails = ({
     }
   };
 
-  const handleCallback = (issuer, isValid) => {
+  const handleCallback = async (issuer, isValid) => {
     setIssuer(issuer);
     if (userDetails?.billingdetailstatus) {
       setValidCard(true);
     } else {
-      setValidCard(isValid);
+      let cardTypeNumber = 0;
+      if (cardType.length > 0) {
+        await cardType.map((data) => {
+          if (data.name.toLowerCase() === issuer.replaceAll("-", " ")) {
+            cardTypeNumber = data.id;
+          }
+        });
+      }
+      if (cardTypeNumber !== 0) {
+        setValidCard(isValid);
+      }
     }
   };
   const onSameCustomer = (e) => {
