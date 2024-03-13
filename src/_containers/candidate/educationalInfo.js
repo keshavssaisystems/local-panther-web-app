@@ -93,12 +93,22 @@ export function CandidateEducation(props) {
 
   const getTitle = function (item) {
     let text = "";
-    if (item.levelofeducation != "" && item.levelofeducation) {
+    if (item.levelofeducation !== "" && item.levelofeducation) {
       text = item.levelofeducation;
-      if (item.fieldofstudy != "" && item.fieldofstudy) {
+      if (
+        item.fieldofstudy !== "" &&
+        item.fieldofstudy &&
+        item.fieldofstudy !== "NA" &&
+        item.fieldofstudy !== "N/A"
+      ) {
         text += ", " + item.fieldofstudy;
       }
-    } else if (item.fieldofstudy != "" && item.fieldofstudy) {
+    } else if (
+      item.fieldofstudy !== "" &&
+      item.fieldofstudy &&
+      item.fieldofstudy !== "NA" &&
+      item.fieldofstudy !== "N/A"
+    ) {
       text = item.fieldofstudy;
     }
     return text;
