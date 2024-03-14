@@ -14,8 +14,7 @@ import {
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BsTrash3 } from "react-icons/bs";
-import { getTimezoneDateTimeForNow } from "_helpers/helper";
-import moment from "moment";
+import { getTimezoneDateTime } from "_helpers/helper";
 import { Link } from "react-router-dom";
 import "./alertmodal.scss";
 
@@ -96,8 +95,7 @@ export const AlertModal = (props) => {
                                     className="widget-subheading alert-desc"
                                     style={{ paddingBottom: "6px" }}
                                   >
-                                    Posted{" "}
-                                    {getTimezoneDateTimeForNow(
+                                    {getTimezoneDateTime(
                                       item.modifieddate
                                         ? item.modifieddate
                                         : item.createddate
