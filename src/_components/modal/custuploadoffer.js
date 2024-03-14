@@ -19,10 +19,13 @@ import Dropzone from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import DatePicker from "react-datepicker";
 import Loader from "react-loaders";
+import { useDispatch, useSelector } from "react-redux";
+import { dropdownActions } from "_store";
 import "../../_components/formComponents/Form.scss";
 import "./custuploadoffer.scss";
 
 export const CustomerUploadOffer = (props) => {
+  const dispatch = useDispatch();
   const [fileName, setFileName] = useState("");
   const [file, setFile] = useState("");
   const [pay, setPay] = useState("");
@@ -30,9 +33,25 @@ export const CustomerUploadOffer = (props) => {
   const [payErr, setPayErr] = useState(false);
   const [startDateErr, setStartDateErr] = useState(false);
   const [finalOffer, setFinalOffer] = useState(false);
-
   const [fileError, setFileError] = useState(false);
-  useEffect(() => {}, []);
+  const [payType, setPayType] = useState("");
+  const [payTypeErr, setPayTypeErr] = useState(false);
+  const payPeriodTypeOption = useSelector(
+    (state) => state.dropdown.payPeriodType
+  );
+  useEffect(() => {
+    getPayPeriod();
+  }, []);
+
+  useEffect(() => {
+    if (props?.data?.jobPaymentBenefitDtos?.length > 0) {
+      setPayType(props?.data?.jobPaymentBenefitDtos[0].payperiodtype);
+    }
+  }, [props.data]);
+
+  const getPayPeriod = async () => {
+    await dispatch(dropdownActions.getPayPeriodTypeThunk());
+  };
   const onDrop = useCallback((acceptedFiles) => {
     let name = acceptedFiles[0].name.replace(/^.*[\\\/]/, "");
     setFileError(name === "");
@@ -49,31 +68,38 @@ export const CustomerUploadOffer = (props) => {
   };
 
   const onUploadClick = () => {
-    if (fileName === "" || startDate === "" || pay === "") {
+    if (
+      fileName === "" ||
+      startDate === "" ||
+      pay === "" ||
+      parseInt(pay) === 0 ||
+      payType === "" ||
+      parseInt(payType) === 0
+    ) {
       setFileError(fileName === "");
       setStartDateErr(startDate === "");
-      setPayErr(pay === "");
+      setPayErr(pay === "" || parseInt(pay) === 0);
+      setPayTypeErr(payType === "" || parseInt(payType) === 0);
       return false;
     } else if (fileName !== "" && startDate !== " " && pay !== "") {
       props.uploadOfferDoc(
         file,
         startDate,
         pay.replaceAll(",", ""),
-        finalOffer
+        finalOffer,
+        payType
       );
     }
   };
 
   const setPayVal = (e) => {
-    setPayErr(e.target.value === "");
-    if (isNaN(e.target.value.replaceAll(",", "")) === true) {
-      setPayErr(true);
-    } else {
-      let val = new Intl.NumberFormat("en-US").format(
-        e.target.value.replaceAll(",", "")
-      );
-      setPay(val);
-    }
+    setPay(e.target.value);
+    setPayErr(e.target.value === "" || parseInt(e.target.value) === 0);
+  };
+
+  const onPayType = (e) => {
+    setPayTypeErr(e.target.value === "" || parseInt(e.target.value) === 0);
+    setPayType(e.target.value);
   };
 
   return (
@@ -96,7 +122,7 @@ export const CustomerUploadOffer = (props) => {
         ) : (
           <Row>
             {" "}
-            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+            <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
               <FormGroup>
                 <Label for={"pay"} className="fw-semi-bold">
                   Salary<span style={{ color: "red" }}>* </span>
@@ -106,8 +132,10 @@ export const CustomerUploadOffer = (props) => {
                   <Input
                     id={"pay"}
                     name={"pay"}
-                    type={"text"}
+                    type={"number"}
                     value={pay}
+                    step={"any"}
+                    min={0}
                     placeholder={"Enter salary"}
                     invalid={false}
                     onChange={(e) => setPayVal(e)}
@@ -120,7 +148,37 @@ export const CustomerUploadOffer = (props) => {
                 )}
               </FormGroup>
             </Col>
-            <Col xs={12} sm={12} md={12} lg={6} xl={6} xxl={6}>
+            <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
+              <Label className="fw-semi-bold">
+                Pay period type <span style={{ color: "red" }}>* </span>
+              </Label>
+              <Input
+                id={"payPeriodType"}
+                name={"payPeriodType"}
+                type={"select"}
+                onChange={(e) => onPayType(e)}
+              >
+                <option key={0} value={"0"}>
+                  Select pay period type
+                </option>
+                {payPeriodTypeOption.length > 0 &&
+                  payPeriodTypeOption.map((options) => (
+                    <option
+                      key={options.id}
+                      value={options.name}
+                      selected={payType === options.name}
+                    >
+                      {options.name}
+                    </option>
+                  ))}
+              </Input>
+              {payTypeErr && (
+                <FormText color="danger">
+                  Please select pay period type
+                </FormText>
+              )}
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
               <FormGroup>
                 <Label for={"pay"} className="fw-semi-bold">
                   Start date<span style={{ color: "red" }}>* </span>

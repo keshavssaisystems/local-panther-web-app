@@ -42,18 +42,7 @@ const passwordRegex =
 
 export function CustomerRegistration() {
   const dispatch = useDispatch();
-  let settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    arrows: true,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    fade: true,
-    initialSlide: 0,
-    autoplay: true,
-    adaptiveHeight: true,
-  };
+  const [locationData, setLocation] = useState([]);
 
   useEffect(() => {
     dispatch(dropdownActions.getCompanyListPublicThunk());
@@ -101,16 +90,7 @@ export function CustomerRegistration() {
   const [companyCountryErr, setCompanyCountryErr] = useState(false);
   const [companyZip, setCompanyZip] = useState("");
   const [companyZipErr, setCompanyZipErr] = useState(false);
-  // const [newCompanyDetails, setNewCompanyDetails] = useState({
-  //   companyname: { value: "", error: false },
-  //   companyemail: { value: "", error: false },
-  //   companyphone: { value: "", error: false },
-  //   companyemployees: { value: "", error: false },
-  //   companyaddress: { value: "", error: false },
-  //   companycity: { value: "", error: false },
-  //   companycountry: { value: "", error: false },
-  //   companyzip: { value: "", error: false },
-  // });
+  const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   useEffect(() => {
     // redirect to home if already logged in
@@ -181,9 +161,9 @@ export function CustomerRegistration() {
       if (
         !companyName ||
         !companyAddr ||
-        !companyCity ||
+        companyCity?.length === 0 ||
         !companyPhone ||
-        !companyCountry ||
+        companyCountry?.length === 0 ||
         !companyEmail ||
         !companyZip ||
         !companyEmp ||
@@ -191,9 +171,9 @@ export function CustomerRegistration() {
       ) {
         setCompanyNameErr(!companyName);
         setCompanyAddrErr(!companyAddr);
-        setCompanyCityErr(!companyCity);
+        setCompanyCityErr(companyCity?.length === 0 ? true : false);
         setCompanyPhoneErr(!companyPhone);
-        setCompanyCountryErr(!companyCountry);
+        setCompanyCountryErr(companyCountry?.length === 0 ? true : false);
         setCompanyEmailErr(!companyEmail);
         setCompanyZipErr(!companyZip);
         setCompanyEmpErr(!companyEmp || companyEmp === "0");
@@ -201,7 +181,7 @@ export function CustomerRegistration() {
       } else {
         let cityId = String(companyCity.value);
         let stateId = String(
-          compCityList?.find((x) => x.cityid === companyCity.value)?.stateid
+          compCityList?.find((x) => x.cityid === companyCity?.value)?.stateid
         );
 
         let payload = {
@@ -307,60 +287,24 @@ export function CustomerRegistration() {
   const [otpDetails, setOTPDetails] = useState([]);
 
   const validateOTP = async function (check) {
-    let formDetails = getValues();
-    let data = { ...field };
-    data = "";
+    let data;
+    if (check === "phone") {
+      data = getValues("phoneNumber").replace(/\D/g, "");
+      if (data === "" || data.length < 10) {
+        setMobileValidError(true);
+        return;
+      } else {
+        setMobileValidError(false);
+      }
+    } else {
+      data = getValues("email");
 
-    if (companyValue === 0) {
-      data = "company";
-    }
-
-    // if (
-    //   formDetails.jobprofile === "" ||
-    //   !validationSchema.fields.jobprofile.isValidSync(getValues("jobprofile"))
-    // ) {
-    //   data = data !== "" ? data + ", title" : "title";
-    // }
-    if (
-      formDetails.firstName === "" ||
-      !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
-    ) {
-      data = data !== "" ? data + ", first name" : "first name";
-    }
-    if (
-      formDetails.lastName === "" ||
-      !validationSchema.fields.lastName.isValidSync(getValues("lastName"))
-    ) {
-      data = data !== "" ? data + ", last name" : "last name";
-    }
-    if (
-      formDetails.email === "" ||
-      !validationSchema.fields.email.isValidSync(getValues("email"))
-    ) {
-      data = data !== "" ? data + ", email" : "email";
-    }
-    if (
-      formDetails.phoneNumber === "" ||
-      !validationSchema.fields.phoneNumber.isValidSync(getValues("phoneNumber"))
-    ) {
-      data = data !== "" ? data + ", phone number" : "phone number";
-    }
-    if (cityValue === 0) {
-      data = data !== "" ? data + ", city, state" : "city, state";
-    }
-    if (countryValue === 0) {
-      data = data !== "" ? data + ", country" : "country";
-    }
-
-    if (data !== "") {
-      setField(data);
-
-      showSweetAlert({
-        title: "Please enter valid " + data + " to verify email/phone",
-        type: "warning",
-      });
-
-      return;
+      if (data === "" || !emailRegex.test(data)) {
+        setEmailValidError(true);
+        return;
+      } else {
+        setEmailValidError(false);
+      }
     }
     let userRegistrationId = otpDetails.userregistrationid;
     let post_data = {
@@ -539,6 +483,9 @@ export function CustomerRegistration() {
 
   const onSelectCompanyDropdown = (data) => {
     setCompanyValue(data);
+    setCompanyCity("");
+    setCompanyCountry("");
+    setCompanyZip("");
     setValue("companyid", String(data));
   };
   const togglePasswordVisibility = () => {
@@ -570,6 +517,9 @@ export function CustomerRegistration() {
       return {
         value,
         label: `${rest.location + ", " + rest.statename}`,
+        zipcode: rest.zipcode,
+        countryid: rest.countryid,
+        countryname: rest.countryname,
       };
     });
 
@@ -627,6 +577,34 @@ export function CustomerRegistration() {
       setCityReqError(true);
     } else {
       setCityReqError(false);
+    }
+  };
+
+  const getZipLocationData = async function (inputValue) {
+    setCompanyZip(inputValue);
+
+    setCompanyZipErr(inputValue.length === 0 ? true : false);
+
+    if (inputValue.length === 5) {
+      const { data = [] } = await getLocationFilter(inputValue);
+      setCompCityList(data);
+      setCityList(data);
+      let filter_data = data.map(({ cityid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.location + ", " + rest.statename}`,
+          zipcode: rest.zipcode,
+          stateid: rest.stateid,
+          statename: rest.statename,
+        };
+      });
+      if (filter_data?.length > 0) {
+        setCompanyCountry([{ value: 1, label: "USA" }]);
+        setCompanyCity(filter_data[0]);
+      } else {
+        setCompanyCountry([]);
+        setCompanyCity([]);
+      }
     }
   };
 
@@ -703,17 +681,18 @@ export function CustomerRegistration() {
   };
 
   const handleFormData = function (check, data) {
-    console.log(getValues("email"));
     if (check === "mobile") {
-      if (validationSchema.fields.phoneNumber.isValidSync(data)) {
-        setMobileValidError(false);
-      } else {
-        setMobileValidError(true);
+      if (data.replace(/\D/g, "").length <= 10) {
+        if (data !== "" && data.replace(/\D/g, "").length === 10) {
+          setMobileValidError(false);
+        } else {
+          setMobileValidError(true);
+        }
       }
     }
 
     if (check === "email") {
-      if (validationSchema.fields.email.isValidSync(data)) {
+      if (data !== "" && emailRegex.test(data)) {
         setEmailValidError(false);
       } else {
         setEmailValidError(true);
@@ -730,6 +709,16 @@ export function CustomerRegistration() {
     if (check === "email") {
       validateOTP("email");
     }
+  };
+
+  const selectLocation = function (e) {
+    setCompanyCity(e);
+    setCompanyCityErr(!e);
+    setCompanyZip(e.zipcode?.[0] ? e.zipcode[0] : "");
+    setCompanyZipErr(e.zipcode?.[0] ? false : true);
+    let obj = { value: e.countryid, label: e.countryname };
+    setCompanyCountry(obj);
+    setCompanyCountryErr(false);
   };
 
   return (
@@ -970,10 +959,9 @@ export function CustomerRegistration() {
                     }`}
                     // {...register("cityid")}
                     onChange={(e) => {
-                      setCompanyCity(e);
-                      setCompanyCityErr(!e);
-                      console.log(e);
+                      selectLocation(e);
                     }}
+                    value={companyCity}
                   />
                   <div className="async-error-text">
                     {companyCityErr ? "Please select city and state." : ""}
@@ -998,7 +986,9 @@ export function CustomerRegistration() {
                     onChange={(e) => {
                       setCompanyCountry(e);
                       setCompanyCountryErr(!e);
+                      console.log(e);
                     }}
+                    value={companyCountry}
                     onMenuOpen={() => checkCompCityValid()}
                   />
                   <div className="async-error-text">
@@ -1012,9 +1002,9 @@ export function CustomerRegistration() {
                     Zip code <span className="text-danger">*</span>
                   </Label>
                   <InputGroup>
-                    <InputMask
+                    <Input
                       type="text"
-                      mask="99999"
+                      // mask="99999"
                       name="companyzip"
                       id="companyzip"
                       placeholder="Enter Company Zip Code"
@@ -1022,12 +1012,12 @@ export function CustomerRegistration() {
                       className={`form-control placeholder-name ${
                         companyZipErr ? "is-invalid" : ""
                       }`}
-                      onChange={(e) => {
-                        setCompanyZip(e.target.value);
-                        setCompanyZipErr(e.target.value === "");
+                      onInput={(e) => {
+                        getZipLocationData(e.target.value);
                       }}
+                      value={companyZip}
+                      maxLength={5}
                       autoComplete="off"
-                      maxLength={70}
                     />
                     <FormFeedback>
                       {" "}
@@ -1105,6 +1095,7 @@ export function CustomerRegistration() {
                     className="grp-btn"
                     color="light"
                     onClick={() => validateOTP("email")}
+                    disabled={emailValidError}
                   >
                     Verify
                   </Button>
@@ -1157,6 +1148,7 @@ export function CustomerRegistration() {
                     className="grp-btn"
                     color="light"
                     onClick={() => validateOTP("phone")}
+                    disabled={mobileValidError}
                   >
                     Verify
                   </Button>
@@ -1198,6 +1190,7 @@ export function CustomerRegistration() {
                   className={`form-control placeholder-name ${
                     errors.password ? "is-invalid" : ""
                   }`}
+                  autoComplete="new-password"
                 />
                 <InputGroupText onClick={(evt) => togglePasswordVisibility()}>
                   {showPassword ? <FaEyeSlash /> : <FaEye />}

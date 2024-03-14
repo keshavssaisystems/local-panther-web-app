@@ -2,8 +2,7 @@ import React from "react";
 import { Row, Col, Card } from "reactstrap";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
-import appliedIcon from "assets/utils/images/applied_icon.svg";
-
+import custDashIcons from "assets/utils/images/customer/dashboard";
 export function DashboardCounts() {
   const counts = useSelector(
     (state) => state.candidateDashboard.dashboardCounts
@@ -38,10 +37,11 @@ export function DashboardCounts() {
               <Row>
                 <Col md="4" sm="4" className="me-2 mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
-                    <div className={"icon-wrapper-bg bg-alternate"} />
-                    <i
-                      className={"lnr-graduation-hat text-alternate"}
-                      style={{ fontSize: "2rem" }}
+                    <div className={"icon-wrapper-bg bg-primary"} />
+                    <img
+                      className="d-flex justify-content-center"
+                      src={custDashIcons.candMatched}
+                      alt="matched-icon"
                     />
                   </div>
                 </Col>
@@ -79,7 +79,11 @@ export function DashboardCounts() {
                 <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-primary"} />
-                    <i className={"lnr-calendar-full text-primary"} />
+                    <img
+                      className="d-flex justify-content-center"
+                      src={custDashIcons.candInterview}
+                      alt="interview-icon"
+                    />
                   </div>
                 </Col>
                 <Col>
@@ -117,7 +121,11 @@ export function DashboardCounts() {
                 <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-info"} />
-                    <i className={"lnr-bullhorn text-info"} />
+                    <img
+                      className="d-flex justify-content-center"
+                      src={custDashIcons.candOffer}
+                      alt="offer-icon"
+                    />
                   </div>
                 </Col>
                 <Col>
@@ -158,7 +166,11 @@ export function DashboardCounts() {
                 <Col md="4" sm="4" className="me-2 mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-success"} />
-                    <i className={"lnr-thumbs-up text-success"} />
+                    <img
+                      className="d-flex justify-content-center"
+                      src={custDashIcons.candAccepted}
+                      alt="accepted-icon"
+                    />
                   </div>
                 </Col>
                 <Col>
@@ -195,7 +207,11 @@ export function DashboardCounts() {
                 <Col md="4" sm="4" className="me-2  mt-1">
                   <div className="icon-wrapper rounded-circle mt-1">
                     <div className={"icon-wrapper-bg bg-danger"} />
-                    <i className={"lnr-user text-danger"} />
+                    <img
+                      className="d-flex justify-content-center"
+                      src={custDashIcons.candRejected}
+                      alt="rejected-icon"
+                    />
                   </div>
                 </Col>
                 <Col>
@@ -220,11 +236,10 @@ export function DashboardCounts() {
               "warning border-warning"
             }
             onClick={(e) =>
-              navigateToJobsPage(e, counts.rejectedbycandidate, "applied")
+              navigateToJobsPage(e, counts.appliedcount, "applied")
             }
             style={{
-              cursor:
-                counts.rejectedbycandidate === 0 ? "not-allowed" : "pointer",
+              cursor: counts.appliedcount === 0 ? "not-allowed" : "pointer",
               height: "68%",
             }}
           >
@@ -236,8 +251,7 @@ export function DashboardCounts() {
 
                     <img
                       className="d-flex justify-content-center"
-                      src={appliedIcon}
-                      style={{ marginLeft: "13px", marginRight: "13px" }}
+                      src={custDashIcons.candApplied}
                       alt="applied-icon"
                     />
                   </div>

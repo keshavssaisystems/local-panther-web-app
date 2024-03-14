@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
 import {
@@ -10,7 +10,7 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 import SelectJobType from "../../../_components/createJobComponents/selectJobType";
-import CreateJob from "../../../_components/createJobComponents/createJobForm";
+import { CreateJob } from "../../../_components/createJobComponents/createJobForm";
 import JobPreview from "../../../_components/createJobComponents/jobPreview";
 import PublishJobStep from "../../../_components/createJobComponents/publishJobStep";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,7 @@ export function CreateJobWizard({ type }) {
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
   const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
+  const childRef = useRef(null);
   const getJobDetailForEdit = async function () {
     await dispatch(createjobActions.getJobDetailForUpdateThunk(id));
   };
@@ -211,6 +212,7 @@ export function CreateJobWizard({ type }) {
           JobDataForPreview={(e) => getDataForPreview(e)}
           nextPage={(e) => nextPage(e)}
           customerDetails={customerDetails}
+          ref={childRef}
         />
       ),
     },
@@ -289,7 +291,11 @@ export function CreateJobWizard({ type }) {
   };
   const handleKeyDown = (evt) => {
     if (evt.which === 13) {
-      next();
+      if (compState === 1) {
+        childRef.current.submit();
+      } else {
+        next();
+      }
     }
   };
   const next = () => {

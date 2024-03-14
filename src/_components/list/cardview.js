@@ -146,7 +146,7 @@ export const CandidateCardView = (props) => {
     ) {
       return (
         <Row>
-          {props.data.candidateQualificationsDtos.map((data) => {
+          {props.data.candidateQualificationsDtos.map((data, index) => {
             return (
               <>
                 <Col sm={12} md={12} lg={12} xl={12} className="card-details">
@@ -164,10 +164,22 @@ export const CandidateCardView = (props) => {
                 >
                   {" "}
                   {data.iscurrentlyworking
-                    ? `${moment(data.startdate).format("YYYY")} - Present`
-                    : `${moment(data.startdate).format("YYYY")} - ${moment(
-                        data.enddate
-                      ).format("YYYY")}`}
+                    ? `${
+                        data.startdate === null
+                          ? "NA"
+                          : moment(data.startdate).format("YYYY")
+                      } - Present`
+                    : `${
+                        data.startdate === null
+                          ? "NA"
+                          : moment(data.startdate).format("YYYY")
+                      } - ${
+                        data.enddate === null
+                          ? index === 0
+                            ? "Present"
+                            : "NA"
+                          : moment(data.enddate).format("YYYY")
+                      }`}
                 </Col>
               </>
             );

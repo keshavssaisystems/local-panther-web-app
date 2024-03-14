@@ -66,6 +66,7 @@ export const PaymentDetails = ({
   const [validCard, setValidCard] = useState(false);
   const [deletedCard, setDeletedCard] = useState(false);
   const [disableSAC, setDisableSAC] = useState(false);
+  const [zipCode, setZipCode] = useState("");
 
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -167,6 +168,7 @@ export const PaymentDetails = ({
     setCardHolder(billingDetails?.cardholdername);
     setValue("address", billingDetails?.address);
     setValue("zipcode", billingDetails?.zipcode);
+    setZipCode(billingDetails?.zipcode);
   };
   const setDetails = (userDetails) => {
     setValue("name", userDetails.firstname + " " + userDetails.lastname);
@@ -176,6 +178,7 @@ export const PaymentDetails = ({
     setValue("address", userDetails.address);
     setValue("phoneNumber", userDetails.phonenumber);
     setValue("zipcode", userDetails.zipcode);
+    setZipCode(userDetails.zipcode);
     // let cityData = [
     //   // {
     //   {
@@ -263,6 +266,7 @@ export const PaymentDetails = ({
       return {
         value,
         label: `${rest.location + ", " + rest.statename}`,
+        zipcode: rest.zipcode,
       };
     });
     // setDefaultCityList(filter_data);
@@ -270,11 +274,12 @@ export const PaymentDetails = ({
   };
 
   const setAsyncSelectValue = (data) => {
-    console.log(data);
     setValue("cityid", String(data.value));
     setCityValue(data);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
+    setValue("zipcode", data.zipcode?.[0] ? data.zipcode[0] : "");
+    setZipCode(data.zipcode?.[0] ? data.zipcode[0] : "");
   };
 
   const setCardDetails = (e) => {
@@ -310,18 +315,59 @@ export const PaymentDetails = ({
     }
   };
 
-  const handleCallback = (issuer, isValid) => {
+  const handleCallback = async (issuer, isValid) => {
     setIssuer(issuer);
     if (userDetails?.billingdetailstatus) {
       setValidCard(true);
     } else {
-      setValidCard(isValid);
+      let cardTypeNumber = 0;
+      if (cardType.length > 0) {
+        await cardType.map((data) => {
+          if (data.name.toLowerCase() === issuer.replaceAll("-", " ")) {
+            cardTypeNumber = data.id;
+          }
+        });
+      }
+      if (cardTypeNumber !== 0) {
+        setValidCard(isValid);
+      }
     }
   };
   const onSameCustomer = (e) => {
     setSameAsCust(e.target.checked);
     if (!e.target.checked) {
       clearFormData();
+    }
+  };
+
+  const getZipLocationData = async function (inputValue) {
+    setValue("zipcode", inputValue);
+    setZipCode(inputValue);
+
+    if (inputValue.length === 5) {
+      const { data = [] } = await getLocationFilter(inputValue);
+      setCityList(data);
+      let filter_data = data.map(({ cityid: value, ...rest }) => {
+        return {
+          value,
+          label: `${rest.location + ", " + rest.statename}`,
+          zipcode: rest.zipcode,
+          stateid: rest.stateid,
+          statename: rest.statename,
+        };
+      });
+      if (filter_data?.length > 0) {
+        setCountryValue([{ value: 1, label: "USA" }]);
+        setCityValue(filter_data[0]);
+      } else {
+        setCountryValue([]);
+        setCityValue([]);
+
+        setValue("cityid", "");
+
+        setValue("stateid", "");
+        setValue("countryid", "");
+      }
     }
   };
 
@@ -339,6 +385,7 @@ export const PaymentDetails = ({
     setCountryValue("");
     setValue("address", "");
     dispatch(paymentActions.updateUserDetails({}));
+    setZipCode("");
   };
 
   const onSubmit = async (formData) => {
@@ -710,9 +757,8 @@ export const PaymentDetails = ({
                 Zip Code <span className="text-danger">*</span>
               </Label>
               <InputGroup>
-                <InputMask
+                <Input
                   type="text"
-                  mask="99999"
                   name="zipcode"
                   disabled={userDetails?.billingdetailstatus}
                   id="zipcode"
@@ -722,6 +768,11 @@ export const PaymentDetails = ({
                     errors.zipcode ? "is-invalid" : ""
                   }`}
                   autoComplete="off"
+                  onInput={(e) => {
+                    getZipLocationData(e.target.value);
+                  }}
+                  maxLength={5}
+                  value={zipCode}
                 />
                 <FormFeedback>{errors.zipcode?.message}</FormFeedback>
               </InputGroup>

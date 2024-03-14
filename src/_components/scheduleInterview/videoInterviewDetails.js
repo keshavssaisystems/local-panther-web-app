@@ -304,7 +304,7 @@ export function VideoInterviewDetails({
         </CardHeader>
         <CardBody>
           <div>
-            <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
+            {/* <div className="btn-actions-pane-right text-capitalize actions-icon-btn float-end">
               <UncontrolledButtonDropdown>
                 <DropdownToggle className="btn-icon btn-icon-only" color="link">
                   {fromCustList || interviewDetail?.interviewstatusid !== 0 ? (
@@ -324,7 +324,7 @@ export function VideoInterviewDetails({
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledButtonDropdown>
-            </div>
+            </div> */}
             <div className="p-custom">
               <p className="mb-0">
                 {scheduled} at {startTime} to {endTime} ({" "}
@@ -369,7 +369,7 @@ export function VideoInterviewDetails({
                 <div className="p-custom">
                   <p className="mb-0">
                     <a href="/" onClick={(e) => toggle()}>
-                      <NavLink to={`/video-screen/${id}`} exact>
+                      <NavLink to={`/video-screen/${id}`} target="_blank" exact>
                         Click here to join
                       </NavLink>
                     </a>{" "}
@@ -387,7 +387,7 @@ export function VideoInterviewDetails({
             </div>
           </div>
         </CardBody>
-        <CardFooter className="d-block text-left">
+        <CardFooter className="d-block text-left right-align">
           {fromCustList ? (
             <></>
           ) : (
@@ -425,6 +425,26 @@ export function VideoInterviewDetails({
                   >
                     {" "}
                     Interview feedback{" "}
+                  </Button>
+                  <Button
+                    outline={!feedbackModal}
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    size={"sm"}
+                    onClick={(e) => editScheduledInterview(true)}
+                  >
+                    {" "}
+                    Reschedule{" "}
+                  </Button>
+                  <Button
+                    outline={!feedbackModal}
+                    className="mb-2 mr-2 btn-transition"
+                    color="primary"
+                    size={"sm"}
+                    onClick={(e) => setShowCancelPopup(true)}
+                  >
+                    {" "}
+                    Cancel{" "}
                   </Button>
                 </>
               )}

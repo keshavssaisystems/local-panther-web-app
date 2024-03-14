@@ -41,6 +41,8 @@ import { CustomerRegistration } from "./customerRegistration";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
 export function Registration() {
   let settings = {
     dots: true,
@@ -168,54 +170,29 @@ export function Registration() {
     title: "",
     description: "",
   });
-  const [field, setField] = useState(false);
   const [otpDetails, setOTPDetails] = useState([]);
 
   const validateOTP = async function (check) {
-    let formDetails = getValues();
-    let data = { ...field };
-    data = "";
-    if (
-      formDetails.firstName === "" ||
-      !validationSchema.fields.firstName.isValidSync(getValues("firstName"))
-    ) {
-      data = data !== "" ? data + ", first name" : "first name";
-    }
-    if (
-      formDetails.lastName === "" ||
-      !validationSchema.fields.lastName.isValidSync(getValues("lastName"))
-    ) {
-      data = data !== "" ? data + ", last name" : "last name";
-    }
-    if (
-      formDetails.email === "" ||
-      !validationSchema.fields.email.isValidSync(getValues("email"))
-    ) {
-      data = data !== "" ? data + ", email" : "email";
-    }
-    if (
-      formDetails.phoneNumber === "" ||
-      !validationSchema.fields.phoneNumber.isValidSync(getValues("phoneNumber"))
-    ) {
-      data = data !== "" ? data + ", phone number" : "phone number";
-    }
-    if (cityValue === 0) {
-      data = data !== "" ? data + ", city, state" : "city, state";
-    }
-    if (countryValue === 0) {
-      data = data !== "" ? data + ", country" : "country";
+    let data;
+    if (check === "phone") {
+      data = getValues("phoneNumber").replace(/\D/g, "");
+      if (data === "" || data.length < 10) {
+        setMobileValidError(true);
+        return;
+      } else {
+        setMobileValidError(false);
+      }
+    } else {
+      data = getValues("email");
+
+      if (data === "" || !emailRegex.test(data)) {
+        setEmailValidError(true);
+        return;
+      } else {
+        setEmailValidError(false);
+      }
     }
 
-    if (data !== "") {
-      setField(data);
-
-      showSweetAlert({
-        title: "Please enter valid " + data + " to verify email/phone",
-        type: "warning",
-      });
-
-      return;
-    }
     let userRegistrationId = otpDetails.userregistrationid;
     let post_data = {
       userregistrationid: 0,
@@ -511,14 +488,16 @@ export function Registration() {
 
   const handleFormData = function (check, data) {
     if (check === "mobile") {
-      if (validationSchema.fields.phoneNumber.isValidSync(data)) {
-        setMobileValidError(false);
-      } else {
-        setMobileValidError(true);
+      if (data.replace(/\D/g, "").length <= 10) {
+        if (data !== "" && data.replace(/\D/g, "").length === 10) {
+          setMobileValidError(false);
+        } else {
+          setMobileValidError(true);
+        }
       }
     }
     if (check === "email") {
-      if (validationSchema.fields.email.isValidSync(data)) {
+      if (data !== "" && emailRegex.test(data)) {
         setEmailValidError(false);
       } else {
         setEmailValidError(true);
@@ -675,6 +654,7 @@ export function Registration() {
                               <Button
                                 className="grp-btn"
                                 color="light"
+                                disabled={emailValidError}
                                 onClick={() => validateOTP("email")}
                               >
                                 Verify
@@ -721,7 +701,6 @@ export function Registration() {
                               className={`form-control placeholder-name ${
                                 errors.phoneNumber ? "is-invalid" : ""
                               }`}
-                              maxLength={20}
                               onInput={(e) =>
                                 handleFormData("mobile", e.target.value)
                               }
@@ -731,6 +710,7 @@ export function Registration() {
                               <Button
                                 className="grp-btn"
                                 color="light"
+                                disabled={mobileValidError}
                                 onClick={() => validateOTP("phone")}
                               >
                                 Verify
@@ -777,6 +757,7 @@ export function Registration() {
                               className={`form-control placeholder-name ${
                                 errors.password ? "is-invalid" : ""
                               }`}
+                              autoComplete="new-password"
                             />
                             <InputGroupText
                               onClick={(evt) => togglePasswordVisibility()}

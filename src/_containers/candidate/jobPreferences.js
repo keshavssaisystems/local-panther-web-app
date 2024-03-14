@@ -26,7 +26,6 @@ import Loader from "react-loaders";
 import { NoProfileData } from "_components/common/noProfileData";
 import InputMask from "react-input-mask";
 import { getBasePayMask } from "_helpers/helper";
-import { FALSE } from "sass";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -398,9 +397,7 @@ export function JobPreferences(props) {
 
       new_data[0].payperiodtypeid = data.value;
     } else if (check === "basePay") {
-      new_data[0].minimumbasepay = new Intl.NumberFormat("en-US").format(
-        data.replace(/,/g, "")
-      );
+      new_data[0].minimumbasepay = data.replace(/,/g, "");
     } else if (check === "relocate") {
       new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
 
@@ -582,9 +579,7 @@ export function JobPreferences(props) {
   const deleteModal = function (id) {
     setDeleteConfirm(true);
   };
-  const close = function () {
-    setPersonalModal(false);
-  };
+
   const [basePayValue, setBasePayValue] = useState("");
   return (
     <div>
@@ -710,7 +705,7 @@ export function JobPreferences(props) {
             size="lg"
             isOpen={isPersonalModal}
           >
-            <ModalHeader toggle={() => close()} charCode="Y">
+            <ModalHeader toggle={() => closeModal()} charCode="Y">
               <strong className="card-title-text">
                 Add/Edit Job preferences
               </strong>
@@ -946,17 +941,13 @@ export function JobPreferences(props) {
 
                         <InputGroup>
                           <InputGroupText>$</InputGroupText>
-                          <InputMask
+                          <Input
                             className="field-input placeholder-text form-control input-text"
-                            mask={getBasePayMask(
-                              basePayValue === ""
-                                ? parentItem.minimumbasepay
-                                : basePayValue
-                            )}
-                            maskChar={null}
+                            min={0}
+                            type="number"
                             name="minPay"
                             id="minPay"
-                            placeholder="Enter base pay"
+                            placeholder="Enter minimum base pay"
                             onInput={(evt) => {
                               onHandleInputChange("basePay", evt.target.value);
                               setBasePayValue(evt.target.value);
@@ -968,6 +959,7 @@ export function JobPreferences(props) {
                                   ? "#ff0000"
                                   : "",
                             }}
+                            step="any"
                           />
                         </InputGroup>
                         <div className="filter-info-text filter-error-msg">

@@ -93,12 +93,22 @@ export function CandidateEducation(props) {
 
   const getTitle = function (item) {
     let text = "";
-    if (item.levelofeducation != "" && item.levelofeducation) {
+    if (item.levelofeducation !== "" && item.levelofeducation) {
       text = item.levelofeducation;
-      if (item.fieldofstudy != "" && item.fieldofstudy) {
+      if (
+        item.fieldofstudy !== "" &&
+        item.fieldofstudy &&
+        item.fieldofstudy !== "NA" &&
+        item.fieldofstudy !== "N/A"
+      ) {
         text += ", " + item.fieldofstudy;
       }
-    } else if (item.fieldofstudy != "" && item.fieldofstudy) {
+    } else if (
+      item.fieldofstudy !== "" &&
+      item.fieldofstudy &&
+      item.fieldofstudy !== "NA" &&
+      item.fieldofstudy !== "N/A"
+    ) {
       text = item.fieldofstudy;
     }
     return text;
@@ -157,16 +167,18 @@ export function CandidateEducation(props) {
                             />
                           </div>
                         </Col>
-                        {item.cityname !== "" ||
-                        item.statename !== "" ||
-                        item.countryname !== "" ||
-                        item.school !== "" ? (
+
+                        {(item.cityname !== "" && item.cityname) ||
+                        (item.statename !== "" && item.statename) ||
+                        (item.countryname !== "" && item.countryname) ||
+                        (item.school !== "" && item.school) ? (
                           <Label className="mb-0 mt-0 card-p-text-black">
                             {getEducText(item)}
                           </Label>
                         ) : (
                           ""
                         )}
+
                         {item.iscurrentlystudying ? (
                           <p className="mt-1 card-p-text-black">
                             Currently attending{" "}
