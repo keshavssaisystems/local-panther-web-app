@@ -757,6 +757,7 @@ export function Registration() {
                               className={`form-control placeholder-name ${
                                 errors.password ? "is-invalid" : ""
                               }`}
+                              autoComplete="new-password"
                             />
                             <InputGroupText
                               onClick={(evt) => togglePasswordVisibility()}

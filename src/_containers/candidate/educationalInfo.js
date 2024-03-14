@@ -167,16 +167,18 @@ export function CandidateEducation(props) {
                             />
                           </div>
                         </Col>
-                        {item.cityname !== "" ||
-                        item.statename !== "" ||
-                        item.countryname !== "" ||
-                        item.school !== "" ? (
+
+                        {(item.cityname !== "" && item.cityname) ||
+                        (item.statename !== "" && item.statename) ||
+                        (item.countryname !== "" && item.countryname) ||
+                        (item.school !== "" && item.school) ? (
                           <Label className="mb-0 mt-0 card-p-text-black">
                             {getEducText(item)}
                           </Label>
                         ) : (
                           ""
                         )}
+
                         {item.iscurrentlystudying ? (
                           <p className="mt-1 card-p-text-black">
                             Currently attending{" "}

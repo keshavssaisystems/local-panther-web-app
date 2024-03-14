@@ -236,11 +236,10 @@ export function DashboardCounts() {
               "warning border-warning"
             }
             onClick={(e) =>
-              navigateToJobsPage(e, counts.rejectedbycandidate, "applied")
+              navigateToJobsPage(e, counts.appliedcount, "applied")
             }
             style={{
-              cursor:
-                counts.rejectedbycandidate === 0 ? "not-allowed" : "pointer",
+              cursor: counts.appliedcount === 0 ? "not-allowed" : "pointer",
               height: "68%",
             }}
           >
