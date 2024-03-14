@@ -991,6 +991,7 @@ export const CreateJob = forwardRef(
       }
     };
     const getLocationDetails = (event, cityState = false) => {
+      setZipcodeCityState(event);
       setCityValidation(false);
       let locationSplit = event.value.split(", ");
       setCountryOnChange(true);
@@ -1013,7 +1014,6 @@ export const CreateJob = forwardRef(
     const locationZipCode = useSelector(
       (state) => state.location?.location[0]?.name
     );
-    console.log(zipCodeFromCityState);
     const setupDescriptionData = (event) => {
       setDescriptionData(event);
       setDescriptionValidation(false);
