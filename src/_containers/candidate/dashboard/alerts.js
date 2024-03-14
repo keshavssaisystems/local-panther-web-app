@@ -1,27 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   CardHeader,
   Card,
-  CardFooter,
   Row,
   Col,
   ListGroup,
   ListGroupItem,
 } from "reactstrap";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {
-  VerticalTimeline,
-  VerticalTimelineElement,
-} from "react-vertical-timeline-component";
 import alertsIcon from "../../../assets/utils/images/alert-reminder.svg";
 import { useSelector } from "react-redux";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
 import { BsTrash3 } from "react-icons/bs";
-import { getTimezoneDateTimeForNow } from "_helpers/helper";
+import { getTimezoneDateTime } from "_helpers/helper";
 import "./dashboard.scss";
 import "../../../_components/modal/alertmodal.scss";
-import moment from "moment";
 import { Link } from "react-router-dom";
 
 export function Alerts(props) {
@@ -93,8 +87,7 @@ export function Alerts(props) {
                                         className="widget-subheading alert-desc"
                                         style={{ paddingBottom: "6px" }}
                                       >
-                                        Posted{" "}
-                                        {getTimezoneDateTimeForNow(
+                                        {getTimezoneDateTime(
                                           item.modifieddate
                                             ? item.modifieddate
                                             : item.createddate
@@ -154,8 +147,7 @@ export function Alerts(props) {
                                         className="widget-subheading alert-desc"
                                         style={{ paddingBottom: "6px" }}
                                       >
-                                        Posted{" "}
-                                        {getTimezoneDateTimeForNow(
+                                        {getTimezoneDateTime(
                                           item.modifieddate
                                             ? item.modifieddate
                                             : item.createddate
