@@ -181,7 +181,7 @@ export function QualificationModal(props) {
 
       if (props.selected.startdate) {
         let year = new Date(props.selected.startdate).getFullYear();
-        let selectedYear = yearList?.find((x) => x.name === Number(year))?.name;
+        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
 
         data[0].fromDateSelect.month = Number(
           new Date(props.selected.startdate).getMonth() + 1
@@ -190,7 +190,7 @@ export function QualificationModal(props) {
       }
       if (props.selected.enddate) {
         let year = new Date(props.selected.enddate).getFullYear();
-        let selectedYear = yearList?.find((x) => x.name === Number(year))?.name;
+        let selectedYear = yearList?.find((x) => x.name == Number(year))?.name;
 
         data[0].toDateSelect.month = Number(
           new Date(props.selected.enddate).getMonth() + 1
