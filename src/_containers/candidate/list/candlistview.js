@@ -706,7 +706,7 @@ export const CandListView = (props) => {
             cell: (row) => (
               <span
                 title={
-                  row?.jobOfferDtos === null
+                  row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
@@ -715,7 +715,7 @@ export const CandListView = (props) => {
                       )
                 }
               >
-                {row?.jobOfferDtos === null
+                {row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
@@ -725,7 +725,7 @@ export const CandListView = (props) => {
               </span>
             ),
             selector: (row) =>
-              row?.jobOfferDtos === null
+              row?.jobOfferDtos[0] === undefined
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
