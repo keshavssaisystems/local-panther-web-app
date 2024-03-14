@@ -258,11 +258,9 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           <HeadingAndDetailWithDiv
             heading={"Job posted on"}
             detail={getTimezoneDateTime(
-              moment(
-                jobDetail?.publisheddate === null
-                  ? jobDetail?.jobcreatedatetime
-                  : jobDetail?.publisheddate
-              ).format("YYYY-MM-DD"),
+              jobDetail?.publisheddate === null
+                ? jobDetail?.jobcreatedatetime
+                : jobDetail?.publisheddate,
               "MM/DD/YYYY"
             )}
             iconId={3}
