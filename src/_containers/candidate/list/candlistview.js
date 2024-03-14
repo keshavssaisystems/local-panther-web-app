@@ -666,7 +666,7 @@ export const CandListView = (props) => {
             cell: (row) => (
               <span
                 title={
-                  row?.jobOfferDtos === null
+                  row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.salary === 0
                     ? "-"
@@ -676,7 +676,7 @@ export const CandListView = (props) => {
                       )
                 }
               >
-                {row?.jobOfferDtos === null
+                {row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.salary === 0
                   ? "-"
@@ -690,7 +690,7 @@ export const CandListView = (props) => {
               </span>
             ),
             selector: (row) =>
-              row?.jobOfferDtos === null
+              row?.jobOfferDtos[0] === undefined
                 ? "-"
                 : row?.jobOfferDtos[0]?.salary === 0
                 ? "-"
@@ -1116,7 +1116,8 @@ export const CandListView = (props) => {
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
                     ) +
-                    (row?.jobOfferDtos?.length > 0
+                    (row?.jobOfferDtos?.length > 0 &&
+                    row?.jobOfferDtos[0].payperiodtype !== null
                       ? " - " + row?.jobOfferDtos[0].payperiodtype
                       : "")}
               </span>
