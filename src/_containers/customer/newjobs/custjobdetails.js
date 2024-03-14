@@ -273,11 +273,9 @@ export function CustJobDetail({
     {
       name: "Published",
       count: getTimezoneDateTime(
-        moment(
-          jobDetail?.publisheddate === null
-            ? jobDetail?.jobcreatedatetime
-            : jobDetail?.publisheddate
-        ).format("YYYY-MM-DD"),
+        jobDetail?.publisheddate === null
+          ? jobDetail?.jobcreatedatetime
+          : jobDetail?.publisheddate,
         "MM/DD/YYYY"
       ),
       icon: publishedIcon,

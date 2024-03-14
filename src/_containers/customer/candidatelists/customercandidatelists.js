@@ -97,6 +97,7 @@ export const CustomerCandidateLists = (props) => {
   }, [props.type, id]);
 
   const returnStatusId = (type) => {
+    console.log(type);
     if (type === "liked") {
       return 1;
     } else if (type === "maybe") {
