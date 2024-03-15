@@ -455,9 +455,9 @@ export const CandListView = (props) => {
                   row?.scheduledInterviewDtos &&
                   row?.scheduledInterviewDtos?.length > 0
                     ? getTimezoneDateTime(
-                        moment(
-                          row?.scheduledInterviewDtos[0]?.scheduledate
-                        ).format("MM/DD/YYYY") +
+                        moment
+                          .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
+                          .format("MM/DD/YYYY") +
                           (row?.scheduledInterviewDtos[0]?.starttime !== null
                             ? " " + row?.scheduledInterviewDtos[0]?.starttime
                             : " 00:00:00")
@@ -468,9 +468,9 @@ export const CandListView = (props) => {
                 {row?.scheduledInterviewDtos &&
                 row?.scheduledInterviewDtos?.length > 0
                   ? getTimezoneDateTime(
-                      moment(
-                        row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY") +
+                      moment
+                        .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
+                        .format("MM/DD/YYYY") +
                         (row?.scheduledInterviewDtos[0]?.starttime !== null
                           ? " " + row?.scheduledInterviewDtos[0]?.starttime
                           : " 00:00:00")
@@ -482,9 +482,9 @@ export const CandListView = (props) => {
               row?.scheduledInterviewDtos &&
               row?.scheduledInterviewDtos?.length > 0
                 ? getTimezoneDateTime(
-                    moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
-                      "MM/DD/YYYY"
-                    ) +
+                    moment
+                      .utc(row?.scheduledInterviewDtos[0]?.scheduledate)
+                      .format("MM/DD/YYYY") +
                       (row?.scheduledInterviewDtos[0]?.starttime !== null
                         ? " " + row?.scheduledInterviewDtos[0]?.starttime
                         : " 00:00:00")
@@ -710,18 +710,18 @@ export const CandListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : moment(row?.jobOfferDtos[0]?.startdate).format(
-                        "MM/DD/YYYY"
-                      )
+                    : moment
+                        .utc(row?.jobOfferDtos[0]?.startdate)
+                        .format("MM/DD/YYYY")
                 }
               >
                 {row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : moment(row?.jobOfferDtos[0]?.startdate).format(
-                      "MM/DD/YYYY"
-                    )}
+                  : moment
+                      .utc(row?.jobOfferDtos[0]?.startdate)
+                      .format("MM/DD/YYYY")}
               </span>
             ),
             selector: (row) =>
@@ -729,7 +729,9 @@ export const CandListView = (props) => {
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
-                : moment(row?.jobOfferDtos[0]?.startdate).format("MM/DD/YYYY"),
+                : moment
+                    .utc(row?.jobOfferDtos[0]?.startdate)
+                    .format("MM/DD/YYYY"),
             sortable: true,
             width: "10%",
           },
@@ -939,18 +941,18 @@ export const CandListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : moment(row?.jobOfferDtos[0]?.startdate).format(
-                        "MM/DD/YYYY"
-                      )
+                    : moment
+                        .utc(row?.jobOfferDtos[0]?.startdate)
+                        .format("MM/DD/YYYY")
                 }
               >
                 {row?.jobOfferDtos === null
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : moment(row?.jobOfferDtos[0]?.startdate).format(
-                      "MM/DD/YYYY"
-                    )}
+                  : moment
+                      .utc(row?.jobOfferDtos[0]?.startdate)
+                      .format("MM/DD/YYYY")}
               </span>
             ),
             selector: (row) =>
@@ -958,7 +960,9 @@ export const CandListView = (props) => {
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
-                : moment(row?.jobOfferDtos[0]?.startdate).format("MM/DD/YYYY"),
+                : moment
+                    .utc(row?.jobOfferDtos[0]?.startdate)
+                    .format("MM/DD/YYYY"),
             sortable: true,
             width: "10%",
           },
@@ -1143,18 +1147,18 @@ export const CandListView = (props) => {
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
-                    : moment(row?.jobOfferDtos[0]?.startdate).format(
-                        "MM/DD/YYYY"
-                      )
+                    : moment
+                        .utc(row?.jobOfferDtos[0]?.startdate)
+                        .format("MM/DD/YYYY")
                 }
               >
                 {row?.jobOfferDtos === null
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
-                  : moment(row?.jobOfferDtos[0]?.startdate).format(
-                      "MM/DD/YYYY"
-                    )}
+                  : moment
+                      .utc(row?.jobOfferDtos[0]?.startdate)
+                      .format("MM/DD/YYYY")}
               </span>
             ),
             selector: (row) =>
@@ -1162,7 +1166,9 @@ export const CandListView = (props) => {
                 ? "-"
                 : row?.jobOfferDtos[0]?.startdate === null
                 ? "-"
-                : moment(row?.jobOfferDtos[0]?.startdate).format("MM/DD/YYYY"),
+                : moment
+                    .utc(row?.jobOfferDtos[0]?.startdate)
+                    .format("MM/DD/YYYY"),
             sortable: true,
             width: "10%",
           },
