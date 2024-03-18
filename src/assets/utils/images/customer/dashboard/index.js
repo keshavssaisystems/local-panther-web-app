@@ -16,6 +16,7 @@ const custDashIcons = {
   candOffer: require("./candOffer.svg").default,
   candRejected: require("./candRejected.svg").default,
   statistics: require("./statistics.svg").default,
+  upcomint: require("./upcomint.svg").default,
 };
 
 export default custDashIcons;
