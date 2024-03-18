@@ -69,7 +69,7 @@ export function ForgotPasswordSuccess() {
                 New Password Sent Successfully
               </p>
               <p className="mb-3 header-text">
-                Please check your register email for new password.
+                Please check your email for new password.
               </p>
               <div>
                 <Button
