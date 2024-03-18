@@ -525,9 +525,25 @@ export const PaymentDetails = ({
     }
   };
 
+  const cardErr = () => {
+    if (
+      cardnumber === "" ||
+      cvv === "" ||
+      expiry === "" ||
+      invalidExp ||
+      !validCard ||
+      cardholder === ""
+    ) {
+      setCardNumberErr(cardnumber === "");
+      setCVVErr(cvv === "");
+      setExpiryErr(expiry === "");
+      setCardHolderErr(cardholder === "");
+    }
+  };
+
   return (
     <Row>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit, cardErr)}>
         {/* onSubmit={handleSubmit(onSubmit)} */}
         <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
           <h3 className="mt-2 pay-title">Billing Contact</h3>
@@ -571,17 +587,17 @@ export const PaymentDetails = ({
                 <input
                   type="text"
                   name="name"
-                  disabled={userDetails?.billingdetailstatus}
                   id="name"
+                  disabled={userDetails?.billingdetailstatus}
                   placeholder="Enter Name"
                   {...register("name")}
                   className={`form-control placeholder-name ${
                     errors.name ? "is-invalid" : ""
                   }`}
                   maxLength={50}
-                  onChange={(e) => setCardDetails(e)}
+                  // onChange={(e) => setCardDetails(e)}
                 />
-                <FormFeedback>{errors.name?.message}</FormFeedback>
+                <FormFeedback>{errors?.name?.message}</FormFeedback>
               </InputGroup>
             </FormGroup>
           </Col>
