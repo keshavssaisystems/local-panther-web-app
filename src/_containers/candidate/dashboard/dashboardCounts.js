@@ -8,12 +8,7 @@ export function DashboardCounts() {
     (state) => state.candidateDashboard.dashboardCounts
   );
   const navigateToJobsPage = function (e, count, tab) {
-    if (count === 0) {
-      e.preventDefault();
-      return;
-    } else {
-      history.navigate("/job-list-" + tab);
-    }
+    history.navigate("/job-list-" + tab);
   };
 
   return (
@@ -29,7 +24,7 @@ export function DashboardCounts() {
               navigateToJobsPage(e, counts.matchedcandidate, "matched")
             }
             style={{
-              cursor: counts.matchedcandidate === 0 ? "not-allowed" : "pointer",
+              cursor: "pointer",
               height: "68%",
             }}
           >
@@ -69,8 +64,7 @@ export function DashboardCounts() {
               navigateToJobsPage(e, counts.interveiwSchedule, "interview")
             }
             style={{
-              cursor:
-                counts.interveiwSchedule === 0 ? "not-allowed" : "pointer",
+              cursor: "pointer",
               height: "68%",
             }}
           >
@@ -111,8 +105,7 @@ export function DashboardCounts() {
               navigateToJobsPage(e, counts.offersforcandidate, "offers")
             }
             style={{
-              cursor:
-                counts.offersforcandidate === 0 ? "not-allowed" : "pointer",
+              cursor: "pointer",
               height: "68%",
             }}
           >
@@ -156,8 +149,7 @@ export function DashboardCounts() {
               navigateToJobsPage(e, counts.acceptedbycandidate, "accepted")
             }
             style={{
-              cursor:
-                counts.acceptedbycandidate === 0 ? "not-allowed" : "pointer",
+              cursor: "pointer",
               height: "68%",
             }}
           >
@@ -197,8 +189,7 @@ export function DashboardCounts() {
               navigateToJobsPage(e, counts.rejectedbycandidate, "rejected")
             }
             style={{
-              cursor:
-                counts.rejectedbycandidate === 0 ? "not-allowed" : "pointer",
+              cursor: "pointer",
               height: "68%",
             }}
           >
@@ -239,7 +230,7 @@ export function DashboardCounts() {
               navigateToJobsPage(e, counts.appliedcount, "applied")
             }
             style={{
-              cursor: counts.appliedcount === 0 ? "not-allowed" : "pointer",
+              cursor: "pointer",
               height: "68%",
             }}
           >

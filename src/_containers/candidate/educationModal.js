@@ -126,7 +126,7 @@ export function EducationModal(props) {
         error: false,
         candidateeducationid: props.selected.candidateeducationid,
         education: {
-          value: props.selected.candidateeducationid,
+          value: props.selected.levelofeducationid,
           label: props.selected.levelofeducation,
         },
 
