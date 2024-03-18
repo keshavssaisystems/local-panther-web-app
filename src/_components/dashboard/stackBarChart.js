@@ -138,7 +138,7 @@ export function StackBarChart({ graphData }) {
           <span
             style={{ fontWeight: "500", color: "#2F2E2E", fontSize: "16px" }}
           >
-            Job Preferences
+            Job Statistics
           </span>
         </div>
       </div>
