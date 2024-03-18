@@ -13,21 +13,9 @@ import {
 } from "reactstrap";
 import Loader from "react-loaders";
 import AsyncSelect from "react-select/async";
-import { formatDate, extractDatePart } from "_helpers/helper";
+import { extractDatePart } from "_helpers/helper";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-import {
-  BsUpload,
-  BsPencil,
-  BsTelephone,
-  BsPinMap,
-  BsGenderMale,
-  BsPeople,
-  BsEnvelope,
-  BsBalloon,
-  BsPencilSquare,
-  BsCamera,
-} from "react-icons/bs";
-import moment from "moment-timezone";
+import { BsPencil, BsTelephone, BsPinMap, BsEnvelope } from "react-icons/bs";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 
@@ -44,18 +32,14 @@ import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import imgHover from "../../assets/utils/images/profile-pic-hover.svg";
-import {
-  profileActions,
-  jobPreferenceDetailsActions,
-  getProfileActions,
-  getZipLocation,
-} from "_store";
+import { profileActions, jobPreferenceDetailsActions } from "_store";
 import { getLocationFilter } from "_store";
 
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.getProfile.loader);
   const [editImg, setEditImg] = useState(false);
+  const [file, setFile] = useState(false);
 
   const genderList = useSelector((state) => state.gender.genderList);
   const raceList = useSelector((state) => state.ethnicity.ethnicityList);
@@ -78,6 +62,7 @@ export function PersonalInformation(props) {
   const personalInfo_temp = useSelector(
     (state) => state.getProfile.profileData.personalInfo
   );
+  const uploadedImage = useSelector((state) => state.getProfile.profileImage);
 
   useEffect(() => {
     let data = {
@@ -85,6 +70,7 @@ export function PersonalInformation(props) {
       eligibilityList: eligibilityList_temp,
     };
     setSelectedCandidate(data);
+    setFile(uploadedImage !== "" && uploadedImage ? true : false);
   }, [personalInfo_temp]);
 
   const [selectedCandidate, setSelectedCandidate] = useState({
@@ -124,7 +110,7 @@ export function PersonalInformation(props) {
       loadOptions(props.profileInfo.personalInfo.city.slice(0, 3));
     }
   }, []);
-
+  const [sizeError, setSizeError] = useState(false);
   const loadDetails = () => {
     let data = {
       jobprofile: selectedCandidate?.personalInfo?.jobprofile,
@@ -498,6 +484,8 @@ export function PersonalInformation(props) {
     setSuccess(false);
     setError(false);
     setSave(false);
+    setEditImg(false);
+    setFile(uploadedImage !== "" && uploadedImage ? true : false);
     props.onCallBack();
   };
 
@@ -668,7 +656,13 @@ export function PersonalInformation(props) {
     setRequiredErros(errors);
     setGetResponse(new_data);
   };
+
   const onDrop = (acceptedFiles) => {
+    if (acceptedFiles[0].size > 2 * 1024 * 1024) {
+      setSizeError(true);
+
+      return;
+    }
     addEditProfileImage(acceptedFiles);
   };
 
@@ -709,8 +703,10 @@ export function PersonalInformation(props) {
             result.data.data.profilephotopath
           );
           setProfileImage(result.data.data.profilephotopath);
+          setFile(true);
         } else {
           setError(true);
+          setFile(false);
         }
         setEditImg(false);
       })
@@ -1396,23 +1392,6 @@ export function PersonalInformation(props) {
                       : ""}
                   </div>
                   <hr />
-                  {/* <Row>
-                    <Col>
-                      <FormGroup check>
-                        <Input
-                          name="immediateJoin"
-                          type="checkbox"
-                          checked={getResponse.isreadytoworkimmediately}
-                          onChange={(evt) =>
-                            onHandleInputChange("work", evt.target.value)
-                          }
-                        />{" "}
-                        <Label className="fw-semi-bold">
-                          Ready to work immediately{" "}
-                        </Label>
-                      </FormGroup>
-                    </Col>
-                  </Row> */}
 
                   <Row>
                     <Col md={4}>
@@ -1553,11 +1532,11 @@ export function PersonalInformation(props) {
             <div className="mb-0 d-flex justify-content-center">
               Accepted file formats include png,jpg,jpeg and
             </div>
-            <div className="mb-0 d-flex justify-content-center">
+            <div className="d-flex justify-content-center">
               gif with maximum size limit of 2MB
             </div>
 
-            <div className="mt-3">
+            <div className="mt-4">
               <Row>
                 <Col>
                   <div {...getRootProps()} className="dropzone">
@@ -1581,9 +1560,9 @@ export function PersonalInformation(props) {
                     </Row>
                   </div>
                 </Col>
-                <Col>
-                  <FormGroup>
-                    <Row style={{ marginLeft: "5px" }}>
+                {file && (
+                  <Col>
+                    <FormGroup>
                       <Button
                         style={{
                           width: "auto",
@@ -1596,8 +1575,36 @@ export function PersonalInformation(props) {
                       >
                         <span>Delete</span>
                       </Button>
-                    </Row>
-                  </FormGroup>
+                    </FormGroup>
+                  </Col>
+                )}
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+      <Modal className="modal-reject-align profile-view" isOpen={sizeError}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              File size should not exceed 5 MB
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setSizeError(false)}
+                  >
+                    OK
+                  </Button>
                 </Col>
               </Row>
             </div>

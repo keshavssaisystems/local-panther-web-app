@@ -1196,7 +1196,7 @@ export function JobPreferences(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Job Preferences!!
+              want to delete the Job Preferences?
             </div>
             <div>
               <Row>

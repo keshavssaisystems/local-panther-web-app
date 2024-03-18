@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardBody, Row, Col } from "reactstrap";
 import Chart from "react-apexcharts";
 import { NoDataFound } from "_components/common/nodatafound";
+import custDashIcons from "assets/utils/images/customer/dashboard";
 import "./dashboard.scss";
 
 export function StackBarChart({ graphData }) {
@@ -126,6 +127,21 @@ export function StackBarChart({ graphData }) {
   };
   return (
     <>
+      <div className="customer-slider">
+        <div className=" mb-2 main-title">
+          <img
+            src={custDashIcons.statistics}
+            width={16}
+            height={16}
+            alt="stat icon"
+          />{" "}
+          <span
+            style={{ fontWeight: "500", color: "#2F2E2E", fontSize: "16px" }}
+          >
+            Job Preferences
+          </span>
+        </div>
+      </div>
       <Card className="mb-3 stackchart">
         {graphData?.length > 0 && (
           <CardBody className="pt-4">

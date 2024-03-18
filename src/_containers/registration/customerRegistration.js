@@ -151,7 +151,7 @@ export function CustomerRegistration() {
   async function onSubmit(formData) {
     if (!validated.mobile || !validated.email) {
       showSweetAlert({
-        title: "Please verify your email/mobile to create account",
+        title: "Please verify your email/phone to create account",
         type: "warning",
       });
       return;
@@ -720,10 +720,33 @@ export function CustomerRegistration() {
     setCompanyCountry(obj);
     setCompanyCountryErr(false);
   };
-
+  const newCompErr = () => {
+    if (companyValue == "-1") {
+      if (
+        !companyName ||
+        !companyAddr ||
+        companyCity?.length === 0 ||
+        !companyPhone ||
+        companyCountry?.length === 0 ||
+        !companyEmail ||
+        !companyZip ||
+        !companyEmp ||
+        companyEmp === "0"
+      ) {
+        setCompanyNameErr(!companyName);
+        setCompanyAddrErr(!companyAddr);
+        setCompanyCityErr(companyCity?.length === 0 ? true : false);
+        setCompanyPhoneErr(!companyPhone);
+        setCompanyCountryErr(companyCountry?.length === 0 ? true : false);
+        setCompanyEmailErr(!companyEmail);
+        setCompanyZipErr(!companyZip);
+        setCompanyEmpErr(!companyEmp || companyEmp === "0");
+      }
+    }
+  };
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit, newCompErr)}>
         <Row>
           <Col md={6}>
             <FormGroup>

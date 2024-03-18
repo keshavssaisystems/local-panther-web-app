@@ -574,6 +574,31 @@ export function QualificationModal(props) {
     }
   }
 
+  const getYearValid = function (seletedData, id, month) {
+    let year = new Date().getFullYear();
+
+    if (
+      seletedData.toDateSelect?.year !== "" &&
+      seletedData.toDateSelect?.year
+    ) {
+      if (seletedData.toDateSelect?.year < year) {
+        return false;
+      } else {
+        if (seletedData.toDateSelect?.year == year) {
+          if (id <= month) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      }
+    } else {
+      return false;
+    }
+  };
+
   return (
     <div className="profile-view react-date-picker-profile">
       {formDetails.map((item, index) => (
@@ -825,7 +850,7 @@ export function QualificationModal(props) {
                           value={options.id}
                           disabled={
                             !item.iscurrentlyworking &&
-                            options.id > todayDate?.month
+                            getYearValid(item, options.id, todayDate?.month)
                           }
                         >
                           {options.name}
