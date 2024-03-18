@@ -15,7 +15,7 @@ import { BsCalendar2WeekFill, BsClockFill } from "react-icons/bs";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useNavigate } from "react-router-dom";
 import { NoDataFound } from "_components/common/nodatafound";
-
+import custDashIcons from "assets/utils/images/customer/dashboard";
 export function CustomerSlider({ data }) {
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -95,7 +95,13 @@ export function CustomerSlider({ data }) {
     <>
       <div className="customer-slider">
         <div className=" mb-2 main-title">
-          <i className="lnr-calendar-full"></i> {"  "}Upcoming Interviews
+          <img
+            src={custDashIcons.upcomint}
+            width={16}
+            height={16}
+            alt="stat icon"
+          />{" "}
+          {"  "}Upcoming Interviews
         </div>
       </div>
       <Card className="mb-3 customer-slider">
