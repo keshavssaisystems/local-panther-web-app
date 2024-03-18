@@ -386,7 +386,7 @@ export function CandidateQualification(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Qualification!!
+              want to delete the Qualification?
             </div>
             <div>
               <Row>

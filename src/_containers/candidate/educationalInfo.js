@@ -349,7 +349,7 @@ export function CandidateEducation(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Education details!!
+              want to delete the Education details?
             </div>
             <div>
               <Row>

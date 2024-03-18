@@ -453,7 +453,7 @@ export function ResumeDetails(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Resume!!
+              want to delete the Resume?
             </div>
             <div>
               <Row>
