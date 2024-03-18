@@ -63,7 +63,7 @@ export const CreateJob = forwardRef(
       if (type === "new_template" && previousStep !== 3) {
         setZipcodeCityState({
           value: "",
-          label: "Search city or zipcode",
+          label: "Search city or zip code",
         });
       }
       if (type === "previous_template" || type === "recommendation_template") {
