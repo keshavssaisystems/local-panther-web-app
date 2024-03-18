@@ -253,7 +253,7 @@ export function AdditionalInformation(props) {
             </div>
             <div className="mb-3 d-flex justify-content-center rejected-success-text">
               {" "}
-              want to delete the Additional Information!!
+              want to delete the Additional Information?
             </div>
             <div>
               <Row>
