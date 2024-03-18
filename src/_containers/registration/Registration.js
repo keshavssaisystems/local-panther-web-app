@@ -144,7 +144,7 @@ export function Registration() {
   async function onSubmit(payload) {
     if (!validated.mobile || !validated.email) {
       showSweetAlert({
-        title: "Please verify your email/mobile to create account",
+        title: "Please verify your email/phone to create account",
         type: "warning",
       });
       return;
