@@ -720,10 +720,33 @@ export function CustomerRegistration() {
     setCompanyCountry(obj);
     setCompanyCountryErr(false);
   };
-
+  const newCompErr = () => {
+    if (companyValue == "-1") {
+      if (
+        !companyName ||
+        !companyAddr ||
+        companyCity?.length === 0 ||
+        !companyPhone ||
+        companyCountry?.length === 0 ||
+        !companyEmail ||
+        !companyZip ||
+        !companyEmp ||
+        companyEmp === "0"
+      ) {
+        setCompanyNameErr(!companyName);
+        setCompanyAddrErr(!companyAddr);
+        setCompanyCityErr(companyCity?.length === 0 ? true : false);
+        setCompanyPhoneErr(!companyPhone);
+        setCompanyCountryErr(companyCountry?.length === 0 ? true : false);
+        setCompanyEmailErr(!companyEmail);
+        setCompanyZipErr(!companyZip);
+        setCompanyEmpErr(!companyEmp || companyEmp === "0");
+      }
+    }
+  };
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit, newCompErr)}>
         <Row>
           <Col md={6}>
             <FormGroup>
