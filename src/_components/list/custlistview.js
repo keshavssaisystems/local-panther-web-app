@@ -1641,7 +1641,7 @@ export const CustCandidateListView = (props) => {
         columns={columns(handleButtonClick)}
         persistTableHead
         // pagination
-        className="cust-list-view"
+        className="cust-list-view popover-height"
         responsive
       />
       <>
