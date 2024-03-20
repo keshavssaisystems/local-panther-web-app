@@ -202,7 +202,7 @@ export function CustomerRegistration() {
           cityid: Number(formData.cityid),
           stateid: Number(formData.stateid),
           countryid: 1,
-          isactive: true,
+          isactive: false,
           customerstatusid: 0,
           currentUserId: 0,
           userCompany: {
