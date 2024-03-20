@@ -684,7 +684,8 @@ export const CandListView = (props) => {
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
                     ) +
-                    (row?.jobOfferDtos?.length > 0
+                    (row?.jobOfferDtos?.length > 0 &&
+                    row?.jobOfferDtos[0].payperiodtype !== null
                       ? " - " + row?.jobOfferDtos[0].payperiodtype
                       : "")}
               </span>
@@ -915,7 +916,8 @@ export const CandListView = (props) => {
                     new Intl.NumberFormat("en-US").format(
                       row?.jobOfferDtos[0]?.salary
                     ) +
-                    (row?.jobOfferDtos?.length > 0
+                    (row?.jobOfferDtos?.length > 0 &&
+                    row?.jobOfferDtos[0].payperiodtype !== null
                       ? " - " + row?.jobOfferDtos[0].payperiodtype
                       : "")}
               </span>
