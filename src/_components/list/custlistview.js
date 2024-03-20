@@ -623,7 +623,7 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span
                   title={
-                    row?.jobOfferDtos === null
+                    row?.jobOfferDtos[0] === undefined
                       ? "-"
                       : row?.jobOfferDtos[0]?.salary === 0
                       ? "-"
@@ -633,7 +633,7 @@ export const CustCandidateListView = (props) => {
                         )
                   }
                 >
-                  {row?.jobOfferDtos === null
+                  {row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.salary === 0
                     ? "-"
@@ -642,13 +642,13 @@ export const CustCandidateListView = (props) => {
                         row?.jobOfferDtos[0]?.salary
                       ) +
                       (row?.jobOfferDtos?.length > 0 &&
-                      row?.jobOfferDtos[0]?.payperiodtype !== ""
+                      row?.jobOfferDtos[0].payperiodtype !== null
                         ? " - " + row?.jobOfferDtos[0].payperiodtype
                         : "")}
                 </span>
               ),
               selector: (row) =>
-                row?.jobOfferDtos === null
+                row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.salary === 0
                   ? "-"
@@ -664,7 +664,7 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span
                   title={
-                    row?.jobOfferDtos === null
+                    row?.jobOfferDtos[0] === undefined
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
@@ -673,7 +673,7 @@ export const CustCandidateListView = (props) => {
                         )
                   }
                 >
-                  {row?.jobOfferDtos === null
+                  {row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
@@ -683,7 +683,7 @@ export const CustCandidateListView = (props) => {
                 </span>
               ),
               selector: (row) =>
-                row?.jobOfferDtos === null
+                row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
@@ -919,7 +919,7 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span
                   title={
-                    row?.jobOfferDtos === null
+                    row?.jobOfferDtos[0] === undefined
                       ? "-"
                       : row?.jobOfferDtos[0]?.salary === 0
                       ? "-"
@@ -929,7 +929,7 @@ export const CustCandidateListView = (props) => {
                         )
                   }
                 >
-                  {row?.jobOfferDtos === null
+                  {row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.salary === 0
                     ? "-"
@@ -938,13 +938,13 @@ export const CustCandidateListView = (props) => {
                         row?.jobOfferDtos[0]?.salary
                       ) +
                       (row?.jobOfferDtos?.length > 0 &&
-                      row?.jobOfferDtos[0]?.payperiodtype !== ""
+                      row?.jobOfferDtos[0].payperiodtype !== null
                         ? " - " + row?.jobOfferDtos[0].payperiodtype
                         : "")}
                 </span>
               ),
               selector: (row) =>
-                row?.jobOfferDtos === null
+                row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.salary === 0
                   ? "-"
@@ -960,7 +960,7 @@ export const CustCandidateListView = (props) => {
               cell: (row) => (
                 <span
                   title={
-                    row?.jobOfferDtos === null
+                    row?.jobOfferDtos[0] === undefined
                       ? "-"
                       : row?.jobOfferDtos[0]?.startdate === null
                       ? "-"
@@ -969,7 +969,7 @@ export const CustCandidateListView = (props) => {
                         )
                   }
                 >
-                  {row?.jobOfferDtos === null
+                  {row?.jobOfferDtos[0] === undefined
                     ? "-"
                     : row?.jobOfferDtos[0]?.startdate === null
                     ? "-"
@@ -979,7 +979,7 @@ export const CustCandidateListView = (props) => {
                 </span>
               ),
               selector: (row) =>
-                row?.jobOfferDtos === null
+                row?.jobOfferDtos[0] === undefined
                   ? "-"
                   : row?.jobOfferDtos[0]?.startdate === null
                   ? "-"
