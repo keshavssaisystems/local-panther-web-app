@@ -46,7 +46,6 @@ export const CreateJob = forwardRef(
     },
     ref
   ) => {
-    // console.log(jobData);
     const dispatch = useDispatch();
     const [accordion, setAccordion] = useState([
       true,
@@ -944,15 +943,17 @@ export const CreateJob = forwardRef(
         eventData.target.elements.custom_question.length > 0
       ) {
         eventData.target.elements.custom_question.forEach((element) => {
-          let obj = {
-            jobprescreenapplicationid: 0,
-            jobid: 0,
-            iscustomquestion: true,
-            prescreenquestionid: 0,
-            prescreenquestion: element.value,
-            isactive: true,
-          };
-          questionArr.push(obj);
+          if (element.value !== "") {
+            let obj = {
+              jobprescreenapplicationid: 0,
+              jobid: 0,
+              iscustomquestion: true,
+              prescreenquestionid: 0,
+              prescreenquestion: element.value,
+              isactive: true,
+            };
+            questionArr.push(obj);
+          }
         });
       }
       if (
@@ -1331,7 +1332,23 @@ export const CreateJob = forwardRef(
         });
       }
     }, []);
-
+    let preScreenQuestionsDataFromPre = jobData?.preScreen;
+    let customQuestionDataFromPre = preScreenQuestionsDataFromPre?.filter(
+      (value) => value.iscustomquestion === true
+    );
+    let prescreenTypeVIsibility = false;
+    let customCount = 0;
+    let customCount1 = 0;
+    let customCount2 = 0;
+    if (customQuestionDataFromPre?.length > 0) {
+      prescreenTypeVIsibility = true;
+      customCount1 = customQuestionDataFromPre?.length;
+    }
+    if (customQuestionInput?.length > 1) {
+      prescreenTypeVIsibility = true;
+      customCount2 = customQuestionInput?.length - 1;
+    }
+    customCount = Number(customCount1) + Number(customCount2);
     return (
       <>
         <div className="form-wizard-content">
@@ -2463,12 +2480,65 @@ export const CreateJob = forwardRef(
                     </Row>
                     <Row>
                       <Col md={7}>
+                        {customQuestionDataFromPre?.map((item, i) => {
+                          return (
+                            <FormGroup>
+                              <Label className="fw-semi-bold">
+                                Custom Question
+                              </Label>
+                              <Input
+                                id={i + 1}
+                                name={"custom_question"}
+                                type={item.type}
+                                maxLength="100"
+                                defaultValue={item.prescreenquestion}
+                                onChange={(e) =>
+                                  checkRestrictedWord(
+                                    "custom_question_" + i++,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                              {i === 1 && restrictionValidation1 === true && (
+                                <FormText
+                                  color="danger"
+                                  className="custom-question-validation"
+                                >
+                                  Your input contains the flagged word '{" "}
+                                  <b>{restrictionWord1.toString()}</b> '.
+                                </FormText>
+                              )}
+                              {i === 2 && restrictionValidation2 === true && (
+                                <FormText
+                                  color="danger"
+                                  className="custom-question-validation"
+                                >
+                                  Your input contains the flagged word '{" "}
+                                  <b>{restrictionWord2.toString()}</b> '.
+                                </FormText>
+                              )}
+                              {i === 3 && restrictionValidation3 === true && (
+                                <FormText
+                                  color="danger"
+                                  className="custom-question-validation"
+                                >
+                                  Your input contains the flagged word '{" "}
+                                  <b>{restrictionWord3.toString()}</b> '.
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          );
+                        })}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={7}>
                         {customQuestionInput?.map((item, i) => {
                           if (i > 0) {
                             return (
                               <FormGroup>
                                 <Label className="fw-semi-bold">
-                                  Custom Question {i}
+                                  Custom Question
                                 </Label>
                                 <Input
                                   id={i}
@@ -2515,7 +2585,7 @@ export const CreateJob = forwardRef(
                         })}
                       </Col>
                     </Row>
-                    {customQuestionInput.length < 4 && (
+                    {customCount < 3 && (
                       <Col md={5}>
                         <Button
                           color="link"
@@ -2523,13 +2593,13 @@ export const CreateJob = forwardRef(
                           className="custom-add-button"
                         >
                           <BsPlusSquare className="mb-1" /> Add{"  "}
-                          {customQuestionInput.length > 1 ? "another" : ""}{" "}
-                          custom question
+                          {prescreenTypeVIsibility ? "another" : ""} custom
+                          question
                         </Button>
                       </Col>
                     )}
 
-                    {customQuestionInput.length > 1 && (
+                    {customCount > 0 && (
                       <Row>
                         <Col md={5}>
                           <FormGroup>
@@ -2545,6 +2615,9 @@ export const CreateJob = forwardRef(
                                     name={"applicantsRecordAnswer"}
                                     type={"radio"}
                                     value={"Audio"}
+                                    defaultChecked={
+                                      jobData?.preCustomScreen === "Audio"
+                                    }
                                   />{" "}
                                   {"  "}
                                   <Label className="fw-semi-bold">Audio</Label>
@@ -2555,6 +2628,9 @@ export const CreateJob = forwardRef(
                                     name={"applicantsRecordAnswer"}
                                     type={"radio"}
                                     value={"Video"}
+                                    defaultChecked={
+                                      jobData?.preCustomScreen === "Video"
+                                    }
                                   />{" "}
                                   {"  "}
                                   <Label className="fw-semi-bold">Video</Label>
@@ -2565,6 +2641,9 @@ export const CreateJob = forwardRef(
                                     name={"applicantsRecordAnswer"}
                                     type={"radio"}
                                     value={"Text"}
+                                    defaultChecked={
+                                      jobData?.preCustomScreen === "Text"
+                                    }
                                   />{" "}
                                   {"  "}
                                   <Label className="fw-semi-bold">Text</Label>
