@@ -46,6 +46,7 @@ export const CreateJob = forwardRef(
     },
     ref
   ) => {
+    // console.log(jobData);
     const dispatch = useDispatch();
     const [accordion, setAccordion] = useState([
       true,
@@ -625,6 +626,12 @@ export const CreateJob = forwardRef(
         : previousValue.issecurityclearancerequired
     );
     const [jobTypeValidation, setJobTypeValidation] = useState(false);
+    const [payPeriodTypeValidation, setPayPeriodTypeValidation] =
+      useState(false);
+    const [minimumBasepayValidation, setMinimumBasepayValidation] =
+      useState(false);
+    const [maximumBasepayValidation, setMaximumBasepayValidation] =
+      useState(false);
     const [prevKeyQualificationArr1, setPrevKey] = useState([]);
     const [prevKeyQualificationArr2, setPrevKey2] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -766,6 +773,22 @@ export const CreateJob = forwardRef(
       ) {
         setAccordion([true, false, false, false, false]);
       }
+      event.target.elements.payPeriodType.value === ""
+        ? setPayPeriodTypeValidation(true)
+        : setPayPeriodTypeValidation(false);
+      event.target.elements.minimumAmount.value === ""
+        ? setMinimumBasepayValidation(true)
+        : setMinimumBasepayValidation(false);
+      event.target.elements.maximumAmount.value === ""
+        ? setMaximumBasepayValidation(true)
+        : setMaximumBasepayValidation(false);
+      if (
+        payPeriodTypeValidation === true ||
+        minimumBasepayValidation === true ||
+        maximumBasepayValidation === true
+      ) {
+        setAccordion([false, false, true, false, false]);
+      }
       if (
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
@@ -775,7 +798,10 @@ export const CreateJob = forwardRef(
         descriptionData !== "" &&
         checkJobLocationCondition === true &&
         checkSecurity === true &&
-        jobType !== ""
+        jobType !== "" &&
+        event.target.elements.payPeriodType.value !== "" &&
+        event.target.elements.minimumAmount.value !== "" &&
+        event.target.elements.maximumAmount.value !== ""
       ) {
         saveData(event);
       }
@@ -1563,7 +1589,7 @@ export const CreateJob = forwardRef(
                             name={"country"}
                             type={"text"}
                             readOnly
-                            value={"US"}
+                            value={"USA"}
                             placeholder="Select country"
                           />
                         </FormGroup>
@@ -2139,11 +2165,13 @@ export const CreateJob = forwardRef(
                         <FormGroup>
                           <Label className="fw-semi-bold">
                             Pay period type
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"payPeriodType"}
                             name={"payPeriodType"}
                             type={"select"}
+                            onChange={() => setPayPeriodTypeValidation(false)}
                           >
                             <option key={0} value={""}>
                               Select pay period type
@@ -2167,12 +2195,18 @@ export const CreateJob = forwardRef(
                                 </option>
                               ))}
                           </Input>
+                          {payPeriodTypeValidation === true && (
+                            <FormText color="danger">
+                              Please select pay period type
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}>
                         <FormGroup>
                           <Label for={"minimumAmount"} className="fw-semi-bold">
                             Minimum base pay
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"minimumAmount"}
@@ -2180,6 +2214,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            onChange={() => setMinimumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2189,12 +2224,18 @@ export const CreateJob = forwardRef(
                             }
                             placeholder="Enter minimum base pay"
                           />
+                          {minimumBasepayValidation === true && (
+                            <FormText color="danger">
+                              Please enter minimum base pay
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}>
                         <FormGroup>
                           <Label for="maximumAmount" className="fw-semi-bold">
                             Maximum base pay
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"maximumAmount"}
@@ -2202,6 +2243,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            onChange={() => setMaximumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2211,6 +2253,11 @@ export const CreateJob = forwardRef(
                             }
                             placeholder="Enter maximum base pay"
                           />
+                          {maximumBasepayValidation === true && (
+                            <FormText color="danger">
+                              Please enter maximum base pay
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}></Col>
