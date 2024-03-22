@@ -61,7 +61,7 @@ import { CompanyList } from "_containers/admin/company/companyList";
 import { ZoomVideoScreen } from "zoom/zoom-video";
 import { ToastContainer, toast } from "react-toastify";
 import { Row, Button } from "reactstrap";
-import { candidateDashboardActions } from "_store";
+import { candidateDashboardActions, getProfileActions } from "_store";
 import { useDispatch } from "react-redux";
 import { Notifications } from "_containers/notifications/notifications";
 import { ShareJobDetails } from "_containers/sharejob/sharejob";
@@ -108,6 +108,9 @@ export function App() {
             autoClose: 10000,
           }
         );
+        if(isProfilePage){
+          dispatch(getProfileActions.getCandidate(JSON.parse(localStorage.getItem("userDetails")).InternalUserId));
+        }
         updatePushNotifications();
       });
     }

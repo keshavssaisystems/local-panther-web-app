@@ -58,6 +58,47 @@ export function DashboardCounts() {
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
+              "warning border-warning"
+            }
+            onClick={(e) =>
+              navigateToJobsPage(e, counts.appliedcount, "applied")
+            }
+            style={{
+              cursor: "pointer",
+              height: "68%",
+            }}
+          >
+            <div className="widget-chat-wrapper-outer">
+              <Row>
+                <Col md="4" sm="4" className="me-2  mt-1">
+                  <div className="icon-wrapper rounded-circle mt-1">
+                    <div className={"icon-wrapper-bg bg-warning"} />
+
+                    <img
+                      className="d-flex justify-content-center"
+                      src={custDashIcons.candApplied}
+                      alt="applied-icon"
+                    />
+                  </div>
+                </Col>
+                <Col>
+                  <div className="widget-chart-content">
+                    <div className="widget-title opacity-5 ">Applied</div>
+                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
+                      <div className="widget-chart-flex ">
+                        <div>{counts ? counts.appliedcount : 0}</div>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </Card>
+        </Col>
+        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+          <Card
+            className={
+              "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
               "primary border-primary"
             }
             onClick={(e) =>
@@ -211,48 +252,6 @@ export function DashboardCounts() {
                     <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex ">
                         <div>{counts ? counts.rejectedbycandidate : 0}</div>
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          </Card>
-        </Col>
-
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
-          <Card
-            className={
-              "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
-              "warning border-warning"
-            }
-            onClick={(e) =>
-              navigateToJobsPage(e, counts.appliedcount, "applied")
-            }
-            style={{
-              cursor: "pointer",
-              height: "68%",
-            }}
-          >
-            <div className="widget-chat-wrapper-outer">
-              <Row>
-                <Col md="4" sm="4" className="me-2  mt-1">
-                  <div className="icon-wrapper rounded-circle mt-1">
-                    <div className={"icon-wrapper-bg bg-warning"} />
-
-                    <img
-                      className="d-flex justify-content-center"
-                      src={custDashIcons.candApplied}
-                      alt="applied-icon"
-                    />
-                  </div>
-                </Col>
-                <Col>
-                  <div className="widget-chart-content">
-                    <div className="widget-title opacity-5 ">Applied</div>
-                    <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
-                      <div className="widget-chart-flex ">
-                        <div>{counts ? counts.appliedcount : 0}</div>
                       </div>
                     </div>
                   </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { yearActions, monthActions } from "_store";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Alert } from "reactstrap";
 import Loader from "react-loaders";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
@@ -203,12 +203,61 @@ export function CandidateProfile() {
     };
     setDropDownLists(dropdown_selected);
   };
-
+  let sectionValidation = {};
+  const [viewValidation, setViewValidation] = useState(true);
+  if (profileData) {
+    sectionValidation.skills =
+      profileData?.skillsInfo?.length === 0 ? false : true;
+    sectionValidation.education =
+      profileData?.educationInfo?.length === 0 ? false : true;
+    sectionValidation.certification =
+      profileData?.certificationsInfo?.length === 0 ? false : true;
+    sectionValidation.qualification =
+      profileData?.qualificationsInfo?.length === 0 ? false : true;
+    sectionValidation.jobPreference =
+      profileData?.jobPreferenceInfo?.length === 0 ? false : true;
+    sectionValidation.employmentEligiblity =
+      profileData?.personalInfo?.employmenteligiblity === null ? false : true;
+    if (
+      sectionValidation.skills === true &&
+      sectionValidation.qualification === true &&
+      sectionValidation.education === true &&
+      sectionValidation.certification === true &&
+      sectionValidation.employmentEligiblity === true &&
+      sectionValidation.jobPreference === true
+    ) {
+      setViewValidation(false);
+    }
+  }
   return (
     <div className="profile-view">
       <div className="profile-view">
         <PageTitle heading="Candidate Profile" icon={candidatelogo} />
       </div>
+      <Alert
+        color="warning"
+        isOpen={viewValidation}
+        toggle={() => setViewValidation(false)}
+      >
+        Enhance your experience and find the best job matches. Please provide{" "}
+        {sectionValidation.skills === false ? "Skills, " : " "}
+        {sectionValidation.qualification === false
+          ? "Qualification details, "
+          : " "}
+        {sectionValidation.education === false ? "Education details, " : " "}
+        {sectionValidation.certification === false ? "Certifications, " : " "}
+        {sectionValidation.employmentEligiblity === false
+          ? "Employment eligibility, "
+          : " "}
+        {sectionValidation.skills === false ||
+        sectionValidation.qualification === false ||
+        sectionValidation.education === false ||
+        sectionValidation.certification === false ||
+        sectionValidation.employmentEligiblity === false
+          ? "and "
+          : " "}
+        {sectionValidation.jobPreference === false ? "job preference." : " "}
+      </Alert>
       {profileData.personalInfo.email ? (
         <div className="profile-view">
           <Row>
