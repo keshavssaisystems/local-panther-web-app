@@ -200,7 +200,9 @@ export function CustomerRegistration() {
           address: "",
           zipcode: "",
           cityid: Number(formData.cityid),
-          stateid: Number(formData.stateid),
+          stateid: Number(
+            cityList?.find((x) => x.cityid == formData.cityid)?.stateid
+          ),
           countryid: 1,
           isactive: false,
           customerstatusid: 0,
@@ -252,7 +254,9 @@ export function CustomerRegistration() {
         address: "",
         zipcode: "",
         cityid: Number(formData.cityid),
-        stateid: Number(formData.stateid),
+        stateid: Number(
+          cityList?.find((x) => x.cityid == formData.cityid)?.stateid
+        ),
         countryid: 1,
         isactive: false,
         customerstatusid: 0,

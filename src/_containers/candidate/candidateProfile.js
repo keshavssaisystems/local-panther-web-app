@@ -217,7 +217,10 @@ export function CandidateProfile() {
     sectionValidation.jobPreference =
       profileData?.jobPreferenceInfo?.length === 0 ? false : true;
     sectionValidation.employmentEligiblity =
-      profileData?.personalInfo?.employmenteligiblity === null ? false : true;
+      profileData?.personalInfo?.employmenteligiblity === null ||
+      profileData?.personalInfo?.employmenteligiblity === 0
+        ? false
+        : true;
     if (
       sectionValidation.skills === true &&
       sectionValidation.qualification === true &&
@@ -246,7 +249,8 @@ export function CandidateProfile() {
           : " "}
         {sectionValidation.education === false ? "Education details, " : " "}
         {sectionValidation.certification === false ? "Certifications, " : " "}
-        {sectionValidation.employmentEligiblity === false
+        {sectionValidation.employmentEligiblity === false ||
+        sectionValidation.employmentEligiblity === 0
           ? "Employment eligibility, "
           : " "}
         {sectionValidation.skills === false ||
@@ -256,7 +260,7 @@ export function CandidateProfile() {
         sectionValidation.employmentEligiblity === false
           ? "and "
           : " "}
-        {sectionValidation.jobPreference === false ? "job preference." : " "}
+        {sectionValidation.jobPreference === false ? "Job preference." : " "}
       </Alert>
       {profileData.personalInfo.email ? (
         <div className="profile-view">
