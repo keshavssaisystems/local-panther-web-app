@@ -211,7 +211,6 @@ export function CandidateProfile() {
   const [stringValue, setStringValue] = useState("");
   useEffect(() => {
     if (profileData) {
-      console.log(profileData);
       sectionValidation.skills =
         profileData?.skillsInfo?.length === 0 ? false : true;
       sectionValidation.education =
@@ -230,7 +229,6 @@ export function CandidateProfile() {
         profileData?.personalInfo?.employmenteligiblity === 0
           ? false
           : true;
-      console.log(sectionValidation);
       if (
         sectionValidation.skills === true &&
         sectionValidation.qualification === true &&
@@ -264,7 +262,6 @@ export function CandidateProfile() {
         }
       }
     }
-    console.log(stringArray);
     setStringValue(stringArray.toString());
   }, [profileData]);
 
