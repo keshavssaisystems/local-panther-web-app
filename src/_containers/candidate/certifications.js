@@ -128,8 +128,14 @@ export function CertificationDetails(props) {
                             <div className="mb-4">
                               <strong className="me-2 content-title">
                                 {certificationDetails[index].certificationtype}{" "}
-                                {" - "}{" "}
-                                {certificationDetails[index].certificationname}{" "}
+                                {certificationDetails[index]
+                                  .certificationname !== "" &&
+                                certificationDetails[index]
+                                  .certificationname !== null
+                                  ? " - " +
+                                    certificationDetails[index]
+                                      .certificationname
+                                  : ""}
                               </strong>
                               <div className="float-end">
                                 <BsPencil
