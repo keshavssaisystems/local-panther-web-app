@@ -96,7 +96,6 @@ export function CreateJobWizard({ type }) {
     type === "add" ? createJob(data) : updateJob(data);
   };
   const getSearchValue = (data) => {
-    debugger;
     setSearchData(data);
     getRecommendedJobData({
       pageNo: 1,
