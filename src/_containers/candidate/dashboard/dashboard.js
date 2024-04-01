@@ -239,23 +239,22 @@ export function CandidateDashboard() {
                 Certifications,
               </span>
             )}
-            {counts.employmentEligiblity === false && (
-              <span className="candidate-profile-prompt-bold">
-                {" "}
-                Employment Eligiblity,
-              </span>
-            )}
+            {counts.employmentEligiblity === false ||
+              (counts.employmentEligiblity === 0 && (
+                <span className="candidate-profile-prompt-bold">
+                  {" "}
+                  Employment eligiblity,
+                </span>
+              ))}
             {counts.jobPreference === false && (
               <span className="candidate-profile-prompt-bold">
                 {" "}
-                Job Preferences,
+                Job preferences,
               </span>
             )}{" "}
             and uploading your{" "}
-            <span className="candidate-profile-prompt-bold">
-              latest resume
-            </span>{" "}
-            to your profile.”
+            <span className="candidate-profile-prompt-bold">resume</span> to
+            your profile.”
           </p>
         </SweetAlert>
       </div>
