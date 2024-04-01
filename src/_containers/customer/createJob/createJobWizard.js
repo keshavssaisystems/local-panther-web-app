@@ -96,7 +96,6 @@ export function CreateJobWizard({ type }) {
     type === "add" ? createJob(data) : updateJob(data);
   };
   const getSearchValue = (data) => {
-    debugger;
     setSearchData(data);
     getRecommendedJobData({
       pageNo: 1,
@@ -295,11 +294,7 @@ export function CreateJobWizard({ type }) {
       if (compState === 1) {
         childRef.current.submit();
       } else {
-        if (evt.key === "Enter") {
-          evt.preventDefault(); // Prevent form submission
-        } else {
-          next();
-        }
+        next();
       }
     }
   };

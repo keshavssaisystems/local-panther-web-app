@@ -142,7 +142,6 @@ export function CandidateDashboard() {
       counts.certifications === false ||
       counts.employmentEligiblity === 0
     ) {
-      debugger;
       setShowProfilePrompt(true);
     }
   }, [counts]);
