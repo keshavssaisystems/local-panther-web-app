@@ -151,6 +151,10 @@ export function Registration() {
     }
     let newPayload;
     newPayload = payload;
+    newPayload.stateid = cityList?.find(
+      (x) => x.cityid == newPayload.cityid
+    )?.stateid;
+
     newPayload.phoneNumber = payload?.phoneNumber?.replace(/\D/g, "");
     let response = await dispatch(authActions.registerThunk(newPayload));
     if (!response.payload) {
@@ -801,11 +805,11 @@ export function Registration() {
                       </Col>
                       <Col>
                         <FormGroup>
-                          <Label for="city" className="fw-semi-bold">
+                          <Label for="cityid" className="fw-semi-bold">
                             City, State <span className="text-danger">* </span>
                           </Label>
                           <AsyncSelect
-                            name="city"
+                            name="cityid"
                             placeholder="Search to select"
                             placeholderText="search"
                             loadOptions={loadOptions}
