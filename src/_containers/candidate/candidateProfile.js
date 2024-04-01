@@ -220,7 +220,10 @@ export function CandidateProfile() {
       sectionValidation.qualification =
         profileData?.qualificationsInfo?.length === 0 ? false : true;
       sectionValidation.jobPreference =
-        profileData?.jobPreferenceInfo?.length === 0 ? false : true;
+        profileData?.jobPreferenceInfo?.length === 0 ||
+        profileData?.jobPreferenceInfo === null
+          ? false
+          : true;
       sectionValidation.employmentEligiblity =
         profileData?.personalInfo?.employmenteligiblity === null ||
         profileData?.personalInfo?.employmenteligiblity === 0
@@ -251,6 +254,13 @@ export function CandidateProfile() {
       if (sectionValidation.employmentEligiblity === false) {
         stringArray.push(" Employment eligibility");
       }
+      if (sectionValidation.jobPreference === false) {
+        if (stringArray.length > 0) {
+          stringArray.push(" and Job preference.");
+        } else {
+          stringArray.push(" Job preference.");
+        }
+      }
     }
     setStringValue(stringArray.toString());
   }, [profileData]);
@@ -267,15 +277,6 @@ export function CandidateProfile() {
       >
         Enhance your experience and find the best job matches. Please provide{" "}
         {stringValue}
-        {(sectionValidation.skills === false ||
-          sectionValidation.qualification === false ||
-          sectionValidation.education === false ||
-          sectionValidation.certification === false ||
-          sectionValidation.employmentEligiblity === false) &&
-        sectionValidation.jobPreference === false
-          ? " and "
-          : " "}
-        {sectionValidation.jobPreference === false ? "Job preference." : " "}
       </Alert>
       {profileData.personalInfo.email ? (
         <div className="profile-view">
