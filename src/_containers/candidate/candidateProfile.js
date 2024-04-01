@@ -177,6 +177,8 @@ export function CandidateProfile() {
     new_data.educationInfo = filter_data?.candidateEducationDtos;
     new_data.certificationsInfo = filter_data?.candidateCertificationDtos;
     new_data.additionalInfo = filter_data?.candidateAdditionalInformationDtos;
+    new_data.jobPreferenceInfo = filter_data?.candidateJobPreferenceDtos;
+    // console.log(new_data);
     setProfileData(new_data);
 
     let dropdown_selected = { ...dropdownLists };
@@ -204,34 +206,55 @@ export function CandidateProfile() {
     setDropDownLists(dropdown_selected);
   };
   let sectionValidation = {};
+  let stringArray = [];
   const [viewValidation, setViewValidation] = useState(true);
-  if (profileData) {
-    sectionValidation.skills =
-      profileData?.skillsInfo?.length === 0 ? false : true;
-    sectionValidation.education =
-      profileData?.educationInfo?.length === 0 ? false : true;
-    sectionValidation.certification =
-      profileData?.certificationsInfo?.length === 0 ? false : true;
-    sectionValidation.qualification =
-      profileData?.qualificationsInfo?.length === 0 ? false : true;
-    sectionValidation.jobPreference =
-      profileData?.jobPreferenceInfo?.length === 0 ? false : true;
-    sectionValidation.employmentEligiblity =
-      profileData?.personalInfo?.employmenteligiblity === null ||
-      profileData?.personalInfo?.employmenteligiblity === 0
-        ? false
-        : true;
-    if (
-      sectionValidation.skills === true &&
-      sectionValidation.qualification === true &&
-      sectionValidation.education === true &&
-      sectionValidation.certification === true &&
-      sectionValidation.employmentEligiblity === true &&
-      sectionValidation.jobPreference === true
-    ) {
-      setViewValidation(false);
+  const [stringValue, setStringValue] = useState("");
+  useEffect(() => {
+    if (profileData) {
+      sectionValidation.skills =
+        profileData?.skillsInfo?.length === 0 ? false : true;
+      sectionValidation.education =
+        profileData?.educationInfo?.length === 0 ? false : true;
+      sectionValidation.certification =
+        profileData?.certificationsInfo?.length === 0 ? false : true;
+      sectionValidation.qualification =
+        profileData?.qualificationsInfo?.length === 0 ? false : true;
+      sectionValidation.jobPreference =
+        profileData?.jobPreferenceInfo?.length === 0 ? false : true;
+      sectionValidation.employmentEligiblity =
+        profileData?.personalInfo?.employmenteligiblity === null ||
+        profileData?.personalInfo?.employmenteligiblity === 0
+          ? false
+          : true;
+      if (
+        sectionValidation.skills === true &&
+        sectionValidation.qualification === true &&
+        sectionValidation.education === true &&
+        sectionValidation.certification === true &&
+        sectionValidation.employmentEligiblity === true &&
+        sectionValidation.jobPreference === true
+      ) {
+        setViewValidation(false);
+      }
+      if (sectionValidation.skills === false) {
+        stringArray.push("Skills");
+      }
+      if (sectionValidation.qualification === false) {
+        stringArray.push(" Qualification details");
+      }
+      if (sectionValidation.education === false) {
+        stringArray.push(" Education details");
+      }
+      if (sectionValidation.certification === false) {
+        stringArray.push(" Certifications");
+      }
+      if (sectionValidation.employmentEligiblity === false) {
+        stringArray.push(" Employment eligibility");
+      }
     }
-  }
+    setStringValue(stringArray.toString());
+  }, [profileData]);
+
   return (
     <div className="profile-view">
       <div className="profile-view">
@@ -243,22 +266,14 @@ export function CandidateProfile() {
         toggle={() => setViewValidation(false)}
       >
         Enhance your experience and find the best job matches. Please provide{" "}
-        {sectionValidation.skills === false ? "Skills, " : " "}
-        {sectionValidation.qualification === false
-          ? "Qualification details, "
-          : " "}
-        {sectionValidation.education === false ? "Education details, " : " "}
-        {sectionValidation.certification === false ? "Certifications, " : " "}
-        {sectionValidation.employmentEligiblity === false ||
-        sectionValidation.employmentEligiblity === 0
-          ? "Employment eligibility, "
-          : " "}
-        {sectionValidation.skills === false ||
-        sectionValidation.qualification === false ||
-        sectionValidation.education === false ||
-        sectionValidation.certification === false ||
-        sectionValidation.employmentEligiblity === false
-          ? "and "
+        {stringValue}
+        {(sectionValidation.skills === false ||
+          sectionValidation.qualification === false ||
+          sectionValidation.education === false ||
+          sectionValidation.certification === false ||
+          sectionValidation.employmentEligiblity === false) &&
+        sectionValidation.jobPreference === false
+          ? " and "
           : " "}
         {sectionValidation.jobPreference === false ? "Job preference." : " "}
       </Alert>
