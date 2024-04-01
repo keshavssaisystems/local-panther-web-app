@@ -294,7 +294,11 @@ export function CreateJobWizard({ type }) {
       if (compState === 1) {
         childRef.current.submit();
       } else {
-        next();
+        if (evt.key === "Enter") {
+          evt.preventDefault(); // Prevent form submission
+        } else {
+          next();
+        }
       }
     }
   };
