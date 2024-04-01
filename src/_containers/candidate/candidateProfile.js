@@ -211,6 +211,7 @@ export function CandidateProfile() {
   const [stringValue, setStringValue] = useState("");
   useEffect(() => {
     if (profileData) {
+      console.log(profileData);
       sectionValidation.skills =
         profileData?.skillsInfo?.length === 0 ? false : true;
       sectionValidation.education =
@@ -220,12 +221,16 @@ export function CandidateProfile() {
       sectionValidation.qualification =
         profileData?.qualificationsInfo?.length === 0 ? false : true;
       sectionValidation.jobPreference =
-        profileData?.jobPreferenceInfo?.length === 0 ? false : true;
+        profileData?.jobPreferenceInfo?.length === 0 ||
+        profileData?.jobPreferenceInfo === null
+          ? false
+          : true;
       sectionValidation.employmentEligiblity =
         profileData?.personalInfo?.employmenteligiblity === null ||
         profileData?.personalInfo?.employmenteligiblity === 0
           ? false
           : true;
+      console.log(sectionValidation);
       if (
         sectionValidation.skills === true &&
         sectionValidation.qualification === true &&
@@ -251,7 +256,15 @@ export function CandidateProfile() {
       if (sectionValidation.employmentEligiblity === false) {
         stringArray.push(" Employment eligibility");
       }
+      if (sectionValidation.jobPreference === false) {
+        if (stringArray.length > 0) {
+          stringArray.push(" and Job preference.");
+        } else {
+          stringArray.push(" Job preference.");
+        }
+      }
     }
+    console.log(stringArray);
     setStringValue(stringArray.toString());
   }, [profileData]);
 
@@ -267,15 +280,6 @@ export function CandidateProfile() {
       >
         Enhance your experience and find the best job matches. Please provide{" "}
         {stringValue}
-        {(sectionValidation.skills === false ||
-          sectionValidation.qualification === false ||
-          sectionValidation.education === false ||
-          sectionValidation.certification === false ||
-          sectionValidation.employmentEligiblity === false) &&
-        sectionValidation.jobPreference === false
-          ? " and "
-          : " "}
-        {sectionValidation.jobPreference === false ? "Job preference." : " "}
       </Alert>
       {profileData.personalInfo.email ? (
         <div className="profile-view">
