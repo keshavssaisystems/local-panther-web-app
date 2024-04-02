@@ -710,7 +710,8 @@ export const CreateJob = forwardRef(
       event.target.elements.jobTitle.value === ""
         ? setJobTitleValidation(true)
         : setJobTitleValidation(false);
-      event.target.elements.openPositions.value === ""
+      event.target.elements.openPositions.value === "" ||
+      Number(event.target.elements.openPositions.value) === 0
         ? setOpenPositionValidation(true)
         : setOpenPositionValidation(false);
       event.target.elements.city.value === ""
@@ -792,6 +793,7 @@ export const CreateJob = forwardRef(
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
         event.target.elements.openPositions.value !== "" &&
+        Number(event.target.elements.openPositions.value) !== 0 &&
         event.target.elements.zipCode.value !== "" &&
         event.target.elements.city.value !== "" &&
         descriptionData !== "" &&
