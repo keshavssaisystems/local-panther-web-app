@@ -157,6 +157,14 @@ export const updateProfileImage = createAsyncThunk(
   }
 );
 
+// updateEmploymentEligibilityThunk thunk
+export const updateEmploymentEligibilityThunk = createAsyncThunk(
+  `candidate/updateEmploymentEligibilityThunk`,
+  async ({ candidateId, payload }) => {
+    const CANDIDATE_PUT_ENDPOINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Candidate/candidateEmploymentEligibility?candidateId=${candidateId}`;
+    return await fetchWrapper.put(CANDIDATE_PUT_ENDPOINT, payload);
+  }
+);
 // Create the slice
 const getProfileSlice = createSlice({
   name: "getProfile",
@@ -334,6 +342,16 @@ const getProfileSlice = createSlice({
       })
       .addCase(getAvailability.rejected, (state, action) => {
         state.error = action.error;
+      })
+      .addCase(updateEmploymentEligibilityThunk.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateEmploymentEligibilityThunk.fulfilled, (state, action) => {
+        state.updateJob = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(updateEmploymentEligibilityThunk.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -346,5 +364,6 @@ export const getProfileActions = {
   getReasonList,
   getDistanceDetails,
   getAvailability,
+  updateEmploymentEligibilityThunk,
 };
 export const getProfileReducer = getProfileSlice.reducer;
