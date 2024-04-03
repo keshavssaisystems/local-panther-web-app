@@ -33,6 +33,7 @@ import {
   studyFieldActions,
   profileSkillsActions,
 } from "_store";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CandidateProfile() {
   const dispatch = useDispatch();
@@ -178,7 +179,6 @@ export function CandidateProfile() {
     new_data.certificationsInfo = filter_data?.candidateCertificationDtos;
     new_data.additionalInfo = filter_data?.candidateAdditionalInformationDtos;
     new_data.jobPreferenceInfo = filter_data?.candidateJobPreferenceDtos;
-    // console.log(new_data);
     setProfileData(new_data);
 
     let dropdown_selected = { ...dropdownLists };
@@ -208,6 +208,7 @@ export function CandidateProfile() {
   let sectionValidation = {};
   let stringArray = [];
   const [viewValidation, setViewValidation] = useState(true);
+  const [showEEPopup, setShowEEPopup] = useState(false);
   const [stringValue, setStringValue] = useState("");
   useEffect(() => {
     if (profileData) {
@@ -229,6 +230,10 @@ export function CandidateProfile() {
         profileData?.personalInfo?.employmenteligiblity === 0
           ? false
           : true;
+      sectionValidation.employmentEligiblity === false
+        ? setShowEEPopup(true)
+        : setShowEEPopup(false);
+
       if (
         sectionValidation.skills === true &&
         sectionValidation.qualification === true &&
@@ -256,30 +261,67 @@ export function CandidateProfile() {
       }
       if (sectionValidation.jobPreference === false) {
         if (stringArray.length > 0) {
-          stringArray.push(" and Job preference.");
+          stringArray.push(" and Job preferences.");
         } else {
-          stringArray.push(" Job preference.");
+          stringArray.push(" Job preferences.");
         }
       }
     }
     setStringValue(stringArray.toString());
   }, [profileData]);
 
+  const setEmployementEligibility = (type) => {
+    updateEmploymentEligibility(type);
+    setShowEEPopup(false);
+  };
+
+  const updateEmploymentEligibility = async (type) => {
+    let candidateId = Number(userDetails.InternalUserId);
+    let payload = {
+      candidateid: candidateId,
+      employmenteligiblity: type,
+    };
+    let data = await dispatch(
+      getProfileActions.updateEmploymentEligibilityThunk({
+        candidateId,
+        payload,
+      })
+    );
+    if (data?.payload?.status === "Success") {
+      dispatch(getProfileActions.getCandidate(candidateId));
+    }
+  };
+
   return (
     <div className="profile-view">
       <div className="profile-view">
         <PageTitle heading="Candidate Profile" icon={candidatelogo} />
       </div>
-      <Alert
-        color="warning"
-        isOpen={viewValidation}
-        toggle={() => setViewValidation(false)}
-      >
-        Enhance your experience and find the best job matches. Please provide{" "}
-        {stringValue}
-      </Alert>
+
       {profileData.personalInfo.email ? (
         <div className="profile-view">
+          <SweetAlert
+            warning
+            show={showEEPopup}
+            cancelBtnText={"No"}
+            confirmBtnText={"Yes"}
+            onConfirm={() => setEmployementEligibility(1)}
+            onCancel={() => setEmployementEligibility(2)}
+            showCancel
+          >
+            <p className="candidate-profile-prompt">
+              Are you authorized to work in the United States?
+            </p>
+          </SweetAlert>
+          <Alert
+            color="warning"
+            isOpen={viewValidation}
+            toggle={() => setViewValidation(false)}
+          >
+            Enhance your experience and find the{" "}
+            <span className="prompt-bold">best job matches</span>. Please
+            provide <span className="prompt-bold">{stringValue}</span>
+          </Alert>
           <Row>
             <PersonalInformation
               profileInfo={profileData}

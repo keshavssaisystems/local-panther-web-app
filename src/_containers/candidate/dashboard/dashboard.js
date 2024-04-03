@@ -250,7 +250,7 @@ export function CandidateDashboard() {
                 (counts.employmentEligiblity === 0 && (
                   <span className="candidate-profile-prompt-bold">
                     {" "}
-                    Employment eligiblity,
+                    Employment eligibility,
                   </span>
                 ))}
               {counts.jobPreference === false && (
