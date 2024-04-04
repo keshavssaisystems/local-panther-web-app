@@ -43,6 +43,7 @@ export const CreateJob = forwardRef(
       previousData,
       customerDetails,
       nextPage,
+      certificationList,
     },
     ref
   ) => {
@@ -216,6 +217,15 @@ export const CreateJob = forwardRef(
         label: `${rest.name}`,
       };
     });
+
+    let certificationOptions = certificationList.map(
+      ({ id: value, ...rest }) => {
+        return {
+          value: `${value}`,
+          label: `${rest.name}`,
+        };
+      }
+    );
     const [stateData, setStateData] = useState({});
     const customStyles = {
       valueContainer: (provided, state) => ({
@@ -256,6 +266,28 @@ export const CreateJob = forwardRef(
         );
       }
     };
+
+    const getCertificationData = (data) => {
+      if (data?.certifications?.split(",")?.length > 0) {
+        let newData = data.certifications.split(",");
+        let newOptions = certificationOptions.filter((data) =>
+          newData.includes(data.value)
+        );
+        console.log(newOptions);
+        return newOptions;
+      }
+      if (data?.certifications?.split(",")?.length === undefined) {
+        return certificationOptions.filter(
+          (data2) => data2.value === Number(data?.certifications)
+        );
+      }
+    };
+
+    let certificationsData =
+      previousStep === 3
+        ? getCertificationData(jobData.basicInformation)
+        : getCertificationData(previousData);
+
     let educationData =
       previousStep === 3
         ? getEducationData(jobData.basicInformation)
@@ -810,6 +842,7 @@ export const CreateJob = forwardRef(
     const saveData = (eventData) => {
       let educationString = getEducationFormData(eventData);
       let studyString = getStudyFormData(eventData);
+      let certificationString = getCertificationFormData(eventData);
       let workSchedule = getWorkSchedule(
         eventData.target.elements.workSchedule
       );
@@ -853,9 +886,10 @@ export const CreateJob = forwardRef(
             : false,
         levelofeducationids: educationString,
         fieldofstudiesids: studyString,
-        certifications: eventData.target.elements.certifications.value,
+        certifications: certificationString,
         levelofeducationOption: levelOfEducationOption,
         fieldofstudiesOption: fieldOfStudyOption,
+        certificationsOptions: certificationList,
         subsidiaryid:
           eventData?.target?.elements?.subsidiaryid?.value === undefined
             ? 0
@@ -1060,6 +1094,21 @@ export const CreateJob = forwardRef(
         return postEducationData.toString();
       }
     };
+
+    const getCertificationFormData = (eventData) => {
+      let postCertificationData = [];
+      let certificationArray = eventData?.target?.elements?.certificationids;
+      if (certificationArray?.length === undefined) {
+        return certificationArray.value;
+      }
+      if (certificationArray?.length > 0) {
+        certificationArray?.forEach((element) => {
+          postCertificationData.push(element.value);
+        });
+        return postCertificationData.toString();
+      }
+    };
+
     const getStudyFormData = (eventData) => {
       let postStudyData = [];
       let studyArray = eventData?.target?.elements?.fieldofstudiesids;
@@ -1870,9 +1919,9 @@ export const CreateJob = forwardRef(
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={6}>
-                        <FormGroup>
+                        {/* <FormGroup>
                           <Label for="certifications" className="fw-semi-bold">
-                            Certification
+                            Certification test
                           </Label>
                           <Input
                             id={"certifications"}
@@ -1886,6 +1935,28 @@ export const CreateJob = forwardRef(
                                 ? preValue.certifications
                                 : previousValue.certifications
                             }
+                          />
+                        </FormGroup> */}
+
+                        <FormGroup>
+                          <Label
+                            for="certificationids"
+                            className="fw-semi-bold"
+                          >
+                            Certification
+                          </Label>
+
+                          <Select
+                            defaultValue={
+                              type === "new_template" && previousStep !== 3
+                                ? ""
+                                : certificationsData
+                            }
+                            isMulti
+                            name="certificationids"
+                            options={certificationOptions}
+                            classNamePrefix="select"
+                            placeholder="Select field of study"
                           />
                         </FormGroup>
                       </Col>

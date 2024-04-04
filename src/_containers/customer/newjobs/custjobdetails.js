@@ -187,6 +187,16 @@ export function CustJobDetail({
     }
   };
 
+  const returnCertifications = () => {
+    if (jobDetail && jobDetail?.jobCertificationDtos?.length > 0) {
+      return jobDetail?.jobCertificationDtos
+        .map((item) => item.certification)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
+
   const returnSchedule = () => {
     let workScheduleString = [];
     if (
@@ -573,11 +583,7 @@ export function CustJobDetail({
             />
             <HeadingAndDetailWithDiv
               heading={"Certifications"}
-              detail={
-                jobDetail?.certifications === ""
-                  ? "-"
-                  : jobDetail?.certifications
-              }
+              detail={returnCertifications()}
               iconId={12}
             />
             <HeadingAndDetailWithDiv
