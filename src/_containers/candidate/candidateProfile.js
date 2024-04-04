@@ -308,6 +308,7 @@ export function CandidateProfile() {
             onConfirm={() => setEmployementEligibility(1)}
             onCancel={() => setEmployementEligibility(2)}
             showCancel
+            closeOnClickOutside={false}
           >
             <p className="candidate-profile-prompt">
               Are you authorized to work in the United States?

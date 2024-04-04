@@ -52,7 +52,7 @@ export const CustJobList = () => {
       dispatch(custJobListActions.getJobDetail({ jobId: jobList[0].jobid }));
       dispatch(dropdownActions.getCloseJobReasonListThunk());
     }
-  }, [jobList]);
+  }, [jobList, dispatch]);
 
   const onPageChange = (page) => {
     let filterOnPageChange = {
