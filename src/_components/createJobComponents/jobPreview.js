@@ -102,6 +102,7 @@ export default function JobPreview({ previewData, editdata }) {
     });
     levelOfEducationString = levelOfEducationString.toString();
   }
+
   let studyFieldString = [];
   if (previewData.basicInformation.fieldofstudiesids !== "") {
     previewData.basicInformation.fieldofstudiesOption?.forEach((element) => {
@@ -113,6 +114,17 @@ export default function JobPreview({ previewData, editdata }) {
     });
     studyFieldString = studyFieldString.toString();
   }
+
+  let certificationsString = [];
+  if (previewData.basicInformation.certifications !== "") {
+    previewData.basicInformation.certificationsOptions?.forEach((element) => {
+      if (previewData.basicInformation.certifications?.includes(element.id)) {
+        certificationsString.push(element.name);
+      }
+    });
+    certificationsString = certificationsString.toString();
+  }
+
   let mustHaveArray = [];
   let niceToHaveArray = [];
   if (previewData.keyQualification?.length > 0) {
@@ -358,9 +370,9 @@ export default function JobPreview({ previewData, editdata }) {
                   <h6 className="mb-0 job-heading-custom">Certifications</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                    previewData.basicInformation.certifications === undefined
+                    certificationsString === undefined
                       ? "-"
-                      : previewData.basicInformation.certifications}
+                      : certificationsString}
                   </p>
                 </div>
               </Col>
