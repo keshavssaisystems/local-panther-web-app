@@ -792,19 +792,6 @@ export const CreateJob = forwardRef(
       }
       let jobType = getJobType(event.target.elements.jobType);
       jobType === "" ? setJobTypeValidation(true) : setJobTypeValidation(false);
-
-      if (jobTypeValidation === true) {
-        setAccordion([false, true, false, false, false]);
-      }
-      if (
-        companyValidation === true ||
-        jobTitleValidation === true ||
-        openPositionValidation === true ||
-        cityValidation === true ||
-        descriptionValidation === true
-      ) {
-        setAccordion([true, false, false, false, false]);
-      }
       event.target.elements.payPeriodType.value === ""
         ? setPayPeriodTypeValidation(true)
         : setPayPeriodTypeValidation(false);
@@ -821,6 +808,19 @@ export const CreateJob = forwardRef(
       ) {
         setAccordion([false, false, true, false, false]);
       }
+      if (jobTypeValidation === true) {
+        setAccordion([false, true, false, false, false]);
+      }
+      if (
+        companyValidation === true ||
+        jobTitleValidation === true ||
+        openPositionValidation === true ||
+        cityValidation === true ||
+        descriptionValidation === true
+      ) {
+        setAccordion([true, false, false, false, false]);
+      }
+
       if (
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
