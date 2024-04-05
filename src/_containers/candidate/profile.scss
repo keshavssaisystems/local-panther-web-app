@@ -520,3 +520,17 @@ input[type="month"]:active::before {
   content: "";
   width: 0%;
 }
+.candidate-profile-prompt{
+  color: var(--Font-dark-grey, #2F2E2E);
+  font-family: capitana;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 150%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.prompt-bold{
+  color: red;
+  font-weight: 600;
+}

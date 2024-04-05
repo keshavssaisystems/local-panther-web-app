@@ -43,6 +43,7 @@ export const CreateJob = forwardRef(
       previousData,
       customerDetails,
       nextPage,
+      certificationList,
     },
     ref
   ) => {
@@ -216,6 +217,15 @@ export const CreateJob = forwardRef(
         label: `${rest.name}`,
       };
     });
+
+    let certificationOptions = certificationList.map(
+      ({ id: value, ...rest }) => {
+        return {
+          value: `${value}`,
+          label: `${rest.name}`,
+        };
+      }
+    );
     const [stateData, setStateData] = useState({});
     const customStyles = {
       valueContainer: (provided, state) => ({
@@ -256,6 +266,28 @@ export const CreateJob = forwardRef(
         );
       }
     };
+
+    const getCertificationData = (data) => {
+      if (data?.certifications?.split(",")?.length > 0) {
+        let newData = data.certifications.split(",");
+        let newOptions = certificationOptions.filter((data) =>
+          newData.includes(data.value)
+        );
+        console.log(newOptions);
+        return newOptions;
+      }
+      if (data?.certifications?.split(",")?.length === undefined) {
+        return certificationOptions.filter(
+          (data2) => data2.value === Number(data?.certifications)
+        );
+      }
+    };
+
+    let certificationsData =
+      previousStep === 3
+        ? getCertificationData(jobData.basicInformation)
+        : getCertificationData(previousData);
+
     let educationData =
       previousStep === 3
         ? getEducationData(jobData.basicInformation)
@@ -625,6 +657,12 @@ export const CreateJob = forwardRef(
         : previousValue.issecurityclearancerequired
     );
     const [jobTypeValidation, setJobTypeValidation] = useState(false);
+    const [payPeriodTypeValidation, setPayPeriodTypeValidation] =
+      useState(false);
+    const [minimumBasepayValidation, setMinimumBasepayValidation] =
+      useState(false);
+    const [maximumBasepayValidation, setMaximumBasepayValidation] =
+      useState(false);
     const [prevKeyQualificationArr1, setPrevKey] = useState([]);
     const [prevKeyQualificationArr2, setPrevKey2] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -704,7 +742,8 @@ export const CreateJob = forwardRef(
       event.target.elements.jobTitle.value === ""
         ? setJobTitleValidation(true)
         : setJobTitleValidation(false);
-      event.target.elements.openPositions.value === ""
+      event.target.elements.openPositions.value === "" ||
+      Number(event.target.elements.openPositions.value) === 0
         ? setOpenPositionValidation(true)
         : setOpenPositionValidation(false);
       event.target.elements.city.value === ""
@@ -753,7 +792,22 @@ export const CreateJob = forwardRef(
       }
       let jobType = getJobType(event.target.elements.jobType);
       jobType === "" ? setJobTypeValidation(true) : setJobTypeValidation(false);
-
+      event.target.elements.payPeriodType.value === ""
+        ? setPayPeriodTypeValidation(true)
+        : setPayPeriodTypeValidation(false);
+      event.target.elements.minimumAmount.value === ""
+        ? setMinimumBasepayValidation(true)
+        : setMinimumBasepayValidation(false);
+      event.target.elements.maximumAmount.value === ""
+        ? setMaximumBasepayValidation(true)
+        : setMaximumBasepayValidation(false);
+      if (
+        payPeriodTypeValidation === true ||
+        minimumBasepayValidation === true ||
+        maximumBasepayValidation === true
+      ) {
+        setAccordion([false, false, true, false, false]);
+      }
       if (jobTypeValidation === true) {
         setAccordion([false, true, false, false, false]);
       }
@@ -766,16 +820,21 @@ export const CreateJob = forwardRef(
       ) {
         setAccordion([true, false, false, false, false]);
       }
+
       if (
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
         event.target.elements.openPositions.value !== "" &&
+        Number(event.target.elements.openPositions.value) !== 0 &&
         event.target.elements.zipCode.value !== "" &&
         event.target.elements.city.value !== "" &&
         descriptionData !== "" &&
         checkJobLocationCondition === true &&
         checkSecurity === true &&
-        jobType !== ""
+        jobType !== "" &&
+        event.target.elements.payPeriodType.value !== "" &&
+        event.target.elements.minimumAmount.value !== "" &&
+        event.target.elements.maximumAmount.value !== ""
       ) {
         saveData(event);
       }
@@ -783,6 +842,7 @@ export const CreateJob = forwardRef(
     const saveData = (eventData) => {
       let educationString = getEducationFormData(eventData);
       let studyString = getStudyFormData(eventData);
+      let certificationString = getCertificationFormData(eventData);
       let workSchedule = getWorkSchedule(
         eventData.target.elements.workSchedule
       );
@@ -826,9 +886,10 @@ export const CreateJob = forwardRef(
             : false,
         levelofeducationids: educationString,
         fieldofstudiesids: studyString,
-        certifications: eventData.target.elements.certifications.value,
+        certifications: certificationString,
         levelofeducationOption: levelOfEducationOption,
         fieldofstudiesOption: fieldOfStudyOption,
+        certificationsOptions: certificationList,
         subsidiaryid:
           eventData?.target?.elements?.subsidiaryid?.value === undefined
             ? 0
@@ -918,15 +979,17 @@ export const CreateJob = forwardRef(
         eventData.target.elements.custom_question.length > 0
       ) {
         eventData.target.elements.custom_question.forEach((element) => {
-          let obj = {
-            jobprescreenapplicationid: 0,
-            jobid: 0,
-            iscustomquestion: true,
-            prescreenquestionid: 0,
-            prescreenquestion: element.value,
-            isactive: true,
-          };
-          questionArr.push(obj);
+          if (element.value !== "") {
+            let obj = {
+              jobprescreenapplicationid: 0,
+              jobid: 0,
+              iscustomquestion: true,
+              prescreenquestionid: 0,
+              prescreenquestion: element.value,
+              isactive: true,
+            };
+            questionArr.push(obj);
+          }
         });
       }
       if (
@@ -1031,6 +1094,21 @@ export const CreateJob = forwardRef(
         return postEducationData.toString();
       }
     };
+
+    const getCertificationFormData = (eventData) => {
+      let postCertificationData = [];
+      let certificationArray = eventData?.target?.elements?.certificationids;
+      if (certificationArray?.length === undefined) {
+        return certificationArray.value;
+      }
+      if (certificationArray?.length > 0) {
+        certificationArray?.forEach((element) => {
+          postCertificationData.push(element.value);
+        });
+        return postCertificationData.toString();
+      }
+    };
+
     const getStudyFormData = (eventData) => {
       let postStudyData = [];
       let studyArray = eventData?.target?.elements?.fieldofstudiesids;
@@ -1305,7 +1383,23 @@ export const CreateJob = forwardRef(
         });
       }
     }, []);
-
+    let preScreenQuestionsDataFromPre = jobData?.preScreen;
+    let customQuestionDataFromPre = preScreenQuestionsDataFromPre?.filter(
+      (value) => value.iscustomquestion === true
+    );
+    let prescreenTypeVIsibility = false;
+    let customCount = 0;
+    let customCount1 = 0;
+    let customCount2 = 0;
+    if (customQuestionDataFromPre?.length > 0) {
+      prescreenTypeVIsibility = true;
+      customCount1 = customQuestionDataFromPre?.length;
+    }
+    if (customQuestionInput?.length > 1) {
+      prescreenTypeVIsibility = true;
+      customCount2 = customQuestionInput?.length - 1;
+    }
+    customCount = Number(customCount1) + Number(customCount2);
     return (
       <>
         <div className="form-wizard-content">
@@ -1563,7 +1657,7 @@ export const CreateJob = forwardRef(
                             name={"country"}
                             type={"text"}
                             readOnly
-                            value={"US"}
+                            value={"USA"}
                             placeholder="Select country"
                           />
                         </FormGroup>
@@ -1825,9 +1919,9 @@ export const CreateJob = forwardRef(
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={6}>
-                        <FormGroup>
+                        {/* <FormGroup>
                           <Label for="certifications" className="fw-semi-bold">
-                            Certification
+                            Certification test
                           </Label>
                           <Input
                             id={"certifications"}
@@ -1841,6 +1935,28 @@ export const CreateJob = forwardRef(
                                 ? preValue.certifications
                                 : previousValue.certifications
                             }
+                          />
+                        </FormGroup> */}
+
+                        <FormGroup>
+                          <Label
+                            for="certificationids"
+                            className="fw-semi-bold"
+                          >
+                            Certification
+                          </Label>
+
+                          <Select
+                            defaultValue={
+                              type === "new_template" && previousStep !== 3
+                                ? ""
+                                : certificationsData
+                            }
+                            isMulti
+                            name="certificationids"
+                            options={certificationOptions}
+                            classNamePrefix="select"
+                            placeholder="Select field of study"
                           />
                         </FormGroup>
                       </Col>
@@ -2139,11 +2255,13 @@ export const CreateJob = forwardRef(
                         <FormGroup>
                           <Label className="fw-semi-bold">
                             Pay period type
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"payPeriodType"}
                             name={"payPeriodType"}
                             type={"select"}
+                            onChange={() => setPayPeriodTypeValidation(false)}
                           >
                             <option key={0} value={""}>
                               Select pay period type
@@ -2167,12 +2285,18 @@ export const CreateJob = forwardRef(
                                 </option>
                               ))}
                           </Input>
+                          {payPeriodTypeValidation === true && (
+                            <FormText color="danger">
+                              Please select pay period type
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}>
                         <FormGroup>
                           <Label for={"minimumAmount"} className="fw-semi-bold">
                             Minimum base pay
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"minimumAmount"}
@@ -2180,6 +2304,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            onChange={() => setMinimumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2189,12 +2314,18 @@ export const CreateJob = forwardRef(
                             }
                             placeholder="Enter minimum base pay"
                           />
+                          {minimumBasepayValidation === true && (
+                            <FormText color="danger">
+                              Please enter minimum base pay
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}>
                         <FormGroup>
                           <Label for="maximumAmount" className="fw-semi-bold">
                             Maximum base pay
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"maximumAmount"}
@@ -2202,6 +2333,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            onChange={() => setMaximumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2211,6 +2343,11 @@ export const CreateJob = forwardRef(
                             }
                             placeholder="Enter maximum base pay"
                           />
+                          {maximumBasepayValidation === true && (
+                            <FormText color="danger">
+                              Please enter maximum base pay
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}></Col>
@@ -2416,12 +2553,65 @@ export const CreateJob = forwardRef(
                     </Row>
                     <Row>
                       <Col md={7}>
+                        {customQuestionDataFromPre?.map((item, i) => {
+                          return (
+                            <FormGroup>
+                              <Label className="fw-semi-bold">
+                                Custom Question
+                              </Label>
+                              <Input
+                                id={i + 1}
+                                name={"custom_question"}
+                                type={item.type}
+                                maxLength="100"
+                                defaultValue={item.prescreenquestion}
+                                onChange={(e) =>
+                                  checkRestrictedWord(
+                                    "custom_question_" + i++,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                              {i === 1 && restrictionValidation1 === true && (
+                                <FormText
+                                  color="danger"
+                                  className="custom-question-validation"
+                                >
+                                  Your input contains the flagged word '{" "}
+                                  <b>{restrictionWord1.toString()}</b> '.
+                                </FormText>
+                              )}
+                              {i === 2 && restrictionValidation2 === true && (
+                                <FormText
+                                  color="danger"
+                                  className="custom-question-validation"
+                                >
+                                  Your input contains the flagged word '{" "}
+                                  <b>{restrictionWord2.toString()}</b> '.
+                                </FormText>
+                              )}
+                              {i === 3 && restrictionValidation3 === true && (
+                                <FormText
+                                  color="danger"
+                                  className="custom-question-validation"
+                                >
+                                  Your input contains the flagged word '{" "}
+                                  <b>{restrictionWord3.toString()}</b> '.
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          );
+                        })}
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={7}>
                         {customQuestionInput?.map((item, i) => {
                           if (i > 0) {
                             return (
                               <FormGroup>
                                 <Label className="fw-semi-bold">
-                                  Custom Question {i}
+                                  Custom Question
                                 </Label>
                                 <Input
                                   id={i}
@@ -2468,7 +2658,7 @@ export const CreateJob = forwardRef(
                         })}
                       </Col>
                     </Row>
-                    {customQuestionInput.length < 4 && (
+                    {customCount < 3 && (
                       <Col md={5}>
                         <Button
                           color="link"
@@ -2476,13 +2666,13 @@ export const CreateJob = forwardRef(
                           className="custom-add-button"
                         >
                           <BsPlusSquare className="mb-1" /> Add{"  "}
-                          {customQuestionInput.length > 1 ? "another" : ""}{" "}
-                          custom question
+                          {prescreenTypeVIsibility ? "another" : ""} custom
+                          question
                         </Button>
                       </Col>
                     )}
 
-                    {customQuestionInput.length > 1 && (
+                    {customCount > 0 && (
                       <Row>
                         <Col md={5}>
                           <FormGroup>
@@ -2498,6 +2688,9 @@ export const CreateJob = forwardRef(
                                     name={"applicantsRecordAnswer"}
                                     type={"radio"}
                                     value={"Audio"}
+                                    defaultChecked={
+                                      jobData?.preCustomScreen === "Audio"
+                                    }
                                   />{" "}
                                   {"  "}
                                   <Label className="fw-semi-bold">Audio</Label>
@@ -2508,6 +2701,9 @@ export const CreateJob = forwardRef(
                                     name={"applicantsRecordAnswer"}
                                     type={"radio"}
                                     value={"Video"}
+                                    defaultChecked={
+                                      jobData?.preCustomScreen === "Video"
+                                    }
                                   />{" "}
                                   {"  "}
                                   <Label className="fw-semi-bold">Video</Label>
@@ -2518,6 +2714,9 @@ export const CreateJob = forwardRef(
                                     name={"applicantsRecordAnswer"}
                                     type={"radio"}
                                     value={"Text"}
+                                    defaultChecked={
+                                      jobData?.preCustomScreen === "Text"
+                                    }
                                   />{" "}
                                   {"  "}
                                   <Label className="fw-semi-bold">Text</Label>

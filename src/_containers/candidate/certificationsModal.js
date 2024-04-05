@@ -176,15 +176,16 @@ export function CertificationsModal(props) {
   const onHandleInputChange = function (check, data) {
     let new_data = { ...formDetails };
     if (check === "certificateType") {
-      new_data.certificationtypeid = data;
+      new_data.certificationtypeid =
+        data === "Select Certification Type" ? 0 : data;
       new_data.typeError = false;
     } else if (check === "name") {
       new_data.certificationname = data;
-      if (new_data.certificationname == "") {
-        new_data.error = true;
-      } else {
-        new_data.error = false;
-      }
+      // if (new_data.certificationname == "") {
+      //   new_data.error = true;
+      // } else {
+      //   new_data.error = false;
+      // }
     } else if (check === "expired") {
       new_data.isexpired = !new_data.isexpired;
 
@@ -298,13 +299,13 @@ export function CertificationsModal(props) {
   async function onSubmit() {
     let valid = true;
     let new_data = { ...formDetails };
-    if (
-      !formDetails.certificationname ||
-      formDetails.certificationname === ""
-    ) {
-      new_data.error = true;
-      valid = false;
-    }
+    // if (
+    //   !formDetails.certificationname ||
+    //   formDetails.certificationname === ""
+    // ) {
+    //   new_data.error = true;
+    //   valid = false;
+    // }
     if (formDetails.certificationtypeid === 0) {
       new_data.typeError = true;
       valid = false;
@@ -476,7 +477,6 @@ export function CertificationsModal(props) {
             <FormGroup>
               <Label for="certification" className="fw-semi-bold">
                 Certification/License
-                <span className="required-icon"> *</span>
               </Label>
               <input
                 placeholder="Enter certification/license"
@@ -486,14 +486,8 @@ export function CertificationsModal(props) {
                 id="name"
                 value={formDetails.certificationname}
                 onInput={(evt) => onHandleInputChange("name", evt.target.value)}
-                className={`field-input placeholder-text form-control ${
-                  formDetails.error ? "is-invalid" : ""
-                }`}
+                className="field-input placeholder-text form-control"
               />
-
-              <div className="invalid-feedback">
-                {formDetails.error ? "Certifications is required" : ""}
-              </div>
             </FormGroup>
           </Col>
         </Row>

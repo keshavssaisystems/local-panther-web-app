@@ -67,6 +67,9 @@ export function Registration() {
       name: "Employer",
     },
   ]);
+
+  const [countryValue, setCountryValue] = useState([]);
+  const [cityValue, setCityValue] = useState(0);
   const [selected, setSelected] = useState(0);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
@@ -136,7 +139,7 @@ export function Registration() {
   const formOptions = { resolver: yupResolver(validationSchema) };
 
   // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState, setValue, getValues } =
+  const { register, handleSubmit, formState, setValue, getValues, reset } =
     useForm(formOptions);
   const { errors } = formState;
   const [cityList, setCityList] = useState([]);
@@ -151,6 +154,10 @@ export function Registration() {
     }
     let newPayload;
     newPayload = payload;
+    newPayload.stateid = cityList?.find(
+      (x) => x.cityid == newPayload.cityid
+    )?.stateid;
+
     newPayload.phoneNumber = payload?.phoneNumber?.replace(/\D/g, "");
     let response = await dispatch(authActions.registerThunk(newPayload));
     if (!response.payload) {
@@ -200,7 +207,7 @@ export function Registration() {
       lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       email: getValues("email"),
-      countryid: countryValue,
+      countryid: countryValue?.value,
       stateid: parseInt(getValues("stateid")),
       cityid: cityValue,
       phoneotp: null,
@@ -353,19 +360,18 @@ export function Registration() {
     }
   };
 
-  const [countryValue, setCountryValue] = useState(0);
-  const [cityValue, setCityValue] = useState(0);
-
   const setAsyncSelectValue = (data) => {
     setValue("cityid", String(data.value));
     setCityValue(data.value);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
+    setCountryValue([{ value: 1, label: "USA" }]);
+    setValue("countryid", String(1));
   };
 
   const onSelectCountryDropdown = (data) => {
-    setCountryValue(data.value);
-    setValue("countryid", String(data.value));
+    setCountryValue([{ value: 1, label: "USA" }]);
+    setValue("countryid", String(1));
   };
 
   const togglePasswordVisibility = () => {
@@ -483,6 +489,8 @@ export function Registration() {
     }
   };
   const onHandleInputChange = (data) => {
+    setCountryValue([]);
+    reset({ resolver: yupResolver(validationSchema) });
     setSelected(data);
   };
 
@@ -801,11 +809,11 @@ export function Registration() {
                       </Col>
                       <Col>
                         <FormGroup>
-                          <Label for="city" className="fw-semi-bold">
+                          <Label for="cityid" className="fw-semi-bold">
                             City, State <span className="text-danger">* </span>
                           </Label>
                           <AsyncSelect
-                            name="city"
+                            name="cityid"
                             placeholder="Search to select"
                             placeholderText="search"
                             loadOptions={loadOptions}
@@ -836,17 +844,18 @@ export function Registration() {
                             placeholderText="search"
                             isMulti={false}
                             className={`placeholder-name ${
-                              errors.countryid && countryValue === 0
+                              errors.countryid && countryValue?.length === 0
                                 ? "async-border-red"
                                 : ""
                             }`}
                             {...register("countryid")}
+                            value={countryValue}
                             defaultOptions={countryList}
                             onChange={(e) => onSelectCountryDropdown(e)}
                             onMenuOpen={() => checkCityValid()}
                           />
                           <div className="async-error-text">
-                            {errors.countryid && countryValue === 0
+                            {errors.countryid && countryValue?.length === 0
                               ? "Country is required"
                               : ""}
                           </div>

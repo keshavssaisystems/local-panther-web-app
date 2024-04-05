@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { yearActions, monthActions } from "_store";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Alert } from "reactstrap";
 import Loader from "react-loaders";
 import { useDispatch } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
@@ -33,6 +33,7 @@ import {
   studyFieldActions,
   profileSkillsActions,
 } from "_store";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CandidateProfile() {
   const dispatch = useDispatch();
@@ -177,6 +178,7 @@ export function CandidateProfile() {
     new_data.educationInfo = filter_data?.candidateEducationDtos;
     new_data.certificationsInfo = filter_data?.candidateCertificationDtos;
     new_data.additionalInfo = filter_data?.candidateAdditionalInformationDtos;
+    new_data.jobPreferenceInfo = filter_data?.candidateJobPreferenceDtos;
     setProfileData(new_data);
 
     let dropdown_selected = { ...dropdownLists };
@@ -203,14 +205,124 @@ export function CandidateProfile() {
     };
     setDropDownLists(dropdown_selected);
   };
+  let sectionValidation = {};
+  let stringArray = [];
+  const [viewValidation, setViewValidation] = useState(true);
+  const [showEEPopup, setShowEEPopup] = useState(false);
+  const [stringValue, setStringValue] = useState("");
+  useEffect(() => {
+    if (profileData) {
+      sectionValidation.skills =
+        profileData?.skillsInfo?.length === 0 ? false : true;
+      sectionValidation.education =
+        profileData?.educationInfo?.length === 0 ? false : true;
+      sectionValidation.certification =
+        profileData?.certificationsInfo?.length === 0 ? false : true;
+      sectionValidation.qualification =
+        profileData?.qualificationsInfo?.length === 0 ? false : true;
+      sectionValidation.jobPreference =
+        profileData?.jobPreferenceInfo?.length === 0 ||
+        profileData?.jobPreferenceInfo === null
+          ? false
+          : true;
+      sectionValidation.employmentEligiblity =
+        profileData?.personalInfo?.employmenteligiblity === null ||
+        profileData?.personalInfo?.employmenteligiblity === 0
+          ? false
+          : true;
+      sectionValidation.employmentEligiblity === false
+        ? setShowEEPopup(true)
+        : setShowEEPopup(false);
+
+      if (
+        sectionValidation.skills === true &&
+        sectionValidation.qualification === true &&
+        sectionValidation.education === true &&
+        sectionValidation.certification === true &&
+        sectionValidation.employmentEligiblity === true &&
+        sectionValidation.jobPreference === true
+      ) {
+        setViewValidation(false);
+      }
+      if (sectionValidation.skills === false) {
+        stringArray.push("Skills");
+      }
+      if (sectionValidation.qualification === false) {
+        stringArray.push(" Qualification details");
+      }
+      if (sectionValidation.education === false) {
+        stringArray.push(" Education details");
+      }
+      if (sectionValidation.certification === false) {
+        stringArray.push(" Certifications");
+      }
+      if (sectionValidation.employmentEligiblity === false) {
+        stringArray.push(" Employment eligibility");
+      }
+      if (sectionValidation.jobPreference === false) {
+        if (stringArray.length > 0) {
+          stringArray.push(" and Job preferences.");
+        } else {
+          stringArray.push(" Job preferences.");
+        }
+      }
+    }
+    setStringValue(stringArray.toString());
+  }, [profileData]);
+
+  const setEmployementEligibility = (type) => {
+    updateEmploymentEligibility(type);
+    setShowEEPopup(false);
+  };
+
+  const updateEmploymentEligibility = async (type) => {
+    let candidateId = Number(userDetails.InternalUserId);
+    let payload = {
+      candidateid: candidateId,
+      employmenteligiblity: type,
+    };
+    let data = await dispatch(
+      getProfileActions.updateEmploymentEligibilityThunk({
+        candidateId,
+        payload,
+      })
+    );
+    if (data?.payload?.status === "Success") {
+      dispatch(getProfileActions.getCandidate(candidateId));
+    }
+  };
 
   return (
     <div className="profile-view">
       <div className="profile-view">
         <PageTitle heading="Candidate Profile" icon={candidatelogo} />
       </div>
+
       {profileData.personalInfo.email ? (
         <div className="profile-view">
+          <SweetAlert
+            warning
+            show={showEEPopup}
+            cancelBtnText={"No"}
+            confirmBtnText={"Yes"}
+            onConfirm={() => setEmployementEligibility(1)}
+            onCancel={() => setEmployementEligibility(2)}
+            showCancel
+            closeOnClickOutside={false}
+          >
+            <p className="candidate-profile-prompt">
+              Are you authorized to work in the United States?
+            </p>
+          </SweetAlert>
+          <Alert
+            color="warning"
+            isOpen={viewValidation}
+            toggle={() => setViewValidation(false)}
+          >
+            Enhance your experience and find the{" "}
+            <span className="prompt-bold">best job matches</span>. Please
+            provide <span className="prompt-bold">{stringValue}</span>
+          </Alert>
           <Row>
             <PersonalInformation
               profileInfo={profileData}
