@@ -90,7 +90,7 @@ export function CreateJobWizard({ type }) {
     await dispatch(createjobActions.getPreviousJobListThunk(searchArr));
   };
   const getDataForPreview = (event) => {
-    debugger;
+    // debugger;
     setJobPreviewData(event);
   };
   const editJob = (jobData) => {

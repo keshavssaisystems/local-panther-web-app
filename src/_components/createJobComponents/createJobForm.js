@@ -663,6 +663,7 @@ export const CreateJob = forwardRef(
       useState(false);
     const [maximumBasepayValidation, setMaximumBasepayValidation] =
       useState(false);
+    const [mustHaveValidation, setMustHaveValidation] = useState(false);
     const [prevKeyQualificationArr1, setPrevKey] = useState([]);
     const [prevKeyQualificationArr2, setPrevKey2] = useState([]);
     const [searchText, setSearchText] = useState("");
@@ -801,6 +802,12 @@ export const CreateJob = forwardRef(
       event.target.elements.maximumAmount.value === ""
         ? setMaximumBasepayValidation(true)
         : setMaximumBasepayValidation(false);
+      event.target.elements.mustHave.value === ""
+        ? setMustHaveValidation(true)
+        : setMustHaveValidation(false);
+      if (mustHaveValidation === true) {
+        setAccordion([false, false, false, true, false]);
+      }
       if (
         payPeriodTypeValidation === true ||
         minimumBasepayValidation === true ||
@@ -834,7 +841,8 @@ export const CreateJob = forwardRef(
         jobType !== "" &&
         event.target.elements.payPeriodType.value !== "" &&
         event.target.elements.minimumAmount.value !== "" &&
-        event.target.elements.maximumAmount.value !== ""
+        event.target.elements.maximumAmount.value !== "" &&
+        event.target.elements.mustHave.value !== ""
       ) {
         saveData(event);
       }
@@ -1287,10 +1295,13 @@ export const CreateJob = forwardRef(
     const onSelectSkillsDropdown = function (data) {
       setSearchText("");
       if (data.length === 0) {
+        setMustHaveValidation(true);
         setPrevKey([]);
         setKeyQual1([]);
       } else {
         setPrevKey(data);
+        setKeyQual1(data);
+        setMustHaveValidation(false);
       }
     };
     const selectOptionalSkills = function (data) {
@@ -1300,6 +1311,7 @@ export const CreateJob = forwardRef(
         setKeyQual2([]);
       } else {
         setPrevKey2(data);
+        setKeyQual2(data);
       }
     };
     const formatCreateLabel = (inputValue) => {
@@ -2428,7 +2440,7 @@ export const CreateJob = forwardRef(
                       <Col md={6} lg={4}>
                         <FormGroup>
                           <Label for={"mustHave"} className="fw-semi-bold">
-                            Must have
+                            Must have <span style={{ color: "red" }}>* </span>
                           </Label>
 
                           <AsyncCreatableSelect
@@ -2454,6 +2466,11 @@ export const CreateJob = forwardRef(
                             formatCreateLabel={formatCreateLabel}
                             onCreateOption={addNewSkill}
                           />
+                          {mustHaveValidation === true && (
+                            <FormText color="danger">
+                              Please select must have skills
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={4}>
