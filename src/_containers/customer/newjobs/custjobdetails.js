@@ -558,7 +558,7 @@ export function CustJobDetail({
                 jobDetail?.jobExperienceScheduleDtos &&
                 jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
                   ? jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
-                  : ""
+                  : "-"
               }
               iconId={8}
             />
@@ -615,8 +615,13 @@ export function CustJobDetail({
               detail={jobDetail.description}
             />
             <HeadingAndDetailWithoutIcon
-              heading={"About company"}
-              detail={jobDetail.companydetails}
+              heading={"About company test"}
+              detail={
+                jobDetail.companydetails !== "" &&
+                jobDetail.companydetails !== null
+                  ? jobDetail.companydetails
+                  : "-"
+              }
             />
             <HeadingAndDetailWithoutIcon
               heading={"Benefits"}
@@ -624,7 +629,7 @@ export function CustJobDetail({
                 jobDetail?.jobPaymentBenefitDtos &&
                 jobDetail?.jobPaymentBenefitDtos[0]?.benefits
                   ? jobDetail?.jobPaymentBenefitDtos[0]?.benefits
-                  : ""
+                  : "-"
               }
             />
             {jobDetail?.jobKeyQualificationDtos &&
@@ -636,7 +641,7 @@ export function CustJobDetail({
                     jobDetail?.jobKeyQualificationDtos &&
                     jobDetail?.jobKeyQualificationDtos?.length > 0
                       ? returnAdditionalCriteria()
-                      : ""
+                      : "-"
                   }
                   type={"list"}
                 />
@@ -653,7 +658,7 @@ export function CustJobDetail({
                     jobDetail?.jobPrescreenApplicationDtos &&
                     jobDetail?.jobPrescreenApplicationDtos?.length > 0
                       ? returnPrescreenInfo()
-                      : ""
+                      : "-"
                   }
                   type={"list"}
                 />
