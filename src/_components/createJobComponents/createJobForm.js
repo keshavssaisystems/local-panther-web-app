@@ -802,7 +802,8 @@ export const CreateJob = forwardRef(
       event.target.elements.maximumAmount.value === ""
         ? setMaximumBasepayValidation(true)
         : setMaximumBasepayValidation(false);
-      event.target.elements.mustHave.value === ""
+      event.target.elements.mustHave.value === "" ||
+      event.target.elements.mustHave.length === 0
         ? setMustHaveValidation(true)
         : setMustHaveValidation(false);
       if (mustHaveValidation === true) {
@@ -842,7 +843,8 @@ export const CreateJob = forwardRef(
         event.target.elements.payPeriodType.value !== "" &&
         event.target.elements.minimumAmount.value !== "" &&
         event.target.elements.maximumAmount.value !== "" &&
-        event.target.elements.mustHave.value !== ""
+        (event.target.elements.mustHave.value !== "" ||
+          event.target.elements.mustHave.length > 0)
       ) {
         saveData(event);
       }
