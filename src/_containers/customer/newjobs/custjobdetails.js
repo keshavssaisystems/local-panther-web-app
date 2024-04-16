@@ -257,7 +257,7 @@ export function CustJobDetail({
         </ul>
       );
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -615,7 +615,7 @@ export function CustJobDetail({
               detail={jobDetail.description}
             />
             <HeadingAndDetailWithoutIcon
-              heading={"About company test"}
+              heading={"About company"}
               detail={
                 jobDetail.companydetails !== "" &&
                 jobDetail.companydetails !== null
