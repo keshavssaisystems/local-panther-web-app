@@ -139,7 +139,7 @@ export function CandidateDashboard() {
       counts.qualifications === false ||
       counts.education === false ||
       counts.jobPreference === false ||
-      counts.certifications === false ||
+      // counts.certifications === false ||
       counts.employmentEligiblity === 0
     ) {
       setShowProfilePrompt(true);
@@ -203,7 +203,7 @@ export function CandidateDashboard() {
       {(counts.skills === false ||
         counts.qualifications === false ||
         counts.education === false ||
-        counts.certifications === false ||
+        // counts.certifications === false ||
         counts.employmentEligiblity === 0 ||
         counts.jobPreference === false) && (
         <div className="profile-prompt">
@@ -240,12 +240,12 @@ export function CandidateDashboard() {
                   Education details,
                 </span>
               )}
-              {counts.certifications === false && (
+              {/* {counts.certifications === false && (
                 <span className="candidate-profile-prompt-bold">
                   {" "}
                   Certifications,
                 </span>
-              )}
+              )} */}
               {counts.employmentEligiblity === false ||
                 (counts.employmentEligiblity === 0 && (
                   <span className="candidate-profile-prompt-bold">
