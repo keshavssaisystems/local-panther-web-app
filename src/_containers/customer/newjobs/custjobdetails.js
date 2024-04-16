@@ -17,7 +17,6 @@ import { FiMapPin, FiEdit, FiCheckSquare, FiXSquare } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useSelector } from "react-redux";
-import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
 import publishedIcon from "assets/utils/images/job-detail-icons/published.svg";
 import matchedIcon from "assets/utils/images/job-detail-icons/matched.svg";
@@ -28,8 +27,8 @@ import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
 import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
-import { ShareSocial } from "react-share-social";
 import { CloseJobReasonPopup } from "./closeJobReasonPopup";
+import infoIcon from "assets/utils/images/yellow-info-big.svg";
 
 export function CustJobDetail({
   jobDetails,
@@ -40,6 +39,9 @@ export function CustJobDetail({
   isShare = false,
   isAdmin = false,
 }) {
+  let internalUserId = JSON.parse(
+    localStorage.getItem("userDetails")
+  ).InternalUserId;
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [closeConfirmation, setCloseConfirmation] = useState(false);
   const shiftsOption = useSelector((state) => state.dropdown.shift);
@@ -47,6 +49,10 @@ export function CustJobDetail({
     (state) => state.dropdown.workSchedule
   );
   const billingStatus = useSelector((state) => state?.payment?.showBilling);
+  const customerDetails = useSelector(
+    (state) => state?.createJob?.customerDetails
+  );
+  let customerApproval = customerDetails?.customerstatusid === 2 ? true : false;
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
   let loading = true;
   let jobDetail = {};
@@ -257,7 +263,7 @@ export function CustJobDetail({
         </ul>
       );
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -386,6 +392,7 @@ export function CustJobDetail({
   const navigateTo = (action) => {
     navigate(action);
   };
+  const [noPaymentPopup, setNoPaymentPopup] = useState(false);
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -434,35 +441,113 @@ export function CustJobDetail({
                           >
                             <FiEdit className="mb-1" /> Edit job
                           </Button>
-                          {billingStatus === true && (
-                            <Button
-                              color="primary"
-                              className={"me-3 mt-3"}
-                              onClick={(e) => {
-                                setPublishSuccess(true);
-                                publishJob(jobDetail.jobid);
-                              }}
-                            >
-                              <FiCheckSquare className="mb-1" /> Publish job
-                            </Button>
-                          )}
-                          {billingStatus === false && (
-                            <>
+                          {billingStatus === true &&
+                            customerApproval === true && (
                               <Button
                                 color="primary"
-                                className={"me-3 mt-3 btn-mute"}
-                                id="publishButton"
+                                className={"me-3 mt-3"}
+                                onClick={(e) => {
+                                  setPublishSuccess(true);
+                                  publishJob(jobDetail.jobid);
+                                }}
                               >
                                 <FiCheckSquare className="mb-1" /> Publish job
                               </Button>
-                              <UncontrolledTooltip
-                                placement="bottom"
-                                target={"publishButton"}
-                              >
-                                Please add billing details to publish job
-                              </UncontrolledTooltip>
-                            </>
-                          )}
+                            )}
+                          {billingStatus === false &&
+                            customerApproval === false && (
+                              <>
+                                <Button
+                                  color="primary"
+                                  className={"me-3 mt-3"}
+                                  onClick={() => setNoPaymentPopup(true)}
+                                >
+                                  <FiCheckSquare className="mb-1" /> Publish job
+                                </Button>
+                                <SweetAlert
+                                  custom
+                                  show={noPaymentPopup}
+                                  onConfirm={() => {
+                                    setNoPaymentPopup(false);
+                                    navigate(`/payment/${internalUserId}`);
+                                  }}
+                                  onCancel={() => {
+                                    setNoPaymentPopup(false);
+                                  }}
+                                  cancelBtnText={"Remind me later"}
+                                  confirmBtnText="Update"
+                                  showCancel
+                                  customIcon={infoIcon}
+                                >
+                                  <p className="candidate-profile-prompt">
+                                    Please add billing details & get company
+                                    admin approval to publish job.
+                                  </p>
+                                </SweetAlert>
+                              </>
+                            )}
+                          {billingStatus === true &&
+                            customerApproval === false && (
+                              <>
+                                <Button
+                                  color="primary"
+                                  className={"me-3 mt-3"}
+                                  onClick={() => setNoPaymentPopup(true)}
+                                >
+                                  <FiCheckSquare className="mb-1" /> Publish job
+                                </Button>
+                                <SweetAlert
+                                  custom
+                                  show={noPaymentPopup}
+                                  onConfirm={() => {
+                                    setNoPaymentPopup(false);
+                                  }}
+                                  onCancel={() => {
+                                    setNoPaymentPopup(false);
+                                  }}
+                                  cancelBtnText={"Remind me later"}
+                                  confirmBtnText="OK"
+                                  showCancel
+                                  customIcon={infoIcon}
+                                >
+                                  <p className="candidate-profile-prompt">
+                                    Please get company admin approval to publish
+                                    job.
+                                  </p>
+                                </SweetAlert>
+                              </>
+                            )}
+                          {billingStatus === false &&
+                            customerApproval === true && (
+                              <>
+                                <Button
+                                  color="primary"
+                                  className={"me-3 mt-3"}
+                                  onClick={() => setNoPaymentPopup(true)}
+                                >
+                                  <FiCheckSquare className="mb-1" /> Publish job
+                                </Button>
+                                <SweetAlert
+                                  custom
+                                  show={noPaymentPopup}
+                                  onConfirm={() => {
+                                    setNoPaymentPopup(false);
+                                    navigate(`/payment/${internalUserId}`);
+                                  }}
+                                  onCancel={() => {
+                                    setNoPaymentPopup(false);
+                                  }}
+                                  cancelBtnText={"Remind me later"}
+                                  confirmBtnText="Update"
+                                  showCancel
+                                  customIcon={infoIcon}
+                                >
+                                  <p className="candidate-profile-prompt">
+                                    Please add billing details to publish job.
+                                  </p>
+                                </SweetAlert>
+                              </>
+                            )}
                         </Col>
                       ) : (
                         <></>
@@ -615,7 +700,7 @@ export function CustJobDetail({
               detail={jobDetail.description}
             />
             <HeadingAndDetailWithoutIcon
-              heading={"About company test"}
+              heading={"About company"}
               detail={
                 jobDetail.companydetails !== "" &&
                 jobDetail.companydetails !== null
