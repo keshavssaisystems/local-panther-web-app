@@ -216,8 +216,8 @@ export function CandidateProfile() {
         profileData?.skillsInfo?.length === 0 ? false : true;
       sectionValidation.education =
         profileData?.educationInfo?.length === 0 ? false : true;
-      sectionValidation.certification =
-        profileData?.certificationsInfo?.length === 0 ? false : true;
+      // sectionValidation.certification =
+      //   profileData?.certificationsInfo?.length === 0 ? false : true;
       sectionValidation.qualification =
         profileData?.qualificationsInfo?.length === 0 ? false : true;
       sectionValidation.jobPreference =
@@ -238,7 +238,7 @@ export function CandidateProfile() {
         sectionValidation.skills === true &&
         sectionValidation.qualification === true &&
         sectionValidation.education === true &&
-        sectionValidation.certification === true &&
+        // sectionValidation.certification === true &&
         sectionValidation.employmentEligiblity === true &&
         sectionValidation.jobPreference === true
       ) {
@@ -253,9 +253,9 @@ export function CandidateProfile() {
       if (sectionValidation.education === false) {
         stringArray.push(" Education details");
       }
-      if (sectionValidation.certification === false) {
-        stringArray.push(" Certifications");
-      }
+      // if (sectionValidation.certification === false) {
+      //   stringArray.push(" Certifications");
+      // }
       if (sectionValidation.employmentEligiblity === false) {
         stringArray.push(" Employment eligibility");
       }

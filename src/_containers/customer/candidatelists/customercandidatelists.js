@@ -30,6 +30,7 @@ import {
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
+import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -473,7 +474,9 @@ export const CustomerCandidateLists = (props) => {
                           className="center-middle-align"
                         >
                           <Col>
-                            <NoDataFound></NoDataFound>
+                            <NoCandidateAvailable
+                              message={"NO CANDIDATES AVAILABLE"}
+                            ></NoCandidateAvailable>
                           </Col>
                         </Row>
                       ) : (
