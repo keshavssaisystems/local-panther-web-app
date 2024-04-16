@@ -1237,7 +1237,7 @@ export const CreateJob = forwardRef(
       setKeyQual2(keyQualification2);
     };
     const loadOptions2 = async (inputValue) => {
-      if (inputValue.length > 2) {
+      if (inputValue.length > 0) {
         setLabelVisibility(true);
         setSearchText(inputValue);
         const { data = [] } = await getSkillsFilter(inputValue);
@@ -1260,7 +1260,7 @@ export const CreateJob = forwardRef(
       }
     };
     const loadOptionsoptional = async (inputValue) => {
-      if (inputValue.length > 2) {
+      if (inputValue.length > 0) {
         setLabelVisibility(true);
         setSearchOptionalText(inputValue);
         const { data = [] } = await getSkillsFilter(inputValue);
