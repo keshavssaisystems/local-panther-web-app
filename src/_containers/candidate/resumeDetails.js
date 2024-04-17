@@ -22,12 +22,11 @@ import classnames from "classnames";
 import { formatDate } from "_helpers/helper";
 import { profileActions } from "_store";
 import { useDispatch, useSelector } from "react-redux";
-import { BsDownload, BsTrash3, BsUpload } from "react-icons/bs";
+import { BsDownload, BsTrash3, BsUpload, BsInfoCircle } from "react-icons/bs";
 import axios from "axios";
 import "./profile.scss";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { useDropzone } from "react-dropzone";
-import Loader from "react-loaders";
 import Dropzone from "react-dropzone";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 
@@ -36,7 +35,9 @@ import CardHeader from "react-bootstrap/esm/CardHeader";
 
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
-
+  const notifications = useSelector(
+    (state) => state.candidateDashboard.alertsList
+  );
   const resumeDetails = useSelector(
     (state) => state.getProfile.profileData.resumeInfo
   );
@@ -56,13 +57,26 @@ export function ResumeDetails(props) {
   const [buildModal, setBuildModal] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
   const [selectedFile, setSelectedFile] = useState();
+  const [showUpload, setShowUpload] = useState(true);
 
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
 
-  const loading = useSelector((state) => state.getProfile.loader);
-
   useEffect(() => {
     getFileName();
+  }, [resumeDetails]);
+
+  useEffect(() => {
+    if (notifications?.[0]?.notificationmessage === "Resume Parsed") {
+      setShowUpload(true);
+    }
+  }, [notifications]);
+
+  useEffect(() => {
+    if (resumeDetails.isparsed) {
+      setShowUpload(true);
+    } else {
+      setShowUpload(false);
+    }
   }, [resumeDetails]);
 
   const addEditResumeDetails = function () {
@@ -84,7 +98,6 @@ export function ResumeDetails(props) {
         Authorization: `Bearer ${authData}`,
       },
     };
-
     if (resumeDetails) {
       const form = new FormData();
       form.append("Candidateresumeid", resumeDetails.candidateresumeid);
@@ -111,11 +124,14 @@ export function ResumeDetails(props) {
           if (result.data.statusCode == 204) {
             setSuccess(true);
             setMessage(result.data.message);
+            setShowUpload(false);
           } else {
             setError(true);
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setShowUpload(true);
+        });
     } else {
       const form = new FormData();
       form.append(
@@ -131,6 +147,7 @@ export function ResumeDetails(props) {
             if (result.data.status === "Success") {
               setSuccess(true);
               setMessage(result.data.message);
+              setShowUpload(false);
             } else {
               setError(true);
             }
@@ -138,7 +155,9 @@ export function ResumeDetails(props) {
             setError(true);
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          setShowUpload(true);
+        });
     }
   };
 
@@ -207,19 +226,6 @@ export function ResumeDetails(props) {
         <Card className="card-hover-shadow-2x mb-3">
           <CardHeader className="card-title-text  text-capitalize ">
             <Nav>
-              {/* <NavItem>
-                  <NavLink
-                    href="#"
-                    className={classnames({
-                      active: activeTab === "1",
-                    })}
-                    onClick={() => {
-                      toggle("1");
-                    }}
-                  >
-                    Template
-                  </NavLink>
-              </NavItem> */}
               <NavItem>
                 <NavLink
                   href="#"
@@ -251,21 +257,21 @@ export function ResumeDetails(props) {
           <CardBody className="scroll-area-md">
             <TabContent activeTab={activeTab}>
               {/* <TabPane tabId="1">
-                <p>
-                  <BsDownload />
-                  <a
-                    href={resumeTemplate?.[0]?.name}
-                    download="Resume_Template.docx"
-                    className="card-p-text-black"
-                    style={{ color: "#2F479B", marginLeft: "2px" }}
-                  >
-                    Click here{" "}
-                  </a>
-                  <Label className="card-p-text-black">
-                    to download standard template
-                  </Label>
-                </p>
-              </TabPane> */}
+                 <p>
+                   <BsDownload />
+                   <a
+                     href={resumeTemplate?.[0]?.name}
+                     download="Resume_Template.docx"
+                     className="card-p-text-black"
+                     style={{ color: "#2F479B", marginLeft: "2px" }}
+                   >
+                     Click here{" "}
+                   </a>
+                   <Label className="card-p-text-black">
+                     to download standard template
+                   </Label>
+                 </p>
+               </TabPane> */}
               <TabPane tabId="1">
                 {resumeDetails?.resumepath ? (
                   <div className="mb-2">
@@ -293,42 +299,57 @@ export function ResumeDetails(props) {
                 ) : (
                   <></>
                 )}
-                <Row>
-                  <Col>
-                    <div className="dropzone-wrapper dropzone-wrapper-sm">
-                      <Dropzone
-                        onDrop={(e) => onDrop(e)}
-                        onFileDialogCancel={onCancel}
-                      >
-                        {() => (
-                          <div {...getRootProps()}>
-                            <input {...getInputProps()} />
-                            <div className="dropzone-content">
-                              <p>Upload your own resume</p>
-                              <p>
-                                Try dropping some files here, or click to select
-                                files to upload.
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </Dropzone>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <div className="file-info mt-2">
-                    Support formats: .doc, .docx and .pdf up to 5 MB
-                  </div>
-                </Row>
-                <Row>
-                  <Col className="divider me-2" />
+                {showUpload ? (
+                  <div>
+                    <Row>
+                      <Col>
+                        <div className="dropzone-wrapper dropzone-wrapper-sm">
+                          <Dropzone
+                            onDrop={(e) => onDrop(e)}
+                            onFileDialogCancel={onCancel}
+                          >
+                            {() => (
+                              <div {...getRootProps()}>
+                                <input {...getInputProps()} />
+                                <div className="dropzone-content">
+                                  <p>Upload your own resume</p>
+                                  <p>
+                                    Try dropping some files here, or click to
+                                    select files to upload.
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                          </Dropzone>
+                        </div>
+                      </Col>
+                    </Row>
 
-                  <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
-                    or
-                  </Col>
-                  <Col className="divider" />
-                </Row>
+                    <Row>
+                      <div className="file-info mt-2">
+                        Support formats: .doc, .docx and .pdf up to 5 MB
+                      </div>
+                    </Row>
+                    <Row>
+                      <Col className="divider me-2" />
+
+                      <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                        or
+                      </Col>
+                      <Col className="divider" />
+                    </Row>
+                  </div>
+                ) : (
+                  <div className="resume-info-text mb-5 mt-5">
+                    <p className="p-3">
+                      <BsInfoCircle className="resume-icon mr-2 mt-0" />
+                      Just a few more seconds! We're analyzing your skills and
+                      experience to provide you with customized job suggestions.
+                      Hang tight for 15 to 20 seconds. Check out the results in
+                      our job section.
+                    </p>
+                  </div>
+                )}
                 <p>
                   <BsDownload />
                   <a
@@ -343,51 +364,52 @@ export function ResumeDetails(props) {
                     to download standard template
                   </Label>
                 </p>
-                {/* <Row>
-                  <Col className="col-4">
-                    <b className="mb-2 d-block mt-2">Dropped Files</b>
-                    <ListGroup>
-                      <ListGroupItem key={fileName}>{fileName}</ListGroupItem>
-                    </ListGroup>
-                  </Col>
-                </Row> */}
-                {/* <div className=" div-box">
-                  <div className=" mb-2 card-p-text-black">
-                    Upload your resume here
-                  </div>
-                  <Row>
-                    <label>
-                      <div
-                        className="dropZone"
-                        id="dragbox"
-                        onChange={handleChange}
-                      >
-                        <input {...getInputProps()} />
-                        <Button
-                          style={{
-                            width: "auto",
-                            backgroundColor: "#2F2E2E",
-                            borderColor: "#2F2E2E",
-                            float: "left",
-                            marginRight: "15px",
-                          }}
-                          {...getRootProps()}
-                          className="mb-2 mt-0 btn-icon btn-pill btn-text dropzone"
-                          color="primary"
-                        >
-                          <span className="me-2">
-                            <BsUpload />
-                          </span>
 
-                          <span className="me-2">Upload</span>
-                        </Button>
-                      </div>
-                      <div className="file-info" style={{ paddingTop: "10px" }}>
-                        Support formats: doc, docx, pdf, upto 5 MB
-                      </div>
-                    </label>
-                  </Row>
-                </div> */}
+                {/* <Row>
+                   <Col className="col-4">
+                     <b className="mb-2 d-block mt-2">Dropped Files</b>
+                     <ListGroup>
+                       <ListGroupItem key={fileName}>{fileName}</ListGroupItem>
+                     </ListGroup>
+                   </Col>
+                 </Row> */}
+                {/* <div className=" div-box">
+                   <div className=" mb-2 card-p-text-black">
+                     Upload your resume here
+                   </div>
+                   <Row>
+                     <label>
+                       <div
+                         className="dropZone"
+                         id="dragbox"
+                         onChange={handleChange}
+                       >
+                         <input {...getInputProps()} />
+                         <Button
+                           style={{
+                             width: "auto",
+                             backgroundColor: "#2F2E2E",
+                             borderColor: "#2F2E2E",
+                             float: "left",
+                             marginRight: "15px",
+                           }}
+                           {...getRootProps()}
+                           className="mb-2 mt-0 btn-icon btn-pill btn-text dropzone"
+                           color="primary"
+                         >
+                           <span className="me-2">
+                             <BsUpload />
+                           </span>
+ 
+                           <span className="me-2">Upload</span>
+                         </Button>
+                       </div>
+                       <div className="file-info" style={{ paddingTop: "10px" }}>
+                         Support formats: doc, docx, pdf, upto 5 MB
+                       </div>
+                     </label>
+                   </Row>
+                 </div> */}
               </TabPane>
               <TabPane tabId="2">
                 <div className="div-box build-resume-box">
