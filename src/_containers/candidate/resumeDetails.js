@@ -72,7 +72,7 @@ export function ResumeDetails(props) {
   }, [notifications]);
 
   useEffect(() => {
-    if (resumeDetails.isparsed) {
+    if (resumeDetails?.isparsed || resumeDetails === null) {
       setShowUpload(true);
     } else {
       setShowUpload(false);
