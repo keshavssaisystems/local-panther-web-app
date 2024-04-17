@@ -645,6 +645,7 @@ export const CreateJob = forwardRef(
     const [companyValidation, setcompanyValidation] = useState(false);
     const [jobTitleValidation, setJobTitleValidation] = useState(false);
     const [openPositionValidation, setOpenPositionValidation] = useState(false);
+    const [jobLocationValidation, setJobLocationValidation] = useState(false);
     const [cityValidation, setCityValidation] = useState(false);
     const [countryOnchange, setCountryOnChange] = useState(false);
     const [descriptionValidation, setDescriptionValidation] = useState(false);
@@ -747,6 +748,9 @@ export const CreateJob = forwardRef(
       Number(event.target.elements.openPositions.value) === 0
         ? setOpenPositionValidation(true)
         : setOpenPositionValidation(false);
+      event.target.elements.jobLocation.value === "0"
+        ? setJobLocationValidation(true)
+        : setJobLocationValidation(false);
       event.target.elements.city.value === ""
         ? setCityValidation(true)
         : setCityValidation(false);
@@ -823,6 +827,7 @@ export const CreateJob = forwardRef(
         companyValidation === true ||
         jobTitleValidation === true ||
         openPositionValidation === true ||
+        jobLocationValidation === true ||
         cityValidation === true ||
         descriptionValidation === true
       ) {
@@ -833,6 +838,7 @@ export const CreateJob = forwardRef(
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
         event.target.elements.openPositions.value !== "" &&
+        event.target.elements.jobLocation.value !== "0" &&
         Number(event.target.elements.openPositions.value) !== 0 &&
         event.target.elements.zipCode.value !== "" &&
         event.target.elements.city.value !== "" &&
@@ -1560,14 +1566,19 @@ export const CreateJob = forwardRef(
                         <FormGroup>
                           <Label for="jobLocation" className="fw-semi-bold">
                             Job location
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"jobLocation"}
                             name={"jobLocation"}
                             type={"select"}
-                            onChange={(e) =>
-                              setJobLocationOption(e.target.value)
+                            invalid={
+                              jobLocationValidation === true ? true : false
                             }
+                            onChange={(e) => {
+                              setJobLocationOption(e.target.value);
+                              setJobLocationValidation(false);
+                            }}
                           >
                             <option key={0} value={0}>
                               Select job location
@@ -1592,6 +1603,11 @@ export const CreateJob = forwardRef(
                                 </option>
                               ))}
                           </Input>
+                          {jobLocationValidation === true && (
+                            <FormText color="danger">
+                              Please select job location
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}>
