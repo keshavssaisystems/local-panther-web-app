@@ -1056,6 +1056,11 @@ export const CreateJob = forwardRef(
     };
 
     const loadOptionsByZip = async (inputValue) => {
+      if (inputValue.length > 0) {
+        setZipCodeValidation(false);
+      } else {
+        setZipCodeValidation(true);
+      }
       if (inputValue.length > 3) {
         const { data = [] } = await getLocation(inputValue);
         return data.map(({ cityid: value, ...rest }) => {
@@ -1209,6 +1214,7 @@ export const CreateJob = forwardRef(
       if (searchText === "") {
         return;
       }
+      setKeyQualifucationChange(true);
       let prevKey = [...prevKeyQualificationArr1];
 
       let obj = {
@@ -1223,11 +1229,13 @@ export const CreateJob = forwardRef(
       let keyQualification1 = [...keyQualificationArr1];
       keyQualification1.push(obj);
       setKeyQual1(keyQualification1);
+      setMustHaveValidation(false);
     };
     const addNewSkillOptional = () => {
       if (searchOptionalText === "") {
         return;
       }
+      setKeyQualifucationChange(true);
       let prevKey2 = [...prevKeyQualificationArr2];
 
       let obj = {
@@ -1242,6 +1250,7 @@ export const CreateJob = forwardRef(
       let keyQualification2 = [...keyQualificationArr2];
       keyQualification2.push(obj);
       setKeyQual2(keyQualification2);
+      setMustHaveValidation(false);
     };
     const loadOptions2 = async (inputValue) => {
       if (inputValue.length > 0) {
@@ -1324,7 +1333,7 @@ export const CreateJob = forwardRef(
       }
     };
     const formatCreateLabel = (inputValue) => {
-      if (skillExist && inputValue !== "" && inputValue.length > 2) {
+      if (skillExist && inputValue !== "" && inputValue.length > 0) {
         return (
           <span style={{ cursor: "pointer" }}>
             Add new skill -{" "}
