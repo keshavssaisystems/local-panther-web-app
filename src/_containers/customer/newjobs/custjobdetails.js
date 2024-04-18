@@ -502,12 +502,7 @@ export function CustJobDetail({
                                   onConfirm={() => {
                                     setNoPaymentPopup(false);
                                   }}
-                                  onCancel={() => {
-                                    setNoPaymentPopup(false);
-                                  }}
-                                  cancelBtnText={"Remind me later"}
                                   confirmBtnText="OK"
-                                  showCancel
                                   customIcon={infoIcon}
                                 >
                                   <p className="candidate-profile-prompt">
