@@ -105,6 +105,11 @@ export function CandidateProfile() {
     await getDropdownLists();
   };
 
+  const closeJobPreferModal = function () {
+    setshowJobPreferModal(false);
+    loadPage();
+  };
+
   let popular_skills = [];
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());
@@ -209,6 +214,8 @@ export function CandidateProfile() {
   let stringArray = [];
   const [viewValidation, setViewValidation] = useState(true);
   const [showEEPopup, setShowEEPopup] = useState(false);
+  const [showJopPrefPopup, setShowJopPrefPopup] = useState(false);
+  const [showJobPreferModal, setshowJobPreferModal] = useState(false);
   const [stringValue, setStringValue] = useState("");
   useEffect(() => {
     if (profileData) {
@@ -234,6 +241,17 @@ export function CandidateProfile() {
         ? setShowEEPopup(true)
         : setShowEEPopup(false);
 
+      if (
+        profileData?.personalInfo?.employmenteligiblity !== null &&
+        profileData?.personalInfo?.employmenteligiblity !== undefined &&
+        profileData?.personalInfo?.employmenteligiblity !== 0 &&
+        (profileData?.jobPreferenceInfo === null ||
+          profileData?.jobPreferenceInfo?.length === 0)
+      ) {
+        setShowJopPrefPopup(true);
+      } else {
+        setShowJopPrefPopup(false);
+      }
       if (
         sectionValidation.skills === true &&
         sectionValidation.qualification === true &&
@@ -292,6 +310,11 @@ export function CandidateProfile() {
     }
   };
 
+  const onClickJobPrefUpdate = async () => {
+    setshowJobPreferModal(true);
+    setShowJopPrefPopup(false);
+  };
+
   return (
     <div className="profile-view">
       <div className="profile-view">
@@ -314,6 +337,19 @@ export function CandidateProfile() {
               Are you authorized to work in the United States?
             </p>
           </SweetAlert>
+
+          <SweetAlert
+            warning
+            show={showJopPrefPopup}
+            confirmBtnText={"Update"}
+            onConfirm={() => onClickJobPrefUpdate(true)}
+            closeOnClickOutside={false}
+          >
+            <p className="candidate-profile-prompt">
+              Please provide job preferences.
+            </p>
+          </SweetAlert>
+
           <Alert
             color="warning"
             isOpen={viewValidation}
@@ -375,8 +411,17 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-            <JobPreferences onCallBack={() => loadPage()} />
+            <JobPreferences onCallBack={() => loadPage()} isRequired={false} />
           </Row>
+
+          {showJobPreferModal && (
+            <Row>
+              <JobPreferences
+                onCallBack={() => closeJobPreferModal()}
+                isRequired={true}
+              />
+            </Row>
+          )}
         </div>
       ) : (
         <div className="loader-wrapper d-flex justify-content-center align-items-center loader">

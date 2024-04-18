@@ -29,7 +29,7 @@ import { getBasePayMask } from "_helpers/helper";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
-  const [isPersonalModal, setPersonalModal] = useState(false);
+
   const selectDate = function () {};
 
   const [jobTypes, setJobTypes] = useState([]);
@@ -68,6 +68,7 @@ export function JobPreferences(props) {
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const distanceList = useSelector((state) => state.getProfile.distanceList);
+  const [isPersonalModal, setPersonalModal] = useState(props?.isRequired);
   const [formDetails, setFormData] = useState({});
 
   const location = useSelector((state) => state.dropdown?.jobType);
@@ -705,11 +706,18 @@ export function JobPreferences(props) {
             size="lg"
             isOpen={isPersonalModal}
           >
-            <ModalHeader toggle={() => closeModal()} charCode="Y">
-              <strong className="card-title-text">
-                Add/Edit Job preferences
-              </strong>
-            </ModalHeader>
+            {!props?.isRequired ? (
+              <ModalHeader toggle={() => closeModal()} charCode="Y">
+                <strong className="card-title-text">
+                  Add/Edit Job preferences
+                </strong>
+              </ModalHeader>
+            ) : (
+              <ModalHeader>
+                <strong className="card-title-text">Add Job preferences</strong>
+              </ModalHeader>
+            )}
+
             <ModalBody>
               {preferenceDetails?.map((parentItem, index) => (
                 <Form onSubmit={(e) => onSubmit(e)}>
@@ -1165,13 +1173,15 @@ export function JobPreferences(props) {
                     <Button className="me-2 save-btn" type="submit">
                       Save
                     </Button>
-                    <Button
-                      type="button"
-                      className="close-btn"
-                      onClick={() => closeModal()}
-                    >
-                      Close
-                    </Button>
+                    {!props?.isRequired && (
+                      <Button
+                        type="button"
+                        className="close-btn"
+                        onClick={() => closeModal()}
+                      >
+                        Close
+                      </Button>
+                    )}
                   </div>
                 </Form>
               ))}
