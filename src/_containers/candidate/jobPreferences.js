@@ -707,7 +707,7 @@ export function JobPreferences(props) {
             isOpen={isPersonalModal}
           >
             {!props?.isRequired ? (
-              <ModalHeader toggle={() => closeModal()} charCode="X">
+              <ModalHeader toggle={() => closeModal()} charCode="Y">
                 <strong className="card-title-text">
                   Add/Edit Job preferences
                 </strong>
