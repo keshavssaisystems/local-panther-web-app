@@ -60,6 +60,7 @@ export const CreateJob = forwardRef(
       const state = prevState.map((x, index) => (tab === index ? !x : false));
       setAccordion(state);
     };
+    console.log(customerDetails);
     useEffect((e) => {
       if (type === "new_template" && previousStep !== 3) {
         setZipcodeCityState({
@@ -2291,6 +2292,7 @@ export const CreateJob = forwardRef(
                             id={"payPeriodType"}
                             name={"payPeriodType"}
                             type={"select"}
+                            invalid={payPeriodTypeValidation ? true : false}
                             onChange={() => setPayPeriodTypeValidation(false)}
                           >
                             <option key={0} value={""}>
@@ -2334,6 +2336,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            invalid={minimumBasepayValidation ? true : false}
                             onChange={() => setMinimumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
@@ -2363,6 +2366,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            invalid={maximumBasepayValidation ? true : false}
                             onChange={() => setMaximumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
@@ -2481,6 +2485,11 @@ export const CreateJob = forwardRef(
                               onSelectSkillsDropdown(evt);
                               setKeyQualifucationChange(true);
                             }}
+                            className={
+                              mustHaveValidation === true
+                                ? "async-border-red"
+                                : ""
+                            }
                             formatCreateLabel={formatCreateLabel}
                             onCreateOption={addNewSkill}
                           />
