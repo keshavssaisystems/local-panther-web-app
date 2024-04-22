@@ -60,6 +60,7 @@ export const CreateJob = forwardRef(
       const state = prevState.map((x, index) => (tab === index ? !x : false));
       setAccordion(state);
     };
+    console.log(customerDetails);
     useEffect((e) => {
       if (type === "new_template" && previousStep !== 3) {
         setZipcodeCityState({
@@ -645,6 +646,7 @@ export const CreateJob = forwardRef(
     const [companyValidation, setcompanyValidation] = useState(false);
     const [jobTitleValidation, setJobTitleValidation] = useState(false);
     const [openPositionValidation, setOpenPositionValidation] = useState(false);
+    const [jobLocationValidation, setJobLocationValidation] = useState(false);
     const [cityValidation, setCityValidation] = useState(false);
     const [countryOnchange, setCountryOnChange] = useState(false);
     const [descriptionValidation, setDescriptionValidation] = useState(false);
@@ -747,6 +749,9 @@ export const CreateJob = forwardRef(
       Number(event.target.elements.openPositions.value) === 0
         ? setOpenPositionValidation(true)
         : setOpenPositionValidation(false);
+      event.target.elements.jobLocation.value === "0"
+        ? setJobLocationValidation(true)
+        : setJobLocationValidation(false);
       event.target.elements.city.value === ""
         ? setCityValidation(true)
         : setCityValidation(false);
@@ -823,6 +828,7 @@ export const CreateJob = forwardRef(
         companyValidation === true ||
         jobTitleValidation === true ||
         openPositionValidation === true ||
+        jobLocationValidation === true ||
         cityValidation === true ||
         descriptionValidation === true
       ) {
@@ -833,6 +839,7 @@ export const CreateJob = forwardRef(
         event.target.elements.companyName.value !== "" &&
         event.target.elements.jobTitle.value !== "" &&
         event.target.elements.openPositions.value !== "" &&
+        event.target.elements.jobLocation.value !== "0" &&
         Number(event.target.elements.openPositions.value) !== 0 &&
         event.target.elements.zipCode.value !== "" &&
         event.target.elements.city.value !== "" &&
@@ -1049,6 +1056,11 @@ export const CreateJob = forwardRef(
     };
 
     const loadOptionsByZip = async (inputValue) => {
+      if (inputValue.length > 0) {
+        setZipCodeValidation(false);
+      } else {
+        setZipCodeValidation(true);
+      }
       if (inputValue.length > 3) {
         const { data = [] } = await getLocation(inputValue);
         return data.map(({ cityid: value, ...rest }) => {
@@ -1202,6 +1214,7 @@ export const CreateJob = forwardRef(
       if (searchText === "") {
         return;
       }
+      setKeyQualifucationChange(true);
       let prevKey = [...prevKeyQualificationArr1];
 
       let obj = {
@@ -1216,11 +1229,13 @@ export const CreateJob = forwardRef(
       let keyQualification1 = [...keyQualificationArr1];
       keyQualification1.push(obj);
       setKeyQual1(keyQualification1);
+      setMustHaveValidation(false);
     };
     const addNewSkillOptional = () => {
       if (searchOptionalText === "") {
         return;
       }
+      setKeyQualifucationChange(true);
       let prevKey2 = [...prevKeyQualificationArr2];
 
       let obj = {
@@ -1235,9 +1250,10 @@ export const CreateJob = forwardRef(
       let keyQualification2 = [...keyQualificationArr2];
       keyQualification2.push(obj);
       setKeyQual2(keyQualification2);
+      setMustHaveValidation(false);
     };
     const loadOptions2 = async (inputValue) => {
-      if (inputValue.length > 2) {
+      if (inputValue.length > 0) {
         setLabelVisibility(true);
         setSearchText(inputValue);
         const { data = [] } = await getSkillsFilter(inputValue);
@@ -1260,7 +1276,7 @@ export const CreateJob = forwardRef(
       }
     };
     const loadOptionsoptional = async (inputValue) => {
-      if (inputValue.length > 2) {
+      if (inputValue.length > 0) {
         setLabelVisibility(true);
         setSearchOptionalText(inputValue);
         const { data = [] } = await getSkillsFilter(inputValue);
@@ -1317,7 +1333,7 @@ export const CreateJob = forwardRef(
       }
     };
     const formatCreateLabel = (inputValue) => {
-      if (skillExist && inputValue !== "" && inputValue.length > 2) {
+      if (skillExist && inputValue !== "" && inputValue.length > 0) {
         return (
           <span style={{ cursor: "pointer" }}>
             Add new skill -{" "}
@@ -1560,14 +1576,19 @@ export const CreateJob = forwardRef(
                         <FormGroup>
                           <Label for="jobLocation" className="fw-semi-bold">
                             Job location
+                            <span style={{ color: "red" }}>* </span>
                           </Label>
                           <Input
                             id={"jobLocation"}
                             name={"jobLocation"}
                             type={"select"}
-                            onChange={(e) =>
-                              setJobLocationOption(e.target.value)
+                            invalid={
+                              jobLocationValidation === true ? true : false
                             }
+                            onChange={(e) => {
+                              setJobLocationOption(e.target.value);
+                              setJobLocationValidation(false);
+                            }}
                           >
                             <option key={0} value={0}>
                               Select job location
@@ -1592,6 +1613,11 @@ export const CreateJob = forwardRef(
                                 </option>
                               ))}
                           </Input>
+                          {jobLocationValidation === true && (
+                            <FormText color="danger">
+                              Please select job location
+                            </FormText>
+                          )}
                         </FormGroup>
                       </Col>
                       <Col md={6} lg={3}>
@@ -2275,6 +2301,7 @@ export const CreateJob = forwardRef(
                             id={"payPeriodType"}
                             name={"payPeriodType"}
                             type={"select"}
+                            invalid={payPeriodTypeValidation ? true : false}
                             onChange={() => setPayPeriodTypeValidation(false)}
                           >
                             <option key={0} value={""}>
@@ -2318,6 +2345,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            invalid={minimumBasepayValidation ? true : false}
                             onChange={() => setMinimumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
@@ -2347,6 +2375,7 @@ export const CreateJob = forwardRef(
                             type={"number"}
                             min={0}
                             step={"any"}
+                            invalid={maximumBasepayValidation ? true : false}
                             onChange={() => setMaximumBasepayValidation(false)}
                             defaultValue={
                               type === "new_template" && previousStep !== 3
@@ -2465,6 +2494,11 @@ export const CreateJob = forwardRef(
                               onSelectSkillsDropdown(evt);
                               setKeyQualifucationChange(true);
                             }}
+                            className={
+                              mustHaveValidation === true
+                                ? "async-border-red"
+                                : ""
+                            }
                             formatCreateLabel={formatCreateLabel}
                             onCreateOption={addNewSkill}
                           />

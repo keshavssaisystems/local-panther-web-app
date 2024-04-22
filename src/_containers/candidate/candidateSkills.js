@@ -247,7 +247,7 @@ export function CandidateSkills(props) {
   };
   const [skillExist, setSkillExist] = useState(false);
   const loadOptions = async (inputValue) => {
-    if (inputValue.length > 2) {
+    if (inputValue.length > 0) {
       setSearchText(inputValue);
       setLabelVisibility(true);
 
