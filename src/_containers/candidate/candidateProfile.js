@@ -345,9 +345,7 @@ export function CandidateProfile() {
             onConfirm={() => onClickJobPrefUpdate(true)}
             closeOnClickOutside={false}
           >
-            <p className="candidate-profile-prompt">
-              Please provide job preferences.
-            </p>
+            Please provide job preferences.
           </SweetAlert>
 
           <Alert
