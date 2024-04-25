@@ -1256,7 +1256,10 @@ export const CreateJob = forwardRef(
       if (inputValue.length > 0) {
         setLabelVisibility(true);
         setSearchText(inputValue);
-        const { data = [] } = await getSkillsFilter(inputValue);
+        let payload = {
+          searchText: inputValue,
+        };
+        const { data = [] } = await getSkillsFilter(payload);
 
         const isKeyTrueForAll = data.some(
           (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
@@ -1279,7 +1282,10 @@ export const CreateJob = forwardRef(
       if (inputValue.length > 0) {
         setLabelVisibility(true);
         setSearchOptionalText(inputValue);
-        const { data = [] } = await getSkillsFilter(inputValue);
+        let payload = {
+          searchText: inputValue,
+        };
+        const { data = [] } = await getSkillsFilter(payload);
 
         const isKeyTrueForAll = data.some(
           (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
@@ -2532,7 +2538,10 @@ export const CreateJob = forwardRef(
                                 : prevKeyQualificationArr2
                             }
                             onKeyDown={(e) => handleKeyDownOptional(e)}
-                            onChange={(evt) => selectOptionalSkills(evt)}
+                            onChange={(evt) => {
+                              selectOptionalSkills(evt);
+                              setKeyQualifucationChange(true);
+                            }}
                             formatCreateLabel={formatCreateLabel}
                             onCreateOption={addNewSkillOptional}
                           />

@@ -250,8 +250,11 @@ export function CandidateSkills(props) {
     if (inputValue.length > 0) {
       setSearchText(inputValue);
       setLabelVisibility(true);
+      let payload = {
+        searchText: inputValue,
+      };
 
-      const { data = [] } = await getSkillsFilter(inputValue);
+      const { data = [] } = await getSkillsFilter(payload);
 
       const isKeyTrueForAll = data.some(
         (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
@@ -337,7 +340,7 @@ export function CandidateSkills(props) {
   };
 
   const formatCreateLabel = (inputValue) => {
-    if (skillExist && inputValue !== "" && inputValue.length > 2) {
+    if (skillExist && inputValue !== "" && inputValue.length > 0) {
       return (
         <span style={{ cursor: "pointer" }}>
           Add new skill - <span style={{ color: "#545cd8" }}>{inputValue}</span>
