@@ -125,7 +125,10 @@ export function CandidateProfile() {
     await dispatch(getpayPeriodActions.getpayPeriod());
     await dispatch(experienceLevelActions.getExperienceLevelThunk());
     await dispatch(resumeTemplateActions.getResumeTemplate());
-    popular_skills = await getSkillsFilter("java");
+    let payload = {
+      searchText: "java",
+    };
+    popular_skills = await getSkillsFilter(payload);
     setPopularSkills(popular_skills.data);
     await dispatch(studyFieldActions.getStudyField());
     await dispatch(dropdownActions.getJobLocationTypeThunk());
