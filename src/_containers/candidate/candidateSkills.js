@@ -337,7 +337,7 @@ export function CandidateSkills(props) {
   };
 
   const formatCreateLabel = (inputValue) => {
-    if (skillExist && inputValue !== "" && inputValue.length > 2) {
+    if (skillExist && inputValue !== "" && inputValue.length > 0) {
       return (
         <span style={{ cursor: "pointer" }}>
           Add new skill - <span style={{ color: "#545cd8" }}>{inputValue}</span>
