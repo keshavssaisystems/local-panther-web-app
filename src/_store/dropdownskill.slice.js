@@ -44,11 +44,13 @@ export const skillActions = {
 };
 export const skillReducer = skillSlice.reducer;
 
-export const getSkillsFilter = async (searchText) => {
+export const getSkillsFilter = async (payload = {}) => {
   const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
-  return await fetchWrapper.get(
-    `${baseUrl}/Skill/GetSkillDropdown?searchText=${searchText}`
-  );
+
+  const GET_SKILL_STATS = `${baseUrl}/Skill/GetSkillDropdown?${new URLSearchParams(
+    payload
+  )}`;
+  return await fetchWrapper.get(GET_SKILL_STATS);
 };
 
 export const getLanguageFilter = async (searchText) => {
