@@ -175,7 +175,10 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
     if (inputValue.length > 2) {
       setLabelVisibility(true);
       setSearchText(inputValue);
-      const { data = [] } = await getSkillsFilter(inputValue);
+      let payload = {
+        searchText: inputValue,
+      };
+      const { data = [] } = await getSkillsFilter(payload);
 
       const isKeyTrueForAll = data.some(
         (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
@@ -199,7 +202,10 @@ export function KeyQualification({ data, postData, prevStep, previousData }) {
     if (inputValue.length > 2) {
       setLabelVisibility(true);
       setSearchOptionalText(inputValue);
-      const { data = [] } = await getSkillsFilter(inputValue);
+      let payload = {
+        searchText: inputValue,
+      };
+      const { data = [] } = await getSkillsFilter(payload);
 
       const isKeyTrueForAll = data.some(
         (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()

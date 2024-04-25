@@ -250,8 +250,11 @@ export function CandidateSkills(props) {
     if (inputValue.length > 0) {
       setSearchText(inputValue);
       setLabelVisibility(true);
+      let payload = {
+        searchText: inputValue,
+      };
 
-      const { data = [] } = await getSkillsFilter(inputValue);
+      const { data = [] } = await getSkillsFilter(payload);
 
       const isKeyTrueForAll = data.some(
         (item) => item["skillname"].toLowerCase() === inputValue.toLowerCase()
