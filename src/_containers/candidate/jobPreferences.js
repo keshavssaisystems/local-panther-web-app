@@ -125,6 +125,7 @@ export function JobPreferences(props) {
         workschedulestext: null,
         traveldistance: "",
       });
+      setShowDistance(true);
       setDetails(data);
     } else {
       if (get_response.length > 0) {
@@ -159,7 +160,7 @@ export function JobPreferences(props) {
           workschedulestext: get_response[0].workschedulestext,
           traveldistance: get_response[0].traveldistance,
         });
-
+        setShowDistance(data?.[0]?.willingtorelocate ? false : true);
         let new_data = data[0].candidateJobtitlesDtos?.filter(
           (x) => x.ischecked == true
         );
@@ -913,7 +914,6 @@ export function JobPreferences(props) {
                     <div className="mb-1 fw-bold">Desired minimum pay</div>
                     <hr />
                   </Row>
-
                   <Row>
                     <Col md={4}>
                       <FormGroup>
@@ -983,7 +983,6 @@ export function JobPreferences(props) {
                       </FormGroup>
                     </Col>
                   </Row>
-
                   <Row>
                     <div className="mb-1 fw-bold">Location</div>
                     <hr />
@@ -994,7 +993,6 @@ export function JobPreferences(props) {
                       <span style={{ color: "red" }}> *</span>
                     </Label>
                   </Row>
-
                   <div>
                     <Row className="mt-2 mb-2">
                       <Col md={4}>
@@ -1038,7 +1036,6 @@ export function JobPreferences(props) {
                       </Col>
                     </Row>
                   </div>
-
                   {parentItem.willingtorelocate ? (
                     <div>
                       <Row>
@@ -1136,6 +1133,7 @@ export function JobPreferences(props) {
                   ) : (
                     <></>
                   )}
+
                   {showDistance && (
                     <div>
                       <Row>
