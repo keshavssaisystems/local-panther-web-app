@@ -22,6 +22,7 @@ import {
 } from "_helpers/helper";
 
 import AsyncSelect from "react-select/async";
+import Select from "react-select";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
@@ -606,13 +607,14 @@ export function EducationModal(props) {
                   <span className="required-icon"> *</span>
                 </Label>
 
-                <AsyncSelect
-                  placeholder="Select..."
-                  name="levelofeducation"
-                  defaultOptions={educationList}
+                <Select
+                  defaultValue={item.education.value == 0 ? [] : item.education}
                   isMulti={false}
+                  name="levelofeducation"
+                  options={educationList}
                   value={item.education.value == 0 ? [] : item.education}
                   className="location-dropdown-education"
+                  placeholder="Select..."
                   onChange={(evt) =>
                     onHandleInputChange("levelofeducation", evt, index)
                   }
@@ -629,12 +631,12 @@ export function EducationModal(props) {
                   <Label for={"studyField"} className="fw-semi-bold">
                     Field of study
                   </Label>
-                  <AsyncSelect
+                  <Select
                     placeholder="Select..."
                     name="studyField"
-                    defaultOptions={studyFieldList}
+                    options={studyFieldList}
                     isMulti={false}
-                    value={
+                    defaultValue={
                       item.fieldofstudy?.value == 0 ? [] : item.fieldofstudy
                     }
                     className="location-dropdown-education"
