@@ -831,7 +831,8 @@ export const CreateJob = forwardRef(
         openPositionValidation === true ||
         jobLocationValidation === true ||
         cityValidation === true ||
-        descriptionValidation === true
+        descriptionValidation === true ||
+        addressValidation === true
       ) {
         setAccordion([true, false, false, false, false]);
       }
