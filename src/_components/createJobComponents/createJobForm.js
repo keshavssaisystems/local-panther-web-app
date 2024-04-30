@@ -807,10 +807,11 @@ export const CreateJob = forwardRef(
       event.target.elements.maximumAmount.value === ""
         ? setMaximumBasepayValidation(true)
         : setMaximumBasepayValidation(false);
-      event.target.elements.mustHave.value === "" ||
-      event.target.elements.mustHave.length === 0
+      prevKeyQualificationArr1?.length === 0 &&
+      keyQualificationArr1?.length === 0
         ? setMustHaveValidation(true)
         : setMustHaveValidation(false);
+
       if (mustHaveValidation === true) {
         setAccordion([false, false, false, true, false]);
       }
@@ -830,7 +831,8 @@ export const CreateJob = forwardRef(
         openPositionValidation === true ||
         jobLocationValidation === true ||
         cityValidation === true ||
-        descriptionValidation === true
+        descriptionValidation === true ||
+        addressValidation === true
       ) {
         setAccordion([true, false, false, false, false]);
       }
@@ -2002,7 +2004,7 @@ export const CreateJob = forwardRef(
                             name="certificationids"
                             options={certificationOptions}
                             classNamePrefix="select"
-                            placeholder="Select field of study"
+                            placeholder="Select certification"
                           />
                         </FormGroup>
                       </Col>
