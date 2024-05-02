@@ -343,10 +343,12 @@ export function ResumeDetails(props) {
                   <div className="resume-info-text mb-5 mt-5">
                     <p className="p-3">
                       <BsInfoCircle className="resume-icon mr-2 mt-0" />
-                      Just a few more seconds! We're analyzing your skills and
-                      experience to provide you with customized job suggestions.
-                      Hang tight for 15 to 20 seconds. Check out the results in
-                      our job section.
+                      Please wait for a few more moments. We are parsing and
+                      evaluating your skills and experience in order to offer
+                      you personalized job recommendations. Please remain
+                      patient for approximately 30 to 40 seconds. You can view
+                      the results in our job section once the resume parsing
+                      process is complete.
                     </p>
                   </div>
                 )}
