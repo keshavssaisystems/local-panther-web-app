@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { yearActions, monthActions } from "_store";
 import { Row, Col, Alert } from "reactstrap";
 import Loader from "react-loaders";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
@@ -290,6 +290,14 @@ export function CandidateProfile() {
     }
     setStringValue(stringArray.toString());
   }, [profileData]);
+  const notifications = useSelector(
+    (state) => state.candidateDashboard.alertsList
+  );
+  useEffect(() => {
+    if (notifications?.[0]?.notificationmessage === "Resume Parsed") {
+      loadPage();
+    }
+  }, [notifications]);
 
   const setEmployementEligibility = (type) => {
     updateEmploymentEligibility(type);
