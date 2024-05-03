@@ -220,6 +220,7 @@ export function CandidateProfile() {
   const [showJopPrefPopup, setShowJopPrefPopup] = useState(false);
   const [showJobPreferModal, setshowJobPreferModal] = useState(false);
   const [stringValue, setStringValue] = useState("");
+  const [viewAINote, setViewAINote] = useState(true);
   useEffect(() => {
     if (profileData) {
       sectionValidation.skills =
@@ -367,6 +368,29 @@ export function CandidateProfile() {
             Enhance your experience and find the{" "}
             <span className="prompt-bold">best job matches</span>. Please
             provide <span className="prompt-bold">{stringValue}</span>
+          </Alert>
+          <Alert
+            color="info"
+            isOpen={viewAINote}
+            toggle={() => setViewAINote(false)}
+          >
+            <b>Note:</b>
+            <ul className="mb-0">
+              <li>
+                Although AI Candidate/Job Matching and Resume Parsing can
+                greatly enhance the resume parsing and matching process, they
+                are not foolproof.
+              </li>
+              <li>
+                It is still important for users to carefully review and adjust
+                their profiles according to their individual experiences and
+                preferences.
+              </li>
+              <li>
+                No technology can substitute the significance of thoughtful
+                self-presentation and customization to meet specific criteria.
+              </li>
+            </ul>
           </Alert>
           <Row>
             <PersonalInformation

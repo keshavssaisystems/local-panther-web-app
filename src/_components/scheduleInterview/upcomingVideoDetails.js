@@ -166,7 +166,9 @@ export function UpcomingVideoDetails({
       interviewDetails?.suggestedquestion !== undefined
         ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
         : "";
-    suggestedQuestionArray = suggestedJson?.questions?.split("\n");
+    suggestedQuestionArray = Array.isArray(suggestedJson?.questions)
+      ? suggestedJson?.questions
+      : suggestedJson?.questions?.split("\n");
   } catch {
     suggestedJson = "";
     suggestedQuestionArray = [];
