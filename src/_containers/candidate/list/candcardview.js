@@ -112,7 +112,7 @@ export function CandCardView({
               <Col md="12">
                 <Row className="mb-2">
                   <Col xs={7} sm={7} md="7" lg={7} xl={7} xxl={7}>
-                    <div className="job-title">{name} </div>
+                    <div className="job-title">{name}</div>
                     <div className="muted-name">{customer}</div>
                   </Col>
                   <Col
