@@ -19,6 +19,7 @@ import {
   BsQuestionCircle,
   BsCheckCircle,
   BsCashStack,
+  BsHandThumbsUp,
 } from "react-icons/bs";
 import "../../../_components/job/job.scss";
 import "./candidatelist.scss";
@@ -111,7 +112,7 @@ export function CandCardView({
               <Col md="12">
                 <Row className="mb-2">
                   <Col xs={7} sm={7} md="7" lg={7} xl={7} xxl={7}>
-                    <div className="job-title">{name}</div>
+                    <div className="job-title">{name} </div>
                     <div className="muted-name">{customer}</div>
                   </Col>
                   <Col
@@ -152,6 +153,23 @@ export function CandCardView({
                     )}
                   </Col>
                 </Row>
+                {additionalData.iscustomerlike ? (
+                  <>
+                    <p className="job-details">
+                      <Row>
+                        <Col md="1" lg="1">
+                          <BsHandThumbsUp className="mb-1" />
+                        </Col>
+                        <Col md="9" lg="9">
+                          Liked by employer
+                        </Col>
+                      </Row>
+                    </p>
+                  </>
+                ) : (
+                  <></>
+                )}
+
                 <p className="job-details">
                   <Row>
                     <Col md="1" lg="1">
