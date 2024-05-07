@@ -207,7 +207,7 @@ export function CandCardView({
                     </Col>
                   </Row>
                 </p>
-                {additionalData.iscustomerlike === false ? (
+                {additionalData.iscustomerlike ? (
                   <>
                     <p className="candidate-liked">
                       <Row>
