@@ -141,11 +141,19 @@ export function VideoInterviewDetails({
   const rejectSchedule = () => {
     rejectInterview(interviewId);
   };
-  let suggestedJson =
-    interviewDetail?.suggestedquestion !== ""
-      ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
-      : "";
-  let suggestedQuestionArray = suggestedJson?.questions?.split("\n");
+  let suggestedJson = "";
+  let suggestedQuestionArray = [];
+  try {
+    suggestedJson =
+      interviewDetail?.suggestedquestion !== ""
+        ? JSON.parse(interviewDetails?.suggestedquestion.replace(/'/g, '"'))
+        : "";
+    suggestedQuestionArray = Array.isArray(suggestedJson?.questions)
+      ? suggestedJson?.questions
+      : suggestedJson?.questions?.split("\n");
+  } catch {
+    suggestedQuestionArray = [];
+  }
   let customQuestion = [];
   let preQuestions = [];
   if (
