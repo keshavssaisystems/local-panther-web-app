@@ -14,7 +14,11 @@ import { CreateJob } from "../../../_components/createJobComponents/createJobFor
 import JobPreview from "../../../_components/createJobComponents/jobPreview";
 import PublishJobStep from "../../../_components/createJobComponents/publishJobStep";
 import { useDispatch, useSelector } from "react-redux";
-import { createjobActions, dropdownActions } from "_store";
+import {
+  createjobActions,
+  dropdownActions,
+  certificationTypeActions,
+} from "_store";
 import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 import { useParams } from "react-router-dom";
 import "./CreateJob.scss";
@@ -86,6 +90,7 @@ export function CreateJobWizard({ type }) {
     await dispatch(createjobActions.getPreviousJobListThunk(searchArr));
   };
   const getDataForPreview = (event) => {
+    // debugger;
     setJobPreviewData(event);
   };
   const editJob = (jobData) => {
@@ -134,12 +139,17 @@ export function CreateJobWizard({ type }) {
     await dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
     );
+    await dispatch(certificationTypeActions.certificationType());
   };
 
   const jobLocationOptions = useSelector(
     (state) => state.dropdown.jobLocationType
   );
   const shiftsOption = useSelector((state) => state.dropdown.shift);
+  const certificationDetails = useSelector(
+    (state) => state.certificateType.user.data
+  );
+
   const workScheduleOptions = useSelector(
     (state) => state.dropdown.workSchedule
   );
@@ -195,6 +205,7 @@ export function CreateJobWizard({ type }) {
       name: "Create/update job",
       component: (
         <CreateJob
+          certificationList={certificationDetails}
           shiftsOption={shiftsOption}
           workScheduleOptions={workScheduleOptions}
           jobTypeOption={jobTypeOption}
@@ -294,7 +305,11 @@ export function CreateJobWizard({ type }) {
       if (compState === 1) {
         childRef.current.submit();
       } else {
-        next();
+        if (evt.key === "Enter") {
+          evt.preventDefault(); // Prevent form submission
+        } else {
+          next();
+        }
       }
     }
   };

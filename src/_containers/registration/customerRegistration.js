@@ -57,6 +57,8 @@ export function CustomerRegistration() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   const authUser = useSelector((x) => x?.auth?.token);
+  const [countryValue, setCountryValue] = useState([]);
+  const [cityValue, setCityValue] = useState(0);
   const [message, setMessage] = useState("");
   const [countryList, setCountryList] = useState([]);
   const [compCountryList, setCompCountryList] = useState([]);
@@ -200,9 +202,11 @@ export function CustomerRegistration() {
           address: "",
           zipcode: "",
           cityid: Number(formData.cityid),
-          stateid: Number(formData.stateid),
+          stateid: Number(
+            cityList?.find((x) => x.cityid == formData.cityid)?.stateid
+          ),
           countryid: 1,
-          isactive: true,
+          isactive: false,
           customerstatusid: 0,
           currentUserId: 0,
           userCompany: {
@@ -252,7 +256,9 @@ export function CustomerRegistration() {
         address: "",
         zipcode: "",
         cityid: Number(formData.cityid),
-        stateid: Number(formData.stateid),
+        stateid: Number(
+          cityList?.find((x) => x.cityid == formData.cityid)?.stateid
+        ),
         countryid: 1,
         isactive: false,
         customerstatusid: 0,
@@ -313,7 +319,7 @@ export function CustomerRegistration() {
       lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       email: getValues("email"),
-      countryid: countryValue,
+      countryid: countryValue?.value,
       stateid: parseInt(getValues("stateid")),
       cityid: cityValue,
       phoneotp: null,
@@ -466,19 +472,18 @@ export function CustomerRegistration() {
     }
   };
 
-  const [countryValue, setCountryValue] = useState(0);
-  const [cityValue, setCityValue] = useState(0);
-
   const setAsyncSelectValue = (data) => {
     setValue("cityid", String(data.value));
     setCityValue(data.value);
     let state = String(cityList?.find((x) => x.cityid === data.value)?.stateid);
     setValue("stateid", state);
+    setValue("countryid", String(1));
+    setCountryValue([{ value: 1, label: "USA" }]);
   };
 
   const onSelectCountryDropdown = (data) => {
-    setCountryValue(data.value);
-    setValue("countryid", String(data.value));
+    setCountryValue([{ value: 1, label: "USA" }]);
+    setValue("countryid", String(1));
   };
 
   const onSelectCompanyDropdown = (data) => {
@@ -1283,17 +1288,18 @@ export function CustomerRegistration() {
                 placeholderText="search"
                 isMulti={false}
                 className={`placeholder-name ${
-                  errors.countryid && countryValue === 0
+                  errors.countryid && countryValue?.length === 0
                     ? "async-border-red"
                     : ""
                 }`}
                 {...register("countryid")}
+                value={countryValue}
                 defaultOptions={countryList}
                 onChange={(e) => onSelectCountryDropdown(e)}
                 onMenuOpen={() => checkCityValid()}
               />
               <div className="async-error-text">
-                {errors.countryid && countryValue === 0
+                {errors.countryid && countryValue?.length === 0
                   ? "Country is required"
                   : ""}
               </div>

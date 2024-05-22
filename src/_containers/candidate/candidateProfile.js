@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { yearActions, monthActions } from "_store";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Alert } from "reactstrap";
 import Loader from "react-loaders";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
 import "./profile.scss";
 import candidatelogo from "../../assets/utils/images/candidate.svg";
@@ -33,6 +33,7 @@ import {
   studyFieldActions,
   profileSkillsActions,
 } from "_store";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CandidateProfile() {
   const dispatch = useDispatch();
@@ -104,6 +105,11 @@ export function CandidateProfile() {
     await getDropdownLists();
   };
 
+  const closeJobPreferModal = function () {
+    setshowJobPreferModal(false);
+    loadPage();
+  };
+
   let popular_skills = [];
   const getDropdownLists = async function () {
     await dispatch(genderActions.getGender());
@@ -119,7 +125,10 @@ export function CandidateProfile() {
     await dispatch(getpayPeriodActions.getpayPeriod());
     await dispatch(experienceLevelActions.getExperienceLevelThunk());
     await dispatch(resumeTemplateActions.getResumeTemplate());
-    popular_skills = await getSkillsFilter("java");
+    let payload = {
+      searchText: "java",
+    };
+    popular_skills = await getSkillsFilter(payload);
     setPopularSkills(popular_skills.data);
     await dispatch(studyFieldActions.getStudyField());
     await dispatch(dropdownActions.getJobLocationTypeThunk());
@@ -177,6 +186,7 @@ export function CandidateProfile() {
     new_data.educationInfo = filter_data?.candidateEducationDtos;
     new_data.certificationsInfo = filter_data?.candidateCertificationDtos;
     new_data.additionalInfo = filter_data?.candidateAdditionalInformationDtos;
+    new_data.jobPreferenceInfo = filter_data?.candidateJobPreferenceDtos;
     setProfileData(new_data);
 
     let dropdown_selected = { ...dropdownLists };
@@ -203,14 +213,185 @@ export function CandidateProfile() {
     };
     setDropDownLists(dropdown_selected);
   };
+  let sectionValidation = {};
+  let stringArray = [];
+  const [viewValidation, setViewValidation] = useState(true);
+  const [showEEPopup, setShowEEPopup] = useState(false);
+  const [showJopPrefPopup, setShowJopPrefPopup] = useState(false);
+  const [showJobPreferModal, setshowJobPreferModal] = useState(false);
+  const [stringValue, setStringValue] = useState("");
+  const [viewAINote, setViewAINote] = useState(true);
+  useEffect(() => {
+    if (profileData) {
+      sectionValidation.skills =
+        profileData?.skillsInfo?.length === 0 ? false : true;
+      sectionValidation.education =
+        profileData?.educationInfo?.length === 0 ? false : true;
+      // sectionValidation.certification =
+      //   profileData?.certificationsInfo?.length === 0 ? false : true;
+      sectionValidation.qualification =
+        profileData?.qualificationsInfo?.length === 0 ? false : true;
+      sectionValidation.jobPreference =
+        profileData?.jobPreferenceInfo?.length === 0 ||
+        profileData?.jobPreferenceInfo === null
+          ? false
+          : true;
+      sectionValidation.employmentEligiblity =
+        profileData?.personalInfo?.employmenteligiblity === null ||
+        profileData?.personalInfo?.employmenteligiblity === 0
+          ? false
+          : true;
+      sectionValidation.employmentEligiblity === false
+        ? setShowEEPopup(true)
+        : setShowEEPopup(false);
+
+      if (
+        profileData?.personalInfo?.employmenteligiblity !== null &&
+        profileData?.personalInfo?.employmenteligiblity !== undefined &&
+        profileData?.personalInfo?.employmenteligiblity !== 0 &&
+        (profileData?.jobPreferenceInfo === null ||
+          profileData?.jobPreferenceInfo?.length === 0)
+      ) {
+        setShowJopPrefPopup(true);
+      } else {
+        setShowJopPrefPopup(false);
+      }
+      if (
+        sectionValidation.skills === true &&
+        sectionValidation.qualification === true &&
+        sectionValidation.education === true &&
+        // sectionValidation.certification === true &&
+        sectionValidation.employmentEligiblity === true &&
+        sectionValidation.jobPreference === true
+      ) {
+        setViewValidation(false);
+      }
+      if (sectionValidation.skills === false) {
+        stringArray.push("Skills");
+      }
+      if (sectionValidation.qualification === false) {
+        stringArray.push(" Qualification details");
+      }
+      if (sectionValidation.education === false) {
+        stringArray.push(" Education details");
+      }
+      // if (sectionValidation.certification === false) {
+      //   stringArray.push(" Certifications");
+      // }
+      if (sectionValidation.employmentEligiblity === false) {
+        stringArray.push(" Employment eligibility");
+      }
+      if (sectionValidation.jobPreference === false) {
+        if (stringArray.length > 0) {
+          stringArray.push(" and Job preferences.");
+        } else {
+          stringArray.push(" Job preferences.");
+        }
+      }
+    }
+    setStringValue(stringArray.toString());
+  }, [profileData]);
+  const notifications = useSelector(
+    (state) => state.candidateDashboard.alertsList
+  );
+  useEffect(() => {
+    if (notifications?.[0]?.notificationmessage === "Resume Parsed") {
+      loadPage();
+    }
+  }, [notifications]);
+
+  const setEmployementEligibility = (type) => {
+    updateEmploymentEligibility(type);
+    setShowEEPopup(false);
+  };
+
+  const updateEmploymentEligibility = async (type) => {
+    let candidateId = Number(userDetails.InternalUserId);
+    let payload = {
+      candidateid: candidateId,
+      employmenteligiblity: type,
+    };
+    let data = await dispatch(
+      getProfileActions.updateEmploymentEligibilityThunk({
+        candidateId,
+        payload,
+      })
+    );
+    if (data?.payload?.status === "Success") {
+      dispatch(getProfileActions.getCandidate(candidateId));
+    }
+  };
+
+  const onClickJobPrefUpdate = async () => {
+    setshowJobPreferModal(true);
+    setShowJopPrefPopup(false);
+  };
 
   return (
     <div className="profile-view">
       <div className="profile-view">
         <PageTitle heading="Candidate Profile" icon={candidatelogo} />
       </div>
+
       {profileData.personalInfo.email ? (
         <div className="profile-view">
+          <SweetAlert
+            warning
+            show={showEEPopup}
+            cancelBtnText={"No"}
+            confirmBtnText={"Yes"}
+            onConfirm={() => setEmployementEligibility(1)}
+            onCancel={() => setEmployementEligibility(2)}
+            showCancel
+            closeOnClickOutside={false}
+          >
+            <p className="candidate-profile-prompt">
+              Are you authorized to work in the United States?
+            </p>
+          </SweetAlert>
+
+          <SweetAlert
+            warning
+            show={showJopPrefPopup}
+            confirmBtnText={"Update"}
+            onConfirm={() => onClickJobPrefUpdate(true)}
+            closeOnClickOutside={false}
+          >
+            Please provide job preferences.
+          </SweetAlert>
+
+          <Alert
+            color="warning"
+            isOpen={viewValidation}
+            toggle={() => setViewValidation(false)}
+          >
+            Enhance your experience and find the{" "}
+            <span className="prompt-bold">best job matches</span>. Please
+            provide <span className="prompt-bold">{stringValue}</span>
+          </Alert>
+          <Alert
+            color="info"
+            isOpen={viewAINote}
+            toggle={() => setViewAINote(false)}
+          >
+            <b>Note:</b>
+            <ul className="mb-0">
+              <li>
+                Although AI Candidate/Job Matching and Resume Parsing can
+                greatly enhance the resume parsing and matching process, they
+                are not foolproof.
+              </li>
+              <li>
+                It is still important for users to carefully review and adjust
+                their profiles according to their individual experiences and
+                preferences.
+              </li>
+              <li>
+                No technology can substitute the significance of thoughtful
+                self-presentation and customization to meet specific criteria.
+              </li>
+            </ul>
+          </Alert>
           <Row>
             <PersonalInformation
               profileInfo={profileData}
@@ -263,8 +444,17 @@ export function CandidateProfile() {
             </Col>
           </Row>
           <Row>
-            <JobPreferences onCallBack={() => loadPage()} />
+            <JobPreferences onCallBack={() => loadPage()} isRequired={false} />
           </Row>
+
+          {showJobPreferModal && (
+            <Row>
+              <JobPreferences
+                onCallBack={() => closeJobPreferModal()}
+                isRequired={true}
+              />
+            </Row>
+          )}
         </div>
       ) : (
         <div className="loader-wrapper d-flex justify-content-center align-items-center loader">

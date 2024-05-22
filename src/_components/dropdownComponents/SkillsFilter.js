@@ -13,8 +13,11 @@ export function SkillsFilter({
   defaultValue,
 }) {
   const loadOptions = async (inputValue) => {
-    if (inputValue.length > 2) {
-      const { data = [] } = await getSkillsFilter(inputValue);
+    if (inputValue.length > 0) {
+      let payload = {
+        searchText: inputValue,
+      };
+      const { data = [] } = await getSkillsFilter(payload);
       return data.map(({ skillid: value, ...rest }) => {
         return {
           value: `${value}, ${rest.skillname}`,

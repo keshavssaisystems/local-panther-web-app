@@ -69,6 +69,16 @@
     padding-top: 0px;
     padding-bottom: 0px;
   }
+  .candidate-profile-prompt{
+    color: var(--Font-dark-grey, #2F2E2E);
+    text-align: center;
+    font-size: 21px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 150%;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 
 .close-job-popup{

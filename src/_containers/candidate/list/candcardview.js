@@ -19,14 +19,14 @@ import {
   BsQuestionCircle,
   BsCheckCircle,
   BsCashStack,
+  BsHandThumbsUpFill,
 } from "react-icons/bs";
-import moment from "moment/moment";
 import "../../../_components/job/job.scss";
 import "./candidatelist.scss";
 import "./candcardview.scss";
 import { ProgressCircle } from "_components/common/progress";
 import { ScorePopup } from "_components/list/scorePopup";
-import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
+import { getTimezoneDateTime } from "_helpers/helper";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 
 export function CandCardView({
@@ -44,7 +44,6 @@ export function CandCardView({
   onCandidateActions,
 }) {
   const [rejectReasonModal, setRejectReasonModal] = useState(false);
-
   let recommendedLevel =
     additionalData.avgscore === 10
       ? 1
@@ -208,6 +207,22 @@ export function CandCardView({
                     </Col>
                   </Row>
                 </p>
+                {additionalData.iscustomerlike ? (
+                  <>
+                    <p className="candidate-liked">
+                      <Row>
+                        <Col md="1" lg="1">
+                          <BsHandThumbsUpFill className="mb-1" />
+                        </Col>
+                        <Col md="9" lg="9">
+                          Liked by employer
+                        </Col>
+                      </Row>
+                    </p>
+                  </>
+                ) : (
+                  <></>
+                )}
 
                 {type === "Recommended" && (
                   <p className="job-details mt-2 recommended-success float-end">
@@ -230,9 +245,27 @@ export function CandCardView({
                   </p>
                 )}
                 <Row>
-                  <Col md={12} lg={12}>
+                  <Col md={6} lg={6}>
+                    <div className="muted-name mt-2">Job posted on </div>
+                  </Col>
+                  <Col md={6} lg={6}>
+                    <div className="muted-name mt-2 float-end">
+                      Job matched on{" "}
+                    </div>
+                  </Col>
+                  <Col md={6} lg={6}>
                     <div className="muted-name mt-2">
-                      Posted {moment(createdDate).fromNow()}
+                      {getTimezoneDateTime(createdDate, "MM/DD/YYYY hh:mm A")}
+                    </div>
+                  </Col>
+                  <Col md={6} lg={6}>
+                    <div className="muted-name mt-2 float-end">
+                      {getTimezoneDateTime(
+                        additionalData?.modifieddate === null
+                          ? additionalData?.createddate
+                          : additionalData?.modifieddate,
+                        "MM/DD/YYYY hh:mm A"
+                      )}
                     </div>
                   </Col>
                 </Row>

@@ -61,9 +61,6 @@ export function CandidateDashboard() {
     dispatch(dropdownActions.getShiftThunk2());
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
-    dispatch(
-      candidateDashboardActions.getCandidateSkillsListThunk({ candidateId })
-    );
   };
 
   const onDeleteNotification = async (id) => {
@@ -133,15 +130,21 @@ export function CandidateDashboard() {
     data.description = "Are you sure want to delete this notification?";
     SetConfAlert(data);
   };
-  let isloginCompleteCheck = localStorage.getItem("isloginComplete");
-  const skillsData = useSelector(
-    (state) => state.candidateDashboard.availableSkills
+  const counts = useSelector(
+    (state) => state.candidateDashboard.dashboardCounts
   );
   useEffect(() => {
-    if (skillsData?.totalRows === 0 && isloginCompleteCheck === null) {
+    if (
+      counts.skills === false ||
+      counts.qualifications === false ||
+      counts.education === false ||
+      counts.jobPreference === false ||
+      // counts.certifications === false ||
+      counts.employmentEligiblity === 0
+    ) {
       setShowProfilePrompt(true);
     }
-  }, [skillsData, isloginCompleteCheck]);
+  }, [counts]);
 
   return (
     <>
@@ -196,41 +199,71 @@ export function CandidateDashboard() {
           {confAlert.description}
         </SweetAlert>
       </>
-      <div className="profile-prompt">
-        <SweetAlert
-          custom
-          show={showProfilePrompt}
-          onConfirm={() => {
-            localStorage.setItem("isloginComplete", true);
-            setShowProfilePrompt(false);
-            navigate("/profile");
-          }}
-          onCancel={() => {
-            localStorage.setItem("isloginComplete", true);
-            setShowProfilePrompt(false);
-          }}
-          cancelBtnText={"Remind me later"}
-          confirmBtnText="Update"
-          showCancel
-          customIcon={infoIcon}
-        >
-          <p className="candidate-profile-prompt">
-            “Enhance your experience and find the best job matches by updating
-            your <span className="candidate-profile-prompt-bold">Skills</span>,
-            <span className="candidate-profile-prompt-bold">
-              {" "}
-              Qualifications
-            </span>
-            , and{" "}
-            <span className="candidate-profile-prompt-bold">
-              Education details
-            </span>
-            , and uploading your{" "}
-            <span className="candidate-profile-prompt-bold">latest resume</span>{" "}
-            to your profile.”
-          </p>
-        </SweetAlert>
-      </div>
+
+      {(counts.skills === false ||
+        counts.qualifications === false ||
+        counts.education === false ||
+        // counts.certifications === false ||
+        counts.employmentEligiblity === 0 ||
+        counts.jobPreference === false) && (
+        <div className="profile-prompt">
+          <SweetAlert
+            custom
+            show={showProfilePrompt}
+            onConfirm={() => {
+              setShowProfilePrompt(false);
+              navigate("/profile");
+            }}
+            onCancel={() => {
+              setShowProfilePrompt(false);
+            }}
+            cancelBtnText={"Remind me later"}
+            confirmBtnText="Update"
+            showCancel
+            customIcon={infoIcon}
+          >
+            <p className="candidate-profile-prompt">
+              “Enhance your experience and find the best job matches by updating
+              your{" "}
+              {counts.skills === false && (
+                <span className="candidate-profile-prompt-bold">Skills,</span>
+              )}
+              {counts.qualifications === false && (
+                <span className="candidate-profile-prompt-bold">
+                  {" "}
+                  Qualification details,
+                </span>
+              )}
+              {counts.education === false && (
+                <span className="candidate-profile-prompt-bold">
+                  {" "}
+                  Education details,
+                </span>
+              )}
+              {/* {counts.certifications === false && (
+                <span className="candidate-profile-prompt-bold">
+                  {" "}
+                  Certifications,
+                </span>
+              )} */}
+              {counts.employmentEligiblity === false ||
+                (counts.employmentEligiblity === 0 && (
+                  <span className="candidate-profile-prompt-bold">
+                    {" "}
+                    Employment eligibility,
+                  </span>
+                ))}
+              {counts.jobPreference === false && (
+                <span className="candidate-profile-prompt-bold">
+                  {" "}
+                  Job preferences,
+                </span>
+              )}{" "}
+              to your profile.”
+            </p>
+          </SweetAlert>
+        </div>
+      )}
     </>
   );
 }

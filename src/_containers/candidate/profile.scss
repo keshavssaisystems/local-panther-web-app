@@ -218,6 +218,20 @@
     letter-spacing: 0em;
     text-align: left;
   }
+  .resume-info-text {
+    color: #2e2f2f;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0em;
+    font-style: italic;
+    text-align: center;
+    background-color: #fff9be;
+  }
+  .resume-icon {
+    width: 20px;
+    height: 20px;
+  }
   .div-box {
     border: solid 1px #ced4da !important;
     border-radius: 4px;
@@ -519,4 +533,18 @@ input[type="month"]:focus::before,
 input[type="month"]:active::before {
   content: "";
   width: 0%;
+}
+.candidate-profile-prompt {
+  color: var(--Font-dark-grey, #2f2e2e);
+  font-family: capitana;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 150%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.prompt-bold {
+  color: red;
+  font-weight: 600;
 }

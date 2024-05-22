@@ -29,7 +29,7 @@ import { getBasePayMask } from "_helpers/helper";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
-  const [isPersonalModal, setPersonalModal] = useState(false);
+
   const selectDate = function () {};
 
   const [jobTypes, setJobTypes] = useState([]);
@@ -45,6 +45,7 @@ export function JobPreferences(props) {
   const [error, setError] = useState(false);
   const [message, setMessage] = useState(false);
   const [distanceSelect, setDistanceSelect] = useState([]);
+  const [showDistance, setShowDistance] = useState(true);
 
   const [preferenceDetails, setDetails] = useState([]);
   const get_response = useSelector(
@@ -68,6 +69,7 @@ export function JobPreferences(props) {
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
   const distanceList = useSelector((state) => state.getProfile.distanceList);
+  const [isPersonalModal, setPersonalModal] = useState(props?.isRequired);
   const [formDetails, setFormData] = useState({});
 
   const location = useSelector((state) => state.dropdown?.jobType);
@@ -123,6 +125,7 @@ export function JobPreferences(props) {
         workschedulestext: null,
         traveldistance: "",
       });
+      setShowDistance(true);
       setDetails(data);
     } else {
       if (get_response.length > 0) {
@@ -157,7 +160,7 @@ export function JobPreferences(props) {
           workschedulestext: get_response[0].workschedulestext,
           traveldistance: get_response[0].traveldistance,
         });
-
+        setShowDistance(data?.[0]?.willingtorelocate ? false : true);
         let new_data = data[0].candidateJobtitlesDtos?.filter(
           (x) => x.ischecked == true
         );
@@ -401,6 +404,11 @@ export function JobPreferences(props) {
     } else if (check === "relocate") {
       new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
 
+      setShowDistance(new_data[0].willingtorelocate ? false : true);
+      if (new_data[0].willingtorelocate) {
+        setDistanceSelect([]);
+      }
+
       new_data[0].anywhereonlynear = 0;
     } else if (check === "anyWhere") {
       new_data[0].anywhereonlynear = 1;
@@ -489,15 +497,14 @@ export function JobPreferences(props) {
 
     e.preventDefault();
     let new_data = [...preferenceDetails];
-
     if (
       new_data[0].desiredworktypeids === "" ||
       new_data[0].workschedules === "" ||
       new_data[0].shifts === "" ||
       new_data[0].desiredjobtypes === "" ||
       new_data[0].payperiodtypeid == 0 ||
-      distanceSelect.length === 0 ||
-      new_data[0].minimumbasepay === ""
+      new_data[0].minimumbasepay === "" ||
+      (showDistance && distanceSelect.length === 0)
     ) {
       return;
     }
@@ -535,7 +542,7 @@ export function JobPreferences(props) {
         desiredworktypeids: rest.desiredworktypeids,
         isactive: rest.isactive,
         currentUserId: parseInt(userDetails?.UserId ?? 0),
-        traveldistance: rest.traveldistance,
+        traveldistance: showDistance ? rest.traveldistance : "",
       };
     });
 
@@ -705,11 +712,18 @@ export function JobPreferences(props) {
             size="lg"
             isOpen={isPersonalModal}
           >
-            <ModalHeader toggle={() => closeModal()} charCode="Y">
-              <strong className="card-title-text">
-                Add/Edit Job preferences
-              </strong>
-            </ModalHeader>
+            {!props?.isRequired ? (
+              <ModalHeader toggle={() => closeModal()} charCode="Y">
+                <strong className="card-title-text">
+                  Add/Edit Job preferences
+                </strong>
+              </ModalHeader>
+            ) : (
+              <ModalHeader>
+                <strong className="card-title-text">Add Job preferences</strong>
+              </ModalHeader>
+            )}
+
             <ModalBody>
               {preferenceDetails?.map((parentItem, index) => (
                 <Form onSubmit={(e) => onSubmit(e)}>
@@ -900,7 +914,6 @@ export function JobPreferences(props) {
                     <div className="mb-1 fw-bold">Desired minimum pay</div>
                     <hr />
                   </Row>
-
                   <Row>
                     <Col md={4}>
                       <FormGroup>
@@ -970,7 +983,6 @@ export function JobPreferences(props) {
                       </FormGroup>
                     </Col>
                   </Row>
-
                   <Row>
                     <div className="mb-1 fw-bold">Location</div>
                     <hr />
@@ -981,7 +993,6 @@ export function JobPreferences(props) {
                       <span style={{ color: "red" }}> *</span>
                     </Label>
                   </Row>
-
                   <div>
                     <Row className="mt-2 mb-2">
                       <Col md={4}>
@@ -1025,7 +1036,6 @@ export function JobPreferences(props) {
                       </Col>
                     </Row>
                   </div>
-
                   {parentItem.willingtorelocate ? (
                     <div>
                       <Row>
@@ -1123,55 +1133,62 @@ export function JobPreferences(props) {
                   ) : (
                     <></>
                   )}
-                  <Row>
-                    <div className="mb-1 fw-bold mt-2">
-                      Choose your preferred distance
-                    </div>
-                    <hr />
-                  </Row>
 
-                  <Row>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="zipCode" className="fw-semi-bold">
-                          Distance<span style={{ color: "red" }}> *</span>
-                        </Label>
-                        <AsyncSelect
-                          name="distance"
-                          placeholder="Select"
-                          defaultOptions={distanceList}
-                          isMulti={false}
-                          value={
-                            distanceSelect?.length > 0 ? distanceSelect : ""
-                          }
-                          onChange={(evt) =>
-                            onHandleInputChange("distance", evt)
-                          }
-                          className={`placeholder-name ${
-                            save && distanceSelect.length === 0
-                              ? "async-border-red"
-                              : ""
-                          }`}
-                        />
-                        <div className="filter-info-text filter-error-msg">
-                          {save && distanceSelect.length === 0
-                            ? "Distance is required"
-                            : ""}
+                  {showDistance && (
+                    <div>
+                      <Row>
+                        <div className="mb-1 fw-bold mt-2">
+                          Choose your preferred distance
                         </div>
-                      </FormGroup>
-                    </Col>
-                  </Row>
+                        <hr />
+                      </Row>
+
+                      <Row>
+                        <Col md={4}>
+                          <FormGroup>
+                            <Label for="zipCode" className="fw-semi-bold">
+                              Distance<span style={{ color: "red" }}> *</span>
+                            </Label>
+                            <AsyncSelect
+                              name="distance"
+                              placeholder="Select"
+                              defaultOptions={distanceList}
+                              isMulti={false}
+                              value={
+                                distanceSelect?.length > 0 ? distanceSelect : ""
+                              }
+                              onChange={(evt) =>
+                                onHandleInputChange("distance", evt)
+                              }
+                              className={`placeholder-name ${
+                                save && distanceSelect.length === 0
+                                  ? "async-border-red"
+                                  : ""
+                              }`}
+                            />
+                            <div className="filter-info-text filter-error-msg">
+                              {save && distanceSelect.length === 0
+                                ? "Distance is required"
+                                : ""}
+                            </div>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </div>
+                  )}
                   <div className="float-end">
                     <Button className="me-2 save-btn" type="submit">
                       Save
                     </Button>
-                    <Button
-                      type="button"
-                      className="close-btn"
-                      onClick={() => closeModal()}
-                    >
-                      Close
-                    </Button>
+                    {!props?.isRequired && (
+                      <Button
+                        type="button"
+                        className="close-btn"
+                        onClick={() => closeModal()}
+                      >
+                        Close
+                      </Button>
+                    )}
                   </div>
                 </Form>
               ))}

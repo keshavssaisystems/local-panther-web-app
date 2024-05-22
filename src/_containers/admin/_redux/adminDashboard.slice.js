@@ -44,7 +44,7 @@ export const getDashboardAnalyticsCountThunk = createAsyncThunk(
 export const getEmployerApprovalPendingListThunk = createAsyncThunk(
   `${name}/getEmployerApprovalPendingListThunk`,
   async ({ pageSize, pageNo }) => {
-    const FETCH_STATISTICS = `${process.env.REACT_APP_NEW_API_URL}Customer/Get?isActive=false&pageSize=${pageSize}&pageNumber=${pageNo}&customerStatusId=1`;
+    const FETCH_STATISTICS = `${process.env.REACT_APP_NEW_API_URL}Customer/Get?pageSize=${pageSize}&pageNumber=${pageNo}&customerStatusId=1`;
     return await fetchWrapper.get(FETCH_STATISTICS);
   }
 );

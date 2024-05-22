@@ -6,6 +6,7 @@ import { getDate, getEducText } from "_helpers/helper";
 import html2pdf from "html2pdf.js";
 
 export function ProfilePDF(props) {
+  let userRoleId = localStorage.getItem("userroleid");
   const componentRef = useRef();
   const personalInfo_temp = useSelector(
     (state) => state.getProfile.profileData.personalInfo
@@ -136,7 +137,6 @@ export function ProfilePDF(props) {
     }
     return text;
   };
-
   return (
     <div>
       <Card>
@@ -149,35 +149,38 @@ export function ProfilePDF(props) {
             <div>
               <Row>
                 <Col className="col-8">
-                  <h1>
-                    <strong>
-                      {" "}
-                      {personalInfo_temp?.firstname}{" "}
-                      {personalInfo_temp?.lastname}{" "}
-                      {personalInfo_temp?.pronounname !== "" && (
-                        <span
-                          style={{
-                            color: "#979797",
-                            fontWeight: "400",
-                            fontSize: "16px",
-                          }}
-                        >
-                          ( {personalInfo_temp?.pronounname} )
-                        </span>
-                      )}
-                    </strong>
-                  </h1>
+                  {userRoleId === 3 && (
+                    <h1>
+                      <strong>
+                        {" "}
+                        {personalInfo_temp?.firstname}{" "}
+                        {personalInfo_temp?.lastname}{" "}
+                        {personalInfo_temp?.pronounname !== "" && (
+                          <span
+                            style={{
+                              color: "#979797",
+                              fontWeight: "400",
+                              fontSize: "16px",
+                            }}
+                          >
+                            ( {personalInfo_temp?.pronounname} )
+                          </span>
+                        )}
+                      </strong>
+                    </h1>
+                  )}
                   <p>
                     {personalInfo_temp?.city}
                     {", "}
                     {personalInfo_temp?.state}
                   </p>
-
-                  <p>
-                    <span style={{ fontWeight: "600" }}>
-                      {personalInfo_temp?.email}
-                    </span>
-                  </p>
+                  {userRoleId === 3 && (
+                    <p>
+                      <span style={{ fontWeight: "600" }}>
+                        {personalInfo_temp?.email}
+                      </span>
+                    </p>
+                  )}
                   {getData?.length > 0 ? (
                     <p>
                       <span style={{ fontWeight: "600" }}>

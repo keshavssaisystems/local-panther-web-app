@@ -92,6 +92,17 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
       return "-";
     }
   };
+
+  const returnCertifications = () => {
+    if (jobDetail && jobDetail?.jobCertificationDtos?.length > 0) {
+      return jobDetail?.jobCertificationDtos
+        .map((item) => item.certification)
+        .join(", ");
+    } else {
+      return "-";
+    }
+  };
+
   const returnJobType = () => {
     let jobTypeString = [];
     if (
@@ -206,7 +217,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
         </ul>
       );
     } else {
-      return "";
+      return "-";
     }
   };
 
@@ -314,7 +325,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
               jobDetail?.jobExperienceScheduleDtos &&
               jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
                 ? jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
-                : ""
+                : "-"
             }
             iconId={8}
           />
@@ -339,9 +350,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           />
           <HeadingAndDetailWithDiv
             heading={"Certifications"}
-            detail={
-              jobDetail?.certifications === "" ? "-" : jobDetail?.certifications
-            }
+            detail={returnCertifications()}
             iconId={12}
           />
           <HeadingAndDetailWithDiv
@@ -374,7 +383,12 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
           />
           <HeadingAndDetailWithoutIcon
             heading={"About company"}
-            detail={jobDetail.companydetails}
+            detail={
+              jobDetail.companydetails !== "" &&
+              jobDetail.companydetails !== null
+                ? jobDetail.companydetails
+                : "-"
+            }
           />
           <HeadingAndDetailWithoutIcon
             heading={"Benefits"}
@@ -382,7 +396,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
               jobDetail?.jobPaymentBenefitDtos &&
               jobDetail?.jobPaymentBenefitDtos[0]?.benefits
                 ? jobDetail?.jobPaymentBenefitDtos[0]?.benefits
-                : ""
+                : "-"
             }
           />
 
@@ -392,7 +406,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
               jobDetail?.jobKeyQualificationDtos &&
               jobDetail?.jobKeyQualificationDtos?.length > 0
                 ? returnAdditionalCriteria()
-                : ""
+                : "-"
             }
             type={"list"}
           />
@@ -404,7 +418,7 @@ export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {
                   jobDetail?.jobPrescreenApplicationDtos &&
                   jobDetail?.jobPrescreenApplicationDtos?.length > 0
                     ? returnPrescreenInfo()
-                    : ""
+                    : "-"
                 }
                 type={"list"}
               />

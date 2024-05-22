@@ -90,7 +90,7 @@ export function HorizonatalBarGraph({ graphData }) {
               className="ps-2"
             >
               <div className="card-header-title font-size-lg mt-3 ms-4 text-capitalize fw-normal">
-                Candidate Interview's
+                Candidate Interviews
               </div>
               <span className="text-muted mt-1 ms-4">
                 Accepted, Scheduled & Rejected
