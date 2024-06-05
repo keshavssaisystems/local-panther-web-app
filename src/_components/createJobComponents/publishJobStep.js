@@ -79,6 +79,10 @@ export default function PublishJobStep({
     window.location.reload(false);
   };
   const billingStatus = useSelector((state) => state?.payment?.showBilling);
+  const customerDetails = useSelector(
+    (state) => state?.createJob?.customerDetails
+  );
+  let customerApproval = customerDetails?.customerstatusid === 2 ? true : false;
   return (
     <>
       <div className="form-wizard-content">
@@ -107,7 +111,7 @@ export default function PublishJobStep({
                 Create new job
               </Button>{" "}
               {"   "}
-              {billingStatus === true ? (
+              {billingStatus === true && customerApproval === true ? (
                 <Button
                   color="success"
                   size="lg"
