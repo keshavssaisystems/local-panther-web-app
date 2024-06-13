@@ -494,7 +494,6 @@ export function JobPreferences(props) {
 
   async function onSubmit(e) {
     setSave(true);
-
     e.preventDefault();
     let new_data = [...preferenceDetails];
     if (
@@ -532,7 +531,10 @@ export function JobPreferences(props) {
         shifts: rest.shifts,
         payperiodtypeid: parseInt(rest.payperiodtypeid),
         minimumbasepay: rest.minimumbasepay,
-        willingtorelocate: rest.willingtorelocate,
+        willingtorelocate:
+          workType?.length === 1 && workType["0"] === "1"
+            ? false
+            : rest.willingtorelocate,
         anywhereonlynear: parseInt(rest.anywhereonlynear),
         locationids:
           parseInt(rest.anywhereonlynear) === 1 ||
@@ -542,7 +544,12 @@ export function JobPreferences(props) {
         desiredworktypeids: rest.desiredworktypeids,
         isactive: rest.isactive,
         currentUserId: parseInt(userDetails?.UserId ?? 0),
-        traveldistance: showDistance ? rest.traveldistance : "",
+        traveldistance:
+          workType?.length === 1 && workType["0"] === "1"
+            ? ""
+            : showDistance
+            ? rest.traveldistance
+            : "",
       };
     });
 
@@ -983,198 +990,210 @@ export function JobPreferences(props) {
                       </FormGroup>
                     </Col>
                   </Row>
-                  <Row>
-                    <div className="mb-1 fw-bold">Location</div>
-                    <hr />
-                  </Row>
-                  <Row>
-                    <Label check className="fw-semi-bold">
-                      Willing to Relocate
-                      <span style={{ color: "red" }}> *</span>
-                    </Label>
-                  </Row>
-                  <div>
-                    <Row className="mt-2 mb-2">
-                      <Col md={4}>
-                        <FormGroup check>
-                          <Input
-                            name="no_relocate"
-                            id="no_relocate"
-                            onChange={(evt) =>
-                              onHandleInputChange(
-                                "relocate",
-                                !parentItem.willingtorelocate
-                              )
-                            }
-                            type="radio"
-                            checked={!parentItem.willingtorelocate}
-                          />{" "}
-                          <Label check className="fw-semi-bold">
-                            No
-                          </Label>
-                        </FormGroup>
-                      </Col>
-
-                      <Col md={4}>
-                        <FormGroup check>
-                          <Input
-                            name="relocate"
-                            id="relocate"
-                            onChange={(evt) =>
-                              onHandleInputChange(
-                                "relocate",
-                                !parentItem.willingtorelocate
-                              )
-                            }
-                            type="radio"
-                            checked={parentItem.willingtorelocate}
-                          />{" "}
-                          <Label check className="fw-semi-bold">
-                            Yes
-                          </Label>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </div>
-                  {parentItem.willingtorelocate ? (
-                    <div>
+                  {workType?.length === 1 && workType["0"] === "1" ? (
+                    <></>
+                  ) : (
+                    <>
                       <Row>
-                        <Col md={4}>
-                          <FormGroup check>
-                            <Input
-                              name="anyWhere"
-                              type="radio"
-                              onChange={(evt) =>
-                                onHandleInputChange(
-                                  "anyWhere",
-                                  evt.target.value
-                                )
-                              }
-                              checked={parentItem.anywhereonlynear == 1}
-                              style={{
-                                borderColor:
-                                  save && parentItem.anywhereonlynear === 0
-                                    ? "#ff0000"
-                                    : "",
-                              }}
-                            />{" "}
-                            <Label check className="fw-semi-bold">
-                              Anywhere
-                            </Label>
-                            <div className="filter-info-text filter-error-msg">
-                              {save && parentItem.anywhereonlynear === 0
-                                ? "Relocate is required"
-                                : ""}
-                            </div>
-                          </FormGroup>
-                        </Col>
-
-                        <Col md={4}>
-                          <FormGroup check>
-                            <Input
-                              name="onlyNear"
-                              type="radio"
-                              onChange={(evt) =>
-                                onHandleInputChange("near", evt.target.value)
-                              }
-                              checked={parentItem.anywhereonlynear == 2}
-                              style={{
-                                borderColor:
-                                  save && parentItem.anywhereonlynear === 0
-                                    ? "#ff0000"
-                                    : "",
-                              }}
-                            />{" "}
-                            <Label check className="fw-semi-bold">
-                              Only near
-                            </Label>
-                            <div className="filter-info-text filter-error-msg">
-                              {save && parentItem.anywhereonlynear === 0
-                                ? "Relocate is required"
-                                : ""}
-                            </div>
-                          </FormGroup>
-                        </Col>
+                        <div className="mb-1 fw-bold">Location</div>
+                        <hr />
                       </Row>
-                      {parentItem.anywhereonlynear == 2 && (
-                        <Row className="mt-2">
+                      <Row>
+                        <Label check className="fw-semi-bold">
+                          Willing to Relocate
+                          <span style={{ color: "red" }}> *</span>
+                        </Label>
+                      </Row>
+                      <div>
+                        <Row className="mt-2 mb-2">
                           <Col md={4}>
-                            <FormGroup>
-                              <Label for="city" className="fw-semi-bold">
-                                City, State
-                                <span className="required-icon"> *</span>
-                              </Label>
-                              <AsyncSelect
-                                name="location"
-                                placeholder="Search to select"
-                                loadOptions={loadOptions}
-                                isMulti={true}
-                                value={selectedLocation}
+                            <FormGroup check>
+                              <Input
+                                name="no_relocate"
+                                id="no_relocate"
                                 onChange={(evt) =>
-                                  onHandleInputChange("location", evt)
+                                  onHandleInputChange(
+                                    "relocate",
+                                    !parentItem.willingtorelocate
+                                  )
                                 }
-                                className={`placeholder-name ${
-                                  save && selectedLocation.length === 0
-                                    ? "async-border-red"
-                                    : ""
-                                }`}
-                              />
+                                type="radio"
+                                checked={!parentItem.willingtorelocate}
+                              />{" "}
+                              <Label check className="fw-semi-bold">
+                                No
+                              </Label>
+                            </FormGroup>
+                          </Col>
 
-                              <div className="async-error-text">
-                                {save && selectedLocation.length === 0
-                                  ? "Location is required"
-                                  : ""}
-                              </div>
+                          <Col md={4}>
+                            <FormGroup check>
+                              <Input
+                                name="relocate"
+                                id="relocate"
+                                onChange={(evt) =>
+                                  onHandleInputChange(
+                                    "relocate",
+                                    !parentItem.willingtorelocate
+                                  )
+                                }
+                                type="radio"
+                                checked={parentItem.willingtorelocate}
+                              />{" "}
+                              <Label check className="fw-semi-bold">
+                                Yes
+                              </Label>
                             </FormGroup>
                           </Col>
                         </Row>
-                      )}
-                    </div>
-                  ) : (
-                    <></>
-                  )}
+                      </div>
+                      {parentItem.willingtorelocate ? (
+                        <div>
+                          <Row>
+                            <Col md={4}>
+                              <FormGroup check>
+                                <Input
+                                  name="anyWhere"
+                                  type="radio"
+                                  onChange={(evt) =>
+                                    onHandleInputChange(
+                                      "anyWhere",
+                                      evt.target.value
+                                    )
+                                  }
+                                  checked={parentItem.anywhereonlynear == 1}
+                                  style={{
+                                    borderColor:
+                                      save && parentItem.anywhereonlynear === 0
+                                        ? "#ff0000"
+                                        : "",
+                                  }}
+                                />{" "}
+                                <Label check className="fw-semi-bold">
+                                  Anywhere
+                                </Label>
+                                <div className="filter-info-text filter-error-msg">
+                                  {save && parentItem.anywhereonlynear === 0
+                                    ? "Relocate is required"
+                                    : ""}
+                                </div>
+                              </FormGroup>
+                            </Col>
 
-                  {showDistance && (
-                    <div>
-                      <Row>
-                        <div className="mb-1 fw-bold mt-2">
-                          Choose your preferred distance
+                            <Col md={4}>
+                              <FormGroup check>
+                                <Input
+                                  name="onlyNear"
+                                  type="radio"
+                                  onChange={(evt) =>
+                                    onHandleInputChange(
+                                      "near",
+                                      evt.target.value
+                                    )
+                                  }
+                                  checked={parentItem.anywhereonlynear == 2}
+                                  style={{
+                                    borderColor:
+                                      save && parentItem.anywhereonlynear === 0
+                                        ? "#ff0000"
+                                        : "",
+                                  }}
+                                />{" "}
+                                <Label check className="fw-semi-bold">
+                                  Only near
+                                </Label>
+                                <div className="filter-info-text filter-error-msg">
+                                  {save && parentItem.anywhereonlynear === 0
+                                    ? "Relocate is required"
+                                    : ""}
+                                </div>
+                              </FormGroup>
+                            </Col>
+                          </Row>
+                          {parentItem.anywhereonlynear == 2 && (
+                            <Row className="mt-2">
+                              <Col md={4}>
+                                <FormGroup>
+                                  <Label for="city" className="fw-semi-bold">
+                                    City, State
+                                    <span className="required-icon"> *</span>
+                                  </Label>
+                                  <AsyncSelect
+                                    name="location"
+                                    placeholder="Search to select"
+                                    loadOptions={loadOptions}
+                                    isMulti={true}
+                                    value={selectedLocation}
+                                    onChange={(evt) =>
+                                      onHandleInputChange("location", evt)
+                                    }
+                                    className={`placeholder-name ${
+                                      save && selectedLocation.length === 0
+                                        ? "async-border-red"
+                                        : ""
+                                    }`}
+                                  />
+
+                                  <div className="async-error-text">
+                                    {save && selectedLocation.length === 0
+                                      ? "Location is required"
+                                      : ""}
+                                  </div>
+                                </FormGroup>
+                              </Col>
+                            </Row>
+                          )}
                         </div>
-                        <hr />
-                      </Row>
+                      ) : (
+                        <></>
+                      )}
 
-                      <Row>
-                        <Col md={4}>
-                          <FormGroup>
-                            <Label for="zipCode" className="fw-semi-bold">
-                              Distance<span style={{ color: "red" }}> *</span>
-                            </Label>
-                            <AsyncSelect
-                              name="distance"
-                              placeholder="Select"
-                              defaultOptions={distanceList}
-                              isMulti={false}
-                              value={
-                                distanceSelect?.length > 0 ? distanceSelect : ""
-                              }
-                              onChange={(evt) =>
-                                onHandleInputChange("distance", evt)
-                              }
-                              className={`placeholder-name ${
-                                save && distanceSelect.length === 0
-                                  ? "async-border-red"
-                                  : ""
-                              }`}
-                            />
-                            <div className="filter-info-text filter-error-msg">
-                              {save && distanceSelect.length === 0
-                                ? "Distance is required"
-                                : ""}
+                      {showDistance && (
+                        <div>
+                          <Row>
+                            <div className="mb-1 fw-bold mt-2">
+                              Choose your preferred distance
                             </div>
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                    </div>
+                            <hr />
+                          </Row>
+
+                          <Row>
+                            <Col md={4}>
+                              <FormGroup>
+                                <Label for="zipCode" className="fw-semi-bold">
+                                  Distance
+                                  <span style={{ color: "red" }}> *</span>
+                                </Label>
+                                <AsyncSelect
+                                  name="distance"
+                                  placeholder="Select"
+                                  defaultOptions={distanceList}
+                                  isMulti={false}
+                                  value={
+                                    distanceSelect?.length > 0
+                                      ? distanceSelect
+                                      : ""
+                                  }
+                                  onChange={(evt) =>
+                                    onHandleInputChange("distance", evt)
+                                  }
+                                  className={`placeholder-name ${
+                                    save && distanceSelect.length === 0
+                                      ? "async-border-red"
+                                      : ""
+                                  }`}
+                                />
+                                <div className="filter-info-text filter-error-msg">
+                                  {save && distanceSelect.length === 0
+                                    ? "Distance is required"
+                                    : ""}
+                                </div>
+                              </FormGroup>
+                            </Col>
+                          </Row>
+                        </div>
+                      )}
+                    </>
                   )}
                   <div className="float-end">
                     <Button className="me-2 save-btn" type="submit">
