@@ -25,6 +25,7 @@ import {
 } from "reactstrap";
 import { async } from "q";
 import InputMask from "react-input-mask";
+import { analytics } from "../../../firebase/index";
 
 export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
@@ -226,6 +227,13 @@ export const AddEditUser = (props) => {
       setValue("phonenumber", data["phonenumber"].replace(/[\(\)-]/g, ""));
       setValue("roleid", data["userroleid"]);
       setRoleId(data["userroleid"]);
+    }
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin add/edit user",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
     }
   }, []);
 

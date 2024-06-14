@@ -37,7 +37,7 @@ import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
-
+import { analytics } from "../../firebase/index";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
@@ -94,7 +94,13 @@ export function Registration() {
   useEffect(() => {
     // redirect to home if already logged in
     if (authUser) history.navigate("/");
-
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Registration page",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -34,6 +34,7 @@ import {
   profileSkillsActions,
 } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { analytics } from "../../firebase/index";
 
 export function CandidateProfile() {
   const dispatch = useDispatch();
@@ -98,6 +99,13 @@ export function CandidateProfile() {
     loadPage();
     dispatch(getProfileActions.getAvailability());
     dispatch(getProfileActions.getPronoun());
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "candidate profile",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const loadPage = async function () {

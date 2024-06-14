@@ -23,6 +23,7 @@ import {
   ModalHeader,
   ModalBody,
 } from "reactstrap";
+import { analytics } from "../../../firebase/index";
 
 export const AddEditCustomer = (props) => {
   const { entity, isAddMode, data } = props;
@@ -140,6 +141,14 @@ export const AddEditCustomer = (props) => {
       setValue("state", data["stateid"]);
       setValue("city", data["cityid"]);
       setValue("company", data["companyid"]);
+    }
+
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin add/edit employer",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
     }
   }, []);
 

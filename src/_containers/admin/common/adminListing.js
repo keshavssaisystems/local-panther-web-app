@@ -35,6 +35,7 @@ import { settingsActions } from "_store";
 import cx from "classnames";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
+import { analytics } from "../../../firebase/index";
 
 export const AdminListing = ({ entity }) => {
   const dispatch = useDispatch();
@@ -47,6 +48,13 @@ export const AdminListing = ({ entity }) => {
   useEffect(() => {
     loadData();
     dispatch(getRoles());
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin listing",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
   const { data } = useSelector((state) => state?.adminListing ?? {});
   const rolesList = useSelector((state) => state.adminListing.rolesList);

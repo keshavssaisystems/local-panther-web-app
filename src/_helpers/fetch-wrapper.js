@@ -43,11 +43,11 @@ function authHeader(url) {
       if (userAgent.indexOf("Android") != -1) os = "Android";
       if (userAgent.indexOf("like Mac") != -1) os = "iOS";
       return {
-        // LoginSource: "Web",
-        // IpAddress: "Web",
-        // LoginDevice: os,
-        // OsVersion: navigator.userAgent,
-        // LoginDeviceId: os,
+        LoginSource: "Web",
+        IpAddress: "Web",
+        LoginDevice: os,
+        // OsVersion: userAgent ? userAgent.toString() : "",
+        LoginDeviceId: os,
       };
     } else {
       return {};

@@ -39,6 +39,7 @@ import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import { analytics } from "../../../firebase/index";
 import "./adminreports.scss";
 
 export function OpenJobs({ title }) {
@@ -68,6 +69,13 @@ export function OpenJobs({ title }) {
     dispatch(openJobsThunk());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin open jobs report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

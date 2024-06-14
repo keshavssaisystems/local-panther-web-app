@@ -45,6 +45,7 @@ import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { getProfileActions } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
+import { analytics } from "../../../firebase/index";
 import "./customerreport.scss";
 
 export function CustomerReportScheduledInterviews() {
@@ -83,6 +84,13 @@ export function CustomerReportScheduledInterviews() {
     dispatch(getJobDropdown());
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Employer Schedule Interview Report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

@@ -16,7 +16,9 @@ import { InterViewDetailModal } from "../../../_components/modal/interviewdetail
 import { Row, Col, FormGroup, Button, Input } from "reactstrap";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { analytics } from "../../../firebase/index";
 import "./admincalendar.scss";
+
 export function AdminCalendar({ title }) {
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const dispatch = useDispatch();
@@ -70,6 +72,13 @@ export function AdminCalendar({ title }) {
     dispatch(getCandidateDropdownList());
     dispatch(getCustomerDropdownList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin Calendar",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const getUpcomingData = async function (filterdata) {
