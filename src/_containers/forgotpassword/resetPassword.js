@@ -13,6 +13,7 @@ import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import logo from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
+import { analytics } from "../../firebase/index";
 
 export function ResetPassword() {
   const dispatch = useDispatch();
@@ -31,7 +32,15 @@ export function ResetPassword() {
     adaptiveHeight: true,
   });
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Reset password",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
 
   // form validation rules
   const validationSchema = Yup.object().shape({

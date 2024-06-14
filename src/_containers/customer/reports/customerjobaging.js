@@ -33,6 +33,7 @@ import Loader from "react-loaders";
 import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import { analytics } from "../../../firebase/index";
 import "./customerreport.scss";
 
 export function CustomerReportJobAging() {
@@ -59,6 +60,13 @@ export function CustomerReportJobAging() {
     onGetCustReportJobAgingList({});
     dispatch(getJobDropdown());
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Employer Job aging Report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

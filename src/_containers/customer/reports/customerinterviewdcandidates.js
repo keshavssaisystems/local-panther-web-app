@@ -47,6 +47,7 @@ import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import "./customerreport.scss";
 import { getTimezoneDateTime } from "_helpers/helper";
+import { analytics } from "../../../firebase/index";
 
 export function CustomerReportInterviewedCandidates() {
   const dispatch = useDispatch();
@@ -114,6 +115,13 @@ export function CustomerReportInterviewedCandidates() {
     dispatch(getScheduledCandidatesForCustomerDropdown(userId));
     dispatch(getJobDropdown());
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Employer interviewed candidate Report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const onGetCustReportIVDCandList = (filter) => {

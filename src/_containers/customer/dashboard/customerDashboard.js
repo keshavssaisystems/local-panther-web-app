@@ -18,6 +18,7 @@ import { BillDetailRemModal } from "_components/modal/billdetailremmodal";
 import { Alerts } from "_containers/candidate/dashboard/alerts";
 import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
+import { analytics } from "../../../firebase/index";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
@@ -78,6 +79,13 @@ export default function CustomerDashboard() {
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
     );
     dispatch(customerCandidateListsActions.getDurationOptions());
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Employer dashboard",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.customerDashboard.dashboardCounts

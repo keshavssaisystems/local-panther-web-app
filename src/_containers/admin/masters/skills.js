@@ -30,6 +30,7 @@ import {
   getSkills,
   deleteSkills,
 } from "_containers/admin/_redux/adminListing.slice";
+import { analytics } from "../../../firebase/index";
 
 export const Skills = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -46,6 +47,13 @@ export const Skills = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getSkillsList();
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin skills",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const [success, setSuccess] = useState(false);

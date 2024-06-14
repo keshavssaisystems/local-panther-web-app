@@ -34,6 +34,7 @@ import {
   deleteFlaggedWords,
   getFlaggedWordList,
 } from "_containers/admin/_redux/adminListing.slice";
+import { analytics } from "../../../firebase/index";
 
 export const FlaggedWord = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -51,6 +52,13 @@ export const FlaggedWord = () => {
   useEffect(() => {
     dispatch(getFlaggedWordList());
     getSkillsList();
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin flagged words",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const [success, setSuccess] = useState(false);

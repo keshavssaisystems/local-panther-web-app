@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import Slider from "react-slick";
 import { useState } from "react";
@@ -25,6 +25,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import logo from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
+import { analytics } from "../../firebase/index";
 
 export function ForgotPassword() {
   const dispatch = useDispatch();
@@ -53,6 +54,15 @@ export function ForgotPassword() {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors } = formState;
 
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Forgot password",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
   async function onSubmit({ email }) {
     let userId = 0;
     let loggedInUserId = 0;

@@ -3,6 +3,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/messaging";
+import "firebase/analytics";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyBkc5ZFqejClCiGb8NavO2bvTuU0YwSCPU",
@@ -15,6 +16,7 @@ export const firebaseConfig = {
 };
 const initApp = firebase.initializeApp(firebaseConfig);
 export const messaging = firebase.messaging();
+export const analytics = firebase.analytics(initApp);
 
 export const servers = {
   iceServers: [

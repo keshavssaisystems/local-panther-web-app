@@ -35,6 +35,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import { updateMonthstoYears } from "_helpers/helper";
 import { getProfileActions } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { analytics } from "../../../firebase/index";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -109,6 +110,13 @@ export function IncompleteCandidateProfile({ title }) {
   useEffect(() => {
     getReportData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin incomplete candidate profile report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const handleChange = (name, value) => {

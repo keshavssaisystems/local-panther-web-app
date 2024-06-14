@@ -12,6 +12,7 @@ import { AddEditSubsidary } from "./addEditSubsidary";
 import { getLocationText } from "_helpers/helper";
 import { editSubsidiary } from "_containers/admin/_redux/addCustomer.slice";
 import { useParams } from "react-router-dom";
+import { analytics } from "../../../firebase/index";
 
 export const SubsidaryList = (props) => {
   const { id } = useParams();
@@ -33,6 +34,13 @@ export const SubsidaryList = (props) => {
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
     getSubsidaryList(pageSize, pageNo);
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin subsidiary list",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const [companyId, setCompanyId] = useState(id ? id : 0);

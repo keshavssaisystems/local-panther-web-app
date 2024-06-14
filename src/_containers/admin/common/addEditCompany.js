@@ -36,6 +36,7 @@ import {
 import { async } from "q";
 import { addCompany } from "../_redux/addCustomer.slice";
 import InputMask from "react-input-mask";
+import { analytics } from "../../../firebase/index";
 import "./adminListing.scss";
 
 export const AddEditCompany = (props) => {
@@ -74,6 +75,13 @@ export const AddEditCompany = (props) => {
     if (!isAddMode) {
       let name = data?.logourl?.replace(/^.*[\\\/]/, "");
       setSelectedFile(name);
+    }
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin add/edit company",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
     }
   }, []);
 
