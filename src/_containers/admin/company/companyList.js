@@ -23,6 +23,7 @@ import { AddEditCompany } from "../common/addEditCompany";
 import { useNavigate } from "react-router-dom";
 import customerIcons from "assets/utils/images/customer";
 import { FaEye } from "react-icons/fa";
+import { analytics } from "../../../firebase/index";
 
 export const CompanyList = () => {
   const navigate = useNavigate();
@@ -45,6 +46,13 @@ export const CompanyList = () => {
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
     getCompanyList(pageSize, pageNo);
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin company list",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const [success, setSuccess] = useState(false);

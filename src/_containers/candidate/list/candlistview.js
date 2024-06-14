@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import memoize from "memoize-one";
 import DataTable from "react-data-table-component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,6 +25,7 @@ import newOffer from "assets/utils/images/job-detail-icons/newoffer.svg";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { getAcceptedListUniqueData } from "_helpers/helper";
 import { useSelector } from "react-redux";
+import { analytics } from "../../../firebase/index";
 
 export const CandListView = (props) => {
   const onBtnClick = (type, candidaterecommendedjobid, reason) => {
@@ -43,6 +44,16 @@ export const CandListView = (props) => {
     title: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "candidate list view page",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
   const acceptedListData = getAcceptedListUniqueData(acceptedList);
   const rejectReason = (rejectTitle, type, candidaterecommendedjobid) => {
     setTitle(rejectTitle);

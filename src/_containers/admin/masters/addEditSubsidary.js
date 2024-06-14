@@ -25,6 +25,7 @@ import {
   Input,
 } from "reactstrap";
 import InputMask from "react-input-mask";
+import { analytics } from "../../../firebase/index";
 
 export const AddEditSubsidary = (props) => {
   const dispatch = useDispatch();
@@ -66,6 +67,16 @@ export const AddEditSubsidary = (props) => {
       setCountryList(data);
     }
   }, [cityList]);
+
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin add/edit subsidiary",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",

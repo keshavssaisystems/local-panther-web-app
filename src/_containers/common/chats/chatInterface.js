@@ -3,6 +3,7 @@ import cx from "classnames";
 import { ChatList } from "firebase/chat/chatList";
 import { useDispatch, useSelector } from "react-redux";
 import { chatActions } from "_store";
+import { analytics } from "../../../firebase/index";
 import "./chat.scss";
 
 export function ChatInterface() {
@@ -15,6 +16,13 @@ export function ChatInterface() {
     if (userRole === 3) {
       getCustomerList();
       dispatch(chatActions.getCompletedCustomerListThunk());
+    }
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "chat page",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
     }
   }, []);
   const getCandidateList = async function () {

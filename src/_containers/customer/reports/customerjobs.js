@@ -39,6 +39,7 @@ import { exportToExcel } from "react-json-to-excel";
 import { NoDataFound } from "_components/common/nodatafound";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./customerreport.scss";
+import { analytics } from "../../../firebase/index";
 
 export function CustomerReportJobList() {
   const dispatch = useDispatch();
@@ -67,6 +68,13 @@ export function CustomerReportJobList() {
       : "";
     dispatch(getReportSubsidiaryList(compId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Employer Jobs",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

@@ -27,6 +27,7 @@ import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo.png";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { analytics } from "../../firebase";
 import "./login.scss";
 
 export function Login() {
@@ -62,6 +63,16 @@ export function Login() {
       }
     }
   }, [authUser, authError]);
+
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Login page",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

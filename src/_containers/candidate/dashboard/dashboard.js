@@ -16,6 +16,7 @@ import {
 } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
+import { analytics } from "../../../firebase/index";
 
 export function CandidateDashboard() {
   const dispatch = useDispatch();
@@ -42,6 +43,13 @@ export function CandidateDashboard() {
 
   useEffect(() => {
     loadPage();
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "dashboard",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const loadPage = async function () {
