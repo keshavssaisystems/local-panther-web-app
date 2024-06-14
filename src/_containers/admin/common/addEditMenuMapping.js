@@ -16,6 +16,7 @@ import {
   Input,
   Collapse,
 } from "reactstrap";
+import { analytics } from "../../../firebase/index";
 
 export const AddEditMenuMapping = (props) => {
   const { entity, isAddMode, data, isView } = props;
@@ -205,6 +206,13 @@ export const AddEditMenuMapping = (props) => {
 
       setValue("menuid", data["menuid"]);
       setMenuId(data["menuid"]);
+    }
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin add/edit menu",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
     }
   }, []);
 

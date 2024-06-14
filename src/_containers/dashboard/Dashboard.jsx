@@ -10,12 +10,20 @@ import titlelogo from "../../assets/utils/images/candidate.svg";
 import { userActions } from "_store";
 import CustomerDashboardDetails from "_containers/customer/CustomerDashboardDetails";
 import CandidateDashboardDetails from "_containers/candidate/CandidateDashboardDetails";
+import { analytics } from "firebase";
 
 export const AdminDashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(userActions.getAll());
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin dashboard",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, [dispatch]);
 
   return (

@@ -50,7 +50,7 @@ import { CandVideoScreen } from "../../firebase/candvideo";
 import { AdminListing } from "_containers/admin/common/adminListing";
 import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 
-import { messaging } from "../../firebase/index";
+import { messaging, analytics } from "../../firebase/index";
 import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { CustomerList } from "_containers/admin/customer/customerList";
@@ -108,8 +108,12 @@ export function App() {
             autoClose: 10000,
           }
         );
-        if(isProfilePage){
-          dispatch(getProfileActions.getCandidate(JSON.parse(localStorage.getItem("userDetails")).InternalUserId));
+        if (isProfilePage) {
+          dispatch(
+            getProfileActions.getCandidate(
+              JSON.parse(localStorage.getItem("userDetails")).InternalUserId
+            )
+          );
         }
         updatePushNotifications();
       });
@@ -135,6 +139,16 @@ export function App() {
       setHideSidebar(false);
     }
   }, [location]);
+
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "home page",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
   const renderRoutes = (userroleid) => {
     if (userroleid === 1) {
       return (

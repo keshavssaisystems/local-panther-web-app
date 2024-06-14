@@ -12,6 +12,7 @@ import Loader from "react-loaders";
 import { CustJobFilter } from "./custjofilter";
 import { NoDataFound } from "_components/common/nodatafound";
 import moment from "moment/moment";
+import { analytics } from "../../../firebase/index";
 
 export const CustJobList = () => {
   const [page, setPage] = useState(1);
@@ -45,6 +46,13 @@ export const CustJobList = () => {
   useEffect(() => {
     getCompanyDetails();
     onPageChange(page);
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "New Jobs",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

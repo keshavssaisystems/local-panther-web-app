@@ -7,9 +7,19 @@ import { PaymentDetails } from "./paydetails";
 import paymentIcons from "assets/utils/images/payment";
 import PageTitle from "_components/common/pagetitle";
 import { history } from "_helpers";
+import { analytics } from "../../firebase/index";
 import "./payment.scss";
 
 export const Payment = ({ authUser }) => {
+  useEffect(() => {
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Payment page",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
+  }, []);
   let settings = {
     dots: true,
     infinite: true,
