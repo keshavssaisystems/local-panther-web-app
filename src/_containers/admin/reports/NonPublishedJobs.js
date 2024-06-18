@@ -43,6 +43,7 @@ import { exportToExcel } from "react-json-to-excel";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import { analytics } from "../../../firebase/index";
 import "./adminreports.scss";
 
 const initFilter = {
@@ -97,6 +98,13 @@ export function NonPublishedJobs({ title }) {
   useEffect(() => {
     getReportData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin non published job report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

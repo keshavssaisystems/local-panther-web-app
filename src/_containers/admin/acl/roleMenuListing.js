@@ -28,6 +28,7 @@ import { BsPencil } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { AddEditMenuMapping } from "../common/addEditMenuMapping";
 import { AddEditRole } from "../common/addEditRole";
+import { analytics } from "../../../firebase/index";
 
 export const RoleMenuListing = ({ entity }) => {
   const dispatch = useDispatch();
@@ -107,6 +108,13 @@ export const RoleMenuListing = ({ entity }) => {
   useEffect(() => {
     setSearchText("");
     loadData();
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin ACL",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   const loadData = async () => {

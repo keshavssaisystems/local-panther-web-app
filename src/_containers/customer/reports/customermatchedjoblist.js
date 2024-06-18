@@ -37,6 +37,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import { getProfileActions } from "_store";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
+import { analytics } from "../../../firebase/index";
 import "./customerreport.scss";
 
 export function CustomerReportMatchedCandidate() {
@@ -69,6 +70,13 @@ export function CustomerReportMatchedCandidate() {
     dispatch(getJobDropdown());
     dispatch(getRecommendedJobStatus());
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Employer Matched Jobs Report",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
 
   useEffect(() => {

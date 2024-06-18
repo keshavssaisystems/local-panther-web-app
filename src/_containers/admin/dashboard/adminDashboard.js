@@ -17,6 +17,7 @@ import moment from "moment";
 import { getTimezoneDateTime } from "_helpers/helper";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { ApprovalPendingList } from "_components/dashboard/approvalPendingList";
+import { analytics } from "../../../firebase/index";
 
 export function AdminDashboard() {
   const dispatch = useDispatch();
@@ -51,6 +52,13 @@ export function AdminDashboard() {
     getAnalyiticalCounts();
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "Admin dashboard",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
   const dashboardCounts = useSelector(
     (state) => state.adminDashboard.dashboardCountDetails

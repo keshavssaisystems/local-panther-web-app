@@ -31,6 +31,7 @@ import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
 import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
+import { analytics } from "../../../firebase/index";
 
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
@@ -88,6 +89,14 @@ export const CustomerCandidateLists = (props) => {
     dispatch(dropdownActions.getShiftThunk2());
     if (window?.location?.pathname?.includes("candidate-list")) {
       onGetPageList(pageNo, props.type || activeTab, "");
+    }
+
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "employer job list",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
     }
   }, []);
 

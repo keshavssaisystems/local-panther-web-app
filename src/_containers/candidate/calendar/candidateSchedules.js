@@ -12,6 +12,7 @@ import { InterViewDetailModal } from "../../../_components/modal/interviewdetail
 import { getTimezoneDateTime } from "_helpers/helper";
 import "./calendar.scss";
 import { faLessThanEqual } from "@fortawesome/free-solid-svg-icons";
+import { analytics } from "../../../firebase/index";
 
 export function CandidateSchedules() {
   const dispatch = useDispatch();
@@ -57,6 +58,13 @@ export function CandidateSchedules() {
       start: formattedFirstDay,
       end: formattedLastDay,
     });
+    if (analytics) {
+      analytics.logEvent("page_visit", {
+        page_title: "candidate calendar",
+        page_location: window.location.pathname,
+        page_path: window.location.pathname,
+      });
+    }
   }, []);
   const getUpcomingData = async function (filterdata) {
     await dispatch(

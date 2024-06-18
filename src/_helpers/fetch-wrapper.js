@@ -32,7 +32,26 @@ function authHeader(url) {
   if (isLoggedIn && isApiUrl) {
     return { Authorization: `Bearer ${authData}` };
   } else {
-    return {};
+    if (url.indexOf("Login") > -1) {
+      const userAgent = navigator.userAgent;
+      let os = "Unknown OS";
+
+      if (userAgent.indexOf("Win") != -1) os = "Windows";
+      if (userAgent.indexOf("Mac") != -1) os = "MacOS";
+      if (userAgent.indexOf("X11") != -1) os = "UNIX";
+      if (userAgent.indexOf("Linux") != -1) os = "Linux";
+      if (userAgent.indexOf("Android") != -1) os = "Android";
+      if (userAgent.indexOf("like Mac") != -1) os = "iOS";
+      return {
+        LoginSource: "Web",
+        IpAddress: "Web",
+        LoginDevice: os,
+        // OsVersion: userAgent ? userAgent.toString() : "",
+        LoginDeviceId: os,
+      };
+    } else {
+      return {};
+    }
   }
 }
 
