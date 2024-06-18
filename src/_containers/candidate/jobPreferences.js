@@ -403,7 +403,6 @@ export function JobPreferences(props) {
       new_data[0].minimumbasepay = data.replace(/,/g, "");
     } else if (check === "relocate") {
       new_data[0].willingtorelocate = !new_data[0].willingtorelocate;
-
       setShowDistance(new_data[0].willingtorelocate ? false : true);
       if (new_data[0].willingtorelocate) {
         setDistanceSelect([]);
@@ -503,7 +502,9 @@ export function JobPreferences(props) {
       new_data[0].desiredjobtypes === "" ||
       new_data[0].payperiodtypeid == 0 ||
       new_data[0].minimumbasepay === "" ||
-      (showDistance && distanceSelect.length === 0)
+      (showDistance &&
+        distanceSelect.length === 0 &&
+        !(workType?.length === 1 && workType["0"] === "1"))
     ) {
       return;
     }
