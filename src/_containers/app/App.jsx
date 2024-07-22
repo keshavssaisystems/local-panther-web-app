@@ -69,6 +69,7 @@ import { SubsidaryList } from "_containers/admin/masters/subsidary";
 import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
 import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
+import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -166,6 +167,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CustomerList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/candidate-list"
+            element={
+              <PrivateRoute>
+                <AdmCandidateList />
               </PrivateRoute>
             }
           />
