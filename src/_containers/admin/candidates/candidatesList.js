@@ -14,25 +14,33 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import cx from "classnames";
-import { FaEye } from "react-icons/fa";
+import { FaEnvelopeOpenText, FaEnvelope } from "react-icons/fa";
 import customerIcons from "assets/utils/images/customer";
 import DataTable from "react-data-table-component";
+import { adminListingActions } from "_store";
+import { USPhoneNumber } from "_helpers/helper";
+import SweetAlert from "react-bootstrap-sweetalert";
 
 export const AdmCandidateList = () => {
-  let data = [
-    {
-      name: "test",
-      email: "test@gmail.com",
-      phone: "5678999322",
-      address: "albama, California",
-      Source: "admin",
-      status: "",
-    },
-  ];
   const dispatch = useDispatch();
   const [searchData, setSearchText] = useState("");
+  const [pageNo, setPageNo] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
+  });
+
+  const candidateList = useSelector(
+    (state) => state.adminListing?.candidateList
+  );
+  const candTotalRecords = useSelector(
+    (state) => state.adminListing?.candTotalRecords
+  );
   useEffect(() => {
-    // dispatch(dropdownActions.getCompanyListThunk());
+    getCandidateListData(pageNo, pageSize);
   }, []);
 
   const onClearSearch = async function () {
@@ -45,7 +53,7 @@ export const AdmCandidateList = () => {
     {
       name: "Name",
       id: "name",
-      selector: (row) => row.name,
+      selector: (row) => row.firstname + " " + row.lastname,
 
       sortable: true,
     },
@@ -60,13 +68,17 @@ export const AdmCandidateList = () => {
     {
       name: "Phone",
       id: "phone",
-      selector: (row) => row.phone,
+      selector: (row) =>
+        row.phonenumber ? USPhoneNumber(row.phonenumber) : "",
       sortable: true,
     },
     {
       name: "City & State",
       id: "city",
-      selector: (row) => row.address,
+      selector: (row) =>
+        (row.cityname ? row.cityname : "") +
+        " " +
+        (row.statename ? "," + row.statename : ""),
       sortable: true,
     },
     {
@@ -85,27 +97,63 @@ export const AdmCandidateList = () => {
       cell: (row) => (
         <div>
           <ButtonGroup>
-            <Button
-              // outline
-              size="sm"
-              title="Edit candidate"
-              className="btn-icon"
-              color="warning"
-              onClick={(e) => {}}
-            >
-              <img src={customerIcons?.list_edit} alt="list approve"></img>
-            </Button>
+            {row.status === 0 ? (
+              <>
+                <Button
+                  // outline
+                  size="sm"
+                  title="Edit candidate"
+                  className="btn-icon"
+                  color="warning"
+                  disabled
+                  onClick={(e) => {}}
+                >
+                  <img src={customerIcons?.list_edit} alt="list approve"></img>
+                </Button>
 
-            <Button
-              // outline
-              size="sm"
-              title="Send Invitation"
-              className="btn-icon"
-              color="info"
-              onClick={(e) => {}}
-            >
-              <FaEye style={{ fontSize: "18px" }} />
-            </Button>
+                <Button
+                  // outline
+                  size="sm"
+                  title="Send Invitation"
+                  className="btn-icon"
+                  color="info"
+                  onClick={(e) => {
+                    sendEmailInvitation(row.candidateid);
+                  }}
+                >
+                  <FaEnvelope style={{ fontSize: "18px" }} />
+                </Button>
+              </>
+            ) : row.status === 1 ? (
+              <>
+                <Button
+                  // outline
+                  size="sm"
+                  title="Edit candidate"
+                  className="btn-icon"
+                  color="warning"
+                  disabled
+                  onClick={(e) => {}}
+                >
+                  <img src={customerIcons?.list_edit} alt="list approve"></img>
+                </Button>
+
+                <Button
+                  // outline
+                  size="sm"
+                  title="Re-Send Invitation"
+                  className="btn-icon"
+                  color="info"
+                  onClick={(e) => {
+                    sendEmailInvitation(row.candidateid);
+                  }}
+                >
+                  <FaEnvelopeOpenText style={{ fontSize: "18px" }} />
+                </Button>
+              </>
+            ) : (
+              <></>
+            )}
           </ButtonGroup>
         </div>
       ),
@@ -125,6 +173,62 @@ export const AdmCandidateList = () => {
   };
   const getFilterValue = async (event) => {};
 
+  const getCandidateListData = (pageNo, pageSize) => {
+    dispatch(
+      adminListingActions.getAdmCandidateList({
+        isActive: true,
+        pageSize: pageSize,
+        pageNumber: pageNo,
+      })
+    );
+  };
+  const handlePerRowsChange = async (pagesize) => {
+    setPageSize(pagesize);
+    getCandidateListData(pageNo, pagesize);
+  };
+  const handlePageChange = async (page) => {
+    setPageNo(page);
+    getCandidateListData(page, pageSize);
+  };
+
+  const sendEmailInvitation = async (candidateid) => {
+    let res = await dispatch(
+      adminListingActions.sendEmailInvitation(candidateid)
+    );
+
+    if (res?.payload?.statusCode === 201) {
+      getCandidateListData(pageNo, pageSize);
+      showSweetAlert({
+        title: res?.payload?.message
+          ? res.payload.message
+          : "Email Invitation sent successfully.",
+        type: "success",
+      });
+    } else {
+      showSweetAlert({
+        title: res?.error?.message
+          ? res?.error?.message
+          : "Error while sending invitation",
+        type: "error",
+      });
+    }
+  };
+
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
   return (
     <>
       <Row>
@@ -135,12 +239,13 @@ export const AdmCandidateList = () => {
           <Card className="mb-3">
             <CardBody>
               <Row>
-                <Col md={12} lg={12} sm={12}>
+                <Col md={12} lg={12} sm={12} style={{ paddingBottom: "1rem" }}>
                   <Button
                     style={{ background: "#2f479b" }}
                     color={"primary"}
                     className="input-group-text float-end mt-1"
                     type="submit"
+                    disabled
                     // onClick={(e) => addModal()}
                   >
                     New Candidate
@@ -160,6 +265,7 @@ export const AdmCandidateList = () => {
                         className="search-input search-placeholder"
                         id="search-input"
                         value={searchData}
+                        disabled
                         onInput={(evt) => setSearchText(evt.target.value)}
                         placeholder="Search.."
                       />
@@ -178,7 +284,7 @@ export const AdmCandidateList = () => {
                 </Col>
               </Row>
               <DataTable
-                data={data}
+                data={candidateList}
                 columns={columns}
                 pagination
                 fixedHeader
@@ -186,14 +292,24 @@ export const AdmCandidateList = () => {
                 // progressPending={loading}
                 responsive
                 paginationServer
-                // paginationTotalRows={totalRecords}
-                // onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
-                // onChangePage={(e) => handlePageChange(e)}
+                paginationTotalRows={candTotalRecords}
+                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                onChangePage={(e) => handlePageChange(e)}
               />
             </CardBody>
           </Card>
         </Col>
       </Row>
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </>
   );
 };
