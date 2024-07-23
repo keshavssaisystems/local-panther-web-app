@@ -36,7 +36,7 @@ import {
 import SweetAlert from "react-bootstrap-sweetalert";
 import { analytics } from "../../firebase/index";
 
-export function CandidateProfile() {
+export function CandidateProfile({ candId }) {
   const dispatch = useDispatch();
   const [dropdownLists, setDropDownLists] = useState({
     cityDropdown: [],

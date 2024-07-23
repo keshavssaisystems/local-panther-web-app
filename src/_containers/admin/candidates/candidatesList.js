@@ -10,6 +10,7 @@ import {
   FormGroup,
   Button,
   ButtonGroup,
+  Input,
 } from "reactstrap";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -17,14 +18,16 @@ import cx from "classnames";
 import { FaEnvelopeOpenText, FaEnvelope } from "react-icons/fa";
 import customerIcons from "assets/utils/images/customer";
 import DataTable from "react-data-table-component";
-import { adminListingActions } from "_store";
+import { adminListingActions, getLocation } from "_store";
 import { USPhoneNumber } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
-
+import AsyncSelect from "react-select/async";
+import { CandidateProfile } from "_containers/candidate/candidateProfile";
 export const AdmCandidateList = () => {
   const dispatch = useDispatch();
-  const [searchData, setSearchText] = useState("");
   const [pageNo, setPageNo] = useState(1);
+  const [showProfile, setShowProfile] = useState(false);
+  const [selectedCandidate, setSelectedCandidate] = useState("");
   const [pageSize, setPageSize] = useState(10);
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -32,7 +35,12 @@ export const AdmCandidateList = () => {
     title: "",
     description: "",
   });
-
+  const [loading, setLoading] = useState(false);
+  const [stateData, setStateData] = useState({
+    value: "",
+    label: "Search city or zip code",
+  });
+  const [searchData, setSearchText] = useState("");
   const candidateList = useSelector(
     (state) => state.adminListing?.candidateList
   );
@@ -40,12 +48,8 @@ export const AdmCandidateList = () => {
     (state) => state.adminListing?.candTotalRecords
   );
   useEffect(() => {
-    getCandidateListData(pageNo, pageSize);
+    getCandidateListData(pageNo, pageSize, searchData);
   }, []);
-
-  const onClearSearch = async function () {
-    setSearchText("");
-  };
 
   let title = "Candidates";
   let icon = companyLogo;
@@ -106,9 +110,14 @@ export const AdmCandidateList = () => {
                   className="btn-icon"
                   color="warning"
                   disabled
-                  onClick={(e) => {}}
+                  onClick={(e) => {
+                    showCandidateProfile(row.candidateid);
+                  }}
                 >
-                  <img src={customerIcons?.list_edit} alt="list approve"></img>
+                  <img
+                    src={customerIcons?.list_edit}
+                    alt="Edit candidate"
+                  ></img>
                 </Button>
 
                 <Button
@@ -133,9 +142,14 @@ export const AdmCandidateList = () => {
                   className="btn-icon"
                   color="warning"
                   disabled
-                  onClick={(e) => {}}
+                  onClick={(e) => {
+                    showCandidateProfile(row.candidateid);
+                  }}
                 >
-                  <img src={customerIcons?.list_edit} alt="list approve"></img>
+                  <img
+                    src={customerIcons?.list_edit}
+                    alt="Edit candidate"
+                  ></img>
                 </Button>
 
                 <Button
@@ -171,24 +185,37 @@ export const AdmCandidateList = () => {
       },
     },
   };
-  const getFilterValue = async (event) => {};
 
-  const getCandidateListData = (pageNo, pageSize) => {
+  const getCandidateListData = (
+    pageNo,
+    pageSize,
+    searchData,
+    fromClear = false
+  ) => {
+    let cityId = 0;
+    let stateId = 0;
+    if (stateData?.value) {
+      cityId = stateData.value.split(",")[0];
+      stateId = stateData.value.split(",")[1];
+    }
     dispatch(
       adminListingActions.getAdmCandidateList({
         isActive: true,
         pageSize: pageSize,
         pageNumber: pageNo,
+        searchText: fromClear ? "" : searchData,
+        cityId: fromClear ? 0 : cityId,
+        stateId: fromClear ? 0 : stateId,
       })
     );
   };
   const handlePerRowsChange = async (pagesize) => {
     setPageSize(pagesize);
-    getCandidateListData(pageNo, pagesize);
+    getCandidateListData(pageNo, pagesize, searchData);
   };
   const handlePageChange = async (page) => {
     setPageNo(page);
-    getCandidateListData(page, pageSize);
+    getCandidateListData(page, pageSize, searchData);
   };
 
   const sendEmailInvitation = async (candidateid) => {
@@ -197,7 +224,7 @@ export const AdmCandidateList = () => {
     );
 
     if (res?.payload?.statusCode === 201) {
-      getCandidateListData(pageNo, pageSize);
+      getCandidateListData(pageNo, pageSize, searchData);
       showSweetAlert({
         title: res?.payload?.message
           ? res.payload.message
@@ -229,77 +256,150 @@ export const AdmCandidateList = () => {
     data.show = false;
     SetShowAlert(data);
   };
+
+  const loadOptions = async (inputValue) => {
+    if (inputValue.length > 0) {
+      const { data = [] } = await getLocation(inputValue);
+      return data.map(({ cityid: value, ...rest }) => {
+        return {
+          value: `${value}, ${rest.stateid}, ${rest.location}, ${rest.statename}`,
+          label: `${rest.location}, ${rest.statename}`,
+        };
+      });
+    }
+  };
+
+  const getFormValues = () => {};
+  const applyFilter = async () => {
+    setPageNo(1);
+    getCandidateListData(1, pageSize, searchData);
+  };
+
+  const clearFilter = async () => {
+    setPageNo(1);
+    setStateData({ value: "", label: "Search city or zip code" });
+    setSearchText("");
+    getCandidateListData(1, pageSize, "", true);
+  };
+
+  const getLocationDetails = (event) => {
+    let locationSplit = event.value.split(", ");
+
+    setStateData({
+      value:
+        locationSplit[0] +
+        ", " +
+        locationSplit[1] +
+        ", " +
+        locationSplit[2] +
+        ", " +
+        locationSplit[3],
+      label: locationSplit[2] + ", " + locationSplit[3],
+    });
+  };
+
+  const showCandidateProfile = (id) => {
+    setShowProfile(true);
+    setSelectedCandidate(id);
+  };
   return (
     <>
-      <Row>
-        <Col md="12">
-          <PageTitle heading={title} icon={icon} />
-        </Col>
-        <Col md="12">
-          <Card className="mb-3">
-            <CardBody>
-              <Row>
-                <Col md={12} lg={12} sm={12} style={{ paddingBottom: "1rem" }}>
-                  <Button
-                    style={{ background: "#2f479b" }}
-                    color={"primary"}
-                    className="input-group-text float-end mt-1"
-                    type="submit"
-                    disabled
-                    // onClick={(e) => addModal()}
-                  >
-                    New Candidate
-                  </Button>
-                  <div
-                    className={cx(
-                      "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-                      {
-                        active: true,
-                      }
-                    )}
-                  >
-                    {" "}
-                    <div className="input-holder float-end">
-                      <input
-                        type="text"
-                        className="search-input search-placeholder"
-                        id="search-input"
-                        value={searchData}
-                        disabled
-                        onInput={(evt) => setSearchText(evt.target.value)}
-                        placeholder="Search.."
-                      />
-                      <button
-                        className="btn-close"
-                        onClick={(evt) => onClearSearch()}
-                      />
-                      <button
-                        // onClick={(evt) => getCompanyList(pageSize, pageNo)}
-                        className="search-icon"
-                      >
-                        <span />
-                      </button>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              <DataTable
-                data={candidateList}
-                columns={columns}
-                pagination
-                fixedHeader
-                customStyles={customStyles}
-                // progressPending={loading}
-                responsive
-                paginationServer
-                paginationTotalRows={candTotalRecords}
-                onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
-                onChangePage={(e) => handlePageChange(e)}
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+      {" "}
+      {!showProfile ? (
+        <Row>
+          <Col md="12">
+            <PageTitle heading={title} icon={icon} />
+          </Col>
+          <Col md="12">
+            <Card className="mb-3">
+              <CardBody>
+                <Row>
+                  <Col md={8} lg={8} sm={12} style={{ paddingBottom: "1rem" }}>
+                    <Form onSubmit={(e) => getFormValues(e)}>
+                      <Row>
+                        <Col md={6} lg={3} sm={12}>
+                          <FormGroup>
+                            <Input
+                              id={"search"}
+                              name={"serach"}
+                              type={"text"}
+                              value={searchData}
+                              onChange={(e) => {
+                                setSearchText(e.target.value);
+                              }}
+                              placeholder="Search name, email"
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col md={8} lg={5} sm={12} style={{ zIndex: "9999" }}>
+                          <FormGroup>
+                            <AsyncSelect
+                              name={"city"}
+                              placeholder="Search city or zipcode"
+                              loadOptions={loadOptions}
+                              isMulti={false}
+                              styles={customStyles}
+                              value={stateData}
+                              onChange={(e) => getLocationDetails(e)}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col lg="4" md="6" sm="12">
+                          <Button
+                            style={{ background: "rgb(47 71 155)" }}
+                            color="primary"
+                            type="button"
+                            onClick={() => applyFilter()}
+                          >
+                            {" "}
+                            Search
+                          </Button>
+                          <Button
+                            color="link"
+                            type="button"
+                            style={{ marginLeft: "1rem" }}
+                            onClick={() => clearFilter()}
+                          >
+                            {" "}
+                            Clear
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Col>
+                  <Col md={4} lg={4} sm={12} style={{ paddingBottom: "1rem" }}>
+                    <Button
+                      style={{ background: "#2f479b" }}
+                      color={"primary"}
+                      className="input-group-text float-end mt-1"
+                      type="submit"
+                      disabled
+                      // onClick={(e) => addModal()}
+                    >
+                      New Candidate
+                    </Button>
+                  </Col>
+                </Row>
+                <DataTable
+                  data={candidateList}
+                  columns={columns}
+                  pagination
+                  fixedHeader
+                  customStyles={customStyles}
+                  progressPending={loading}
+                  responsive
+                  paginationServer
+                  paginationTotalRows={candTotalRecords}
+                  onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                  onChangePage={(e) => handlePageChange(e)}
+                />
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      ) : (
+        <CandidateProfile candId={selectedCandidate}></CandidateProfile>
+      )}
       <>
         {" "}
         <SweetAlert
