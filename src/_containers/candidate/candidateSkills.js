@@ -219,7 +219,9 @@ export function CandidateSkills(props) {
       setMustHaveValidation(true);
     } else {
       setMustHaveValidation(false);
-      let id = JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId;
+      let id = localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId;
       let userId = JSON.parse(localStorage.getItem("userDetails")).UserId;
       console.log(skillsMultiple);
       let payload = skillsMultiple.map((rest) => {

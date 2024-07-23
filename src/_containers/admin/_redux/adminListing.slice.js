@@ -260,6 +260,7 @@ const adminListingSlice = createSlice({
     candPageNo: 1,
     candPageSize: 10,
     candTotalRecords: 0,
+    candListLoading: false,
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -583,7 +584,11 @@ const adminListingSlice = createSlice({
       state.error = action.error;
     },
 
-    [getAdmCandidateList.pending]: (state) => {},
+    [getAdmCandidateList.pending]: (state) => {
+      state.candidateList = [];
+      state.candListLoading = true;
+      state.candTotalRecords = 0;
+    },
     [getAdmCandidateList.fulfilled]: (state, { payload = {} }) => {
       state.candidateList =
         payload?.data?.candidateList?.length > 0
@@ -592,8 +597,11 @@ const adminListingSlice = createSlice({
       state.candTotalRecords = payload?.data?.totalRows
         ? payload.data.totalRows
         : 0;
+      state.candListLoading = false;
     },
-    [getAdmCandidateList.rejected]: (state, action) => {},
+    [getAdmCandidateList.rejected]: (state, action) => {
+      state.candListLoading = false;
+    },
     [sendEmailInvitation.pending]: (state) => {
       state.loading = true;
       state.error = null;
