@@ -407,7 +407,9 @@ export function PersonalInformation(props) {
     }
 
     let post_data = {
-      candidateid: userDetails.InternalUserId,
+      candidateid: localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : userDetails.InternalUserId,
       email: new_data.email,
       phonenumber: new_data.phonenumber,
       firstname: new_data.firstname,

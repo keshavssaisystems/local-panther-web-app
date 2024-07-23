@@ -11,6 +11,7 @@ import {
   Button,
   ButtonGroup,
   Input,
+  Badge,
 } from "reactstrap";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -23,11 +24,11 @@ import { USPhoneNumber } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
 import AsyncSelect from "react-select/async";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
+import { NoDataFound } from "_components/common/nodatafound";
 export const AdmCandidateList = () => {
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
   const [showProfile, setShowProfile] = useState(false);
-  const [selectedCandidate, setSelectedCandidate] = useState("");
   const [pageSize, setPageSize] = useState(10);
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -35,20 +36,29 @@ export const AdmCandidateList = () => {
     title: "",
     description: "",
   });
-  const [loading, setLoading] = useState(false);
+
   const [stateData, setStateData] = useState({
     value: "",
     label: "Search city or zip code",
   });
   const [searchData, setSearchText] = useState("");
+  const [status, setStatus] = useState("");
+  const [source, setSource] = useState("");
   const candidateList = useSelector(
     (state) => state.adminListing?.candidateList
   );
   const candTotalRecords = useSelector(
     (state) => state.adminListing?.candTotalRecords
   );
+  const candListLoading = useSelector(
+    (state) => state.adminListing?.candListLoading
+  );
+
   useEffect(() => {
     getCandidateListData(pageNo, pageSize, searchData);
+    return () => {
+      localStorage.removeItem("admcandid");
+    };
   }, []);
 
   let title = "Candidates";
@@ -93,7 +103,17 @@ export const AdmCandidateList = () => {
     },
     {
       name: "Status",
-      selector: (row) => row.status,
+      cell: (row) => (
+        <div>
+          {row.status === 0 && row?.source?.toLowerCase() === "admin" ? (
+            <Badge color="warning">Email not sent</Badge>
+          ) : row.status === 1 && row?.source?.toLowerCase() === "admin" ? (
+            <Badge color="info">Email send</Badge>
+          ) : (
+            <Badge color="success">Active</Badge>
+          )}
+        </div>
+      ),
       sortable: true,
     },
     {
@@ -101,7 +121,7 @@ export const AdmCandidateList = () => {
       cell: (row) => (
         <div>
           <ButtonGroup>
-            {row.status === 0 ? (
+            {row.status === 0 && row?.source?.toLowerCase() === "admin" ? (
               <>
                 <Button
                   // outline
@@ -109,7 +129,7 @@ export const AdmCandidateList = () => {
                   title="Edit candidate"
                   className="btn-icon"
                   color="warning"
-                  disabled
+                  // disabled
                   onClick={(e) => {
                     showCandidateProfile(row.candidateid);
                   }}
@@ -133,7 +153,7 @@ export const AdmCandidateList = () => {
                   <FaEnvelope style={{ fontSize: "18px" }} />
                 </Button>
               </>
-            ) : row.status === 1 ? (
+            ) : row.status === 1 && row?.source?.toLowerCase() === "admin" ? (
               <>
                 <Button
                   // outline
@@ -141,7 +161,7 @@ export const AdmCandidateList = () => {
                   title="Edit candidate"
                   className="btn-icon"
                   color="warning"
-                  disabled
+                  // disabled
                   onClick={(e) => {
                     showCandidateProfile(row.candidateid);
                   }}
@@ -206,6 +226,8 @@ export const AdmCandidateList = () => {
         searchText: fromClear ? "" : searchData,
         cityId: fromClear ? 0 : cityId,
         stateId: fromClear ? 0 : stateId,
+        source: fromClear ? "" : source,
+        status: fromClear ? "" : status,
       })
     );
   };
@@ -279,6 +301,8 @@ export const AdmCandidateList = () => {
     setPageNo(1);
     setStateData({ value: "", label: "Search city or zip code" });
     setSearchText("");
+    setSource("");
+    setStatus("");
     getCandidateListData(1, pageSize, "", true);
   };
 
@@ -300,7 +324,12 @@ export const AdmCandidateList = () => {
 
   const showCandidateProfile = (id) => {
     setShowProfile(true);
-    setSelectedCandidate(id);
+    localStorage.setItem("admcandid", id);
+  };
+
+  const backToList = () => {
+    setShowProfile(false);
+    localStorage.removeItem("admcandid");
   };
   return (
     <>
@@ -331,7 +360,7 @@ export const AdmCandidateList = () => {
                             />
                           </FormGroup>
                         </Col>
-                        <Col md={8} lg={5} sm={12} style={{ zIndex: "9999" }}>
+                        <Col md={6} lg={3} sm={12} style={{ zIndex: "9999" }}>
                           <FormGroup>
                             <AsyncSelect
                               name={"city"}
@@ -342,6 +371,37 @@ export const AdmCandidateList = () => {
                               value={stateData}
                               onChange={(e) => getLocationDetails(e)}
                             />
+                          </FormGroup>
+                        </Col>
+                        <Col md={6} lg={3} sm={12}>
+                          <FormGroup>
+                            <Input
+                              type="select"
+                              name="source"
+                              value={source}
+                              onChange={(e) => setSource(e.target.value)}
+                            >
+                              <option value={""}>All Source</option>
+                              <option value={"Admin"}>Admin</option>
+                              <option value={"Registration"}>
+                                Registration
+                              </option>
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col md={6} lg={3} sm={12}>
+                          <FormGroup>
+                            <Input
+                              type="select"
+                              name="status"
+                              value={status}
+                              onChange={(e) => setStatus(e.target.value)}
+                            >
+                              <option value={""}>All Status</option>
+                              <option value={"0"}>Email not sent</option>
+                              <option value={"1"}>Email send</option>
+                              <option value={"2"}>Active</option>
+                            </Input>
                           </FormGroup>
                         </Col>
                         <Col lg="4" md="6" sm="12">
@@ -380,13 +440,14 @@ export const AdmCandidateList = () => {
                     </Button>
                   </Col>
                 </Row>
+
                 <DataTable
                   data={candidateList}
                   columns={columns}
                   pagination
                   fixedHeader
                   customStyles={customStyles}
-                  progressPending={loading}
+                  progressPending={candListLoading}
                   responsive
                   paginationServer
                   paginationTotalRows={candTotalRecords}
@@ -398,7 +459,22 @@ export const AdmCandidateList = () => {
           </Col>
         </Row>
       ) : (
-        <CandidateProfile candId={selectedCandidate}></CandidateProfile>
+        <Row>
+          <Col md={12} lg={12} sm={12}>
+            <Button
+              style={{ background: "#2f479b", marginBottom: "1rem" }}
+              color={"primary"}
+              className="input-group-text float-end mt-1"
+              type="submit"
+              onClick={(e) => backToList()}
+            >
+              Back to list
+            </Button>
+          </Col>
+          <Col md={12} lg={12} sm={12}>
+            <CandidateProfile></CandidateProfile>
+          </Col>
+        </Row>
       )}
       <>
         {" "}

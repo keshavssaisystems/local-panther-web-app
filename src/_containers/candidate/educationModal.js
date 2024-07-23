@@ -514,7 +514,9 @@ export function EducationModal(props) {
     let filtered_data = formDetails.map(({ skillid: value, ...rest }) => {
       return {
         candidateeducationid: rest.candidateeducationid,
-        candidateid: Number(userDetails.InternalUserId),
+        candidateid: localStorage.getItem("admcandid")
+          ? Number(localStorage.getItem("admcandid"))
+          : Number(userDetails.InternalUserId),
         levelofeducation: rest.education.label,
         fieldofstudy: rest.fieldofstudy?.label,
         school: rest.school,
