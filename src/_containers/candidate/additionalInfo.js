@@ -91,7 +91,6 @@ export function AdditionalInformation(props) {
     props.onCallBack();
   };
   const deleteModal = function (id) {
-    debugger;
     setDeleteId(
       localStorage.getItem("admcandid")
         ? localStorage.getItem("admcandid")
