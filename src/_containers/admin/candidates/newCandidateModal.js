@@ -156,11 +156,13 @@ export const NewCandidateModal = (props) => {
           createddate: new Date().toISOString(),
         })
       );
-      if (btnType === "2") {
-        props.onSaveCloseNext(res.payload.data.candidateid);
-      } else {
-        props.onSaveClose();
-      }
+      setTimeout(() => {
+        if (btnType === "2") {
+          props.onSaveCloseNext(res.payload.data.candidateid);
+        } else {
+          props.onSaveClose();
+        }
+      }, [2000]);
     } else {
       showSweetAlert({
         title: res?.error?.message
