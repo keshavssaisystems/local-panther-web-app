@@ -100,6 +100,14 @@ export const putRegisterCustomer = createAsyncThunk(
   }
 );
 
+export const postAddAuditLogs = createAsyncThunk(
+  `${name}/postAddAuditLogs`,
+  async (payload) => {
+    const POST_ADD_AUDIT_LOG = `${process.env.REACT_APP_MAIN_API_URL}/api/AuditLogs/AddLog`;
+    return await fetchWrapper.post(POST_ADD_AUDIT_LOG, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -284,6 +292,15 @@ const authSlice = createSlice({
     [logoutThunk.rejected]: (state, action) => {
       // do nothing
     },
+    [postAddAuditLogs.pending]: (state, { payload }) => {
+      // do nothing
+    },
+    [postAddAuditLogs.fulfilled]: (state, { payload = {} }) => {
+      // do nothing
+    },
+    [postAddAuditLogs.rejected]: (state, action) => {
+      // do nothing
+    },
   },
 });
 
@@ -301,6 +318,7 @@ export const authActions = {
   getShareJobDetails,
   logoutThunk,
   putRegisterCustomer,
+  postAddAuditLogs,
 };
 
 export const authReducer = authSlice.reducer;

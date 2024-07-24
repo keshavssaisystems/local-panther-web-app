@@ -5,7 +5,6 @@ import {
   Row,
   Col,
   Button,
-  ModalFooter,
   ModalHeader,
   FormGroup,
   Label,
@@ -19,7 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import InputMask from "react-input-mask";
 import AsyncSelect from "react-select/async";
 import SweetAlert from "react-bootstrap-sweetalert";
-import { getLocationFilter } from "_store";
+import { getLocationFilter, authActions } from "_store";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { adminListingActions } from "_store";
@@ -141,6 +140,22 @@ export const NewCandidateModal = (props) => {
           : "Candidate Added successfully.",
         type: "success",
       });
+      let res1 = await dispatch(
+        authActions.postAddAuditLogs({
+          useractivityid: 0,
+          userid: localStorage.getItem("userId")
+            ? localStorage.getItem("userId")
+            : 0,
+          datasource: "add candidate",
+          ipaddress: localStorage.getItem("publicip")
+            ? localStorage.getItem("publicip")
+            : "Web",
+          resource: "admin",
+          functionname: "addCandidate",
+          pagename: "candidateRegistration",
+          createddate: new Date().toISOString(),
+        })
+      );
       if (btnType === "2") {
         props.onSaveCloseNext(res.payload.data.candidateid);
       } else {
@@ -220,14 +235,14 @@ export const NewCandidateModal = (props) => {
   return (
     <Modal
       size="xl"
-      toggle={() => props.onClose()}
+      //   toggle={() => props.onClose()}
       isOpen={props.isOpen}
       backdrop={true}
       className="payment-cont"
       fade={true}
     >
       <ModalHeader toggle={() => props.onClose()}>
-        New Candidate Registration
+        Candidate Registration
       </ModalHeader>
       <ModalBody style={{ maxHeight: "80vh", overflow: "auto" }}>
         <Form onSubmit={handleSubmit(onSubmit)}>
@@ -399,7 +414,8 @@ export const NewCandidateModal = (props) => {
               </FormGroup>
             </Col>
           </Row>
-          <div className="mt-4 d-flex align-items-center float-end">
+          <hr style={{ margin: "0.25rem" }}></hr>
+          <div className="mt-3 d-flex align-items-center float-end">
             <div>
               <Button
                 type="submit"
@@ -419,18 +435,18 @@ export const NewCandidateModal = (props) => {
               >
                 Save & Continue
               </Button>
-              <Button
+              {/* <Button
                 type="submit"
                 color="secondary"
                 onClick={() => props.onClose()}
               >
                 Close
-              </Button>
+              </Button> */}
             </div>
           </div>
         </Form>
       </ModalBody>
-      <ModalFooter></ModalFooter>
+
       <>
         {" "}
         <SweetAlert

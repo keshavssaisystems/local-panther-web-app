@@ -15,10 +15,15 @@ import {
 } from "reactstrap";
 
 import { useDispatch, useSelector } from "react-redux";
-import { FaEnvelopeOpenText, FaEnvelope } from "react-icons/fa";
+import { FaEnvelopeOpenText, FaEnvelope, FaEye } from "react-icons/fa";
 import customerIcons from "assets/utils/images/customer";
 import DataTable from "react-data-table-component";
-import { adminListingActions, getLocation } from "_store";
+import {
+  adminListingActions,
+  getLocation,
+  authActions,
+  getProfileActions,
+} from "_store";
 import { USPhoneNumber } from "_helpers/helper";
 import SweetAlert from "react-bootstrap-sweetalert";
 import AsyncSelect from "react-select/async";
@@ -26,11 +31,12 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
 import { NewCandidateModal } from "./newCandidateModal";
-
+import { BuildCVModal } from "_components/modal/buildcvmodal";
 export const AdmCandidateList = () => {
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
   const [showProfile, setShowProfile] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddCandMod, setShowAddCandMod] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [showAlert, SetShowAlert] = useState({
@@ -71,7 +77,7 @@ export const AdmCandidateList = () => {
       name: "Name",
       id: "name",
       selector: (row) => row.firstname + " " + row.lastname,
-
+      width: "15%",
       sortable: true,
     },
 
@@ -80,6 +86,7 @@ export const AdmCandidateList = () => {
       id: "cityname",
       selector: (row) => row.email,
       sortable: true,
+      width: "20%",
     },
 
     {
@@ -88,6 +95,7 @@ export const AdmCandidateList = () => {
       selector: (row) =>
         row.phonenumber ? USPhoneNumber(row.phonenumber) : "",
       sortable: true,
+      width: "15%",
     },
     {
       name: "City & State",
@@ -101,12 +109,14 @@ export const AdmCandidateList = () => {
         " " +
         (row.statename ? row.statename : ""),
       sortable: true,
+      width: "15%",
     },
     {
       name: "Source",
       id: "source",
       selector: (row) => row.source,
       sortable: true,
+      width: "10%",
     },
     {
       name: "Status",
@@ -123,6 +133,7 @@ export const AdmCandidateList = () => {
       ),
       sortable: true,
       selector: (row) => row.status,
+      width: "15%",
     },
     {
       name: "Action",
@@ -155,10 +166,22 @@ export const AdmCandidateList = () => {
                   className="btn-icon"
                   color="info"
                   onClick={(e) => {
-                    sendEmailInvitation(row.candidateid);
+                    sendEmailInvitation(row.candidateid, 1);
                   }}
                 >
                   <FaEnvelope style={{ fontSize: "18px" }} />
+                </Button>
+                <Button
+                  // outline
+                  size="sm"
+                  title="View Profile"
+                  className="btn-icon"
+                  color="danger"
+                  onClick={(e) => {
+                    onCandidateClick(row.candidateid);
+                  }}
+                >
+                  <FaEye style={{ fontSize: "18px" }} />
                 </Button>
               </>
             ) : row.status === 1 && row?.source?.toLowerCase() === "admin" ? (
@@ -187,14 +210,39 @@ export const AdmCandidateList = () => {
                   className="btn-icon"
                   color="info"
                   onClick={(e) => {
-                    sendEmailInvitation(row.candidateid);
+                    sendEmailInvitation(row.candidateid, 2);
                   }}
                 >
                   <FaEnvelopeOpenText style={{ fontSize: "18px" }} />
                 </Button>
+                <Button
+                  // outline
+                  size="sm"
+                  title="View Profile"
+                  className="btn-icon"
+                  color="danger"
+                  onClick={(e) => {
+                    onCandidateClick(row.candidateid);
+                  }}
+                >
+                  <FaEye style={{ fontSize: "18px" }} />
+                </Button>
               </>
             ) : (
-              <></>
+              <>
+                <Button
+                  // outline
+                  size="sm"
+                  title="View Profile"
+                  className="btn-icon"
+                  color="danger"
+                  onClick={(e) => {
+                    onCandidateClick(row.candidateid);
+                  }}
+                >
+                  <FaEye style={{ fontSize: "18px" }} />
+                </Button>
+              </>
             )}
           </ButtonGroup>
         </div>
@@ -248,7 +296,24 @@ export const AdmCandidateList = () => {
     getCandidateListData(page, pageSize, searchData);
   };
 
-  const sendEmailInvitation = async (candidateid) => {
+  const sendEmailInvitation = async (candidateid, type) => {
+    let res1 = await dispatch(
+      authActions.postAddAuditLogs({
+        useractivityid: 0,
+        userid: localStorage.getItem("userId")
+          ? localStorage.getItem("userId")
+          : 0,
+        datasource:
+          type === 1 ? "send email invitation" : "re-send email invitation",
+        ipaddress: localStorage.getItem("publicip")
+          ? localStorage.getItem("publicip")
+          : "Web",
+        resource: type === 1 ? "email invitation" : "resend email invitation",
+        functionname: type === 1 ? "emailinvitation" : "resendemailinvitation",
+        pagename: "admincandidateemailinvitation",
+        createddate: new Date().toISOString(),
+      })
+    );
     let res = await dispatch(
       adminListingActions.sendEmailInvitation(candidateid)
     );
@@ -256,9 +321,10 @@ export const AdmCandidateList = () => {
     if (res?.payload?.statusCode === 201) {
       getCandidateListData(pageNo, pageSize, searchData);
       showSweetAlert({
-        title: res?.payload?.message
-          ? res.payload.message
-          : "Email Invitation sent successfully.",
+        title:
+          type === 1
+            ? "Email Invitation sent successfully."
+            : "Email Invitation re-send successfully.",
         type: "success",
       });
     } else {
@@ -330,7 +396,23 @@ export const AdmCandidateList = () => {
     });
   };
 
-  const showCandidateProfile = (id) => {
+  const showCandidateProfile = async (id) => {
+    let res1 = await dispatch(
+      authActions.postAddAuditLogs({
+        useractivityid: 0,
+        userid: localStorage.getItem("userId")
+          ? localStorage.getItem("userId")
+          : 0,
+        datasource: "edit candidate",
+        ipaddress: localStorage.getItem("publicip")
+          ? localStorage.getItem("publicip")
+          : "Web",
+        resource: "admin",
+        functionname: "editCandidate",
+        pagename: "editcandidateprofile",
+        createddate: new Date().toISOString(),
+      })
+    );
     setShowProfile(true);
     localStorage.setItem("admcandid", id);
   };
@@ -350,6 +432,15 @@ export const AdmCandidateList = () => {
     setShowAddCandMod(false);
     localStorage.setItem("admcandid", id);
     setShowProfile(true);
+  };
+
+  const onCandidateClick = async (candidateId) => {
+    const response = await dispatch(
+      getProfileActions.getCandidate(candidateId)
+    );
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
   };
   return (
     <>
@@ -530,6 +621,18 @@ export const AdmCandidateList = () => {
               onClose={() => setShowAddCandMod(false)}
               onSaveClose={() => onSaveClose()}
               onSaveCloseNext={(id) => onSaveCloseNext(id)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showProfileModal ? (
+          <>
+            <BuildCVModal
+              isOpen={showProfileModal}
+              onClose={() => setShowProfileModal(false)}
             />
           </>
         ) : (
