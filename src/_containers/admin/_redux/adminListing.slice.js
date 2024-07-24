@@ -242,6 +242,14 @@ export const sendEmailInvitation = createAsyncThunk(
   }
 );
 
+export const admAddCandidate = createAsyncThunk(
+  `${name}/admAddCandidate`,
+  async (payload) => {
+    const POST_ADM_ADD_CAND = `${baseUrl}/Candidate`;
+    return await fetchWrapper.post(POST_ADM_ADD_CAND, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -613,6 +621,9 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+    [admAddCandidate.pending]: (state) => {},
+    [admAddCandidate.fulfilled]: (state, { payload = {} }) => {},
+    [admAddCandidate.rejected]: (state, action) => {},
   },
 });
 
@@ -645,6 +656,7 @@ export const adminListingActions = {
   getFlaggedWordList,
   getAdmCandidateList,
   sendEmailInvitation,
+  admAddCandidate,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

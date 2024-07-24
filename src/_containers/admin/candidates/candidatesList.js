@@ -15,7 +15,6 @@ import {
 } from "reactstrap";
 
 import { useDispatch, useSelector } from "react-redux";
-import cx from "classnames";
 import { FaEnvelopeOpenText, FaEnvelope } from "react-icons/fa";
 import customerIcons from "assets/utils/images/customer";
 import DataTable from "react-data-table-component";
@@ -25,10 +24,14 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import AsyncSelect from "react-select/async";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { NoDataFound } from "_components/common/nodatafound";
+import Loader from "react-loaders";
+import { NewCandidateModal } from "./newCandidateModal";
+
 export const AdmCandidateList = () => {
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
   const [showProfile, setShowProfile] = useState(false);
+  const [showAddCandMod, setShowAddCandMod] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -39,7 +42,7 @@ export const AdmCandidateList = () => {
 
   const [stateData, setStateData] = useState({
     value: "",
-    label: "Search city or zip code",
+    label: "Search city/state",
   });
   const [searchData, setSearchText] = useState("");
   const [status, setStatus] = useState("");
@@ -90,9 +93,13 @@ export const AdmCandidateList = () => {
       name: "City & State",
       id: "city",
       selector: (row) =>
-        (row.cityname ? row.cityname : "") +
+        (row.cityname
+          ? row.statename
+            ? row.cityname + ","
+            : row.cityname
+          : "") +
         " " +
-        (row.statename ? "," + row.statename : ""),
+        (row.statename ? row.statename : ""),
       sortable: true,
     },
     {
@@ -115,6 +122,7 @@ export const AdmCandidateList = () => {
         </div>
       ),
       sortable: true,
+      selector: (row) => row.status,
     },
     {
       name: "Action",
@@ -299,7 +307,7 @@ export const AdmCandidateList = () => {
 
   const clearFilter = async () => {
     setPageNo(1);
-    setStateData({ value: "", label: "Search city or zip code" });
+    setStateData({ value: "", label: "Search city/state" });
     setSearchText("");
     setSource("");
     setStatus("");
@@ -328,8 +336,20 @@ export const AdmCandidateList = () => {
   };
 
   const backToList = () => {
+    clearFilter();
     setShowProfile(false);
     localStorage.removeItem("admcandid");
+  };
+
+  const onSaveClose = () => {
+    clearFilter();
+    setShowAddCandMod(false);
+  };
+
+  const onSaveCloseNext = (id) => {
+    setShowAddCandMod(false);
+    localStorage.setItem("admcandid", id);
+    setShowProfile(true);
   };
   return (
     <>
@@ -433,27 +453,43 @@ export const AdmCandidateList = () => {
                       color={"primary"}
                       className="input-group-text float-end mt-1"
                       type="submit"
-                      disabled
-                      // onClick={(e) => addModal()}
+                      onClick={(e) => setShowAddCandMod(true)}
                     >
                       New Candidate
                     </Button>
                   </Col>
                 </Row>
-
-                <DataTable
-                  data={candidateList}
-                  columns={columns}
-                  pagination
-                  fixedHeader
-                  customStyles={customStyles}
-                  progressPending={candListLoading}
-                  responsive
-                  paginationServer
-                  paginationTotalRows={candTotalRecords}
-                  onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
-                  onChangePage={(e) => handlePageChange(e)}
-                />
+                {candListLoading ? (
+                  <Loader
+                    type="line-scale-pulse-out-rapid"
+                    className="d-flex justify-content-center"
+                  />
+                ) : (
+                  <>
+                    {candidateList.length > 0 ? (
+                      <Row>
+                        <DataTable
+                          data={candidateList}
+                          columns={columns}
+                          pagination
+                          fixedHeader
+                          customStyles={customStyles}
+                          // progressPending={candListLoading}
+                          responsive
+                          paginationServer
+                          paginationDefaultPage={pageNo}
+                          paginationTotalRows={candTotalRecords}
+                          onChangeRowsPerPage={(e) => handlePerRowsChange(e)}
+                          onChangePage={(e) => handlePageChange(e)}
+                        />
+                      </Row>
+                    ) : (
+                      <Row className="center-align ">
+                        <NoDataFound></NoDataFound>
+                      </Row>
+                    )}
+                  </>
+                )}
               </CardBody>
             </Card>
           </Col>
@@ -485,6 +521,20 @@ export const AdmCandidateList = () => {
           onConfirm={() => closeSweetAlert()}
         />
         {showAlert.description}
+      </>
+      <>
+        {showAddCandMod ? (
+          <>
+            <NewCandidateModal
+              isOpen={showAddCandMod}
+              onClose={() => setShowAddCandMod(false)}
+              onSaveClose={() => onSaveClose()}
+              onSaveCloseNext={(id) => onSaveCloseNext(id)}
+            />
+          </>
+        ) : (
+          <></>
+        )}
       </>
     </>
   );
