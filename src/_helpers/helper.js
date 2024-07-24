@@ -507,3 +507,14 @@ export const getAcceptedListUniqueData = (acceptedList) => {
     return returnArray;
   }
 };
+
+export const getPublicIP = async () => {
+  try {
+    const response = await fetch("https://api.ipify.org?format=json");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching IP:", error);
+    return error;
+  }
+};

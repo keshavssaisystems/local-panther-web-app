@@ -91,7 +91,11 @@ export function AdditionalInformation(props) {
     props.onCallBack();
   };
   const deleteModal = function (id) {
-    setDeleteId(userDetails.InternalUserId);
+    setDeleteId(
+      localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : userDetails.InternalUserId
+    );
     setDeleteConfirm(true);
   };
 

@@ -338,7 +338,9 @@ export function CertificationsModal(props) {
     let userDetails = JSON.parse(localStorage.getItem("userDetails"));
 
     let filtered_data = {
-      candidateid: Number(userDetails.InternalUserId),
+      candidateid: localStorage.getItem("admcandid")
+        ? Number(localStorage.getItem("admcandid"))
+        : Number(userDetails.InternalUserId),
       certificationname: formDetails.certificationname,
       candidatecertificationid: formDetails.candidatecertificationid,
       certificationtypeid: formDetails.certificationtypeid,

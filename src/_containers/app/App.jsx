@@ -69,6 +69,8 @@ import { SubsidaryList } from "_containers/admin/masters/subsidary";
 import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
 import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
+import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
+import { getPublicIP } from "_helpers/helper";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -148,7 +150,18 @@ export function App() {
         page_path: window.location.pathname,
       });
     }
+    getPublicIpAdd();
+    return () => {
+      localStorage.removeItem("publicip");
+    };
   }, []);
+
+  const getPublicIpAdd = async () => {
+    let data = await getPublicIP();
+    if (data?.ip) {
+      localStorage.setItem("publicip", data.ip);
+    }
+  };
   const renderRoutes = (userroleid) => {
     if (userroleid === 1) {
       return (
@@ -166,6 +179,14 @@ export function App() {
             element={
               <PrivateRoute>
                 <CustomerList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/candidate-list"
+            element={
+              <PrivateRoute>
+                <AdmCandidateList />
               </PrivateRoute>
             }
           />

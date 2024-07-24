@@ -44,10 +44,13 @@ function authHeader(url) {
       if (userAgent.indexOf("like Mac") != -1) os = "iOS";
       return {
         LoginSource: "Web",
-        IpAddress: "Web",
+
         LoginDevice: os,
         // OsVersion: userAgent ? userAgent.toString() : "",
         LoginDeviceId: os,
+        IpAddress: localStorage.getItem("publicip")
+          ? localStorage.getItem("publicip")
+          : "Web",
       };
     } else {
       return {};

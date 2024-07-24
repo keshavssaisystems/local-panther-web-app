@@ -224,6 +224,32 @@ export const getFlaggedWordList = createAsyncThunk(
   }
 );
 
+export const getAdmCandidateList = createAsyncThunk(
+  `${name}/getAdmCandidateList`,
+  async (payload = {}) => {
+    const GET_ADM_CAND_LIST = `${baseUrl}/Candidate?${new URLSearchParams(
+      payload
+    )}`;
+    return await fetchWrapper.get(GET_ADM_CAND_LIST);
+  }
+);
+
+export const sendEmailInvitation = createAsyncThunk(
+  `${name}/sendEmailInvitation`,
+  async (candidateId) => {
+    const POST_SEND_EMINV = `${baseUrl}/Candidate/SendInvitation/${candidateId}`;
+    return await fetchWrapper.post(POST_SEND_EMINV);
+  }
+);
+
+export const admAddCandidate = createAsyncThunk(
+  `${name}/admAddCandidate`,
+  async (payload) => {
+    const POST_ADM_ADD_CAND = `${baseUrl}/Candidate`;
+    return await fetchWrapper.post(POST_ADM_ADD_CAND, payload);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -238,6 +264,11 @@ const adminListingSlice = createSlice({
     menuList: [],
     flaggedWordList: [],
     totalRecords: 0,
+    candidateList: [],
+    candPageNo: 1,
+    candPageSize: 10,
+    candTotalRecords: 0,
+    candListLoading: false,
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -560,6 +591,39 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
+
+    [getAdmCandidateList.pending]: (state) => {
+      state.candidateList = [];
+      state.candListLoading = true;
+      state.candTotalRecords = 0;
+    },
+    [getAdmCandidateList.fulfilled]: (state, { payload = {} }) => {
+      state.candidateList =
+        payload?.data?.candidateList?.length > 0
+          ? payload.data.candidateList
+          : [];
+      state.candTotalRecords = payload?.data?.totalRows
+        ? payload.data.totalRows
+        : 0;
+      state.candListLoading = false;
+    },
+    [getAdmCandidateList.rejected]: (state, action) => {
+      state.candListLoading = false;
+    },
+    [sendEmailInvitation.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [sendEmailInvitation.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [sendEmailInvitation.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [admAddCandidate.pending]: (state) => {},
+    [admAddCandidate.fulfilled]: (state, { payload = {} }) => {},
+    [admAddCandidate.rejected]: (state, action) => {},
   },
 });
 
@@ -590,6 +654,9 @@ export const adminListingActions = {
   updateFlaggedWords,
   deleteFlaggedWords,
   getFlaggedWordList,
+  getAdmCandidateList,
+  sendEmailInvitation,
+  admAddCandidate,
 };
 
 export const adminListingReducer = adminListingSlice.reducer;
