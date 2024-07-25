@@ -28,6 +28,7 @@ import logo from "../../assets/utils/images/panther-logo.png";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
+import { getPublicIP } from "_helpers/helper";
 import "./login.scss";
 
 export function Login() {
@@ -98,6 +99,10 @@ export function Login() {
   }
   const firebasemessaging = async (payload) => {
     const permission = await Notification.requestPermission();
+    let data = await getPublicIP();
+    if (data?.ip) {
+      localStorage.setItem("publicip", data.ip);
+    }
     if (permission === "granted") {
       // Generate Token
       const token = await messaging.getToken({

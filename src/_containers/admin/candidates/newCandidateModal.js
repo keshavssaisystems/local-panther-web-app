@@ -152,7 +152,7 @@ export const NewCandidateModal = (props) => {
             : "Web",
           resource: "admin",
           functionname: "addCandidate",
-          pagename: "candidateRegistration",
+          pagename: "candidates",
           createddate: new Date().toISOString(),
         })
       );

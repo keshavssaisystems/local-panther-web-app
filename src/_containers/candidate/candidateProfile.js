@@ -342,7 +342,11 @@ export function CandidateProfile() {
   return (
     <div className="profile-view">
       <div className="profile-view">
-        <PageTitle heading="Candidate Profile" icon={candidatelogo} />
+        {localStorage.getItem("publicip") ? (
+          <></>
+        ) : (
+          <PageTitle heading="Candidate Profile" icon={candidatelogo} />
+        )}
       </div>
 
       {profileData.personalInfo.email ? (
