@@ -56,6 +56,7 @@ export function JobPreferences(props) {
   const workTypeOption = useSelector(
     (state) => state.dropdown?.jobLocationType
   );
+
   const workScheduleOptions = useSelector(
     (state) => state.workSchedule?.workSchedule
   );
@@ -128,6 +129,7 @@ export function JobPreferences(props) {
         traveldistance: "",
       });
       setShowDistance(true);
+
       setDetails(data);
     } else {
       if (get_response.length > 0) {
@@ -238,6 +240,9 @@ export function JobPreferences(props) {
         });
 
         setGetResponse(filtered_data);
+      }
+      if (data[0]?.desiredjobtypes) {
+        setWorkType(data[0].desiredjobtypes.split(","));
       }
       setDetails(data);
       if (distanceList) {
@@ -483,6 +488,7 @@ export function JobPreferences(props) {
       workschedules: "",
       workschedulestext: null,
     });
+
     setDetails(data);
   };
 

@@ -308,9 +308,10 @@ export const AdmCandidateList = () => {
         ipaddress: localStorage.getItem("publicip")
           ? localStorage.getItem("publicip")
           : "Web",
-        resource: type === 1 ? "email invitation" : "resend email invitation",
-        functionname: type === 1 ? "emailinvitation" : "resendemailinvitation",
-        pagename: "admincandidateemailinvitation",
+        resource: type === 1 ? "email invitation" : "re-send email invitation",
+        functionname:
+          type === 1 ? "sendemailinvitation" : "resendemailinvitation",
+        pagename: "candidates",
         createddate: new Date().toISOString(),
       })
     );
