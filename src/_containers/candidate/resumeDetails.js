@@ -143,6 +143,10 @@ export function ResumeDetails(props) {
           : JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
       );
       form.append("Resumefile", acceptedFiles[0]);
+      form.append(
+        "CurrentUserId",
+        JSON.parse(localStorage.getItem("userDetails")).UserId
+      );
 
       axios
         .post(`${url}/PostResume`, form, config)
