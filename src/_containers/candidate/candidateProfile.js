@@ -146,7 +146,9 @@ export function CandidateProfile() {
   };
 
   const getPersonalDetails = async function () {
-    let candidateid = userDetails.InternalUserId;
+    let candidateid = localStorage.getItem("admcandid")
+      ? localStorage.getItem("admcandid")
+      : userDetails.InternalUserId;
     let response = await dispatch(getProfileActions.getCandidate(candidateid));
     let filter_data = response.payload;
     let organization = filter_data?.candidateQualificationsDtos?.filter(
@@ -314,7 +316,9 @@ export function CandidateProfile() {
   };
 
   const updateEmploymentEligibility = async (type) => {
-    let candidateId = Number(userDetails.InternalUserId);
+    let candidateId = localStorage.getItem("admcandid")
+      ? Number(localStorage.getItem("admcandid"))
+      : Number(userDetails.InternalUserId);
     let payload = {
       candidateid: candidateId,
       employmenteligiblity: type,
@@ -338,7 +342,11 @@ export function CandidateProfile() {
   return (
     <div className="profile-view">
       <div className="profile-view">
-        <PageTitle heading="Candidate Profile" icon={candidatelogo} />
+        {localStorage.getItem("publicip") ? (
+          <></>
+        ) : (
+          <PageTitle heading="Candidate Profile" icon={candidatelogo} />
+        )}
       </div>
 
       {profileData.personalInfo.email ? (

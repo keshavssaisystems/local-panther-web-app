@@ -540,7 +540,9 @@ export function QualificationModal(props) {
 
     let filtered_data = formDetails.map(({ skillid: value, ...rest }) => {
       return {
-        candidateid: parseInt(user.InternalUserId),
+        candidateid: localStorage.getItem("admcandid")
+          ? localStorage.getItem("admcandid")
+          : parseInt(user.InternalUserId),
         jobtitle: rest.jobTitle,
         company: rest.organization,
         jobdescription: rest.jobdescription,

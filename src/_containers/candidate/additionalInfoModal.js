@@ -34,7 +34,9 @@ export function AdditionalInfoModal(props) {
     if (!props.selected) {
       data = {
         candidateadditioninformationid: 0,
-        candidateid: userDetails.InternalUserId,
+        candidateid: localStorage.getItem("admcandid")
+          ? localStorage.getItem("admcandid")
+          : userDetails.InternalUserId,
         summary: "",
         candidateLanguageDtos: [
           {
@@ -50,7 +52,9 @@ export function AdditionalInfoModal(props) {
       };
     } else {
       data = {
-        candidateid: userDetails.InternalUserId,
+        candidateid: localStorage.getItem("admcandid")
+          ? localStorage.getItem("admcandid")
+          : userDetails.InternalUserId,
         candidateadditioninformationid:
           props.selected.candidateadditioninformationid,
         summary: props.selected.summary,
@@ -167,7 +171,9 @@ export function AdditionalInfoModal(props) {
     e.preventDefault();
 
     let postData = {
-      candidateid: userDetails.InternalUserId,
+      candidateid: localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : userDetails.InternalUserId,
       candidateadditioninformationid:
         formDetails.candidateadditioninformationid,
       summary: formDetails.summary,

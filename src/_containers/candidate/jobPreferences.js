@@ -56,6 +56,7 @@ export function JobPreferences(props) {
   const workTypeOption = useSelector(
     (state) => state.dropdown?.jobLocationType
   );
+
   const workScheduleOptions = useSelector(
     (state) => state.workSchedule?.workSchedule
   );
@@ -103,7 +104,9 @@ export function JobPreferences(props) {
         candidateLocationsDtos: [],
         candidateShiftsDtos: [],
         candidateWorkSchedulesDtos: [],
-        candidateid: userDetails?.InternalUserId ?? 0,
+        candidateid: localStorage.getItem("admcandid")
+          ? localStorage.getItem("admcandid")
+          : userDetails?.InternalUserId ?? 0,
         candidatejobpreferenceid: 0,
         desiredjobtitle: "",
         desiredjobtitleid: 0,
@@ -126,6 +129,7 @@ export function JobPreferences(props) {
         traveldistance: "",
       });
       setShowDistance(true);
+
       setDetails(data);
     } else {
       if (get_response.length > 0) {
@@ -138,7 +142,9 @@ export function JobPreferences(props) {
           candidateShiftsDtos: get_response[0].candidateShiftsDtos,
           candidateWorkSchedulesDtos:
             get_response[0].candidateWorkSchedulesDtos,
-          candidateid: userDetails?.InternalUserId ?? 0,
+          candidateid: localStorage.getItem("admcandid")
+            ? localStorage.getItem("admcandid")
+            : userDetails?.InternalUserId ?? 0,
           candidatejobpreferenceid: get_response[0].candidatejobpreferenceid,
           desiredjobtitle: get_response[0].desiredjobtitle,
           desiredjobtitleid: get_response[0].desiredjobtitleid,
@@ -235,6 +241,9 @@ export function JobPreferences(props) {
 
         setGetResponse(filtered_data);
       }
+      if (data[0]?.desiredjobtypes) {
+        setWorkType(data[0].desiredjobtypes.split(","));
+      }
       setDetails(data);
       if (distanceList) {
         let data = distanceList.filter(
@@ -278,7 +287,9 @@ export function JobPreferences(props) {
   const loadData = function () {
     let data = {
       candidatejobpreferenceid: 0,
-      candidateid: userDetails?.InternalUserId ?? 0,
+      candidateid: localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : userDetails?.InternalUserId ?? 0,
       desiredjobtitleid: 0,
       jobtitlesids: "",
       desiredjobtypes: "",
@@ -454,7 +465,9 @@ export function JobPreferences(props) {
       candidateLocationsDtos: [],
       candidateShiftsDtos: [],
       candidateWorkSchedulesDtos: [],
-      candidateid: userDetails?.InternalUserId ?? 0,
+      candidateid: localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : userDetails?.InternalUserId ?? 0,
       candidatejobpreferenceid: 0,
       desiredjobtitle: "",
       desiredjobtitleid: 0,
@@ -475,6 +488,7 @@ export function JobPreferences(props) {
       workschedules: "",
       workschedulestext: null,
     });
+
     setDetails(data);
   };
 
@@ -524,7 +538,9 @@ export function JobPreferences(props) {
     let data = preferenceDetails.map((rest) => {
       return {
         candidatejobpreferenceid: rest.candidatejobpreferenceid,
-        candidateid: parseInt(userDetails?.InternalUserId ?? 0),
+        candidateid: localStorage.getItem("admcandid")
+          ? parseInt(localStorage.getItem("admcandid"))
+          : parseInt(userDetails?.InternalUserId ?? 0),
         // desiredjobtitleid: parseInt(rest.desiredjobtitleid),
         // jobtitlesids: rest.jobtitlesids,
         desiredjobtypes: rest.desiredjobtypes,
