@@ -886,8 +886,8 @@ export function BasicInformation({
               <CKEditor
                 name="description"
                 config={{
-                  removePlugins: "a11yhelp", // Removes accessibility warnings if they are unnecessary
-                  debug: false, // Disables CKEditor debug messages
+                  removePlugins: "a11yhelp",
+                  debug: false,
                 }}
                 id="description"
                 maxLength={2000}
