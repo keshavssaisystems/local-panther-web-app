@@ -885,6 +885,10 @@ export function BasicInformation({
               </Label>
               <CKEditor
                 name="description"
+                config={{
+                  removePlugins: "a11yhelp", // Removes accessibility warnings if they are unnecessary
+                  debug: false, // Disables CKEditor debug messages
+                }}
                 id="description"
                 maxLength={2000}
                 initData={
