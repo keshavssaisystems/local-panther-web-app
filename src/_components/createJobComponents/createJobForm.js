@@ -2017,6 +2017,10 @@ export const CreateJob = forwardRef(
                           </Label>
                           <CKEditor
                             name="description"
+                            config={{
+                              removePlugins: "a11yhelp",
+                              debug: false,
+                            }}
                             id="description"
                             maxLength={2000}
                             initData={
