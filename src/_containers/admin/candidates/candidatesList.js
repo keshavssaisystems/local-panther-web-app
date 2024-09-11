@@ -123,9 +123,9 @@ export const AdmCandidateList = () => {
       cell: (row) => (
         <div>
           {row.status === 0 && row?.source?.toLowerCase() === "admin" ? (
-            <Badge color="warning">Email not sent</Badge>
+            <Badge color="warning">Inactive</Badge>
           ) : row.status === 1 && row?.source?.toLowerCase() === "admin" ? (
-            <Badge color="info">Email send</Badge>
+            <Badge color="warning">Inactive</Badge>
           ) : (
             <Badge color="success">Active</Badge>
           )}
@@ -159,7 +159,7 @@ export const AdmCandidateList = () => {
                   ></img>
                 </Button>
 
-                <Button
+                {/* <Button
                   // outline
                   size="sm"
                   title="Send Invitation"
@@ -170,7 +170,7 @@ export const AdmCandidateList = () => {
                   }}
                 >
                   <FaEnvelope style={{ fontSize: "18px" }} />
-                </Button>
+                </Button> */}
                 <Button
                   // outline
                   size="sm"
@@ -202,7 +202,7 @@ export const AdmCandidateList = () => {
                     alt="Edit candidate"
                   ></img>
                 </Button>
-
+                {/* 
                 <Button
                   // outline
                   size="sm"
@@ -214,7 +214,7 @@ export const AdmCandidateList = () => {
                   }}
                 >
                   <FaEnvelopeOpenText style={{ fontSize: "18px" }} />
-                </Button>
+                </Button> */}
                 <Button
                   // outline
                   size="sm"
@@ -296,47 +296,47 @@ export const AdmCandidateList = () => {
     getCandidateListData(page, pageSize, searchData);
   };
 
-  const sendEmailInvitation = async (candidateid, type) => {
-    let res1 = await dispatch(
-      authActions.postAddAuditLogs({
-        useractivityid: 0,
-        userid: localStorage.getItem("userId")
-          ? localStorage.getItem("userId")
-          : 0,
-        datasource:
-          type === 1 ? "send email invitation" : "re-send email invitation",
-        ipaddress: localStorage.getItem("publicip")
-          ? localStorage.getItem("publicip")
-          : "Web",
-        resource: type === 1 ? "email invitation" : "re-send email invitation",
-        functionname:
-          type === 1 ? "sendemailinvitation" : "resendemailinvitation",
-        pagename: "candidates",
-        createddate: new Date().toISOString(),
-      })
-    );
-    let res = await dispatch(
-      adminListingActions.sendEmailInvitation(candidateid)
-    );
+  // const sendEmailInvitation = async (candidateid, type) => {
+  //   let res1 = await dispatch(
+  //     authActions.postAddAuditLogs({
+  //       useractivityid: 0,
+  //       userid: localStorage.getItem("userId")
+  //         ? localStorage.getItem("userId")
+  //         : 0,
+  //       datasource:
+  //         type === 1 ? "send email invitation" : "re-send email invitation",
+  //       ipaddress: localStorage.getItem("publicip")
+  //         ? localStorage.getItem("publicip")
+  //         : "Web",
+  //       resource: type === 1 ? "email invitation" : "re-send email invitation",
+  //       functionname:
+  //         type === 1 ? "sendemailinvitation" : "resendemailinvitation",
+  //       pagename: "candidates",
+  //       createddate: new Date().toISOString(),
+  //     })
+  //   );
+  //   let res = await dispatch(
+  //     adminListingActions.sendEmailInvitation(candidateid)
+  //   );
 
-    if (res?.payload?.statusCode === 201) {
-      getCandidateListData(pageNo, pageSize, searchData);
-      showSweetAlert({
-        title:
-          type === 1
-            ? "Email Invitation sent successfully."
-            : "Email Invitation re-send successfully.",
-        type: "success",
-      });
-    } else {
-      showSweetAlert({
-        title: res?.error?.message
-          ? res?.error?.message
-          : "Error while sending invitation",
-        type: "error",
-      });
-    }
-  };
+  //   if (res?.payload?.statusCode === 201) {
+  //     getCandidateListData(pageNo, pageSize, searchData);
+  //     showSweetAlert({
+  //       title:
+  //         type === 1
+  //           ? "Email Invitation sent successfully."
+  //           : "Email Invitation re-send successfully.",
+  //       type: "success",
+  //     });
+  //   } else {
+  //     showSweetAlert({
+  //       title: res?.error?.message
+  //         ? res?.error?.message
+  //         : "Error while sending invitation",
+  //       type: "error",
+  //     });
+  //   }
+  // };
 
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
