@@ -82,7 +82,7 @@ export function ForgotPasswordSuccess() {
                 </Button>
               </div>
               <div className="text-center mt-5">
-                powered by <br />
+                Powered by <br />
                 <img
                   src={footerImg}
                   className="logo mb-2"

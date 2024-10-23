@@ -71,7 +71,7 @@ export const RegistrationSuccess = () => {
                 </Link>
               </div>
               <div className="text-center mt-3">
-                powered by <br />
+                Powered by <br />
                 <img
                   src={footerImg}
                   className="mb-2"

@@ -42,7 +42,7 @@ export function AppFooter() {
       <div className="app-footer__inner">
         <div className="app-footer-left">
           <div className="footer-dots">
-            powered by{" "}
+            Powered by{" "}
             <img src={logo} className="footer-logo ms-1" alt="logo" />
             <div className="dots-separator" />
             <Link

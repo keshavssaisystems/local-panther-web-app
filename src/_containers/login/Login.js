@@ -337,7 +337,7 @@ export function Login() {
                     </div>
                   </div>
                   <div className="text-center mt-3">
-                    powered by <br />
+                    Powered by <br />
                     <img
                       src={footerImg}
                       className="logo mb-2"
