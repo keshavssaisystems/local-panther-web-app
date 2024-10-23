@@ -889,7 +889,7 @@ export function Registration() {
               </div>
               {selected === 2 ? "" : <br />}
               <div className="text-center mt-3">
-                powered by <br />
+                Powered by <br />
                 <img
                   src={footerImg}
                   className="mb-2"
