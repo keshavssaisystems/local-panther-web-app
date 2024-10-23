@@ -9,6 +9,7 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { authActions } from "_store";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 
 import {
   Col,
@@ -22,7 +23,7 @@ import {
   CardTitle,
 } from "reactstrap";
 import SweetAlert from "react-bootstrap-sweetalert";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
 import { analytics } from "../../firebase/index";
@@ -116,9 +117,7 @@ export function ForgotPassword() {
                 width={"200px"}
                 alt="logo"
               />
-
               <Row className="login-divider" />
-
               <p className="mb-2 mt-4 title-text">Forgot Password?</p>
               <p className="mb-3 header-text">
                 Enter your registered Email to reset the password
@@ -161,6 +160,16 @@ export function ForgotPassword() {
                     </Button>
                   </div>
                 </Form>
+              </div>
+              <br /> <br />
+              <div className="text-center mt-5">
+                powered by <br />
+                <img
+                  src={footerImg}
+                  className="logo mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

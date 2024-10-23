@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Input, Label } from "reactstrap";
 import Slider from "react-slick";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import bg1 from "../../assets/utils/images/login.png";
 import { PaymentDetails } from "./paydetails";
 import paymentIcons from "assets/utils/images/payment";

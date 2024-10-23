@@ -6,7 +6,8 @@ import { Col, Row, Button } from "reactstrap";
 
 import { history } from "_helpers";
 
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 
 export function ForgotPasswordSuccess() {
   const [sliderSettings] = useState({
@@ -79,6 +80,15 @@ export function ForgotPasswordSuccess() {
                 >
                   Proceed to Sign in
                 </Button>
+              </div>
+              <div className="text-center mt-5">
+                powered by <br />
+                <img
+                  src={footerImg}
+                  className="logo mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

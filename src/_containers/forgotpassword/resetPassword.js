@@ -10,7 +10,8 @@ import { useSelector, useDispatch } from "react-redux";
 import loginBgImg from "../../assets/utils/images/login.png";
 
 import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
 import { analytics } from "../../firebase/index";
@@ -158,6 +159,15 @@ export function ResetPassword() {
                     </Button>
                   </div>
                 </Form>
+              </div>
+              <div className="text-center mt-5">
+                powered by <br />
+                <img
+                  src={footerImg}
+                  className="logo mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

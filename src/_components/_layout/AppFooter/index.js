@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import "./appfooter.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { settingsActions } from "_store";
+import logo from "../../../assets/utils/images/panther-logo.png";
+import admin from "../../../assets/utils/OpenWorx_Admin_User_Manual.pdf";
+import employer from "../../../assets/utils/OpenWorx_Web_Employer_User_Manual.pdf";
+import candidate from "../../../assets/utils/OpenWorx_Web_Candidate_User_Manual.pdf";
 
 export function AppFooter() {
   const dispatch = useDispatch();
@@ -25,12 +29,21 @@ export function AppFooter() {
     dispatch(settingsActions.getCompanyDetails());
   };
 
+  let userRoleId = localStorage.getItem("userroleid");
+  let helpFile = logo;
+  if (userRoleId === 1) {
+    helpFile = logo;
+  } else if (userRoleId === 2) {
+    helpFile = logo;
+  }
+
   return (
     <div className="app-footer">
       <div className="app-footer__inner">
         <div className="app-footer-left">
           <div className="footer-dots">
-            &copy; OpenWorx
+            powered by{" "}
+            <img src={logo} className="footer-logo ms-1" alt="logo" />
             <div className="dots-separator" />
             <Link
               to={privacyPolicy ? privacyPolicy[0]?.name : ""}
@@ -56,12 +69,25 @@ export function AppFooter() {
               Security
             </Link> */}
             {/* <div className="dots-separator" /> */}
-            <Link
+            {/* <Link
               to={contactData ? contactData[0]?.name : ""}
               className="text-primary account-text me-3"
               target="_blank"
             >
               About us
+            </Link> */}
+            <Link
+              to={
+                userRoleId === 1
+                  ? admin
+                  : userRoleId === 2
+                  ? employer
+                  : candidate
+              }
+              className="text-primary account-text me-3"
+              target="_blank"
+            >
+              Help
             </Link>
           </div>
         </div>

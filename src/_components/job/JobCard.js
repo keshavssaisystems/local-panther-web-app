@@ -21,7 +21,7 @@ import {
 } from "_store";
 import { RejectModal } from "_components/modal/rejectmodal";
 
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import { FiMapPin } from "react-icons/fi";
 
 import {

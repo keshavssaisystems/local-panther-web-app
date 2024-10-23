@@ -8,8 +8,8 @@ import { Col, Row, Button } from "reactstrap";
 
 import "./registrationsuccess.scss";
 
-import logo from "../../assets/utils/images/panther-logo.png";
-
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 export const RegistrationSuccess = () => {
   useEffect(() => {
     return () => {
@@ -69,6 +69,15 @@ export const RegistrationSuccess = () => {
                     Proceed to login
                   </Button>
                 </Link>
+              </div>
+              <div className="text-center mt-3">
+                powered by <br />
+                <img
+                  src={footerImg}
+                  className="mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

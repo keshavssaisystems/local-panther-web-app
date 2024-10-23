@@ -17,14 +17,14 @@ import Slider from "react-slick";
 import { messaging } from "../../firebase";
 import LoadingOverlay from "react-loading-overlay-ts";
 import Loader from "react-loaders";
-import { BsLinkedin, BsGoogle, BsApple } from "react-icons/bs";
 
 import { Col, Row, Button, Form, FormGroup, Label } from "reactstrap";
 
 import { history } from "_helpers";
 import { authActions } from "_store";
 
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
@@ -185,11 +185,9 @@ export function Login() {
                     alt="logo"
                   />
                   <Row className="login-divider" />
-
                   <p className="mb-3 mt-4 title-text">
                     Please sign in to your account.
                   </p>
-
                   <div className="login-form">
                     <Form onSubmit={handleSubmit(onSubmit)}>
                       <Row>
@@ -337,6 +335,15 @@ export function Login() {
                         </Link>
                       </p>
                     </div>
+                  </div>
+                  <div className="text-center mt-3">
+                    powered by <br />
+                    <img
+                      src={footerImg}
+                      className="logo mb-2"
+                      width="155px"
+                      alt="logo"
+                    />
                   </div>
                 </Col>
               </Col>

@@ -13,7 +13,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
-
+import footerImg from "../../assets/utils/images/panther-logo.png";
 import {
   Col,
   Row,
@@ -34,7 +34,7 @@ import {
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import { authActions } from "_store";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
 import { analytics } from "../../firebase/index";
@@ -886,6 +886,16 @@ export function Registration() {
                   </Form>
                 )}
                 {selected === 2 && <CustomerRegistration />}
+              </div>
+              {selected === 2 ? "" : <br />}
+              <div className="text-center mt-3">
+                powered by <br />
+                <img
+                  src={footerImg}
+                  className="mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

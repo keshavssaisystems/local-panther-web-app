@@ -34,7 +34,7 @@ import {
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import { authActions, dropdownActions, addCustomerActions } from "_store";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import { getLocationFilter } from "_store";
 
 const passwordRegex =
