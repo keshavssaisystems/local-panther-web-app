@@ -78,9 +78,9 @@ export function AppFooter() {
             </Link> */}
             <Link
               to={
-                userRoleId === 1
+                userRoleId === "1"
                   ? admin
-                  : userRoleId === 2
+                  : userRoleId === "2"
                   ? employer
                   : candidate
               }
