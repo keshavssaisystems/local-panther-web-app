@@ -45,25 +45,45 @@ export function AppFooter() {
             Powered by{" "}
             <img src={logo} className="footer-logo ms-1" alt="logo" />
             <div className="dots-separator" />
-            <Link
-              to={privacyPolicy ? privacyPolicy[0]?.name : ""}
+            <a
+              href="/privacy.html"
+              className="text-primary account-text me-2"
               target="_blank"
-              className="text-primary account-text me-3"
+              rel="noopener noreferrer"
             >
               Privacy Policy
-            </Link>
+            </a>
             <div className="dots-separator" />
-            <Link
-              to={termsData ? termsData[0]?.name : ""}
-              className="text-primary account-text me-3"
+            <a
+              href="/terms.html"
+              className="text-primary account-text me-2"
               target="_blank"
+              rel="noopener noreferrer"
             >
-              Terms
-            </Link>
+              Terms & Conditions
+            </a>
           </div>
         </div>
         <div className="app-footer-right">
           <div className="footer-dots">
+            <a
+              href="/support.html"
+              className="text-primary account-text me-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Support
+            </a>
+            <div className="dots-separator" />
+            <a
+              href="/contact-us.html"
+              className="text-primary account-text me-2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Contact us
+            </a>
+            <div className="dots-separator" />
             {/* <div className="dots-separator" />
             <Link to="/security" className="text-primary account-text me-3">
               Security

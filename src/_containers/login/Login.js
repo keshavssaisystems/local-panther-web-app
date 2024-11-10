@@ -257,6 +257,15 @@ export function Login() {
                                 )}
                                 <span className="btn-text">Sign in</span>
                               </Button>
+                              <Button
+                                color="primary"
+                                className="btn-text ms-2"
+                                size="lg"
+                                tag={Link}
+                                to="/registration"
+                              >
+                                <span className="btn-text">Register</span>
+                              </Button>
                               <div></div>
                             </div>
                           </FormGroup>
@@ -330,9 +339,41 @@ export function Login() {
                       </p>
                       <p className="mt-3 d-flex register-paragraph">
                         Become Part of the OpenWorX Community;{"  "}
-                        <Link to="/registration" className="ms-1 register-link">
-                          <u>Register Here</u>
-                        </Link>
+                      </p>
+                      <p className="mt-3 d-flex register-paragraph">
+                        <a
+                          href="/privacy.html"
+                          className="register-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <u>Privacy Policy, </u>
+                        </a>
+                        <a
+                          href="/terms.html"
+                          className="ms-1 register-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <u>Terms & Conditions, </u>
+                        </a>
+                        <a
+                          href="/support.html"
+                          className="ms-1 me-1 register-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <u>Support, </u>
+                        </a>
+                        and{" "}
+                        <a
+                          href="/contact-us.html"
+                          className="ms-1 register-link"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <u>Contact Us</u>
+                        </a>
                       </p>
                     </div>
                   </div>
