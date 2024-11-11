@@ -239,17 +239,19 @@ export function Login() {
                               </div>
                             </InputGroup>
                             <div className="mt-4 mb-3 float-end">
-                              <Link
-                                to="/forgot-password"
-                                className="text-primary forgot-pwd-text me-3 "
+                              <Button
+                                color="primary"
+                                className="btn-text me-2"
+                                size="lg"
+                                tag={Link}
+                                to="/registration"
                               >
-                                Forgot Password?
-                              </Link>
-
+                                <span className="btn-text">Register</span>
+                              </Button>
                               <Button
                                 disabled={isSubmitting}
                                 color="primary"
-                                className="btn-text"
+                                className="btn-text me-2"
                                 size="lg"
                               >
                                 {isSubmitting && (
@@ -257,15 +259,12 @@ export function Login() {
                                 )}
                                 <span className="btn-text">Sign in</span>
                               </Button>
-                              <Button
-                                color="primary"
-                                className="btn-text ms-2"
-                                size="lg"
-                                tag={Link}
-                                to="/registration"
+                              <Link
+                                to="/forgot-password"
+                                className="text-primary forgot-pwd-text"
                               >
-                                <span className="btn-text">Register</span>
-                              </Button>
+                                Forgot Password?
+                              </Link>
                               <div></div>
                             </div>
                           </FormGroup>
@@ -300,30 +299,6 @@ export function Login() {
                         </div>
                       )}
                     </Form>
-
-                    {/* <Row className="mt-5 d-flex justify-content-center align-items-center">
-                    <Col></Col>
-                    <Col>
-                      <Row>
-                        <Col className="text-center">
-                          <div className="ellipse d-flex justify-content-center align-items-center">
-                            <BsLinkedin className="icon" />
-                          </div>
-                        </Col>
-                        <Col className="text-center">
-                          <div className="ellipse d-flex justify-content-center align-items-center">
-                            <BsGoogle className="icon" />
-                          </div>
-                        </Col>
-                        <Col className="text-center">
-                          <div className="ellipse d-flex justify-content-center align-items-center">
-                            <BsApple className="icon" />
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col></Col>
-                  </Row> */}
                     <div className="mt-4 register-division">
                       <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
                         We are thrilled to have you join the OpenWorX community!
@@ -338,42 +313,7 @@ export function Login() {
                         to reach out. Thanks for being part of OpenWorX!
                       </p>
                       <p className="mt-3 d-flex register-paragraph">
-                        Become Part of the OpenWorX Community;{"  "}
-                      </p>
-                      <p className="mt-3 d-flex register-paragraph">
-                        <a
-                          href="/privacy.html"
-                          className="register-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <u>Privacy Policy, </u>
-                        </a>
-                        <a
-                          href="/terms.html"
-                          className="ms-1 register-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <u>Terms & Conditions, </u>
-                        </a>
-                        <a
-                          href="/support.html"
-                          className="ms-1 me-1 register-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <u>Support, </u>
-                        </a>
-                        and{" "}
-                        <a
-                          href="/contact-us.html"
-                          className="ms-1 register-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <u>Contact Us</u>
-                        </a>
+                        Become Part of the OpenWorX Community.{"  "}
                       </p>
                     </div>
                   </div>
@@ -386,6 +326,47 @@ export function Login() {
                       alt="logo"
                     />
                   </div>
+                  <footer className="footer mt-4 text-center">
+                    <Row>
+                      <Col>
+                        <a
+                          href="/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Privacy Policy
+                        </a>
+                        <span className="mx-2">|</span>
+                        <a
+                          href="/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Terms & Conditions
+                        </a>
+                        <span className="mx-2">|</span>
+                        <a
+                          href="/support"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Support
+                        </a>
+                        <span className="mx-2">|</span>
+                        <a
+                          href="/contact"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Contact Us
+                        </a>
+                      </Col>
+                    </Row>
+                  </footer>
                 </Col>
               </Col>
             </Row>

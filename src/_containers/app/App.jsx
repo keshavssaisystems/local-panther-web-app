@@ -71,6 +71,10 @@ import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
 import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
 import { getPublicIP } from "_helpers/helper";
+import { TermsAndConditions } from "_containers/static/terms";
+import { PrivacyPolicy } from "_containers/static/privacy";
+import { Support } from "_containers/static/support";
+import { Contact } from "_containers/static/contact";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -130,6 +134,9 @@ export function App() {
   history.navigate = useNavigate();
   const location = useLocation();
   history.location = useLocation();
+  const excludedPaths = ['/terms', '/privacy', '/contact', '/support'];
+  const isExcludedPath = excludedPaths.includes(location.pathname);
+  console.log(isExcludedPath);
   useEffect(() => {
     if (
       location.pathname !== "" &&
@@ -657,110 +664,110 @@ export function App() {
 
   return (
     <>
-      {authUser && (
-        <AppHeader
-          isSidebarOpen={isSidebarOpen}
-          onOpenSidebar={() => onOpenSidebar()}
-          onCloseSidebar={() => onCloseSidebar()}
+    {isExcludedPath ? 
+      <>
+       <Routes forceRefresh={true}>
+       <Route
+          path="/contact"
+          element={ <Contact /> }
         />
-      )}
-      {!authUser && hideSidebar && (
-        <AppHeader
-          unAuth={true}
-          isSidebarOpen={isSidebarOpen}
-          onOpenSidebar={() => onOpenSidebar()}
-          onCloseSidebar={() => onCloseSidebar()}
+        <Route
+          path="/privacy"
+          element={ <PrivacyPolicy /> }
         />
-      )}
-      <div className={authUser ? `app-main` : ""}>
-        {authUser && !hideSidebar && (
-          <AppSidebar
+        <Route
+          path="/terms"
+          element={ <TermsAndConditions /> }
+        />
+        <Route
+          path="/support"
+          element={ <Support /> }
+        />
+       </Routes>
+      </> : 
+      <>
+        {authUser && (
+          <AppHeader
             isSidebarOpen={isSidebarOpen}
-            setIsSidebarOpen={setIsSidebarOpen}
+            onOpenSidebar={() => onOpenSidebar()}
+            onCloseSidebar={() => onCloseSidebar()}
           />
         )}
-        <div className={authUser ? `app-main__outer` : ""}>
-          <div className={"app-main__inner "}>
-            <ToastContainer />
-            <Routes forceRefresh={true}>
-              {renderRoutes(userroleid)}
-              <Route
-                path="/policy"
-                element={
-                  <PrivateRoute>
-                    <CandidateUnderConstruction title={"Policy"} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/terms"
-                element={
-                  <PrivateRoute>
-                    <CandidateUnderConstruction title={"Terms"} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/security"
-                element={
-                  <PrivateRoute>
-                    <CandidateUnderConstruction title={"Security"} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/contact"
-                element={
-                  <PrivateRoute>
-                    <CandidateUnderConstruction title={"Contact"} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/notification"
-                element={
-                  <PrivateRoute>
-                    <Notifications />
-                  </PrivateRoute>
-                }
-              />
+        {!authUser && hideSidebar && !isExcludedPath && (
+          <AppHeader
+            unAuth={true}
+            isSidebarOpen={isSidebarOpen}
+            onOpenSidebar={() => onOpenSidebar()}
+            onCloseSidebar={() => onCloseSidebar()}
+          />
+        )}
+        <div className={authUser ? `app-main` : ""}>
+          {authUser && !hideSidebar && (
+            <AppSidebar
+              isSidebarOpen={isSidebarOpen}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
+          )}
+          <div className={authUser ? `app-main__outer` : ""}>
+            <div className={"app-main__inner "}>
+              <ToastContainer />
+              <Routes forceRefresh={true}>
+                {renderRoutes(userroleid)}
+                <Route
+                  path="/security"
+                  element={
+                    <PrivateRoute>
+                      <CandidateUnderConstruction title={"Security"} />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/notification"
+                  element={
+                    <PrivateRoute>
+                      <Notifications />
+                    </PrivateRoute>
+                  }
+                />
 
-              <Route path="/login" element={<Login />} />
-              <Route path="/registration" element={<Registration />} />
-              <Route
-                path="/customer-registration"
-                element={<CustomerRegistration />}
-              />
-              <Route
-                path="/registration-success"
-                element={<RegistrationSuccess />}
-              />
-              <Route
-                path="/forgot-password-success"
-                element={<ForgotPasswordSuccess />}
-              />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              {/* for firebase */}
-              {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
-              {/* for zoom */}
-              <Route
-                path="/video-screen/*"
-                element={<ZoomVideoScreen authUser={authUser} />}
-              />
-              <Route
-                path="/job-detail/:id"
-                element={<ShareJobDetails authUser={authUser} />}
-              />
-              <Route
-                path="/payment/:id"
-                element={<Payment authUser={authUser} />}
-              />
-            </Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/registration" element={<Registration />} />
+                <Route
+                  path="/customer-registration"
+                  element={<CustomerRegistration />}
+                />
+                <Route
+                  path="/registration-success"
+                  element={<RegistrationSuccess />}
+                />
+                <Route
+                  path="/forgot-password-success"
+                  element={<ForgotPasswordSuccess />}
+                />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                {/* for firebase */}
+                {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
+                {/* for zoom */}
+                <Route
+                  path="/video-screen/*"
+                  element={<ZoomVideoScreen authUser={authUser} />}
+                />
+                <Route
+                  path="/job-detail/:id"
+                  element={<ShareJobDetails authUser={authUser} />}
+                />
+                <Route
+                  path="/payment/:id"
+                  element={<Payment authUser={authUser} />}
+                />
+              </Routes>
+            </div>
+            {authUser && <AppFooter />}
+            {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
           </div>
-          {authUser && <AppFooter />}
-          {!authUser && hideSidebar && <AppFooter />}
         </div>
-      </div>
+      </>}
     </>
+
   );
 }

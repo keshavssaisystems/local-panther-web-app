@@ -44,9 +44,12 @@ export function AppFooter() {
           <div className="footer-dots">
             Powered by{" "}
             <img src={logo} className="footer-logo ms-1" alt="logo" />
-            <div className="dots-separator" />
+          </div>
+        </div>
+        <div className="app-footer-right">
+          <div className="footer-dots">
             <a
-              href="/privacy.html"
+              href="/privacy"
               className="text-primary account-text me-2"
               target="_blank"
               rel="noopener noreferrer"
@@ -55,19 +58,16 @@ export function AppFooter() {
             </a>
             <div className="dots-separator" />
             <a
-              href="/terms.html"
+              href="/terms"
               className="text-primary account-text me-2"
               target="_blank"
               rel="noopener noreferrer"
             >
               Terms & Conditions
             </a>
-          </div>
-        </div>
-        <div className="app-footer-right">
-          <div className="footer-dots">
+            <div className="dots-separator" />
             <a
-              href="/support.html"
+              href="/support"
               className="text-primary account-text me-2"
               target="_blank"
               rel="noopener noreferrer"
@@ -76,26 +76,14 @@ export function AppFooter() {
             </a>
             <div className="dots-separator" />
             <a
-              href="/contact-us.html"
+              href="/contact"
               className="text-primary account-text me-2"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Contact us
+              Contact Us
             </a>
             <div className="dots-separator" />
-            {/* <div className="dots-separator" />
-            <Link to="/security" className="text-primary account-text me-3">
-              Security
-            </Link> */}
-            {/* <div className="dots-separator" /> */}
-            {/* <Link
-              to={contactData ? contactData[0]?.name : ""}
-              className="text-primary account-text me-3"
-              target="_blank"
-            >
-              About us
-            </Link> */}
             <Link
               to={
                 userRoleId === "1"
