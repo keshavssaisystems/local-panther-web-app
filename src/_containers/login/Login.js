@@ -317,18 +317,18 @@ export function Login() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-center mt-3">
-                    Powered by <br />
-                    <img
-                      src={footerImg}
-                      className="logo mb-2"
-                      width="155px"
-                      alt="logo"
-                    />
-                  </div>
-                  <footer className="footer mt-4 text-center">
+                  <footer className="footer mt-4">
                     <Row>
-                      <Col>
+                      <Col className="text-start mt-1">
+                        <span className="mt-2">Powered by</span>
+                        <img
+                          src={footerImg}
+                          className="logo ms-1"
+                          width="135px"
+                          alt="logo"
+                        />
+                      </Col>
+                      <Col className="text-end mt-1">
                         <a
                           href="/privacy"
                           target="_blank"

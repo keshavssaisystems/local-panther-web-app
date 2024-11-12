@@ -1,6 +1,6 @@
 {
     "name": "openworx",
-    "version": "0.1.14",
+    "version": "0.1.16",
     "private": true,
     "scripts": {
         "start": "react-scripts start",
