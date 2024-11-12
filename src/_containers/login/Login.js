@@ -319,7 +319,15 @@ export function Login() {
                   </div>
                   <footer className="footer mt-4">
                     <Row>
-                      <Col className="text-start mt-1">
+                      <Col
+                        xxl={{ order: 1, size: 5 }}
+                        xl={{ order: 1, size: 5 }}
+                        lg={{ order: 1, size: 5 }}
+                        md={{ order: 1, size: 12 }}
+                        sm={{ order: 1, size: 12 }}
+                        xs={{ order: 1, size: 12 }}
+                        className="text-start mt-1"
+                      >
                         <span className="mt-2">Powered by</span>
                         <img
                           src={footerImg}
@@ -328,7 +336,15 @@ export function Login() {
                           alt="logo"
                         />
                       </Col>
-                      <Col className="text-end mt-1">
+                      <Col
+                        xxl={{ order: 2, size: 7 }}
+                        xl={{ order: 2, size: 7 }}
+                        lg={{ order: 2, size: 7 }}
+                        md={{ order: 1, size: 12 }}
+                        sm={{ order: 1, size: 12 }}
+                        xs={{ order: 1, size: 12 }}
+                        className="text-end mt-1"
+                      >
                         <a
                           href="/privacy"
                           target="_blank"
