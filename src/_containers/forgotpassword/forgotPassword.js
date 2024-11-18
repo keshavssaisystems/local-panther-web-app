@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { authActions } from "_store";
 import footerImg from "../../assets/utils/images/panther-logo.png";
-
+import "../static/terms.scss";
 import {
   Col,
   Row,
@@ -172,6 +172,80 @@ export function ForgotPassword() {
                 />
               </div>
             </Col>
+            <footer className="footer--pin-registration">
+              <Row>
+                <Col lg="4" md="4" sm="12"></Col>
+                <Col
+                  xxl={{ order: 1, size: 3 }}
+                  xl={{ order: 1, size: 3 }}
+                  lg={{ order: 1, size: 3 }}
+                  md={{ order: 1, size: 3 }}
+                  sm={{ order: 1, size: 12 }}
+                  xs={{ order: 1, size: 12 }}
+                  className="text-start mt-1"
+                >
+                  <span className="mt-2">Powered by</span>
+                  <img
+                    src={footerImg}
+                    className="logo ms-1"
+                    width="135px"
+                    alt="logo"
+                  />
+                </Col>
+                <Col
+                  xxl={{ order: 2, size: 5 }}
+                  xl={{ order: 2, size: 5 }}
+                  lg={{ order: 2, size: 5 }}
+                  md={{ order: 1, size: 5 }}
+                  sm={{ order: 1, size: 12 }}
+                  xs={{ order: 1, size: 12 }}
+                  className="text-end mt-1"
+                >
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Privacy Policy
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Terms & Conditions
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/support"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Support
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/contact"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Contact Us
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Home
+                  </a>
+                </Col>
+              </Row>
+            </footer>
           </Col>
         </Row>
 

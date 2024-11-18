@@ -14,6 +14,8 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
 import footerImg from "../../assets/utils/images/panther-logo.png";
+import "../static/terms.scss";
+
 import {
   Col,
   Row,
@@ -888,16 +890,85 @@ export function Registration() {
                 {selected === 2 && <CustomerRegistration />}
               </div>
               {selected === 2 ? "" : <br />}
-              <div className="text-center mt-3">
-                Powered by <br />
-                <img
-                  src={footerImg}
-                  className="mb-2"
-                  width="155px"
-                  alt="logo"
-                />
-              </div>
+              <br></br>
+              <br></br>
+
+              <footer className="footer--pin">
+                <Row>
+                  {/* <Col lg="2" md="2" sm="12"></Col> */}
+                  <Col
+                    xxl={{ order: 1, size: 3 }}
+                    xl={{ order: 1, size: 3 }}
+                    lg={{ order: 1, size: 3 }}
+                    md={{ order: 1, size: 3 }}
+                    sm={{ order: 1, size: 12 }}
+                    xs={{ order: 1, size: 12 }}
+                    className="text-start mt-1"
+                  >
+                    <span className="mt-2">Powered by</span>
+                    <img
+                      src={footerImg}
+                      className="logo ms-1"
+                      width="135px"
+                      alt="logo"
+                    />
+                  </Col>
+                  <Col
+                    xxl={{ order: 2, size: 4 }}
+                    xl={{ order: 2, size: 4 }}
+                    lg={{ order: 2, size: 4 }}
+                    md={{ order: 1, size: 4 }}
+                    sm={{ order: 1, size: 12 }}
+                    xs={{ order: 1, size: 12 }}
+                    className="text-end mt-1"
+                  >
+                    <a
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link"
+                    >
+                      Privacy Policy
+                    </a>
+                    <span className="mx-2">|</span>
+                    <a
+                      href="/terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link"
+                    >
+                      Terms & Conditions
+                    </a>
+                    <span className="mx-2">|</span>
+                    <a
+                      href="/support"
+                      rel="noopener noreferrer"
+                      className="footer-link"
+                    >
+                      Support
+                    </a>
+                    <span className="mx-2">|</span>
+                    <a
+                      href="/contact"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-link"
+                    >
+                      Contact Us
+                    </a>
+                    <span className="mx-2">|</span>
+                    <a
+                      href="/"
+                      rel="noopener noreferrer"
+                      className="footer-link"
+                    >
+                      Home
+                    </a>
+                  </Col>
+                </Row>
+              </footer>
             </Col>
+
           </Col>
           <Col lg="5" className="d-xs-none">
             <div className="slider-light">

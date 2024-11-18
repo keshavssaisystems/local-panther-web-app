@@ -15,7 +15,7 @@ const firebaseConfig = {
   measurementId: "G-K5T2MCQPGY"
 };
 firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+const messaging = firebase.messaging.isSupported() ? firebase.messaging() : null;
 //messaging.onBackgroundMessage((payload) => {
 //  console.log(
 //    "[firebase-messaging-sw.js] Received background message ",
