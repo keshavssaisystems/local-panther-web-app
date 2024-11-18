@@ -13,6 +13,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
+import footerImg from "../../assets/utils/images/panther-logo.png";
+import "../static/terms.scss";
 
 import {
   Col,
