@@ -548,8 +548,21 @@ export function Registration() {
               sm="12"
               className="mx-auto app-login-box me-2 ms-2"
             >
-              <div className="">
-                <img src={logo} alt="logo" className="logo mb-2" />
+              <div className="" style={{ width: "200px", height: "80px" }}>
+                <img
+                  src={
+                    localStorage.getItem("logo")
+                      ? localStorage.getItem("logo")
+                      : logo
+                  }
+                  alt="logo"
+                  className="logo mb-2"
+                  style={{
+                    objectFit: "contain",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                />
               </div>
               <Row className="login-divider" />
               <div className="app-logo mb-0" />
@@ -968,7 +981,6 @@ export function Registration() {
                 </Row>
               </footer>
             </Col>
-
           </Col>
           <Col lg="5" className="d-xs-none">
             <div className="slider-light">

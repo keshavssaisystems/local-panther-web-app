@@ -111,12 +111,22 @@ export function ForgotPassword() {
             className="h-100 d-flex bg-white justify-content-center align-items-center"
           >
             <Col lg="6" md="8" sm="12" className="ps-2">
-              <img
-                src={logo}
-                className="logo mb-2"
-                width={"200px"}
-                alt="logo"
-              />
+              <div style={{ width: "200px", height: "80px" }}>
+                <img
+                  src={
+                    localStorage.getItem("logo")
+                      ? localStorage.getItem("logo")
+                      : logo
+                  }
+                  className="logo mb-2"
+                  style={{
+                    objectFit: "contain",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                  alt="logo"
+                />
+              </div>
               <Row className="login-divider" />
               <p className="mb-2 mt-4 title-text">Forgot Password?</p>
               <p className="mb-3 header-text">
@@ -236,11 +246,7 @@ export function ForgotPassword() {
                     Contact Us
                   </a>
                   <span className="mx-2">|</span>
-                  <a
-                    href="/"
-                    rel="noopener noreferrer"
-                    className="footer-link"
-                  >
+                  <a href="/" rel="noopener noreferrer" className="footer-link">
                     Home
                   </a>
                 </Col>

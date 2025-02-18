@@ -64,8 +64,21 @@ export const Payment = ({ authUser }) => {
                 className="mx-auto app-login-box me-2 ms-2"
               >
                 {!authUser ? (
-                  <div className="">
-                    <img src={logo} alt="logo" className="logo mb-2" />
+                  <div className="" style={{ width: "200px", height: "80px" }}>
+                    <img
+                      src={
+                        localStorage.getItem("logo")
+                          ? localStorage.getItem("logo")
+                          : logo
+                      }
+                      alt="logo"
+                      className="logo mb-2"
+                      style={{
+                        objectFit: "contain",
+                        height: "100%",
+                        width: "100%",
+                      }}
+                    />
                   </div>
                 ) : (
                   <></>

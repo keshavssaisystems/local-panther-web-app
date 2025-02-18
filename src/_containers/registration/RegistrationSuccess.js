@@ -39,7 +39,23 @@ export const RegistrationSuccess = () => {
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
           >
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
-              <img src={logo} width={"130px"} alt="logo" className="logo" />
+              <div style={{ width: "200px", height: "80px" }}>
+                <img
+                  src={
+                    localStorage.getItem("logo")
+                      ? localStorage.getItem("logo")
+                      : logo
+                  }
+                  width={"130px"}
+                  alt="logo"
+                  className="logo"
+                  style={{
+                    objectFit: "contain",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                />
+              </div>
               <div className="app-logo" style={{ height: "0px" }} />
               <h6>
                 <div className="succese-text">

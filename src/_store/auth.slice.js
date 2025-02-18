@@ -129,6 +129,7 @@ const authSlice = createSlice({
       state.user = {};
       state.token = null;
       state.loader = false;
+      let logo = localStorage.getItem("logo");
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToekn");
@@ -138,7 +139,7 @@ const authSlice = createSlice({
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
       localStorage.clear();
-
+      localStorage.setItem("logo", logo);
       history.navigate("/login");
     },
   },
@@ -153,6 +154,14 @@ const authSlice = createSlice({
       state.menuList = menuDtoList;
       state.user = data;
       state.token = token;
+      let companyLogo = data.appConfigurationDtoList.filter((d) => {
+        return d?.appconfigurationkey === "CompanyLogo";
+      });
+      let defLogo = data.appConfigurationDtoList.filter((d) => {
+        return d?.appconfigurationkey === "DefaultLogo";
+      });
+      let cmpLogo =
+        data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
       localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
@@ -178,6 +187,16 @@ const authSlice = createSlice({
       localStorage.setItem(
         "pushnotification",
         decodedData?.Pushnotification?.toLowerCase() === "true"
+      );
+      localStorage.setItem(
+        "logo",
+        cmpLogo.length
+          ? cmpLogo
+          : companyLogo.length > 0
+          ? companyLogo[0].appconfigurationvalue
+          : defLogo.length > 0
+          ? defLogo[0].appconfigurationvalue
+          : ""
       );
 
       // get return url from location state or default to home page
@@ -277,6 +296,7 @@ const authSlice = createSlice({
       state.user = {};
       state.token = null;
       state.loader = false;
+      let logo = localStorage.getItem("logo");
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToekn");
@@ -286,7 +306,7 @@ const authSlice = createSlice({
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
       localStorage.clear();
-
+      localStorage.setItem("logo", logo);
       history.navigate("/login");
     },
     [logoutThunk.rejected]: (state, action) => {

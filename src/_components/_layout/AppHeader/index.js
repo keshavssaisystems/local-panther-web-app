@@ -42,12 +42,26 @@ export function AppHeader({
               <Col className="no-padding">
                 {isSidebarOpen ? (
                   <Link to="/">
-                    <img
-                      src={logo}
-                      width={"135px"}
-                      height={"55px"}
-                      alt="logo"
-                    />
+                    <div
+                      className=""
+                      style={{ width: "135px", height: "55px" }}
+                    >
+                      <img
+                        src={
+                          localStorage.getItem("logo")
+                            ? localStorage.getItem("logo")
+                            : logo
+                        }
+                        style={{
+                          objectFit: "contain",
+                          height: "100%",
+                          width: "100%",
+                          background: "#FFF",
+                          cursor: "not-allowed",
+                        }}
+                        alt="logo"
+                      />
+                    </div>
                   </Link>
                 ) : (
                   <></>
@@ -65,13 +79,27 @@ export function AppHeader({
                         onClick={() => onCloseSidebar()}
                       />
                     ) : (
-                      <img
-                        src={smlogo}
-                        alt="Open side Menu"
-                        width={"135px"}
-                        height={"55px"}
-                        onClick={() => onOpenSidebar()}
-                      />
+                      <div
+                        className=""
+                        style={{ width: "135px", height: "55px" }}
+                      >
+                        <img
+                          src={
+                            localStorage.getItem("logo")
+                              ? localStorage.getItem("logo")
+                              : smlogo
+                          }
+                          alt="Open side Menu"
+                          style={{
+                            objectFit: "contain",
+                            height: "100%",
+                            width: "100%",
+                            cursor: "pointer",
+                            background: "#FFF",
+                          }}
+                          onClick={() => onOpenSidebar()}
+                        />
+                      </div>
                     )}
                   </>
                 )}
