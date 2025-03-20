@@ -54,7 +54,7 @@ export const AddEditCompany = (props) => {
     onClose,
     isViewMode,
   } = props;
-  const logourl = data?.logourl;
+  const [logourl, setLogoUrl] = useState(data?.logourl);
   const [editData, setEditData] = useState(data);
 
   const [cityList, setCityList] = useState([]);
@@ -222,6 +222,7 @@ export const AddEditCompany = (props) => {
   const onCancel = (acceptedFiles) => {
     setLogo(null);
     setSelectedFile("");
+    setLogoUrl(null);
   };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
@@ -264,6 +265,7 @@ export const AddEditCompany = (props) => {
   };
 
   const onSubmit = async () => {
+    debugger;
     var form = new FormData();
 
     form.append("Companyname", editData.companyname);
