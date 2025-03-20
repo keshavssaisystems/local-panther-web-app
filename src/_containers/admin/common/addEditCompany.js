@@ -265,7 +265,6 @@ export const AddEditCompany = (props) => {
   };
 
   const onSubmit = async () => {
-    debugger;
     var form = new FormData();
 
     form.append("Companyname", editData.companyname);
