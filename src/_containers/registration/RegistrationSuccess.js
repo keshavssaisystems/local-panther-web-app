@@ -8,8 +8,8 @@ import { Col, Row, Button } from "reactstrap";
 
 import "./registrationsuccess.scss";
 
-import logo from "../../assets/utils/images/panther-logo.png";
-
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 export const RegistrationSuccess = () => {
   useEffect(() => {
     return () => {
@@ -39,7 +39,23 @@ export const RegistrationSuccess = () => {
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
           >
             <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
-              <img src={logo} width={"130px"} alt="logo" className="logo" />
+              <div style={{ width: "200px", height: "80px" }}>
+                <img
+                  src={
+                    localStorage.getItem("logo")
+                      ? localStorage.getItem("logo")
+                      : logo
+                  }
+                  width={"130px"}
+                  alt="logo"
+                  className="logo"
+                  style={{
+                    objectFit: "contain",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                />
+              </div>
               <div className="app-logo" style={{ height: "0px" }} />
               <h6>
                 <div className="succese-text">
@@ -69,6 +85,15 @@ export const RegistrationSuccess = () => {
                     Proceed to login
                   </Button>
                 </Link>
+              </div>
+              <div className="text-center mt-3">
+                Powered by <br />
+                <img
+                  src={footerImg}
+                  className="mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

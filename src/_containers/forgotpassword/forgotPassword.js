@@ -9,7 +9,8 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { authActions } from "_store";
-
+import footerImg from "../../assets/utils/images/panther-logo.png";
+import "../static/terms.scss";
 import {
   Col,
   Row,
@@ -22,7 +23,7 @@ import {
   CardTitle,
 } from "reactstrap";
 import SweetAlert from "react-bootstrap-sweetalert";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
 import { analytics } from "../../firebase/index";
@@ -110,15 +111,23 @@ export function ForgotPassword() {
             className="h-100 d-flex bg-white justify-content-center align-items-center"
           >
             <Col lg="6" md="8" sm="12" className="ps-2">
-              <img
-                src={logo}
-                className="logo mb-2"
-                width={"200px"}
-                alt="logo"
-              />
-
+              <div style={{ width: "200px", height: "80px" }}>
+                <img
+                  src={
+                    localStorage.getItem("logo")
+                      ? localStorage.getItem("logo")
+                      : logo
+                  }
+                  className="logo mb-2"
+                  style={{
+                    objectFit: "contain",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                  alt="logo"
+                />
+              </div>
               <Row className="login-divider" />
-
               <p className="mb-2 mt-4 title-text">Forgot Password?</p>
               <p className="mb-3 header-text">
                 Enter your registered Email to reset the password
@@ -162,7 +171,87 @@ export function ForgotPassword() {
                   </div>
                 </Form>
               </div>
+              <br /> <br />
+              <div className="text-center mt-5">
+                Powered by <br />
+                <img
+                  src={footerImg}
+                  className="logo mb-2"
+                  width="155px"
+                  alt="logo"
+                />
+              </div>
             </Col>
+            <footer className="footer--pin-registration">
+              <Row>
+                <Col lg="4" md="4" sm="12"></Col>
+                <Col
+                  xxl={{ order: 1, size: 3 }}
+                  xl={{ order: 1, size: 3 }}
+                  lg={{ order: 1, size: 3 }}
+                  md={{ order: 1, size: 3 }}
+                  sm={{ order: 1, size: 12 }}
+                  xs={{ order: 1, size: 12 }}
+                  className="text-start mt-1"
+                >
+                  <span className="mt-2">Powered by</span>
+                  <img
+                    src={footerImg}
+                    className="logo ms-1"
+                    width="135px"
+                    alt="logo"
+                  />
+                </Col>
+                <Col
+                  xxl={{ order: 2, size: 5 }}
+                  xl={{ order: 2, size: 5 }}
+                  lg={{ order: 2, size: 5 }}
+                  md={{ order: 1, size: 5 }}
+                  sm={{ order: 1, size: 12 }}
+                  xs={{ order: 1, size: 12 }}
+                  className="text-end mt-1"
+                >
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Privacy Policy
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Terms & Conditions
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/support"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Support
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a
+                    href="/contact"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-link"
+                  >
+                    Contact Us
+                  </a>
+                  <span className="mx-2">|</span>
+                  <a href="/" rel="noopener noreferrer" className="footer-link">
+                    Home
+                  </a>
+                </Col>
+              </Row>
+            </footer>
           </Col>
         </Row>
 

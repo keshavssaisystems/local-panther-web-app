@@ -21,7 +21,7 @@ import {
 } from "_store";
 import { RejectModal } from "_components/modal/rejectmodal";
 
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
 import { FiMapPin } from "react-icons/fi";
 
 import {
@@ -122,11 +122,22 @@ export function JobCard({
                   <div className="muted-name">{customer}</div>
                 </Col>
                 <Col>
-                  <img
-                    src={logo}
-                    alt="logo"
-                    className="float-end display-logo-card"
-                  />
+                  <div className="" style={{ width: "200px", height: "80px" }}>
+                    <img
+                      src={
+                        localStorage.getItem("logo")
+                          ? localStorage.getItem("logo")
+                          : logo
+                      }
+                      alt="logo"
+                      style={{
+                        objectFit: "contain",
+                        height: "100%",
+                        width: "100%",
+                      }}
+                      className="float-end display-logo-card"
+                    />
+                  </div>
                 </Col>
               </Row>
               <p className="job-details">

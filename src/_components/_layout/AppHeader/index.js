@@ -2,17 +2,16 @@ import React from "react";
 import cx from "classnames";
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 import { UserBox } from "./Components/UserBox";
-import logo from "../../../assets/utils/images/panther-logo.png";
-import smlogo from "../../../assets/utils/sidebarimages/icon.png";
+import logo from "../../../assets/utils/images/panther-logo-2.png";
+import smlogo from "../../../assets/utils/images/panther-logo-2.png";
 import { useSelector } from "react-redux";
 import "./appheader.scss";
 import { ChatCounter } from "./Components/chatCounter";
 import { NotificationCounter } from "./Components/notificationCounter";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col } from "reactstrap";
-import sideBarIcons from "assets/utils/sidebarimages";
 
 export function AppHeader({
   headerBackgroundColor = "white",
@@ -43,7 +42,26 @@ export function AppHeader({
               <Col className="no-padding">
                 {isSidebarOpen ? (
                   <Link to="/">
-                    <img src={logo} className="header-app-logo" alt="logo" />
+                    <div
+                      className=""
+                      style={{ width: "135px", height: "55px" }}
+                    >
+                      <img
+                        src={
+                          localStorage.getItem("logo")
+                            ? localStorage.getItem("logo")
+                            : logo
+                        }
+                        style={{
+                          objectFit: "contain",
+                          height: "100%",
+                          width: "100%",
+                          background: "#FFF",
+                          cursor: "not-allowed",
+                        }}
+                        alt="logo"
+                      />
+                    </div>
                   </Link>
                 ) : (
                   <></>
@@ -61,13 +79,27 @@ export function AppHeader({
                         onClick={() => onCloseSidebar()}
                       />
                     ) : (
-                      <img
-                        src={smlogo}
-                        alt="Open side Menu"
-                        width={"40px"}
-                        height={"40px"}
-                        onClick={() => onOpenSidebar()}
-                      />
+                      <div
+                        className=""
+                        style={{ width: "135px", height: "55px" }}
+                      >
+                        <img
+                          src={
+                            localStorage.getItem("logo")
+                              ? localStorage.getItem("logo")
+                              : smlogo
+                          }
+                          alt="Open side Menu"
+                          style={{
+                            objectFit: "contain",
+                            height: "100%",
+                            width: "100%",
+                            cursor: "pointer",
+                            background: "#FFF",
+                          }}
+                          onClick={() => onOpenSidebar()}
+                        />
+                      </div>
                     )}
                   </>
                 )}

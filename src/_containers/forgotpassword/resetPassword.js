@@ -10,7 +10,8 @@ import { useSelector, useDispatch } from "react-redux";
 import loginBgImg from "../../assets/utils/images/login.png";
 
 import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
 import { history } from "_helpers";
 import { analytics } from "../../firebase/index";
@@ -86,13 +87,22 @@ export function ResetPassword() {
             className="h-100 d-flex bg-white justify-content-center align-items-center"
           >
             <Col lg="6" md="8" sm="12">
-              <img
-                src={logo}
-                className="logo mb-2"
-                width={"200px"}
-                alt="logo"
-              />
-
+              <div className="" style={{ width: "200px", height: "80px" }}>
+                <img
+                  src={
+                    localStorage.getItem("logo")
+                      ? localStorage.getItem("logo")
+                      : logo
+                  }
+                  className="logo mb-2"
+                  style={{
+                    objectFit: "contain",
+                    height: "100%",
+                    width: "100%",
+                  }}
+                  alt="logo"
+                />
+              </div>
               <Row className="login-divider" />
 
               <p className="mb-1 mt-4 title-text">Reset Password</p>
@@ -158,6 +168,15 @@ export function ResetPassword() {
                     </Button>
                   </div>
                 </Form>
+              </div>
+              <div className="text-center mt-5">
+                Powered by <br />
+                <img
+                  src={footerImg}
+                  className="logo mb-2"
+                  width="155px"
+                  alt="logo"
+                />
               </div>
             </Col>
           </Col>

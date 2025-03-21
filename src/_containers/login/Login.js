@@ -17,14 +17,14 @@ import Slider from "react-slick";
 import { messaging } from "../../firebase";
 import LoadingOverlay from "react-loading-overlay-ts";
 import Loader from "react-loaders";
-import { BsLinkedin, BsGoogle, BsApple } from "react-icons/bs";
 
 import { Col, Row, Button, Form, FormGroup, Label } from "reactstrap";
 
 import { history } from "_helpers";
 import { authActions } from "_store";
 
-import logo from "../../assets/utils/images/panther-logo.png";
+import logo from "../../assets/utils/images/panther-logo-2.png";
+import footerImg from "../../assets/utils/images/panther-logo.png";
 import loginBgImg from "../../assets/utils/images/login.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
@@ -178,18 +178,26 @@ export function Login() {
                 className="h-100 d-flex bg-white justify-content-center align-items-center"
               >
                 <Col lg="9" md="10" sm="12">
-                  <img
-                    src={logo}
-                    className="logo mb-2"
-                    width={"200px"}
-                    alt="logo"
-                  />
+                  <div style={{ width: "200px", height: "80px" }}>
+                    <img
+                      src={
+                        localStorage.getItem("logo")
+                          ? localStorage.getItem("logo")
+                          : logo
+                      }
+                      className="logo mb-2"
+                      style={{
+                        objectFit: "contain",
+                        height: "100%",
+                        width: "100%",
+                      }}
+                      alt="logo"
+                    />
+                  </div>
                   <Row className="login-divider" />
-
                   <p className="mb-3 mt-4 title-text">
                     Please sign in to your account.
                   </p>
-
                   <div className="login-form">
                     <Form onSubmit={handleSubmit(onSubmit)}>
                       <Row>
@@ -241,17 +249,19 @@ export function Login() {
                               </div>
                             </InputGroup>
                             <div className="mt-4 mb-3 float-end">
-                              <Link
-                                to="/forgot-password"
-                                className="text-primary forgot-pwd-text me-3 "
+                              <Button
+                                color="primary"
+                                className="btn-text me-2"
+                                size="lg"
+                                tag={Link}
+                                to="/registration"
                               >
-                                Forgot Password?
-                              </Link>
-
+                                <span className="btn-text">Register</span>
+                              </Button>
                               <Button
                                 disabled={isSubmitting}
                                 color="primary"
-                                className="btn-text"
+                                className="btn-text me-2"
                                 size="lg"
                               >
                                 {isSubmitting && (
@@ -259,6 +269,12 @@ export function Login() {
                                 )}
                                 <span className="btn-text">Sign in</span>
                               </Button>
+                              <Link
+                                to="/forgot-password"
+                                className="text-primary forgot-pwd-text"
+                              >
+                                Forgot Password?
+                              </Link>
                               <div></div>
                             </div>
                           </FormGroup>
@@ -293,30 +309,6 @@ export function Login() {
                         </div>
                       )}
                     </Form>
-
-                    {/* <Row className="mt-5 d-flex justify-content-center align-items-center">
-                    <Col></Col>
-                    <Col>
-                      <Row>
-                        <Col className="text-center">
-                          <div className="ellipse d-flex justify-content-center align-items-center">
-                            <BsLinkedin className="icon" />
-                          </div>
-                        </Col>
-                        <Col className="text-center">
-                          <div className="ellipse d-flex justify-content-center align-items-center">
-                            <BsGoogle className="icon" />
-                          </div>
-                        </Col>
-                        <Col className="text-center">
-                          <div className="ellipse d-flex justify-content-center align-items-center">
-                            <BsApple className="icon" />
-                          </div>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col></Col>
-                  </Row> */}
                     <div className="mt-4 register-division">
                       <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
                         We are thrilled to have you join the OpenWorX community!
@@ -331,13 +323,76 @@ export function Login() {
                         to reach out. Thanks for being part of OpenWorX!
                       </p>
                       <p className="mt-3 d-flex register-paragraph">
-                        Become Part of the OpenWorX Community;{"  "}
-                        <Link to="/registration" className="ms-1 register-link">
-                          <u>Register Here</u>
-                        </Link>
+                        Become Part of the OpenWorX Community.{"  "}
                       </p>
                     </div>
                   </div>
+                  <footer className="footer mt-4">
+                    <Row>
+                      <Col
+                        xxl={{ order: 1, size: 5 }}
+                        xl={{ order: 1, size: 5 }}
+                        lg={{ order: 1, size: 5 }}
+                        md={{ order: 1, size: 12 }}
+                        sm={{ order: 1, size: 12 }}
+                        xs={{ order: 1, size: 12 }}
+                        className="text-start mt-1"
+                      >
+                        <span className="mt-2">Powered by</span>
+                        <img
+                          src={footerImg}
+                          className="logo ms-1"
+                          width="135px"
+                          alt="logo"
+                        />
+                      </Col>
+                      <Col
+                        xxl={{ order: 2, size: 7 }}
+                        xl={{ order: 2, size: 7 }}
+                        lg={{ order: 2, size: 7 }}
+                        md={{ order: 1, size: 12 }}
+                        sm={{ order: 1, size: 12 }}
+                        xs={{ order: 1, size: 12 }}
+                        className="text-end mt-1"
+                      >
+                        <a
+                          href="/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Privacy Policy
+                        </a>
+                        <span className="mx-2">|</span>
+                        <a
+                          href="/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Terms & Conditions
+                        </a>
+                        <span className="mx-2">|</span>
+                        <a
+                          href="/support"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Support
+                        </a>
+                        <span className="mx-2">|</span>
+                        <a
+                          href="/contact"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="footer-link"
+                        >
+                          Contact Us
+                        </a>
+                      </Col>
+                    </Row>
+                  </footer>
                 </Col>
               </Col>
             </Row>
