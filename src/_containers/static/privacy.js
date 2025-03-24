@@ -11,7 +11,7 @@ export function PrivacyPolicy() {
     <>
       <Container className="my-5">
         <Col className="text-center mb-3">
-          <img src={plogo} height="100px" alt="logo" />
+          {/* <img src={plogo} height="100px" alt="logo" /> */}
         </Col>
         <h1 className="display-4 text-center">Our Commitment To Privacy</h1>
 
@@ -123,11 +123,7 @@ export function PrivacyPolicy() {
             xs={{ order: 1, size: 12 }}
             className="text-end mt-1"
           >
-            <a
-              href="/terms"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/terms" rel="noopener noreferrer" className="footer-link">
               Terms & Conditions
             </a>
             <span className="mx-2">|</span>
@@ -147,11 +143,7 @@ export function PrivacyPolicy() {
               Contact Us
             </a>
             <span className="mx-2">|</span>
-            <a
-              href="/"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/" rel="noopener noreferrer" className="footer-link">
               Home
             </a>
           </Col>

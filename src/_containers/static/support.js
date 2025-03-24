@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Col,Row } from "reactstrap";
+import { Container, Col, Row } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import logo from "../../assets/utils/images/panther-logo.png";
 import plogo from "../../assets/utils/images/panther-logo-2.png";
@@ -11,7 +11,7 @@ export function Support() {
     <>
       <Container className="my-5">
         <Col className="text-center mb-3">
-          <img src={plogo} height="100px" alt="logo" />
+          {/* <img src={plogo} height="100px" alt="logo" /> */}
         </Col>
         <h2 className="section-title text-center mt-4">
           Get in touch with our Support Team <br />
@@ -57,11 +57,7 @@ export function Support() {
               Privacy Policy
             </a>
             <span className="mx-2">|</span>
-            <a
-              href="/terms"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/terms" rel="noopener noreferrer" className="footer-link">
               Terms & Conditions
             </a>
             <span className="mx-2">|</span>
@@ -73,11 +69,7 @@ export function Support() {
               Contact Us
             </a>
             <span className="mx-2">|</span>
-            <a
-              href="/"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/" rel="noopener noreferrer" className="footer-link">
               Home
             </a>
           </Col>

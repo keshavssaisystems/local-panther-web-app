@@ -11,7 +11,7 @@ export function TermsAndConditions() {
     <>
       <Container className="my-5">
         <Col className="text-center mb-3">
-          <img src={plogo} height="100px" alt="logo" />
+          {/* <img src={plogo} height="100px" alt="logo" /> */}
         </Col>
         <h1 className="display-4 text-center">Important Information</h1>
 
@@ -205,11 +205,7 @@ export function TermsAndConditions() {
               Contact Us
             </a>
             <span className="mx-2">|</span>
-            <a
-              href="/"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/" rel="noopener noreferrer" className="footer-link">
               Home
             </a>
           </Col>
