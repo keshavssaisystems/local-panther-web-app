@@ -190,7 +190,9 @@ const authSlice = createSlice({
       );
       localStorage.setItem(
         "logo",
-        cmpLogo.length
+        decodedData.role.toLowerCase() === "candidate"
+          ? ""
+          : cmpLogo.length
           ? cmpLogo
           : companyLogo.length > 0
           ? companyLogo[0].appconfigurationvalue
