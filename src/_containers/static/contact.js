@@ -11,7 +11,7 @@ export function Contact() {
     <>
       <Container className="my-5">
         <Col className="text-center mb-3">
-          <img src={plogo} height="100px" alt="logo" />
+          {/* <img src={plogo} height="100px" alt="logo" /> */}
         </Col>
         <h2 className="section-title text-center mt-4">
           For more information, please contact us at <br />
@@ -59,11 +59,7 @@ export function Contact() {
               Privacy Policy
             </a>
             <span className="mx-2">|</span>
-            <a
-              href="/terms"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/terms" rel="noopener noreferrer" className="footer-link">
               Terms & Conditions
             </a>
             <span className="mx-2">|</span>
@@ -75,11 +71,7 @@ export function Contact() {
               Support
             </a>
             <span className="mx-2">|</span>
-            <a
-              href="/"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
+            <a href="/" rel="noopener noreferrer" className="footer-link">
               Home
             </a>
           </Col>
