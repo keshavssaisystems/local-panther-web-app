@@ -190,14 +190,14 @@ const authSlice = createSlice({
       );
       localStorage.setItem(
         "logo",
-        decodedData.role.toLowerCase() === "candidate"
+        decodedData?.role?.toLowerCase() === "candidate"
           ? ""
-          : cmpLogo.length
+          : cmpLogo?.length > 0
           ? cmpLogo
-          : companyLogo.length > 0
-          ? companyLogo[0].appconfigurationvalue
-          : defLogo.length > 0
-          ? defLogo[0].appconfigurationvalue
+          : companyLogo?.length > 0
+          ? companyLogo[0]?.appconfigurationvalue
+          : defLogo?.length > 0
+          ? defLogo[0]?.appconfigurationvalue
           : ""
       );
 
