@@ -140,6 +140,7 @@ export function UpdateScheduleInterviewModal({
     onClose();
     setDateChange(false);
   };
+  console.log(interviewData);
   return (
     <>
       <Modal
@@ -197,14 +198,17 @@ export function UpdateScheduleInterviewModal({
                         dateChange === false
                           ? new Date(
                               getTimezoneDateTime(
-                                moment(
-                                  interviewData?.scheduledInterviewDtos &&
-                                    interviewData?.scheduledInterviewDtos
-                                      ?.length > 0
-                                    ? interviewData?.scheduledInterviewDtos[0]
-                                        .scheduledate
-                                    : interviewData?.scheduledate
-                                ),
+                                interviewData?.scheduledInterviewDtos &&
+                                  interviewData?.scheduledInterviewDtos
+                                    ?.length > 0
+                                  ? interviewData?.scheduledInterviewDtos[0].scheduledate.slice(
+                                      0,
+                                      11
+                                    ) +
+                                      interviewData?.scheduledInterviewDtos[0]
+                                        ?.starttime
+                                  : interviewData?.scheduledate?.slice(0, 11) +
+                                      interviewData?.starttime,
                                 "YYYY-MM-DD HH:mm:ss"
                               )
                             )
@@ -266,7 +270,10 @@ export function UpdateScheduleInterviewModal({
                                         ? interviewData
                                             ?.scheduledInterviewDtos[0]
                                             .scheduledate
-                                        : interviewData?.scheduledate
+                                        : interviewData?.scheduledate?.slice(
+                                            0,
+                                            11
+                                          ) + interviewData?.starttime
                                     ).format("YYYY-MM-DD") +
                                       " " +
                                       (interviewData?.scheduledInterviewDtos &&
