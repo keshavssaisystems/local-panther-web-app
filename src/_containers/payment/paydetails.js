@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Row,
   Col,
@@ -31,6 +31,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import Payment from "payment";
 import { history } from "_helpers";
 import { Link } from "react-router-dom";
+import debounce from "lodash/debounce";
 import "./payment.scss";
 
 export const PaymentDetails = ({
@@ -257,6 +258,13 @@ export const PaymentDetails = ({
     setCurrencyValue(data);
     setValue("currency", data);
   };
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -742,7 +750,8 @@ export const PaymentDetails = ({
                 name="city"
                 placeholder="Search to Select"
                 placeholderText="search"
-                loadOptions={loadOptions}
+                cacheOptions
+                loadOptions={loadOptionsDeb}
                 isMulti={false}
                 value={cityValue}
                 className={`placeholder-name ${
