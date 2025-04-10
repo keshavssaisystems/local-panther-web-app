@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useCallback } from "react";
 import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
 import {
   Row,
@@ -34,6 +34,7 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 import imgHover from "../../assets/utils/images/profile-pic-hover.svg";
 import { profileActions, jobPreferenceDetailsActions } from "_store";
 import { getLocationFilter } from "_store";
+import debounce from "lodash/debounce";
 
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
@@ -519,6 +520,13 @@ export function PersonalInformation(props) {
       setCountryList(data);
     }
   }, [cityList]);
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
@@ -1157,7 +1165,8 @@ export function PersonalInformation(props) {
                           name="skills"
                           placeholder="Search to select"
                           placeholderText="search"
-                          loadOptions={loadOptions}
+                          loadOptions={loadOptionsDeb}
+                          cacheOptions
                           isMulti={false}
                           value={citySelect}
                           defaultOptions={locationData}

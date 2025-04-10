@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -37,6 +37,7 @@ import { async } from "q";
 import { addCompany } from "../_redux/addCustomer.slice";
 import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
+import debounce from "lodash/debounce";
 import "./adminListing.scss";
 
 export const AddEditCompany = (props) => {
@@ -147,6 +148,13 @@ export const AddEditCompany = (props) => {
   const { register, handleSubmit, formState, setValue, getValues } =
     useForm(formOptions);
   const { errors, isSubmitting } = formState;
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -521,7 +529,8 @@ export const AddEditCompany = (props) => {
                     isDisabled={isViewMode}
                     placeholder="Search to select"
                     placeholderText="search"
-                    loadOptions={loadOptions}
+                    loadOptions={loadOptionsDeb}
+                    cacheOptions
                     isMulti={false}
                     className={`placeholder-name ${
                       locationValidation ? "async-border-red" : "async-no-error"
