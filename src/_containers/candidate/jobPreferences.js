@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
 import { jobPreferenceDetailsActions, getProfileActions } from "_store";
 import {
@@ -26,6 +26,7 @@ import Loader from "react-loaders";
 import { NoProfileData } from "_components/common/noProfileData";
 import InputMask from "react-input-mask";
 import { getBasePayMask } from "_helpers/helper";
+import debounce from "lodash/debounce";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -307,6 +308,13 @@ export function JobPreferences(props) {
     };
     setFormData(data);
   };
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
@@ -1138,7 +1146,8 @@ export function JobPreferences(props) {
                                   <AsyncSelect
                                     name="location"
                                     placeholder="Search to select"
-                                    loadOptions={loadOptions}
+                                    loadOptions={loadOptionsDeb}
+                                    cacheOptions
                                     isMulti={true}
                                     value={selectedLocation}
                                     onChange={(evt) =>

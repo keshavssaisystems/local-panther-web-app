@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Label, Input } from "reactstrap";
 import { getLocationFilter, educationDetailsSlice } from "_store";
 import {
@@ -26,6 +26,7 @@ import Select from "react-select";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
+import debounce from "lodash/debounce";
 
 export function EducationModal(props) {
   const [check, setCheck] = useState(props.check);
@@ -247,6 +248,13 @@ export function EducationModal(props) {
     new_data.splice(index, 1);
     setFormData(new_data);
   };
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
@@ -678,7 +686,8 @@ export function EducationModal(props) {
                 <AsyncSelect
                   name="skills"
                   placeholder="Search to select"
-                  loadOptions={loadOptions}
+                  loadOptions={loadOptionsDeb}
+                  cacheOptions
                   isMulti={false}
                   className="location-dropdown"
                   value={!item.city.value ? [] : item.city}

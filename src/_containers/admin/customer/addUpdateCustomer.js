@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InputMask from "react-input-mask";
 import {
@@ -19,6 +19,7 @@ import { getLocation } from "_store";
 import "./customer.scss";
 import { AddEditCompany } from "../common/addEditCompany";
 import { dropdownActions } from "_store";
+import debounce from "lodash/debounce";
 
 export const AddUpdateCustomer = ({
   openModal,
@@ -43,6 +44,13 @@ export const AddUpdateCustomer = ({
   const companiesList = useSelector((state) => state.dropdown.companyList);
   const [save, setSave] = useState(false);
   const [companyModal, setCompanyModal] = useState(false);
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
@@ -422,7 +430,8 @@ export const AddUpdateCustomer = ({
                     name={"location"}
                     placeholder={"Select city, state"}
                     // defaultOptions={defaultOption}
-                    loadOptions={loadOptions}
+                    loadOptions={loadOptionsDeb}
+                    cacheOptions
                     isMulti={false}
                     // styles={customStyles}
                     onChange={(e) => handleInputChange(e, "location")}
