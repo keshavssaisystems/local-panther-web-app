@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Modal,
   ModalBody,
@@ -22,6 +22,7 @@ import { getLocationFilter, authActions } from "_store";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { adminListingActions } from "_store";
+import debounce from "lodash/debounce";
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -201,6 +202,13 @@ export const NewCandidateModal = (props) => {
     setValue("countryid", String(1));
   };
 
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
+
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
     setCityList(data);
@@ -356,7 +364,8 @@ export const NewCandidateModal = (props) => {
                   name="cityid"
                   placeholder="Search to select"
                   placeholderText="search"
-                  loadOptions={loadOptions}
+                  cacheOptions
+                  loadOptions={loadOptionsDeb}
                   isMulti={false}
                   className={`placeholder-name ${
                     errors.cityid && cityValue === 0

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Label, Input } from "reactstrap";
 import { qualificationSlice } from "_store";
 import {
@@ -26,6 +26,7 @@ import {
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { getLocationFilter } from "_store";
+import debounce from "lodash/debounce";
 
 export function QualificationModal(props) {
   const dispatch = useDispatch();
@@ -232,6 +233,13 @@ export function QualificationModal(props) {
       setCountryList(data);
     }
   }, [cityList]);
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
   const loadOptions = async function (inputValue) {
     if (inputValue !== "") {
       const { data = [] } = await getLocationFilter(inputValue);
@@ -681,7 +689,8 @@ export function QualificationModal(props) {
                   <AsyncSelect
                     name="skills"
                     placeholder="Search to select"
-                    loadOptions={loadOptions}
+                    cacheOptions
+                    loadOptions={loadOptionsDeb}
                     styles={customStyles}
                     isMulti={false}
                     value={!item.city?.value ? [] : item.city}

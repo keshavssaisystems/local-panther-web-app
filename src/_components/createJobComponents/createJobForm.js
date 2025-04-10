@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef } from "react";
+import React, { useEffect, useState, forwardRef, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -24,7 +24,7 @@ import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
 import { BsPlusSquare } from "react-icons/bs";
 import { locationActions } from "_store";
-
+import debounce from "lodash/debounce";
 export const CreateJob = forwardRef(
   (
     {
@@ -1037,6 +1037,13 @@ export const CreateJob = forwardRef(
       JobDataForPreview(data);
       nextPage(true);
     };
+
+    const loadOptionsDeb = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptions(inputValue).then(callback);
+      }, 500),
+      [] // Important: memoize once!
+    );
     const loadOptions = async (inputValue) => {
       if (inputValue.length > 0) {
         const { data = [] } = await getLocation(inputValue);
@@ -1680,7 +1687,8 @@ export const CreateJob = forwardRef(
                             name={"city"}
                             placeholder="Search city or zipcode"
                             value={zipcodeCityState}
-                            loadOptions={loadOptions}
+                            cacheOptions
+                            loadOptions={loadOptionsDeb}
                             isMulti={false}
                             styles={customStyles}
                             onChange={(e) => getLocationDetails(e, true)}

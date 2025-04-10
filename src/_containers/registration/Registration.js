@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +14,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
 import footerImg from "../../assets/utils/images/panther-logo.png";
+
 import "../static/terms.scss";
 
 import {
@@ -40,6 +41,7 @@ import logo from "../../assets/utils/images/panther-logo-2.png";
 import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
 import { analytics } from "../../firebase/index";
+import debounce from "lodash/debounce";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
@@ -388,6 +390,13 @@ export function Registration() {
   const toggleConfirmPassword = () => {
     setShowConfirm(!showConfirm);
   };
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -837,7 +846,8 @@ export function Registration() {
                             name="cityid"
                             placeholder="Search to select"
                             placeholderText="search"
-                            loadOptions={loadOptions}
+                            cacheOptions
+                            loadOptions={loadOptionsDeb}
                             isMulti={false}
                             className={`placeholder-name ${
                               errors.cityid && cityValue === 0

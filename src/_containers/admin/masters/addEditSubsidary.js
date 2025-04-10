@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -26,6 +26,7 @@ import {
 } from "reactstrap";
 import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
+import debounce from "lodash/debounce";
 
 export const AddEditSubsidary = (props) => {
   const dispatch = useDispatch();
@@ -103,6 +104,13 @@ export const AddEditSubsidary = (props) => {
   // get functions to build form with useForm() hook
   const { register, formState, setValue } = useForm(formOptions);
   const { errors } = formState;
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -342,7 +350,8 @@ export const AddEditSubsidary = (props) => {
                     name="city"
                     placeholder="Search to select"
                     placeholderText="search"
-                    loadOptions={loadOptions}
+                    loadOptions={loadOptionsDeb}
+                    cacheOptions
                     isMulti={false}
                     className={`placeholder-name ${
                       locationValidation ? "async-border-red" : "async-no-error"

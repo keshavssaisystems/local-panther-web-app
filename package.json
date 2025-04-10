@@ -65,6 +65,7 @@
         "jsrsasign": "^10.8.6",
         "jwt-decode": "^3.1.2",
         "loaders.css": "^0.1.2",
+        "lodash": "^4.17.21",
         "luhn": "^2.4.1",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.43",
