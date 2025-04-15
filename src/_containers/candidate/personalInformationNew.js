@@ -1,24 +1,13 @@
-import React, { useState, useEffect, Fragment } from "react";
-import {
-  Label,
-  Input,
-  CardFooter,
-  ModalHeader,
-  ModalBody,
-  CardTitle,
-} from "reactstrap";
-import { candidateActions } from "_store";
+import React, { useState, Fragment } from "react";
+import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
+
 import {
   Row,
   Col,
   Modal,
   Card,
-  CardBody,
-  Collapse,
-  CardHeader,
   Button,
   FormGroup,
-  FormFeedback,
   InputGroup,
   Form,
 } from "reactstrap";
@@ -30,16 +19,13 @@ import profileImg from "../../assets/utils/images/avatars/1.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import DatePicker from "react-datepicker";
-import Tabs from "react-responsive-tabs";
+
 import { useDispatch } from "react-redux";
-import successIcon from "../../assets/utils/images/check-circle.svg";
-import errorIcon from "../../assets/utils/images/x-circle.svg";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
-import candidatelogo from "../../assets/utils/images/candidate.svg";
 
 export function PersonalInformationNew(props) {
   const dispatch = useDispatch();

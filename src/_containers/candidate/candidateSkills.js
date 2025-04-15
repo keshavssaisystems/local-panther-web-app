@@ -5,7 +5,6 @@ import {
   ModalHeader,
   ModalBody,
   FormText,
-  CardFooter,
   CardHeader,
 } from "reactstrap";
 import {
@@ -17,7 +16,6 @@ import {
   Button,
   FormGroup,
   Form,
-  CardTitle,
 } from "reactstrap";
 
 import { getSkillsFilter } from "_store";

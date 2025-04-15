@@ -27,7 +27,7 @@ import { AddUpdateCustomer } from "./addUpdateCustomer";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
 import customerIcons from "assets/utils/images/customer";
-import { BsPencil } from "react-icons/bs";
+
 import { PaymentModal } from "_components/modal/paymentmodal";
 
 export const CustomerList = () => {

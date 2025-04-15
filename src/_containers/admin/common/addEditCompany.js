@@ -5,13 +5,6 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import axios from "axios";
-import {
-  getStatesList,
-  getCitiesList,
-  getCompaniesList,
-  getCountriesList,
-  addCustomer,
-} from "_containers/admin/_redux/addCustomer.slice";
 import AsyncSelect from "react-select/async";
 import { getLocationFilter } from "_store";
 import { useDropzone } from "react-dropzone";
@@ -24,17 +17,13 @@ import {
   Label,
   Row,
   Col,
-  FormText,
   Button,
   ModalHeader,
   Modal,
   ModalBody,
-  ListGroup,
-  ListGroupItem,
   Input,
 } from "reactstrap";
-import { async } from "q";
-import { addCompany } from "../_redux/addCustomer.slice";
+
 import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
 import debounce from "lodash/debounce";

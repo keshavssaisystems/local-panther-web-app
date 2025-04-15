@@ -17,8 +17,7 @@ import { getLanguageFilter } from "_store";
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-import addIcon from "../../assets/utils/images/add.svg";
-import subtract from "../../assets/utils/images/Subtract 1.svg";
+
 import AsyncCreatableSelect from "react-select/async-creatable";
 
 export function AdditionalInfoModal(props) {

@@ -14,7 +14,6 @@ import {
 } from "reactstrap";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-import { RejectReasonModal } from "_components/modal/rejectReasonPopup";
 import moment from "moment";
 import customerIcons from "assets/utils/images/customer";
 import { getTimezoneDateTime } from "_helpers/helper";

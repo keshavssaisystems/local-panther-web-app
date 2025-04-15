@@ -5,25 +5,9 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import axios from "axios";
-import {
-  getStatesList,
-  getCitiesList,
-  getCompaniesList,
-  addCustomer,
-} from "_containers/admin/_redux/addCustomer.slice";
-// import { getState } from '_store/dropdownstate.slice'
 
-import {
-  Form,
-  FormGroup,
-  Label,
-  Row,
-  Col,
-  FormText,
-  Button,
-  Input,
-} from "reactstrap";
-import { async } from "q";
+import { Form, FormGroup, Label, Row, Col, Button, Input } from "reactstrap";
+
 import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
 
