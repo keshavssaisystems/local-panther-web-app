@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Button,
-  UncontrolledTooltip,
-} from "reactstrap";
+import { Row, Col, Card, CardBody, Button } from "reactstrap";
 import SelectJobType from "../../../_components/createJobComponents/selectJobType";
 import { CreateJob } from "../../../_components/createJobComponents/createJobForm";
 import JobPreview from "../../../_components/createJobComponents/jobPreview";

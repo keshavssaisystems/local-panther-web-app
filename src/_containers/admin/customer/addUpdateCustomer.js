@@ -36,9 +36,7 @@ export const AddUpdateCustomer = ({
   const [firstNameValidation, setFirstNameValidation] = useState(false);
 
   const [lastNameValidation, setLastNameValidation] = useState(false);
-  const [PrefixValidation, setPrefixValidation] = useState(false);
-  const [prefixMinLengthValidation, setPrefixMinLengthValidation] =
-    useState(false);
+
   const [emailValidation, setEmailValidation] = useState(false);
   const [locationValidation, setLocationValidation] = useState(false);
   const companiesList = useSelector((state) => state.dropdown.companyList);
@@ -180,13 +178,7 @@ export const AddUpdateCustomer = ({
       getSubmitForm(event);
     }
   };
-  const checkCityValid = function () {
-    // if (cityList?.length === 0) {
-    //   setCityReqError(true);
-    // } else {
-    //   setCityReqError(false);
-    // }
-  };
+
   const getLocationData = (data) => {
     let slicedData = data.split(", ");
     return {

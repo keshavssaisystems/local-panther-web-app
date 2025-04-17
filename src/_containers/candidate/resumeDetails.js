@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Label, ModalBody } from "reactstrap";
+import React, { useState, useEffect } from "react";
+import { Label } from "reactstrap";
 import {
   Row,
   Col,
@@ -9,14 +9,11 @@ import {
   CardBody,
   Button,
   FormGroup,
-  CardTitle,
   TabContent,
   TabPane,
   Nav,
   NavItem,
   NavLink,
-  ListGroup,
-  ListGroupItem,
 } from "reactstrap";
 import classnames from "classnames";
 import { formatDate } from "_helpers/helper";

@@ -1298,11 +1298,14 @@ export const CustCandidateListView = (props) => {
                   row?.scheduledInterviewDtos != null
                     ? getTimezoneDateTime(
                         moment(
-                          row?.scheduledInterviewDtos[0]?.scheduledate
-                        ).format("MM/DD/YYYY") +
-                          (row?.scheduledInterviewDtos[0]?.starttime !== null
-                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                            : " 00:00:00")
+                          row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                            0,
+                            11
+                          ) +
+                            (row?.scheduledInterviewDtos[0]?.starttime !== null
+                              ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                              : " 00:00:00")
+                        ).format("YYYY-MM-DD HH:mm:ss")
                       )
                     : ""
                 }
@@ -1310,11 +1313,14 @@ export const CustCandidateListView = (props) => {
                 {row?.scheduledInterviewDtos != null
                   ? getTimezoneDateTime(
                       moment(
-                        row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY") +
-                        (row?.scheduledInterviewDtos[0]?.starttime !== null
-                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                          : " 00:00:00")
+                        row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                          0,
+                          11
+                        ) +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? row?.scheduledInterviewDtos[0]?.starttime
+                            : "00:00:00")
+                      ).format("YYYY-MM-DD HH:mm:ss")
                     )
                   : ""}
               </span>
@@ -1322,12 +1328,15 @@ export const CustCandidateListView = (props) => {
             selector: (row) =>
               row?.scheduledInterviewDtos != null
                 ? getTimezoneDateTime(
-                    moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
-                      "MM/DD/YYYY"
-                    ) +
-                      (row?.scheduledInterviewDtos[0]?.starttime !== null
-                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                        : " 00:00:00")
+                    moment(
+                      row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                        0,
+                        11
+                      ) +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? row?.scheduledInterviewDtos[0]?.starttime
+                          : "00:00:00")
+                    ).format("YYYY-MM-DD HH:mm:ss")
                   )
                 : "",
 

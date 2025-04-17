@@ -22,7 +22,6 @@ import {
   custJobListActions,
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
-import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
 

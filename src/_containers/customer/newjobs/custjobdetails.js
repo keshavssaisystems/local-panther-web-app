@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Card,
-  Col,
-  Row,
-  Button,
-  CardFooter,
-  UncontrolledTooltip,
-} from "reactstrap";
+import { Card, Col, Row, Button, CardFooter } from "reactstrap";
 import { HeadingAndDetailWithDiv } from "../../../_components/jobDetailComponents/HeadingAndDetailWithDiv";
 import { HeadingAndDetailWithoutIcon } from "../../../_components/jobDetailComponents/HeadingAndDetailWithoutIcon";
 import Loader from "react-loaders";

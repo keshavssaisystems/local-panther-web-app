@@ -24,8 +24,7 @@ import "./profile.scss";
 import { getLocationFilter } from "_store";
 import Loader from "react-loaders";
 import { NoProfileData } from "_components/common/noProfileData";
-import InputMask from "react-input-mask";
-import { getBasePayMask } from "_helpers/helper";
+
 import debounce from "lodash/debounce";
 
 export function JobPreferences(props) {

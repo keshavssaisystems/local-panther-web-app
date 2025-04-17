@@ -7,8 +7,6 @@ import Loader from "react-loaders";
 import {
   Col,
   Row,
-  FormGroup,
-  InputGroup,
   Button,
   Card,
   CardBody,
@@ -19,17 +17,12 @@ import {
   DropdownItem,
 } from "reactstrap";
 
-import {
-  SkillsFilter,
-  LocationFilter,
-  CompanyFilter,
-} from "../filterComponent";
+import { CompanyFilter } from "../filterComponent";
 
 import { getReportDataThunk } from "../_redux/report.slice";
 
-import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faFileExcel } from "@fortawesome/free-solid-svg-icons";
+import { faFileExcel } from "@fortawesome/free-solid-svg-icons";
 
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";

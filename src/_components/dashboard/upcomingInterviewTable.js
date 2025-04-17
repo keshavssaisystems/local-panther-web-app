@@ -68,7 +68,9 @@ export function UpcomingInterviewTable({ tableData }) {
       width: "120px",
       selector: (row) =>
         getTimezoneDateTime(
-          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
+          moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
           "MM/DD/YYYY"
         ),
     },
@@ -78,7 +80,9 @@ export function UpcomingInterviewTable({ tableData }) {
       width: "100px",
       selector: (row) =>
         getTimezoneDateTime(
-          moment(row.scheduledate).format("YYYY-MM-DD") + "T" + row.starttime,
+          moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
           "h:mm a"
         ),
     },

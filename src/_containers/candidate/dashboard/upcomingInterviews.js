@@ -15,14 +15,11 @@ import {
 } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  formatDate,
-  convertTo12HourFormat,
   getLocationText,
-  calculateEndTime,
   getTimezoneDateTime,
   getVideoChannelId,
 } from "_helpers/helper";
-import { history } from "_helpers";
+
 import SweetAlert from "react-bootstrap-sweetalert";
 import DataTable from "react-data-table-component";
 import scheduleIcon from "../../../assets/utils/images/upcoming-interview.svg";
@@ -35,10 +32,10 @@ import { InterViewDetailModal } from "../../../_components/modal/interviewdetail
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
 import { customerCandidateListsActions } from "_store";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import moment from "moment-timezone";
-import { NavLink } from "react-router-dom";
+
 import { USPhoneNumber } from "_helpers/helper";
 import { useNavigate } from "react-router-dom";
 
@@ -91,7 +88,9 @@ export function UpcomingInterviews() {
       name: "Scheduled date",
       selector: (row) =>
         getTimezoneDateTime(
-          moment(row?.scheduledate).format("YYYY-MM-DD") + " " + row?.starttime,
+          moment(row.scheduledate + " " + row.starttime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
           "MM/DD/YYYY"
         ),
       sortable: false,
