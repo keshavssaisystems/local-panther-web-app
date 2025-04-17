@@ -127,9 +127,10 @@ export function CustomerSlider({ data }) {
                         <div className="widget-date">
                           <BsCalendar2WeekFill className="mb-1" /> {"  "}
                           {getTimezoneDateTime(
-                            moment(options?.scheduledate).format("YYYY-MM-DD") +
-                              "T" +
-                              options?.starttime,
+                            moment(
+                              options.scheduledate.slice(0, 11) +
+                                options.starttime
+                            ).format("YYYY-MM-DD HH:mm:ss"),
                             "MM/DD/YYYY"
                           )}
                         </div>
@@ -168,9 +169,10 @@ export function CustomerSlider({ data }) {
                         <div className="widget-time float-end">
                           <BsClockFill className="mb-1" /> {"  "}
                           {getTimezoneDateTime(
-                            moment(options?.scheduledate).format("YYYY-MM-DD") +
-                              "T" +
-                              options?.starttime,
+                            moment(
+                              options.scheduledate.slice(0, 11) +
+                                options.starttime
+                            ).format("YYYY-MM-DD HH:mm:ss"),
                             "h:mm A"
                           )}
                         </div>

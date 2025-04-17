@@ -88,7 +88,9 @@ export function UpcomingInterviews() {
       name: "Scheduled date",
       selector: (row) =>
         getTimezoneDateTime(
-          moment(row?.scheduledate).format("YYYY-MM-DD") + " " + row?.starttime,
+          moment(row.scheduledate + " " + row.starttime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
           "MM/DD/YYYY"
         ),
       sortable: false,

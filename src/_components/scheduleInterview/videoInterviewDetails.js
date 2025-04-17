@@ -80,26 +80,24 @@ export function VideoInterviewDetails({
   );
 
   let scheduled = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
     "MM/DD/YYYY"
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
   let yesterdayDate = getTimezoneDateTime(
-    moment().subtract(1, "days").format("YYYY-MM-DD"),
+    moment().subtract(1, "days"),
     "YYYY-MM-DD"
   );
-  let tomorrowDate = getTimezoneDateTime(
-    moment().add(1, "days").format("YYYY-MM-DD"),
-    "YYYY-MM-DD"
-  );
+  let tomorrowDate = getTimezoneDateTime(moment().add(1, "days"), "YYYY-MM-DD");
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
     "YYYY-MM-DD"
   );
+  debugger;
   if (scheduledDate === currentDay) {
     scheduled = "Today";
   }
