@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Form,
-  FormGroup,
-  Label,
-  Button,
-  Modal,
-  Input,
-} from "reactstrap";
+import { Row, Col, Form, FormGroup, Label, Button, Input } from "reactstrap";
 import "./dashboard.scss";
 import { candidateDashboardActions } from "_store";
 import { useDispatch } from "react-redux";
-import { SuccessPopUp } from "_components/common/successPopUp";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 export function CreateToDo(props) {

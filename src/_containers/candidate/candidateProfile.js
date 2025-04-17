@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { yearActions, monthActions } from "_store";
 import { Row, Col, Alert } from "reactstrap";
 import Loader from "react-loaders";

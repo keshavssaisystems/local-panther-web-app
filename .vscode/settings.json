@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/5f65870a-fe2d-44c0-ba66-6f4955c13018/resourceGroups/rg-openworx-eastus-01/providers/Microsoft.Web/sites/openworx-web",
+    "appService.deploySubpath": "build"
+}

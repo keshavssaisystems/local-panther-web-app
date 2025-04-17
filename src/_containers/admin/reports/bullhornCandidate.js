@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "react-loaders";
-import { Col, Row, Card, CardBody, Button, ButtonGroup } from "reactstrap";
+import { Col, Row, Card, CardBody } from "reactstrap";
 import { getBullhornCandidateReportThunk } from "../_redux/report.slice";
 import PageTitle from "_components/common/pagetitle";
 import titlelogo from "assets/utils/images/candidate.svg";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import "./adminreports.scss";
-import customerIcons from "assets/utils/images/customer";
 
 export function BullhornCandidate({ title }) {
   const [pageSize, setPageSize] = useState(10);

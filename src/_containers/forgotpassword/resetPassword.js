@@ -13,7 +13,7 @@ import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import logo from "../../assets/utils/images/panther-logo-2.png";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
-import { history } from "_helpers";
+
 import { analytics } from "../../firebase/index";
 
 export function ResetPassword() {

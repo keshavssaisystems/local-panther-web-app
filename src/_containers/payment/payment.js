@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Input, Label } from "reactstrap";
+import React, { useEffect } from "react";
+import { Row, Col } from "reactstrap";
 import Slider from "react-slick";
 import logo from "../../assets/utils/images/panther-logo-2.png";
 import bg1 from "../../assets/utils/images/login.png";

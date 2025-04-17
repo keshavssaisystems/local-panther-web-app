@@ -11,7 +11,6 @@ import {
   CardHeader,
 } from "reactstrap";
 import {
-  formatDate,
   endDateValidation,
   formatMonthYear,
   getEducText,

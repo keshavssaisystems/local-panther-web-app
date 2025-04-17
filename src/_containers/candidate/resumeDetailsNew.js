@@ -1,26 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Label, Input, CardFooter, ModalHeader, ModalBody } from "reactstrap";
-import { candidateActions } from "_store";
-import {
-  Row,
-  Col,
-  Modal,
-  Card,
-  CardBody,
-  Collapse,
-  CardHeader,
-  Button,
-  FormGroup,
-  Form,
-} from "reactstrap";
-import Tabs from "react-responsive-tabs";
+import React, { useState } from "react";
+import { Label, ModalBody } from "reactstrap";
+
+import { Row, Col, Modal, Card, CardBody, Button, FormGroup } from "reactstrap";
+
 import { useDispatch } from "react-redux";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import "./profile.scss";
-import candidatelogo from "../../assets/utils/images/candidate.svg";
 
 export function ResumeDetailsNew(props) {
   const dispatch = useDispatch();

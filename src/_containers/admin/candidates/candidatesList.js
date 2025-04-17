@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 
 import { useDispatch, useSelector } from "react-redux";
-import { FaEnvelopeOpenText, FaEnvelope, FaEye } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import customerIcons from "assets/utils/images/customer";
 import DataTable from "react-data-table-component";
 import {

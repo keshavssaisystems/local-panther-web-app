@@ -1,8 +1,7 @@
 import React from "react";
 import { Container, Col, Row } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import logo from "../../assets/utils/images/panther-logo.png";
-import plogo from "../../assets/utils/images/panther-logo-2.png";
+
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./terms.scss";
 

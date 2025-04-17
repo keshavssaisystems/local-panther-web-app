@@ -7,13 +7,12 @@ import { useSelector, useDispatch } from "react-redux";
 import InputMask from "react-input-mask";
 import AsyncSelect from "react-select/async";
 
-import Slider from "react-slick";
 import "./registration.scss";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SweetAlert from "react-bootstrap-sweetalert";
-import bg1 from "../../assets/utils/images/login.png";
+
 import validIcon from "../../assets/utils/images/valid-icon.svg";
-import footerImg from "../../assets/utils/images/panther-logo.png";
+
 import "../static/terms.scss";
 
 import {
@@ -35,8 +34,8 @@ import {
 
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { authActions, dropdownActions, addCustomerActions } from "_store";
-import logo from "../../assets/utils/images/panther-logo-2.png";
+import { authActions, dropdownActions } from "_store";
+
 import { getLocationFilter } from "_store";
 import debounce from "lodash/debounce";
 
