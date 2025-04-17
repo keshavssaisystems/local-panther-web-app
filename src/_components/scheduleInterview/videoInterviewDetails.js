@@ -97,7 +97,7 @@ export function VideoInterviewDetails({
     ).format("YYYY-MM-DD HH:mm:ss"),
     "YYYY-MM-DD"
   );
-  debugger;
+
   if (scheduledDate === currentDay) {
     scheduled = "Today";
   }
