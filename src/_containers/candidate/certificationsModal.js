@@ -14,7 +14,6 @@ import {
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  formatDate,
   extractDatePart,
   convertDateToYYYMMDD,
   checkDateValidation,
@@ -23,11 +22,6 @@ import {
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
-
-import { CKEditor } from "ckeditor4-react";
-
-import DatePicker from "react-datepicker";
 
 export function CertificationsModal(props) {
   const dispatch = useDispatch();

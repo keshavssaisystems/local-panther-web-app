@@ -33,9 +33,10 @@ export function ScheduleDetails({
     (state) => state.scheduleInterview?.interviewGuideList
   );
   let scheduled = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
+
     "MM/DD/YYYY"
   );
 
@@ -44,19 +45,16 @@ export function ScheduleDetails({
     interviewDetail?.scheduleinterviewid,
     interviewDetail?.candidateid
   );
-  let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
+  let currentDay = getTimezoneDateTime(moment());
   let yesterdayDate = getTimezoneDateTime(
-    moment().subtract(1, "days").format("YYYY-MM-DD"),
+    moment().subtract(1, "days"),
     "YYYY-MM-DD"
   );
-  let tomorrowDate = getTimezoneDateTime(
-    moment().add(1, "days").format("YYYY-MM-DD"),
-    "YYYY-MM-DD"
-  );
+  let tomorrowDate = getTimezoneDateTime(moment().add(1, "days"), "YYYY-MM-DD");
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
     "YYYY-MM-DD"
   );
   if (scheduledDate === currentDay) {
@@ -69,9 +67,10 @@ export function ScheduleDetails({
     scheduled = "Tommorow";
   }
   let startTime = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
+
     "hh:mm A"
   );
   let startDate =
@@ -390,9 +389,18 @@ export function ScheduleDetails({
                           </p>
                         </div>
                       )}
-                      {moment(interviewDetail?.scheduledate).format(
+
+                      {getTimezoneDateTime(
+                        moment(
+                          interviewDetail?.scheduledate.slice(0, 11) +
+                            interviewDetail?.starttime
+                        ).format("YYYY-MM-DD HH:mm:ss"),
                         "YYYY-MM-DD"
-                      ) >= moment().format("YYYY-MM-DD") ? (
+                      ) >=
+                      getTimezoneDateTime(
+                        moment().format("YYYY-MM-DD"),
+                        "YYYY-MM-DD"
+                      ) ? (
                         <>
                           {!isAdmin ? (
                             <>
@@ -441,7 +449,6 @@ export function ScheduleDetails({
                       ) : (
                         <></>
                       )}
-
                       {interviewDetail.messagetocandidate !== "" && (
                         <div className="p-custom">
                           <p className="mb-0">

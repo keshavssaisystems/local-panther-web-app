@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { firebaseConfig, servers } from "../firebase/index";

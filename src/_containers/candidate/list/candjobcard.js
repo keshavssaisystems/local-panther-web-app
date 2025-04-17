@@ -6,7 +6,7 @@ import { DetailsHeader } from "../../../_components/jobDetailComponents/DetailsH
 import customerIcons from "../../../assets/utils/images/customer";
 import "../../../_components/job/job.scss";
 import { useSelector } from "react-redux";
-import moment from "moment";
+
 import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CandJobDetail({ jobDetails, type, onApplyClick, isModal }) {

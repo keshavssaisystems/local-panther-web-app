@@ -7,7 +7,6 @@ import {
   Modal,
   Card,
   CardBody,
-  InputGroup,
   Button,
   FormGroup,
   Form,
@@ -15,9 +14,8 @@ import {
 import AsyncSelect from "react-select/async";
 import { useDispatch, useSelector } from "react-redux";
 import "./profile.scss";
-import Loader from "react-loaders";
+
 import {
-  formatDate,
   extractDatePart,
   convertDateToYYYMMDD,
   checkDateValidation,
