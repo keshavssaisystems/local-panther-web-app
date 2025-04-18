@@ -93,8 +93,8 @@ export function IncompleteCandidateProfile({ title }) {
             : "",
           Skills: rec?.skills,
           Location: rec?.location,
-          Created: rec.createddate
-            ? moment(data.createddate).format("MM/DD/YYYY")
+          Created: rec?.createddate
+            ? moment(rec?.createddate).format("MM/DD/YYYY")
             : "",
         };
       });
