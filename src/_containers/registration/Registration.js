@@ -505,6 +505,41 @@ export function Registration() {
       }
     }
   };
+
+  const handlePaste = (e, check) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim().slice(0, 6);
+    if (!/^\d+$/.test(pasteData)) return;
+
+    const pasted = pasteData.split("");
+    if (check === "email") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`email-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new.email = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails(otp_new);
+      }
+    } else if (check === "mobile") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`mobile-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new.mobile = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails(otp_new);
+      }
+    }
+  };
   const onHandleInputChange = (data) => {
     setCountryValue([]);
     reset({ resolver: yupResolver(validationSchema) });
@@ -1049,6 +1084,7 @@ export function Registration() {
                         onInput={(e) =>
                           handleInputChange("mobile", e.target.value, index)
                         }
+                        onPaste={(e) => handlePaste(e, "mobile")}
                       />
                     </FormGroup>
                   ))}
@@ -1140,6 +1176,7 @@ export function Registration() {
                         onInput={(e) =>
                           handleInputChange("email", e.target.value, index)
                         }
+                        onPaste={(e) => handlePaste(e, "email")}
                       />
                     </FormGroup>
                   ))}
