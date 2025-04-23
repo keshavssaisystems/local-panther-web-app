@@ -259,7 +259,7 @@ export function ScheduleDetails({
                                   <Button
                                     // outline
                                     size="sm"
-                                    title="Reject interview"
+                                    title="Decline interview"
                                     onClick={() =>
                                       rejectReason(
                                         "interview reject",

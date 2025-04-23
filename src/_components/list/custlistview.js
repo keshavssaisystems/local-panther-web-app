@@ -208,7 +208,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject"
+            title="Decline"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -264,7 +264,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject candidate"
+            title="Decline candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -299,7 +299,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject candidate"
+            title="Decline candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -330,7 +330,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject offer"
+            title="Decline offer"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -345,7 +345,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject candidate"
+            title="Decline candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"

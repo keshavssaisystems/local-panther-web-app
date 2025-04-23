@@ -404,7 +404,7 @@ export const CandidateCardView = (props) => {
                 onClick={() => onRejectClick()}
                 size="sm"
               >
-                Reject <BsXCircle></BsXCircle>
+                Decline <BsXCircle></BsXCircle>
               </Button>
             </ButtonGroup>
           </Row>
