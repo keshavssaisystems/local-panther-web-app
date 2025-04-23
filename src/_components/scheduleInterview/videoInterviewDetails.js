@@ -227,7 +227,7 @@ export function VideoInterviewDetails({
                           size={"sm"}
                           className="mb-2 btn-transition"
                           outline
-                          title="Reject interview"
+                          title="Decline interview"
                           onClick={(e) => setShowRejectPopup(true)}
                         >
                           <BsXCircleFill className="mb-1" />
@@ -272,8 +272,8 @@ export function VideoInterviewDetails({
             ? "Accepted"
             : interviewDetail?.isrejected === true
             ? interviewDetail?.rejectionreason !== ""
-              ? "Rejected (" + interviewDetail?.rejectionreason + ")"
-              : "Rejected"
+              ? "Declined (" + interviewDetail?.rejectionreason + ")"
+              : "Declined"
             : "No response from candidate"}
         </p>
       </div>
@@ -595,7 +595,7 @@ export function VideoInterviewDetails({
         <SweetAlert
           warning
           showCancel
-          confirmBtnText="Yes, reject interview!"
+          confirmBtnText="Yes, decline interview!"
           confirmBtnBsStyle="danger"
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"

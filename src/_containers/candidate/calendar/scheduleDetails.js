@@ -262,7 +262,7 @@ export function ScheduleDetails({
                                     title="Decline interview"
                                     onClick={() =>
                                       rejectReason(
-                                        "interview reject",
+                                        "interview decline",
                                         "rejectInterview",
                                         interviewDetail?.scheduleinterviewid
                                       )

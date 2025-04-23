@@ -788,12 +788,12 @@ export const CustCandidateListView = (props) => {
                 <span>
                   {row?.customerrecommendedjobstatusid === 5 &&
                   row?.candidaterecommendedjobstatusid === 6
-                    ? "Offer rejected by candidate"
+                    ? "Offer declined by candidate"
                     : row?.candidaterecommendedjobstatusid === 6 &&
                       row?.customerrecommendedjobstatusid !== 5
-                    ? "Rejected by candidate"
+                    ? "Declined by candidate"
                     : row?.customerrecommendedjobstatusid === 6
-                    ? "Rejected by customer"
+                    ? "Declined by customer"
                     : "-"}
                   {row?.candidaterecommendedjobstatusid === 6 ? (
                     <>
@@ -838,12 +838,12 @@ export const CustCandidateListView = (props) => {
               selector: (row) =>
                 row?.customerrecommendedjobstatusid === 5 &&
                 row?.candidaterecommendedjobstatusid === 6
-                  ? "Offer rejected by candidate"
+                  ? "Offer declined by candidate"
                   : row?.candidaterecommendedjobstatusid === 6 &&
                     row?.customerrecommendedjobstatusid !== 5
-                  ? "Rejected by candidate"
+                  ? "Declined by candidate"
                   : row?.customerrecommendedjobstatusid === 6
-                  ? "Rejected by customer"
+                  ? "Declined by customer"
                   : "-",
               ignoreRowClick: true,
               button: true,
@@ -1363,7 +1363,7 @@ export const CustCandidateListView = (props) => {
                             row?.scheduledInterviewDtos[0]?.isrejected === false
                           ? "Accepted"
                           : row?.scheduledInterviewDtos[0]?.isrejected === true
-                          ? "Rejected"
+                          ? "Declined"
                           : "No response"
                         : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                           1
@@ -1389,7 +1389,7 @@ export const CustCandidateListView = (props) => {
                           row?.scheduledInterviewDtos[0]?.isrejected === false
                         ? "Accepted"
                         : row?.scheduledInterviewDtos[0]?.isrejected === true
-                        ? "Rejected"
+                        ? "Declined"
                         : "No response"
                       : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
                       ? "Completed"
@@ -1475,7 +1475,7 @@ export const CustCandidateListView = (props) => {
                         row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
-                      ? "Rejected"
+                      ? "Declined"
                       : "No response"
                     : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
                     ? "Completed"

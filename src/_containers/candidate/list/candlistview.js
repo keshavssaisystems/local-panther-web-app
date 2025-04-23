@@ -98,7 +98,7 @@ export const CandListView = (props) => {
             //   onBtnClick("rejected", row.candidaterecommendedjobid)
             // }
             onClick={() =>
-              rejectReason("reject", "rejected", row.candidaterecommendedjobid)
+              rejectReason("decline", "rejected", row.candidaterecommendedjobid)
             }
           >
             <img src={customerIcons?.list_reject} alt="list reject"></img>
@@ -127,7 +127,7 @@ export const CandListView = (props) => {
             // }
 
             onClick={() =>
-              rejectReason("reject", "rejected", row.candidaterecommendedjobid)
+              rejectReason("decline", "rejected", row.candidaterecommendedjobid)
             }
             className="btn-icon"
             color="danger"
@@ -158,7 +158,7 @@ export const CandListView = (props) => {
             // }
 
             onClick={() =>
-              rejectReason("reject", "rejected", row.candidaterecommendedjobid)
+              rejectReason("decline", "rejected", row.candidaterecommendedjobid)
             }
             className="btn-icon"
             color="danger"
@@ -186,7 +186,7 @@ export const CandListView = (props) => {
                         title="Decline interview"
                         onClick={() =>
                           rejectReason(
-                            "interview reject",
+                            "interview decline",
                             "rejectInterview",
                             row?.scheduledInterviewDtos[0]?.scheduleinterviewid
                           )
@@ -260,11 +260,7 @@ export const CandListView = (props) => {
             size="sm"
             title="Decline offer"
             onClick={() =>
-              rejectReason(
-                "rejection",
-                "rejected",
-                row.candidaterecommendedjobid
-              )
+              rejectReason("decline", "rejected", row.candidaterecommendedjobid)
             }
             className="btn-icon"
             color="danger"
@@ -355,11 +351,7 @@ export const CandListView = (props) => {
             size="sm"
             title="Decline offer"
             onClick={() =>
-              rejectReason(
-                "rejection",
-                "rejected",
-                row.candidaterecommendedjobid
-              )
+              rejectReason("decline", "rejected", row.candidaterecommendedjobid)
             }
             className="btn-icon"
             color="danger"

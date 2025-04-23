@@ -736,7 +736,7 @@ export function ScheduleInterview({ fromDashboard }) {
                       <div className="ms-3 mb-3 me-0 badge badge-color-red">
                         ..
                       </div>{" "}
-                      Rejected interview
+                      Declined interview
                     </span>
                     <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">

@@ -261,7 +261,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of rejected</span>,
+      name: <span className="table-title">No. of declined</span>,
       cell: (row) => (
         <span className="table-cell" title={row.rejectedcandidates}>
           {row.rejectedcandidates}
