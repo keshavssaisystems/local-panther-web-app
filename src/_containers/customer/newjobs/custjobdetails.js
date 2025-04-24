@@ -353,7 +353,7 @@ export function CustJobDetail({
       icon: acceptedIcon,
     },
     {
-      name: "Rejected",
+      name: "Declined",
       count:
         jobDetail.totalRejectedCandidates === null
           ? 0

@@ -358,7 +358,7 @@ export function ScheduleDetails({
                           interviewDetail?.isrejected === false
                         ? "Accepted"
                         : interviewDetail?.isrejected === true
-                        ? "Rejected"
+                        ? "Declined"
                         : "You have not responded"}
                     </p>
                   </div>
