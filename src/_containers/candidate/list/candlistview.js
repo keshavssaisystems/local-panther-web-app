@@ -816,35 +816,35 @@ export const CandListView = (props) => {
                 title={
                   row?.customerrecommendedjobstatusid === 5 &&
                   row?.candidaterecommendedjobstatusid === 6
-                    ? "Offer rejected"
+                    ? "Offer declined"
                     : row?.candidaterecommendedjobstatusid === 6 &&
                       row?.customerrecommendedjobstatusid !== 5
-                    ? "Rejected by candidate"
+                    ? "Declined by candidate"
                     : row?.customerrecommendedjobstatusid === 6
-                    ? "Rejected by customer"
+                    ? "Declined by customer"
                     : "-"
                 }
               >
                 {row?.customerrecommendedjobstatusid === 5 &&
                 row?.candidaterecommendedjobstatusid === 6
-                  ? "Offer rejected"
+                  ? "Offer declined"
                   : row?.candidaterecommendedjobstatusid === 6 &&
                     row?.customerrecommendedjobstatusid !== 5
-                  ? "Rejected by candidate"
+                  ? "Declined by candidate"
                   : row?.customerrecommendedjobstatusid === 6
-                  ? "Rejected by customer"
+                  ? "Declined by customer"
                   : "-"}
               </span>
             ),
             selector: (row) =>
               row?.customerrecommendedjobstatusid === 5 &&
               row?.candidaterecommendedjobstatusid === 6
-                ? "Offer rejected"
+                ? "Offer declined"
                 : row?.candidaterecommendedjobstatusid === 6 &&
                   row?.customerrecommendedjobstatusid !== 5
-                ? "Rejected by candidate"
+                ? "Declined by candidate"
                 : row?.customerrecommendedjobstatusid === 6
-                ? "Rejected by customer"
+                ? "Declined by customer"
                 : "-",
             sortable: true,
             width: "14%",
