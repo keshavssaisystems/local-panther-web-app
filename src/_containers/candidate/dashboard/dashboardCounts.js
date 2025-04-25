@@ -248,7 +248,7 @@ export function DashboardCounts() {
                 </Col>
                 <Col>
                   <div className="widget-chart-content">
-                    <div className="widget-title opacity-5 ">Rejected</div>
+                    <div className="widget-title opacity-5 ">Declined</div>
                     <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex ">
                         <div>{counts ? counts.rejectedbycandidate : 0}</div>

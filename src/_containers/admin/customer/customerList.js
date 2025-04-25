@@ -196,7 +196,7 @@ export const CustomerList = () => {
               <Button
                 // outline
                 size="sm"
-                title="Reject employer"
+                title="Decline employer"
                 className="btn-icon"
                 color="danger"
                 onClick={() => onApprove(row, false)}

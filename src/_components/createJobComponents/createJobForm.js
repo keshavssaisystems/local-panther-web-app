@@ -13,7 +13,8 @@ import {
   Col,
   FormText,
 } from "reactstrap";
-import { CKEditor } from "ckeditor4-react";
+// import { CKEditor } from "ckeditor4-react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
 import "./createJob.scss";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
@@ -25,6 +26,27 @@ import { findRestrictedWords } from "_helpers/helper";
 import { BsPlusSquare } from "react-icons/bs";
 import { locationActions } from "_store";
 import debounce from "lodash/debounce";
+
+import {
+  ClassicEditor,
+  Essentials,
+  Paragraph,
+  Bold,
+  Italic,
+  ToolbarView,
+  Heading,
+  Underline,
+  Strikethrough,
+  Link,
+  BlockQuote,
+  Undo,
+  Alignment,
+} from "ckeditor5";
+
+// import { FormatPainter } from "ckeditor5-premium-features";
+
+import "ckeditor5/ckeditor5.css";
+import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 export const CreateJob = forwardRef(
   (
     {
@@ -2025,28 +2047,77 @@ export const CreateJob = forwardRef(
                           </Label>
                           <CKEditor
                             name="description"
+                            editor={ClassicEditor}
                             config={{
-                              removePlugins: "a11yhelp",
-                              debug: false,
+                              licenseKey: "GPL",
+                              plugins: [
+                                Essentials,
+                                Paragraph,
+                                Bold,
+                                Italic,
+                                ToolbarView,
+                                // FormatPainter,
+                                Heading,
+                                Underline,
+                                Strikethrough,
+                                Link,
+
+                                BlockQuote,
+                                // Table,
+                                // MediaEmbed,
+                                // ImageInsert,
+                                Undo,
+                                Alignment,
+                              ],
+                              toolbar: [
+                                "heading",
+                                "|",
+                                "bold",
+                                "italic",
+                                "underline",
+                                "strikethrough",
+                                "|",
+                                "link",
+                                "bulletedList",
+                                "numberedList",
+                                "blockQuote",
+                                "|",
+                                "insertTable",
+                                "mediaEmbed",
+                                "imageUpload",
+                                "|",
+                                "undo",
+                                "redo",
+                                "alignment",
+                                "outdent",
+                                "indent",
+                              ],
                             }}
                             id="description"
                             maxLength={2000}
-                            initData={
+                            data={
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
                                 ? preValue.description
                                 : previousValue.description
                             }
-                            onChange={(e) => {
-                              setupDescriptionData(e.editor.getData());
+                            onChange={(e, editor) => {
+                              setupDescriptionData(editor.getData());
                             }}
                             className={
                               descriptionValidation === true
                                 ? "ckeditor-invalid"
                                 : ""
                             }
-                          />
+                          >
+                            {" "}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: descriptionData,
+                              }}
+                            />
+                          </CKEditor>
                         </FormGroup>
                         {descriptionValidation === true && (
                           <FormText color="danger">

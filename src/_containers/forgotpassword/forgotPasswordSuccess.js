@@ -30,11 +30,11 @@ export function ForgotPasswordSuccess() {
     <>
       <div className="h-100 forgot-password">
         <Row className="h-100 g-0">
-          <Col lg="5" className="d-xs-none">
+          <Col lg="4" className="d-xs-none">
             <div className="">
               <Slider {...sliderSettings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
+                  {/* <div
                     className="slide-img-bg"
                     style={{
                       backgroundImage: "url(" + loginBgImg + ")",
@@ -46,13 +46,13 @@ export function ForgotPasswordSuccess() {
                       What makes The OpenWorX community the ideal career
                       partner? We focus on what you want most from your career!
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Slider>
             </div>
           </Col>
           <Col
-            lg="7"
+            lg="8"
             md="12"
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
           >
@@ -90,7 +90,7 @@ export function ForgotPasswordSuccess() {
                   Proceed to Sign in
                 </Button>
               </div>
-              <div className="text-center mt-5">
+              <div className="text-center mt-5 pb-text">
                 Powered by <br />
                 <img
                   src={footerImg}

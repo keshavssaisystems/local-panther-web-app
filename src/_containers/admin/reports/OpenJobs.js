@@ -337,7 +337,7 @@ export function OpenJobs({ title }) {
       minWidth: "120px",
     },
     {
-      name: <span className="table-title">Rejected</span>,
+      name: <span className="table-title">Declined</span>,
       cell: (row) => (
         <span className="table-cell" title={row.reject}>
           {row.reject}

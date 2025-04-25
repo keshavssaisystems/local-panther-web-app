@@ -244,8 +244,8 @@ export function UpcomingVideoDetails({
             ? "Accepted"
             : interviewDetails?.isrejected === true
             ? interviewDetails?.rejectionreason !== ""
-              ? "Rejected (" + interviewDetails?.rejectionreason + ")"
-              : "Rejected"
+              ? "Declined (" + interviewDetails?.rejectionreason + ")"
+              : "Declined"
             : "No response"}
         </div>
         {interviewDetails?.interviewstatusid !== 0 &&
@@ -580,7 +580,7 @@ export function UpcomingVideoDetails({
         <SweetAlert
           warning
           showCancel
-          confirmBtnText="Yes, reject interview!"
+          confirmBtnText="Yes, decline interview!"
           confirmBtnBsStyle="danger"
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
@@ -589,7 +589,7 @@ export function UpcomingVideoDetails({
           onCancel={() => setShowRejectPopup(false)}
           focusCancelBtn
         >
-          You want to reject the interview with{" "}
+          You want to decline the interview with{" "}
           {interviewDetails?.candidatename
             ? interviewDetails?.candidatename
             : interviewDetails?.firstname && interviewDetails?.lastname

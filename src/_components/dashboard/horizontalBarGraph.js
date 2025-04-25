@@ -47,11 +47,11 @@ export function HorizonatalBarGraph({ graphData }) {
       "rgba(43, 128, 253, 0.40)",
     ],
     xaxis: {
-      categories: ["Rejected ", "Scheduled", "Accepted"],
+      categories: ["Declined ", "Scheduled", "Accepted"],
     },
     series: [
       {
-        name: "Rejected",
+        name: "Declined",
         data: [graphData?.rejected, 0, 0],
       },
       {
@@ -93,7 +93,7 @@ export function HorizonatalBarGraph({ graphData }) {
                 Candidate Interviews
               </div>
               <span className="text-muted mt-1 ms-4">
-                Accepted, Scheduled & Rejected
+                Accepted, Scheduled & Declined
               </span>
             </Col>
           </Row>
