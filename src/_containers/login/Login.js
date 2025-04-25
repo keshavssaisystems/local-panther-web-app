@@ -26,6 +26,7 @@ import { authActions } from "_store";
 import logo from "../../assets/utils/images/panther-logo-2.png";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import loginBgImg from "../../assets/utils/images/login.png";
+import OpenWorXAppCover from "../../assets/utils/images/OpenWorXAppCover.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
 import { getPublicIP } from "_helpers/helper";
@@ -150,20 +151,20 @@ export function Login() {
                 <div className="">
                   <Slider {...sliderSettings}>
                     <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                      <div
+                      {/* <div
                         className="slide-img-bg"
                         style={{
-                          backgroundImage: "url(" + loginBgImg + ")",
+                          backgroundImage: "url(" + OpenWorXAppCover + ")",
                         }}
-                      />
-                      <div className="login-slider-title">
+                      /> */}
+                      {/* <div className="login-slider-title">
                         <p>Experts In Human Capital</p>
                         <p className="login-slider-text m-5">
                           What makes The OpenWorX community the ideal career
                           partner? We focus on what you want most from your
                           career!
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   </Slider>
                 </div>
@@ -309,18 +310,19 @@ export function Login() {
                         </div>
                       )}
                     </Form>
+
                     <div className="mt-4 register-division">
                       <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
                         We are thrilled to have you join the OpenWorX community!
-                        To ensure a high-quality professional community we
+                        To ensure a high-quality professional community, we
                         kindly ask you to register by uploading or creating your
                         profile.
                       </p>
                       <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
-                        Looking forward to connecting and engaging with you in
-                        this vibrant community! If you have any questions or
-                        need assistance with the registration process, feel free
-                        to reach out. Thanks for being part of OpenWorX!
+                        We are looking forward to connecting and engaging with
+                        you in this vibrant community! If you have any questions
+                        or need assistance with the registration process, feel
+                        free to reach out. Thanks for being part of OpenWorX!
                       </p>
                       <p className="mt-3 d-flex register-paragraph">
                         Become Part of the OpenWorX Community.{"  "}
@@ -338,7 +340,7 @@ export function Login() {
                         xs={{ order: 1, size: 12 }}
                         className="text-start mt-1"
                       >
-                        <span className="mt-2">Powered by</span>
+                        <span className="mt-2 pb-text">Powered by</span>
                         <img
                           src={footerImg}
                           className="logo ms-1"

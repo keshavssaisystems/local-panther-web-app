@@ -259,10 +259,10 @@ export function ScheduleDetails({
                                   <Button
                                     // outline
                                     size="sm"
-                                    title="Reject interview"
+                                    title="Decline interview"
                                     onClick={() =>
                                       rejectReason(
-                                        "interview reject",
+                                        "interview decline",
                                         "rejectInterview",
                                         interviewDetail?.scheduleinterviewid
                                       )
@@ -358,7 +358,7 @@ export function ScheduleDetails({
                           interviewDetail?.isrejected === false
                         ? "Accepted"
                         : interviewDetail?.isrejected === true
-                        ? "Rejected"
+                        ? "Declined"
                         : "You have not responded"}
                     </p>
                   </div>

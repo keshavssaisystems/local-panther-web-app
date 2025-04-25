@@ -105,7 +105,7 @@ export function PrivacyPolicy() {
             xs={{ order: 1, size: 12 }}
             className="text-start mt-1"
           >
-            <span className="mt-2">Powered by</span>
+            <span className="mt-2 pb-text">Powered by</span>
             <img
               src={footerImg}
               className="logo ms-1"

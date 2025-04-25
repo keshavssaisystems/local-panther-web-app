@@ -85,7 +85,7 @@ export function UpcomingCard({
                       interview.isreschedulerequested === false && (
                         <Col md="12" lg="5">
                           <div className="mb-2 me-2 mt-1 badge bg-danger float-end badge-custom">
-                            Rejected
+                            Declined
                           </div>
                         </Col>
                       )}

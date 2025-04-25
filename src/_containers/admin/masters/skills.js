@@ -86,7 +86,7 @@ export const Skills = () => {
           ? "Pending"
           : row.skillstatusid === 1
           ? "Approved"
-          : "Rejected",
+          : "Declined",
       sortable: true,
     },
 
@@ -137,7 +137,7 @@ export const Skills = () => {
               <Button
                 // outline
                 size="sm"
-                title="Reject skill"
+                title="Decline skill"
                 className="btn-icon"
                 color="warning"
                 onClick={() => onApprove(row, false)}
@@ -439,7 +439,7 @@ export const Skills = () => {
                           <option value={0}>All skills</option>
                           <option value={1}>Approved</option>
                           <option value={2}>Pending</option>
-                          <option value={3}>Rejected</option>
+                          <option value={3}>Declined</option>
                         </Input>
                       </FormGroup>
                     </Col>

@@ -662,7 +662,7 @@ export const CandidateList = (props) => {
                 toggle("rejected");
               }}
             >
-              Rejected
+              Declined
             </Button>
           </ButtonGroup>
         </Col>
@@ -1116,7 +1116,7 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      A rejected job refers to a decision to decline an offer or
+                      A declined job refers to a decision to decline an offer or
                       a customer rescinding it, indicating that the individual
                       has decided not to work for the customer or has changed
                       their hiring decision.

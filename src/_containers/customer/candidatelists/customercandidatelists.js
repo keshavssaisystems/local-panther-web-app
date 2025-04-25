@@ -365,7 +365,7 @@ export const CustomerCandidateLists = (props) => {
                 toggle("rejected");
               }}
             >
-              Rejected
+              Declined
             </Button>
           </ButtonGroup>
         </Col>
@@ -981,7 +981,7 @@ export const CustomerCandidateLists = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      Rejected candidates are those who have been rejected
+                      Declined candidates are those who have been rejected
                       during the hiring process due to non-compliance with
                       requirements, withdrawal of application, or refusal of
                       offer. They are stored in a separate section of the

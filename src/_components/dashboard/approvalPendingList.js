@@ -126,7 +126,7 @@ export function ApprovalPendingList() {
       width: "15%",
     },
     {
-      name: "Accept / Reject",
+      name: "Accept / Decline",
       cell: (row) => (
         <ButtonGroup>
           <Button
@@ -140,7 +140,7 @@ export function ApprovalPendingList() {
           </Button>
           <Button
             size="sm"
-            title="Reject employer"
+            title="Decline employer"
             className="btn-icon"
             color="danger"
             onClick={() => onApprove(row, false)}

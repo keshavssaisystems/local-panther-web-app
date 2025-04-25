@@ -48,7 +48,7 @@ export const RejectModal = (props) => {
             Please Provide a Reason for
           </div>
           <div className="mb-3 d-flex justify-content-center reject-reason-text">
-            Candidate Rejection
+            Candidate Decline
           </div>
           <div className="candidate-list">
             <Row>

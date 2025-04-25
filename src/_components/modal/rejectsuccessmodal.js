@@ -11,7 +11,7 @@ export const RejectSuccessModal = (props) => {
             <img src={successIcon} alt="success-icon" />
           </div>
           <div className="mb-0 d-flex justify-content-center rejected-success-text">
-            Candidate Rejected
+            Candidate Declined
           </div>
           <div className="mb-3 d-flex justify-content-center rejected-success-text">
             {" "}
