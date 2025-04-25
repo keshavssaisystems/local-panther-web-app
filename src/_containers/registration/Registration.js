@@ -581,7 +581,7 @@ export function Registration() {
       <div className=" registration-container h-100">
         <Row className="h-100 g-0">
           <Col
-            lg="7"
+            lg="8"
             md="12"
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
             style={{ overflow: "auto" }}
@@ -1027,11 +1027,12 @@ export function Registration() {
               </footer>
             </Col>
           </Col>
-          <Col lg="5" className="d-xs-none">
+          <Col lg="4" className="d-xs-none">
             <div className="slider-light">
               <Slider {...settings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
+                  <p className="m-5 slider-content"></p>
+                  {/* <div
                     className="slide-img-bg"
                     style={{
                       backgroundImage: "url(" + bg1 + ")",
@@ -1043,7 +1044,7 @@ export function Registration() {
                       What makes The OpenWorX community the ideal career
                       partner? We focus on what you want most from your career!
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Slider>
             </div>

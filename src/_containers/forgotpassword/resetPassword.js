@@ -64,7 +64,7 @@ export function ResetPassword() {
             <div className="">
               <Slider {...sliderSettings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
+                  {/* <div
                     className="slide-img-bg"
                     style={{
                       backgroundImage: "url(" + loginBgImg + ")",
@@ -76,7 +76,7 @@ export function ResetPassword() {
                       What makes The OpenWorX community the ideal career
                       partner? We focus on what you want most from your career!
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Slider>
             </div>
