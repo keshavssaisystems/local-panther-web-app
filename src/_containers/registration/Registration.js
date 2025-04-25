@@ -932,6 +932,7 @@ export function Registration() {
                       <h5 className="mb-0 account-text ms-auto me-4">
                         <Link
                           to="/login"
+                          className="pb-text"
                           style={{ borderBottom: "1px solid #545cd8" }}
                         >
                           Already a member? Sign in
@@ -963,7 +964,7 @@ export function Registration() {
                     xs={{ order: 1, size: 12 }}
                     className="text-start mt-1"
                   >
-                    <span className="mt-2">Powered by</span>
+                    <span className="mt-2 pb-text">Powered by</span>
                     <img
                       src={footerImg}
                       className="logo ms-1"

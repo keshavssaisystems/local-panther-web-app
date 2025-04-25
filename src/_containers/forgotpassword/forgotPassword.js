@@ -174,7 +174,7 @@ export function ForgotPassword() {
               <br /> <br />
               <div
                 style={{ visibility: "hidden" }}
-                className="text-center mt-5"
+                className="text-center mt-5 pb-text"
               >
                 Powered by <br />
                 <img
@@ -197,7 +197,7 @@ export function ForgotPassword() {
                   xs={{ order: 1, size: 12 }}
                   className="text-start mt-1"
                 >
-                  <span className="mt-2">Powered by</span>
+                  <span className="mt-2 pb-text">Powered by</span>
                   <img
                     src={footerImg}
                     className="logo ms-1"

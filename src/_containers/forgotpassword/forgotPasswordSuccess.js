@@ -90,7 +90,7 @@ export function ForgotPasswordSuccess() {
                   Proceed to Sign in
                 </Button>
               </div>
-              <div className="text-center mt-5">
+              <div className="text-center mt-5 pb-text">
                 Powered by <br />
                 <img
                   src={footerImg}

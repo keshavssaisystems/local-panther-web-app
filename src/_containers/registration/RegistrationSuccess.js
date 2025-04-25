@@ -86,7 +86,7 @@ export const RegistrationSuccess = () => {
                   </Button>
                 </Link>
               </div>
-              <div className="text-center mt-3">
+              <div className="text-center mt-3 pb-text">
                 Powered by <br />
                 <img
                   src={footerImg}
