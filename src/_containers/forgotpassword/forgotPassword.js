@@ -172,7 +172,10 @@ export function ForgotPassword() {
                 </Form>
               </div>
               <br /> <br />
-              <div className="text-center mt-5">
+              <div
+                style={{ visibility: "hidden" }}
+                className="text-center mt-5"
+              >
                 Powered by <br />
                 <img
                   src={footerImg}
