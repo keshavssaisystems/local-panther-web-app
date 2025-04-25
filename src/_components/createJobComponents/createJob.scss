@@ -179,3 +179,8 @@
 .textarea-height-custom{
     min-height: 200px !important;
 }
+
+.ck-content {
+    min-height: 150px;
+    overflow: auto;
+}

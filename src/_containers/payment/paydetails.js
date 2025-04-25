@@ -1113,7 +1113,7 @@ export const PaymentDetails = ({
           {!isAdmin && !authUser ? (
             <Link
               to="/login"
-              className="me-2"
+              className="me-2 pb-text"
               style={{ borderBottom: "1px solid #545cd8" }}
             >
               Return to Sign In Page

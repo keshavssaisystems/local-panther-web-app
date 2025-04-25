@@ -17,7 +17,7 @@
   }
 
   .bg-plum-plate {
-    background: url("../../assets/utils/images/login.png"), no-repeat,
+    background: url("../../assets/utils/images/OpenWorXAppCover.png"), no-repeat,
       linear-gradient(
         180deg,
         rgba(47, 71, 155, 0) 0%,
@@ -41,7 +41,7 @@
   }
 
   .title-text {
-    color: #2f479b;
+    color: #052f5f;
     font-size: 25px;
     font-style: normal;
     font-weight: 600;
@@ -67,7 +67,7 @@
   }
 
   .forgot-pwd-text {
-    color: #2f479b;
+    color: #052f5f !important;
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -177,7 +177,7 @@
     }
     .login-btn {
       border-radius: 4px;
-      background: #2f479b;
+      background: #052f5f;
       margin-top: 0px;
       height: 30px;
     }
@@ -190,7 +190,7 @@
       letter-spacing: -0.01em;
       text-align: left;
       padding: 12px, 20px, 12px, 20px;
-      background: #2f479b;
+      background: #052f5f;
       cursor: pointer;
     }
   }
@@ -200,7 +200,7 @@
     background: var(--White, #FFF);
   }
   .register-paragraph{
-    color: var(--grey, #979797);
+    color: #052f5f;
     font-size: 14px;
     font-style: italic;
     font-weight: 400;
@@ -209,7 +209,7 @@
     margin-right: 28px;
   }
   .register-link{
-    color: var(--blue, #2F479B);
+    color: var(--blue, #052f5f);
     font-size: 14px;
     font-style: italic;
     font-weight: 600;
