@@ -88,7 +88,7 @@ export function ForgotPassword() {
             <div className="">
               <Slider {...sliderSettings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
+                  {/* <div
                     className="slide-img-bg"
                     style={{
                       backgroundImage: "url(" + loginBgImg + ")",
@@ -100,7 +100,7 @@ export function ForgotPassword() {
                       What makes The OpenWorX community the ideal career
                       partner? We focus on what you want most from your career!
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Slider>
             </div>
@@ -172,7 +172,10 @@ export function ForgotPassword() {
                 </Form>
               </div>
               <br /> <br />
-              <div className="text-center mt-5">
+              <div
+                style={{ visibility: "hidden" }}
+                className="text-center mt-5 pb-text"
+              >
                 Powered by <br />
                 <img
                   src={footerImg}
@@ -194,7 +197,7 @@ export function ForgotPassword() {
                   xs={{ order: 1, size: 12 }}
                   className="text-start mt-1"
                 >
-                  <span className="mt-2">Powered by</span>
+                  <span className="mt-2 pb-text">Powered by</span>
                   <img
                     src={footerImg}
                     className="logo ms-1"

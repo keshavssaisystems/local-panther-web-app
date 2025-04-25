@@ -133,7 +133,7 @@ export const CandidateListView = (props) => {
             <Button
               outline
               size="sm"
-              title="reject"
+              title="decline"
               onClick={() => onRejectClick(candidaterecommendedjobid)}
               className="btn-icon"
               color="primary"
@@ -195,7 +195,7 @@ export const CandidateListView = (props) => {
             <Button
               outline
               size="sm"
-              title="reject"
+              title="decline"
               onClick={() => onRejectClick()}
               className="btn-icon"
               color="primary"
@@ -235,7 +235,7 @@ export const CandidateListView = (props) => {
             <Button
               outline
               size="sm"
-              title="reject"
+              title="decline"
               onClick={() => onRejectClick()}
               className="btn-icon"
               color="primary"
@@ -252,7 +252,7 @@ export const CandidateListView = (props) => {
             <Button
               outline
               size="sm"
-              title="reject"
+              title="decline"
               onClick={() => onRejectClick()}
               className="btn-icon"
               color="primary"
@@ -315,7 +315,7 @@ export const CandidateListView = (props) => {
               active={props.type === "rejected"}
               outline
               size="sm"
-              title="reject"
+              title="decline"
               onClick={() => onRejectClick()}
               className="btn-icon"
               color="primary"
@@ -375,7 +375,7 @@ export const CandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              title="reject"
+              title="decline"
               className="btn-icon"
               color="danger"
               size="sm"
@@ -410,7 +410,7 @@ export const CandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              title="reject"
+              title="decline"
               className="btn-icon"
               color="danger"
               size="sm"
@@ -456,7 +456,7 @@ export const CandidateListView = (props) => {
           </Col>
           <Col>
             <Button
-              title="reject"
+              title="decline"
               className="btn-icon"
               color="danger"
               size="sm"
@@ -471,7 +471,7 @@ export const CandidateListView = (props) => {
         <Row xs={1} sm={1} md={1} lg={1} xl={1} noGutters>
           <Col>
             <Button
-              title="reject"
+              title="decline"
               className="btn-icon"
               color="danger"
               size="sm"
