@@ -155,7 +155,6 @@ export function Registration() {
   const [cityList, setCityList] = useState([]);
   //new reg flow
   async function onSubmit1(payload) {
-    debugger;
     validateOTP("phone");
   }
 
@@ -250,6 +249,10 @@ export function Registration() {
       }
 
       if (response?.payload) {
+        showSweetAlert({
+          title: response.payload.message,
+          type: "success",
+        });
         setOTPDetails(response.payload.data);
         setOtpForm(true);
       } else {
@@ -314,12 +317,20 @@ export function Registration() {
 
   const loginWithOTP = async () => {
     let payload = {
+      cityid: null,
+      countryid: null,
+      email: getValues("email"),
+      firstname: getValues("firstName"),
+      lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
-      otp: otp.mobile,
-      firebasetoken: "",
+      stateid: null,
     };
-    let response = await dispatch(authActions.loginWithOTP(payload));
+    let response = await dispatch(authActions.candRegisterOTPThunk(payload));
     if (response.payload) {
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
     } else {
       showSweetAlert({
         title: response.error.message,
@@ -1132,7 +1143,7 @@ export function Registration() {
               <Row className="mt-1">
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    {timer > 0 ? (
+                    {/* {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
                         Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
@@ -1146,7 +1157,16 @@ export function Registration() {
                       >
                         Resend verification code
                       </a>
-                    )}
+                    )} */}
+                    <button
+                      href="#"
+                      onClick={() => {
+                        onSubmit1();
+                      }}
+                      className="btn-lg btn btn-link otp-link-label"
+                    >
+                      Resend Code
+                    </button>
                   </div>
                 </Col>
               </Row>

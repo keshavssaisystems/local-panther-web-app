@@ -518,3 +518,16 @@ export const getPublicIP = async () => {
     return error;
   }
 };
+
+export const detectInputType = (input) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+?\d{10,15}$/; // Adjust for specific country format if needed
+
+  if (emailRegex.test(input)) {
+    return "email";
+  } else if (phoneRegex.test(input)) {
+    return "mobile";
+  } else {
+    return "invalid";
+  }
+};

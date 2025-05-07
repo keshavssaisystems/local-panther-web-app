@@ -13,7 +13,7 @@ import {
 } from "reactstrap";
 import logo from "../../assets/utils/images/panther-logo-2.png";
 import phone from "../../assets/utils/images/phone_verify.svg";
-
+import { detectInputType } from "_helpers/helper";
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 export const VerifyEmailPhoneOTPModal = (props) => {
@@ -26,7 +26,7 @@ export const VerifyEmailPhoneOTPModal = (props) => {
   const [timer, setTimer] = useState(0);
   const [mobileValidError, setMobileValidError] = useState(false);
   const [emailValidError, setEmailValidError] = useState(false);
-
+  const [type, setType] = useState(detectInputType(props.email));
   useEffect(() => {
     if (timer > 0) {
       const countdown = setTimeout(() => {
@@ -158,11 +158,20 @@ export const VerifyEmailPhoneOTPModal = (props) => {
   };
 
   const verifyMobileOTPDetails = (otp) => {
-    if (otp.length < 6) {
+    if (otp[type].length < 6) {
+      props.showSweetAlert("Please enter valid OTP", "error");
+    } else {
+      props.loginWithOTP(otp[type], type);
     }
   };
 
-  const verifyEmailOTPDetails = (otp) => {};
+  const verifyEmailOTPDetails = (otp) => {
+    if (otp[type].length < 6) {
+      props.showSweetAlert("Please enter valid OTP", "error");
+    } else {
+      props.loginWithOTP(otp[type], type);
+    }
+  };
   return (
     <Modal
       className="modal-reject-align registration-container"
@@ -203,7 +212,7 @@ export const VerifyEmailPhoneOTPModal = (props) => {
               <b>Enter Code </b>
               <div>To proceed, please enter the code sent to</div>
             </div>
-            <div style={{ color: "#545cd8" }}>9822287600</div>
+            <div style={{ color: "#545cd8" }}>{props.email}</div>
           </div>
 
           <div>
@@ -214,14 +223,22 @@ export const VerifyEmailPhoneOTPModal = (props) => {
                     <Input
                       type="text"
                       name="otp"
-                      id={`mobile-${index}`}
+                      id={
+                        type === "mobile" ? `mobile-${index}` : `email-${index}`
+                      }
                       maxLength="1"
                       style={{ fontSize: "24px" }}
                       className="form-control placeholder-name text-center"
                       onInput={(e) =>
-                        handleInputChange("mobile", e.target.value, index)
+                        handleInputChange(
+                          type === "mobile" ? "mobile" : "email",
+                          e.target.value,
+                          index
+                        )
                       }
-                      onPaste={(e) => handlePaste(e, "mobile")}
+                      onPaste={(e) =>
+                        handlePaste(e, type === "mobile" ? "mobile" : "email")
+                      }
                     />
                   </FormGroup>
                 ))}
@@ -230,12 +247,21 @@ export const VerifyEmailPhoneOTPModal = (props) => {
             <Row>
               <Col>
                 <div className="ms-auto d-flex justify-content-center align-items-center">
-                  Don't received verification code?
+                  {" "}
+                  <button
+                    href="#"
+                    onClick={() => {
+                      props.onGetMobileEmailOTP();
+                    }}
+                    className="btn-lg btn btn-link otp-link-label"
+                  >
+                    Resend Code
+                  </button>
                 </div>
               </Col>
             </Row>
 
-            <Row className="mt-1">
+            {/* <Row className="mt-1">
               <Col>
                 <div className="ms-auto d-flex justify-content-center align-items-center">
                   {timer > 0 ? (
@@ -255,7 +281,7 @@ export const VerifyEmailPhoneOTPModal = (props) => {
                   )}
                 </div>
               </Col>
-            </Row>
+            </Row> */}
           </div>
         </CardBody>
         <CardFooter>

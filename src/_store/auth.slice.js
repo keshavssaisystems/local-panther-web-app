@@ -117,6 +117,15 @@ export const loginWithOTP = createAsyncThunk(
   }
 );
 
+// cand registration using otp thunk
+export const candRegisterOTPThunk = createAsyncThunk(
+  `${name}/candRegisterOTPThunk`,
+  async (payload) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
+    return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -335,10 +344,139 @@ const authSlice = createSlice({
     [loginWithOTP.pending]: (state, { payload }) => {
       // do nothing
     },
-    [loginWithOTP.fulfilled]: (state, { payload = {} }) => {
-      // do nothing
+    [loginWithOTP.fulfilled]: (state, { payload: { data = {} } = {} }) => {
+      if (data?.token) {
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        state.menuList = menuDtoList;
+        state.user = data;
+        state.token = token;
+        let companyLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "CompanyLogo";
+        });
+        let defLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "DefaultLogo";
+        });
+        let cmpLogo =
+          data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+        localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
+        localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        const decodedData = jwtDecode(token);
+        localStorage.setItem("userId", decodedData.UserId);
+        localStorage.setItem("profileImage", decodedData.Profilephotopath);
+        localStorage.setItem("userLoginInfoId", userLoginInfoId);
+        localStorage.setItem(
+          "userroleid",
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+            ? 2
+            : 3
+        );
+        state.userroleid =
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+            ? 2
+            : 3;
+        localStorage.setItem("userDetails", JSON.stringify(decodedData));
+        localStorage.setItem(
+          "pushnotification",
+          decodedData?.Pushnotification?.toLowerCase() === "true"
+        );
+        localStorage.setItem(
+          "logo",
+          decodedData?.role?.toLowerCase() === "candidate"
+            ? ""
+            : cmpLogo?.length > 0
+            ? cmpLogo
+            : companyLogo?.length > 0
+            ? companyLogo[0]?.appconfigurationvalue
+            : defLogo?.length > 0
+            ? defLogo[0]?.appconfigurationvalue
+            : ""
+        );
+
+        // get return url from location state or default to home page
+        const { from } = history.location.state || {
+          from: { pathname: "/" },
+        };
+        state.loader = false;
+        history.navigate(from);
+      }
     },
     [loginWithOTP.rejected]: (state, action) => {
+      // do nothing
+    },
+
+    [candRegisterOTPThunk.pending]: (state, { payload }) => {
+      // do nothing
+    },
+    [candRegisterOTPThunk.fulfilled]: (
+      state,
+      { payload: { data = {} } = {} }
+    ) => {
+      if (data?.token) {
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        state.menuList = menuDtoList;
+        state.user = data;
+        state.token = token;
+        let companyLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "CompanyLogo";
+        });
+        let defLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "DefaultLogo";
+        });
+        let cmpLogo =
+          data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+        localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
+        localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        const decodedData = jwtDecode(token);
+        localStorage.setItem("userId", decodedData.UserId);
+        localStorage.setItem("profileImage", decodedData.Profilephotopath);
+        localStorage.setItem("userLoginInfoId", userLoginInfoId);
+        localStorage.setItem(
+          "userroleid",
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+            ? 2
+            : 3
+        );
+        state.userroleid =
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+            ? 2
+            : 3;
+        localStorage.setItem("userDetails", JSON.stringify(decodedData));
+        localStorage.setItem(
+          "pushnotification",
+          decodedData?.Pushnotification?.toLowerCase() === "true"
+        );
+        localStorage.setItem(
+          "logo",
+          decodedData?.role?.toLowerCase() === "candidate"
+            ? ""
+            : cmpLogo?.length > 0
+            ? cmpLogo
+            : companyLogo?.length > 0
+            ? companyLogo[0]?.appconfigurationvalue
+            : defLogo?.length > 0
+            ? defLogo[0]?.appconfigurationvalue
+            : ""
+        );
+
+        // get return url from location state or default to home page
+        const { from } = history.location.state || {
+          from: { pathname: "/" },
+        };
+        state.loader = false;
+        history.navigate(from);
+      }
+    },
+    [candRegisterOTPThunk.rejected]: (state, action) => {
       // do nothing
     },
   },
@@ -360,6 +498,7 @@ export const authActions = {
   putRegisterCustomer,
   postAddAuditLogs,
   loginWithOTP,
+  candRegisterOTPThunk,
 };
 
 export const authReducer = authSlice.reducer;

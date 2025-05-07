@@ -24,7 +24,7 @@ export function AppHeader({
   onOpenSidebar,
 }) {
   const userroleid = useSelector((state) => state.auth.userroleid);
-  const [showCPModal, setShowCPModal] = useState(true);
+  const [showCPModal, setShowCPModal] = useState(false);
   return (
     <>
       <CSSTransitionGroup

@@ -29,7 +29,7 @@ import loginBgImg from "../../assets/utils/images/login.png";
 import OpenWorXAppCover from "../../assets/utils/images/OpenWorXAppCover.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
-import { getPublicIP } from "_helpers/helper";
+import { getPublicIP, detectInputType } from "_helpers/helper";
 import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
 import "./login.scss";
 
@@ -124,7 +124,10 @@ export function Login() {
       .max(30, "Password can be at most 30 characters"),
   });
 
-  const formOptions = { resolver: yupResolver(validationSchema) };
+  const formOptions = {
+    resolver: yupResolver(validationSchema),
+    mode: "onChange",
+  };
 
   // get functions to build form with useForm() hook
   const { register, handleSubmit, formState, getValues } = useForm(formOptions);
@@ -155,20 +158,7 @@ export function Login() {
     }
   };
 
-  function detectInputType(input) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\+?\d{10,15}$/; // Adjust for specific country format if needed
-
-    if (emailRegex.test(input)) {
-      return "email";
-    } else if (phoneRegex.test(input)) {
-      return "mobile";
-    } else {
-      return "invalid";
-    }
-  }
-  const onGetMobileEmailOTP = async () => {
-    handleSubmit(["email"]);
+  const onGetMobileEmailOTP = async (isModal = false) => {
     let type = detectInputType(getValues("email"));
     let payload = {};
     if (type === "mobile") {
@@ -189,7 +179,39 @@ export function Login() {
         title: response.payload.message,
         type: "success",
       });
-      setShowEPModal(true);
+      if (!isModal) {
+        setShowEPModal(true);
+      }
+    } else {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    }
+  };
+
+  const loginWithOTP = async (otp, type) => {
+    let payload = {};
+    if (type === "mobile") {
+      payload = {
+        phonenumber: getValues("email"),
+        otp: otp,
+        firebasetoken: "",
+      };
+    } else {
+      payload = {
+        email: getValues("email"),
+        otp: otp,
+        firebasetoken: "",
+      };
+    }
+
+    let response = await dispatch(authActions.loginWithOTP(payload));
+    if (response.payload) {
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
     } else {
       showSweetAlert({
         title: response.error.message,
@@ -307,6 +329,7 @@ export function Login() {
                                 color="primary"
                                 className="btn-text"
                                 size="sm"
+                                disabled={!!errors.email}
                                 onClick={() => onGetMobileEmailOTP()}
                               >
                                 {" "}
@@ -498,9 +521,17 @@ export function Login() {
             {showEPModal && (
               <VerifyEmailPhoneOTPModal
                 isOpen={showEPModal}
+                email={getValues("email")}
                 onClose={() => {
                   setShowEPModal(false);
                 }}
+                onGetMobileEmailOTP={() => {
+                  onGetMobileEmailOTP(true);
+                }}
+                showSweetAlert={(title, type) =>
+                  showSweetAlert({ title, type })
+                }
+                loginWithOTP={(otp, type) => loginWithOTP(otp, type)}
               ></VerifyEmailPhoneOTPModal>
             )}
             <>
