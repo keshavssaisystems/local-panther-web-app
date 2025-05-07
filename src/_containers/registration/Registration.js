@@ -128,23 +128,23 @@ export function Registration() {
         "Please enter valid email"
       ),
     phoneNumber: Yup.string().required("Phone number is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(4, "Password must be at least 4 characters")
-      .matches(
-        passwordRegex,
-        "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
-      )
-      .max(30, "Password can be at most 30 characters"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Confirm Password is required")
-      .min(4, "Confirm Password must be at least 4 characters")
-      .max(30, "Confirm Password can be at most 30 characters"),
+    // password: Yup.string()
+    //   .required("Password is required")
+    //   .min(4, "Password must be at least 4 characters")
+    //   .matches(
+    //     passwordRegex,
+    //     "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
+    //   )
+    //   .max(30, "Password can be at most 30 characters"),
+    // confirmPassword: Yup.string()
+    //   .oneOf([Yup.ref("password"), null], "Passwords must match")
+    //   .required("Confirm Password is required")
+    //   .min(4, "Confirm Password must be at least 4 characters")
+    //   .max(30, "Confirm Password can be at most 30 characters"),
 
-    cityid: Yup.string().required("City, State is required"),
-    stateid: Yup.string(),
-    countryid: Yup.string().required("Country is required"),
+    // cityid: Yup.string().required("City, State is required"),
+    // stateid: Yup.string(),
+    // countryid: Yup.string().required("Country is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
 
@@ -153,6 +153,10 @@ export function Registration() {
     useForm(formOptions);
   const { errors } = formState;
   const [cityList, setCityList] = useState([]);
+  //new reg flow
+  async function onSubmit1(payload) {
+    validateOTP("phone");
+  }
 
   async function onSubmit(payload) {
     if (!validated.mobile || !validated.email) {
@@ -217,19 +221,20 @@ export function Registration() {
       lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       email: getValues("email"),
-      countryid: countryValue?.value,
-      stateid: parseInt(getValues("stateid")),
-      cityid: cityValue,
-      phoneotp: null,
-      phoneotpgeneratedate: new Date().toISOString(),
-      isphonenumberverify: false,
-      emailotp: null,
-      emailotpgeneratedate: null,
-      isemailverify: false,
+      countryid: null,
+      stateid: null,
+      cityid: null,
+      // phoneotp: null,
+      // phoneotpgeneratedate: new Date().toISOString(),
+      // isphonenumberverify: false,
+      // emailotp: null,
+      // emailotpgeneratedate: null,
+      // isemailverify: false,
       isactive: true,
       currentuserid: 0,
       type: "phone",
       userroleid: 3,
+      password: "Temp@123",
     };
     let response;
     if (check === "phone") {
@@ -244,6 +249,10 @@ export function Registration() {
       }
 
       if (response?.payload) {
+        showSweetAlert({
+          title: response.payload.message,
+          type: "success",
+        });
         setOTPDetails(response.payload.data);
         setOtpForm(true);
       } else {
@@ -286,11 +295,12 @@ export function Registration() {
     }
   };
 
-  const showSweetAlert = ({ title, type }) => {
+  const showSweetAlert = ({ title, type, redirect = false }) => {
     let data = { ...showAlert };
     data.title = title;
     data.type = type;
     data.show = true;
+    data.redirect = redirect;
     SetShowAlert(data);
   };
   const closeSweetAlert = () => {
@@ -298,7 +308,35 @@ export function Registration() {
     data.title = "";
     data.type = "";
     data.show = false;
+    if (data.redirect) {
+      loginWithOTP("phone");
+    }
+    data.redirect = false;
     SetShowAlert(data);
+  };
+
+  const loginWithOTP = async () => {
+    let payload = {
+      cityid: null,
+      countryid: null,
+      email: getValues("email"),
+      firstname: getValues("firstName"),
+      lastname: getValues("lastName"),
+      phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
+      stateid: null,
+    };
+    let response = await dispatch(authActions.candRegisterOTPThunk(payload));
+    if (response.payload) {
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    } else {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    }
   };
 
   const verifyMobileOTPDetails = async function (data) {
@@ -319,6 +357,7 @@ export function Registration() {
         showSweetAlert({
           title: response.payload.message,
           type: "success",
+          redirect: true,
         });
         setOtpForm(false);
         setMessage("Phone number verified");
@@ -657,7 +696,7 @@ export function Registration() {
               </div>
               <div className="mt-5">
                 {selected === 1 && (
-                  <Form onSubmit={handleSubmit(onSubmit)}>
+                  <Form onSubmit={handleSubmit(onSubmit1)}>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
@@ -723,7 +762,7 @@ export function Registration() {
                               autoComplete="off"
                               disabled={validated.email}
                             />
-                            {!validated.email ? (
+                            {/* {!validated.email ? (
                               <Button
                                 className="grp-btn"
                                 color="light"
@@ -746,7 +785,7 @@ export function Registration() {
                               >
                                 <img src={validIcon} alt="valid-icon" />
                               </Button>
-                            )}{" "}
+                            )}{" "} */}
                             <FormFeedback>{errors.email?.message}</FormFeedback>
                           </InputGroup>
 
@@ -779,7 +818,7 @@ export function Registration() {
                               }
                               disabled={validated.mobile}
                             />
-                            {!validated.mobile ? (
+                            {/* {!validated.mobile ? (
                               <Button
                                 className="grp-btn"
                                 color="light"
@@ -802,7 +841,7 @@ export function Registration() {
                               >
                                 <img src={validIcon} alt="valid-icon" />
                               </Button>
-                            )}{" "}
+                            )}{" "} */}
                             <FormFeedback>
                               {errors.phoneNumber?.message}
                             </FormFeedback>
@@ -814,7 +853,8 @@ export function Registration() {
                           </div>
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
+                      {/* new updated flow */}
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="password" className="input-label">
                             Password <span className="text-danger">*</span>
@@ -926,7 +966,7 @@ export function Registration() {
                               : ""}
                           </div>
                         </FormGroup>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <div className="mt-4 d-flex align-items-center">
                       <h5 className="mb-0 account-text ms-auto me-4">
@@ -1103,7 +1143,7 @@ export function Registration() {
               <Row className="mt-1">
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    {timer > 0 ? (
+                    {/* {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
                         Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
@@ -1117,7 +1157,16 @@ export function Registration() {
                       >
                         Resend verification code
                       </a>
-                    )}
+                    )} */}
+                    <button
+                      href="#"
+                      onClick={() => {
+                        onSubmit1();
+                      }}
+                      className="btn-lg btn btn-link otp-link-label"
+                    >
+                      Resend Code
+                    </button>
                   </div>
                 </Col>
               </Row>
