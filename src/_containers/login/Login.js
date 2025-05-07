@@ -30,6 +30,7 @@ import OpenWorXAppCover from "../../assets/utils/images/OpenWorXAppCover.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
 import { getPublicIP } from "_helpers/helper";
+import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
 import "./login.scss";
 
 export function Login() {
@@ -39,6 +40,7 @@ export function Login() {
   const loading = useSelector((state) => state.auth.loader);
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showEPModal, setShowEPModal] = useState(false);
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -50,6 +52,13 @@ export function Login() {
     initialSlide: 0,
     autoplay: true,
     adaptiveHeight: true,
+  });
+
+  const [showAlert, SetShowAlert] = useState({
+    show: false,
+    type: "success",
+    title: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -80,9 +89,35 @@ export function Login() {
     setShowPassword(!showPassword);
   };
 
+  const showSweetAlert = ({ title, type }) => {
+    let data = { ...showAlert };
+    data.title = title;
+    data.type = type;
+    data.show = true;
+    SetShowAlert(data);
+  };
+  const closeSweetAlert = () => {
+    let data = { ...showAlert };
+    data.title = "";
+    data.type = "";
+    data.show = false;
+    SetShowAlert(data);
+  };
+
   // form validation rules
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required("Email is required"),
+    email: Yup.string()
+      .required("Email or phone is required")
+      .test(
+        "is-email-or-phone",
+        "Enter a valid email or phone number",
+        function (value) {
+          const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+          const phoneRegex = /^\+?\d{10,15}$/; // Simple phone pattern
+
+          return emailRegex.test(value || "") || phoneRegex.test(value || "");
+        }
+      ),
     password: Yup.string()
       .required("Password is required")
       .min(4, "Password must be at least 4 characters")
@@ -92,7 +127,7 @@ export function Login() {
   const formOptions = { resolver: yupResolver(validationSchema) };
 
   // get functions to build form with useForm() hook
-  const { register, handleSubmit, formState } = useForm(formOptions);
+  const { register, handleSubmit, formState, getValues } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
   function onSubmit(payload) {
@@ -117,6 +152,49 @@ export function Login() {
     } else if (permission === "denied") {
       console.log("You denied for the notification");
       dispatch(authActions.loginThunk(payload));
+    }
+  };
+
+  function detectInputType(input) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\+?\d{10,15}$/; // Adjust for specific country format if needed
+
+    if (emailRegex.test(input)) {
+      return "email";
+    } else if (phoneRegex.test(input)) {
+      return "mobile";
+    } else {
+      return "invalid";
+    }
+  }
+  const onGetMobileEmailOTP = async () => {
+    handleSubmit(["email"]);
+    let type = detectInputType(getValues("email"));
+    let payload = {};
+    if (type === "mobile") {
+      payload = {
+        phonenumber: getValues("email"),
+        firebasetoken: "",
+      };
+    } else {
+      payload = {
+        email: getValues("email"),
+        firebasetoken: "",
+      };
+    }
+
+    let response = await dispatch(authActions.loginWithOTP(payload));
+    if (response.payload) {
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+      setShowEPModal(true);
+    } else {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
     }
   };
 
@@ -197,7 +275,7 @@ export function Login() {
                   </div>
                   <Row className="login-divider" />
                   <p className="mb-3 mt-4 title-text">
-                    Please sign in to your account.
+                    Already Registered, Login Here
                   </p>
                   <div className="login-form">
                     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -205,13 +283,14 @@ export function Login() {
                         <Col md={6}>
                           <FormGroup>
                             <Label for="email" className="input-label">
-                              Email <span className="required-icon">*</span>
+                              Email or Phone{" "}
+                              <span className="required-icon">*</span>
                             </Label>
                             <input
                               type="email"
                               name="email"
                               id="email"
-                              placeholder="Email"
+                              placeholder="Enter email or phone"
                               {...register("email")}
                               className={`login-field-input placeholder-text form-control ${
                                 errors.email
@@ -222,6 +301,18 @@ export function Login() {
                             <div className="invalid-feedback">
                               {errors.email?.message}
                             </div>
+                            <div className="mt-1" style={{ textAlign: "end" }}>
+                              <Button
+                                style={{ fontSize: "10px" }}
+                                color="primary"
+                                className="btn-text"
+                                size="sm"
+                                onClick={() => onGetMobileEmailOTP()}
+                              >
+                                {" "}
+                                Log in with code
+                              </Button>
+                            </div>
                           </FormGroup>
                         </Col>
                         <Col md={6}>
@@ -231,7 +322,7 @@ export function Login() {
                             </Label>
                             <InputGroup>
                               <input
-                                placeholder="Enter Password"
+                                placeholder="Enter password"
                                 name="password"
                                 type={showPassword ? "text" : "password"}
                                 id="password"
@@ -249,8 +340,14 @@ export function Login() {
                                 {errors.password?.message}
                               </div>
                             </InputGroup>
-                            <div className="mt-4 mb-3 float-end">
-                              <Button
+                            <div className="mt-5 mb-3 float-end">
+                              <Link
+                                to="/registration"
+                                className="text-primary forgot-pwd-text"
+                              >
+                                Not a member yet?
+                              </Link>
+                              {/* <Button
                                 color="primary"
                                 className="btn-text me-2"
                                 size="lg"
@@ -258,11 +355,11 @@ export function Login() {
                                 to="/registration"
                               >
                                 <span className="btn-text">Register</span>
-                              </Button>
+                              </Button> */}
                               <Button
                                 disabled={isSubmitting}
                                 color="primary"
-                                className="btn-text me-2"
+                                className="btn-text me-2 ms-2"
                                 size="lg"
                               >
                                 {isSubmitting && (
@@ -398,6 +495,24 @@ export function Login() {
                 </Col>
               </Col>
             </Row>
+            {showEPModal && (
+              <VerifyEmailPhoneOTPModal
+                isOpen={showEPModal}
+                onClose={() => {
+                  setShowEPModal(false);
+                }}
+              ></VerifyEmailPhoneOTPModal>
+            )}
+            <>
+              {" "}
+              <SweetAlert
+                title={showAlert.title}
+                show={showAlert.show}
+                type={showAlert.type}
+                onConfirm={() => closeSweetAlert()}
+              />
+              {showAlert.description}
+            </>
           </div>
         </LoadingOverlay>
       </div>

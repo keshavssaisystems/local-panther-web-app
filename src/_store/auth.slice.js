@@ -108,6 +108,15 @@ export const postAddAuditLogs = createAsyncThunk(
   }
 );
 
+// login thunk
+export const loginWithOTP = createAsyncThunk(
+  `${name}/loginWithOTP`,
+  async (payload) => {
+    const LOGIN_OTP_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/OTPLogin`;
+    return await fetchWrapper.post(LOGIN_OTP_END_POINT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -323,6 +332,15 @@ const authSlice = createSlice({
     [postAddAuditLogs.rejected]: (state, action) => {
       // do nothing
     },
+    [loginWithOTP.pending]: (state, { payload }) => {
+      // do nothing
+    },
+    [loginWithOTP.fulfilled]: (state, { payload = {} }) => {
+      // do nothing
+    },
+    [loginWithOTP.rejected]: (state, action) => {
+      // do nothing
+    },
   },
 });
 
@@ -341,6 +359,7 @@ export const authActions = {
   logoutThunk,
   putRegisterCustomer,
   postAddAuditLogs,
+  loginWithOTP,
 };
 
 export const authReducer = authSlice.reducer;

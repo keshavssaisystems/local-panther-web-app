@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import cx from "classnames";
 import CSSTransitionGroup from "react-transition-group/TransitionGroup";
 import { UserBox } from "./Components/UserBox";
@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col } from "reactstrap";
+import { CompleteCandProfileModal } from "_components/modal/completeCandProfileModal";
 
 export function AppHeader({
   headerBackgroundColor = "white",
@@ -23,6 +24,7 @@ export function AppHeader({
   onOpenSidebar,
 }) {
   const userroleid = useSelector((state) => state.auth.userroleid);
+  const [showCPModal, setShowCPModal] = useState(true);
   return (
     <>
       <CSSTransitionGroup
@@ -121,6 +123,12 @@ export function AppHeader({
                 {userroleid !== 1 && <ChatCounter />}
                 <NotificationCounter></NotificationCounter>
                 <UserBox />
+                <CompleteCandProfileModal
+                  isOpen={showCPModal}
+                  onCloseModal={() => {
+                    setShowCPModal(false);
+                  }}
+                ></CompleteCandProfileModal>
               </div>
             </>
           ) : (
