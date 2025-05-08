@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Label, Input, ModalHeader, ModalBody } from "reactstrap";
-import { jobPreferenceDetailsActions, getProfileActions } from "_store";
+import {
+  jobPreferenceDetailsActions,
+  getProfileActions,
+  profileActions,
+} from "_store";
 import {
   Row,
   Col,
@@ -26,6 +30,11 @@ import Loader from "react-loaders";
 import { NoProfileData } from "_components/common/noProfileData";
 
 import debounce from "lodash/debounce";
+import { useDropzone } from "react-dropzone";
+import Dropzone from "react-dropzone";
+import axios from "axios";
+import { formatDate } from "_helpers/helper";
+import { BsDownload, BsUpload, BsInfoCircle } from "react-icons/bs";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -48,10 +57,19 @@ export function JobPreferences(props) {
   const [showDistance, setShowDistance] = useState(true);
 
   const [preferenceDetails, setDetails] = useState([]);
+  const [fileName, setFileName] = useState("");
+  const [sizeError, setSizeError] = useState(false);
+
   const get_response = useSelector(
     (state) => state.getProfile?.profileData?.jobPreferenceInfo
   );
 
+  const profileData = useSelector(
+    (state) => state.getProfile?.profileData?.personalInfo
+  );
+  const resumeDetails = useSelector(
+    (state) => state?.getProfile?.profileData?.resumeInfo
+  );
   const shiftsOption = useSelector((state) => state.shifts?.shift);
   const workTypeOption = useSelector(
     (state) => state.dropdown?.jobLocationType
@@ -62,8 +80,11 @@ export function JobPreferences(props) {
   );
   const jobTypeOption = useSelector((state) => state.jobType?.jobType);
   const loader = useSelector((state) => state.getProfile?.loader);
-
   const [deleteConfirmation, setDeleteConfirm] = useState(false);
+  const [deleteResConfirmation, setDeleteResConfirm] = useState(false);
+
+  const [selectedLocationCP, setSelectedLocationCP] = useState([]);
+  const [selectedFile, setSelectedFile] = useState();
 
   let jobTitleList = useSelector((state) => state.getJobTitle?.user?.data);
   let payPeriodList = useSelector((state) => state.getPayPeriod?.user?.data);
@@ -92,6 +113,66 @@ export function JobPreferences(props) {
     shiftsError: false,
     workTypeError: false,
   });
+
+  const onDrop = (acceptedFiles) => {
+    if (acceptedFiles[0].size > 5 * 1024 * 1024) {
+      setSizeError(true);
+
+      return;
+    }
+    let name = acceptedFiles[0].name.replace(/^.*[\\\/]/, "");
+
+    // setFileName(name);
+    addEditResume(acceptedFiles);
+  };
+  const addEditResume = async function (acceptedFiles) {
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+    form.append(
+      "Candidateid",
+      localStorage.getItem("admcandid")
+        ? localStorage.getItem("admcandid")
+        : JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
+    );
+    form.append("Resumefile", acceptedFiles[0]);
+    form.append(
+      "CurrentUserId",
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+
+    axios
+      .post(`${process.env.REACT_APP_PANTHER_URL}/PostResume`, form, config)
+      .then((result) => {
+        if (result.data) {
+          if (result.data.status === "Success") {
+            // setShowUpload(false);
+            props?.getPersonalDetails();
+          } else {
+          }
+        } else {
+        }
+      })
+      .catch((error) => {
+        // setShowUpload(true);
+      });
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: ".pdf,.doc,.docx",
+  });
+  const onCancel = (acceptedFiles) => {
+    setSelectedFile(null);
+  };
 
   useEffect(() => {
     let data = [];
@@ -129,7 +210,11 @@ export function JobPreferences(props) {
         traveldistance: "",
       });
       setShowDistance(true);
-
+      if (props?.isRequired && props?.isCompleteProfile) {
+        data.employmenteligibility = false;
+        data.city = "";
+        data.state = "";
+      }
       setDetails(data);
     } else {
       if (get_response.length > 0) {
@@ -244,6 +329,12 @@ export function JobPreferences(props) {
       if (data[0]?.desiredjobtypes) {
         setWorkType(data[0].desiredjobtypes.split(","));
       }
+
+      if (props?.isRequired && props?.isCompleteProfile) {
+        data.employmenteligibility = false;
+        data.city = "";
+        data.state = "";
+      }
       setDetails(data);
       if (distanceList) {
         let data = distanceList.filter(
@@ -305,6 +396,11 @@ export function JobPreferences(props) {
       isactive: true,
       currentUserId: userDetails?.UserId ?? 0,
     };
+    if (props?.isRequired && props?.isCompleteProfile) {
+      data.employmenteligibility = false;
+      data.city = "";
+      data.state = "";
+    }
     setFormData(data);
   };
 
@@ -314,6 +410,28 @@ export function JobPreferences(props) {
     }, 500),
     [] // Important: memoize once!
   );
+
+  const loadOptionsDebCP = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptionsCP(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
+
+  const loadOptionsCP = async function (inputValue) {
+    // if (inputValue.length > 2) {
+    const { data = [] } = await getLocationFilter(inputValue);
+
+    return data.map(({ cityid: value, ...rest }) => {
+      return {
+        value,
+        cityid: value,
+        stateid: rest.stateid,
+
+        label: `${rest.location + ", " + rest.statename}`,
+      };
+    });
+  };
 
   const loadOptions = async function (inputValue) {
     // if (inputValue.length > 2) {
@@ -443,6 +561,12 @@ export function JobPreferences(props) {
       let distance_new = [];
       distance_new.push(data);
       setDistanceSelect(distance_new);
+    } else if (check === "employmenteligibility") {
+      new_data[0].employmenteligibility = !new_data[0].employmenteligibility;
+    } else if (check === "locationCP") {
+      setSelectedLocationCP(data);
+      new_data[0].stateid = data.stateid;
+      new_data[0].cityid = data.cityid;
     }
 
     setFormData(new_data);
@@ -495,6 +619,12 @@ export function JobPreferences(props) {
       workschedules: "",
       workschedulestext: null,
     });
+
+    if (props?.isRequired && props?.isCompleteProfile) {
+      data.employmenteligibility = false;
+      data.city = "";
+      data.state = "";
+    }
 
     setDetails(data);
   };
@@ -594,7 +724,28 @@ export function JobPreferences(props) {
     setSave(false);
     if (response.payload) {
       setSuccess(true);
-      setMessage(response.payload.message);
+      setMessage(
+        props.isCompleteProfile
+          ? "Profile details updated successfully!"
+          : response.payload.message
+      );
+
+      let payload = {
+        candidateid: localStorage.getItem("admcandid")
+          ? localStorage.getItem("admcandid")
+          : userDetails?.InternalUserId ?? 0,
+        cityid: new_data[0].cityid,
+        countryid: 1,
+        currentUserId: Number(localStorage.getItem("userId")),
+        email: profileData?.email,
+        employmenteligiblity: new_data[0].employmenteligibility ? 2 : 1,
+        firstname: profileData?.firstname,
+        lastname: profileData?.lastname,
+        phonenumber: profileData?.phonenumber,
+        stateid: new_data[0].stateid,
+        isactive: true,
+      };
+      await dispatch(jobPreferenceDetailsActions.updateProfileData(payload));
     } else {
       setError(true);
     }
@@ -618,11 +769,30 @@ export function JobPreferences(props) {
     setDeleteConfirm(true);
   };
 
+  const deleteResume = async function () {
+    let resumeId = resumeDetails.candidateresumeid;
+
+    let response = await dispatch(profileActions.deleteResume(resumeId));
+    if (response.payload) {
+      props?.getPersonalDetails();
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+    } else {
+      // setError(true);
+    }
+
+    setDeleteResConfirm(false);
+    // props.onCallBack();
+  };
+
   const [basePayValue, setBasePayValue] = useState("");
   return (
     <div>
       <div className="profile-view">
-        <Card className="card-hover-shadow-2x mb-3">
+        <Card
+          style={{ display: props?.isCompleteProfile ? "none" : "block" }}
+          className="card-hover-shadow-2x mb-3"
+        >
           <CardHeader className="card-title-text  text-capitalize ">
             Job preferences
             <div className="float-end me-2 ms-auto">
@@ -751,13 +921,196 @@ export function JobPreferences(props) {
               </ModalHeader>
             ) : (
               <ModalHeader>
-                <strong className="card-title-text">Add Job preferences</strong>
+                <strong className="card-title-text">
+                  {props?.isCompleteProfile
+                    ? "Complete your profile"
+                    : "Add Job preferences"}
+                </strong>
               </ModalHeader>
             )}
 
             <ModalBody>
               {preferenceDetails?.map((parentItem, index) => (
                 <Form onSubmit={(e) => onSubmit(e)}>
+                  {props?.isRequired && props?.isCompleteProfile ? (
+                    <>
+                      <Row>
+                        <div className="mb-1">
+                          To recommend the most relevant opportunities, we need
+                          a few essential details.
+                        </div>
+                      </Row>
+                      <Row>
+                        <Label check className="fw-semi-bold">
+                          Employment Eligibility
+                          <span style={{ color: "red" }}> *</span>
+                        </Label>
+                      </Row>
+                      <Row>
+                        <Col md={6}>
+                          <FormGroup check>
+                            <Input
+                              name="no_employmenyeligibility"
+                              id="no_employmenyeligibility"
+                              onChange={(evt) =>
+                                onHandleInputChange(
+                                  "employmenteligibility",
+                                  !parentItem.employmenteligibility
+                                )
+                              }
+                              type="radio"
+                              checked={!parentItem.employmenteligibility}
+                            />{" "}
+                            <Label check className="fw-semi-bold">
+                              Authorized to work in the US
+                            </Label>
+                          </FormGroup>
+                        </Col>
+
+                        <Col md={6}>
+                          <FormGroup check>
+                            <Input
+                              name="employmenteligibility"
+                              id="employmenteligibility"
+                              onChange={(evt) =>
+                                onHandleInputChange(
+                                  "employmenteligibility",
+                                  !parentItem.employmenteligibility
+                                )
+                              }
+                              type="radio"
+                              checked={parentItem.employmenteligibility}
+                            />{" "}
+                            <Label check className="fw-semi-bold">
+                              Sponsorship Required
+                            </Label>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={4}>
+                          <FormGroup>
+                            <Label for="city" className="fw-semi-bold">
+                              City, State
+                              <span className="required-icon"> *</span>
+                            </Label>
+                            <AsyncSelect
+                              name="location"
+                              placeholder="Search to select"
+                              loadOptions={loadOptionsDebCP}
+                              cacheOptions
+                              value={selectedLocationCP}
+                              onChange={(evt) =>
+                                onHandleInputChange("locationCP", evt)
+                              }
+                              className={`placeholder-name ${
+                                save && selectedLocationCP.length === 0
+                                  ? "async-border-red"
+                                  : ""
+                              }`}
+                            />
+
+                            <div className="async-error-text">
+                              {save && selectedLocationCP.length === 0
+                                ? "Location is required"
+                                : ""}
+                            </div>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <div
+                          className="ps-2 pe-2 pb-2 pt-2"
+                          style={{
+                            background: "#AAD6FF80",
+                            borderRadius: "5px",
+                            borderStyle: "dotted",
+                            border: "1px blue dotted",
+                          }}
+                        >
+                          {resumeDetails?.resumepath ? (
+                            <Col>
+                              <div className="mb-2">
+                                <h5>
+                                  <b>Resume</b>
+                                </h5>
+                                <strong className="content-title">
+                                  <span className="me-2">
+                                    {resumeDetails.resumepath.replace(
+                                      /^.*[\\\/]/,
+                                      ""
+                                    )}
+                                  </span>{" "}
+                                  <div className="float-end">
+                                    <a
+                                      target="blank"
+                                      href={resumeDetails?.resumepath}
+                                      download={resumeDetails.resumepath.replace(
+                                        /^.*[\\\/]/,
+                                        ""
+                                      )}
+                                      className="me-3"
+                                    >
+                                      <BsDownload />
+                                    </a>
+                                    <BsTrash3
+                                      style={{ color: "#545cd8" }}
+                                      onClick={() => setDeleteResConfirm(true)}
+                                    />
+                                  </div>
+                                </strong>
+                                <div className="card-p-text mt-1 mb-2">
+                                  Uploaded on{" "}
+                                  {formatDate(resumeDetails?.uploadeddate)}
+                                </div>
+                              </div>
+                            </Col>
+                          ) : (
+                            <>
+                              {" "}
+                              <Col>
+                                <div className="mb-2">
+                                  You are one resume away from your dream job!
+                                </div>
+
+                                <div className="mb-2">
+                                  <Button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                    }}
+                                    color="primary"
+                                    outline
+                                  >
+                                    <Dropzone
+                                      onDrop={(e) => onDrop(e)}
+                                      onFileDialogCancel={onCancel}
+                                    >
+                                      {() => (
+                                        <div {...getRootProps()}>
+                                          <input {...getInputProps()} />
+                                          <div className="dropzone-content">
+                                            Upload Resume
+                                          </div>
+                                        </div>
+                                      )}
+                                    </Dropzone>
+                                  </Button>
+                                </div>
+                                <div className="mb-2">
+                                  <i>
+                                    Supported formats: PDF, DOC, DOCX. Max size:
+                                    5MB{" "}
+                                  </i>
+                                </div>
+                              </Col>
+                            </>
+                          )}
+                        </div>
+                      </Row>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                   <Row>
                     <div className="mb-1 fw-bold">Desired job types</div>
                     <hr />
@@ -1328,6 +1681,71 @@ export function JobPreferences(props) {
                   <Button
                     className="me-2 accept-modal-btn"
                     onClick={(evt) => setError(false)}
+                  >
+                    OK
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+      <Modal
+        className="modal-reject-align profile-view"
+        isOpen={deleteResConfirmation}
+      >
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              want to delete the Resume?
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => deleteResume()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    className="success-close-btn"
+                    onClick={(evt) => setDeleteResConfirm(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+      <Modal className="modal-reject-align profile-view" isOpen={sizeError}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              File size should not exceed 5 MB
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              Please try again
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => setSizeError(false)}
                   >
                     OK
                   </Button>
