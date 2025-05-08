@@ -13,14 +13,22 @@ import {
   dropdownActions,
   scheduleInterviewActions,
   customerDashboardActions,
+  getProfileActions,
+  workScheduleActions,
+  jobTypeActions,
+  shiftActions,
+  getpayPeriodActions,
 } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
 import { analytics } from "../../../firebase/index";
+import { JobPreferences } from "../jobPreferences";
 
 export function CandidateDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showJobPreferModal, setShowJobPreferModal] = useState(false);
   let candidateId = JSON.parse(
     localStorage.getItem("userDetails")
   ).InternalUserId;
@@ -71,6 +79,30 @@ export function CandidateDashboard() {
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
   };
 
+  const loadProfileData = async () => {
+    await getPersonalDetails();
+    await getDropdownLists();
+    setShowJobPreferModal(true);
+  };
+
+  const getPersonalDetails = async function () {
+    let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+    let candidateid = localStorage.getItem("admcandid")
+      ? localStorage.getItem("admcandid")
+      : userDetails.InternalUserId;
+    let response = await dispatch(getProfileActions.getCandidate(candidateid));
+
+    return response;
+  };
+
+  const getDropdownLists = async function () {
+    await dispatch(workScheduleActions.getWorkScheduleThunk());
+    await dispatch(jobTypeActions.getJobTypeThunk());
+    await dispatch(shiftActions.getShiftThunk());
+
+    await dispatch(getpayPeriodActions.getpayPeriod());
+    await dispatch(dropdownActions.getJobLocationTypeThunk());
+  };
   const onDeleteNotification = async (id) => {
     let res = await dispatch(
       candidateDashboardActions.deleteNotifications({ id })
@@ -143,9 +175,9 @@ export function CandidateDashboard() {
   );
   useEffect(() => {
     if (
-      counts.skills === false ||
-      counts.qualifications === false ||
-      counts.education === false ||
+      // counts.skills === false ||
+      // counts.qualifications === false ||
+      // counts.education === false ||
       counts.jobPreference === false ||
       // counts.certifications === false ||
       counts.employmentEligiblity === 0
@@ -153,6 +185,10 @@ export function CandidateDashboard() {
       setShowProfilePrompt(true);
     }
   }, [counts]);
+
+  const closeJobPreferModal = function () {
+    setShowJobPreferModal(false);
+  };
 
   return (
     <>
@@ -208,19 +244,19 @@ export function CandidateDashboard() {
         </SweetAlert>
       </>
 
-      {(counts.skills === false ||
-        counts.qualifications === false ||
-        counts.education === false ||
-        // counts.certifications === false ||
-        counts.employmentEligiblity === 0 ||
-        counts.jobPreference === false) && (
+      {// counts.skills === false ||
+      // counts.qualifications === false ||
+      // counts.education === false ||
+      // counts.certifications === false ||
+      (counts.employmentEligiblity === 0 || counts.jobPreference === false) && (
         <div className="profile-prompt">
           <SweetAlert
             custom
             show={showProfilePrompt}
             onConfirm={() => {
               setShowProfilePrompt(false);
-              navigate("/profile");
+              loadProfileData();
+              // navigate("/profile");
             }}
             onCancel={() => {
               setShowProfilePrompt(false);
@@ -233,7 +269,7 @@ export function CandidateDashboard() {
             <p className="candidate-profile-prompt">
               “Enhance your experience and find the best job matches by updating
               your{" "}
-              {counts.skills === false && (
+              {/* {counts.skills === false && (
                 <span className="candidate-profile-prompt-bold">Skills,</span>
               )}
               {counts.qualifications === false && (
@@ -247,29 +283,41 @@ export function CandidateDashboard() {
                   {" "}
                   Education details,
                 </span>
-              )}
+              )} */}
               {/* {counts.certifications === false && (
                 <span className="candidate-profile-prompt-bold">
                   {" "}
                   Certifications,
                 </span>
               )} */}
-              {counts.employmentEligiblity === false ||
+              {/* {counts.employmentEligiblity === false ||
                 (counts.employmentEligiblity === 0 && (
                   <span className="candidate-profile-prompt-bold">
                     {" "}
                     Employment eligibility,
                   </span>
-                ))}
+                ))} */}
               {counts.jobPreference === false && (
                 <span className="candidate-profile-prompt-bold">
                   {" "}
-                  Job preferences,
+                  Employment eligibility, Job preferences,
                 </span>
               )}{" "}
               to your profile.”
             </p>
           </SweetAlert>
+          {showJobPreferModal && (
+            <Row>
+              <JobPreferences
+                onCallBack={() => closeJobPreferModal()}
+                isRequired={true}
+                isCompleteProfile={true}
+                getPersonalDetails={() => {
+                  getPersonalDetails();
+                }}
+              />
+            </Row>
+          )}
         </div>
       )}
     </>
