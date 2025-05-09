@@ -29,6 +29,7 @@ export function CandidateDashboard() {
   const navigate = useNavigate();
 
   const [showJobPreferModal, setShowJobPreferModal] = useState(false);
+  const [prefUpdated, setPrefUpdated] = useState(false);
   let candidateId = JSON.parse(
     localStorage.getItem("userDetails")
   ).InternalUserId;
@@ -185,7 +186,8 @@ export function CandidateDashboard() {
       if (
         counts.jobPreference === false &&
         // counts.certifications === false ||
-        counts.employmentEligiblity === 0
+        counts.employmentEligiblity === 0 &&
+        !prefUpdated
       ) {
         loadProfileData();
       } else {
@@ -331,7 +333,13 @@ export function CandidateDashboard() {
               isRequired={true}
               isCompleteProfile={true}
               getPersonalDetails={() => {
+                setPrefUpdated(true);
                 getPersonalDetails();
+              }}
+              updateCount={() => {
+                dispatch(
+                  candidateDashboardActions.getDashboardCount({ candidateId })
+                );
               }}
             />
           </Row>

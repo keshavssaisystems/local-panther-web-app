@@ -573,6 +573,9 @@ export function JobPreferences(props) {
   };
 
   const closeModal = function () {
+    if (props?.updateCount) {
+      props?.updateCount();
+    }
     setSuccess(false);
     setError(false);
     setPersonalModal(false);
@@ -920,7 +923,7 @@ export function JobPreferences(props) {
                 </strong>
               </ModalHeader>
             ) : (
-              <ModalHeader>
+              <ModalHeader toggle={() => closeModal()}>
                 <strong className="card-title-text">
                   {props?.isCompleteProfile
                     ? "Complete your profile"
