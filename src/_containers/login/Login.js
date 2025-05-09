@@ -329,7 +329,7 @@ export function Login() {
                               <span className="required-icon">*</span>
                             </Label>
                             <input
-                              type="email"
+                              type="text"
                               name="email"
                               id="email"
                               placeholder="Enter email or phone"
