@@ -926,653 +926,666 @@ export function JobPreferences(props) {
                     ? "Complete your profile"
                     : "Add Job preferences"}
                 </strong>
+                {props?.isCompleteProfile && (
+                  <div className="mt-1" style={{ fontSize: "12px" }}>
+                    <i>
+                      To recommend the most relevant opportunities, we need a
+                      few essential details.
+                    </i>
+                  </div>
+                )}
               </ModalHeader>
             )}
 
             <ModalBody>
               {preferenceDetails?.map((parentItem, index) => (
                 <Form onSubmit={(e) => onSubmit(e)}>
-                  {props?.isRequired && props?.isCompleteProfile ? (
-                    <>
-                      <Row>
-                        <div className="mb-1">
-                          To recommend the most relevant opportunities, we need
-                          a few essential details.
-                        </div>
-                      </Row>
-                      <Row>
-                        <Label check className="fw-semi-bold">
-                          Employment Eligibility
-                          <span style={{ color: "red" }}> *</span>
-                        </Label>
-                      </Row>
-                      <Row>
-                        <Col md={6}>
-                          <FormGroup check>
-                            <Input
-                              name="no_employmenyeligibility"
-                              id="no_employmenyeligibility"
-                              onChange={(evt) =>
-                                onHandleInputChange(
-                                  "employmenteligibility",
-                                  !parentItem.employmenteligibility
-                                )
-                              }
-                              type="radio"
-                              checked={!parentItem.employmenteligibility}
-                            />{" "}
-                            <Label check className="fw-semi-bold">
-                              Authorized to work in the US
-                            </Label>
-                          </FormGroup>
-                        </Col>
-
-                        <Col md={6}>
-                          <FormGroup check>
-                            <Input
-                              name="employmenteligibility"
-                              id="employmenteligibility"
-                              onChange={(evt) =>
-                                onHandleInputChange(
-                                  "employmenteligibility",
-                                  !parentItem.employmenteligibility
-                                )
-                              }
-                              type="radio"
-                              checked={parentItem.employmenteligibility}
-                            />{" "}
-                            <Label check className="fw-semi-bold">
-                              Sponsorship Required
-                            </Label>
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col md={4}>
-                          <FormGroup>
-                            <Label for="city" className="fw-semi-bold">
-                              City, State
-                              <span className="required-icon"> *</span>
-                            </Label>
-                            <AsyncSelect
-                              name="location"
-                              placeholder="Search to select"
-                              loadOptions={loadOptionsDebCP}
-                              cacheOptions
-                              value={selectedLocationCP}
-                              onChange={(evt) =>
-                                onHandleInputChange("locationCP", evt)
-                              }
-                              className={`placeholder-name ${
-                                save && selectedLocationCP.length === 0
-                                  ? "async-border-red"
-                                  : ""
-                              }`}
-                            />
-
-                            <div className="async-error-text">
-                              {save && selectedLocationCP.length === 0
-                                ? "Location is required"
-                                : ""}
-                            </div>
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <div
-                          className="ps-2 pe-2 pb-2 pt-2"
-                          style={{
-                            background: "#AAD6FF80",
-                            borderRadius: "5px",
-                            borderStyle: "dotted",
-                            border: "1px blue dotted",
-                          }}
-                        >
-                          {resumeDetails?.resumepath ? (
-                            <Col>
-                              <div className="mb-2">
-                                <h5>
-                                  <b>Resume</b>
-                                </h5>
-                                <strong className="content-title">
-                                  <span className="me-2">
-                                    {resumeDetails.resumepath.replace(
-                                      /^.*[\\\/]/,
-                                      ""
-                                    )}
-                                  </span>{" "}
-                                  <div className="float-end">
-                                    <a
-                                      target="blank"
-                                      href={resumeDetails?.resumepath}
-                                      download={resumeDetails.resumepath.replace(
-                                        /^.*[\\\/]/,
-                                        ""
-                                      )}
-                                      className="me-3"
-                                    >
-                                      <BsDownload />
-                                    </a>
-                                    <BsTrash3
-                                      style={{ color: "#545cd8" }}
-                                      onClick={() => setDeleteResConfirm(true)}
-                                    />
-                                  </div>
-                                </strong>
-                                <div className="card-p-text mt-1 mb-2">
-                                  Uploaded on{" "}
-                                  {formatDate(resumeDetails?.uploadeddate)}
-                                </div>
-                              </div>
-                            </Col>
-                          ) : (
-                            <>
-                              {" "}
-                              <Col>
-                                <div className="mb-2">
-                                  You are one resume away from your dream job!
-                                </div>
-
-                                <div className="mb-2">
-                                  <Button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                    }}
-                                    color="primary"
-                                    outline
-                                  >
-                                    <Dropzone
-                                      onDrop={(e) => onDrop(e)}
-                                      onFileDialogCancel={onCancel}
-                                    >
-                                      {() => (
-                                        <div {...getRootProps()}>
-                                          <input {...getInputProps()} />
-                                          <div className="dropzone-content">
-                                            Upload Resume
-                                          </div>
-                                        </div>
-                                      )}
-                                    </Dropzone>
-                                  </Button>
-                                </div>
-                                <div className="mb-2">
-                                  <i>
-                                    Supported formats: PDF, DOC, DOCX. Max size:
-                                    5MB{" "}
-                                  </i>
-                                </div>
-                              </Col>
-                            </>
-                          )}
-                        </div>
-                      </Row>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  <Row>
-                    <div className="mb-1 fw-bold">Desired job types</div>
-                    <hr />
-                  </Row>
-                  <Row>
-                    <Col>
-                      <FormGroup>
-                        <Label className="fw-semi-bold">
-                          Job type<span style={{ color: "red" }}> *</span>
-                        </Label>
-                        {jobTypeOption?.length > 0 &&
-                          jobTypeOption?.map((options) => (
-                            <div className="form-group-custom">
-                              <Input
-                                key={options.id}
-                                type="checkbox"
-                                name={"jobType"}
-                                id={"jobType_" + options.id}
-                                value={options.id}
-                                onInput={(evt) =>
-                                  onHandleInputChange(
-                                    "jobType",
-                                    evt.target.value
-                                  )
-                                }
-                                style={{
-                                  borderColor:
-                                    save && parentItem.desiredworktypeids === ""
-                                      ? "#ff0000"
-                                      : "",
-                                }}
-                                checked={checkIdExists(
-                                  parentItem.desiredworktypeids,
-                                  options.id
-                                )}
-                              />{" "}
-                              {"  "}
-                              <Label check for={"jobType_" + options.id}>
-                                {options.name}
-                              </Label>
-                            </div>
-                          ))}
-                        <div className="filter-info-text filter-error-msg">
-                          {save && parentItem.desiredworktypeids === ""
-                            ? "Job type is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col>
-                      <FormGroup>
-                        <Label for="workSchedule" className="fw-semi-bold">
-                          Work schedules<span style={{ color: "red" }}> *</span>
-                        </Label>
-                        {workScheduleOptions?.length > 0 &&
-                          workScheduleOptions?.map((options) => (
-                            <div className="form-group-custom">
-                              <Input
-                                key={options.id}
-                                type="checkbox"
-                                name={"workSchedule"}
-                                id={"workSchedule_" + options.id}
-                                value={options.id}
-                                onInput={(evt) =>
-                                  onHandleInputChange(
-                                    "schedules",
-                                    evt.target.value
-                                  )
-                                }
-                                checked={checkIdExists(
-                                  parentItem.workschedules,
-                                  options.id
-                                )}
-                                style={{
-                                  borderColor:
-                                    save && parentItem.workschedules === ""
-                                      ? "#ff0000"
-                                      : "",
-                                }}
-                              />{" "}
-                              {"  "}
-                              <Label check for={"workSchedule_" + options.id}>
-                                {options.name}
-                              </Label>
-                            </div>
-                          ))}
-                        <div className="filter-info-text filter-error-msg">
-                          {save && parentItem.workschedules === ""
-                            ? "Work schedules is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col>
-                      <FormGroup>
-                        <Label for="shifts" className="fw-semi-bold">
-                          Shifts<span style={{ color: "red" }}> *</span>
-                        </Label>
-                        {shiftsOption?.length > 0 &&
-                          shiftsOption?.map((options) => (
-                            <div className="form-group-custom">
-                              <Input
-                                key={options.id}
-                                type="checkbox"
-                                name={"shifts"}
-                                id={"shifts_" + options.id}
-                                value={options.id}
-                                onInput={(evt) =>
-                                  onHandleInputChange(
-                                    "shifts",
-                                    evt.target.value
-                                  )
-                                }
-                                checked={checkIdExists(
-                                  parentItem.shifts,
-                                  options.id
-                                )}
-                                style={{
-                                  borderColor:
-                                    save && parentItem.shifts === ""
-                                      ? "#ff0000"
-                                      : "",
-                                }}
-                              />{" "}
-                              {"  "}
-                              <Label check for={"shifts_" + options.id}>
-                                {options.name}
-                              </Label>
-                            </div>
-                          ))}
-                        <div className="filter-info-text filter-error-msg">
-                          {save && parentItem.shifts === ""
-                            ? "Shifts is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-
-                    <Col>
-                      <FormGroup>
-                        <Label for="shifts" className="fw-semi-bold">
-                          Work Type<span style={{ color: "red" }}> *</span>
-                        </Label>
-                        {workTypeOption?.length > 0 &&
-                          workTypeOption?.map((options) => (
-                            <div className="form-group-custom">
-                              <Input
-                                key={options.id}
-                                type="checkbox"
-                                name={"shifts"}
-                                id={"shifts_" + options.id}
-                                value={options.id}
-                                onInput={(evt) =>
-                                  onHandleInputChange(
-                                    "workType",
-                                    evt.target.value
-                                  )
-                                }
-                                checked={checkIdExists(
-                                  parentItem.desiredjobtypes,
-                                  options.id
-                                )}
-                                style={{
-                                  borderColor:
-                                    save && parentItem.desiredjobtypes === ""
-                                      ? "#ff0000"
-                                      : "",
-                                }}
-                              />{" "}
-                              {"  "}
-                              <Label check for={"workType" + options.id}>
-                                {options.name}
-                              </Label>
-                            </div>
-                          ))}
-                        <div className="filter-info-text filter-error-msg">
-                          {save && parentItem.desiredjobtypes === ""
-                            ? "Work type is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <div className="mb-1 fw-bold">Desired minimum pay</div>
-                    <hr />
-                  </Row>
-                  <Row>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="zipCode" className="fw-semi-bold">
-                          Pay period type
-                          <span style={{ color: "red" }}> *</span>
-                        </Label>
-                        <AsyncSelect
-                          name="jobTitle"
-                          placeholder="Select"
-                          defaultOptions={payPeriodList}
-                          // className={mustHaveValidation ? "is-invalid" : ""}
-                          isMulti={false}
-                          value={selectedPayType}
-                          onChange={(evt) =>
-                            onHandleInputChange("payType", evt)
-                          }
-                          className={`placeholder-name ${
-                            save && parentItem.payperiodtypeid == 0
-                              ? "async-border-red"
-                              : ""
-                          }`}
-                        />
-
-                        <div className="filter-info-text filter-error-msg">
-                          {save && parentItem.payperiodtypeid == 0
-                            ? "Pay period type is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                    <Col md={4}>
-                      <FormGroup>
-                        <Label for="zipCode" className="fw-semi-bold">
-                          Minimum base pay
-                          <span style={{ color: "red" }}> *</span>
-                        </Label>
-
-                        <InputGroup>
-                          <InputGroupText>$</InputGroupText>
-                          <Input
-                            className="field-input placeholder-text form-control input-text"
-                            min={0}
-                            type="number"
-                            name="minPay"
-                            id="minPay"
-                            placeholder="Enter minimum base pay"
-                            onInput={(evt) => {
-                              onHandleInputChange("basePay", evt.target.value);
-                              setBasePayValue(evt.target.value);
-                            }}
-                            value={parentItem.minimumbasepay}
-                            style={{
-                              borderColor:
-                                save && parentItem.minimumbasepay === ""
-                                  ? "#ff0000"
-                                  : "",
-                            }}
-                            step="any"
-                          />
-                        </InputGroup>
-                        <div className="filter-info-text filter-error-msg">
-                          {save && parentItem.minimumbasepay === ""
-                            ? "Minimum base pay is required"
-                            : ""}
-                        </div>
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  {workType?.length === 1 && workType["0"] === "1" ? (
-                    <></>
-                  ) : (
-                    <>
-                      <Row>
-                        <div className="mb-1 fw-bold">Location</div>
-                        <hr />
-                      </Row>
-                      <Row>
-                        <Label check className="fw-semi-bold">
-                          Willing to Relocate
-                          <span style={{ color: "red" }}> *</span>
-                        </Label>
-                      </Row>
-                      <div>
-                        <Row className="mt-2 mb-2">
-                          <Col md={4}>
+                  <Row style={{ overflow: "auto", maxHeight: "75vh" }}>
+                    {props?.isRequired && props?.isCompleteProfile ? (
+                      <>
+                        <Row>
+                          <Label check className="fw-semi-bold">
+                            Employment Eligibility
+                            <span style={{ color: "red" }}> *</span>
+                          </Label>
+                        </Row>
+                        <Row>
+                          <Col md={6}>
                             <FormGroup check>
                               <Input
-                                name="no_relocate"
-                                id="no_relocate"
+                                name="no_employmenyeligibility"
+                                id="no_employmenyeligibility"
                                 onChange={(evt) =>
                                   onHandleInputChange(
-                                    "relocate",
-                                    !parentItem.willingtorelocate
+                                    "employmenteligibility",
+                                    !parentItem.employmenteligibility
                                   )
                                 }
                                 type="radio"
-                                checked={!parentItem.willingtorelocate}
+                                checked={!parentItem.employmenteligibility}
                               />{" "}
                               <Label check className="fw-semi-bold">
-                                No
+                                Authorized to work in the US
                               </Label>
                             </FormGroup>
                           </Col>
 
-                          <Col md={4}>
+                          <Col md={6}>
                             <FormGroup check>
                               <Input
-                                name="relocate"
-                                id="relocate"
+                                name="employmenteligibility"
+                                id="employmenteligibility"
                                 onChange={(evt) =>
                                   onHandleInputChange(
-                                    "relocate",
-                                    !parentItem.willingtorelocate
+                                    "employmenteligibility",
+                                    !parentItem.employmenteligibility
                                   )
                                 }
                                 type="radio"
-                                checked={parentItem.willingtorelocate}
+                                checked={parentItem.employmenteligibility}
                               />{" "}
                               <Label check className="fw-semi-bold">
-                                Yes
+                                Sponsorship Required
                               </Label>
                             </FormGroup>
                           </Col>
                         </Row>
-                      </div>
-                      {parentItem.willingtorelocate ? (
-                        <div>
-                          <Row>
-                            <Col md={4}>
-                              <FormGroup check>
+                        <Row>
+                          <Col md={4}>
+                            <FormGroup>
+                              <Label for="city" className="fw-semi-bold">
+                                City, State
+                                <span className="required-icon"> *</span>
+                              </Label>
+                              <AsyncSelect
+                                name="location"
+                                placeholder="Search to select"
+                                loadOptions={loadOptionsDebCP}
+                                cacheOptions
+                                value={selectedLocationCP}
+                                onChange={(evt) =>
+                                  onHandleInputChange("locationCP", evt)
+                                }
+                                className={`placeholder-name ${
+                                  save && selectedLocationCP.length === 0
+                                    ? "async-border-red"
+                                    : ""
+                                }`}
+                              />
+
+                              <div className="async-error-text">
+                                {save && selectedLocationCP.length === 0
+                                  ? "Location is required"
+                                  : ""}
+                              </div>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <div
+                            className="ps-2 pe-2 pb-2 pt-2"
+                            style={{
+                              background: "#AAD6FF80",
+                              borderRadius: "5px",
+                              borderStyle: "dotted",
+                              border: "1px blue dotted",
+                            }}
+                          >
+                            {resumeDetails?.resumepath ? (
+                              <Col>
+                                <div className="mb-2">
+                                  <h5>
+                                    <b>Resume</b>
+                                  </h5>
+                                  <strong className="content-title">
+                                    <span className="me-2">
+                                      {resumeDetails.resumepath.replace(
+                                        /^.*[\\\/]/,
+                                        ""
+                                      )}
+                                    </span>{" "}
+                                    <div className="float-end">
+                                      <a
+                                        target="blank"
+                                        href={resumeDetails?.resumepath}
+                                        download={resumeDetails.resumepath.replace(
+                                          /^.*[\\\/]/,
+                                          ""
+                                        )}
+                                        className="me-3"
+                                      >
+                                        <BsDownload />
+                                      </a>
+                                      <BsTrash3
+                                        style={{ color: "#545cd8" }}
+                                        onClick={() =>
+                                          setDeleteResConfirm(true)
+                                        }
+                                      />
+                                    </div>
+                                  </strong>
+                                  <div className="card-p-text mt-1 mb-2">
+                                    Uploaded on{" "}
+                                    {formatDate(resumeDetails?.uploadeddate)}
+                                  </div>
+                                </div>
+                              </Col>
+                            ) : (
+                              <>
+                                {" "}
+                                <Col>
+                                  <div className="mb-2">
+                                    You are one resume away from your dream job!
+                                  </div>
+
+                                  <div className="mb-2">
+                                    <Button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                      }}
+                                      color="primary"
+                                      outline
+                                    >
+                                      <Dropzone
+                                        onDrop={(e) => onDrop(e)}
+                                        onFileDialogCancel={onCancel}
+                                      >
+                                        {() => (
+                                          <div {...getRootProps()}>
+                                            <input {...getInputProps()} />
+                                            <div className="dropzone-content">
+                                              Upload Resume
+                                            </div>
+                                          </div>
+                                        )}
+                                      </Dropzone>
+                                    </Button>
+                                  </div>
+                                  <div className="mb-2">
+                                    <i>
+                                      Supported formats: PDF, DOC, DOCX. Max
+                                      size: 5MB{" "}
+                                    </i>
+                                  </div>
+                                </Col>
+                              </>
+                            )}
+                          </div>
+                        </Row>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                    <Row>
+                      <div className="mb-1 fw-bold">Desired job types</div>
+                      <hr />
+                    </Row>
+                    <Row>
+                      <Col>
+                        <FormGroup>
+                          <Label className="fw-semi-bold">
+                            Job type<span style={{ color: "red" }}> *</span>
+                          </Label>
+                          {jobTypeOption?.length > 0 &&
+                            jobTypeOption?.map((options) => (
+                              <div className="form-group-custom">
                                 <Input
-                                  name="anyWhere"
-                                  type="radio"
-                                  onChange={(evt) =>
+                                  key={options.id}
+                                  type="checkbox"
+                                  name={"jobType"}
+                                  id={"jobType_" + options.id}
+                                  value={options.id}
+                                  onInput={(evt) =>
                                     onHandleInputChange(
-                                      "anyWhere",
+                                      "jobType",
                                       evt.target.value
                                     )
                                   }
-                                  checked={parentItem.anywhereonlynear == 1}
                                   style={{
                                     borderColor:
-                                      save && parentItem.anywhereonlynear === 0
+                                      save &&
+                                      parentItem.desiredworktypeids === ""
+                                        ? "#ff0000"
+                                        : "",
+                                  }}
+                                  checked={checkIdExists(
+                                    parentItem.desiredworktypeids,
+                                    options.id
+                                  )}
+                                />{" "}
+                                {"  "}
+                                <Label check for={"jobType_" + options.id}>
+                                  {options.name}
+                                </Label>
+                              </div>
+                            ))}
+                          <div className="filter-info-text filter-error-msg">
+                            {save && parentItem.desiredworktypeids === ""
+                              ? "Job type is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      <Col>
+                        <FormGroup>
+                          <Label for="workSchedule" className="fw-semi-bold">
+                            Work schedules
+                            <span style={{ color: "red" }}> *</span>
+                          </Label>
+                          {workScheduleOptions?.length > 0 &&
+                            workScheduleOptions?.map((options) => (
+                              <div className="form-group-custom">
+                                <Input
+                                  key={options.id}
+                                  type="checkbox"
+                                  name={"workSchedule"}
+                                  id={"workSchedule_" + options.id}
+                                  value={options.id}
+                                  onInput={(evt) =>
+                                    onHandleInputChange(
+                                      "schedules",
+                                      evt.target.value
+                                    )
+                                  }
+                                  checked={checkIdExists(
+                                    parentItem.workschedules,
+                                    options.id
+                                  )}
+                                  style={{
+                                    borderColor:
+                                      save && parentItem.workschedules === ""
                                         ? "#ff0000"
                                         : "",
                                   }}
                                 />{" "}
-                                <Label check className="fw-semi-bold">
-                                  Anywhere
+                                {"  "}
+                                <Label check for={"workSchedule_" + options.id}>
+                                  {options.name}
                                 </Label>
-                                <div className="filter-info-text filter-error-msg">
-                                  {save && parentItem.anywhereonlynear === 0
-                                    ? "Relocate is required"
-                                    : ""}
-                                </div>
+                              </div>
+                            ))}
+                          <div className="filter-info-text filter-error-msg">
+                            {save && parentItem.workschedules === ""
+                              ? "Work schedules is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      <Col>
+                        <FormGroup>
+                          <Label for="shifts" className="fw-semi-bold">
+                            Shifts<span style={{ color: "red" }}> *</span>
+                          </Label>
+                          {shiftsOption?.length > 0 &&
+                            shiftsOption?.map((options) => (
+                              <div className="form-group-custom">
+                                <Input
+                                  key={options.id}
+                                  type="checkbox"
+                                  name={"shifts"}
+                                  id={"shifts_" + options.id}
+                                  value={options.id}
+                                  onInput={(evt) =>
+                                    onHandleInputChange(
+                                      "shifts",
+                                      evt.target.value
+                                    )
+                                  }
+                                  checked={checkIdExists(
+                                    parentItem.shifts,
+                                    options.id
+                                  )}
+                                  style={{
+                                    borderColor:
+                                      save && parentItem.shifts === ""
+                                        ? "#ff0000"
+                                        : "",
+                                  }}
+                                />{" "}
+                                {"  "}
+                                <Label check for={"shifts_" + options.id}>
+                                  {options.name}
+                                </Label>
+                              </div>
+                            ))}
+                          <div className="filter-info-text filter-error-msg">
+                            {save && parentItem.shifts === ""
+                              ? "Shifts is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+
+                      <Col>
+                        <FormGroup>
+                          <Label for="shifts" className="fw-semi-bold">
+                            Work Type<span style={{ color: "red" }}> *</span>
+                          </Label>
+                          {workTypeOption?.length > 0 &&
+                            workTypeOption?.map((options) => (
+                              <div className="form-group-custom">
+                                <Input
+                                  key={options.id}
+                                  type="checkbox"
+                                  name={"shifts"}
+                                  id={"shifts_" + options.id}
+                                  value={options.id}
+                                  onInput={(evt) =>
+                                    onHandleInputChange(
+                                      "workType",
+                                      evt.target.value
+                                    )
+                                  }
+                                  checked={checkIdExists(
+                                    parentItem.desiredjobtypes,
+                                    options.id
+                                  )}
+                                  style={{
+                                    borderColor:
+                                      save && parentItem.desiredjobtypes === ""
+                                        ? "#ff0000"
+                                        : "",
+                                  }}
+                                />{" "}
+                                {"  "}
+                                <Label check for={"workType" + options.id}>
+                                  {options.name}
+                                </Label>
+                              </div>
+                            ))}
+                          <div className="filter-info-text filter-error-msg">
+                            {save && parentItem.desiredjobtypes === ""
+                              ? "Work type is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <div className="mb-1 fw-bold">Desired minimum pay</div>
+                      <hr />
+                    </Row>
+                    <Row>
+                      <Col md={4}>
+                        <FormGroup>
+                          <Label for="zipCode" className="fw-semi-bold">
+                            Pay period type
+                            <span style={{ color: "red" }}> *</span>
+                          </Label>
+                          <AsyncSelect
+                            name="jobTitle"
+                            placeholder="Select"
+                            defaultOptions={payPeriodList}
+                            // className={mustHaveValidation ? "is-invalid" : ""}
+                            isMulti={false}
+                            value={selectedPayType}
+                            onChange={(evt) =>
+                              onHandleInputChange("payType", evt)
+                            }
+                            className={`placeholder-name ${
+                              save && parentItem.payperiodtypeid == 0
+                                ? "async-border-red"
+                                : ""
+                            }`}
+                          />
+
+                          <div className="filter-info-text filter-error-msg">
+                            {save && parentItem.payperiodtypeid == 0
+                              ? "Pay period type is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      <Col md={4}>
+                        <FormGroup>
+                          <Label for="zipCode" className="fw-semi-bold">
+                            Minimum base pay
+                            <span style={{ color: "red" }}> *</span>
+                          </Label>
+
+                          <InputGroup>
+                            <InputGroupText>$</InputGroupText>
+                            <Input
+                              className="field-input placeholder-text form-control input-text"
+                              min={0}
+                              type="number"
+                              name="minPay"
+                              id="minPay"
+                              placeholder="Enter minimum base pay"
+                              onInput={(evt) => {
+                                onHandleInputChange(
+                                  "basePay",
+                                  evt.target.value
+                                );
+                                setBasePayValue(evt.target.value);
+                              }}
+                              value={parentItem.minimumbasepay}
+                              style={{
+                                borderColor:
+                                  save && parentItem.minimumbasepay === ""
+                                    ? "#ff0000"
+                                    : "",
+                              }}
+                              step="any"
+                            />
+                          </InputGroup>
+                          <div className="filter-info-text filter-error-msg">
+                            {save && parentItem.minimumbasepay === ""
+                              ? "Minimum base pay is required"
+                              : ""}
+                          </div>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    {workType?.length === 1 && workType["0"] === "1" ? (
+                      <></>
+                    ) : (
+                      <>
+                        <Row>
+                          <div className="mb-1 fw-bold">Location</div>
+                          <hr />
+                        </Row>
+                        <Row>
+                          <Label check className="fw-semi-bold">
+                            Willing to Relocate
+                            <span style={{ color: "red" }}> *</span>
+                          </Label>
+                        </Row>
+                        <div>
+                          <Row className="mt-2 mb-2">
+                            <Col md={4}>
+                              <FormGroup check>
+                                <Input
+                                  name="no_relocate"
+                                  id="no_relocate"
+                                  onChange={(evt) =>
+                                    onHandleInputChange(
+                                      "relocate",
+                                      !parentItem.willingtorelocate
+                                    )
+                                  }
+                                  type="radio"
+                                  checked={!parentItem.willingtorelocate}
+                                />{" "}
+                                <Label check className="fw-semi-bold">
+                                  No
+                                </Label>
                               </FormGroup>
                             </Col>
 
                             <Col md={4}>
                               <FormGroup check>
                                 <Input
-                                  name="onlyNear"
-                                  type="radio"
+                                  name="relocate"
+                                  id="relocate"
                                   onChange={(evt) =>
                                     onHandleInputChange(
-                                      "near",
-                                      evt.target.value
+                                      "relocate",
+                                      !parentItem.willingtorelocate
                                     )
                                   }
-                                  checked={parentItem.anywhereonlynear == 2}
-                                  style={{
-                                    borderColor:
-                                      save && parentItem.anywhereonlynear === 0
-                                        ? "#ff0000"
-                                        : "",
-                                  }}
+                                  type="radio"
+                                  checked={parentItem.willingtorelocate}
                                 />{" "}
                                 <Label check className="fw-semi-bold">
-                                  Only near
+                                  Yes
                                 </Label>
-                                <div className="filter-info-text filter-error-msg">
-                                  {save && parentItem.anywhereonlynear === 0
-                                    ? "Relocate is required"
-                                    : ""}
-                                </div>
                               </FormGroup>
                             </Col>
                           </Row>
-                          {parentItem.anywhereonlynear == 2 && (
-                            <Row className="mt-2">
+                        </div>
+                        {parentItem.willingtorelocate ? (
+                          <div>
+                            <Row>
                               <Col md={4}>
-                                <FormGroup>
-                                  <Label for="city" className="fw-semi-bold">
-                                    City, State
-                                    <span className="required-icon"> *</span>
-                                  </Label>
-                                  <AsyncSelect
-                                    name="location"
-                                    placeholder="Search to select"
-                                    loadOptions={loadOptionsDeb}
-                                    cacheOptions
-                                    isMulti={true}
-                                    value={selectedLocation}
+                                <FormGroup check>
+                                  <Input
+                                    name="anyWhere"
+                                    type="radio"
                                     onChange={(evt) =>
-                                      onHandleInputChange("location", evt)
+                                      onHandleInputChange(
+                                        "anyWhere",
+                                        evt.target.value
+                                      )
                                     }
-                                    className={`placeholder-name ${
-                                      save && selectedLocation.length === 0
-                                        ? "async-border-red"
-                                        : ""
-                                    }`}
-                                  />
+                                    checked={parentItem.anywhereonlynear == 1}
+                                    style={{
+                                      borderColor:
+                                        save &&
+                                        parentItem.anywhereonlynear === 0
+                                          ? "#ff0000"
+                                          : "",
+                                    }}
+                                  />{" "}
+                                  <Label check className="fw-semi-bold">
+                                    Anywhere
+                                  </Label>
+                                  <div className="filter-info-text filter-error-msg">
+                                    {save && parentItem.anywhereonlynear === 0
+                                      ? "Relocate is required"
+                                      : ""}
+                                  </div>
+                                </FormGroup>
+                              </Col>
 
-                                  <div className="async-error-text">
-                                    {save && selectedLocation.length === 0
-                                      ? "Location is required"
+                              <Col md={4}>
+                                <FormGroup check>
+                                  <Input
+                                    name="onlyNear"
+                                    type="radio"
+                                    onChange={(evt) =>
+                                      onHandleInputChange(
+                                        "near",
+                                        evt.target.value
+                                      )
+                                    }
+                                    checked={parentItem.anywhereonlynear == 2}
+                                    style={{
+                                      borderColor:
+                                        save &&
+                                        parentItem.anywhereonlynear === 0
+                                          ? "#ff0000"
+                                          : "",
+                                    }}
+                                  />{" "}
+                                  <Label check className="fw-semi-bold">
+                                    Only near
+                                  </Label>
+                                  <div className="filter-info-text filter-error-msg">
+                                    {save && parentItem.anywhereonlynear === 0
+                                      ? "Relocate is required"
                                       : ""}
                                   </div>
                                 </FormGroup>
                               </Col>
                             </Row>
-                          )}
-                        </div>
-                      ) : (
-                        <></>
-                      )}
+                            {parentItem.anywhereonlynear == 2 && (
+                              <Row className="mt-2">
+                                <Col md={4}>
+                                  <FormGroup>
+                                    <Label for="city" className="fw-semi-bold">
+                                      City, State
+                                      <span className="required-icon"> *</span>
+                                    </Label>
+                                    <AsyncSelect
+                                      name="location"
+                                      placeholder="Search to select"
+                                      loadOptions={loadOptionsDeb}
+                                      cacheOptions
+                                      isMulti={true}
+                                      value={selectedLocation}
+                                      onChange={(evt) =>
+                                        onHandleInputChange("location", evt)
+                                      }
+                                      className={`placeholder-name ${
+                                        save && selectedLocation.length === 0
+                                          ? "async-border-red"
+                                          : ""
+                                      }`}
+                                    />
 
-                      {showDistance && (
-                        <div>
-                          <Row>
-                            <div className="mb-1 fw-bold mt-2">
-                              Choose your preferred distance
-                            </div>
-                            <hr />
-                          </Row>
+                                    <div className="async-error-text">
+                                      {save && selectedLocation.length === 0
+                                        ? "Location is required"
+                                        : ""}
+                                    </div>
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                            )}
+                          </div>
+                        ) : (
+                          <></>
+                        )}
 
-                          <Row>
-                            <Col md={4}>
-                              <FormGroup>
-                                <Label for="zipCode" className="fw-semi-bold">
-                                  Distance
-                                  <span style={{ color: "red" }}> *</span>
-                                </Label>
-                                <AsyncSelect
-                                  name="distance"
-                                  placeholder="Select"
-                                  defaultOptions={distanceList}
-                                  isMulti={false}
-                                  value={
-                                    distanceSelect?.length > 0
-                                      ? distanceSelect
-                                      : ""
-                                  }
-                                  onChange={(evt) =>
-                                    onHandleInputChange("distance", evt)
-                                  }
-                                  className={`placeholder-name ${
-                                    save && distanceSelect.length === 0
-                                      ? "async-border-red"
-                                      : ""
-                                  }`}
-                                />
-                                <div className="filter-info-text filter-error-msg">
-                                  {save && distanceSelect.length === 0
-                                    ? "Distance is required"
-                                    : ""}
-                                </div>
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        </div>
-                      )}
-                    </>
-                  )}
+                        {showDistance && (
+                          <div>
+                            <Row>
+                              <div className="mb-1 fw-bold mt-2">
+                                Choose your preferred distance
+                              </div>
+                              <hr />
+                            </Row>
+
+                            <Row>
+                              <Col md={4}>
+                                <FormGroup>
+                                  <Label for="zipCode" className="fw-semi-bold">
+                                    Distance
+                                    <span style={{ color: "red" }}> *</span>
+                                  </Label>
+                                  <AsyncSelect
+                                    name="distance"
+                                    placeholder="Select"
+                                    defaultOptions={distanceList}
+                                    isMulti={false}
+                                    value={
+                                      distanceSelect?.length > 0
+                                        ? distanceSelect
+                                        : ""
+                                    }
+                                    onChange={(evt) =>
+                                      onHandleInputChange("distance", evt)
+                                    }
+                                    className={`placeholder-name ${
+                                      save && distanceSelect.length === 0
+                                        ? "async-border-red"
+                                        : ""
+                                    }`}
+                                  />
+                                  <div className="filter-info-text filter-error-msg">
+                                    {save && distanceSelect.length === 0
+                                      ? "Distance is required"
+                                      : ""}
+                                  </div>
+                                </FormGroup>
+                              </Col>
+                            </Row>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </Row>
                   <div className="float-end">
                     <Button className="me-2 save-btn" type="submit">
                       Save
