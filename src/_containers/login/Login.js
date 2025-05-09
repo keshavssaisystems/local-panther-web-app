@@ -173,12 +173,32 @@ export function Login() {
       };
     }
 
+    if (!isModal) {
+      const permission = await Notification.requestPermission();
+      let data = await getPublicIP();
+      if (data?.ip) {
+        localStorage.setItem("publicip", data.ip);
+      }
+      if (permission === "granted") {
+        // Generate Token
+        const token = await messaging.getToken({
+          vapidKey:
+            "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+        });
+        payload.firebasetoken = token;
+      } else if (permission === "denied") {
+        console.log("You denied for the notification");
+      }
+    }
     let response = await dispatch(authActions.loginWithOTP(payload));
     if (response.payload) {
-      showSweetAlert({
-        title: response.payload.message,
-        type: "success",
-      });
+      if (isModal) {
+        showSweetAlert({
+          title: response.payload.message,
+          type: "success",
+        });
+      }
+
       if (!isModal) {
         setShowEPModal(true);
       }
@@ -323,7 +343,7 @@ export function Login() {
                             <div className="invalid-feedback">
                               {errors.email?.message}
                             </div>
-                            <div className="mt-1" style={{ textAlign: "end" }}>
+                            <div className="mt-2" style={{ textAlign: "end" }}>
                               <Button
                                 style={{ fontSize: "10px" }}
                                 color="primary"
@@ -363,22 +383,32 @@ export function Login() {
                                 {errors.password?.message}
                               </div>
                             </InputGroup>
-                            <div className="mt-5 mb-3 float-end">
+                            <div className="mt-2" style={{ textAlign: "end" }}>
                               <Link
+                                to="/forgot-password"
+                                className="text-primary forgot-pwd-text"
+                              >
+                                Forgot Password?
+                              </Link>
+                            </div>
+                            <div className="mt-5 mb-3 float-end">
+                              {/* <Link
                                 to="/registration"
                                 className="text-primary forgot-pwd-text"
                               >
                                 Not a member yet?
-                              </Link>
-                              {/* <Button
+                              </Link> */}
+                              <Button
                                 color="primary"
-                                className="btn-text me-2"
+                                className="btn-text me-1"
                                 size="lg"
                                 tag={Link}
                                 to="/registration"
                               >
-                                <span className="btn-text">Register</span>
-                              </Button> */}
+                                <span className="btn-text">
+                                  Not a member yet?
+                                </span>
+                              </Button>
                               <Button
                                 disabled={isSubmitting}
                                 color="primary"
@@ -390,12 +420,7 @@ export function Login() {
                                 )}
                                 <span className="btn-text">Sign in</span>
                               </Button>
-                              <Link
-                                to="/forgot-password"
-                                className="text-primary forgot-pwd-text"
-                              >
-                                Forgot Password?
-                              </Link>
+
                               <div></div>
                             </div>
                           </FormGroup>

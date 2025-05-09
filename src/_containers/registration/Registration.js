@@ -14,7 +14,8 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
 import footerImg from "../../assets/utils/images/panther-logo.png";
-
+import { messaging } from "../../firebase";
+import { getPublicIP } from "_helpers/helper";
 import "../static/terms.scss";
 
 import {
@@ -155,7 +156,7 @@ export function Registration() {
   const [cityList, setCityList] = useState([]);
   //new reg flow
   async function onSubmit1(payload) {
-    validateOTP("phone");
+    validateOTP("phone", payload?.firstName ? false : true);
   }
 
   async function onSubmit(payload) {
@@ -193,7 +194,7 @@ export function Registration() {
   });
   const [otpDetails, setOTPDetails] = useState([]);
 
-  const validateOTP = async function (check) {
+  const validateOTP = async function (check, showPopup = false) {
     let data;
     if (check === "phone") {
       data = getValues("phoneNumber").replace(/\D/g, "");
@@ -249,10 +250,13 @@ export function Registration() {
       }
 
       if (response?.payload) {
-        showSweetAlert({
-          title: response.payload.message,
-          type: "success",
-        });
+        if (showPopup) {
+          showSweetAlert({
+            title: response.payload.message,
+            type: "success",
+          });
+        }
+
         setOTPDetails(response.payload.data);
         setOtpForm(true);
       } else {
@@ -325,6 +329,21 @@ export function Registration() {
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       stateid: null,
     };
+    const permission = await Notification.requestPermission();
+    let data = await getPublicIP();
+    if (data?.ip) {
+      localStorage.setItem("publicip", data.ip);
+    }
+    if (permission === "granted") {
+      // Generate Token
+      const token = await messaging.getToken({
+        vapidKey:
+          "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+      });
+      payload.firebasetoken = token;
+    } else if (permission === "denied") {
+      console.log("You denied for the notification");
+    }
     let response = await dispatch(authActions.candRegisterOTPThunk(payload));
     if (response.payload) {
       showSweetAlert({
@@ -1161,7 +1180,7 @@ export function Registration() {
                     <button
                       href="#"
                       onClick={() => {
-                        onSubmit1();
+                        onSubmit1(true);
                       }}
                       className="btn-lg btn btn-link otp-link-label"
                     >

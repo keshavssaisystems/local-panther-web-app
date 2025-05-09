@@ -51,6 +51,7 @@ export function CandidateDashboard() {
 
   useEffect(() => {
     loadPage();
+    loadProfileData();
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "dashboard",
@@ -244,32 +245,34 @@ export function CandidateDashboard() {
         </SweetAlert>
       </>
 
-      {// counts.skills === false ||
-      // counts.qualifications === false ||
-      // counts.education === false ||
-      // counts.certifications === false ||
-      (counts.employmentEligiblity === 0 || counts.jobPreference === false) && (
-        <div className="profile-prompt">
-          <SweetAlert
-            custom
-            show={showProfilePrompt}
-            onConfirm={() => {
-              setShowProfilePrompt(false);
-              loadProfileData();
-              // navigate("/profile");
-            }}
-            onCancel={() => {
-              setShowProfilePrompt(false);
-            }}
-            cancelBtnText={"Remind me later"}
-            confirmBtnText="Update"
-            showCancel
-            customIcon={infoIcon}
-          >
-            <p className="candidate-profile-prompt">
-              “Enhance your experience and find the best job matches by updating
-              your{" "}
-              {/* {counts.skills === false && (
+      {
+        // counts.skills === false ||
+        // counts.qualifications === false ||
+        // counts.education === false ||
+        // counts.certifications === false ||
+        (counts.employmentEligiblity === 0 ||
+          counts.jobPreference === false) && (
+          <div className="profile-prompt">
+            <SweetAlert
+              custom
+              show={showProfilePrompt}
+              onConfirm={() => {
+                setShowProfilePrompt(false);
+                loadProfileData();
+                // navigate("/profile");
+              }}
+              onCancel={() => {
+                setShowProfilePrompt(false);
+              }}
+              cancelBtnText={"Remind me later"}
+              confirmBtnText="Update"
+              showCancel
+              customIcon={infoIcon}
+            >
+              <p className="candidate-profile-prompt">
+                “Enhance your experience and find the best job matches by
+                updating your{" "}
+                {/* {counts.skills === false && (
                 <span className="candidate-profile-prompt-bold">Skills,</span>
               )}
               {counts.qualifications === false && (
@@ -284,42 +287,43 @@ export function CandidateDashboard() {
                   Education details,
                 </span>
               )} */}
-              {/* {counts.certifications === false && (
+                {/* {counts.certifications === false && (
                 <span className="candidate-profile-prompt-bold">
                   {" "}
                   Certifications,
                 </span>
               )} */}
-              {/* {counts.employmentEligiblity === false ||
+                {/* {counts.employmentEligiblity === false ||
                 (counts.employmentEligiblity === 0 && (
                   <span className="candidate-profile-prompt-bold">
                     {" "}
                     Employment eligibility,
                   </span>
                 ))} */}
-              {counts.jobPreference === false && (
-                <span className="candidate-profile-prompt-bold">
-                  {" "}
-                  Employment eligibility, Job preferences,
-                </span>
-              )}{" "}
-              to your profile.”
-            </p>
-          </SweetAlert>
-          {showJobPreferModal && (
-            <Row>
-              <JobPreferences
-                onCallBack={() => closeJobPreferModal()}
-                isRequired={true}
-                isCompleteProfile={true}
-                getPersonalDetails={() => {
-                  getPersonalDetails();
-                }}
-              />
-            </Row>
-          )}
-        </div>
-      )}
+                {counts.jobPreference === false && (
+                  <span className="candidate-profile-prompt-bold">
+                    {" "}
+                    Employment eligibility, Job preferences,
+                  </span>
+                )}{" "}
+                to your profile.”
+              </p>
+            </SweetAlert>
+            {showJobPreferModal && (
+              <Row>
+                <JobPreferences
+                  onCallBack={() => closeJobPreferModal()}
+                  isRequired={true}
+                  isCompleteProfile={true}
+                  getPersonalDetails={() => {
+                    getPersonalDetails();
+                  }}
+                />
+              </Row>
+            )}
+          </div>
+        )
+      }
     </>
   );
 }
