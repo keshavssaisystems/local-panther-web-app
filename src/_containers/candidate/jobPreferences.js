@@ -573,6 +573,9 @@ export function JobPreferences(props) {
   };
 
   const closeModal = function () {
+    if (props?.updateCount) {
+      props?.updateCount();
+    }
     setSuccess(false);
     setError(false);
     setPersonalModal(false);
