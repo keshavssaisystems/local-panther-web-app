@@ -923,7 +923,7 @@ export function JobPreferences(props) {
                 </strong>
               </ModalHeader>
             ) : (
-              <ModalHeader toggle={() => closeModal()}>
+              <ModalHeader>
                 <strong className="card-title-text">
                   {props?.isCompleteProfile
                     ? "Complete your profile"
