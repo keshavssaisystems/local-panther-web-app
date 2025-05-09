@@ -51,7 +51,6 @@ export function CandidateDashboard() {
 
   useEffect(() => {
     loadPage();
-    loadProfileData();
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "dashboard",
@@ -81,9 +80,9 @@ export function CandidateDashboard() {
   };
 
   const loadProfileData = async () => {
+    setShowJobPreferModal(true);
     await getPersonalDetails();
     await getDropdownLists();
-    setShowJobPreferModal(true);
   };
 
   const getPersonalDetails = async function () {
@@ -176,14 +175,22 @@ export function CandidateDashboard() {
   );
   useEffect(() => {
     if (
-      // counts.skills === false ||
-      // counts.qualifications === false ||
-      // counts.education === false ||
+      counts.skills === false ||
+      counts.qualifications === false ||
+      counts.education === false ||
       counts.jobPreference === false ||
       // counts.certifications === false ||
       counts.employmentEligiblity === 0
     ) {
-      setShowProfilePrompt(true);
+      if (
+        counts.jobPreference === false &&
+        // counts.certifications === false ||
+        counts.employmentEligiblity === 0
+      ) {
+        loadProfileData();
+      } else {
+        setShowProfilePrompt(true);
+      }
     }
   }, [counts]);
 
@@ -244,86 +251,92 @@ export function CandidateDashboard() {
           {confAlert.description}
         </SweetAlert>
       </>
-
-      {
-        // counts.skills === false ||
-        // counts.qualifications === false ||
-        // counts.education === false ||
-        // counts.certifications === false ||
-        (counts.employmentEligiblity === 0 ||
-          counts.jobPreference === false) && (
-          <div className="profile-prompt">
-            <SweetAlert
-              custom
-              show={showProfilePrompt}
-              onConfirm={() => {
-                setShowProfilePrompt(false);
-                loadProfileData();
-                // navigate("/profile");
-              }}
-              onCancel={() => {
-                setShowProfilePrompt(false);
-              }}
-              cancelBtnText={"Remind me later"}
-              confirmBtnText="Update"
-              showCancel
-              customIcon={infoIcon}
-            >
-              <p className="candidate-profile-prompt">
-                “Enhance your experience and find the best job matches by
-                updating your{" "}
-                {/* {counts.skills === false && (
-                <span className="candidate-profile-prompt-bold">Skills,</span>
-              )}
-              {counts.qualifications === false && (
-                <span className="candidate-profile-prompt-bold">
-                  {" "}
-                  Qualification details,
-                </span>
-              )}
-              {counts.education === false && (
-                <span className="candidate-profile-prompt-bold">
-                  {" "}
-                  Education details,
-                </span>
-              )} */}
-                {/* {counts.certifications === false && (
+      <>
+        {
+          // counts.certifications === false ||
+          (counts.skills === false ||
+            counts.qualifications === false ||
+            counts.education === false ||
+            counts.employmentEligiblity === 0 ||
+            counts.jobPreference === false) && (
+            <div className="profile-prompt">
+              <SweetAlert
+                custom
+                show={showProfilePrompt}
+                onConfirm={() => {
+                  setShowProfilePrompt(false);
+                  // loadProfileData();
+                  navigate("/profile");
+                }}
+                onCancel={() => {
+                  setShowProfilePrompt(false);
+                }}
+                cancelBtnText={"Remind me later"}
+                confirmBtnText="Update"
+                showCancel
+                customIcon={infoIcon}
+              >
+                <p className="candidate-profile-prompt">
+                  “Enhance your experience and find the best job matches by
+                  updating your{" "}
+                  {counts.skills === false && (
+                    <span className="candidate-profile-prompt-bold">
+                      Skills,
+                    </span>
+                  )}
+                  {counts.qualifications === false && (
+                    <span className="candidate-profile-prompt-bold">
+                      {" "}
+                      Qualification details,
+                    </span>
+                  )}
+                  {counts.education === false && (
+                    <span className="candidate-profile-prompt-bold">
+                      {" "}
+                      Education details,
+                    </span>
+                  )}
+                  {/* {counts.certifications === false && (
                 <span className="candidate-profile-prompt-bold">
                   {" "}
                   Certifications,
                 </span>
               )} */}
-                {/* {counts.employmentEligiblity === false ||
-                (counts.employmentEligiblity === 0 && (
-                  <span className="candidate-profile-prompt-bold">
-                    {" "}
-                    Employment eligibility,
-                  </span>
-                ))} */}
-                {counts.jobPreference === false && (
-                  <span className="candidate-profile-prompt-bold">
-                    {" "}
-                    Employment eligibility, Job preferences,
-                  </span>
-                )}{" "}
-                to your profile.”
-              </p>
-            </SweetAlert>
-            {showJobPreferModal && (
-              <Row>
-                <JobPreferences
-                  onCallBack={() => closeJobPreferModal()}
-                  isRequired={true}
-                  isCompleteProfile={true}
-                  getPersonalDetails={() => {
-                    getPersonalDetails();
-                  }}
-                />
-              </Row>
-            )}
-          </div>
-        )
-      }
+                  {counts.employmentEligiblity === false ||
+                    (counts.employmentEligiblity === 0 && (
+                      <span className="candidate-profile-prompt-bold">
+                        {" "}
+                        Employment eligibility,
+                      </span>
+                    ))}
+                  {counts.jobPreference === false && (
+                    <span className="candidate-profile-prompt-bold">
+                      {" "}
+                      Job preferences,
+                    </span>
+                  )}{" "}
+                  to your profile.”
+                </p>
+              </SweetAlert>
+            </div>
+          )
+        }
+      </>
+      <>
+        {" "}
+        {showJobPreferModal && (
+          <Row>
+            <JobPreferences
+              onCallBack={() => closeJobPreferModal()}
+              isRequired={true}
+              isCompleteProfile={true}
+              getPersonalDetails={() => {
+                getPersonalDetails();
+              }}
+            />
+          </Row>
+        )}
+      </>
     </>
   );
 }
