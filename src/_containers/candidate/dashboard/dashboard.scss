@@ -86,3 +86,29 @@
     width: 530px !important;
   }
 }
+
+.progress-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: conic-gradient(#0d6efd 0% 75%, #e9ecef 75% 100%) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  
+  font-size: 1.2rem;
+  position: relative;
+  
+}
+
+.progress-circle::before {
+  content: '';
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  background-color: white !important;
+  border-radius: 50%;
+  
+  
+}
