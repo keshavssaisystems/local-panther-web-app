@@ -17,6 +17,7 @@ import { Row, Col, FormGroup, Button, Input } from "reactstrap";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { analytics } from "../../../firebase/index";
+import { getTimezoneDateTime } from "_helpers/helper";
 import "./admincalendar.scss";
 
 export function AdminCalendar({ title }) {
@@ -93,11 +94,11 @@ export function AdminCalendar({ title }) {
   };
 
   const events = scheduledInterviewList.map((item) => {
-    const startDate = moment(
-      moment(item.scheduledate).format("MMM D, YYYY") + " " + item.starttime
-    )
-      .tz("America/New_York")
-      .format("YYYY-MM-DD HH:mm:ss");
+    const startDate = getTimezoneDateTime(
+      moment(item.scheduledate).format("MMM D, YYYY") + " " + item.starttime,
+
+      "YYYY-MM-DD HH:mm:ss"
+    );
 
     const [duration] =
       item.duration !== undefined ? item.duration.split(" ") : [];

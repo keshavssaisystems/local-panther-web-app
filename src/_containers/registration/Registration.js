@@ -75,7 +75,7 @@ export function Registration() {
 
   const [countryValue, setCountryValue] = useState([]);
   const [cityValue, setCityValue] = useState(0);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(1);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -679,25 +679,46 @@ export function Registration() {
                     <span className="text-danger">*</span>
                   </Label>
 
-                  {registrationType.map((item, index) => (
-                    <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
-                      <FormGroup check style={{ marginLeft: "5px" }}>
-                        <Input
-                          style={{ fontSize: "18px" }}
-                          name="desiredJobType"
-                          type="radio"
-                          onChange={(evt) => onHandleInputChange(item.id)}
-                        />{" "}
-                        <Label
-                          check
-                          className="fw-semi-bold"
-                          style={{ fontSize: "18px", fontWeight: "600" }}
-                        >
-                          {item.name}
-                        </Label>
-                      </FormGroup>
-                    </Col>
-                  ))}
+                  {/* {registrationType.map((item, index) => ( */}
+                  <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
+                    <FormGroup check style={{ marginLeft: "5px" }}>
+                      <Input
+                        style={{ fontSize: "18px" }}
+                        name="desiredJobType"
+                        type="radio"
+                        value={1}
+                        checked={selected === 1}
+                        onChange={(evt) => onHandleInputChange(1)}
+                      />{" "}
+                      <Label
+                        check
+                        className="fw-semi-bold"
+                        style={{ fontSize: "18px", fontWeight: "600" }}
+                      >
+                        Candidate
+                      </Label>
+                    </FormGroup>
+                  </Col>
+                  <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
+                    <FormGroup check style={{ marginLeft: "5px" }}>
+                      <Input
+                        style={{ fontSize: "18px" }}
+                        name="desiredJobType"
+                        type="radio"
+                        value={2}
+                        checked={selected === 2}
+                        onChange={(evt) => onHandleInputChange(2)}
+                      />{" "}
+                      <Label
+                        check
+                        className="fw-semi-bold"
+                        style={{ fontSize: "18px", fontWeight: "600" }}
+                      >
+                        Employer
+                      </Label>
+                    </FormGroup>
+                  </Col>
+                  {/* ))} */}
                 </Row>
                 {selected === 0 && (
                   <div className="mt-3 float-end">
