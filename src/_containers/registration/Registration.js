@@ -682,40 +682,42 @@ export function Registration() {
                   {/* {registrationType.map((item, index) => ( */}
                   <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
                     <FormGroup check style={{ marginLeft: "5px" }}>
-                      <Input
-                        style={{ fontSize: "18px" }}
-                        name="desiredJobType"
-                        type="radio"
-                        value={1}
-                        checked={selected === 1}
-                        onChange={(evt) => onHandleInputChange(1)}
-                      />{" "}
-                      <Label
-                        check
-                        className="fw-semi-bold"
-                        style={{ fontSize: "18px", fontWeight: "600" }}
-                      >
-                        Candidate
-                      </Label>
+                      <div onClick={(evt) => onHandleInputChange(1)}>
+                        <Input
+                          style={{ fontSize: "18px" }}
+                          name="desiredJobType"
+                          type="radio"
+                          value={1}
+                          checked={selected === 1}
+                        />{" "}
+                        <Label
+                          check
+                          className="fw-semi-bold reg-link-text"
+                          style={{ fontSize: "18px", fontWeight: "600" }}
+                        >
+                          Job seekers
+                        </Label>
+                      </div>
                     </FormGroup>
                   </Col>
-                  <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
+                  <Col md={6} lg={6} sm={12} xl={6} xs={12} xxl={4}>
                     <FormGroup check style={{ marginLeft: "5px" }}>
-                      <Input
-                        style={{ fontSize: "18px" }}
-                        name="desiredJobType"
-                        type="radio"
-                        value={2}
-                        checked={selected === 2}
-                        onChange={(evt) => onHandleInputChange(2)}
-                      />{" "}
-                      <Label
-                        check
-                        className="fw-semi-bold"
-                        style={{ fontSize: "18px", fontWeight: "600" }}
-                      >
-                        Employer
-                      </Label>
+                      <div onClick={(evt) => onHandleInputChange(2)}>
+                        <Input
+                          style={{ fontSize: "18px" }}
+                          name="desiredJobType"
+                          type="radio"
+                          value={2}
+                          checked={selected === 2}
+                        />{" "}
+                        <Label
+                          check
+                          className="fw-semi-bold reg-link-text"
+                          style={{ fontSize: "18px", fontWeight: "600" }}
+                        >
+                          Employer? Register here
+                        </Label>
+                      </div>
                     </FormGroup>
                   </Col>
                   {/* ))} */}
@@ -1020,7 +1022,7 @@ export function Registration() {
                       </h5>
                       <div>
                         <Button color="primary" className=" btn-text" size="lg">
-                          Register
+                          Create account
                         </Button>
                       </div>
                     </div>
