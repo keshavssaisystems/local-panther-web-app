@@ -446,7 +446,6 @@ export function JobPreferences(props) {
   };
 
   const onHandleInputChange = function (check, data, status) {
-    debugger;
     let new_data = [...preferenceDetails];
     if (check === "desiredJobType") {
       new_data[0].desiredjobtitleid = data;
