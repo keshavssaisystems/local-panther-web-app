@@ -1153,7 +1153,11 @@ export function JobPreferences(props) {
                                 )}
                               />{" "}
                               {"  "}
-                              <Label check for={"jobType_" + options.id}>
+                              <Label
+                                style={{ cursor: "pointer" }}
+                                check
+                                for={"jobType_" + options.id}
+                              >
                                 {options.name}
                               </Label>
                             </div>
@@ -1198,7 +1202,11 @@ export function JobPreferences(props) {
                                 }}
                               />{" "}
                               {"  "}
-                              <Label check for={"workSchedule_" + options.id}>
+                              <Label
+                                style={{ cursor: "pointer" }}
+                                check
+                                for={"workSchedule_" + options.id}
+                              >
                                 {options.name}
                               </Label>
                             </div>
@@ -1242,7 +1250,11 @@ export function JobPreferences(props) {
                                 }}
                               />{" "}
                               {"  "}
-                              <Label check for={"shifts_" + options.id}>
+                              <Label
+                                style={{ cursor: "pointer" }}
+                                check
+                                for={"shifts_" + options.id}
+                              >
                                 {options.name}
                               </Label>
                             </div>
@@ -1287,7 +1299,11 @@ export function JobPreferences(props) {
                                 }}
                               />{" "}
                               {"  "}
-                              <Label check for={"workType_" + options.id}>
+                              <Label
+                                style={{ cursor: "pointer" }}
+                                check
+                                for={"workType_" + options.id}
+                              >
                                 {options.name}
                               </Label>
                             </div>
