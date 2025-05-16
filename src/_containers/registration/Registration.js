@@ -75,7 +75,7 @@ export function Registration() {
 
   const [countryValue, setCountryValue] = useState([]);
   const [cityValue, setCityValue] = useState(0);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(1);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -679,25 +679,48 @@ export function Registration() {
                     <span className="text-danger">*</span>
                   </Label>
 
-                  {registrationType.map((item, index) => (
-                    <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
-                      <FormGroup check style={{ marginLeft: "5px" }}>
+                  {/* {registrationType.map((item, index) => ( */}
+                  <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
+                    <FormGroup check style={{ marginLeft: "5px" }}>
+                      <div onClick={(evt) => onHandleInputChange(1)}>
                         <Input
                           style={{ fontSize: "18px" }}
                           name="desiredJobType"
                           type="radio"
-                          onChange={(evt) => onHandleInputChange(item.id)}
+                          value={1}
+                          checked={selected === 1}
                         />{" "}
                         <Label
                           check
-                          className="fw-semi-bold"
+                          className="fw-semi-bold reg-link-text"
                           style={{ fontSize: "18px", fontWeight: "600" }}
                         >
-                          {item.name}
+                          Job seekers
                         </Label>
-                      </FormGroup>
-                    </Col>
-                  ))}
+                      </div>
+                    </FormGroup>
+                  </Col>
+                  <Col md={6} lg={6} sm={12} xl={6} xs={12} xxl={4}>
+                    <FormGroup check style={{ marginLeft: "5px" }}>
+                      <div onClick={(evt) => onHandleInputChange(2)}>
+                        <Input
+                          style={{ fontSize: "18px" }}
+                          name="desiredJobType"
+                          type="radio"
+                          value={2}
+                          checked={selected === 2}
+                        />{" "}
+                        <Label
+                          check
+                          className="fw-semi-bold reg-link-text"
+                          style={{ fontSize: "18px", fontWeight: "600" }}
+                        >
+                          Employer? Register here
+                        </Label>
+                      </div>
+                    </FormGroup>
+                  </Col>
+                  {/* ))} */}
                 </Row>
                 {selected === 0 && (
                   <div className="mt-3 float-end">
@@ -999,7 +1022,7 @@ export function Registration() {
                       </h5>
                       <div>
                         <Button color="primary" className=" btn-text" size="lg">
-                          Register
+                          Create account
                         </Button>
                       </div>
                     </div>
