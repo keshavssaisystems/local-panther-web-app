@@ -700,7 +700,7 @@ export function Registration() {
                       </div>
                     </FormGroup>
                   </Col>
-                  <Col md={6} lg={6} sm={12} xl={6} xs={12} xxl={4}>
+                  <Col md={8} lg={8} sm={12} xl={8} xs={12} xxl={6}>
                     <FormGroup check style={{ marginLeft: "5px" }}>
                       <div onClick={(evt) => onHandleInputChange(2)}>
                         <Input
