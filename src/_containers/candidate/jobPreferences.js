@@ -446,6 +446,7 @@ export function JobPreferences(props) {
   };
 
   const onHandleInputChange = function (check, data, status) {
+    debugger;
     let new_data = [...preferenceDetails];
     if (check === "desiredJobType") {
       new_data[0].desiredjobtitleid = data;
@@ -1267,7 +1268,7 @@ export function JobPreferences(props) {
                                 key={options.id}
                                 type="checkbox"
                                 name={"shifts"}
-                                id={"shifts_" + options.id}
+                                id={"workType_" + options.id}
                                 value={options.id}
                                 onInput={(evt) =>
                                   onHandleInputChange(
@@ -1287,7 +1288,7 @@ export function JobPreferences(props) {
                                 }}
                               />{" "}
                               {"  "}
-                              <Label check for={"workType" + options.id}>
+                              <Label check for={"workType_" + options.id}>
                                 {options.name}
                               </Label>
                             </div>
