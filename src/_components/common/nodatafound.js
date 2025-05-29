@@ -11,7 +11,9 @@ export const NoDataFound = (props) => {
           ></BsFillExclamationTriangleFill>
         </Col>
         <Col sm={12} md={12} xl={12} lg={12} className="mb-3">
-          <h6 style={{ fontWeight: "revert" }}>NO DATA FOUND</h6>
+          <h6 style={{ fontWeight: "revert" }}>
+            {props?.text ? props?.text : "NO DATA FOUND"}
+          </h6>
         </Col>
       </Row>
     </div>
