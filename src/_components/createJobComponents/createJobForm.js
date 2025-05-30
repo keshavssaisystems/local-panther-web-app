@@ -92,6 +92,7 @@ export const CreateJob = forwardRef(
       }
       if (type === "previous_template" || type === "recommendation_template") {
         console.log(previousData);
+
         let data = {
           basicInformation: {
             companyId: previousData?.companyname,
@@ -117,6 +118,10 @@ export const CreateJob = forwardRef(
             issecurityclearancerequired:
               previousData?.issecurityclearancerequired,
             securityclearanceid: previousData?.securityclearanceid,
+            isdraft:
+              previousData?.isdraft !== undefined
+                ? previousData?.isdraft
+                : true,
           },
           experienceSchedule: {
             jobType:
@@ -945,6 +950,8 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
+        isdraft:
+          previousData?.isdraft !== undefined ? previousData?.isdraft : true,
       };
       let experienceSchedule = {
         jobType: getJobType(eventData.target.elements.jobType),
@@ -1058,6 +1065,7 @@ export const CreateJob = forwardRef(
         preScreen: questionArr,
         preCustomScreen: customAnswer === "" ? "Audio" : customAnswer,
       };
+
       JobDataForPreview(data);
       nextPage(true);
     };
