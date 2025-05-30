@@ -394,7 +394,7 @@ export const CandidateCardView = (props) => {
                 size="sm"
                 onClick={() => onScheduleInterview()}
               >
-                <span>Schedule</span> <BsClock />
+                Schedule <BsClock />
               </Button>
               <Button
                 outline
