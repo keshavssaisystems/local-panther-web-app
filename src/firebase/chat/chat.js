@@ -20,7 +20,6 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import { useSelector } from "react-redux";
 
 export function Chat({ groupId, details }) {
-  debugger;
   const completedInterviewCustomerList = useSelector(
     (state) => state.chat.completedCustomerList
   );
