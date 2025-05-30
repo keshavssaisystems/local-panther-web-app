@@ -201,7 +201,7 @@ export function EmployerRegistration() {
           companycontactemail: getValues("empemail"),
           companycontactphonenumber: getValues("empphone").replace(/\D/g, ""),
           companyid: 0,
-          companyname: "New company",
+          companyname: getValues("companyname"),
         },
         userroleid: 2,
       };
@@ -428,7 +428,10 @@ export function EmployerRegistration() {
             <Col md={6}>
               <FormGroup>
                 <Label for="empname" className="input-label">
-                  Employer Name <span className="text-danger">*</span>
+                  {selectedComp.value && selectedComp.value === "0"
+                    ? "Contact Person Name"
+                    : "Employer Name"}{" "}
+                  <span className="text-danger">*</span>
                 </Label>
                 <input
                   type="text"
@@ -447,7 +450,10 @@ export function EmployerRegistration() {
             <Col md={6}>
               <FormGroup>
                 <Label for="empphone" className="input-label">
-                  Employer Mobile <span className="text-danger">*</span>
+                  {selectedComp.value && selectedComp.value === "0"
+                    ? "Contact Person Mobile"
+                    : "Employer Mobile"}{" "}
+                  <span className="text-danger">*</span>
                 </Label>
 
                 <InputGroup>
@@ -470,7 +476,10 @@ export function EmployerRegistration() {
             <Col md={6}>
               <FormGroup>
                 <Label for="empemail" className="input-label">
-                  Employer Email <span className="text-danger">*</span>
+                  {selectedComp.value && selectedComp.value === "0"
+                    ? "Contact Person Email"
+                    : "Employer Email"}{" "}
+                  <span className="text-danger">*</span>
                 </Label>
                 <InputGroup>
                   <input
