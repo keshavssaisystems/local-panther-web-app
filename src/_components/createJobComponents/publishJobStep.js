@@ -27,7 +27,10 @@ export default function PublishJobStep({
       stateid: reqData.basicInformation.stateId,
       zipcode: reqData.basicInformation.zipcode,
       countryid: 1,
-      isdraft: true,
+      isdraft:
+        reqData?.basicInformation?.isdraft !== undefined
+          ? reqData?.basicInformation?.isdraft
+          : true,
       isclosed: false,
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),

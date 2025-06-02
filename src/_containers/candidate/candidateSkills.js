@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Label,
   Input,
@@ -29,6 +29,7 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import { NoProfileData } from "_components/common/noProfileData";
 import AsyncCreatableSelect from "react-select/async-creatable";
+import debounce from "lodash/debounce";
 
 export function CandidateSkills(props) {
   const dispatch = useDispatch();
@@ -246,6 +247,12 @@ export function CandidateSkills(props) {
     }
   };
   const [skillExist, setSkillExist] = useState(false);
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 0) {
       setSearchText(inputValue);
@@ -443,13 +450,15 @@ export function CandidateSkills(props) {
                         isMulti
                         isClearable
                         cacheOptions
-                        loadOptions={loadOptions}
+                        loadOptions={loadOptionsDeb}
                         value={skillsMultiple}
                         onChange={(evt) => onSelectSkillsDropdown(evt)}
                         formatCreateLabel={formatCreateLabel}
                         isSearchable
                         placeholder="Search to select"
                         onCreateOption={addNewSkill}
+                        defaultOptions={options}
+                        closeMenuOnSelect={false}
                       />
 
                       {mustHaveValidation === true && (
@@ -459,7 +468,7 @@ export function CandidateSkills(props) {
                   </Col>
                 </Row>
                 <Row className="mt-2">
-                  {skillsMultiple?.map((item, index) => (
+                  {/* {skillsMultiple?.map((item, index) => (
                     <div>
                       <Row>
                         <Col md={4}>
@@ -524,7 +533,7 @@ export function CandidateSkills(props) {
                         </Col>
                       </Row>
                     </div>
-                  ))}
+                  ))} */}
                 </Row>
 
                 <Row>

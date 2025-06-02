@@ -51,3 +51,10 @@ export const getLocationFilter = async (searchText) => {
     `${baseUrl}/Common/GetLocation?searchText=${searchText}`
   );
 };
+
+export const postCompanySearch = async (searchText) => {
+  const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+  return await fetchWrapper.post(`${baseUrl}/Company/Search`, {
+    contactemail: searchText,
+  });
+};

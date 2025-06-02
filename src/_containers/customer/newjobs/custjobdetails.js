@@ -543,17 +543,31 @@ export function CustJobDetail({
                       {jobDetail.isdraft === false &&
                         jobDetail.isclosed === false &&
                         !isShare && (
-                          <Col md={4} lg={4} className="right-align">
-                            <Button
-                              color="danger"
-                              className={"me-3 mt-3"}
-                              onClick={(e) => {
-                                setCloseConfirmation(true);
-                              }}
-                            >
-                              <FiXSquare className="mb-1" /> Close job
-                            </Button>
-                          </Col>
+                          <>
+                            {" "}
+                            <Col md={4} lg={4} className="right-align">
+                              <Button
+                                color="primary"
+                                className={"me-1 mt-3"}
+                                onClick={(e) =>
+                                  navigate(
+                                    `/customer-edit-job/${jobDetail.jobid}`
+                                  )
+                                }
+                              >
+                                <FiEdit className="mb-1" /> Edit job
+                              </Button>
+                              <Button
+                                color="danger"
+                                className={"me-3 mt-3"}
+                                onClick={(e) => {
+                                  setCloseConfirmation(true);
+                                }}
+                              >
+                                <FiXSquare className="mb-1" /> Close job
+                              </Button>
+                            </Col>
+                          </>
                         )}
                       {jobDetail.isclosed === true && !isShare && (
                         <Col md={4} lg={4} className="right-align">

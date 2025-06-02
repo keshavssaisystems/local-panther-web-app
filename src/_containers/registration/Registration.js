@@ -43,6 +43,7 @@ import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
 import { analytics } from "../../firebase/index";
 import debounce from "lodash/debounce";
+import { EmployerRegistration } from "./employerRegistration";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
@@ -1028,7 +1029,8 @@ export function Registration() {
                     </div>
                   </Form>
                 )}
-                {selected === 2 && <CustomerRegistration />}
+                {/* {selected === 2 && <CustomerRegistration />} */}
+                {selected === 2 && <EmployerRegistration />}
               </div>
               {selected === 2 ? "" : <br />}
               <br></br>

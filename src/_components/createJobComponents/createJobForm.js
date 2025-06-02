@@ -92,6 +92,7 @@ export const CreateJob = forwardRef(
       }
       if (type === "previous_template" || type === "recommendation_template") {
         console.log(previousData);
+
         let data = {
           basicInformation: {
             companyId: previousData?.companyname,
@@ -117,6 +118,10 @@ export const CreateJob = forwardRef(
             issecurityclearancerequired:
               previousData?.issecurityclearancerequired,
             securityclearanceid: previousData?.securityclearanceid,
+            isdraft:
+              previousData?.isdraft !== undefined
+                ? previousData?.isdraft
+                : true,
           },
           experienceSchedule: {
             jobType:
@@ -250,6 +255,8 @@ export const CreateJob = forwardRef(
       }
     );
     const [stateData, setStateData] = useState({});
+    const [mustHaveSkills, setMustHaveSkills] = useState([]);
+    const [niceToHaveSkills, setNiceToHaveSkills] = useState([]);
     const customStyles = {
       valueContainer: (provided, state) => ({
         ...provided,
@@ -943,6 +950,8 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
+        isdraft:
+          previousData?.isdraft !== undefined ? previousData?.isdraft : true,
       };
       let experienceSchedule = {
         jobType: getJobType(eventData.target.elements.jobType),
@@ -1056,6 +1065,7 @@ export const CreateJob = forwardRef(
         preScreen: questionArr,
         preCustomScreen: customAnswer === "" ? "Audio" : customAnswer,
       };
+
       JobDataForPreview(data);
       nextPage(true);
     };
@@ -1283,6 +1293,13 @@ export const CreateJob = forwardRef(
       setKeyQual2(keyQualification2);
       setMustHaveValidation(false);
     };
+
+    const loadOptionsDeb2 = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptions2(inputValue).then(callback);
+      }, 500),
+      [] // Important: memoize once!
+    );
     const loadOptions2 = async (inputValue) => {
       if (inputValue.length > 0) {
         setLabelVisibility(true);
@@ -1301,14 +1318,23 @@ export const CreateJob = forwardRef(
         } else {
           setSkillExist(true);
         }
-        return data.map(({ skillid: value, ...rest }) => {
+        let skills = data.map(({ skillid: value, ...rest }) => {
           return {
             value: `${value}, ${rest.skillname}`,
             label: `${rest.skillname}`,
           };
         });
+        setMustHaveSkills(skills);
+        return skills;
       }
     };
+
+    const loadOptionsDeb3 = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsoptional(inputValue).then(callback);
+      }, 500),
+      [] // Important: memoize once!
+    );
     const loadOptionsoptional = async (inputValue) => {
       if (inputValue.length > 0) {
         setLabelVisibility(true);
@@ -1327,12 +1353,14 @@ export const CreateJob = forwardRef(
         } else {
           setOptionalSkillExist(true);
         }
-        return data.map(({ skillid: value, ...rest }) => {
+        let skills = data.map(({ skillid: value, ...rest }) => {
           return {
             value: `${value}, ${rest.skillname}`,
             label: `${rest.skillname}`,
           };
         });
+        setNiceToHaveSkills(skills);
+        return skills;
       }
     };
     const handleKeyDown = (event) => {
@@ -2568,9 +2596,11 @@ export const CreateJob = forwardRef(
                           <AsyncCreatableSelect
                             name="mustHave"
                             placeholder="Search to select"
-                            loadOptions={loadOptions2}
+                            loadOptions={loadOptionsDeb2}
                             isMulti={true}
+                            closeMenuOnSelect={false}
                             styles={customStyles}
+                            defaultOptions={mustHaveSkills}
                             value={
                               type === "new_template" &&
                               previousStep !== 3 &&
@@ -2610,9 +2640,11 @@ export const CreateJob = forwardRef(
                             name="niceToHave"
                             id="niceToHave"
                             placeholder="Search to select"
-                            loadOptions={loadOptionsoptional}
+                            loadOptions={loadOptionsDeb3}
                             isMulti={true}
+                            closeMenuOnSelect={false}
                             styles={customStyles}
+                            defaultOptions={niceToHaveSkills}
                             value={
                               type === "new_template" &&
                               previousStep !== 3 &&

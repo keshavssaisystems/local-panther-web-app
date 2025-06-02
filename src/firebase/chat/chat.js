@@ -18,6 +18,7 @@ import { BsFillSendFill } from "react-icons/bs";
 import moment from "moment-timezone";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { useSelector } from "react-redux";
+
 export function Chat({ groupId, details }) {
   const completedInterviewCustomerList = useSelector(
     (state) => state.chat.completedCustomerList
@@ -118,25 +119,40 @@ export function Chat({ groupId, details }) {
       <CardFooter>
         <Form onSubmit={sendMessage} className="width-full">
           <Row>
-            <Col sm={11} md={11} lg={11}>
-              <Input
-                type="text"
-                readOnly={userRole === 3 && customerArray.includes(customerId)}
-                value={formValue}
-                onChange={(e) => setFormValue(e.target.value)}
-                placeholder="Type your message here"
-                required
-              />
-            </Col>
-            <Col sm={1} md={1} lg={1} className="custom-padding-button-col">
-              <Button
-                type={"submit"}
-                title="Send"
-                disabled={userRole === 3 && customerArray.includes(customerId)}
-              >
-                <BsFillSendFill />
-              </Button>
-            </Col>
+            {userRole === 3 && customerArray.includes(customerId) ? (
+              <>
+                <Col style={{ color: "red" }}>
+                  Your interview process is completed. You can no longer send
+                  messages to the hiring manager.
+                </Col>
+              </>
+            ) : (
+              <>
+                <Col sm={11} md={11} lg={11}>
+                  <Input
+                    type="text"
+                    readOnly={
+                      userRole === 3 && customerArray.includes(customerId)
+                    }
+                    value={formValue}
+                    onChange={(e) => setFormValue(e.target.value)}
+                    placeholder="Type your message here"
+                    required
+                  />
+                </Col>
+                <Col sm={1} md={1} lg={1} className="custom-padding-button-col">
+                  <Button
+                    type={"submit"}
+                    title="Send"
+                    disabled={
+                      userRole === 3 && customerArray.includes(customerId)
+                    }
+                  >
+                    <BsFillSendFill />
+                  </Button>
+                </Col>
+              </>
+            )}
           </Row>
         </Form>
       </CardFooter>
