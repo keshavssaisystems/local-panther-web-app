@@ -732,23 +732,24 @@ export function JobPreferences(props) {
           ? "Profile details updated successfully!"
           : response.payload.message
       );
-
-      let payload = {
-        candidateid: localStorage.getItem("admcandid")
-          ? localStorage.getItem("admcandid")
-          : userDetails?.InternalUserId ?? 0,
-        cityid: new_data[0].cityid,
-        countryid: 1,
-        currentUserId: Number(localStorage.getItem("userId")),
-        email: profileData?.email,
-        employmenteligiblity: new_data[0].employmenteligibility ? 2 : 1,
-        firstname: profileData?.firstname,
-        lastname: profileData?.lastname,
-        phonenumber: profileData?.phonenumber,
-        stateid: new_data[0].stateid,
-        isactive: true,
-      };
-      await dispatch(jobPreferenceDetailsActions.updateProfileData(payload));
+      if (props.isCompleteProfile) {
+        let payload = {
+          candidateid: localStorage.getItem("admcandid")
+            ? localStorage.getItem("admcandid")
+            : userDetails?.InternalUserId ?? 0,
+          cityid: new_data[0].cityid,
+          countryid: 1,
+          currentUserId: Number(localStorage.getItem("userId")),
+          email: profileData?.email,
+          employmenteligiblity: new_data[0].employmenteligibility ? 2 : 1,
+          firstname: profileData?.firstname,
+          lastname: profileData?.lastname,
+          phonenumber: profileData?.phonenumber,
+          stateid: new_data[0].stateid,
+          isactive: true,
+        };
+        await dispatch(jobPreferenceDetailsActions.updateProfileData(payload));
+      }
     } else {
       setError(true);
     }
