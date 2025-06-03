@@ -24,6 +24,7 @@ import { history } from "_helpers";
 import { authActions } from "_store";
 
 import logo from "../../assets/utils/images/panther-logo-2.png";
+import logoOld from "../../assets/utils/images/panther-logo-2-old.png";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import loginBgImg from "../../assets/utils/images/login.png";
 import OpenWorXAppCover from "../../assets/utils/images/OpenWorXAppCover.png";
@@ -299,12 +300,15 @@ export function Login() {
                 className="h-100 d-flex bg-white justify-content-center align-items-center"
               >
                 <Col lg="9" md="10" sm="12">
-                  <div style={{ width: "200px", height: "80px" }}>
+                  <div
+                    className="mb-1"
+                    style={{ width: "200px", height: "80px" }}
+                  >
                     <img
                       src={
                         localStorage.getItem("logo")
                           ? localStorage.getItem("logo")
-                          : logo
+                          : logoOld
                       }
                       className="logo mb-2"
                       style={{
