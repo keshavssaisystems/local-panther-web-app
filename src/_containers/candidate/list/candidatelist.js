@@ -782,8 +782,8 @@ export const CandidateList = (props) => {
                         style={{ textAlign: "center" }}
                         className="center-middle-align"
                       >
-                        <Col xs="12" sm="12" md="6" lg="4" xl="4">
-                          <NoDataFound text="Thanks for applying to OpenWorX. While we don’t have a current match, your profile remains active and will be considered for future roles that fit your background. We’ll be in touch when the right opportunity comes along."></NoDataFound>
+                        <Col xs="12" sm="12" md="8" lg="6" xl="6">
+                          <NoDataFound text="Thanks for signing up with OpenWorX! While there isn't a perfect match right now, your profile stays active and will automatically be considered as new jobs are added. We'll reach out as soon as the right opportunity aligns with your experience and qualifications."></NoDataFound>
                         </Col>
                       </Row>
                     ) : (
