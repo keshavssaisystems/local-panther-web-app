@@ -228,7 +228,9 @@ export function UserBox() {
                                   {userDetail?.FirstName} {userDetail?.LastName}
                                 </div>
                                 <div className="widget-subheading opacity-8">
-                                  {userDetail?.role}
+                                  {userDetail?.UserroleId === "2"
+                                    ? "Hiring Manager"
+                                    : userDetail?.role}
                                 </div>
                               </div>
                               <div className="widget-content-right me-2">
@@ -305,7 +307,12 @@ export function UserBox() {
                   {" "}
                   {userDetail.FirstName} {userDetail.LastName}
                 </div>
-                <div className="widget-subheading">{userDetail.role}</div>
+                <div className="widget-subheading">
+                  {" "}
+                  {userDetail?.UserroleId === "2"
+                    ? "Hiring Manager"
+                    : userDetail?.role}
+                </div>
               </div>
             </div>
           </div>
