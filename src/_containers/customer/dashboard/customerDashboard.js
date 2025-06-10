@@ -19,6 +19,7 @@ import { Alerts } from "_containers/candidate/dashboard/alerts";
 import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
+import { history } from "_helpers";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
@@ -68,6 +69,14 @@ export default function CustomerDashboard() {
     );
   };
   useEffect(() => {
+    if (
+      localStorage.getItem("companyreferrallogid") &&
+      localStorage.getItem("companyreferrallogname")
+    ) {
+      localStorage.removeItem("companyreferrallogname");
+      localStorage.removeItem("companyreferrallogid");
+      history.navigate("/candidate-list");
+    }
     getCompanyDetails();
     getDashboardGraphData();
     getDashboardCounts();

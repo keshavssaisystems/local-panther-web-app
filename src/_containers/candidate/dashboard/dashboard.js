@@ -23,7 +23,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
 import { analytics } from "../../../firebase/index";
 import { JobPreferences } from "../jobPreferences";
-
+import { history } from "_helpers";
 export function CandidateDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,6 +51,14 @@ export function CandidateDashboard() {
   });
 
   useEffect(() => {
+    if (
+      localStorage.getItem("companyreferrallogid") &&
+      localStorage.getItem("companyreferrallogname")
+    ) {
+      localStorage.removeItem("companyreferrallogname");
+      localStorage.removeItem("companyreferrallogid");
+      history.navigate("/job-list");
+    }
     loadPage();
     if (analytics) {
       analytics.logEvent("page_visit", {
