@@ -236,7 +236,9 @@ const authSlice = createSlice({
           ? defLogo[0]?.appconfigurationvalue
           : ""
       );
-
+      if (decodedData?.UserroleId === "2") {
+        localStorage.setItem("isCompanyAdmin", data.isCompanyAdmin);
+      }
       // get return url from location state or default to home page
       const { from } = history.location.state || {
         from: { pathname: "/" },

@@ -60,15 +60,15 @@ export function EmployerRegistration() {
         "Please enter valid email"
       ),
     empname: Yup.string()
-      .required("Employer name is required")
+      .required("Hiring Manager name is required")
       .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
     empemail: Yup.string()
-      .required("Employer Email is required")
+      .required("Hiring Manager Email is required")
       .matches(
         /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
         "Please enter valid email"
       ),
-    empphone: Yup.string().required("Employer Phone number is required"),
+    empphone: Yup.string().required("Hiring Manager Phone number is required"),
   });
   const formOptions = {
     resolver: yupResolver(validationSchema),
@@ -333,8 +333,8 @@ export function EmployerRegistration() {
                     placement="bottom"
                     target={"info-new-comp"}
                   >
-                    When you add a new company, an employer profile will be
-                    created automatically.
+                    When you add a new company, an hiring manager profile will
+                    be created automatically.
                   </UncontrolledTooltip>
                   <img
                     id="info-new-comp"
@@ -430,7 +430,7 @@ export function EmployerRegistration() {
                 <Label for="empname" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
                     ? "Contact Person Name"
-                    : "Employer Name"}{" "}
+                    : "Hiring Manager Name"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
                 <input
@@ -452,7 +452,7 @@ export function EmployerRegistration() {
                 <Label for="empphone" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
                     ? "Contact Person Mobile"
-                    : "Employer Mobile"}{" "}
+                    : "Hiring Manager Mobile"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
 
@@ -478,7 +478,7 @@ export function EmployerRegistration() {
                 <Label for="empemail" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
                     ? "Contact Person Email"
-                    : "Employer Email"}{" "}
+                    : "Hiring Manager Email"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
                 <InputGroup>

@@ -119,10 +119,13 @@ export const CreateJob = forwardRef(
               previousData?.issecurityclearancerequired,
             securityclearanceid: previousData?.securityclearanceid,
             isdraft:
-              previousData?.isdraft !== undefined
-                ? previousData?.isdraft
-                : true,
+              type === "previous_template" ? previousData?.isdraft : true,
+            // isdraft:
+            //   previousData?.isdraft !== undefined
+            //     ? previousData?.isdraft
+            //     : true,
           },
+
           experienceSchedule: {
             jobType:
               previousData?.jobExperienceScheduleDtos === null ||
@@ -192,6 +195,7 @@ export const CreateJob = forwardRef(
               ? {}
               : previousData?.jobPrescreenApplicationDtos,
         };
+
         JobDataForPreview(data);
         setZipcodeCityState({
           value:
@@ -950,9 +954,12 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
-        isdraft:
-          previousData?.isdraft !== undefined ? previousData?.isdraft : true,
+
+        isdraft: type === "previous_template" ? previousData?.isdraft : true,
+        // isdraft:
+        //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
       };
+
       let experienceSchedule = {
         jobType: getJobType(eventData.target.elements.jobType),
         workSchedule: workSchedule,
