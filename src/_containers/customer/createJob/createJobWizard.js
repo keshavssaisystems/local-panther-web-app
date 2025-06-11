@@ -165,7 +165,9 @@ export function CreateJobWizard({ type }) {
   const jobDetail = useSelector((state) => state.createJob.previousJobDetail);
   const newJobDetails = useSelector((state) => state.createJob.createjob);
   const publishNewJob = async function () {
-    let jobId = newJobDetails.jobid;
+    let jobId = newJobDetails.jobid
+      ? newJobDetails.jobid
+      : selectedJobDetailsForEdit[0]?.jobid;
     let payload = {
       currentUserId: Number(localStorage.getItem("userId")),
     };

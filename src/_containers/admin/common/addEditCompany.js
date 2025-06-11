@@ -391,7 +391,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="text"
                     name="company"
-                    disabled={isViewMode}
+                    disabled={isViewMode || props?.isCompanyAdmin}
                     defaultValue={isAddMode ? "" : data?.companyname}
                     onInput={(e) => handleInputChange(e, "company")}
                     placeholder="Enter company"
@@ -494,7 +494,7 @@ export const AddEditCompany = (props) => {
                   <input
                     type="email"
                     name="email"
-                    disabled={isViewMode}
+                    disabled={isViewMode || props?.isCompanyAdmin}
                     onInput={(e) => handleInputChange(e, "email")}
                     defaultValue={isAddMode ? "" : data?.contactemail}
                     maxLength={50}

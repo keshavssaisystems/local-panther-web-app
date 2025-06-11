@@ -45,6 +45,7 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [showEPModal, setShowEPModal] = useState(false);
   const [companyName, setCompanyName] = useState(null);
+  const [reload, setReload] = useState(false);
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -309,6 +310,7 @@ export function Login() {
     }
   };
   const getCompanyReferralLogs = async (companyName) => {
+    setReload(true);
     let payload = {
       referralLogUrl: window.location.href,
       companyName: companyName,
@@ -329,6 +331,7 @@ export function Login() {
       );
       localStorage.setItem("companyreferrallogname", companyName);
     }
+    setReload(false);
   };
   return (
     <>
@@ -393,20 +396,22 @@ export function Login() {
                     className="mb-1"
                     style={{ width: "200px", height: "80px" }}
                   >
-                    <img
-                      src={
-                        localStorage.getItem("logo")
-                          ? localStorage.getItem("logo")
-                          : logoOld
-                      }
-                      className="logo mb-2"
-                      style={{
-                        objectFit: "contain",
-                        height: "100%",
-                        width: "100%",
-                      }}
-                      alt="logo"
-                    />
+                    {!reload && (
+                      <img
+                        src={
+                          localStorage.getItem("logo")
+                            ? localStorage.getItem("logo")
+                            : logoOld
+                        }
+                        className="logo mb-2"
+                        style={{
+                          objectFit: "contain",
+                          height: "100%",
+                          width: "100%",
+                        }}
+                        alt="logo"
+                      />
+                    )}
                   </div>
                   <Row className="login-divider" />
                   <p className="mb-3 mt-4 title-text">

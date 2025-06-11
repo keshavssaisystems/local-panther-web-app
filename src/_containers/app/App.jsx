@@ -531,6 +531,22 @@ export function App() {
               </PrivateRoute>
             }
           />
+            <Route
+            path="masters/company"
+            element={
+              <PrivateRoute>
+                <CompanyList isCompanyAdmin={true}/>
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="acl/users"
+            element={
+              <PrivateRoute>
+                <AdminListing isCompanyAdmin={true} entity="users" />
+              </PrivateRoute>
+            }
+          />
         </>
       );
     } else {
