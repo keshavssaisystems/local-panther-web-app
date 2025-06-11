@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { isDraft } from "@reduxjs/toolkit";
 
 export default function PublishJobStep({
   companyId,
@@ -28,7 +27,8 @@ export default function PublishJobStep({
       stateid: reqData.basicInformation.stateId,
       zipcode: reqData.basicInformation.zipcode,
       countryid: 1,
-      isdraft: type === "edit" ? reqData?.basicInformation?.isdraft : true,
+      isdraft: true,
+      // isdraft: type === "edit" ? reqData?.basicInformation?.isdraft : true,
       // isdraft:
       //   reqData?.basicInformation?.isdraft !== undefined
       //     ? reqData?.basicInformation?.isdraft
@@ -139,16 +139,29 @@ export default function PublishJobStep({
               )}
             </div>
           ) : (
-            <div className="text-center">
-              <Button
-                color="primary"
-                size="lg"
-                className="btn-shadow btn-wide"
-                onClick={(e) => navigate(`/job-list`)}
-              >
-                Back to job list
-              </Button>{" "}
-            </div>
+            <>
+              <div className="text-center">
+                {billingStatus === true && customerApproval === true && (
+                  <Button
+                    color="success"
+                    size="lg"
+                    className="btn-shadow btn-wide"
+                    onClick={(e) => publishJob(true)}
+                  >
+                    Publish job
+                  </Button>
+                )}
+                {"      "}
+                <Button
+                  color="primary"
+                  size="lg"
+                  className="btn-shadow btn-wide"
+                  onClick={(e) => navigate(`/job-list`)}
+                >
+                  Back to job list
+                </Button>{" "}
+              </div>
+            </>
           )}
         </div>
       </div>

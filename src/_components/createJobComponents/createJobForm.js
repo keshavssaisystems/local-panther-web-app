@@ -118,8 +118,8 @@ export const CreateJob = forwardRef(
             issecurityclearancerequired:
               previousData?.issecurityclearancerequired,
             securityclearanceid: previousData?.securityclearanceid,
-            isdraft:
-              type === "previous_template" ? previousData?.isdraft : true,
+            // isdraft:
+            //   type === "previous_template" ? previousData?.isdraft : true,
             // isdraft:
             //   previousData?.isdraft !== undefined
             //     ? previousData?.isdraft
@@ -955,7 +955,7 @@ export const CreateJob = forwardRef(
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
 
-        isdraft: type === "previous_template" ? previousData?.isdraft : true,
+        // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
         //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
       };
