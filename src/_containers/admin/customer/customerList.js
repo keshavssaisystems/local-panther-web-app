@@ -425,7 +425,6 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
     }
   };
   const getCustomerDetails = async (pageSize, pageNo, id) => {
-    debugger;
     setLoading(true);
     let obj = {
       pageSize: pageSize,

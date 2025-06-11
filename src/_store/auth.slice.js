@@ -186,7 +186,6 @@ const authSlice = createSlice({
       state.loader = true;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
-      debugger;
       const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
       state.menuList = menuDtoList;
       state.user = data;
