@@ -274,7 +274,7 @@ export function CustomerReportMatchedCandidate() {
   return (
     <>
       <PageTitle
-        heading={"Employer Matched Candidate List by Job Report"}
+        heading={"Hiring Manager Matched Candidate List by Job Report"}
         icon={titlelogo}
       />
       <Row>

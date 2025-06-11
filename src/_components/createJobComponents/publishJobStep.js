@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { isDraft } from "@reduxjs/toolkit";
 
 export default function PublishJobStep({
   companyId,
@@ -27,10 +28,11 @@ export default function PublishJobStep({
       stateid: reqData.basicInformation.stateId,
       zipcode: reqData.basicInformation.zipcode,
       countryid: 1,
-      isdraft:
-        reqData?.basicInformation?.isdraft !== undefined
-          ? reqData?.basicInformation?.isdraft
-          : true,
+      isdraft: type === "edit" ? reqData?.basicInformation?.isdraft : true,
+      // isdraft:
+      //   reqData?.basicInformation?.isdraft !== undefined
+      //     ? reqData?.basicInformation?.isdraft
+      //     : true,
       isclosed: false,
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
@@ -99,8 +101,10 @@ export default function PublishJobStep({
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
             Your job with <b>{reqData.basicInformation.jobTitle}</b> has been
-            successfully {type === "edit" ? "updated" : "created"} & saved as a
-            draft!
+            successfully {type === "edit" ? "updated" : "created"}{" "}
+            {type === "edit" && !reqData.basicInformation.isdraft
+              ? "!"
+              : "& saved as a draft!"}
           </div>
           <div className="mt-3 mb-3" />
           {type === "add" ? (

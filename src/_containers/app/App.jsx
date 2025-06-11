@@ -81,6 +81,7 @@ export function App() {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -185,7 +186,7 @@ export function App() {
             path="/employers"
             element={
               <PrivateRoute>
-                <CustomerList />
+                <CustomerList isCompanyAdmin={false} />
               </PrivateRoute>
             }
           />
@@ -367,6 +368,7 @@ export function App() {
               </PrivateRoute>
             }
           />
+          
           <Route
             path="/job-list"
             element={
@@ -517,6 +519,15 @@ export function App() {
             element={
               <PrivateRoute>
                 <ChatInterface />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/employers"
+            element={
+              <PrivateRoute>
+                <CustomerList isCompanyAdmin={true} />
               </PrivateRoute>
             }
           />
