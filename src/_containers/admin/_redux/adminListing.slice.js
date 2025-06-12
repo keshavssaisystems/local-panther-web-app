@@ -269,6 +269,7 @@ const adminListingSlice = createSlice({
     candPageSize: 10,
     candTotalRecords: 0,
     candListLoading: false,
+    customersList: [],
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -328,15 +329,18 @@ const adminListingSlice = createSlice({
     [getCustomers.pending]: (state) => {
       state.loading = true;
       state.error = null;
+      state.customersList = [];
     },
     [getCustomers.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
       state.data = data?.customerDetailsList;
+      state.customersList = data?.customerDetailsList;
       state.totalRecords = data.totalRows;
     },
     [getCustomers.rejected]: (state, action) => {
       state.loading = false;
+      state.customersList = [];
       state.error = action.error;
     },
     [getUsers.pending]: (state) => {

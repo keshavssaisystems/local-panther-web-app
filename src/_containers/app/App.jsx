@@ -532,20 +532,44 @@ export function App() {
             }
           />
             <Route
-            path="masters/company"
+            path="/masters"
             element={
               <PrivateRoute>
                 <CompanyList isCompanyAdmin={true}/>
               </PrivateRoute>
             }
           />
-           <Route
-            path="acl/users"
+            <Route
+            path="/masters/company"
+            element={
+              <PrivateRoute>
+                <CompanyList isCompanyAdmin={true}/>
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/acl"
             element={
               <PrivateRoute>
                 <AdminListing isCompanyAdmin={true} entity="users" />
               </PrivateRoute>
             }
+          />
+           <Route
+            path="/acl/users"
+            element={
+              <PrivateRoute>
+                <AdminListing isCompanyAdmin={true} entity="users" />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/report"
+            element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
+          />
+            <Route
+            path="/report/open-jobs"
+            element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
         </>
       );
