@@ -346,19 +346,16 @@ const adminListingSlice = createSlice({
     [getUsers.pending]: (state) => {
       state.loading = true;
       state.error = null;
-      state.userList = [];
     },
     [getUsers.fulfilled]: (state, { payload = {} }) => {
       const { data } = payload;
       state.loading = false;
       state.data = data?.userList;
-
       state.totalRecords = data.totalRows;
     },
     [getUsers.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
-      state.userList = [];
     },
     [getRoles.pending]: (state) => {
       state.loading = true;
