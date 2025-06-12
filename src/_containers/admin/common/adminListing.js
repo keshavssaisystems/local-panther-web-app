@@ -37,7 +37,7 @@ import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
 
-export const AdminListing = ({ entity }) => {
+export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
   const dispatch = useDispatch();
 
   const [pageSize, setPageSize] = useState(10);
@@ -220,6 +220,9 @@ export const AdminListing = ({ entity }) => {
   ];
 
   useEffect(() => {
+    if (isCompanyAdmin) {
+      setRoleId(2);
+    }
     loadData();
   }, [entity]);
 
@@ -228,6 +231,7 @@ export const AdminListing = ({ entity }) => {
     let urlParams = {
       pageNumber: pageNo,
       pageSize: pageSize,
+      companyId: "",
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -237,6 +241,13 @@ export const AdminListing = ({ entity }) => {
     }
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -508,6 +519,8 @@ export const AdminListing = ({ entity }) => {
                     <Input
                       type="select"
                       name="companyid"
+                      value={roleid}
+                      disabled={isCompanyAdmin}
                       onChange={(e) => onSelectRole(e.target.value)}
                     >
                       <option value={0}>All roles</option>
