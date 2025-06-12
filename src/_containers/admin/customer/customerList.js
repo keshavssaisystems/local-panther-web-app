@@ -192,7 +192,7 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
                   </Button>
                 )}
 
-                {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
+                {/* {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
                   <Button
                     // outline
                     size="sm"
@@ -206,9 +206,9 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
                       alt="list approve"
                     ></img>
                   </Button>
-                )}
+                )} */}
 
-                {row.customerstatusid === 1 && (
+                {/* {row.customerstatusid === 1 && (
                   <Button
                     // outline
                     size="sm"
@@ -222,7 +222,7 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
                       alt="list reject"
                     ></img>
                   </Button>
-                )}
+                )} */}
               </ButtonGroup>
             </div>
           )}
