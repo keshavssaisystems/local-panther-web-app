@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import customerIcons from "assets/utils/images/customer";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
 export const CompanyList = ({ isCompanyAdmin = false }) => {
   const navigate = useNavigate();
@@ -42,6 +43,9 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     title: "",
     description: "",
   });
+
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
@@ -157,6 +161,19 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             >
               <FaEye style={{ fontSize: "18px" }} />
             </Button>
+            {/* {isCompanyAdmin && (
+              <>
+                {row.billingdetailstatus ? (
+                  <Button color="link" onClick={() => onViewBilling(row)}>
+                    <span style={{ textDecoration: "underline" }}>View</span>
+                  </Button>
+                ) : (
+                  <Button color="link" onClick={() => onAddBilling(row)}>
+                    <span style={{ textDecoration: "underline" }}>Add</span>
+                  </Button>
+                )}
+              </>
+            )} */}
           </ButtonGroup>
         </div>
       ),
@@ -224,6 +241,22 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         })
       );
     }
+  };
+
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    getCompanyList(pageSize, pageNo);
+    setSelectedCustomer([]);
   };
 
   const getCompanyList = async function (pageSize, pageNo) {
@@ -534,6 +567,16 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           />
           {showAlert.description}
         </>
+      )}
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
       )}
     </>
   );
