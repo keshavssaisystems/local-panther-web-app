@@ -65,6 +65,7 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
   let [location, setLocation] = useState([]);
   let [subsidiaryId, setSubsidiaryId] = useState();
   let [customer, setCustomer] = useState();
+  let [jobStatus, setJobStatus] = useState();
   let [subsidiaryErr, setSubsidiaryErr] = useState(false);
   let [filter, setFilter] = useState({});
 
@@ -160,6 +161,14 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     });
   };
 
+  const handleJobStatusChange = (name, value) => {
+    setJobStatus(value);
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
   const applyFilter = () => {
     if (isCompanyAdmin) {
       let userDetails = localStorage.getItem("userDetails")
@@ -182,6 +191,7 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     setLocation([]);
     setSubsidiaryId("");
     setCustomer("");
+    setJobStatus("");
     if (isCompanyAdmin) {
       let userDetails = localStorage.getItem("userDetails")
         ? JSON.parse(localStorage.getItem("userDetails"))
@@ -665,30 +675,49 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
                 )}
 
                 {isCompanyAdmin && (
-                  <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
-                    <FormGroup>
-                      <Input
-                        type="select"
-                        name="customer"
-                        value={customer}
-                        onChange={(e) =>
-                          handleEmployerChange("customer", e.target.value)
-                        }
-                      >
-                        <option value={0}>All Employees</option>
-                        {customersList?.length > 0 &&
-                          customersList?.map((options) => (
-                            <option
-                              key={options.customerid}
-                              value={options.customerid}
-                            >
-                              {" "}
-                              {options.firstname} {options.lastname}
-                            </option>
-                          ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
+                  <>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="customer"
+                          value={customer}
+                          onChange={(e) =>
+                            handleEmployerChange("customer", e.target.value)
+                          }
+                        >
+                          <option value={0}>All Employees</option>
+                          {customersList?.length > 0 &&
+                            customersList?.map((options) => (
+                              <option
+                                key={options.customerid}
+                                value={options.customerid}
+                              >
+                                {" "}
+                                {options.firstname} {options.lastname}
+                              </option>
+                            ))}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <FormGroup>
+                        <Input
+                          name="jobStatus"
+                          type="select"
+                          value={jobStatus}
+                          onChange={(e) =>
+                            handleJobStatusChange("jobStatus", e.target.value)
+                          }
+                        >
+                          <option value={""}>All jobs</option>
+                          <option value={"Publish"}>Publish jobs</option>
+                          <option value={"Draft"}>Draft jobs</option>
+                          <option value={"Closed"}>Closed jobs</option>
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                  </>
                 )}
                 <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button

@@ -73,7 +73,7 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
 
-  let title = "Employers";
+  let title = "Hiring Manager";
   let icon = companyLogo;
   let columns = [
     {
