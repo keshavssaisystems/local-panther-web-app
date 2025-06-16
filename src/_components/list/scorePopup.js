@@ -1,8 +1,24 @@
-import React from "react";
-import { Nav, NavItem, PopoverBody } from "reactstrap";
+import React, { useState } from "react";
+import {
+  Nav,
+  NavItem,
+  PopoverBody,
+  Accordion,
+  AccordionBody,
+  AccordionHeader,
+  AccordionItem,
+} from "reactstrap";
 import "./scorePopup.scss";
 
 export function ScorePopup({ scoreJson }) {
+  // const [open, setOpen] = useState("1");
+  // const toggle = (id) => {
+  //   if (open === id) {
+  //     setOpen();
+  //   } else {
+  //     setOpen(id);
+  //   }
+  // };
   try {
     let validatedJson = JSON.parse(scoreJson);
     let keys = [
@@ -26,14 +42,21 @@ export function ScorePopup({ scoreJson }) {
             <NavItem className="popup-note">
               The percentage above is calculated based on the score below
             </NavItem>
-            {keys?.map((key) => (
+            {/* <Accordion open={open} toggle={toggle}> */}
+            {keys?.map((key, index) => (
+              // <AccordionItem>
+              // <AccordionHeader targetId={index + 1}>
               <NavItem className="nav-item-header-custom">
                 {displayName[key]}
                 <div className="counter float-end mb-0">
                   {validatedJson[key] === undefined ? "-" : validatedJson[key]}
                 </div>
               </NavItem>
+              // </AccordionHeader>
+              // <AccordionBody accordionId={index + 1}>Test</AccordionBody>
+              // </AccordionItem>
             ))}
+            {/* </Accordion> */}
           </Nav>
         </PopoverBody>
       </>

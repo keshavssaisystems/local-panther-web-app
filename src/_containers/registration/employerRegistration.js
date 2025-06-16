@@ -80,6 +80,17 @@ export function EmployerRegistration() {
     useForm(formOptions);
   const { errors, isValid } = formState;
   async function onSubmit(formData) {
+    debugger;
+    if (selectedComp.value === "0") {
+      let data = await postCompanySearch(getValues("empemail"));
+      if (data?.data?.companyDetailsList?.length > 0) {
+        showSweetAlert({
+          title: "User with the same domain already exists in our system.",
+          type: "error",
+        });
+      }
+      return;
+    }
     let name = formData.empname.split(" ");
     let payload = {
       email: getValues("empemail"),
