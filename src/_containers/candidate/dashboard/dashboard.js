@@ -216,9 +216,9 @@ export function CandidateDashboard() {
         </Col>
       </Row>
       <Row>
-        <Col>
+        {/* <Col>
           <TodoList onCallBack={() => loadPage()} />
-        </Col>
+        </Col> */}
         <Col>
           <Alerts
             onDeleteNotification={(id) => showConfAlert(id)}
