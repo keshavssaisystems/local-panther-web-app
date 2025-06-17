@@ -3,7 +3,7 @@ import { candidateDashboardActions } from "_store";
 import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AlertModal } from "_components/modal/alertModal";
-
+import { history } from "_helpers";
 export const NotificationCounter = () => {
   const dispatch = useDispatch();
   const userId = localStorage.getItem("userId");
@@ -65,9 +65,31 @@ export const NotificationCounter = () => {
     }
   };
 
-  const onReadNotification = (id, status) => {
+  const onReadNotification = async (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
+    }
+
+    if (localStorage.getItem("userroleid") === "3") {
+      if (item?.notificationmessage?.toLowerCase() === "interview scheduled") {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "interview rescheduled"
+      ) {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "offer received" ||
+        item?.notificationmessage?.toLowerCase() === "job offer"
+      ) {
+        history.navigate("/job-list-offers");
+      } else if (item?.notificationmessage?.toLowerCase() === "match job") {
+        history.navigate("/job-list-matched");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "incomplete profile" ||
+        item?.notificationmessage?.toLowerCase() === "resume parsed"
+      ) {
+        history.navigate("/profile");
+      }
     }
   };
 
@@ -120,7 +142,9 @@ export const NotificationCounter = () => {
             notiCount={notiCount}
             data={alerts}
             onDeleteNotification={(id) => showConfAlert(id)}
-            onReadNotification={(id, status) => onReadNotification(id, status)}
+            onReadNotification={(id, status, item) =>
+              onReadNotification(id, status, item)
+            }
           ></AlertModal>
         </>
         <>
