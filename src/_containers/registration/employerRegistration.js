@@ -87,8 +87,8 @@ export function EmployerRegistration() {
           title: "User with the same domain already exists in our system.",
           type: "error",
         });
+        return;
       }
-      return;
     }
     let name = formData.empname.split(" ");
     let payload = {
