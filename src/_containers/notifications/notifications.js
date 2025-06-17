@@ -5,6 +5,7 @@ import { Alerts } from "_containers/candidate/dashboard/alerts";
 import { useDispatch } from "react-redux";
 import { candidateDashboardActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { history } from "_helpers";
 export const Notifications = () => {
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
@@ -21,9 +22,31 @@ export const Notifications = () => {
     description: "",
     id: "",
   });
-  const onReadNotification = (id, status) => {
+  const onReadNotification = (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
+    }
+
+    if (localStorage.getItem("userroleid") === "3") {
+      if (item?.notificationmessage?.toLowerCase() === "interview scheduled") {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "interview rescheduled"
+      ) {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "offer received" ||
+        item?.notificationmessage?.toLowerCase() === "job offer"
+      ) {
+        history.navigate("/job-list-offers");
+      } else if (item?.notificationmessage?.toLowerCase() === "match job") {
+        history.navigate("/job-list-matched");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "incomplete profile" ||
+        item?.notificationmessage?.toLowerCase() === "resume parsed"
+      ) {
+        history.navigate("/profile");
+      }
     }
   };
 
@@ -97,7 +120,9 @@ export const Notifications = () => {
         <Alerts
           type="view"
           onDeleteNotification={(id) => showConfAlert(id)}
-          onReadNotification={(id, status) => onReadNotification(id, status)}
+          onReadNotification={(id, status, item) =>
+            onReadNotification(id, status, item)
+          }
         ></Alerts>
       </div>
       <>

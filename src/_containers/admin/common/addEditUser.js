@@ -14,9 +14,12 @@ import { analytics } from "../../../firebase/index";
 export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
+  let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
+    ? localStorage.getItem("isCompanyAdmin")
+    : false;
   const dispatch = useDispatch();
   const rolesList = useSelector((state) => state.adminListing.rolesList);
-
+  console.log(rolesList);
   let url = `${process.env.REACT_APP_PANTHER_URL}`;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   /*
@@ -254,7 +257,8 @@ export const AddEditUser = (props) => {
                     {" "}
                     Select role{" "}
                   </option>
-                  {rolesList?.length > 0 &&
+                  {!isCompanyAdmin &&
+                    rolesList?.length > 0 &&
                     rolesList?.map((options) => (
                       <option
                         selected={options.userroleid === roleId}
@@ -265,6 +269,20 @@ export const AddEditUser = (props) => {
                             options.userroleid === 2 || options.userroleid === 3
                               ? "none"
                               : "",
+                        }}
+                      >
+                        <div>{options.rolename}</div>
+                      </option>
+                    ))}
+                  {isCompanyAdmin &&
+                    rolesList?.length > 0 &&
+                    rolesList?.map((options) => (
+                      <option
+                        selected={options.userroleid === roleId}
+                        key={options.userroleid}
+                        value={options.userroleid}
+                        style={{
+                          display: options.userroleid === 2 ? "" : "none",
                         }}
                       >
                         <div>{options.rolename}</div>

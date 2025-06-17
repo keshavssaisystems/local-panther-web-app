@@ -122,7 +122,7 @@ export default function CustomerDashboard() {
       });
     }
   };
-  const onReadNotification = (id, status) => {
+  const onReadNotification = (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
     }
@@ -239,8 +239,8 @@ export default function CustomerDashboard() {
           <Col sm="12" md="6" lg="6">
             <Alerts
               onDeleteNotification={(id) => showConfAlert(id)}
-              onReadNotification={(id, status) =>
-                onReadNotification(id, status)
+              onReadNotification={(id, status, item) =>
+                onReadNotification(id, status, item)
               }
             />
           </Col>
