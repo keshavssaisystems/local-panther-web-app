@@ -233,6 +233,69 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
     },
   ];
 
+  let columns1 = [
+    {
+      name: "Name",
+      id: "name",
+      cell: (row) => <div>{row.firstname + " " + row.lastname}</div>,
+      sortable: true,
+    },
+    {
+      name: "Company",
+      id: "companyname",
+      selector: (row) => row.companyname,
+      sortable: true,
+    },
+    // {
+    //   name: "Address",
+    //   id: "address",
+    //   selector: (row) => row.address,
+    //   sortable: true,
+    // },
+    {
+      name: "City, State",
+      id: "cityname",
+      selector: (row) =>
+        row.cityname === "" && row.statename === ""
+          ? ""
+          : row.cityname === "" && row.statename !== ""
+          ? row.statename
+          : row.cityname !== "" && row.statename === ""
+          ? row.cityname
+          : row.cityname + ", " + row.statename,
+      sortable: true,
+    },
+    {
+      name: "Phone",
+      id: "phonenumber",
+      selector: (row) =>
+        row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
+      sortable: true,
+    },
+    {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button color="link" onClick={() => onViewBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
+    },
+    {
+      name: "Email",
+      selector: (row) => row.email,
+      sortable: true,
+    },
+  ];
+
   const onApprove = async (row, check) => {
     let payload = {
       userid: row.userid,
@@ -575,7 +638,7 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
               </Row>
               <DataTable
                 data={data}
-                columns={columns}
+                columns={isCompanyAdmin ? columns1 : columns}
                 pagination
                 fixedHeader
                 customStyles={customStyles}
