@@ -111,12 +111,7 @@ export const AddEditUser = (props) => {
     form.append("Profilephotopath", null);
     form.append("ProfileFile", null);
     if (isAddMode) {
-      form.append(
-        "UserId",
-        localStorage.getItem("isCompanyAdmin")
-          ? JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId
-          : 0
-      );
+      form.append("UserId", 0);
       if (localStorage.getItem("isCompanyAdmin")) {
         form.append(
           "Companyname",
