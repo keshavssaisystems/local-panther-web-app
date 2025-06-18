@@ -368,6 +368,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     let urlParams = {
       pageNumber: pageNo,
       pageSize: pageSize,
+      companyId: "",
     };
 
     if (status !== "All") {
@@ -375,6 +376,13 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     }
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -385,6 +393,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     let urlParams = {
       pageNumber: pageNo,
       pageSize: pageSize,
+      companyId: "",
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -395,6 +404,13 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     }
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -407,12 +423,20 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
       userRoleId: roleId,
       pageNumber: 0,
       pageSize: pageSize,
+      companyId: "",
     };
     if (status !== "All") {
       urlParams.isActive = status;
     }
     if (searchData !== "") {
       urlParams.searchText = searchData;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -423,6 +447,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     let urlParams = {
       pageSize: pageSize,
       pageNumber: pageNo,
+      companyId: "",
     };
     if (check === "0") {
       setStatus("All");
@@ -440,6 +465,13 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     }
     if (searchData !== "") {
       urlParams.searchText = searchData;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);

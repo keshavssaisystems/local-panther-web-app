@@ -229,7 +229,9 @@ export function UserBox() {
                                 </div>
                                 <div className="widget-subheading opacity-8">
                                   {userDetail?.UserroleId === "2"
-                                    ? "Hiring Manager"
+                                    ? localStorage.getItem("isCompanyAdmin")
+                                      ? "Company Admin"
+                                      : "Hiring Manager"
                                     : userDetail?.role}
                                 </div>
                               </div>
@@ -310,7 +312,9 @@ export function UserBox() {
                 <div className="widget-subheading">
                   {" "}
                   {userDetail?.UserroleId === "2"
-                    ? "Hiring Manager"
+                    ? localStorage.getItem("isCompanyAdmin")
+                      ? "Company Admin"
+                      : "Hiring Manager"
                     : userDetail?.role}
                 </div>
               </div>

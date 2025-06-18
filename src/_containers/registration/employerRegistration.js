@@ -447,7 +447,11 @@ export function EmployerRegistration() {
                   type="text"
                   name="empname"
                   id="empname"
-                  placeholder="Enter contact person name"
+                  placeholder={
+                    selectedComp.value && selectedComp.value === "0"
+                      ? "Enter contact person name"
+                      : "Enter hiring manager name"
+                  }
                   {...register("empname")}
                   className={`form-control placeholder-name ${
                     errors.empname ? "is-invalid" : ""
@@ -468,7 +472,11 @@ export function EmployerRegistration() {
 
                 <InputGroup>
                   <InputMask
-                    placeholder="Enter contact person mobile number"
+                    placeholder={
+                      selectedComp.value && selectedComp.value === "0"
+                        ? "Enter contact person mobile number"
+                        : "Enter hiring manager mobile number"
+                    }
                     type="text"
                     mask="(999)-999-9999"
                     name="empphone"
@@ -487,7 +495,7 @@ export function EmployerRegistration() {
               <FormGroup>
                 <Label for="empemail" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
-                    ? "Contact Person Email"
+                    ? "Contact Person Company Email"
                     : "Hiring Manager Email"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
@@ -496,7 +504,11 @@ export function EmployerRegistration() {
                     type="email"
                     name="empemail"
                     id="empemail"
-                    placeholder="Enter contact person email id"
+                    placeholder={
+                      selectedComp.value && selectedComp.value === "0"
+                        ? "Enter contact person company email id"
+                        : "Enter hiring manager email id"
+                    }
                     {...register("empemail")}
                     className={`form-control placeholder-name ${
                       errors.empemail ? "is-invalid" : ""

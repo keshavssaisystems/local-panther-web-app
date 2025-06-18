@@ -23,6 +23,9 @@ export function ScorePopup({ scoreJson }) {
       }
     };
     let validatedJson = JSON.parse(scoreJson);
+    let isHiringManager =
+      localStorage.getItem("userroleid") &&
+      localStorage.getItem("userroleid") === "2";
 
     let keys = [
       "jobtitlescore",
@@ -53,52 +56,72 @@ export function ScorePopup({ scoreJson }) {
             <NavItem className="popup-note">
               The percentage above is calculated based on the score below
             </NavItem>
-            <Accordion open={open} toggle={toggle}>
-              {keys?.map((key, index) => (
-                <AccordionItem>
-                  <AccordionHeader targetId={index + 1}>
-                    <div className="nav-item-header-custom">
-                      <Row>
-                        <Col
-                          md={10}
-                          className={open === index + 1 ? "active" : ""}
-                        >
-                          {displayName[key]}
-                        </Col>
-                        <Col md={2}>
-                          <div className="counter float-end mb-0">
-                            {validatedJson[key] === undefined
-                              ? "-"
-                              : validatedJson[key]}
-                          </div>
-                        </Col>
-                      </Row>
-                    </div>
-                  </AccordionHeader>
-                  <AccordionBody accordionId={index + 1}>
-                    <>
-                      {index + 1 === 1 && (
-                        <div>{validatedJson["job_position_description"]}</div>
-                      )}
-                      {index + 1 === 2 && (
-                        <div>{validatedJson["location_description"]}</div>
-                      )}
-                      {index + 1 === 3 && (
-                        <div>{validatedJson["skills_description"]}</div>
-                      )}
-                      {index + 1 === 4 && (
-                        <div>{validatedJson["experience_description"]}</div>
-                      )}
-                      {index + 1 === 5 && (
-                        <div>
-                          {validatedJson["education_field_description"]}
+
+            {isHiringManager ? (
+              <>
+                <Accordion open={open} toggle={toggle}>
+                  {keys?.map((key, index) => (
+                    <AccordionItem>
+                      <AccordionHeader targetId={index + 1}>
+                        <div className="nav-item-header-custom">
+                          <Row>
+                            <Col
+                              md={10}
+                              className={open === index + 1 ? "active" : ""}
+                            >
+                              {displayName[key]}
+                            </Col>
+                            <Col md={2}>
+                              <div className="counter float-end mb-0">
+                                {validatedJson[key] === undefined
+                                  ? "-"
+                                  : validatedJson[key]}
+                              </div>
+                            </Col>
+                          </Row>
                         </div>
-                      )}
-                    </>
-                  </AccordionBody>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                      </AccordionHeader>
+                      <AccordionBody accordionId={index + 1}>
+                        <>
+                          {index + 1 === 1 && (
+                            <div>
+                              {validatedJson["job_position_description"]}
+                            </div>
+                          )}
+                          {index + 1 === 2 && (
+                            <div>{validatedJson["location_description"]}</div>
+                          )}
+                          {index + 1 === 3 && (
+                            <div>{validatedJson["skills_description"]}</div>
+                          )}
+                          {index + 1 === 4 && (
+                            <div>{validatedJson["experience_description"]}</div>
+                          )}
+                          {index + 1 === 5 && (
+                            <div>
+                              {validatedJson["education_field_description"]}
+                            </div>
+                          )}
+                        </>
+                      </AccordionBody>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </>
+            ) : (
+              <>
+                {keys?.map((key, index) => (
+                  <NavItem className="nav-item-header-custom">
+                    {displayName[key]}
+                    <div className="counter float-end mb-0">
+                      {validatedJson[key] === undefined
+                        ? "-"
+                        : validatedJson[key]}
+                    </div>
+                  </NavItem>
+                ))}
+              </>
+            )}
           </Nav>
         </PopoverBody>
       </>

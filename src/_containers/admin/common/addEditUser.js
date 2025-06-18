@@ -112,6 +112,16 @@ export const AddEditUser = (props) => {
     form.append("ProfileFile", null);
     if (isAddMode) {
       form.append("UserId", 0);
+      if (localStorage.getItem("isCompanyAdmin")) {
+        form.append(
+          "Companyname",
+          JSON.parse(localStorage.getItem("userDetails"))?.Companyname
+        );
+        form.append(
+          "Companyid",
+          JSON.parse(localStorage.getItem("userDetails"))?.CompanyId
+        );
+      }
       axios
         .post(`${url}/api/User/AddUser`, form, config)
         .then((result) => {
