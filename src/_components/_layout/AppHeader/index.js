@@ -115,7 +115,9 @@ export function AppHeader({
                   {userroleid === 1
                     ? "Admin"
                     : userroleid === 2
-                    ? "Hiring Manager"
+                    ? localStorage.getItem("isCompanyAdmin")
+                      ? "Company Admin"
+                      : "Hiring Manager"
                     : "Candidate"}
                 </h4>
               </div>
