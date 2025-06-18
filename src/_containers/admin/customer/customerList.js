@@ -53,7 +53,11 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
     let userDetails = localStorage.getItem("userDetails")
       ? JSON.parse(localStorage.getItem("userDetails"))
       : {};
-    if (userDetails.CompanyId && localStorage.getItem("isCompanyAdmin")) {
+    if (
+      userDetails.CompanyId &&
+      localStorage.getItem("isCompanyAdmin") &&
+      localStorage.getItem("isCompanyAdmin") === "true"
+    ) {
       setCompanyId(Number(userDetails.CompanyId));
       getCustomerDetails(pageSize, pageNo, Number(userDetails.CompanyId));
     } else {

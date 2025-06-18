@@ -25,6 +25,10 @@ export function AppHeader({
 }) {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [showCPModal, setShowCPModal] = useState(false);
+
+  let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
+    ? localStorage.getItem("isCompanyAdmin") === "true"
+    : false;
   return (
     <>
       <CSSTransitionGroup
@@ -115,7 +119,7 @@ export function AppHeader({
                   {userroleid === 1
                     ? "Admin"
                     : userroleid === 2
-                    ? localStorage.getItem("isCompanyAdmin")
+                    ? isCompanyAdmin
                       ? "Company Admin"
                       : "Hiring Manager"
                     : "Candidate"}
