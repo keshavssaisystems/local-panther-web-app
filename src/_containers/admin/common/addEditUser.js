@@ -15,7 +15,7 @@ export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
   let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
-    ? localStorage.getItem("isCompanyAdmin")
+    ? localStorage.getItem("isCompanyAdmin") === "true"
     : false;
   const dispatch = useDispatch();
   const rolesList = useSelector((state) => state.adminListing.rolesList);
@@ -112,7 +112,10 @@ export const AddEditUser = (props) => {
     form.append("ProfileFile", null);
     if (isAddMode) {
       form.append("UserId", 0);
-      if (localStorage.getItem("isCompanyAdmin")) {
+      if (
+        localStorage.getItem("isCompanyAdmin") &&
+        localStorage.getItem("isCompanyAdmin") === "true"
+      ) {
         form.append(
           "Companyname",
           JSON.parse(localStorage.getItem("userDetails"))?.Companyname
