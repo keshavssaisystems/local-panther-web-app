@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Row, Col, FormGroup, Label, Input, CardTitle, Form } from "reactstrap";
 import SearchPreviousJob from "./searchPreviousJob";
+import AIJobCreation from "./aiJobCreation";
 import "./createJob.scss";
 
 export default function SelectJobType({
@@ -9,6 +10,7 @@ export default function SelectJobType({
   postSearch,
   readyForNextStep,
   recommendedJobList,
+  aiDescriptionData,
 }) {
   const [jobType, setJobType] = useState("new_template");
   const [showJobTable, setShowJobTable] = useState(false);
@@ -25,7 +27,18 @@ export default function SelectJobType({
       event.target.value === "previous_template" ||
       event.target.value === "recommendation_template"
     ) {
+      getJobTypeData({
+        type: event.target.value,
+        jobId: "",
+      });
       setShowJobTable(true);
+      readyForNextStep(true);
+    } else if (event.target.value === "ai_template") {
+      setShowJobTable(true);
+      getJobTypeData({
+        type: event.target.value,
+        jobId: "",
+      });
       readyForNextStep(true);
     } else {
       setShowJobTable(false);
@@ -80,6 +93,23 @@ export default function SelectJobType({
                 {"  "}
                 <p className="mt-0 mb-2 text-muted-custom">Beginning a new</p>
               </FormGroup>
+              <FormGroup check>
+                <Input
+                  type="radio"
+                  name="jobType"
+                  id="new"
+                  value={"ai_template"}
+                  onClick={(e) => onButtonClick(e)}
+                />
+                <Label for="new" check className="radio-label-custom">
+                  Generate job posting with AI
+                </Label>
+                {"  "}
+                <p className="mt-0 mb-2 text-muted-custom">
+                  Use a prompt to automatically create a new job description
+                </p>
+              </FormGroup>
+
               {/* <FormGroup check>
                 <Input
                   type="radio"
@@ -103,15 +133,22 @@ export default function SelectJobType({
             </Form>
           </Col>
         </Row>
-        {showJobTable === true && (
-          <SearchPreviousJob
-            getJobId={(e) => getOldJobId(e)}
-            jobList={jobList}
-            postSearch={(e) => postSearch(e)}
-            recommendedJobList={recommendedJobList}
-            jobType={jobType}
-          />
-        )}
+        <>
+          {showJobTable === true && jobType === "ai_template" && (
+            <AIJobCreation aiDescriptionData={(e) => aiDescriptionData(e)} />
+          )}
+        </>
+        <>
+          {showJobTable === true && jobType === "previous_template" && (
+            <SearchPreviousJob
+              getJobId={(e) => getOldJobId(e)}
+              jobList={jobList}
+              postSearch={(e) => postSearch(e)}
+              recommendedJobList={recommendedJobList}
+              jobType={jobType}
+            />
+          )}
+        </>
       </div>
     </>
   );

@@ -69,6 +69,7 @@ export const CreateJob = forwardRef(
     },
     ref
   ) => {
+    console.log(previousData);
     const dispatch = useDispatch();
     const [accordion, setAccordion] = useState([
       true,
