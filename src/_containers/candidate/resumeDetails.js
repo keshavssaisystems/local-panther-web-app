@@ -444,10 +444,11 @@ export function ResumeDetails(props) {
                             <Button
                               style={{
                                 width: "auto",
-                                backgroundColor: "#2F479B",
+                                // backgroundColor: "#2F479B",
+                                border: "1px solid black",
                               }}
-                              className="me-2 btn-icon btn-pill btn-text"
-                              color="primary"
+                              className="me-2 btn-icon btn-pill"
+                              color="link"
                               onClick={() => handlePrint()}
                             >
                               <span className="me-2">
