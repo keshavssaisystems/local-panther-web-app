@@ -351,6 +351,7 @@ export function CreateJobWizard({ type }) {
       .then(async (result) => {
         if (result?.data?.job) {
           let aiJD = await formatAIJobData(result?.data?.job);
+
           setAIJobDetail(aiJD);
           setNavState(compState + 1);
         }

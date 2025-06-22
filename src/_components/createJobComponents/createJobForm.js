@@ -69,7 +69,6 @@ export const CreateJob = forwardRef(
     },
     ref
   ) => {
-    console.log(previousData);
     const dispatch = useDispatch();
     const [accordion, setAccordion] = useState([
       true,
@@ -83,7 +82,7 @@ export const CreateJob = forwardRef(
       const state = prevState.map((x, index) => (tab === index ? !x : false));
       setAccordion(state);
     };
-    console.log(customerDetails);
+
     useEffect((e) => {
       if (type === "new_template" && previousStep !== 3) {
         setZipcodeCityState({

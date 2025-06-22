@@ -3,7 +3,7 @@ export const ai_response = {
   Status: "Success",
   job: {
     authorized_to_working_us: false,
-    certifications: ["Google Ads Certification", "HubSpot Certification"],
+    certifications: ["Google Ads", "HubSpot"],
     city_data: [
       {
         cityid: 4168,
@@ -20,7 +20,7 @@ export const ai_response = {
     country_name: "United States",
     custom_question_answer_type: "",
     description:
-      "<p>Sure! Here's a professional job description for a <strong>Marketing Manager</strong> role. You can customize the details based on your company, industry, and specific requirements:</p><p><strong>Job Title:</strong> Marketing Manager<br><strong>Location:</strong> [City, State or Remote]<br><strong>Job Type:</strong> [Full-Time/Part-Time]<br><strong>Department:</strong> Marketing<br><strong>Reports to:</strong> [Director of Marketing / VP of Marketing / CEO]</p><h3><strong>Job Summary:</strong></h3><p>We are seeking a results-driven and strategic <strong>Marketing Manager</strong> to lead and execute our marketing initiatives. The ideal candidate will be responsible for developing, implementing, and managing marketing campaigns that promote our brand, products, and services. You will play a major role in enhancing brand awareness, driving web traffic, and acquiring leads/customers.</p><h3><strong>Key Responsibilities:</strong></h3><p>Develop and execute comprehensive marketing strategies and campaigns across digital, print, and social channels.</p><p>Lead content creation and messaging for websites, email, social media, and paid advertising.</p><p>Manage marketing budget and allocate resources effectively.</p><p>Analyze performance metrics and optimize campaigns based on data-driven insights.</p><p>Collaborate with sales, product, and design teams to ensure brand consistency and maximize campaign impact. and payout wil be Per month bases</p><p>Conduct market research to identify trends, competitor strategies, and customer needs. 1st shift work support needed </p><p>Oversee and manage marketing team members, freelancers, or agency partners.</p><p>Plan and manage events, trade shows, and promotional activities as needed.</p><p>Monitor SEO/SEM, marketing automation tools, and CRM systems to support campaign goals. they need you on site within 1-2 weeks</p><h3><strong>Qualifications:</strong></h3><p>Bachelor's degree in Marketing, Business, Communications, or a related field.</p><p>3–5+ years of experience in marketing, with at least 1–2 years in a managerial role.</p><p>Strong understanding of digital marketing channels (SEO, SEM, email, social media, etc.).</p><p>Experience with tools such as Google Analytics, HubSpot, Mailchimp, Adobe Creative Suite, etc.</p><p>Excellent written and verbal communication skills.</p><p>Strong leadership, project management, and organizational skills.</p><p>Analytical mindset with the ability to interpret data and generate insights.</p><h3><strong>Preferred Qualifications:</strong></h3><p>Master’s degree in Marketing or related field.</p><p>Experience in [industry, e.g., SaaS, healthcare, e-commerce, etc.].</p><p>Familiarity with CMS platforms (WordPress, Webflow, etc.).</p><p>Certification in Google Ads, HubSpot, or similar tools.</p><h3><strong>Benefits:</strong></h3><p>Competitive salary and performance-based bonuses</p><p>Health, dental, and vision insurance</p><p>Paid time off and holidays</p><p>Professional development opportunities candidate will get 20000 to 22000$ monthly</p><p>[Any additional perks: remote work, wellness stipend with Contract mode work culture will be Weekends only, etc.]</p><p>Would you like this tailored to a specific industry or company size? Secret Clearance required address: 5 Research Drive Shelton, CT 06484</p>",
+      "<p>&lt;p&gt;Sure! Here's a professional job description for a &lt;strong&gt;Marketing Manager&lt;/strong&gt; role. You can customize the details based on your company, industry, and specific requirements:&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Job Title:&lt;/strong&gt; Marketing Manager&lt;br&gt;&lt;strong&gt;Location:&lt;/strong&gt; [City, State or Remote]&lt;br&gt;&lt;strong&gt;Job Type:&lt;/strong&gt; [Full-Time/Part-Time]&lt;br&gt;&lt;strong&gt;Department:&lt;/strong&gt; Marketing&lt;br&gt;&lt;strong&gt;Reports to:&lt;/strong&gt; [Director of Marketing / VP of Marketing / CEO]&lt;/p&gt;&lt;h3&gt;&lt;strong&gt;Job Summary:&lt;/strong&gt;&lt;/h3&gt;&lt;p&gt;We are seeking a results-driven and strategic &lt;strong&gt;Marketing Manager&lt;/strong&gt; to lead and execute our marketing initiatives. The ideal candidate will be responsible for developing, implementing, and managing marketing campaigns that promote our brand, products, and services. You will play a major role in enhancing brand awareness, driving web traffic, and acquiring leads/customers.&lt;/p&gt;&lt;h3&gt;&lt;strong&gt;Key Responsibilities:&lt;/strong&gt;&lt;/h3&gt;&lt;p&gt;Develop and execute comprehensive marketing strategies and campaigns across digital, print, and social channels.&lt;/p&gt;&lt;p&gt;Lead content creation and messaging for websites, email, social media, and paid advertising.&lt;/p&gt;&lt;p&gt;Manage marketing budget and allocate resources effectively.&lt;/p&gt;&lt;p&gt;Analyze performance metrics and optimize campaigns based on data-driven insights.&lt;/p&gt;&lt;p&gt;Collaborate with sales, product, and design teams to ensure brand consistency and maximize campaign impact. and payout wil be Per month bases&lt;/p&gt;&lt;p&gt;Conduct market research to identify trends, competitor strategies, and customer needs. 1st shift work support needed &lt;/p&gt;&lt;p&gt;Oversee and manage marketing team members, freelancers, or agency partners.&lt;/p&gt;&lt;p&gt;Plan and manage events, trade shows, and promotional activities as needed.&lt;/p&gt;&lt;p&gt;Monitor SEO/SEM, marketing automation tools, and CRM systems to support campaign goals. they need you on site within 1-2 weeks&lt;/p&gt;&lt;h3&gt;&lt;strong&gt;Qualifications:&lt;/strong&gt;&lt;/h3&gt;&lt;p&gt;Bachelor's degree in Marketing, Business, Communications, or a related field.&lt;/p&gt;&lt;p&gt;3–5+ years of experience in marketing, with at least 1–2 years in a managerial role.&lt;/p&gt;&lt;p&gt;Strong understanding of digital marketing channels (SEO, SEM, email, social media, etc.).&lt;/p&gt;&lt;p&gt;Experience with tools such as Google Analytics, HubSpot, Mailchimp, Adobe Creative Suite, etc.&lt;/p&gt;&lt;p&gt;Excellent written and verbal communication skills.&lt;/p&gt;&lt;p&gt;Strong leadership, project management, and organizational skills.&lt;/p&gt;&lt;p&gt;Analytical mindset with the ability to interpret data and generate insights.&lt;/p&gt;&lt;h3&gt;&lt;strong&gt;Preferred Qualifications:&lt;/strong&gt;&lt;/h3&gt;&lt;p&gt;Master’s degree in Marketing or related field.&lt;/p&gt;&lt;p&gt;Experience in [industry, e.g., SaaS, healthcare, e-commerce, etc.].&lt;/p&gt;&lt;p&gt;Familiarity with CMS platforms (WordPress, Webflow, etc.).&lt;/p&gt;&lt;p&gt;Certification in Google Ads, HubSpot, or similar tools.&lt;/p&gt;&lt;h3&gt;&lt;strong&gt;Benefits:&lt;/strong&gt;&lt;/h3&gt;&lt;p&gt;Competitive salary and performance-based bonuses&lt;/p&gt;&lt;p&gt;Health, dental, and vision insurance&lt;/p&gt;&lt;p&gt;Paid time off and holidays&lt;/p&gt;&lt;p&gt;Professional development opportunities candidate will get 20000 to 22000$ monthly&lt;/p&gt;&lt;p&gt;[Any additional perks: remote work, wellness stipend with Contract mode work culture will be Weekends only, etc.]&lt;/p&gt;&lt;p&gt;Would you like this tailored to a specific industry or company size? Secret Clearance required address: 5 Research Drive Shelton, CT 06484&lt;/p&gt;</p>",
     field_of_studies: ["Marketing", "Business", "Communications"],
     field_of_study: "Marketing,Business,Communications",
     field_of_study_data: [
@@ -32,7 +32,7 @@ export const ai_response = {
     job_Experience_Schedule: [
       {
         experience_level: "3–5+ years",
-        experience_level_id: 5,
+        experience_level_id: 3,
         hiring_timeline: "1-2 weeks",
         hiring_timeline_id: 2,
         job_Types: [
@@ -56,13 +56,13 @@ export const ai_response = {
       },
     ],
     job_Key_Qualification: [
-      "Bachelor's degree in Marketing, Business, Communications, or related field",
-      "3–5+ years of marketing experience with 1–2 years in managerial role",
-      "Strong understanding of digital marketing channels (SEO, SEM, email, social media)",
-      "Experience with Google Analytics, HubSpot, Mailchimp, Adobe Creative Suite",
+      "Bachelor's degree in Marketing, Business, Communications, or a related field",
+      "3–5+ years of experience in marketing, with at least 1–2 years in a managerial role",
+      "Strong understanding of digital marketing channels (SEO, SEM, email, social media, etc.)",
+      "Experience with tools such as Google Analytics, HubSpot, Mailchimp, Adobe Creative Suite",
       "Excellent written and verbal communication skills",
       "Strong leadership, project management, and organizational skills",
-      "Analytical mindset with ability to interpret data and generate insights",
+      "Analytical mindset with the ability to interpret data and generate insights",
     ],
     job_Payment_Benefit: {
       benefits:
@@ -80,7 +80,7 @@ export const ai_response = {
       },
     ],
     job_title: "Marketing Manager",
-    level_of_education: "Bachelor's degree,Master’s degree (preferred)",
+    level_of_education: "Bachelor's degree,Master’s degree",
     level_of_education_data: [
       {
         levelofeducation: "Bachelor's Degree",
@@ -91,8 +91,8 @@ export const ai_response = {
         levelofeducationid: 5,
       },
     ],
-    level_of_educations: ["Bachelor's degree", "Master’s degree (preferred)"],
-    location_address: "5 Research Drive, Shelton, Connecticut, 06484",
+    level_of_educations: ["Bachelor's degree", "Master’s degree"],
+    location_address: "5 Research Drive Shelton, Connecticut 06484",
     must_have_skills: [
       "Digital marketing channels (SEO, SEM, email, social media)",
       "Google Analytics",
@@ -101,18 +101,11 @@ export const ai_response = {
       "Adobe Creative Suite",
       "Leadership",
       "Project management",
+      "Analytical skills",
     ],
     nice_to_have_skills:
-      "CMS platforms (WordPress, Webflow),Certification in Google Ads, HubSpot,Experience in SaaS, healthcare, e-commerce",
+      "CMS platforms (WordPress, Webflow),Certification in Google Ads, HubSpot",
     nice_to_have_skills_data: [
-      {
-        skillid: 10011,
-        skillname: "E-Commerce",
-      },
-      {
-        skillid: 33964,
-        skillname: "Healthcare",
-      },
       {
         skillid: 35187,
         skillname: "Hubspot",
@@ -122,11 +115,15 @@ export const ai_response = {
     security_clearance: "Secret Clearance",
     security_clearance_id: 1,
     skills:
-      "Digital marketing channels (SEO, SEM, email, social media),Google Analytics,HubSpot,Mailchimp,Adobe Creative Suite,Leadership,Project management",
+      "Digital marketing channels (SEO, SEM, email, social media),Google Analytics,HubSpot,Mailchimp,Adobe Creative Suite,Leadership,Project management,Analytical skills",
     skills_data: [
       {
         skillid: 731,
         skillname: "Adobe Creative Suite",
+      },
+      {
+        skillid: 1468,
+        skillname: "Analytical Skills",
       },
       {
         skillid: 13485,
