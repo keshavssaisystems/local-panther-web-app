@@ -55,7 +55,7 @@ export default function AIJobCreation({ aiDescriptionData }) {
               config={{
                 licenseKey: "GPL",
                 placeholder:
-                  "Enter job details (Title, Positions, Type, Skills, Location, Education, Pay, Salary, Experience). AI will generate a template with provided details.",
+                  "Enter job details (Title, Positions, Type, Skills, Location, Education, Pay, Salary, Experience). OpenWorX agent will generate a template with provided details.",
                 plugins: [
                   Essentials,
                   Paragraph,
