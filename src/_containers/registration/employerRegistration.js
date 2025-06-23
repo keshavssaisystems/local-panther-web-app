@@ -84,7 +84,7 @@ export function EmployerRegistration() {
       let data = await postCompanySearch(getValues("empemail"));
       if (data?.data?.companyDetailsList?.length > 0) {
         showSweetAlert({
-          title: "User with the same domain already exists in our system.",
+          title: "The company domain already exist.",
           type: "error",
         });
         return;
