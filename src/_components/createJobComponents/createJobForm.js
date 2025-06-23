@@ -91,8 +91,6 @@ export const CreateJob = forwardRef(
         });
       }
       if (type === "previous_template" || type === "recommendation_template") {
-        console.log(previousData);
-
         let data = {
           basicInformation: {
             companyId: previousData?.companyname,
@@ -1454,6 +1452,30 @@ export const CreateJob = forwardRef(
         ? preValue.securityclearanceid
         : previousValue.securityclearanceid;
     useEffect(() => {
+      if (type === "ai_template") {
+        setZipcodeCityState({
+          value:
+            previousData?.cityid +
+            ", " +
+            previousData?.stateid +
+            ", " +
+            previousData?.cityname +
+            ", " +
+            previousData?.statename,
+          label: previousData?.cityname + ", " + previousData?.statename,
+        });
+        getLocationDetails({
+          value:
+            previousData?.cityid +
+            ", " +
+            previousData?.stateid +
+            ", " +
+            previousData?.cityname +
+            ", " +
+            previousData?.statename,
+          label: previousData?.cityname + ", " + previousData?.statename,
+        });
+      }
       if (previousStep === 3) {
         setZipcodeCityState({
           value:
