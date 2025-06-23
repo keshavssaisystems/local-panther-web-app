@@ -60,15 +60,15 @@ export function EmployerRegistration() {
         "Please enter valid email"
       ),
     empname: Yup.string()
-      .required("Employer name is required")
+      .required("Hiring Manager name is required")
       .matches(/^[A-Za-z ]*$/, "Please enter valid name"),
     empemail: Yup.string()
-      .required("Employer Email is required")
+      .required("Hiring Manager Email is required")
       .matches(
         /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
         "Please enter valid email"
       ),
-    empphone: Yup.string().required("Employer Phone number is required"),
+    empphone: Yup.string().required("Hiring Manager Phone number is required"),
   });
   const formOptions = {
     resolver: yupResolver(validationSchema),
@@ -80,6 +80,16 @@ export function EmployerRegistration() {
     useForm(formOptions);
   const { errors, isValid } = formState;
   async function onSubmit(formData) {
+    if (selectedComp.value === "0") {
+      let data = await postCompanySearch(getValues("empemail"));
+      if (data?.data?.companyDetailsList?.length > 0) {
+        showSweetAlert({
+          title: "The company domain already exist.",
+          type: "error",
+        });
+        return;
+      }
+    }
     let name = formData.empname.split(" ");
     let payload = {
       email: getValues("empemail"),
@@ -333,8 +343,8 @@ export function EmployerRegistration() {
                     placement="bottom"
                     target={"info-new-comp"}
                   >
-                    When you add a new company, an employer profile will be
-                    created automatically.
+                    When you add a new company, an hiring manager profile will
+                    be created automatically.
                   </UncontrolledTooltip>
                   <img
                     id="info-new-comp"
@@ -430,14 +440,18 @@ export function EmployerRegistration() {
                 <Label for="empname" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
                     ? "Contact Person Name"
-                    : "Employer Name"}{" "}
+                    : "Hiring Manager Name"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
                 <input
                   type="text"
                   name="empname"
                   id="empname"
-                  placeholder="Enter contact person name"
+                  placeholder={
+                    selectedComp.value && selectedComp.value === "0"
+                      ? "Enter contact person name"
+                      : "Enter hiring manager name"
+                  }
                   {...register("empname")}
                   className={`form-control placeholder-name ${
                     errors.empname ? "is-invalid" : ""
@@ -452,13 +466,17 @@ export function EmployerRegistration() {
                 <Label for="empphone" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
                     ? "Contact Person Mobile"
-                    : "Employer Mobile"}{" "}
+                    : "Hiring Manager Mobile"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
 
                 <InputGroup>
                   <InputMask
-                    placeholder="Enter contact person mobile number"
+                    placeholder={
+                      selectedComp.value && selectedComp.value === "0"
+                        ? "Enter contact person mobile number"
+                        : "Enter hiring manager mobile number"
+                    }
                     type="text"
                     mask="(999)-999-9999"
                     name="empphone"
@@ -477,8 +495,8 @@ export function EmployerRegistration() {
               <FormGroup>
                 <Label for="empemail" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
-                    ? "Contact Person Email"
-                    : "Employer Email"}{" "}
+                    ? "Contact Person Company Email"
+                    : "Hiring Manager Email"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
                 <InputGroup>
@@ -486,7 +504,11 @@ export function EmployerRegistration() {
                     type="email"
                     name="empemail"
                     id="empemail"
-                    placeholder="Enter contact person email id"
+                    placeholder={
+                      selectedComp.value && selectedComp.value === "0"
+                        ? "Enter contact person company email id"
+                        : "Enter hiring manager email id"
+                    }
                     {...register("empemail")}
                     className={`form-control placeholder-name ${
                       errors.empemail ? "is-invalid" : ""

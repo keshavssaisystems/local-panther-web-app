@@ -126,6 +126,24 @@ export const candRegisterOTPThunk = createAsyncThunk(
   }
 );
 
+export const postCompanyReferralLogs = createAsyncThunk(
+  `${name}/postCompanyReferralLogs`,
+  async (payload) => {
+    const CMPREFFLOGS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CompanyReferralLogs`;
+    return await fetchWrapper.post(CMPREFFLOGS_END_POINT, payload);
+  }
+);
+
+export const putCompanyReferralLogs = createAsyncThunk(
+  `${name}/putCompanyReferralLogs`,
+  async (id, payload) => {
+    const CMPREFFLOGS_END_POINT_PT =
+      `${process.env.REACT_APP_MAIN_API_URL}/api/CompanyReferralLogs/Patch/` +
+      id;
+    return await fetchWrapper.put(CMPREFFLOGS_END_POINT_PT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -218,7 +236,9 @@ const authSlice = createSlice({
           ? defLogo[0]?.appconfigurationvalue
           : ""
       );
-
+      if (decodedData?.UserroleId === "2") {
+        localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
+      }
       // get return url from location state or default to home page
       const { from } = history.location.state || {
         from: { pathname: "/" },
@@ -346,7 +366,9 @@ const authSlice = createSlice({
             ? defLogo[0]?.appconfigurationvalue
             : ""
         );
-
+        if (decodedData?.UserroleId === "2") {
+          localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
+        }
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },
@@ -457,7 +479,9 @@ const authSlice = createSlice({
             ? defLogo[0]?.appconfigurationvalue
             : ""
         );
-
+        if (decodedData?.UserroleId === "2") {
+          localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
+        }
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },
@@ -540,6 +564,12 @@ const authSlice = createSlice({
     [candRegisterOTPThunk.rejected]: (state, action) => {
       // do nothing
     },
+    [postCompanyReferralLogs.pending]: (state, { payload }) => {},
+    [postCompanyReferralLogs.fulfilled]: (state, { payload }) => {},
+    [postCompanyReferralLogs.rejected]: (state, action) => {},
+    [putCompanyReferralLogs.pending]: (state, { payload }) => {},
+    [putCompanyReferralLogs.fulfilled]: (state, { payload }) => {},
+    [putCompanyReferralLogs.rejected]: (state, action) => {},
   },
 });
 
@@ -560,6 +590,8 @@ export const authActions = {
   postAddAuditLogs,
   loginWithOTP,
   candRegisterOTPThunk,
+  postCompanyReferralLogs,
+  putCompanyReferralLogs,
 };
 
 export const authReducer = authSlice.reducer;

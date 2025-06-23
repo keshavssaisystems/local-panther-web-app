@@ -74,7 +74,8 @@ export const AlertModal = (props) => {
                                   onClick={() =>
                                     props.onReadNotification(
                                       item.queueid,
-                                      item.notificationstatusid
+                                      item.notificationstatusid,
+                                      item
                                     )
                                   }
                                 >

@@ -30,7 +30,7 @@ import customerIcons from "assets/utils/images/customer";
 
 import { PaymentModal } from "_components/modal/paymentmodal";
 
-export const CustomerList = () => {
+export const CustomerList = ({ isCompanyAdmin = false }) => {
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState({});
@@ -50,10 +50,22 @@ export const CustomerList = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    let userDetails = localStorage.getItem("userDetails")
+      ? JSON.parse(localStorage.getItem("userDetails"))
+      : {};
+    if (
+      userDetails.CompanyId &&
+      localStorage.getItem("isCompanyAdmin") &&
+      localStorage.getItem("isCompanyAdmin") === "true"
+    ) {
+      setCompanyId(Number(userDetails.CompanyId));
+      getCustomerDetails(pageSize, pageNo, Number(userDetails.CompanyId));
+    } else {
+      getCustomerDetails(pageSize, pageNo);
+    }
     dispatch(dropdownActions.getCompanyListThunk());
     dispatch(dropdownActions.getEmployeeCountThunk());
     dispatch(dropdownActions.getStatusListThunk());
-    getCustomerDetails(pageSize, pageNo);
   }, []);
   const [customerStatus, setCustomerStatus] = useState(0);
   const [companyId, setCompanyId] = useState(0);
@@ -65,7 +77,7 @@ export const CustomerList = () => {
   const companyDropdown = useSelector((state) => state.dropdown.companyList);
   const candidateStatusList = useSelector((state) => state.dropdown.statusList);
 
-  let title = "Employers";
+  let title = "Hiring Manager";
   let icon = companyLogo;
   let columns = [
     {
@@ -138,77 +150,153 @@ export const CustomerList = () => {
       id: "isactive",
 
       cell: (row) => (
-        <div>
-          {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
-            <div
-              title="Active/Inactive user"
-              className="switch has-switch  me-1"
-              data-on-label="ON"
-              data-off-label="OFF"
-              style={{ verticalAlign: "bottom", cursor: "pointer" }}
-              onClick={() => toggleNotification(!row.isactive, row)}
-            >
-              <div
-                className={cx("switch-animate", {
-                  "switch-on": row.isactive,
-                  "switch-off": !row.isactive,
-                })}
-              >
-                <input type="checkbox" />
-                <span className="switch-left">ON</span>
-                <label>&nbsp;</label>
-                <span className="switch-right">OFF</span>
-              </div>
+        <>
+          {!isCompanyAdmin && (
+            <div>
+              {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
+                <div
+                  title="Active/Inactive user"
+                  className="switch has-switch  me-1"
+                  data-on-label="ON"
+                  data-off-label="OFF"
+                  style={{ verticalAlign: "bottom", cursor: "pointer" }}
+                  onClick={() => toggleNotification(!row.isactive, row)}
+                >
+                  <div
+                    className={cx("switch-animate", {
+                      "switch-on": row.isactive,
+                      "switch-off": !row.isactive,
+                    })}
+                  >
+                    <input type="checkbox" />
+                    <span className="switch-left">ON</span>
+                    <label>&nbsp;</label>
+                    <span className="switch-right">OFF</span>
+                  </div>
+                </div>
+              )}
+              <ButtonGroup>
+                {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
+                  <Button
+                    // outline
+                    size="sm"
+                    title="Edit employer"
+                    className="btn-icon"
+                    color="warning"
+                    onClick={(e) => {
+                      setEditData(row);
+                      setOpenModal(true);
+                      setIsEdit(true);
+                    }}
+                  >
+                    <img
+                      src={customerIcons?.list_edit}
+                      alt="list approve"
+                    ></img>
+                  </Button>
+                )}
+
+                {/* {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
+                  <Button
+                    // outline
+                    size="sm"
+                    title="Accept employer"
+                    className="btn-icon"
+                    color="success"
+                    onClick={() => onApprove(row, true)}
+                  >
+                    <img
+                      src={customerIcons?.list_accept}
+                      alt="list approve"
+                    ></img>
+                  </Button>
+                )} */}
+
+                {/* {row.customerstatusid === 1 && (
+                  <Button
+                    // outline
+                    size="sm"
+                    title="Decline employer"
+                    className="btn-icon"
+                    color="danger"
+                    onClick={() => onApprove(row, false)}
+                  >
+                    <img
+                      src={customerIcons?.list_reject}
+                      alt="list reject"
+                    ></img>
+                  </Button>
+                )} */}
+              </ButtonGroup>
             </div>
           )}
-          <ButtonGroup>
-            {row.customerstatusid !== 1 && row.customerstatusid !== 3 && (
-              <Button
-                // outline
-                size="sm"
-                title="Edit employer"
-                className="btn-icon"
-                color="warning"
-                onClick={(e) => {
-                  setEditData(row);
-                  setOpenModal(true);
-                  setIsEdit(true);
-                }}
-              >
-                <img src={customerIcons?.list_edit} alt="list approve"></img>
-              </Button>
-            )}
-
-            {(row.customerstatusid === 1 || row.customerstatusid === 3) && (
-              <Button
-                // outline
-                size="sm"
-                title="Accept employer"
-                className="btn-icon"
-                color="success"
-                onClick={() => onApprove(row, true)}
-              >
-                <img src={customerIcons?.list_accept} alt="list approve"></img>
-              </Button>
-            )}
-
-            {row.customerstatusid === 1 && (
-              <Button
-                // outline
-                size="sm"
-                title="Decline employer"
-                className="btn-icon"
-                color="danger"
-                onClick={() => onApprove(row, false)}
-              >
-                <img src={customerIcons?.list_reject} alt="list reject"></img>
-              </Button>
-            )}
-          </ButtonGroup>
-        </div>
+        </>
       ),
       sortable: false,
       minWidth: "204px",
+    },
+  ];
+
+  let columns1 = [
+    {
+      name: "Name",
+      id: "name",
+      cell: (row) => <div>{row.firstname + " " + row.lastname}</div>,
+      sortable: true,
+    },
+    {
+      name: "Company",
+      id: "companyname",
+      selector: (row) => row.companyname,
+      sortable: true,
+    },
+    // {
+    //   name: "Address",
+    //   id: "address",
+    //   selector: (row) => row.address,
+    //   sortable: true,
+    // },
+    {
+      name: "City, State",
+      id: "cityname",
+      selector: (row) =>
+        row.cityname === "" && row.statename === ""
+          ? ""
+          : row.cityname === "" && row.statename !== ""
+          ? row.statename
+          : row.cityname !== "" && row.statename === ""
+          ? row.cityname
+          : row.cityname + ", " + row.statename,
+      sortable: true,
+    },
+    {
+      name: "Phone",
+      id: "phonenumber",
+      selector: (row) =>
+        row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
+      sortable: true,
+    },
+    {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button color="link" onClick={() => onViewBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
+    },
+    {
+      name: "Email",
+      selector: (row) => row.email,
+      sortable: true,
     },
   ];
 
@@ -403,7 +491,7 @@ export const CustomerList = () => {
       setCompanyId(Number(data));
     }
   };
-  const getCustomerDetails = async (pageSize, pageNo) => {
+  const getCustomerDetails = async (pageSize, pageNo, id) => {
     setLoading(true);
     let obj = {
       pageSize: pageSize,
@@ -415,8 +503,8 @@ export const CustomerList = () => {
     if (status !== 0) {
       obj.isActive = status;
     }
-    if (companyId !== 0) {
-      obj.companyId = companyId;
+    if (companyId !== 0 || id !== 0) {
+      obj.companyId = id ? id : companyId;
     }
     await dispatch(getCustomers(obj));
     setLoading(false);
@@ -465,6 +553,8 @@ export const CustomerList = () => {
                           <Input
                             type="select"
                             name="companyid"
+                            disabled={isCompanyAdmin}
+                            value={companyId}
                             onChange={(e) =>
                               handelInputChange(e.target.value, "company")
                             }
@@ -537,20 +627,22 @@ export const CustomerList = () => {
                   </Form>
                 </Col>
                 <Col md={12} lg={2} sm={12}>
-                  <Button
-                    style={{ background: "#2f479b" }}
-                    color={"primary"}
-                    className="input-group-text float-end"
-                    type="submit"
-                    onClick={(e) => addModal()}
-                  >
-                    Add employer
-                  </Button>
+                  {!isCompanyAdmin && (
+                    <Button
+                      style={{ background: "#2f479b" }}
+                      color={"primary"}
+                      className="input-group-text float-end"
+                      type="submit"
+                      onClick={(e) => addModal()}
+                    >
+                      Add employer
+                    </Button>
+                  )}
                 </Col>
               </Row>
               <DataTable
                 data={data}
-                columns={columns}
+                columns={isCompanyAdmin ? columns1 : columns}
                 pagination
                 fixedHeader
                 customStyles={customStyles}

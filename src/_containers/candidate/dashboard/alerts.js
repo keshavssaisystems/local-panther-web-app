@@ -66,7 +66,8 @@ export function Alerts(props) {
                                       onClick={() =>
                                         props.onReadNotification(
                                           item.queueid,
-                                          item.notificationstatusid
+                                          item.notificationstatusid,
+                                          item
                                         )
                                       }
                                     >
@@ -126,7 +127,8 @@ export function Alerts(props) {
                                       onClick={() =>
                                         props.onReadNotification(
                                           item.queueid,
-                                          item.notificationstatusid
+                                          item.notificationstatusid,
+                                          item
                                         )
                                       }
                                     >

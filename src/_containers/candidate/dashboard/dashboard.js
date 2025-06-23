@@ -23,7 +23,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
 import { analytics } from "../../../firebase/index";
 import { JobPreferences } from "../jobPreferences";
-
+import { history } from "_helpers";
 export function CandidateDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,6 +51,14 @@ export function CandidateDashboard() {
   });
 
   useEffect(() => {
+    if (
+      localStorage.getItem("companyreferrallogid") &&
+      localStorage.getItem("companyreferrallogname")
+    ) {
+      localStorage.removeItem("companyreferrallogname");
+      localStorage.removeItem("companyreferrallogid");
+      history.navigate("/job-list");
+    }
     loadPage();
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -120,9 +128,30 @@ export function CandidateDashboard() {
       });
     }
   };
-  const onReadNotification = (id, status) => {
+  const onReadNotification = (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
+    }
+    if (localStorage.getItem("userroleid") === "3") {
+      if (item?.notificationmessage?.toLowerCase() === "interview scheduled") {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "interview rescheduled"
+      ) {
+        history.navigate("/job-list-interview");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "offer received" ||
+        item?.notificationmessage?.toLowerCase() === "job offer"
+      ) {
+        history.navigate("/job-list-offers");
+      } else if (item?.notificationmessage?.toLowerCase() === "match job") {
+        history.navigate("/job-list-matched");
+      } else if (
+        item?.notificationmessage?.toLowerCase() === "incomplete profile" ||
+        item?.notificationmessage?.toLowerCase() === "resume parsed"
+      ) {
+        history.navigate("/profile");
+      }
     }
   };
 
@@ -208,13 +237,15 @@ export function CandidateDashboard() {
         </Col>
       </Row>
       <Row>
-        <Col>
+        {/* <Col>
           <TodoList onCallBack={() => loadPage()} />
-        </Col>
+        </Col> */}
         <Col>
           <Alerts
             onDeleteNotification={(id) => showConfAlert(id)}
-            onReadNotification={(id, status) => onReadNotification(id, status)}
+            onReadNotification={(id, status, item) =>
+              onReadNotification(id, status, item)
+            }
           />
         </Col>
       </Row>

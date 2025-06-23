@@ -40,9 +40,10 @@ import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { analytics } from "../../../firebase/index";
+import { getCustomers } from "_containers/admin/_redux/adminListing.slice";
 import "./adminreports.scss";
 
-export function OpenJobs({ title }) {
+export function OpenJobs({ title, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
   const {
     openJobsList: data = [],
@@ -52,7 +53,10 @@ export function OpenJobs({ title }) {
     jobDetail = [],
     subsidiaryList = [],
   } = useSelector((state) => state?.adminReportReducer ?? {});
-
+  const customersList = useSelector(
+    (state) => state?.adminListing?.customersList
+  );
+  console.log(customersList);
   let [isOpen, setIsOpen] = useState(false);
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
@@ -60,13 +64,28 @@ export function OpenJobs({ title }) {
   let [skill, setSkill] = useState([]);
   let [location, setLocation] = useState([]);
   let [subsidiaryId, setSubsidiaryId] = useState();
+  let [customer, setCustomer] = useState();
+  let [jobStatus, setJobStatus] = useState();
   let [subsidiaryErr, setSubsidiaryErr] = useState(false);
   let [filter, setFilter] = useState({});
 
   const [excelData, setExcelData] = useState([]);
   const [showJDModal, setShowJDModal] = useState(false);
+
   useEffect(() => {
-    dispatch(openJobsThunk());
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+      setCompany({
+        value: Number(userDetails.CompanyId),
+        label: userDetails.Companyname,
+      });
+      dispatch(getCustomers({ companyId: Number(userDetails.CompanyId) }));
+      dispatch(openJobsThunk({ companyId: Number(userDetails.CompanyId) }));
+    } else {
+      dispatch(openJobsThunk());
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (analytics) {
@@ -134,8 +153,33 @@ export function OpenJobs({ title }) {
     });
   };
 
+  const handleEmployerChange = (name, value) => {
+    setCustomer(value);
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
+  const handleJobStatusChange = (name, value) => {
+    setJobStatus(value);
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
   const applyFilter = () => {
-    dispatch(openJobsThunk(filter));
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+      let data = { ...filter };
+      data.companyId = Number(userDetails.CompanyId);
+      dispatch(openJobsThunk(data));
+    } else {
+      dispatch(openJobsThunk(filter));
+    }
   };
 
   const clearFilter = () => {
@@ -146,7 +190,17 @@ export function OpenJobs({ title }) {
     setSkill([]);
     setLocation([]);
     setSubsidiaryId("");
-    dispatch(openJobsThunk());
+    setCustomer("");
+    setJobStatus("");
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      dispatch(openJobsThunk({ companyId: Number(userDetails.CompanyId) }));
+    } else {
+      dispatch(openJobsThunk());
+    }
   };
 
   const handleSheduleClick = (jobId) => {
@@ -504,6 +558,7 @@ export function OpenJobs({ title }) {
                   <CompanyFilter
                     name={"companyId"}
                     placeholder={"Search Company"}
+                    disabled={isCompanyAdmin}
                     onChange={(name, value, e) => {
                       handleChange(name, value);
                       setCompany(e);
@@ -513,107 +568,157 @@ export function OpenJobs({ title }) {
                     value={company}
                   />
                 </Col>
-                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
-                  <Input
-                    type="select"
-                    value={subsidiaryId}
-                    name="subsidiary"
-                    id="subsidiary"
-                    placeholder="Subsidiary Id"
-                    onChange={(e) => {
-                      updateSubsidiary(e);
-                    }}
-                  >
-                    <option value={""}>Select a Subsidiary</option>
-                    {subsidiaryList?.length > 0 ? (
-                      subsidiaryList.map((data) => (
-                        <option
-                          value={data.subsidiaryid ? data.subsidiaryid : ""}
-                          key={data.subsidiaryid ? data.subsidiaryid : ""}
+                {!isCompanyAdmin && (
+                  <>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <Input
+                        type="select"
+                        value={subsidiaryId}
+                        name="subsidiary"
+                        id="subsidiary"
+                        placeholder="Subsidiary Id"
+                        onChange={(e) => {
+                          updateSubsidiary(e);
+                        }}
+                      >
+                        <option value={""}>Select a Subsidiary</option>
+                        {subsidiaryList?.length > 0 ? (
+                          subsidiaryList.map((data) => (
+                            <option
+                              value={data.subsidiaryid ? data.subsidiaryid : ""}
+                              key={data.subsidiaryid ? data.subsidiaryid : ""}
+                            >
+                              {data.subsidiaryname ? data.subsidiaryname : ""}
+                            </option>
+                          ))
+                        ) : (
+                          <></>
+                        )}
+                      </Input>
+                      {subsidiaryErr ? (
+                        <FormText color="danger">
+                          Please select company first
+                        </FormText>
+                      ) : (
+                        <></>
+                      )}
+                    </Col>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <SkillsFilter
+                        name={"skillId"}
+                        placeholder={"Search Skill"}
+                        onChange={(name, value, e) => {
+                          handleChange(name, value);
+                          setSkill(e);
+                        }}
+                        value={skill}
+                      />
+                    </Col>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <LocationFilter
+                        name={"cityId"}
+                        placeholder={"Search Location"}
+                        onChange={(name, value, e) => {
+                          handleChange(name, value);
+                          setLocation(e);
+                        }}
+                        value={location}
+                      />
+                    </Col>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <FormGroup>
+                        <InputGroup>
+                          <div className="input-group-text">
+                            <FontAwesomeIcon icon={faCalendarAlt} />
+                          </div>
+                          <DatePicker
+                            dateFormat={"yyyy-MM-dd"}
+                            name="startDate"
+                            placeholderText="From"
+                            className="form-control"
+                            selected={startDate}
+                            maxDate={endDate}
+                            showMonthDropdown
+                            showYearDropdown
+                            onChange={(date) => {
+                              handleDateChange("startDate", date);
+                              setStartDate(date);
+                            }}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <FormGroup>
+                        <InputGroup>
+                          <div className="input-group-text">
+                            <FontAwesomeIcon icon={faCalendarAlt} />
+                          </div>
+                          <DatePicker
+                            dateFormat={"yyyy-MM-dd"}
+                            name="endDate"
+                            placeholderText="To"
+                            className="form-control"
+                            selected={endDate}
+                            minDate={startDate}
+                            showMonthDropdown
+                            showYearDropdown
+                            onChange={(date) => {
+                              handleDateChange("endDate", date);
+                              setEndDate(date);
+                            }}
+                          />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+                  </>
+                )}
+
+                {isCompanyAdmin && (
+                  <>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="customer"
+                          value={customer}
+                          onChange={(e) =>
+                            handleEmployerChange("customer", e.target.value)
+                          }
                         >
-                          {data.subsidiaryname ? data.subsidiaryname : ""}
-                        </option>
-                      ))
-                    ) : (
-                      <></>
-                    )}
-                  </Input>
-                  {subsidiaryErr ? (
-                    <FormText color="danger">
-                      Please select company first
-                    </FormText>
-                  ) : (
-                    <></>
-                  )}
-                </Col>
-                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
-                  <SkillsFilter
-                    name={"skillId"}
-                    placeholder={"Search Skill"}
-                    onChange={(name, value, e) => {
-                      handleChange(name, value);
-                      setSkill(e);
-                    }}
-                    value={skill}
-                  />
-                </Col>
-                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
-                  <LocationFilter
-                    name={"cityId"}
-                    placeholder={"Search Location"}
-                    onChange={(name, value, e) => {
-                      handleChange(name, value);
-                      setLocation(e);
-                    }}
-                    value={location}
-                  />
-                </Col>
-                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <div className="input-group-text">
-                        <FontAwesomeIcon icon={faCalendarAlt} />
-                      </div>
-                      <DatePicker
-                        dateFormat={"yyyy-MM-dd"}
-                        name="startDate"
-                        placeholderText="From"
-                        className="form-control"
-                        selected={startDate}
-                        maxDate={endDate}
-                        showMonthDropdown
-                        showYearDropdown
-                        onChange={(date) => {
-                          handleDateChange("startDate", date);
-                          setStartDate(date);
-                        }}
-                      />
-                    </InputGroup>
-                  </FormGroup>
-                </Col>
-                <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
-                  <FormGroup>
-                    <InputGroup>
-                      <div className="input-group-text">
-                        <FontAwesomeIcon icon={faCalendarAlt} />
-                      </div>
-                      <DatePicker
-                        dateFormat={"yyyy-MM-dd"}
-                        name="endDate"
-                        placeholderText="To"
-                        className="form-control"
-                        selected={endDate}
-                        minDate={startDate}
-                        showMonthDropdown
-                        showYearDropdown
-                        onChange={(date) => {
-                          handleDateChange("endDate", date);
-                          setEndDate(date);
-                        }}
-                      />
-                    </InputGroup>
-                  </FormGroup>
-                </Col>
+                          <option value={0}>All Employees</option>
+                          {customersList?.length > 0 &&
+                            customersList?.map((options) => (
+                              <option
+                                key={options.customerid}
+                                value={options.customerid}
+                              >
+                                {" "}
+                                {options.firstname} {options.lastname}
+                              </option>
+                            ))}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                    <Col xxl="2" xl="2" lg="3" md="4" sm="12" xs="12">
+                      <FormGroup>
+                        <Input
+                          name="jobStatus"
+                          type="select"
+                          value={jobStatus}
+                          onChange={(e) =>
+                            handleJobStatusChange("jobStatus", e.target.value)
+                          }
+                        >
+                          <option value={""}>All jobs</option>
+                          <option value={"Publish"}>Publish jobs</option>
+                          <option value={"Draft"}>Draft jobs</option>
+                          <option value={"Closed"}>Closed jobs</option>
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                  </>
+                )}
                 <Col xxl="1" xl="1" lg="1" md="2" sm="12" xs="12">
                   <Button
                     style={{ background: "rgb(47 71 155)" }}

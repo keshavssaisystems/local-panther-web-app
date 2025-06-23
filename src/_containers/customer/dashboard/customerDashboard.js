@@ -19,6 +19,7 @@ import { Alerts } from "_containers/candidate/dashboard/alerts";
 import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
+import { history } from "_helpers";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
@@ -68,6 +69,14 @@ export default function CustomerDashboard() {
     );
   };
   useEffect(() => {
+    if (
+      localStorage.getItem("companyreferrallogid") &&
+      localStorage.getItem("companyreferrallogname")
+    ) {
+      localStorage.removeItem("companyreferrallogname");
+      localStorage.removeItem("companyreferrallogid");
+      history.navigate("/candidate-list");
+    }
     getCompanyDetails();
     getDashboardGraphData();
     getDashboardCounts();
@@ -113,7 +122,7 @@ export default function CustomerDashboard() {
       });
     }
   };
-  const onReadNotification = (id, status) => {
+  const onReadNotification = (id, status, item) => {
     if (status !== 3) {
       dispatch(candidateDashboardActions.readNotification({ id }));
     }
@@ -230,8 +239,8 @@ export default function CustomerDashboard() {
           <Col sm="12" md="6" lg="6">
             <Alerts
               onDeleteNotification={(id) => showConfAlert(id)}
-              onReadNotification={(id, status) =>
-                onReadNotification(id, status)
+              onReadNotification={(id, status, item) =>
+                onReadNotification(id, status, item)
               }
             />
           </Col>

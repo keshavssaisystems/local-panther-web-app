@@ -63,6 +63,10 @@ export function UserBox() {
   const personalInfo_temp = localStorage.getItem("profileImage");
 
   const [profileImg, setProfileImg] = useState("");
+
+  let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
+    ? localStorage.getItem("isCompanyAdmin") === "true"
+    : false;
   // const [showBilling, setShowBilling] = useState(false);
   const dispatch = useDispatch();
   const logout = () => {
@@ -228,7 +232,11 @@ export function UserBox() {
                                   {userDetail?.FirstName} {userDetail?.LastName}
                                 </div>
                                 <div className="widget-subheading opacity-8">
-                                  {userDetail?.role}
+                                  {userDetail?.UserroleId === "2"
+                                    ? isCompanyAdmin
+                                      ? "Company Admin"
+                                      : "Hiring Manager"
+                                    : userDetail?.role}
                                 </div>
                               </div>
                               <div className="widget-content-right me-2">
@@ -305,7 +313,14 @@ export function UserBox() {
                   {" "}
                   {userDetail.FirstName} {userDetail.LastName}
                 </div>
-                <div className="widget-subheading">{userDetail.role}</div>
+                <div className="widget-subheading">
+                  {" "}
+                  {userDetail?.UserroleId === "2"
+                    ? isCompanyAdmin
+                      ? "Company Admin"
+                      : "Hiring Manager"
+                    : userDetail?.role}
+                </div>
               </div>
             </div>
           </div>

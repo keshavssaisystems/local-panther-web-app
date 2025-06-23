@@ -81,6 +81,7 @@ export function App() {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -185,7 +186,7 @@ export function App() {
             path="/employers"
             element={
               <PrivateRoute>
-                <CustomerList />
+                <CustomerList isCompanyAdmin={false} />
               </PrivateRoute>
             }
           />
@@ -367,6 +368,7 @@ export function App() {
               </PrivateRoute>
             }
           />
+          
           <Route
             path="/job-list"
             element={
@@ -519,6 +521,55 @@ export function App() {
                 <ChatInterface />
               </PrivateRoute>
             }
+          />
+
+          <Route
+            path="/employers"
+            element={
+              <PrivateRoute>
+                <CustomerList isCompanyAdmin={true} />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/masters"
+            element={
+              <PrivateRoute>
+                <CompanyList isCompanyAdmin={true}/>
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/masters/company"
+            element={
+              <PrivateRoute>
+                <CompanyList isCompanyAdmin={true}/>
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/acl"
+            element={
+              <PrivateRoute>
+                <AdminListing isCompanyAdmin={true} entity="users" />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/acl/users"
+            element={
+              <PrivateRoute>
+                <AdminListing isCompanyAdmin={true} entity="users" />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/report"
+            element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
+          />
+            <Route
+            path="/report/open-jobs"
+            element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
         </>
       );
@@ -731,6 +782,7 @@ export function App() {
                 />
 
                 <Route path="/login" element={<Login />} />
+                {/* <Route path="/login/:id" element={<Login />} /> */}
                 <Route path="/registration" element={<Registration />} />
                 <Route
                   path="/customer-registration"

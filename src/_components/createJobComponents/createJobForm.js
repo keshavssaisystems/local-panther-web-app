@@ -82,7 +82,7 @@ export const CreateJob = forwardRef(
       const state = prevState.map((x, index) => (tab === index ? !x : false));
       setAccordion(state);
     };
-    console.log(customerDetails);
+
     useEffect((e) => {
       if (type === "new_template" && previousStep !== 3) {
         setZipcodeCityState({
@@ -91,8 +91,6 @@ export const CreateJob = forwardRef(
         });
       }
       if (type === "previous_template" || type === "recommendation_template") {
-        console.log(previousData);
-
         let data = {
           basicInformation: {
             companyId: previousData?.companyname,
@@ -118,11 +116,14 @@ export const CreateJob = forwardRef(
             issecurityclearancerequired:
               previousData?.issecurityclearancerequired,
             securityclearanceid: previousData?.securityclearanceid,
-            isdraft:
-              previousData?.isdraft !== undefined
-                ? previousData?.isdraft
-                : true,
+            // isdraft:
+            //   type === "previous_template" ? previousData?.isdraft : true,
+            // isdraft:
+            //   previousData?.isdraft !== undefined
+            //     ? previousData?.isdraft
+            //     : true,
           },
+
           experienceSchedule: {
             jobType:
               previousData?.jobExperienceScheduleDtos === null ||
@@ -192,6 +193,7 @@ export const CreateJob = forwardRef(
               ? {}
               : previousData?.jobPrescreenApplicationDtos,
         };
+
         JobDataForPreview(data);
         setZipcodeCityState({
           value:
@@ -950,9 +952,12 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
-        isdraft:
-          previousData?.isdraft !== undefined ? previousData?.isdraft : true,
+
+        // isdraft: type === "previous_template" ? previousData?.isdraft : true,
+        // isdraft:
+        //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
       };
+
       let experienceSchedule = {
         jobType: getJobType(eventData.target.elements.jobType),
         workSchedule: workSchedule,
@@ -1447,6 +1452,30 @@ export const CreateJob = forwardRef(
         ? preValue.securityclearanceid
         : previousValue.securityclearanceid;
     useEffect(() => {
+      if (type === "ai_template") {
+        setZipcodeCityState({
+          value:
+            previousData?.cityid +
+            ", " +
+            previousData?.stateid +
+            ", " +
+            previousData?.cityname +
+            ", " +
+            previousData?.statename,
+          label: previousData?.cityname + ", " + previousData?.statename,
+        });
+        getLocationDetails({
+          value:
+            previousData?.cityid +
+            ", " +
+            previousData?.stateid +
+            ", " +
+            previousData?.cityname +
+            ", " +
+            previousData?.statename,
+          label: previousData?.cityname + ", " + previousData?.statename,
+        });
+      }
       if (previousStep === 3) {
         setZipcodeCityState({
           value:

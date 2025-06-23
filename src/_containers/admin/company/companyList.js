@@ -24,8 +24,9 @@ import { useNavigate } from "react-router-dom";
 import customerIcons from "assets/utils/images/customer";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
-export const CompanyList = () => {
+export const CompanyList = ({ isCompanyAdmin = false }) => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -42,6 +43,9 @@ export const CompanyList = () => {
     title: "",
     description: "",
   });
+
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
@@ -157,6 +161,19 @@ export const CompanyList = () => {
             >
               <FaEye style={{ fontSize: "18px" }} />
             </Button>
+            {/* {isCompanyAdmin && (
+              <>
+                {row.billingdetailstatus ? (
+                  <Button color="link" onClick={() => onViewBilling(row)}>
+                    <span style={{ textDecoration: "underline" }}>View</span>
+                  </Button>
+                ) : (
+                  <Button color="link" onClick={() => onAddBilling(row)}>
+                    <span style={{ textDecoration: "underline" }}>Add</span>
+                  </Button>
+                )}
+              </>
+            )} */}
           </ButtonGroup>
         </div>
       ),
@@ -204,12 +221,42 @@ export const CompanyList = () => {
 
   const closeModal = (event) => {
     setOpenModal(false);
-    dispatch(
-      getCompanies({
-        pageSize: pageSize,
-        pageNumber: pageNo,
-      })
-    );
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      dispatch(
+        getCompanies({
+          pageSize: pageSize,
+          pageNumber: pageNo,
+          companyId: Number(userDetails.CompanyId),
+        })
+      );
+    } else {
+      dispatch(
+        getCompanies({
+          pageSize: pageSize,
+          pageNumber: pageNo,
+        })
+      );
+    }
+  };
+
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    getCompanyList(pageSize, pageNo);
+    setSelectedCustomer([]);
   };
 
   const getCompanyList = async function (pageSize, pageNo) {
@@ -217,6 +264,7 @@ export const CompanyList = () => {
     let urlParams = {
       pageSize: pageSize,
       pageNumber: pageNo,
+      companyId: "",
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -224,6 +272,14 @@ export const CompanyList = () => {
 
     if (status !== "All") {
       urlParams.isActive = status;
+    }
+
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
 
     await dispatch(getCompanies(urlParams));
@@ -235,6 +291,7 @@ export const CompanyList = () => {
     let urlParams = {
       pageSize: pageSize,
       pageNumber: pageNo,
+      companyId: "",
     };
     if (check === "0") {
       setStatus("All");
@@ -250,6 +307,13 @@ export const CompanyList = () => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
+    }
     await dispatch(getCompanies(urlParams));
     setLoading(false);
   };
@@ -260,10 +324,18 @@ export const CompanyList = () => {
     let urlParams = {
       pageSize: pageSize,
       pageNumber: pageNo,
+      companyId: "",
     };
 
     if (status !== "All") {
       urlParams.isActive = status;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     setLoading(true);
     await dispatch(getCompanies(urlParams));
@@ -388,44 +460,52 @@ export const CompanyList = () => {
                       </FormGroup>
                     </Col>
                     <Col xxl={9} xl={9} md={12} lg={8} sm={12} xs={12}>
-                      <Button
-                        style={{ background: "#2f479b" }}
-                        color={"primary"}
-                        className="input-group-text float-end mt-1"
-                        type="submit"
-                        onClick={(e) => addModal()}
-                      >
-                        Add Company
-                      </Button>
-                      <div
-                        className={cx(
-                          "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-                          {
-                            active: true,
-                          }
-                        )}
-                      >
-                        <div className="input-holder float-end">
-                          <input
-                            type="text"
-                            className="search-input search-placeholder"
-                            id="search-input"
-                            value={searchData}
-                            onInput={(evt) => setSearchText(evt.target.value)}
-                            placeholder="Search.."
-                          />
-                          <button
-                            className="btn-close"
-                            onClick={(evt) => onClearSearch()}
-                          />
-                          <button
-                            onClick={(evt) => getCompanyList(pageSize, pageNo)}
-                            className="search-icon"
+                      {!isCompanyAdmin && (
+                        <>
+                          <Button
+                            style={{ background: "#2f479b" }}
+                            color={"primary"}
+                            className="input-group-text float-end mt-1"
+                            type="submit"
+                            onClick={(e) => addModal()}
                           >
-                            <span />
-                          </button>
-                        </div>
-                      </div>
+                            Add Company
+                          </Button>
+                          <div
+                            className={cx(
+                              "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+                              {
+                                active: true,
+                              }
+                            )}
+                          >
+                            <div className="input-holder float-end">
+                              <input
+                                type="text"
+                                className="search-input search-placeholder"
+                                id="search-input"
+                                value={searchData}
+                                onInput={(evt) =>
+                                  setSearchText(evt.target.value)
+                                }
+                                placeholder="Search.."
+                              />
+                              <button
+                                className="btn-close"
+                                onClick={(evt) => onClearSearch()}
+                              />
+                              <button
+                                onClick={(evt) =>
+                                  getCompanyList(pageSize, pageNo)
+                                }
+                                className="search-icon"
+                              >
+                                <span />
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </Col>
                   </Row>
                 </Col>
@@ -457,6 +537,7 @@ export const CompanyList = () => {
           isViewMode={isView}
           data={editData}
           putData={(e) => putData(e)}
+          isCompanyAdmin={isCompanyAdmin}
         />
       ) : (
         <></>
@@ -486,6 +567,16 @@ export const CompanyList = () => {
           />
           {showAlert.description}
         </>
+      )}
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
       )}
     </>
   );

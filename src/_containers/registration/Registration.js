@@ -716,7 +716,7 @@ export function Registration() {
                           className="fw-semi-bold reg-link-text"
                           style={{ fontSize: "18px", fontWeight: "600" }}
                         >
-                          Employer? Register here
+                          Hiring Manager? Register here
                         </Label>
                       </div>
                     </FormGroup>

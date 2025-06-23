@@ -32,16 +32,20 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { analytics } from "../../firebase";
 import { getPublicIP, detectInputType } from "_helpers/helper";
 import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
+
 import "./login.scss";
 
 export function Login() {
   const dispatch = useDispatch();
+
   const authUser = useSelector((x) => x?.auth?.token);
   const authError = useSelector((x) => x.auth.error);
   const loading = useSelector((state) => state.auth.loader);
   const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showEPModal, setShowEPModal] = useState(false);
+  const [companyName, setCompanyName] = useState(null);
+  const [reload, setReload] = useState(false);
   const [sliderSettings] = useState({
     dots: true,
     infinite: true,
@@ -63,6 +67,13 @@ export function Login() {
   });
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cmpName = urlParams.get("companyName");
+    setCompanyName(cmpName);
+    if (cmpName) {
+      getCompanyReferralLogs(cmpName);
+    }
+
     if (authError) {
       setError(true);
       return;
@@ -150,12 +161,70 @@ export function Login() {
           "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
       });
       payload.firebasetoken = token;
-      dispatch(authActions.loginThunk(payload));
+      let res = await dispatch(authActions.loginThunk(payload));
+
+      if (res.payload && companyName) {
+        let companyreferrallogid = localStorage.getItem("companyreferrallogid");
+        const userAgent = navigator.userAgent;
+        let os = "Unknown OS";
+
+        if (userAgent.indexOf("Win") != -1) os = "Windows";
+        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
+        if (userAgent.indexOf("X11") != -1) os = "UNIX";
+        if (userAgent.indexOf("Linux") != -1) os = "Linux";
+        if (userAgent.indexOf("Android") != -1) os = "Android";
+        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
+        let payload = {
+          referralLogUrl: window.location.href,
+          companyName: companyName,
+          companyid: 0,
+          osversion: "string",
+          ipaddress: localStorage.getItem("publicip")
+            ? localStorage.getItem("publicip")
+            : "Web",
+          loginsource: "Web",
+          logindeviceid: os,
+          logindevice: os,
+          currentUserId: localStorage.getItem("userId"),
+        };
+        dispatch(
+          authActions.putCompanyReferralLogs(companyreferrallogid, payload)
+        );
+      }
       console.log("Token Gen", token);
       // Send this token  to server ( db)
     } else if (permission === "denied") {
       console.log("You denied for the notification");
-      dispatch(authActions.loginThunk(payload));
+      let res = await dispatch(authActions.loginThunk(payload));
+      if (res.payload && companyName) {
+        let companyreferrallogid = localStorage.getItem("companyreferrallogid");
+        const userAgent = navigator.userAgent;
+        let os = "Unknown OS";
+
+        if (userAgent.indexOf("Win") != -1) os = "Windows";
+        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
+        if (userAgent.indexOf("X11") != -1) os = "UNIX";
+        if (userAgent.indexOf("Linux") != -1) os = "Linux";
+        if (userAgent.indexOf("Android") != -1) os = "Android";
+        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
+        let payload = {
+          referralLogUrl: window.location.href,
+          companyName: companyName,
+          companyid: 0,
+          osversion: "string",
+          ipaddress: localStorage.getItem("publicip")
+            ? localStorage.getItem("publicip")
+            : "Web",
+          loginsource: "Web",
+          logindeviceid: os,
+          logindevice: os,
+          currentUserId: localStorage.getItem("userId"),
+        };
+        console.log(payload);
+        dispatch(
+          authActions.putCompanyReferralLogs(companyreferrallogid, payload)
+        );
+      }
     }
   };
 
@@ -240,7 +309,30 @@ export function Login() {
       });
     }
   };
-
+  const getCompanyReferralLogs = async (companyName) => {
+    setReload(true);
+    let payload = {
+      referralLogUrl: window.location.href,
+      companyName: companyName,
+      companyid: 0,
+      osversion: "string",
+      ipaddress: "string",
+      loginsource: "string",
+      logindeviceid: "string",
+      logindevice: "string",
+      currentUserId: 0,
+    };
+    let res = await dispatch(authActions.postCompanyReferralLogs(payload));
+    if (res.payload) {
+      localStorage.setItem("logo", res?.payload?.data?.companyInfo?.logourl);
+      localStorage.setItem(
+        "companyreferrallogid",
+        res?.payload?.data?.companyreferrallogid
+      );
+      localStorage.setItem("companyreferrallogname", companyName);
+    }
+    setReload(false);
+  };
   return (
     <>
       <div className="app-container login-container">
@@ -304,20 +396,22 @@ export function Login() {
                     className="mb-1"
                     style={{ width: "200px", height: "80px" }}
                   >
-                    <img
-                      src={
-                        localStorage.getItem("logo")
-                          ? localStorage.getItem("logo")
-                          : logoOld
-                      }
-                      className="logo mb-2"
-                      style={{
-                        objectFit: "contain",
-                        height: "100%",
-                        width: "100%",
-                      }}
-                      alt="logo"
-                    />
+                    {!reload && (
+                      <img
+                        src={
+                          localStorage.getItem("logo")
+                            ? localStorage.getItem("logo")
+                            : logoOld
+                        }
+                        className="logo mb-2"
+                        style={{
+                          objectFit: "contain",
+                          height: "100%",
+                          width: "100%",
+                        }}
+                        alt="logo"
+                      />
+                    )}
                   </div>
                   <Row className="login-divider" />
                   <p className="mb-3 mt-4 title-text">
@@ -431,12 +525,12 @@ export function Login() {
                         </Col>
                       </Row>
                       <Row>
-                        <Col className="login-divider me-2" />
+                        {/* <Col className="login-divider me-2" /> */}
 
-                        <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                        {/* <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
                           or
-                        </Col>
-                        <Col className="login-divider" />
+                        </Col> */}
+                        {/* <Col className="login-divider" /> */}
                       </Row>
 
                       {error && (
