@@ -102,7 +102,7 @@ export default function SelectJobType({
                   onClick={(e) => onButtonClick(e)}
                 />
                 <Label for="new" check className="radio-label-custom">
-                  Generate job posting with AI
+                  Generate job posting with OpenWorX agent
                 </Label>
                 {"  "}
                 <p className="mt-0 mb-2 text-muted-custom">
