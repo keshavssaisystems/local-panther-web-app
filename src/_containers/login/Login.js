@@ -525,12 +525,12 @@ export function Login() {
                         </Col>
                       </Row>
                       <Row>
-                        <Col className="login-divider me-2" />
+                        {/* <Col className="login-divider me-2" /> */}
 
-                        <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
+                        {/* <Col className="col-md-1 login-mt d-flex justify-content-center align-items-center">
                           or
-                        </Col>
-                        <Col className="login-divider" />
+                        </Col> */}
+                        {/* <Col className="login-divider" /> */}
                       </Row>
 
                       {error && (
