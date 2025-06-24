@@ -236,6 +236,8 @@ export function UserBox() {
                                     ? isCompanyAdmin
                                       ? "Company Admin"
                                       : "Hiring Manager"
+                                    : userDetail?.UserroleId === "1"
+                                    ? "OpenWorX Admin"
                                     : userDetail?.role}
                                 </div>
                               </div>
@@ -319,6 +321,8 @@ export function UserBox() {
                     ? isCompanyAdmin
                       ? "Company Admin"
                       : "Hiring Manager"
+                    : userDetail?.UserroleId === "1"
+                    ? "OpenWorX Admin"
                     : userDetail?.role}
                 </div>
               </div>
