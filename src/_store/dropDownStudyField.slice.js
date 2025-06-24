@@ -22,6 +22,19 @@ export const getStudyField = createAsyncThunk(
   }
 );
 
+export const addFieldOfStudy = createAsyncThunk(
+  " studyField/addFieldOfStudy",
+  async (payload) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.post(
+      `${baseUrl}/FieldOfStudys`,
+      payload
+    );
+
+    return response; // Assuming your API response has a "data" property
+  }
+);
+
 // Create the slice
 const studyFieldSlice = createSlice({
   name: "studyField",
@@ -42,6 +55,14 @@ const studyFieldSlice = createSlice({
       })
       .addCase(getStudyField.rejected, (state, action) => {
         state.error = action.error;
+      })
+
+      .addCase(addFieldOfStudy.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(addFieldOfStudy.fulfilled, (state, action) => {})
+      .addCase(addFieldOfStudy.rejected, (state, action) => {
+        state.error = action.error;
       });
   },
 });
@@ -50,5 +71,6 @@ const studyFieldSlice = createSlice({
 export const studyFieldActions = {
   ...studyFieldSlice.actions,
   getStudyField, // Export the async action
+  addFieldOfStudy,
 };
 export const studyFieldReducer = studyFieldSlice.reducer;
