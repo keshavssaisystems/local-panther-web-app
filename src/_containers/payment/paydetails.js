@@ -39,13 +39,18 @@ export const PaymentDetails = ({
   selectedCustomer = {},
   onClose,
   authUser,
+  userId = "",
 }) => {
   const dispatch = useDispatch();
-  const { id } = useParams();
+
+  let { id } = useParams();
+  if (userId) {
+    id = userId;
+  }
   const [companyValue, setCompanyValue] = useState(0);
   const [currencyValue, setCurrencyValue] = useState(1);
   const [sameAsCust, setSameAsCust] = useState(
-    authUser ? authUser : selectedCustomer?.billingdetailstatus
+    authUser ? authUser : userId ? true : selectedCustomer?.billingdetailstatus
   );
   const [cityList, setCityList] = useState([]);
 
@@ -125,6 +130,7 @@ export const PaymentDetails = ({
   }, []);
 
   useEffect(() => {
+    debugger;
     if ((id || selectedCustomer?.customerid) && sameAsCust) {
       dispatch(
         paymentActions.getCustomerUserDetails(
@@ -563,7 +569,7 @@ export const PaymentDetails = ({
             <Input
               type="checkbox"
               checked={sameAsCust}
-              disabled={userDetails?.billingdetailstatus}
+              disabled={userDetails?.billingdetailstatus || userId}
               onChange={(e) => onSameCustomer(e)}
             ></Input>
             <Label disabled={disableSAC} className="ms-1 same-as-cust">
@@ -596,7 +602,7 @@ export const PaymentDetails = ({
                   type="text"
                   name="name"
                   id="name"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={userDetails?.billingdetailstatus || userId}
                   placeholder="Enter Name"
                   {...register("name")}
                   className={`form-control placeholder-name ${
@@ -626,7 +632,7 @@ export const PaymentDetails = ({
                 name="companyid"
                 {...register("companyid")}
                 value={companyValue}
-                disabled={userDetails?.billingdetailstatus}
+                disabled={userDetails?.billingdetailstatus || userId}
                 className={`form-control placeholder-name ${
                   errors.companyid && companyValue === 0 ? "is-invalid" : ""
                 }`}
@@ -666,7 +672,7 @@ export const PaymentDetails = ({
                   name="email"
                   id="email"
                   placeholder="Enter Email"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={userDetails?.billingdetailstatus || userId}
                   {...register("email")}
                   className={`form-control placeholder-name ${
                     errors.email ? "is-invalid" : ""
@@ -696,7 +702,7 @@ export const PaymentDetails = ({
                   placeholder="Enter Phone Number"
                   type="text"
                   mask="(999)-999-9999"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={userDetails?.billingdetailstatus || userId}
                   name="phoneNumber"
                   id="phoneNumber"
                   {...register("phoneNumber")}
@@ -721,7 +727,7 @@ export const PaymentDetails = ({
                   placeholder="Add address"
                   type="textarea"
                   name="address"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={userDetails?.billingdetailstatus || userId}
                   id="address"
                   {...register("address")}
                   className={`form-control placeholder-name ${
@@ -758,7 +764,9 @@ export const PaymentDetails = ({
                   errors.cityid && !cityValue?.value
                     ? "async-border-red"
                     : "async-no-error"
-                } ${userDetails?.billingdetailstatus ? "disable-ip" : ""}`}
+                } ${
+                  userDetails?.billingdetailstatus || userId ? "disable-ip" : ""
+                }`}
                 {...register("cityid")}
                 onChange={(e) => setAsyncSelectValue(e)}
               />
@@ -785,7 +793,7 @@ export const PaymentDetails = ({
                 <Input
                   type="text"
                   name="zipcode"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={userDetails?.billingdetailstatus || userId}
                   id="zipcode"
                   placeholder="Enter Zip Code"
                   {...register("zipcode")}
@@ -818,7 +826,9 @@ export const PaymentDetails = ({
                   errors.countryid && !countryValue?.value
                     ? "async-border-red"
                     : "async-no-error"
-                } ${userDetails?.billingdetailstatus ? "disable-ip" : ""}`}
+                } ${
+                  userDetails?.billingdetailstatus || userId ? "disable-ip" : ""
+                }`}
                 {...register("countryid")}
                 defaultOptions={countryList}
                 onChange={(e) => onSelectCountryDropdown(e)}
@@ -841,7 +851,7 @@ export const PaymentDetails = ({
                 type="select"
                 name="currency"
                 id="currency"
-                disabled={userDetails?.billingdetailstatus}
+                disabled={userDetails?.billingdetailstatus || userId}
                 placeholder="Select Currency"
                 {...register("currency")}
                 className={`form-control placeholder-name ${
