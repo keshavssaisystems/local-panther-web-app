@@ -23,10 +23,17 @@ import {
 
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import debounce from "lodash/debounce";
+import {
+  addLevelOfEducation,
+  educationActions,
+  addFieldOfStudy,
+  studyFieldActions,
+} from "_store";
 
 export function EducationModal(props) {
   const [check, setCheck] = useState(props.check);
@@ -63,10 +70,9 @@ export function EducationModal(props) {
     month: "",
     year: "",
   });
-  const [educationList, setEducationList] = useState(
-    useSelector((state) => state.educationLevelReducer.educationList)
+  const educationList = useSelector(
+    (state) => state.educationLevelReducer.educationList
   );
-
   const loadData = function () {
     let data = [];
     if (check === "add") {
@@ -563,6 +569,72 @@ export function EducationModal(props) {
     }
   }
 
+  const formatCreateLabel = (inputValue) => {
+    if (inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new eductaion -{" "}
+          <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
+    }
+  };
+
+  const formatCreateLabel1 = (inputValue) => {
+    if (inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new field of study -{" "}
+          <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
+    }
+  };
+
+  const onCreateEducation = async (data, index) => {
+    let payload = {
+      levelofeducation1: data,
+      currentUserId: localStorage.getItem("userId")
+        ? Number(localStorage.getItem("userId"))
+        : 0,
+    };
+
+    let res = await dispatch(addLevelOfEducation(payload));
+    if (res?.payload && res?.payload?.statusCode === 201) {
+      let formData = [...formDetails];
+      formData[index].education.label = res.payload.data.levelofeducation1;
+      formData[index].education.value = res.payload.data.levelofeducationid;
+      setFormData(formData);
+      dispatch(educationActions.getEducation());
+    } else {
+      console.log(res?.error);
+    }
+  };
+
+  const onCreateFieldOfStudy = async (data, index) => {
+    let payload = {
+      fieldofstudy1: data,
+      currentUserId: localStorage.getItem("userId")
+        ? Number(localStorage.getItem("userId"))
+        : 0,
+    };
+
+    let res = await dispatch(addFieldOfStudy(payload));
+    if (res?.payload && res?.payload?.statusCode === 201) {
+      let formData = [...formDetails];
+      formData[index].fieldofstudy.label = res.payload.data.fieldofstudy1;
+      formData[index].fieldofstudy.value = res.payload.data.fieldofstudyid;
+      setFormData(formData);
+      dispatch(studyFieldActions.getStudyField());
+    } else {
+      console.log(res?.error);
+    }
+  };
+
   return (
     <div className="profile-view react-date-picker-profile">
       {formDetails.map((item, index) => (
@@ -617,7 +689,7 @@ export function EducationModal(props) {
                   <span className="required-icon"> *</span>
                 </Label>
 
-                <Select
+                <CreatableSelect
                   defaultValue={item.education.value == 0 ? [] : item.education}
                   isMulti={false}
                   name="levelofeducation"
@@ -628,6 +700,8 @@ export function EducationModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("levelofeducation", evt, index)
                   }
+                  formatCreateLabel={formatCreateLabel}
+                  onCreateOption={(e) => onCreateEducation(e, index)}
                 />
 
                 <div className="filter-info-text filter-error-msg">
@@ -641,7 +715,7 @@ export function EducationModal(props) {
                   <Label for={"studyField"} className="fw-semi-bold">
                     Field of study
                   </Label>
-                  <Select
+                  <CreatableSelect
                     placeholder="Select..."
                     name="studyField"
                     options={studyFieldList}
@@ -649,10 +723,15 @@ export function EducationModal(props) {
                     defaultValue={
                       item.fieldofstudy?.value == 0 ? [] : item.fieldofstudy
                     }
+                    value={
+                      item.fieldofstudy?.value == 0 ? [] : item.fieldofstudy
+                    }
                     className="location-dropdown-education"
                     onChange={(evt) =>
                       onHandleInputChange("studyField", evt, index)
                     }
+                    formatCreateLabel={formatCreateLabel1}
+                    onCreateOption={(e) => onCreateFieldOfStudy(e, index)}
                   />
                 </FormGroup>
               </div>

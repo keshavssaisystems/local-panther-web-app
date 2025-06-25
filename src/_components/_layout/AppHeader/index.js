@@ -117,7 +117,7 @@ export function AppHeader({
               <div className="user-title">
                 <h4>
                   {userroleid === 1
-                    ? "Admin"
+                    ? "OpenWorX Admin"
                     : userroleid === 2
                     ? isCompanyAdmin
                       ? "Company Admin"
