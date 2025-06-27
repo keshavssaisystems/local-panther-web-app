@@ -281,7 +281,16 @@ export function VideoInterviewDetails({
         interviewDetail?.interviewfeedback !== "" && (
           <div className="p-custom">
             <h6 className="fw-bold job-heading">Interview feedback</h6>
-            <p className="mb-0">{interviewDetail?.interviewfeedback}</p>
+            {interviewDetail?.interviewstatus !== "" && (
+              <p className="mb-0">
+                <b>Reason:</b> {interviewDetail?.interviewstatus}
+              </p>
+            )}
+            {interviewDetail?.interviewfeedback !== "" && (
+              <p className="mb-0">
+                <b>Description:</b> {interviewDetail?.interviewfeedback}
+              </p>
+            )}
           </div>
         )}
 

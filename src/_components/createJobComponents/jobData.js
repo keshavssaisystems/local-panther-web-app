@@ -46,7 +46,10 @@ export const formatAIJobData = async (data) => {
     ? data?.sponsorship_required
     : false;
 
-  aiJD.issecurityclearancerequired = true;
+  aiJD.issecurityclearancerequired =
+    data?.security_clearance_id && data?.security_clearance_id !== 0
+      ? true
+      : false;
   aiJD.securityclearance = data?.security_clearance
     ? data?.security_clearance
     : "";
