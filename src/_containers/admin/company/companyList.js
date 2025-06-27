@@ -46,6 +46,11 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
 
   const [openBDModal, setOpenBDModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
+
+  const userDetails = localStorage.getItem("userDetails")
+    ? JSON.parse(localStorage.getItem("userDetails"))
+    : {};
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(dropdownActions.getEmployeeCountThunk());
@@ -161,7 +166,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
             >
               <FaEye style={{ fontSize: "18px" }} />
             </Button>
-            {/* {isCompanyAdmin && (
+            {isCompanyAdmin && (
               <>
                 {row.billingdetailstatus ? (
                   <Button color="link" onClick={() => onViewBilling(row)}>
@@ -173,7 +178,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
                   </Button>
                 )}
               </>
-            )} */}
+            )}
           </ButtonGroup>
         </div>
       ),
@@ -222,15 +227,11 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const closeModal = (event) => {
     setOpenModal(false);
     if (isCompanyAdmin) {
-      let userDetails = localStorage.getItem("userDetails")
-        ? JSON.parse(localStorage.getItem("userDetails"))
-        : {};
-
       dispatch(
         getCompanies({
           pageSize: pageSize,
           pageNumber: pageNo,
-          companyId: Number(userDetails.CompanyId),
+          companyId: Number(userDetails?.CompanyId),
         })
       );
     } else {
@@ -275,11 +276,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
     }
 
     if (isCompanyAdmin) {
-      let userDetails = localStorage.getItem("userDetails")
-        ? JSON.parse(localStorage.getItem("userDetails"))
-        : {};
-
-      urlParams.companyId = Number(userDetails.CompanyId);
+      urlParams.companyId = Number(userDetails?.CompanyId);
     }
 
     await dispatch(getCompanies(urlParams));
@@ -308,11 +305,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       urlParams.searchText = searchData;
     }
     if (isCompanyAdmin) {
-      let userDetails = localStorage.getItem("userDetails")
-        ? JSON.parse(localStorage.getItem("userDetails"))
-        : {};
-
-      urlParams.companyId = Number(userDetails.CompanyId);
+      urlParams.companyId = Number(userDetails?.CompanyId);
     }
     await dispatch(getCompanies(urlParams));
     setLoading(false);
@@ -331,11 +324,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       urlParams.isActive = status;
     }
     if (isCompanyAdmin) {
-      let userDetails = localStorage.getItem("userDetails")
-        ? JSON.parse(localStorage.getItem("userDetails"))
-        : {};
-
-      urlParams.companyId = Number(userDetails.CompanyId);
+      urlParams.companyId = Number(userDetails?.CompanyId);
     }
     setLoading(true);
     await dispatch(getCompanies(urlParams));
@@ -568,12 +557,13 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           {showAlert.description}
         </>
       )}
-      {openBDModal ? (
+      {openBDModal && isCompanyAdmin ? (
         <PaymentModal
           isOpen={openBDModal}
           selectedCustomer={selectedCustomer}
           onClose={() => onCloseBDModal()}
           isAdmin={true}
+          userId={userDetails?.InternalUserId}
         />
       ) : (
         <></>
