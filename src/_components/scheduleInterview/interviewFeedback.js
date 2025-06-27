@@ -13,7 +13,12 @@ import {
 import "./scheduledInterview.scss";
 import { useSelector } from "react-redux";
 
-export function InterviewFeedback({ interviewId, postFeedbackData }) {
+export function InterviewFeedback({
+  interviewId,
+  postFeedbackData,
+  zoomScreen = false,
+  onCancel,
+}) {
   const interviewStatus = useSelector(
     (state) => state.scheduleInterview.interviewStatus
   );
@@ -21,7 +26,7 @@ export function InterviewFeedback({ interviewId, postFeedbackData }) {
   const getFormData = (event) => {
     event.preventDefault();
     let data = {
-      scheduleinterviewid: interviewId,
+      scheduleinterviewid: interviewId ? Number(interviewId) : 0,
       interviewfeedback: event.target.elements.interviewFeedback.value,
       interviewstatusid: Number(event.target.elements.interviewStatus.value),
     };
@@ -43,7 +48,7 @@ export function InterviewFeedback({ interviewId, postFeedbackData }) {
               )}
               <FormGroup>
                 <Label for="interviewFeedback" className="fw-semi-bold">
-                  Interview feedback
+                  Select Interview feedback
                 </Label>
                 <Input type="select" name="interviewStatus">
                   {interviewStatus?.length > 0 &&
@@ -59,7 +64,7 @@ export function InterviewFeedback({ interviewId, postFeedbackData }) {
               <FormGroup>
                 <Input
                   type="textarea"
-                  name="interviewFeedback"
+                  name="interviewFeedbacktext"
                   id="interviewFeedback"
                   placeholder="Enter interview feedback"
                 />
@@ -69,6 +74,17 @@ export function InterviewFeedback({ interviewId, postFeedbackData }) {
               <Button size="sm" color="primary" type="submit">
                 Submit interview feedback
               </Button>
+              {zoomScreen && (
+                <Button
+                  onClick={() => {
+                    onCancel();
+                  }}
+                  size="sm"
+                  className="ms-2"
+                >
+                  Cancel{" "}
+                </Button>
+              )}
             </div>
           </Form>
         </CardBody>

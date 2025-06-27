@@ -39,6 +39,15 @@ export const getBillingDetails = createAsyncThunk(
   }
 );
 
+//get company billing details
+export const getBillingDetailsByCompany = createAsyncThunk(
+  `${name}/getBillingDetailsByCompany`,
+  async (id) => {
+    const GET_BILL_DETAILS_CMP_END_POINT = `${process.env.REACT_APP_NEW_API_URL}BillingDetail/GetBillingDetailsForCustomer?companyId=${id}`;
+    return await fetchWrapper.get(GET_BILL_DETAILS_CMP_END_POINT);
+  }
+);
+
 // delete customer billing details
 export const deleteBillingDetails = createAsyncThunk(
   `${name}/deleteBillingDetails`,
@@ -66,6 +75,7 @@ const paymentSlice = createSlice({
     userDetails: [],
     currencyType: [],
     billingDetails: [],
+    compBillingDetails: [],
     cardType: [],
     showBilling: false,
   },
@@ -75,6 +85,7 @@ const paymentSlice = createSlice({
     },
     clearBillingData: (state) => {
       state.billingDetails = [];
+      state.compBillingDetails = [];
     },
     clearUserData: (state) => {
       state.userDetails = [];
@@ -120,6 +131,17 @@ const paymentSlice = createSlice({
       state.billingDetails = action?.payload?.data;
     },
     [getBillingDetails.rejected]: (state, action) => {},
+
+    //get company billing details
+
+    [getBillingDetailsByCompany.pending]: (state) => {
+      state.compBillingDetails = [];
+    },
+    [getBillingDetailsByCompany.fulfilled]: (state, action) => {
+      state.compBillingDetails = action?.payload?.data;
+    },
+    [getBillingDetailsByCompany.rejected]: (state, action) => {},
+
     // delete customer Billing details
     [deleteBillingDetails.pending]: (state) => {
       state.loading = true;
@@ -150,6 +172,7 @@ export const paymentActions = {
   getBillingDetails,
   deleteBillingDetails,
   getCardTypeDrpDwn,
+  getBillingDetailsByCompany,
 };
 
 export const paymentReducer = paymentSlice.reducer;
