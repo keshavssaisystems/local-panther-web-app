@@ -66,12 +66,14 @@ export function UnsubscribeEmail() {
                 setIsUnsubscribed(response?.payload?.statusCode == 200 ? true : false);
                 if (response?.payload?.statusCode != 200) {
                     validationErrors.response = response.payload.message;
-                    setErrors(validationErrors);
-                    console.log(validationErrors.response)
+                    setErrors({
+                        response: response?.payload?.message || "Something went wrong.",
+                    });
+                    console.log('response:',validationErrors.response)
                 }
             }
             else if (response?.error) {
-                setErrors(true);
+                // setErrors(true);
                 setMessage(response?.error?.message);
             }
         }
@@ -85,13 +87,11 @@ export function UnsubscribeEmail() {
             setOtherReasonText("");
             setErrors({ ...errors, reason: "", other: "" });
         }
-
-        setErrors({ ...errors, reason: "", other: "", response: "" });
     };
 
     const handleTextareaChange = (e) => {
         setOtherReasonText(e.target.value);
-        setErrors({ ...errors, other: "", response: "" });
+        setErrors({ ...errors, other: "" });
     };
 
 
