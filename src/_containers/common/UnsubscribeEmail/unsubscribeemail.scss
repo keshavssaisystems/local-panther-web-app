@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #DDE7F1!important;
+    font-family: Arial, sans-serif;    
+}
+
+.table {
+    border-collapse: collapse;
+}
+
+.email-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    color: #2F2E2E;
+}
+
+.header {
+    padding: 30px;
+    text-align: left;
+    font-weight: 400;
+    line-height: 140%;
+}
+
+.pref-block {
+    padding: 15px 30px;
+}
+
+.cta-button {
+    font-size: 16px;
+    font-weight: 700;
+    background-color: #052F5F;
+    color: #ffffff;
+    padding: 12px 50px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 30px 0;
+    display: inline-block;
+}
+
+.cta-button:hover {
+    background-color: #0a3f7c;
+    color: #ffffff;
+}
+
+.footer {
+    font-size: 12px;
+    color: #979797;
+    padding: 20px;
+    text-align: center;
+}
+
+.radio-group {
+    margin-bottom: 10px;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 8px;
+}
+
+textarea {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    resize: vertical;
+}
+
+@media only screen and (max-width: 600px) {
+    .email-container {
+        width: 100% !important;
+    }
+}
+
+.my-text {
+    font-family: 'Arial', sans-serif !important;
+    height: 100vh;
+}

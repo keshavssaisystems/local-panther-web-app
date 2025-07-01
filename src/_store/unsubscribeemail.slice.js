@@ -9,12 +9,12 @@ const initialState = {
 };
 
 // Define the async action
-export const getUnsubscribeEmail = createAsyncThunk(
-    "unsubscribe/getUnsubscribeEmail",
-    async (token) => {
+export const postUnsubscribeEmail = createAsyncThunk(
+    "unsubscribe/postUnsubscribeEmail",
+    async (payload) => {
         const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
-        const response = await fetchWrapper.get(
-            `${baseUrl}/External/UnsubscribeEmail?token=${token}`
+        const response = await fetchWrapper.post(
+            `${baseUrl}/External/UnsubscribeEmail`, payload
         );
         console.log(response);
         return response; // Assuming your API response has a "data" property
@@ -29,14 +29,14 @@ const unsubscribeSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getUnsubscribeEmail.pending, (state) => {
+            .addCase(postUnsubscribeEmail.pending, (state) => {
                 state.error = null;
             })
-            .addCase(getUnsubscribeEmail.fulfilled, (state, action) => {
+            .addCase(postUnsubscribeEmail.fulfilled, (state, action) => {
                 state.unsubscribe.data = action.payload; // Update the state properly
                 console.log(action);
             })
-            .addCase(getUnsubscribeEmail.rejected, (state, action) => {
+            .addCase(postUnsubscribeEmail.rejected, (state, action) => {
                 state.error = action.error;
             })
     },
@@ -45,5 +45,5 @@ const unsubscribeSlice = createSlice({
 // Export the actions and reducer
 export const unsubscribeActions = {
     ...unsubscribeSlice.actions,
-    getUnsubscribeEmail,
+    postUnsubscribeEmail,
 }
