@@ -1585,7 +1585,15 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const onUploadOfferDoc = (file, startdate, pay, finaloffer, payType) => {
+  const onUploadOfferDoc = (
+    file,
+    startdate,
+    pay,
+    finaloffer,
+    payType,
+    selectedTemplate,
+    generatedHtml
+  ) => {
     setOfferUploadLoading(true);
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
@@ -1614,7 +1622,10 @@ export const CustCandidateListView = (props) => {
       "Startdate",
       moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
     );
-
+    if (selectedTemplate && generatedHtml) {
+      form.append("Offerlettertemplateid", selectedTemplate);
+      form.append("Offerlettertemplatefinaltext", generatedHtml);
+    }
     axios
       .post(
         `${process.env.REACT_APP_PANTHER_URL}/api/JobOffer/MakeJobOffer`,
@@ -1756,8 +1767,24 @@ export const CustCandidateListView = (props) => {
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
             onClose={() => setShowUploadOfferModal(false)}
-            uploadOfferDoc={(file, startdate, pay, finaloffer, payType) =>
-              onUploadOfferDoc(file, startdate, pay, finaloffer, payType)
+            uploadOfferDoc={(
+              file,
+              startdate,
+              pay,
+              finaloffer,
+              payType,
+              selectedTemplate,
+              generatedHtml
+            ) =>
+              onUploadOfferDoc(
+                file,
+                startdate,
+                pay,
+                finaloffer,
+                payType,
+                selectedTemplate,
+                generatedHtml
+              )
             }
             loading={offerUploadLoading}
             data={selectedRowData}

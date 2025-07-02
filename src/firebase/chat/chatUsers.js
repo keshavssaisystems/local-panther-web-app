@@ -84,8 +84,10 @@ export function ChatUsers({ list, getSelectedChatGroup }) {
         <>
           <div className="app-inner-layout__sidebar-header">
             <Nav vertical>
-              <NavItem className="mt-2 ms-3 mb-2 text-center">
-                No chats to display
+              <NavItem className="mt-2 ms-3 mb-2 me-2 text-center">
+                {userRole === 2
+                  ? "Chat will become available once a candidate is matched with a job and the interview is scheduled. "
+                  : "Chat will be enabled once you're matched to a job and an interview is scheduled. At that point, you'll be able to communicate directly with the hiring manager."}
               </NavItem>
             </Nav>
           </div>

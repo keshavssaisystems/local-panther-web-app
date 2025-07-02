@@ -25,7 +25,9 @@ export function AppHeader({
 }) {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [showCPModal, setShowCPModal] = useState(false);
-
+  let userDetail = localStorage.getItem("userDetails")
+    ? JSON.parse(localStorage.getItem("userDetails"))
+    : {};
   let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
     ? localStorage.getItem("isCompanyAdmin") === "true"
     : false;
@@ -116,13 +118,14 @@ export function AppHeader({
             <>
               <div className="user-title">
                 <h4>
-                  {userroleid === 1
+                  Welcome, {userDetail?.FirstName} {userDetail?.LastName}
+                  {/* {userroleid === 1
                     ? "OpenWorX Admin"
                     : userroleid === 2
                     ? isCompanyAdmin
                       ? "Company Admin"
                       : "Hiring Manager"
-                    : "Candidate"}
+                    : "Candidate"} */}
                 </h4>
               </div>
               <div className="app-header-right">
