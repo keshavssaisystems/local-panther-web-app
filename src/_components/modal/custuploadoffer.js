@@ -137,14 +137,15 @@ export const CustomerUploadOffer = (props) => {
         margin: 0.5,
         filename: props.data.firstname + " " + props.data.lastname,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        html2canvas: { scale: 1.5, useCORS: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
       };
-
+      props.updateLoading(true);
       let fileData = await html2pdf()
         .from(element)
         .set(options)
         .outputPdf("blob");
+
       const file = new File(
         [fileData],
         props.data.firstname + " " + props.data.lastname,
@@ -153,6 +154,7 @@ export const CustomerUploadOffer = (props) => {
       let templateData = offerLetterTemplateList.find(
         (d) => d.templatetype === selectedTemplate
       );
+      props.updateLoading(false);
       props.uploadOfferDoc(
         [file],
         startDate,
@@ -230,12 +232,13 @@ export const CustomerUploadOffer = (props) => {
     const element = document.getElementById("pdf-content");
 
     if (content) {
-      await waitForImagesToLoad(content);
+      props.updateLoading(true);
+      await waitForImagesToLoad(element);
 
       const pdfOptions = {
         margin: 10,
         html2canvas: {
-          scale: 2,
+          scale: 1.5,
           useCORS: true,
         },
         filename: props?.data?.firstname + " " + props?.data?.lastname,
@@ -244,6 +247,7 @@ export const CustomerUploadOffer = (props) => {
       };
 
       html2pdf().from(content).set(pdfOptions).save();
+      props.updateLoading(false);
     }
   };
 
@@ -290,7 +294,7 @@ export const CustomerUploadOffer = (props) => {
                     setActiveTab(1);
                   }}
                 >
-                  Upload Offer
+                  Manual Upload Offer
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -301,7 +305,7 @@ export const CustomerUploadOffer = (props) => {
                     setActiveTab(2);
                   }}
                 >
-                  Generate Offer Letter
+                  System Generated Offer
                 </NavLink>
               </NavItem>
               <TabContent activeTab={activeTab}>

@@ -1653,6 +1653,10 @@ export const CustCandidateListView = (props) => {
       });
   };
 
+  const onOfferUploading = (data) => {
+    setOfferUploadLoading(data);
+  };
+
   return (
     <>
       <DataTable
@@ -1787,6 +1791,7 @@ export const CustCandidateListView = (props) => {
               )
             }
             loading={offerUploadLoading}
+            updateLoading={(data) => onOfferUploading(data)}
             data={selectedRowData}
           />
         ) : (
