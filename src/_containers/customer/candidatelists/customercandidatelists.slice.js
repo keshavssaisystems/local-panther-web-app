@@ -27,6 +27,7 @@ function createInitialState() {
     scheduledInterviewList: [],
     prescreenQues: [],
     custOfferHistory: [],
+    offerLetterTemplates: [],
   };
 }
 
@@ -46,6 +47,7 @@ function createExtraActions() {
     getScheduleIVList: getScheduleIVList(),
     getPrescreenDetails: getPrescreenDetails(),
     getCustOfferHistory: getCustOfferHistory(),
+    getofferLetterTemplate: getofferLetterTemplate(),
   };
 
   function getDrpDwnJobLists() {
@@ -233,6 +235,14 @@ function createExtraActions() {
       return await fetchWrapper.get(GET_CUST_OH_END_POINT);
     });
   }
+
+  // get offer letter template
+  function getofferLetterTemplate() {
+    return createAsyncThunk(`${name}/getofferLetterTemplate`, async (id) => {
+      const GET_OLT_EP = `${newUrl}/OfferLetterTemplates/GetList?pageSize=100&pageNumber=1`;
+      return await fetchWrapper.get(GET_OLT_EP);
+    });
+  }
 }
 
 function createExtraReducers() {
@@ -250,6 +260,7 @@ function createExtraReducers() {
     getScheduleIVList();
     getPrescreenDetails();
     getCustOfferHistory();
+    getofferLetterTemplate();
 
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
@@ -466,6 +477,7 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {});
     }
+
     function getCustOfferHistory() {
       let { pending, fulfilled, rejected } = extraActions.getCustOfferHistory;
       builder
@@ -476,6 +488,21 @@ function createExtraReducers() {
           state.custOfferHistory = action?.payload?.data;
         })
         .addCase(rejected, (state, action) => {});
+    }
+
+    function getofferLetterTemplate() {
+      let { pending, fulfilled, rejected } =
+        extraActions.getofferLetterTemplate;
+      builder
+        .addCase(pending, (state) => {
+          state.offerLetterTemplates = [];
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.offerLetterTemplates = action?.payload?.data;
+        })
+        .addCase(rejected, (state, action) => {
+          state.offerLetterTemplates = [];
+        });
     }
   };
 }
