@@ -20,7 +20,15 @@ import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import InputMask from "react-input-mask";
 import { useSelector, useDispatch } from "react-redux";
-import { getLocation, getSkillsFilter } from "_store";
+import {
+  getLocation,
+  getSkillsFilter,
+  addLevelOfEducation,
+  educationActions,
+  studyFieldActions,
+  addFieldOfStudy,
+  dropdownActions,
+} from "_store";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
 import { BsPlusSquare } from "react-icons/bs";
@@ -47,6 +55,7 @@ import {
 
 import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
+import CreatableSelect from "react-select/creatable";
 export const CreateJob = forwardRef(
   (
     {
@@ -226,6 +235,7 @@ export const CreateJob = forwardRef(
     const levelOfEducationOption = useSelector(
       (state) => state.dropdown.levelOfEducationList
     );
+
     const subsidiaryOption = useSelector(
       (state) => state.dropdown.subsidiaryList
     );
@@ -324,6 +334,7 @@ export const CreateJob = forwardRef(
       previousStep === 3
         ? getEducationData(jobData.basicInformation)
         : getEducationData(previousData);
+
     let studyData =
       previousStep === 3
         ? getStudyData(jobData.basicInformation)
@@ -1524,6 +1535,69 @@ export const CreateJob = forwardRef(
       customCount2 = customQuestionInput?.length - 1;
     }
     customCount = Number(customCount1) + Number(customCount2);
+
+    const formatCreateLabel2 = (inputValue) => {
+      if (inputValue !== "" && inputValue.length > 2) {
+        return (
+          <span style={{ cursor: "pointer" }}>
+            Add new eductaion -{" "}
+            <span style={{ color: "#545cd8" }}>{inputValue}</span>
+          </span>
+        );
+      } else {
+        return "";
+      }
+    };
+
+    const formatCreateLabel1 = (inputValue) => {
+      if (inputValue !== "" && inputValue.length > 2) {
+        return (
+          <span style={{ cursor: "pointer" }}>
+            Add new field of study -{" "}
+            <span style={{ color: "#545cd8" }}>{inputValue}</span>
+          </span>
+        );
+      } else {
+        return "";
+      }
+    };
+
+    const onCreateEducation = async (data) => {
+      let payload = {
+        levelofeducation1: data,
+        currentUserId: localStorage.getItem("userId")
+          ? Number(localStorage.getItem("userId"))
+          : 0,
+      };
+
+      let res = await dispatch(addLevelOfEducation(payload));
+      debugger;
+      if (res?.payload && res?.payload?.statusCode === 201) {
+        educationData.push({
+          value: res.payload.data.levelofeducationid,
+          label: res.payload.data.levelofeducation1,
+        });
+        // dispatch(dropdownActions.getLevelOFEducationThunk());
+      } else {
+        console.log(res?.error);
+      }
+    };
+
+    const onCreateFieldOfStudy = async (data) => {
+      let payload = {
+        fieldofstudy1: data,
+        currentUserId: localStorage.getItem("userId")
+          ? Number(localStorage.getItem("userId"))
+          : 0,
+      };
+
+      let res = await dispatch(addFieldOfStudy(payload));
+      if (res?.payload && res?.payload?.statusCode === 201) {
+        dispatch(studyFieldActions.getStudyField());
+      } else {
+        console.log(res?.error);
+      }
+    };
     return (
       <>
         <div className="form-wizard-content">
@@ -2017,7 +2091,7 @@ export const CreateJob = forwardRef(
                           >
                             Level of education
                           </Label>
-                          <Select
+                          <CreatableSelect
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2027,6 +2101,8 @@ export const CreateJob = forwardRef(
                             name="levelofeducationids"
                             options={educationOptions}
                             classNamePrefix="select"
+                            // formatCreateLabel={formatCreateLabel2}
+                            // onCreateOption={(e) => onCreateEducation(e)}
                             placeholder="Select level of education"
                           />
                         </FormGroup>
@@ -2039,7 +2115,7 @@ export const CreateJob = forwardRef(
                           >
                             Field of study
                           </Label>
-                          <Select
+                          <CreatableSelect
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2050,6 +2126,8 @@ export const CreateJob = forwardRef(
                             options={fieldStudyOptions}
                             classNamePrefix="select"
                             placeholder="Select field of study"
+                            // formatCreateLabel={formatCreateLabel1}
+                            // onCreateOption={(e) => onCreateFieldOfStudy(e)}
                           />
                         </FormGroup>
                       </Col>

@@ -205,7 +205,7 @@ export const ZoomVideoScreen = (props) => {
               <strong className="card-title-text">Interview Feedback</strong>
             </ModalHeader>
             <ModalBody>
-              <h6>Please provide a feedback for the interview.</h6>
+              <h6>Please provide feedback for the interview.</h6>
               <br />
               <InterviewFeedback
                 interviewId={id}
