@@ -137,33 +137,35 @@ export const CustomerUploadOffer = (props) => {
         margin: 0.5,
         filename: props.data.firstname + " " + props.data.lastname,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 1.5, useCORS: true },
+        // html2canvas: { scale: 1, useCORS: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
       };
       props.updateLoading(true);
-      let fileData = await html2pdf()
-        .from(element)
-        .set(options)
-        .outputPdf("blob");
+      setTimeout(async () => {
+        let fileData = await html2pdf()
+          .from(element)
+          .set(options)
+          .outputPdf("blob");
 
-      const file = new File(
-        [fileData],
-        props.data.firstname + " " + props.data.lastname,
-        { type: "application/pdf" }
-      );
-      let templateData = offerLetterTemplateList.find(
-        (d) => d.templatetype === selectedTemplate
-      );
-      props.updateLoading(false);
-      props.uploadOfferDoc(
-        [file],
-        startDate,
-        pay.replaceAll(",", ""),
-        finalOffer,
-        payType,
-        templateData?.offerlettertemplateid,
-        generatedHtml
-      );
+        const file = new File(
+          [fileData],
+          props.data.firstname + " " + props.data.lastname,
+          { type: "application/pdf" }
+        );
+        let templateData = offerLetterTemplateList.find(
+          (d) => d.templatetype === selectedTemplate
+        );
+        props.updateLoading(false);
+        props.uploadOfferDoc(
+          [file],
+          startDate,
+          pay.replaceAll(",", ""),
+          finalOffer,
+          payType,
+          templateData?.offerlettertemplateid,
+          generatedHtml
+        );
+      }, [100]);
     }
   };
 
@@ -233,21 +235,22 @@ export const CustomerUploadOffer = (props) => {
 
     if (content) {
       props.updateLoading(true);
-      await waitForImagesToLoad(element);
 
+      await waitForImagesToLoad(element);
       const pdfOptions = {
         margin: 10,
-        html2canvas: {
-          scale: 1.5,
-          useCORS: true,
-        },
+        // html2canvas: {
+        //   scale: 1,
+        //   useCORS: true,
+        // },
         filename: props?.data?.firstname + " " + props?.data?.lastname,
         image: { type: "jpeg", quality: 0.98 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
-
-      html2pdf().from(content).set(pdfOptions).save();
-      props.updateLoading(false);
+      setTimeout(() => {
+        html2pdf().from(content).set(pdfOptions).save();
+        props.updateLoading(false);
+      }, [100]);
     }
   };
 
