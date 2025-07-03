@@ -330,15 +330,15 @@ export const CreateJob = forwardRef(
         ? getCertificationData(jobData.basicInformation)
         : getCertificationData(previousData);
 
-    let educationData =
-      previousStep === 3
-        ? getEducationData(jobData.basicInformation)
-        : getEducationData(previousData);
+    // let educationData =
+    //   previousStep === 3
+    //     ? getEducationData(jobData.basicInformation)
+    //     : getEducationData(previousData);
 
-    let studyData =
-      previousStep === 3
-        ? getStudyData(jobData.basicInformation)
-        : getStudyData(previousData);
+    // let studyData =
+    //   previousStep === 3
+    //     ? getStudyData(jobData.basicInformation)
+    //     : getStudyData(previousData);
     let preValue = {
       companyId: "",
       jobTitle:
@@ -676,6 +676,39 @@ export const CreateJob = forwardRef(
         setPrevKey(new_arr3);
         setPrevKey2(new_arr4);
       }
+
+      if (previousStep === 1 && previousData?.levelofeducationids) {
+        let educationData =
+          previousStep === 3
+            ? getEducationData(jobData.basicInformation)
+            : getEducationData(previousData);
+        setEduArr(educationData);
+      }
+      if (
+        previousStep === 3 &&
+        jobData?.basicInformation?.levelofeducationids
+      ) {
+        let educationData =
+          previousStep === 3
+            ? getEducationData(jobData.basicInformation)
+            : getEducationData(previousData);
+        setEduPrevArr(educationData);
+      }
+
+      if (previousStep === 1 && previousData?.fieldofstudiesids) {
+        let studyData =
+          previousStep === 3
+            ? getStudyData(jobData.basicInformation)
+            : getStudyData(previousData);
+        setStudyFieldArr(studyData);
+      }
+      if (previousStep === 3 && jobData.basicInformation.fieldofstudiesids) {
+        let studyData =
+          previousStep === 3
+            ? getStudyData(jobData.basicInformation)
+            : getStudyData(previousData);
+        setStudyFieldPrevArr(studyData);
+      }
     }, []);
     const [descriptionData, setDescriptionData] = useState(
       previousStep === 3 && preValue.description !== ""
@@ -718,6 +751,12 @@ export const CreateJob = forwardRef(
     const [keyQualificationArr1, setKeyQual1] = useState([]);
     const [keyQualificationArr2, setKeyQual2] = useState([]);
     const [keyQualicationChange, setKeyQualifucationChange] = useState(false);
+    const [eduArr, setEduArr] = useState([]);
+    const [eduPrevArr, setEduPrevArr] = useState([]);
+    const [levelOfEduChange, setLevelOfEduChange] = useState(false);
+    const [studyFieldArr, setStudyFieldArr] = useState([]);
+    const [studyFieldPrevArr, setStudyFieldPrevArr] = useState([]);
+    const [studyFieldChange, setStudyFieldChange] = useState(false);
     const flaggedWordList = useSelector(
       (state) => state.dropdown.flaggedWordsList
     );
@@ -1403,6 +1442,26 @@ export const CreateJob = forwardRef(
         setMustHaveValidation(false);
       }
     };
+
+    const onSelectEduDropdown = function (data) {
+      if (data.length === 0) {
+        setEduArr([]);
+        setEduPrevArr([]);
+      } else {
+        setEduArr(data);
+        setEduPrevArr(data);
+      }
+    };
+
+    const onSelectStudyFieldDropdown = (data) => {
+      if (data.length === 0) {
+        setStudyFieldArr([]);
+        setStudyFieldPrevArr([]);
+      } else {
+        setStudyFieldArr(data);
+        setStudyFieldPrevArr(data);
+      }
+    };
     const selectOptionalSkills = function (data) {
       setSearchOptionalText("");
       if (data.length === 0) {
@@ -1571,13 +1630,22 @@ export const CreateJob = forwardRef(
       };
 
       let res = await dispatch(addLevelOfEducation(payload));
-      debugger;
+
       if (res?.payload && res?.payload?.statusCode === 201) {
-        educationData.push({
+        setLevelOfEduChange(true);
+        let eduData = [...eduArr];
+        eduData.push({
           value: res.payload.data.levelofeducationid,
           label: res.payload.data.levelofeducation1,
         });
-        // dispatch(dropdownActions.getLevelOFEducationThunk());
+        setEduArr(eduData);
+        let eduPrevData = [...eduPrevArr];
+        eduPrevData.push({
+          value: res.payload.data.levelofeducationid,
+          label: res.payload.data.levelofeducation1,
+        });
+        setEduPrevArr(eduPrevData);
+        dispatch(dropdownActions.getLevelOFEducationThunk());
       } else {
         console.log(res?.error);
       }
@@ -1593,7 +1661,20 @@ export const CreateJob = forwardRef(
 
       let res = await dispatch(addFieldOfStudy(payload));
       if (res?.payload && res?.payload?.statusCode === 201) {
-        dispatch(studyFieldActions.getStudyField());
+        setStudyFieldChange(true);
+        let studyFieldData = [...studyFieldArr];
+        studyFieldData.push({
+          value: res.payload.data.fieldofstudyid,
+          label: res.payload.data.fieldofstudy1,
+        });
+        setStudyFieldArr(studyFieldData);
+        let studyFieldPrevData = [...studyFieldPrevArr];
+        studyFieldPrevData.push({
+          value: res.payload.data.fieldofstudyid,
+          label: res.payload.data.fieldofstudy1,
+        });
+        setStudyFieldPrevArr(studyFieldPrevData);
+        dispatch(dropdownActions.getFieldOfStudyThunk());
       } else {
         console.log(res?.error);
       }
@@ -2092,17 +2173,30 @@ export const CreateJob = forwardRef(
                             Level of education
                           </Label>
                           <CreatableSelect
-                            defaultValue={
-                              type === "new_template" && previousStep !== 3
+                            // defaultValue={
+                            //   type === "new_template" && previousStep !== 3
+                            //     ? ""
+                            //     : educationData
+                            // }
+                            value={
+                              type === "new_template" &&
+                              previousStep !== 3 &&
+                              levelOfEduChange === false
                                 ? ""
-                                : educationData
+                                : previousStep === 3
+                                ? eduPrevArr
+                                : eduArr
                             }
                             isMulti
                             name="levelofeducationids"
                             options={educationOptions}
                             classNamePrefix="select"
-                            // formatCreateLabel={formatCreateLabel2}
-                            // onCreateOption={(e) => onCreateEducation(e)}
+                            onChange={(evt) => {
+                              onSelectEduDropdown(evt);
+                              setLevelOfEduChange(true);
+                            }}
+                            formatCreateLabel={formatCreateLabel2}
+                            onCreateOption={(e) => onCreateEducation(e)}
                             placeholder="Select level of education"
                           />
                         </FormGroup>
@@ -2116,18 +2210,31 @@ export const CreateJob = forwardRef(
                             Field of study
                           </Label>
                           <CreatableSelect
-                            defaultValue={
-                              type === "new_template" && previousStep !== 3
-                                ? ""
-                                : studyData
-                            }
+                            // defaultValue={
+                            //   type === "new_template" && previousStep !== 3
+                            //     ? ""
+                            //     : studyData
+                            // }
                             isMulti
+                            value={
+                              type === "new_template" &&
+                              previousStep !== 3 &&
+                              studyFieldChange === false
+                                ? ""
+                                : previousStep === 3
+                                ? studyFieldPrevArr
+                                : studyFieldArr
+                            }
+                            onChange={(evt) => {
+                              onSelectStudyFieldDropdown(evt);
+                              setStudyFieldChange(true);
+                            }}
                             name="fieldofstudiesids"
                             options={fieldStudyOptions}
                             classNamePrefix="select"
                             placeholder="Select field of study"
-                            // formatCreateLabel={formatCreateLabel1}
-                            // onCreateOption={(e) => onCreateFieldOfStudy(e)}
+                            formatCreateLabel={formatCreateLabel1}
+                            onCreateOption={(e) => onCreateFieldOfStudy(e)}
                           />
                         </FormGroup>
                       </Col>
