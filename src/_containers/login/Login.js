@@ -555,20 +555,28 @@ export function Login() {
                     </Form>
 
                     <div className="mt-4 register-division">
-                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
-                        We are thrilled to have you join the OpenWorX community!
-                        To ensure a high-quality professional community, we
-                        kindly ask you to register by uploading or creating your
-                        profile.
-                      </p>
-                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
-                        We are looking forward to connecting and engaging with
-                        you in this vibrant community! If you have any questions
-                        or need assistance with the registration process, feel
-                        free to reach out. Thanks for being part of OpenWorX!
-                      </p>
                       <p className="mt-3 d-flex register-paragraph">
-                        Become Part of the OpenWorX Community.{"  "}
+                        Welcome to our Career Portal
+                      </p>
+
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        Thank you for your interest in joining our team! You're
+                        just a few steps away from exploring exciting
+                        opportunities with us.
+                      </p>
+
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        To ensure a smooth and secure application process,
+                        please register and create your profile here. This
+                        allows us to match you with this and other best-fit
+                        opportunities, and keeps us connected throughout the
+                        hiring journey.
+                      </p>
+
+                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                        If you have any questions or need assistance, feel free
+                        to reach out at any time. We look forward to reviewing
+                        your application - welcome!
                       </p>
                     </div>
                   </div>
