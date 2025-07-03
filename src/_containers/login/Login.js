@@ -559,13 +559,13 @@ export function Login() {
                         Welcome to our Career Portal
                       </p>
 
-                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                      <p className="mt-3 d-flex  register-paragraph">
                         Thank you for your interest in joining our team! You're
                         just a few steps away from exploring exciting
                         opportunities with us.
                       </p>
 
-                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                      <p className="mt-3 d-flex  register-paragraph">
                         To ensure a smooth and secure application process,
                         please register and create your profile here. This
                         allows us to match you with this and other best-fit
@@ -573,7 +573,7 @@ export function Login() {
                         hiring journey.
                       </p>
 
-                      <p className="mt-3 d-flex justify-content-center align-items-center register-paragraph">
+                      <p className="mt-3 d-flex  register-paragraph">
                         If you have any questions or need assistance, feel free
                         to reach out at any time. We look forward to reviewing
                         your application - welcome!

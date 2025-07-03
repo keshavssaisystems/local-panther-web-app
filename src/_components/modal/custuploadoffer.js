@@ -48,7 +48,7 @@ export const CustomerUploadOffer = (props) => {
   const [fileError, setFileError] = useState(false);
   const [payType, setPayType] = useState("");
   const [payTypeErr, setPayTypeErr] = useState(false);
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(2);
   const [showPdfPrev, setShowPdfPrev] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [offerLetterTemplateError, setOfferLetterTemplateError] =
@@ -193,6 +193,7 @@ export const CustomerUploadOffer = (props) => {
     let userDetail = localStorage.getItem("userDetails")
       ? JSON.parse(localStorage.getItem("userDetails"))
       : {};
+
     const offerData = {
       companylogo: localStorage.getItem("logo")
         ? localStorage.getItem("logo")
@@ -200,13 +201,13 @@ export const CustomerUploadOffer = (props) => {
       Letterhead: "Offer Letter",
       date: moment().format("MM/DD/YYYY"),
       candidateFullName: props.data.firstname + " " + props.data.lastname,
-      candidateAddress: props.data.cityname + ", " + props.data.statename,
+      candidateAddress:
+        (props?.data?.cityname ? props?.data?.cityname : "") +
+        (props?.data?.statename ? ", " + props?.data?.statename : ""),
       cityStateZip:
-        props.data.cityname +
-        ", " +
-        props.data.statename +
-        ", " +
-        props.data.zipcode,
+        (props?.data?.cityname ? props?.data?.cityname : "") +
+        (props?.data?.statename ? ", " + props?.data?.statename : "") +
+        (props?.data?.zipcode ? ", " + props?.data?.zipcode : ""),
       candidateFirstName: props.data.firstname,
       companyName: props.data.companyname,
       jobTitle: props.data.jobtitle,
@@ -291,17 +292,6 @@ export const CustomerUploadOffer = (props) => {
             <Nav fill pills>
               <NavItem>
                 <NavLink
-                  active={activeTab === 1}
-                  // className={activeTab === 1 ? "active" : ""}
-                  onClick={() => {
-                    setActiveTab(1);
-                  }}
-                >
-                  Manual Upload Offer
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
                   active={activeTab === 2}
                   // className={activeTab === 2 ? "active" : ""}
                   onClick={() => {
@@ -309,6 +299,17 @@ export const CustomerUploadOffer = (props) => {
                   }}
                 >
                   System Generated Offer
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink
+                  active={activeTab === 1}
+                  // className={activeTab === 1 ? "active" : ""}
+                  onClick={() => {
+                    setActiveTab(1);
+                  }}
+                >
+                  Manual Upload Offer
                 </NavLink>
               </NavItem>
               <TabContent activeTab={activeTab}>
