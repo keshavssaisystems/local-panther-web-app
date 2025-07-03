@@ -11,6 +11,7 @@ import {
   UncontrolledButtonDropdown,
   Card,
   CardBody,
+  Row,
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
@@ -20,6 +21,7 @@ import {
   BsPersonVideo2,
   BsFillTelephoneFill,
   BsPerson,
+  BsDownload,
 } from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
@@ -34,6 +36,8 @@ import {
 } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
+import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
+import html2pdf from "html2pdf.js";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -172,6 +176,25 @@ export function VideoInterviewDetails({
   );
   const downloadInterviewGuide = () => {
     window.open(interviewGuideLink[0].name, "_blank");
+  };
+
+  const generatePDF = async (event) => {
+    const element = document.getElementById("sq-pdf-content");
+
+    if (element) {
+      const pdfOptions = {
+        margin: 10,
+        html2canvas: {
+          scale: 1.2,
+          useCORS: true,
+        },
+        filename: interviewDetails.candidatename + " inetrviewquestions",
+        image: { type: "jpeg", quality: 0.98 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      html2pdf().from(element).set(pdfOptions).save();
+    }
   };
 
   return (
@@ -534,13 +557,34 @@ export function VideoInterviewDetails({
       </div>
       {interviewDetail?.suggestedquestion !== "" && (
         <div className="p-3 suggested-question">
-          <h6 className="fw-bold">Suggested Questions</h6>
-          {suggestedQuestionArray?.length > 0 &&
-            suggestedQuestionArray?.map((suggestedQuestion) => (
-              <>
-                <p className="mb-1">{suggestedQuestion}</p>
-              </>
-            ))}
+          <Row>
+            <Col md="11">
+              {" "}
+              <h6 className="fw-bold">Suggested Questions</h6>
+            </Col>
+            {suggestedQuestionArray?.length > 0 && (
+              <Col md="1">
+                <div
+                  style={{ cursor: "pointer" }}
+                  title="Click here to download suggested questions"
+                  onClick={() => generatePDF()}
+                >
+                  <h6>
+                    {" "}
+                    <BsDownload />
+                  </h6>
+                </div>
+              </Col>
+            )}
+          </Row>
+          <div id="sq-pdf-content">
+            {suggestedQuestionArray?.length > 0 &&
+              suggestedQuestionArray?.map((suggestedQuestion) => (
+                <>
+                  <p className="mb-1 ">{suggestedQuestion}</p>
+                </>
+              ))}
+          </div>
           {suggestedQuestionArray?.length === 0 && (
             <p className="mb-0 ">
               <i> - No suggested question added</i>
