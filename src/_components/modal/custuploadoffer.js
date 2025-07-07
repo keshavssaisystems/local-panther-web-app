@@ -71,6 +71,7 @@ export const CustomerUploadOffer = (props) => {
   useEffect(() => {
     if (props?.data?.jobPaymentBenefitDtos?.length > 0) {
       setPayType(props?.data?.jobPaymentBenefitDtos[0].payperiodtype);
+      setPay(props?.data?.jobPaymentBenefitDtos[0].minimumamount);
     }
     if (props?.data?.jobOfferDtos?.length > 0) {
       setPayType(props?.data?.jobOfferDtos[0].payperiodtype);
@@ -212,7 +213,7 @@ export const CustomerUploadOffer = (props) => {
       companyName: props.data.companyname,
       jobTitle: props.data.jobtitle,
       startDate: moment(startDate)?.format("YYYY-MM-DD").toString(),
-      salaryAmount: pay,
+      salaryAmount: new Intl.NumberFormat("en-US").format(pay.replaceAll(",", "")),
       salaryType: payType,
       yourName: userDetail.FirstName + " " + userDetail.LastName,
       yourTitle: userDetail.role,
@@ -633,8 +634,7 @@ export const CustomerUploadOffer = (props) => {
             className="me-2"
             onClick={() => onUploadClick()}
           >
-            {activeTab === 1 || (showPdfPrev && activeTab === 2)
-              ? "Upload File"
+            {activeTab === 1 ? "Upload File" : (showPdfPrev && activeTab === 2) ? "Confirm & Submit"
               : "Generate offer"}
           </Button>
           <Button color="secondary" onClick={() => props.onClose()}>
