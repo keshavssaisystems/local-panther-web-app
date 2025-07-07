@@ -252,7 +252,16 @@ export function UpcomingVideoDetails({
           interviewDetails?.interviewfeedback !== "" && (
             <div className="p-custom">
               <h6 className="fw-bold mb-0 job-heading">Interview feedback</h6>
-              {interviewDetails?.interviewfeedback}
+              {interviewDetails?.interviewstatus !== "" && (
+                <p className="mb-0">
+                  <b>Reason:</b> {interviewDetails?.interviewstatus}
+                </p>
+              )}
+              {interviewDetails?.interviewfeedback !== "" && (
+                <p className="mb-0">
+                  <b>Description:</b> {interviewDetails?.interviewfeedback}
+                </p>
+              )}
             </div>
           )}
         {showInviteCard === true && (

@@ -75,6 +75,7 @@ import { TermsAndConditions } from "_containers/static/terms";
 import { PrivacyPolicy } from "_containers/static/privacy";
 import { Support } from "_containers/static/support";
 import { Contact } from "_containers/static/contact";
+import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
@@ -812,6 +813,7 @@ export function App() {
                   path="/payment/:id"
                   element={<Payment authUser={authUser} />}
                 />
+                <Route path="/Unsubscribe/:token" element={<UnsubscribeEmail />} />
               </Routes>
             </div>
             {authUser && <AppFooter />}
