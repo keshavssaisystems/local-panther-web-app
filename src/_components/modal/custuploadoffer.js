@@ -133,13 +133,14 @@ export const CustomerUploadOffer = (props) => {
     } else if (activeTab === 2 && showPdfPrev) {
       const element = contentRef.current;
 
+      await waitForImagesToLoad(element);
       // Generate PDF as Blob
       const options = {
-        margin: 0.5,
-        filename: props.data.firstname + " " + props.data.lastname,
+        margin: 10,
+        filename: generateFilenameWithTimestamp(),
         image: { type: "jpeg", quality: 0.9 },
-        html2canvas: { scale: 1, useCORS: true },
-        jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+        html2canvas: { scale: 1.2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
       props.updateLoading(true);
       setTimeout(async () => {
@@ -148,11 +149,9 @@ export const CustomerUploadOffer = (props) => {
           .set(options)
           .outputPdf("blob");
 
-        const file = new File(
-          [fileData],
-          props.data.firstname + " " + props.data.lastname,
-          { type: "application/pdf" }
-        );
+        const file = new File([fileData], generateFilenameWithTimestamp(), {
+          type: "application/pdf",
+        });
         let templateData = offerLetterTemplateList.find(
           (d) => d.templatetype === selectedTemplate
         );
@@ -233,21 +232,43 @@ export const CustomerUploadOffer = (props) => {
     );
   };
 
+  function generateFilenameWithTimestamp(
+    prefix = "offer_letter",
+    extension = "pdf"
+  ) {
+    const now = new Date();
+
+    // Get date components
+
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const day = String(now.getDate()).padStart(2, "0");
+
+    // Get time components
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    // Create the timestamp string in a common format (e.g., YYYYMMDD_HHmmss_SSS)
+    const timestamp = `${month}${day}_${hours}${minutes}${seconds}`;
+
+    // Combine prefix, timestamp, and extension
+    return `${prefix}_${timestamp}.${extension}`;
+  }
+
   const generatePDF = async (event) => {
     const content = contentRef.current;
-    const element = document.getElementById("pdf-content");
 
     if (content) {
       props.updateLoading(true);
 
-      await waitForImagesToLoad(element);
+      await waitForImagesToLoad(content);
       const pdfOptions = {
         margin: 10,
         html2canvas: {
-          scale: 1,
+          scale: 1.2,
           useCORS: true,
         },
-        filename: props?.data?.firstname + " " + props?.data?.lastname,
+        filename: generateFilenameWithTimestamp(),
         image: { type: "jpeg", quality: 0.9 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
