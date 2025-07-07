@@ -137,8 +137,8 @@ export const CustomerUploadOffer = (props) => {
       const options = {
         margin: 0.5,
         filename: props.data.firstname + " " + props.data.lastname,
-        image: { type: "jpeg", quality: 0.98 },
-        // html2canvas: { scale: 1, useCORS: true },
+        image: { type: "jpeg", quality: 0.9 },
+        html2canvas: { scale: 1, useCORS: true },
         jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
       };
       props.updateLoading(true);
@@ -213,7 +213,9 @@ export const CustomerUploadOffer = (props) => {
       companyName: props.data.companyname,
       jobTitle: props.data.jobtitle,
       startDate: moment(startDate)?.format("YYYY-MM-DD").toString(),
-      salaryAmount: new Intl.NumberFormat("en-US").format(pay.replaceAll(",", "")),
+      salaryAmount: new Intl.NumberFormat("en-US").format(
+        pay.replaceAll(",", "")
+      ),
       salaryType: payType,
       yourName: userDetail.FirstName + " " + userDetail.LastName,
       yourTitle: userDetail.role,
@@ -241,12 +243,12 @@ export const CustomerUploadOffer = (props) => {
       await waitForImagesToLoad(element);
       const pdfOptions = {
         margin: 10,
-        // html2canvas: {
-        //   scale: 1,
-        //   useCORS: true,
-        // },
+        html2canvas: {
+          scale: 1,
+          useCORS: true,
+        },
         filename: props?.data?.firstname + " " + props?.data?.lastname,
-        image: { type: "jpeg", quality: 0.98 },
+        image: { type: "jpeg", quality: 0.9 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
       setTimeout(() => {
@@ -634,7 +636,10 @@ export const CustomerUploadOffer = (props) => {
             className="me-2"
             onClick={() => onUploadClick()}
           >
-            {activeTab === 1 ? "Upload File" : (showPdfPrev && activeTab === 2) ? "Confirm & Submit"
+            {activeTab === 1
+              ? "Upload File"
+              : showPdfPrev && activeTab === 2
+              ? "Confirm & Submit"
               : "Generate offer"}
           </Button>
           <Button color="secondary" onClick={() => props.onClose()}>
