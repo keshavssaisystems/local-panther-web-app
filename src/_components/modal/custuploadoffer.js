@@ -98,8 +98,6 @@ export const CustomerUploadOffer = (props) => {
   };
 
   const onUploadClick = async () => {
-
-    console.log("Pay", new Intl.NumberFormat("en-US").format(pay.replaceAll(",", "")))
     if (
       (fileName === "" && activeTab === 1) ||
       startDate === "" ||
