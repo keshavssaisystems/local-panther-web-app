@@ -578,12 +578,15 @@ export function VideoInterviewDetails({
             )}
           </Row>
           <div id="sq-pdf-content">
-            {suggestedQuestionArray?.length > 0 &&
-              suggestedQuestionArray?.map((suggestedQuestion) => (
-                <>
-                  <p className="mb-1 ">{suggestedQuestion}</p>
-                </>
-              ))}
+            {suggestedQuestionArray?.length > 0 && (
+              <ol type="1">
+                {suggestedQuestionArray?.map((suggestedQuestion) => (
+                  <>
+                    <li className="mb-1 ">{suggestedQuestion}</li>
+                  </>
+                ))}
+              </ol>
+            )}
           </div>
           {suggestedQuestionArray?.length === 0 && (
             <p className="mb-0 ">
