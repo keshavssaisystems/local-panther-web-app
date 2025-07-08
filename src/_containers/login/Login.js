@@ -177,7 +177,7 @@ export function Login() {
         let payload = {
           referralLogUrl: window.location.href,
           companyName: companyName,
-          companyid: 0,
+          // companyid: 0,
           osversion: "string",
           ipaddress: localStorage.getItem("publicip")
             ? localStorage.getItem("publicip")
@@ -185,8 +185,11 @@ export function Login() {
           loginsource: "Web",
           logindeviceid: os,
           logindevice: os,
-          currentUserId: localStorage.getItem("userId"),
+          currentUserId: localStorage.getItem("userId")
+            ? Number(localStorage.getItem("userId"))
+            : 0,
         };
+        console.log(payload);
         dispatch(
           authActions.putCompanyReferralLogs(companyreferrallogid, payload)
         );
@@ -210,7 +213,7 @@ export function Login() {
         let payload = {
           referralLogUrl: window.location.href,
           companyName: companyName,
-          companyid: 0,
+          // companyid: 0,
           osversion: "string",
           ipaddress: localStorage.getItem("publicip")
             ? localStorage.getItem("publicip")
@@ -218,7 +221,9 @@ export function Login() {
           loginsource: "Web",
           logindeviceid: os,
           logindevice: os,
-          currentUserId: localStorage.getItem("userId"),
+          currentUserId: localStorage.getItem("userId")
+            ? Number(localStorage.getItem("userId"))
+            : 0,
         };
         console.log(payload);
         dispatch(
