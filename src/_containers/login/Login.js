@@ -335,6 +335,10 @@ export function Login() {
         res?.payload?.data?.companyreferrallogid
       );
       localStorage.setItem("companyreferrallogname", companyName);
+      localStorage.setItem(
+        "referralLogdata",
+        JSON.stringify(res?.payload?.data)
+      );
     }
     setReload(false);
   };
