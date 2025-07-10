@@ -191,7 +191,10 @@ export function Login() {
         };
         console.log(payload);
         dispatch(
-          authActions.putCompanyReferralLogs(companyreferrallogid, payload)
+          authActions.putCompanyReferralLogs({
+            id: companyreferrallogid,
+            payload,
+          })
         );
       }
       console.log("Token Gen", token);
@@ -227,7 +230,10 @@ export function Login() {
         };
         console.log(payload);
         dispatch(
-          authActions.putCompanyReferralLogs(companyreferrallogid, payload)
+          authActions.putCompanyReferralLogs({
+            id: companyreferrallogid,
+            payload,
+          })
         );
       }
     }

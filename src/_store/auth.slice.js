@@ -136,7 +136,7 @@ export const postCompanyReferralLogs = createAsyncThunk(
 
 export const putCompanyReferralLogs = createAsyncThunk(
   `${name}/putCompanyReferralLogs`,
-  async (id, payload) => {
+  async ({ id, payload }) => {
     const CMPREFFLOGS_END_POINT_PT =
       `${process.env.REACT_APP_MAIN_API_URL}/api/CompanyReferralLogs/Patch/` +
       id;
