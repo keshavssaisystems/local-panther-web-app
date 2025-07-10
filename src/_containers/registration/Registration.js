@@ -378,10 +378,10 @@ export function Registration() {
         };
         console.log(payload);
         dispatch(
-          authActions.putCompanyReferralLogs(
-            logData?.companyreferrallogid,
-            payload
-          )
+          authActions.putCompanyReferralLogs({
+            id: logData?.companyreferrallogid,
+            payload,
+          })
         );
         localStorage.removeItem("referralLogdata");
       }

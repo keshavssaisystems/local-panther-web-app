@@ -591,7 +591,7 @@ export function ScheduleInterview({ fromDashboard }) {
                   className="mb-3 right-align"
                 >
                   <div>
-                    <Row>
+                    <Row style={{ display: "none" }}>
                       <Col md={7} className="mt-1 right-align">
                         <span className="right-align">
                           Connect microsoft calendar using
