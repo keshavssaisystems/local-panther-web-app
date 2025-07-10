@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Row, Col, FormGroup, Label, Input, CardTitle, Form } from "reactstrap";
 import SearchPreviousJob from "./searchPreviousJob";
 import AIJobCreation from "./aiJobCreation";
+
 import "./createJob.scss";
 
 export default function SelectJobType({
