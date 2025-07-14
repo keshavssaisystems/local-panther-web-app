@@ -84,42 +84,43 @@ function createExtraActions() {
         // isCandidateApply,
         customerRecommendedJobStatusId,
         jobId,
+        searchText,
       }) => {
         let recommendedStatus = "";
         let isCandidate = "";
         switch (customerRecommendedJobStatusId) {
           case 4:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
             break;
           case 3:
             isCandidate = true;
-            recommendedStatus = `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            recommendedStatus = `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
             break;
           case 5:
             isCandidate = true;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
             break;
           case 7:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=5`;
+            recommendedStatus = `&customerRecommendedJobStatusId=5&searchText=${searchText}`;
             break;
           case 6:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
             break;
           default:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
             break;
         }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}`
           );
         }
       }

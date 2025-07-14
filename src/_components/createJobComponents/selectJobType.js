@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Row, Col, FormGroup, Label, Input, CardTitle, Form } from "reactstrap";
 import SearchPreviousJob from "./searchPreviousJob";
 import AIJobCreation from "./aiJobCreation";
-
+import { jobTypeActions } from "_store";
+import { useDispatch } from "react-redux";
 import "./createJob.scss";
 
 export default function SelectJobType({
@@ -13,6 +14,7 @@ export default function SelectJobType({
   recommendedJobList,
   aiDescriptionData,
 }) {
+  const dispatch = useDispatch();
   const [jobType, setJobType] = useState("new_template");
   const [showJobTable, setShowJobTable] = useState(false);
   const getOldJobId = (event) => {
@@ -41,6 +43,7 @@ export default function SelectJobType({
         jobId: "",
       });
       readyForNextStep(true);
+      dispatch(jobTypeActions.updateLoadAIJDCanvas(true));
     } else {
       setShowJobTable(false);
       getJobTypeData({

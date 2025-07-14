@@ -4,10 +4,14 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import { IoMicOutline } from "react-icons/io5";
+import MicroPhone from "../../assets/utils/images/job-detail-icons/microphone.svg";
+import MicroPhoneStart from "../../assets/utils/images/job-detail-icons/microphone-start.svg";
+import Upload from "../../assets/utils/images/job-detail-icons/upload-icon.svg";
+import UploadStart from "../../assets/utils/images/job-detail-icons/upload-icon-start.svg";
 import "./speechToTextInput.css";
 
-export const SpeechToTextInput = () => {
-  const [input1, setInput1] = useState("");
+export const SpeechToTextInput = (props) => {
+  // const [input1, setInput1] = useState("");
 
   const [activeInput, setActiveInput] = useState(null); // 'input1', 'input2', 'input3', or null
 
@@ -29,7 +33,7 @@ export const SpeechToTextInput = () => {
 
       switch (activeInput) {
         case "input1":
-          setInput1(newText);
+          props.setInput1(newText);
           break;
 
         default:
@@ -39,7 +43,9 @@ export const SpeechToTextInput = () => {
   }, [transcript, listening, activeInput]);
 
   // Function to handle mic icon click for an input
-  const handleMicClick = (inputName, inputRef) => {
+  const handleMicClick = async (inputName, inputRef) => {
+    // let mAccess = await checkMicAccess();
+    // if (mAccess) {
     if (listening && activeInput === inputName) {
       SpeechRecognition.stopListening();
       resetTranscript();
@@ -53,7 +59,7 @@ export const SpeechToTextInput = () => {
       let initialContent = "";
       switch (inputName) {
         case "input1":
-          initialContent = input1;
+          initialContent = props.input1;
           break;
 
         default:
@@ -61,13 +67,39 @@ export const SpeechToTextInput = () => {
       }
       currentInputContentRef.current = initialContent;
 
-      SpeechRecognition.startListening({ continuous: true, language: "en-IN" });
+      SpeechRecognition.startListening({
+        continuous: true,
+        language: "en-IN",
+      });
       if (inputRef.current) {
         inputRef.current.focus();
       }
     }
+    // }
   };
+  const checkMicAccess = async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert("Microphone access is not supported in this browser.");
+      return;
+    }
 
+    try {
+      // Request mic access
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // alert("Microphone access granted ✅");
+      // stream.getTracks().forEach((track) => track.stop()); // Stop after checking
+    } catch (error) {
+      if (error.name === "NotAllowedError") {
+        alert(
+          "Microphone access denied ❌. Please enable it in your browser settings."
+        );
+      } else if (error.name === "NotFoundError") {
+        alert("No microphone found on this device.");
+      } else {
+        alert("Mic access error: " + error.message);
+      }
+    }
+  };
   //   if (!browserSupportsSpeechRecognition) {
   //     return (
   //       <div className="sptcontainer">
@@ -81,8 +113,8 @@ export const SpeechToTextInput = () => {
     <div className="sptcontainer">
       <div className="input-group">
         <textarea
-          value={input1}
-          onChange={(e) => setInput1(e.target.value)}
+          value={props.input1}
+          onChange={(e) => props.setInput1(e.target.value)}
           placeholder="Type your prompt here ..."
           ref={input1Ref}
           className={
@@ -98,27 +130,57 @@ export const SpeechToTextInput = () => {
             onClick={() => handleMicClick("input1", input1Ref)}
             title={
               activeInput === "input1" && listening
-                ? "Stop Listening"
-                : "Start Listening"
+                ? "Stop dictate"
+                : "Start dictate"
             }
           >
             {/* Use IoMicOutline for outline icon */}
-            <IoMicOutline className="mic-icon" />
+            {activeInput === "input1" && listening ? (
+              <img
+                src={MicroPhoneStart}
+                alt="microphone-icon"
+                height={28}
+                width={28}
+              />
+            ) : (
+              <img
+                src={MicroPhone}
+                alt="microphone-icon"
+                height={28}
+                width={28}
+              />
+            )}
           </button>
         )}
         <button
           className={`mic-button1 mic-button ${
             activeInput === "input1" && listening ? "active-listening" : ""
-          }`}
-          onClick={() => handleMicClick("input1", input1Ref)}
-          title={
-            activeInput === "input1" && listening
-              ? "Stop Listening"
-              : "Start Listening"
-          }
+          } ${!props.input1 ? "disabled-col" : ""}`}
+          onClick={() => props.handleUpdateData()}
+          // title={
+          //   activeInput === "input1" && listening
+          //     ? "Stop Listening"
+          //     : "Start Listening"
+          // }
         >
           {/* Use IoMicOutline for outline icon */}
-          <IoMicOutline className="mic-icon" />
+          {props.loadInput ? (
+            <img
+              src={UploadStart}
+              alt="upload-icon"
+              height={28}
+              width={28}
+              title="Submit to prompt"
+            />
+          ) : (
+            <img
+              src={Upload}
+              alt="upload-icon"
+              height={28}
+              width={28}
+              title="Submit to prompt"
+            />
+          )}
         </button>
       </div>
     </div>
