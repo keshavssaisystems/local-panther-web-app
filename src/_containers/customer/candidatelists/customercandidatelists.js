@@ -32,7 +32,7 @@ import { PrescreenModal } from "_components/modal/prescreenmodal";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
 import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
 import { analytics } from "../../../firebase/index";
-
+import cx from "classnames";
 export const CustomerCandidateLists = (props) => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -50,7 +50,7 @@ export const CustomerCandidateLists = (props) => {
   const [preScreenType, setPreScreenType] = useState("");
   const [oHModal, setOHModal] = useState(false);
   const [candidateName, setCandidateName] = useState("");
-
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
@@ -126,12 +126,13 @@ export const CustomerCandidateLists = (props) => {
     }
   };
 
-  const onGetPageList = (pageNo, type, id) => {
+  const onGetPageList = (pageNo, type, id, clearText = false) => {
     let candObj = {
       pageNumber: pageNo,
       pageSize: type === "matched" ? cardPageSize : listPageSize,
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
+      searchText: clearText ? "" : searchText,
     };
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
@@ -143,13 +144,15 @@ export const CustomerCandidateLists = (props) => {
   };
   const toggle = (activetab) => {
     if (id) {
+      setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
       navigate(`/customer-candidate-${activetab}/${id}`);
     } else {
+      setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      onGetPageList(pageNo, activetab, "");
+      onGetPageList(pageNo, activetab, "", true);
     }
   };
 
@@ -248,6 +251,15 @@ export const CustomerCandidateLists = (props) => {
     }
   };
 
+  const onClearSearch = async function () {
+    setSearchText("");
+    setPageNo(1);
+    onGetPageList(pageNo, props.type || activeTab, id ? id : "", true);
+  };
+  const onSearchJob = async () => {
+    setPageNo(1);
+    onGetPageList(pageNo, props.type || activeTab, id ? id : "");
+  };
   return (
     <>
       <Row className="customercandidatelist">
@@ -378,7 +390,33 @@ export const CustomerCandidateLists = (props) => {
           xxl={4}
           className="mb-3 right-align"
         >
-          {jobList?.length > 0 ? (
+          <div
+            className={cx(
+              "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
+              {
+                active: true,
+              }
+            )}
+          >
+            <div className="input-holder float-end">
+              <input
+                type="text"
+                className="search-input search-placeholder"
+                id="search-input"
+                value={searchText}
+                onInput={(evt) => setSearchText(evt.target.value)}
+                placeholder="Search.."
+              />
+              <button
+                className="btn-close"
+                onClick={(evt) => onClearSearch()}
+              />
+              <button onClick={(evt) => onSearchJob()} className="search-icon">
+                <span />
+              </button>
+            </div>
+          </div>
+          {/* {jobList?.length > 0 ? (
             <Input
               value={selectedJobId}
               onChange={(evt) => onSelectClick(evt)}
@@ -405,7 +443,7 @@ export const CustomerCandidateLists = (props) => {
             </Input>
           ) : (
             <></>
-          )}
+          )} */}
         </Col>
 
         <Col>

@@ -84,6 +84,7 @@ function createExtraActions() {
         // isCandidateApply,
         customerRecommendedJobStatusId,
         jobId,
+        searchText,
       }) => {
         let recommendedStatus = "";
         let isCandidate = "";
@@ -115,11 +116,11 @@ function createExtraActions() {
         }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}`
           );
         }
       }
@@ -308,9 +309,11 @@ function createExtraReducers() {
             ? action?.payload?.data?.candidateRecommendedJobDtoList
             : [];
 
-          state.totalRecords = action?.payload?.data?.totalRows
-            ? action?.payload?.data?.totalRows
-            : 0;
+          state.totalRecords =
+            action?.payload?.data?.candidateRecommendedJobDtoList &&
+            action?.payload?.data?.candidateRecommendedJobDtoList?.length > 0
+              ? action?.payload?.data?.candidateRecommendedJobDtoList?.length
+              : 0;
           state.loading = false;
         })
         .addCase(rejected, (state, action) => {
