@@ -17,7 +17,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { ai_response } from "./sampleData";
 import { formatAIJobData, aiJD } from "_components/createJobComponents/jobData";
-
+import { subscribe } from "_helpers/observerService";
 import "./CreateJob.scss";
 
 export function CreateJobWizard({ type }) {
@@ -58,6 +58,13 @@ export function CreateJobWizard({ type }) {
       companyId: localStorage.getItem("companyid"),
       searchType: "JobTitle",
     });
+
+    const unsubscribe = subscribe((data) => {
+      if (data && data?.data) {
+        updateAIJDtoNextStep(data);
+      }
+    });
+    return () => unsubscribe();
   }, []);
   const selectedJobDetailsForEdit = useSelector(
     (state) => state.custJobListReducer.jobDetail
@@ -115,6 +122,10 @@ export function CreateJobWizard({ type }) {
   };
 
   const createJob = async function (formElement) {
+    if (localStorage.getItem("Aijobeventid")) {
+      formElement.Aijobeventid = Number(localStorage.getItem("Aijobeventid"));
+      localStorage.removeItem("Aijobeventid");
+    }
     await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
   const updateJob = async function (formElement) {
@@ -357,6 +368,12 @@ export function CreateJobWizard({ type }) {
         }
       })
       .catch((error) => {});
+  };
+
+  const updateAIJDtoNextStep = (data) => {
+    setAIJobDetail(data.data);
+    setNavState(compState + 1);
+    setButtonDisable(false);
   };
 
   const previous = () => {

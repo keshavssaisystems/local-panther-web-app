@@ -1,0 +1,211 @@
+/* Container for the entire application */
+.sptcontainer {
+  background-color: #ffffff;
+  border-radius: 16px; /* More rounded corners */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); /* Deeper shadow for the main container */
+  /* padding: 4px; */
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Headings and Paragraphs - Minimal changes here, adjust as needed */
+.sptcontainer h2 {
+  color: #333;
+  font-size: 2em;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.sptcontainer p {
+  color: #666;
+  font-size: 1em;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+
+/* --- STYLES FOR INPUT BOXES (TEXTAREAS) --- */
+
+.input-group {
+  position: relative; /* Keep relative for containing the textarea */
+  display: block;
+  margin-bottom: 4px; /* Space between input groups */
+
+  /* The main styling for the box comes here */
+  border: 1px solid #e0e0e0; /* Very subtle light grey border */
+  border-radius: 8px; /* Very rounded pill shape */
+  background-color: #ffffff; /* White background */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Soft, subtle shadow similar to screenshot */
+  transition: all 0.2s ease-in-out;
+  /* Removed padding-right here, as the mic is now INSIDE the textarea */
+}
+
+.input-group:focus-within {
+  border-color: #c9d9f5; /* A subtle blue on focus, like a light halo */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12), 0 0 0 4px rgba(66, 133, 244, 0.2); /* Slightly more prominent shadow and a light blue glow */
+}
+
+.input-group textarea {
+  width: 100%;
+  min-height: 50px; /* Smaller default height for the input area itself */
+  max-height: 150px; /* Still allow vertical expansion */
+  resize: vertical;
+  border: none; /* No border on the textarea itself */
+  padding: 15px 20px; /* Ample padding for text */
+  padding-right: 45px; /* <--- NEW: Create space for the icon inside the textarea */
+  font-size: 1em;
+  color: #333; /* Darker text color */
+  outline: none;
+  background-color: transparent; /* Textarea background is transparent, letting input-group background show */
+  line-height: 1.4;
+  box-sizing: border-box;
+  overflow: hidden; /* Hide scrollbar initially, content will scroll if it overflows */
+  position: relative; /* <--- NEW: Make textarea position relative for absolute child positioning */
+}
+
+/* Placeholder styling to match the screenshot */
+.input-group textarea::placeholder {
+  color: #8a8a8a; /* Greyer, more prominent placeholder */
+  font-style: normal; /* Ensure no italics if default browser styling adds it */
+  font-weight: 400; /* Regular weight */
+}
+
+/* Style for textarea when actively listening into it */
+.input-group textarea.listening-active {
+  background-color: rgba(
+    240,
+    248,
+    255,
+    0.3
+  ); /* Very light, transparent blue tint */
+}
+
+/* --- MICROPHONE ICON STYLES --- */
+.mic-button {
+  position: absolute;
+  /* --- NEW POSITIONING --- */
+  bottom: 8px; /* Position from the bottom edge of the textarea */
+  right: 40px; /* Position from the right edge of the textarea */
+  top: auto; /* Remove top positioning */
+  transform: none; /* Remove translateY transformation */
+  /* --- END NEW POSITIONING --- */
+
+  background-color: #f0f0f0; /* Light grey circle background (inactive) */
+  border: none;
+  border-radius: 50% !important;
+  width: 28px; /* Small size for the button background */
+  height: 28px; /* Small size for the button background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background-color 0.2s ease-in-out;
+  z-index: 2; /* <--- NEW: Ensure it's above the text */
+  padding: 0;
+}
+
+.mic-button1 {
+  bottom: 8px; /* Position from the bottom edge of the textarea */
+  right: 8px;
+}
+
+.mic-button:hover {
+  background-color: #e0e0e0; /* Slightly darker grey on hover */
+}
+
+/* Style for the React Icon itself */
+.mic-button .mic-icon {
+  width: 16px; /* Very small icon size */
+  height: 16px; /* Very small icon size */
+  color: #777; /* Default icon color: Grey outline (inactive) */
+  transition: color 0.2s ease-in-out;
+}
+
+/* Change icon color to a darker grey on hover */
+.mic-button:hover .mic-icon {
+  color: #555; /* Darker grey outline on hover */
+}
+
+/* Active listening state for the microphone button & icon */
+.mic-button.active-listening {
+  background-color: #e1f5fe; /* Very light blue background when listening */
+}
+
+.mic-button.active-listening .mic-icon {
+  color: #1976d2; /* Blue outline color when actively listening */
+  animation: none; /* No pulse animation for this style */
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+@media (max-width: 768px) {
+  .sptcontainer {
+    padding: 25px;
+    margin: 10px;
+  }
+
+  .sptcontainer h2 {
+    font-size: 1.8em;
+  }
+
+  .sptcontainer p {
+    font-size: 0.9em;
+  }
+
+  .input-group {
+    border-radius: 24px;
+    /* padding-right removed from here */
+  }
+
+  .input-group textarea {
+    min-height: 45px;
+    padding: 12px 18px;
+    padding-right: 40px; /* Adjust padding for smaller mic icon area */
+    font-size: 0.95em;
+  }
+
+  .mic-button {
+    width: 26px; /* Smaller button background */
+    height: 26px; /* Smaller button background */
+    right: 6px; /* Adjust position */
+    bottom: 6px; /* Adjust position */
+  }
+
+  .mic-button .mic-icon {
+    width: 14px; /* Even smaller icon */
+    height: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sptcontainer {
+    padding: 15px;
+  }
+
+  .sptcontainer h2 {
+    font-size: 1.5em;
+  }
+
+  .input-group {
+    border-radius: 20px;
+  }
+
+  .input-group textarea {
+    min-height: 40px;
+    padding: 10px 15px;
+    padding-right: 35px; /* Adjust padding for smallest mic icon area */
+  }
+
+  .mic-button {
+    width: 22px; /* Even smaller button */
+    height: 22px;
+    right: 5px;
+    bottom: 5px;
+  }
+
+  .mic-button .mic-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
