@@ -258,7 +258,7 @@ export const CustomerCandidateLists = (props) => {
   };
   const onSearchJob = async () => {
     setPageNo(1);
-    onGetPageList(pageNo, props.type || activeTab, id ? id : "");
+    onGetPageList(1, props.type || activeTab, id ? id : "");
   };
   return (
     <>
@@ -405,7 +405,7 @@ export const CustomerCandidateLists = (props) => {
                 id="search-input"
                 value={searchText}
                 onInput={(evt) => setSearchText(evt.target.value)}
-                placeholder="Search.."
+                placeholder="Search by Job Title"
               />
               <button
                 className="btn-close"
