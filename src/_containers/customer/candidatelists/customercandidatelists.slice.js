@@ -309,11 +309,9 @@ function createExtraReducers() {
             ? action?.payload?.data?.candidateRecommendedJobDtoList
             : [];
 
-          state.totalRecords =
-            action?.payload?.data?.candidateRecommendedJobDtoList &&
-            action?.payload?.data?.candidateRecommendedJobDtoList?.length > 0
-              ? action?.payload?.data?.candidateRecommendedJobDtoList?.length
-              : 0;
+          state.totalRecords = action?.payload?.data?.totalRows
+            ? action?.payload?.data?.totalRows
+            : 0;
           state.loading = false;
         })
         .addCase(rejected, (state, action) => {
