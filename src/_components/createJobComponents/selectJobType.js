@@ -138,9 +138,9 @@ export default function SelectJobType({
           </Col>
         </Row>
         <>
-          {showJobTable === true && jobType === "ai_template" && (
-            <AIJobCreation aiDescriptionData={(e) => aiDescriptionData(e)} />
-          )}
+          {/* {showJobTable === true && jobType === "ai_template" && (
+            // <AIJobCreation aiDescriptionData={(e) => aiDescriptionData(e)} />
+          )} */}
         </>
         <>
           {showJobTable === true && jobType === "previous_template" && (

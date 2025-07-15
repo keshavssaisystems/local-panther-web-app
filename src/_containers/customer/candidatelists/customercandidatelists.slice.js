@@ -91,27 +91,27 @@ function createExtraActions() {
         switch (customerRecommendedJobStatusId) {
           case 4:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
           case 3:
             isCandidate = true;
-            recommendedStatus = `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
+            recommendedStatus = `&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
           case 5:
             isCandidate = true;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
           case 7:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=5&searchText=${searchText}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=5`;
             break;
           case 6:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&candidateRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
           default:
             isCandidate = false;
-            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}&searchText=${searchText}`;
+            recommendedStatus = `&customerRecommendedJobStatusId=${customerRecommendedJobStatusId}`;
             break;
         }
         if (jobId !== undefined) {
@@ -309,9 +309,11 @@ function createExtraReducers() {
             ? action?.payload?.data?.candidateRecommendedJobDtoList
             : [];
 
-          state.totalRecords = action?.payload?.data?.totalRows
-            ? action?.payload?.data?.totalRows
-            : 0;
+          state.totalRecords =
+            action?.payload?.data?.candidateRecommendedJobDtoList &&
+            action?.payload?.data?.candidateRecommendedJobDtoList?.length > 0
+              ? action?.payload?.data?.candidateRecommendedJobDtoList?.length
+              : 0;
           state.loading = false;
         })
         .addCase(rejected, (state, action) => {
