@@ -72,12 +72,7 @@
 
 /* Style for textarea when actively listening into it */
 .input-group textarea.listening-active {
-  background-color: rgba(
-    240,
-    248,
-    255,
-    0.3
-  ); /* Very light, transparent blue tint */
+  /* Very light, transparent blue tint */
 }
 
 /* --- MICROPHONE ICON STYLES --- */
@@ -85,16 +80,16 @@
   position: absolute;
   /* --- NEW POSITIONING --- */
   bottom: 8px; /* Position from the bottom edge of the textarea */
-  right: 40px; /* Position from the right edge of the textarea */
+  right: 48px; /* Position from the right edge of the textarea */
   top: auto; /* Remove top positioning */
   transform: none; /* Remove translateY transformation */
   /* --- END NEW POSITIONING --- */
 
-  background-color: #f0f0f0; /* Light grey circle background (inactive) */
+  background-color: transparent; /* Light grey circle background (inactive) */
   border: none;
   border-radius: 50% !important;
-  width: 28px; /* Small size for the button background */
-  height: 28px; /* Small size for the button background */
+  /* width: 36px;  Small size for the button background */
+  height: 36px; /* Small size for the button background */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,11 +102,10 @@
 
 .mic-button1 {
   bottom: 8px; /* Position from the bottom edge of the textarea */
-  right: 8px;
+  right: 16px;
 }
 
 .mic-button:hover {
-  background-color: #e0e0e0; /* Slightly darker grey on hover */
 }
 
 /* Style for the React Icon itself */
@@ -125,16 +119,6 @@
 /* Change icon color to a darker grey on hover */
 .mic-button:hover .mic-icon {
   color: #555; /* Darker grey outline on hover */
-}
-
-/* Active listening state for the microphone button & icon */
-.mic-button.active-listening {
-  background-color: #e1f5fe; /* Very light blue background when listening */
-}
-
-.mic-button.active-listening .mic-icon {
-  color: #1976d2; /* Blue outline color when actively listening */
-  animation: none; /* No pulse animation for this style */
 }
 
 /* --- Media Queries for Responsiveness --- */

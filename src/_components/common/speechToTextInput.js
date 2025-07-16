@@ -8,6 +8,7 @@ import MicroPhone from "../../assets/utils/images/job-detail-icons/microphone.sv
 import MicroPhoneStart from "../../assets/utils/images/job-detail-icons/microphone-start.svg";
 import Upload from "../../assets/utils/images/job-detail-icons/upload-icon.svg";
 import UploadStart from "../../assets/utils/images/job-detail-icons/upload-icon-start.svg";
+import LoadingSound from "../../assets/utils/images/job-detail-icons/loading-sound.gif";
 import "./speechToTextInput.css";
 
 export const SpeechToTextInput = (props) => {
@@ -136,18 +137,21 @@ export const SpeechToTextInput = (props) => {
           >
             {/* Use IoMicOutline for outline icon */}
             {activeInput === "input1" && listening ? (
-              <img
-                src={MicroPhoneStart}
-                alt="microphone-icon"
-                height={28}
-                width={28}
-              />
+              <>
+                <img src={LoadingSound} height={36} width={36} />{" "}
+                <img
+                  src={MicroPhoneStart}
+                  alt="microphone-icon"
+                  height={36}
+                  width={36}
+                />
+              </>
             ) : (
               <img
                 src={MicroPhone}
                 alt="microphone-icon"
-                height={28}
-                width={28}
+                height={36}
+                width={36}
               />
             )}
           </button>
@@ -156,7 +160,12 @@ export const SpeechToTextInput = (props) => {
           className={`mic-button1 mic-button ${
             activeInput === "input1" && listening ? "active-listening" : ""
           } ${!props.input1 ? "disabled-col" : ""}`}
-          onClick={() => props.handleUpdateData()}
+          onClick={() => {
+            props.handleUpdateData();
+            if (listening) {
+              handleMicClick("input1", input1Ref);
+            }
+          }}
           // title={
           //   activeInput === "input1" && listening
           //     ? "Stop Listening"
@@ -165,19 +174,21 @@ export const SpeechToTextInput = (props) => {
         >
           {/* Use IoMicOutline for outline icon */}
           {props.loadInput ? (
-            <img
-              src={UploadStart}
-              alt="upload-icon"
-              height={28}
-              width={28}
-              title="Submit to prompt"
-            />
+            <>
+              <img
+                src={UploadStart}
+                alt="upload-icon"
+                height={36}
+                width={36}
+                title="Submit to prompt"
+              />
+            </>
           ) : (
             <img
               src={Upload}
               alt="upload-icon"
-              height={28}
-              width={28}
+              height={36}
+              width={36}
               title="Submit to prompt"
             />
           )}

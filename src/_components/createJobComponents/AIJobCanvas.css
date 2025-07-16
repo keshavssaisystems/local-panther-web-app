@@ -27,7 +27,25 @@
   }
 
   .canvas-jd-detail-div {
-    max-height: 62vh;
+    max-height: 65vh;
     overflow: auto;
+  }
+
+  @media only screen and (max-width: 1439px) and (min-width: 1025px) {
+    .canvas-jd-detail-div {
+      max-height: 68vh;
+    }
+  }
+
+  @media only screen and (max-width: 1024px) and (min-width: 767px) {
+    .canvas-jd-detail-div {
+      max-height: 66vh;
+    }
+  }
+
+  @media only screen and (max-width: 767px) and (min-width: 0px) {
+    .canvas-jd-detail-div {
+      max-height: 62vh;
+    }
   }
 }
