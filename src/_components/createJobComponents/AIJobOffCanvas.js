@@ -115,6 +115,7 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
   };
 
   const proceedThisDraft = async () => {
+    setLoadInput(true);
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
       : "";
@@ -145,6 +146,7 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
         }
       })
       .catch((error) => {});
+    setLoadInput(false);
   };
 
   return (
