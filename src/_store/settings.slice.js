@@ -78,6 +78,17 @@ export const notifications = createAsyncThunk(
   }
 );
 
+export const emailNotifications = createAsyncThunk(
+  "settings/emailNotifications",
+  async ({ id, data }) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    return await fetchWrapper.put(
+      `${baseUrl}/User/UpdateEmailnotificationSetting/${id}`,
+      data
+    );
+  }
+);
+
 // Create the slice
 const settingsSlice = createSlice({
   name: "settings",
@@ -118,7 +129,7 @@ const settingsSlice = createSlice({
       .addCase(changePassword.pending, (state) => {
         state.error = null;
       })
-      .addCase(changePassword.fulfilled, (state, action) => {})
+      .addCase(changePassword.fulfilled, (state, action) => { })
       .addCase(changePassword.rejected, (state, action) => {
         state.error = action.error;
       })
@@ -126,7 +137,7 @@ const settingsSlice = createSlice({
       .addCase(deactivateUser.pending, (state) => {
         state.error = null;
       })
-      .addCase(deactivateUser.fulfilled, (state, action) => {})
+      .addCase(deactivateUser.fulfilled, (state, action) => { })
       .addCase(deactivateUser.rejected, (state, action) => {
         state.error = action.error;
       })
@@ -134,8 +145,15 @@ const settingsSlice = createSlice({
       .addCase(notifications.pending, (state) => {
         state.error = null;
       })
-      .addCase(notifications.fulfilled, (state, action) => {})
+      .addCase(notifications.fulfilled, (state, action) => { })
       .addCase(notifications.rejected, (state, action) => {
+        state.error = action.error;
+      })
+      .addCase(emailNotifications.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(emailNotifications.fulfilled, (state, action) => { })
+      .addCase(emailNotifications.rejected, (state, action) => {
         state.error = action.error;
       });
   },
@@ -150,5 +168,6 @@ export const settingsActions = {
   changePassword,
   deactivateUser,
   notifications,
+  emailNotifications
 };
 export const SettingsReducer = settingsSlice.reducer;
