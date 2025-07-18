@@ -10,6 +10,9 @@ import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedba
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import { database } from "../firebase/index";
 import "firebase/database";
+import { HostPreview } from "./component/host-preview";
+import { WaitingPreview } from "./component/waiting-screen";
+import { GuestPreview } from "./component/guest-preview";
 import "../_containers/sharejob/sharejob.scss";
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
@@ -22,6 +25,16 @@ export const ZoomVideoScreen = (props) => {
   });
 
   const [showFBModal, setShowFBModal] = useState(false);
+  const [showScreen, setShowScreen] = useState(
+    localStorage.getItem("userroleid") &&
+      localStorage.getItem("userroleid") === "2"
+      ? "host"
+      : localStorage.getItem("userroleid") &&
+        localStorage.getItem("userroleid") === "3"
+      ? "waiting"
+      : "guest"
+  );
+
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
 
@@ -52,14 +65,13 @@ export const ZoomVideoScreen = (props) => {
   };
 
   const handleAdd = () => {
-    debugger;
     database.ref("items").push({
       value: "test1",
       createdAt: Date.now(),
     });
   };
   useEffect(() => {
-    handleAdd();
+    // handleAdd();
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"
@@ -75,7 +87,7 @@ export const ZoomVideoScreen = (props) => {
 
   useEffect(() => {
     if (sessionData.length === 0) {
-      getToken();
+      // getToken();
     }
 
     if (id && sessionData.length > 0 && uitoolkit) {
@@ -189,6 +201,15 @@ export const ZoomVideoScreen = (props) => {
   return (
     <>
       {/* <div id="previewContainer"></div> */}
+      {showScreen === "host" && (
+        <HostPreview interviewId={id} urlParams={urlParams}></HostPreview>
+      )}
+      {showScreen === "guest" && (
+        <GuestPreview interviewId={id} urlParams={urlParams}>
+          {" "}
+        </GuestPreview>
+      )}
+      {showScreen === "waiting" && <WaitingPreview></WaitingPreview>}
       <div className={!props.authUser ? "share-job-cont" : ""}>
         <div id="sessionContainer"></div>
       </div>
