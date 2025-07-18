@@ -48,6 +48,7 @@ function createExtraActions() {
     getPrescreenDetails: getPrescreenDetails(),
     getCustOfferHistory: getCustOfferHistory(),
     getofferLetterTemplate: getofferLetterTemplate(),
+    getInterviewSlots: getInterviewSlots()
   };
 
   function getDrpDwnJobLists() {
@@ -244,6 +245,27 @@ function createExtraActions() {
       return await fetchWrapper.get(GET_OLT_EP);
     });
   }
+
+  function putAcceptedCandidate() {
+    return createAsyncThunk(
+      `${name}/putAcceptedCandidate`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerAccepted/${id}`
+        )
+    );
+  }
+  function getInterviewSlots() {
+    debugger;
+       let id = parseInt(localStorage.getItem("userId"));
+    return createAsyncThunk(
+      `${name}/getInterviewSlots`, async (data) =>
+      await fetchWrapper.get(
+        `${newUrl}/ScheduledInterview/GetInterviewSlots?scheduleDate=${data.scheduleDateUTC}&userId=${id}&scheduleInterviewId=${data.scheduleInterviewId}`
+      )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -262,7 +284,7 @@ function createExtraReducers() {
     getPrescreenDetails();
     getCustOfferHistory();
     getofferLetterTemplate();
-
+    getInterviewSlots();
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -441,7 +463,7 @@ function createExtraReducers() {
             ? action?.payload?.data?.scheduledInterviewList
             : [];
         })
-        .addCase(rejected, (state, action) => {});
+        .addCase(rejected, (state, action) => { });
     }
 
     function getPrescreenDetails() {
@@ -476,7 +498,7 @@ function createExtraReducers() {
             state.prescreenQues = newData;
           }
         })
-        .addCase(rejected, (state, action) => {});
+        .addCase(rejected, (state, action) => { });
     }
 
     function getCustOfferHistory() {
@@ -488,7 +510,7 @@ function createExtraReducers() {
         .addCase(fulfilled, (state, action) => {
           state.custOfferHistory = action?.payload?.data;
         })
-        .addCase(rejected, (state, action) => {});
+        .addCase(rejected, (state, action) => { });
     }
 
     function getofferLetterTemplate() {
@@ -503,6 +525,21 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           state.offerLetterTemplates = [];
+        });
+    }
+
+    function getInterviewSlots() {
+      let { pending, fulfilled, rejected } =
+        extraActions.getInterviewSlots;
+      builder
+        .addCase(pending, (state) => {
+          state.interviewSlots = [];
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.interviewSlots = action?.payload?.data;
+        })
+        .addCase(rejected, (state, action) => {
+          state.interviewSlots = [];
         });
     }
   };
