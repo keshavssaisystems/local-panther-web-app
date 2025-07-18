@@ -92,11 +92,11 @@ export function ScheduleInterviewModal({
     return `${hour.toString().padStart(2, "0")}:${minute} ${ampm}`;
   };
 
-  const onScheduleDateChange = async (date) => {   
+  const onScheduleDateChange = async (date) => {
     let data = {
-          scheduleDateUTC: moment(date).format("YYYY-MM-DD"),
-          scheduleInterviewId: 0
-        }
+      scheduleDateUTC: moment(date).format("YYYY-MM-DD"),
+      scheduleInterviewId: 0
+    }
     let res = await dispatch(
       customerCandidateListsActions.getInterviewSlots(data)
     );
@@ -113,7 +113,7 @@ export function ScheduleInterviewModal({
         }
       }
     }
-    let diff = subtractTimes(time, e.target.value);
+    let diff = time != 0 ? subtractTimes(time, e.target.value) : 120;
     let durations = durationOptions.filter(v => v.name.replaceAll(' min', '') <= diff);
     setSlotDurationOptions(durations);
   }
