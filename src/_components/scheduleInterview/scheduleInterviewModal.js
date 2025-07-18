@@ -17,7 +17,9 @@ import "./scheduledInterview.scss";
 import InputMask from "react-input-mask";
 import moment from "moment-timezone";
 import DatePicker from "react-datepicker";
-
+import { useDispatch } from "react-redux";
+import { customerCandidateListsActions } from "_store";
+import { constant } from "lodash";
 export function ScheduleInterviewModal({
   candidateData,
   durationOptions,
@@ -33,9 +35,11 @@ export function ScheduleInterviewModal({
   const [scheduleTimeValidation, setScheduleTimeValidation] = useState(false);
   const [durationValidation, setDurationValidation] = useState(false);
   const [videoLinkValidation, setVideoLinkValidation] = useState(false);
-  const [interviewAddressValidation, setInterviewAddressValidation] =
-    useState(false);
+  const [interviewAddressValidation, setInterviewAddressValidation] = useState(false);
   const [scheduledDate, setScheduledDate] = useState();
+  const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+
+  const dispatch = useDispatch();
   const toggle = () => {
     setModal(!modal);
   };
@@ -46,7 +50,7 @@ export function ScheduleInterviewModal({
     setVideoModeCheck(term);
   };
   useEffect(() => {
-    getTimeArray();
+    // getTimeArray();
   }, []);
 
   const getTimeArray = () => {
@@ -80,6 +84,50 @@ export function ScheduleInterviewModal({
     });
     setTimeOption(timeOptions);
   };
+  const convertTo12Hour = (time24) => {
+    const [hourStr, minute, second] = time24.split(":");
+    let hour = parseInt(hourStr, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12; // Convert 0 to 12
+    return `${hour.toString().padStart(2, "0")}:${minute} ${ampm}`;
+  };
+
+  const onScheduleDateChange = async (date) => {   
+    let data = {
+          scheduleDateUTC: moment(date).format("YYYY-MM-DD"),
+          scheduleInterviewId: 0
+        }
+    let res = await dispatch(
+      customerCandidateListsActions.getInterviewSlots(data)
+    );
+    setTimeOption(res?.payload?.data);
+  };
+
+  const getSlotDuration = (e) => {
+    let time = 0;
+    for (let i = 0; i < timeOption.length; i++) {
+      if (timeOption[i].slottime >= e.target.value) {
+        if (!timeOption[i].isavailable) {
+          time = timeOption[i].slottime;
+          break;
+        }
+      }
+    }
+    let diff = subtractTimes(time, e.target.value);
+    let durations = durationOptions.filter(v => v.name.replaceAll(' min', '') <= diff);
+    setSlotDurationOptions(durations);
+  }
+
+  const subtractTimes = (t1, t2) => {
+    const [h1, m1, s1] = t1.split(":").map(Number);
+    const [h2, m2, s2] = t2.split(":").map(Number);
+    const totalSeconds1 = h1 * 3600 + m1 * 60 + s1;
+    const totalSeconds2 = h2 * 3600 + m2 * 60 + s2;
+    const diff = totalSeconds1 - totalSeconds2;
+    const minutes = Math.floor((diff) / 60);
+
+    return minutes;
+  }
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.scheduleDate.value === ""
@@ -92,8 +140,8 @@ export function ScheduleInterviewModal({
       ? setDurationValidation(true)
       : setDurationValidation(false);
     formatButton === 1 &&
-    event.target.elements.videoMode.value === "third-party-video" &&
-    event.target.elements.videoLink.value === ""
+      event.target.elements.videoMode.value === "third-party-video" &&
+      event.target.elements.videoLink.value === ""
       ? setVideoLinkValidation(true)
       : setVideoLinkValidation(false);
     formatButton === 3 && event.target.elements.interviewAddress.value === ""
@@ -134,15 +182,15 @@ export function ScheduleInterviewModal({
     event.preventDefault();
     let scheduleDateUTC = moment(
       event.target.elements.scheduleDate.value +
-        " " +
-        event.target.elements.scheduleStartTime.value
+      " " +
+      event.target.elements.scheduleStartTime.value
     )
       .tz("Etc/UTC")
       .format("YYYY-MM-DD");
     let scheduleTimeUTC = moment(
       event.target.elements.scheduleDate.value +
-        " " +
-        event.target.elements.scheduleStartTime.value
+      " " +
+      event.target.elements.scheduleStartTime.value
     )
       .tz("Etc/UTC")
       .format("HH:mm:ss");
@@ -157,8 +205,8 @@ export function ScheduleInterviewModal({
         formatButton === 1
           ? "Video"
           : formatButton === 2
-          ? "Phone"
-          : "In-person",
+            ? "Phone"
+            : "In-person",
       isappvideocall:
         formatButton === 1
           ? event.target.elements.videoMode.value === "third-party-video"
@@ -167,7 +215,7 @@ export function ScheduleInterviewModal({
           : false,
       videolink:
         formatButton === 1 &&
-        event.target.elements.videoMode.value === "third-party-video"
+          event.target.elements.videoMode.value === "third-party-video"
           ? event.target.elements.videoLink.value
           : "",
       interviewAddress:
@@ -225,6 +273,7 @@ export function ScheduleInterviewModal({
                       onChange={(date) => {
                         setScheduledDate(date);
                         setScheduleDateValidation(false);
+                        onScheduleDateChange(date);
                       }}
                       dateFormat="MM/dd/yyyy"
                       placeholderText="Eg. mm/dd/yyyy"
@@ -246,15 +295,15 @@ export function ScheduleInterviewModal({
                       name="scheduleStartTime"
                       id="scheduleStartTime"
                       invalid={scheduleTimeValidation}
-                      onChange={() => setScheduleTimeValidation(false)}
+                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); }}
                     >
                       <option key={0} value={""}>
                         Select start time
                       </option>
                       {timeOption.length > 0 &&
                         timeOption.map((options) => (
-                          <option key={options} value={options}>
-                            {options}{" "}
+                          <option key={options.slottime} value={options.slottime} disabled={!options.isavailable}>
+                            {convertTo12Hour(options.slottime)}{" "}
                           </option>
                         ))}
                     </Input>
@@ -280,8 +329,8 @@ export function ScheduleInterviewModal({
                       <option key={0} value={""}>
                         Select duration
                       </option>
-                      {durationOptions?.length > 0 &&
-                        durationOptions.map((data) => {
+                      {slotDurationOptions?.length > 0 &&
+                        slotDurationOptions.map((data) => {
                           return (
                             <option value={data.id} key={data.id}>
                               {data.name}
