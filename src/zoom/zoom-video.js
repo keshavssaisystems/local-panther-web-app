@@ -8,7 +8,8 @@ import { authActions, scheduleInterviewActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
-
+import { database } from "../firebase/index";
+import "firebase/database";
 import "../_containers/sharejob/sharejob.scss";
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
@@ -49,7 +50,16 @@ export const ZoomVideoScreen = (props) => {
       }
     }
   };
+
+  const handleAdd = () => {
+    debugger;
+    database.ref("items").push({
+      value: "test1",
+      createdAt: Date.now(),
+    });
+  };
   useEffect(() => {
+    handleAdd();
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"

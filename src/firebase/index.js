@@ -4,6 +4,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/messaging";
 import "firebase/analytics";
+import "firebase/database";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyBkc5ZFqejClCiGb8NavO2bvTuU0YwSCPU",
@@ -15,8 +16,11 @@ export const firebaseConfig = {
   measurementId: "G-K5T2MCQPGY",
 };
 const initApp = firebase.initializeApp(firebaseConfig);
-export const messaging = firebase.messaging.isSupported() ? firebase.messaging() : null;
+export const messaging = firebase.messaging.isSupported()
+  ? firebase.messaging()
+  : null;
 export const analytics = firebase.analytics(initApp);
+export const database = firebase.database();
 
 export const servers = {
   iceServers: [
