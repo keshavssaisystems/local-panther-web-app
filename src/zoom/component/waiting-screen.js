@@ -24,14 +24,6 @@ export const WaitingPreview = (props) => {
 
   const navigate = useNavigate();
 
-  const handleAdd = () => {
-    debugger;
-    database.ref("items").push({
-      value: "test1",
-      createdAt: Date.now(),
-    });
-  };
-
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
     data.title = title;

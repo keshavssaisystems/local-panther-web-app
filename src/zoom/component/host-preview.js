@@ -19,26 +19,16 @@ import cross from "../../assets/utils/images/zoom/x-circle-fill.svg";
 import camera from "../../assets/utils/images/zoom/camera-video-fill.svg";
 import "./host-preview.css";
 
-export const HostPreview = (props) => {
-  debugger;
+export const HostPreview = ({
+  interviewId,
+  fbUsersData,
+  setUsersData,
+  urlParams,
+  usersData,
+  hostStartMeeting,
+}) => {
   const [interViewData, setInterViewData] = useState([]);
-  const [data, setData] = useState([
-    {
-      name: "pramod turakane",
-      email: "pturkane@gmail.com",
-      status: null,
-    },
-    {
-      name: "Keshav Kori",
-      email: "kkori@gmail.com",
-      status: true,
-    },
-    {
-      name: "sandip bhakare",
-      email: "sbhakare@gmail.com",
-      status: false,
-    },
-  ]);
+
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -51,17 +41,21 @@ export const HostPreview = (props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (props.interviewId) {
-      getInterviewDetails(props.interviewId);
+    if (interviewId) {
+      getInterviewDetails(interviewId);
     }
-  }, props.interviewId);
+  }, [interviewId]);
 
-  const handleAdd = () => {
-    debugger;
-    database.ref(props.urlParams).push({
-      value: "test1",
-      createdAt: Date.now(),
-    });
+  const handleAllow = (index) => {
+    let users = usersData.map((item) => ({ ...item }));
+    users[index].status = true;
+    setUsersData(users);
+  };
+
+  const handleDeny = (index) => {
+    let users = usersData.map((item) => ({ ...item }));
+    users[index].status = false;
+    setUsersData(users);
   };
 
   const showSweetAlert = ({ title, type }) => {
@@ -96,8 +90,54 @@ export const HostPreview = (props) => {
     );
     if (res.payload.statusCode === 200) {
       setInterViewData(res?.payload?.data?.scheduledInterviewList[0]);
+      let cand = [];
+      if (
+        res?.payload?.data?.scheduledInterviewList[0]?.intervieweremailids &&
+        res?.payload?.data?.scheduledInterviewList[0]?.intervieweremailids !==
+          ""
+      ) {
+        let ids =
+          res?.payload?.data?.scheduledInterviewList[0]?.intervieweremailids.split(
+            ","
+          );
+        let users = ids.map((d) => {
+          return {
+            name: d,
+            email: d,
+            status: false,
+            isMeetingStarted: false,
+          };
+        });
+        cand = [...cand, ...users];
+      }
+      if (res?.payload?.data?.scheduledInterviewList[0]?.candidateemail) {
+        let user = {
+          name: res?.payload?.data?.scheduledInterviewList[0]?.candidatename,
+          email: res?.payload?.data?.scheduledInterviewList[0]?.candidateemail,
+          status: false,
+          isMeetingStarted: false,
+        };
+
+        cand.push(user);
+        setUsersData(cand);
+        let userFBData = [...fbUsersData];
+        if (userFBData.length > 0) {
+          const updatedArray = cand.map((obj) => {
+            const update = userFBData.find((u) => u.id === obj.id);
+            return update ? { ...obj, ...update } : obj;
+          });
+          database.ref("users/" + urlParams).update(updatedArray);
+        } else {
+          database.ref("users/" + urlParams).set(cand);
+        }
+      }
     } else {
-      //do nothing
+      showSweetAlert({
+        title: res?.error?.message
+          ? res?.error?.message
+          : "Something went wrong, please try later!!",
+        type: "error",
+      });
     }
   };
 
@@ -120,14 +160,18 @@ export const HostPreview = (props) => {
     },
     {
       name: <span className="table-title">Status</span>,
-      cell: (row) => (
+      cell: (row, index) => (
         <span className="table-cell" title={row.status}>
-          {row.status === null ? (
+          {fbUsersData?.length > 0 &&
+          fbUsersData[index]?.status === false &&
+          fbUsersData[index]?.isMeetingStarted === false ? (
             <div className="waiting-pill">
               <img src={half} height={14} width={14} alt="waiting img"></img>{" "}
               Waiting
             </div>
-          ) : row.status ? (
+          ) : fbUsersData?.length > 0 &&
+            fbUsersData[index]?.status === true &&
+            fbUsersData[index]?.isMeetingStarted === false ? (
             <div className="joined-pill">
               <img src={check} height={14} width={14} alt="joined img"></img>{" "}
               Joined
@@ -144,16 +188,22 @@ export const HostPreview = (props) => {
 
     {
       name: <span className="table-title">Action</span>,
-      cell: (row) => (
+      cell: (row, index) => (
         <span className="table-cell">
-          {row.status === null ? (
+          {row.isMeetingStarted === false && row.status === false ? (
             <>
-              <Badge className="badge" color="danger">
+              <Badge
+                onClick={() => {
+                  handleDeny(index);
+                }}
+                className="badge"
+                color="danger"
+              >
                 Deny
               </Badge>
               <Badge
                 onClick={() => {
-                  handleAdd();
+                  handleAllow(index);
                 }}
                 className="badge"
                 color="success"
@@ -161,15 +211,27 @@ export const HostPreview = (props) => {
                 Allow
               </Badge>
             </>
-          ) : row.status ? (
+          ) : row.status === true && row.isMeetingStarted === false ? (
             <>
-              <Badge className="badge" color="danger">
+              <Badge
+                onClick={() => {
+                  handleDeny(index);
+                }}
+                className="badge"
+                color="danger"
+              >
                 Deny
               </Badge>
             </>
           ) : (
             <>
-              <Badge className="badge" color="success">
+              <Badge
+                onClick={() => {
+                  handleAllow(index);
+                }}
+                className="badge"
+                color="success"
+              >
                 Allow
               </Badge>
             </>
@@ -204,10 +266,10 @@ export const HostPreview = (props) => {
         <hr style={{ margin: "0px" }} />
         <div>
           <>
-            {data.length > 0 ? (
+            {usersData.length > 0 ? (
               <DataTable
                 columns={columns}
-                data={data}
+                data={usersData}
                 fixedHeader
                 className="admin-list-view"
               />
@@ -219,8 +281,19 @@ export const HostPreview = (props) => {
           </>
         </div>
         <div className="btn-div">
-          <Button color="primary">
-            <img src={camera} height={20} width={12} alt="camera img"></img>{" "}
+          <Button
+            className="ps-4  pe-4 pt-2 pb-2"
+            style={{ width: "25%" }}
+            color="primary"
+            onClick={() => hostStartMeeting()}
+          >
+            <img
+              className="me-2"
+              src={camera}
+              height={20}
+              width={12}
+              alt="camera img"
+            ></img>{" "}
             Start/Join Meeting
           </Button>
         </div>

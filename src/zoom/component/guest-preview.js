@@ -54,26 +54,6 @@ export const GuestPreview = (props) => {
   const { register, handleSubmit, formState, getValues } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
-  useEffect(() => {
-    const nameRef = database.ref(props.urlParams);
-    nameRef.on("value", (snapshot) => {
-      debugger;
-      const data = snapshot.val();
-      if (data) {
-      }
-    });
-
-    // Cleanup listener on unmount
-    return () => nameRef.off();
-  });
-  const handleAdd = () => {
-    debugger;
-    database.ref("items").push({
-      value: "test1",
-      createdAt: Date.now(),
-    });
-  };
-
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
     data.title = title;
@@ -87,7 +67,6 @@ export const GuestPreview = (props) => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
-    routeToHome();
   };
   const routeToHome = () => {
     if (
@@ -100,7 +79,25 @@ export const GuestPreview = (props) => {
     }
   };
 
-  function onSubmit(payload) {}
+  function onSubmit(payload) {
+    if (props?.fbUsersData?.length > 0) {
+      let ind = props.fbUsersData.findIndex((d) => d.email === payload.email);
+      if (ind > -1) {
+        props.submitGuestUserData(payload);
+      } else {
+        showSweetAlert({
+          title:
+            "Host hasn't started meeting yet please wait for few more time!",
+          type: "error",
+        });
+      }
+    } else {
+      showSweetAlert({
+        title: "Host hasn't started meeting yet please wait for few more time!",
+        type: "error",
+      });
+    }
+  }
 
   return (
     <div className="guest-cont">
@@ -165,6 +162,16 @@ export const GuestPreview = (props) => {
           </Form>
         </div>
       </Card>
+      <>
+        {" "}
+        <SweetAlert
+          title={showAlert.title}
+          show={showAlert.show}
+          type={showAlert.type}
+          onConfirm={() => closeSweetAlert()}
+        />
+        {showAlert.description}
+      </>
     </div>
   );
 };
