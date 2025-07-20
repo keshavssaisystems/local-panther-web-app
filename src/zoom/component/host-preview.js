@@ -49,12 +49,14 @@ export const HostPreview = ({
   const handleAllow = (index) => {
     let users = usersData.map((item) => ({ ...item }));
     users[index].status = true;
+    users[index].isDenied = false;
     setUsersData(users);
   };
 
   const handleDeny = (index) => {
     let users = usersData.map((item) => ({ ...item }));
     users[index].status = false;
+    users[index].isDenied = true;
     setUsersData(users);
   };
 
@@ -106,6 +108,7 @@ export const HostPreview = ({
             email: d,
             status: false,
             isMeetingStarted: false,
+            isDenied: false,
           };
         });
         cand = [...cand, ...users];
@@ -116,6 +119,7 @@ export const HostPreview = ({
           email: res?.payload?.data?.scheduledInterviewList[0]?.candidateemail,
           status: false,
           isMeetingStarted: false,
+          isDenied: false,
         };
 
         cand.push(user);
@@ -164,14 +168,16 @@ export const HostPreview = ({
         <span className="table-cell" title={row.status}>
           {fbUsersData?.length > 0 &&
           fbUsersData[index]?.status === false &&
-          fbUsersData[index]?.isMeetingStarted === false ? (
+          fbUsersData[index]?.isMeetingStarted === false &&
+          row.isDenied === false ? (
             <div className="waiting-pill">
               <img src={half} height={14} width={14} alt="waiting img"></img>{" "}
               Waiting
             </div>
           ) : fbUsersData?.length > 0 &&
             fbUsersData[index]?.status === true &&
-            fbUsersData[index]?.isMeetingStarted === false ? (
+            fbUsersData[index]?.isMeetingStarted === false &&
+            row.isDenied === false ? (
             <div className="joined-pill">
               <img src={check} height={14} width={14} alt="joined img"></img>{" "}
               Joined
@@ -190,7 +196,7 @@ export const HostPreview = ({
       name: <span className="table-title">Action</span>,
       cell: (row, index) => (
         <span className="table-cell">
-          {row.isMeetingStarted === false && row.status === false ? (
+          {row.isDenied === false && row.status === false ? (
             <>
               <Badge
                 onClick={() => {
@@ -211,7 +217,7 @@ export const HostPreview = ({
                 Allow
               </Badge>
             </>
-          ) : row.status === true && row.isMeetingStarted === false ? (
+          ) : row.status === true && row.isDenied === false ? (
             <>
               <Badge
                 onClick={() => {

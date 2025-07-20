@@ -81,15 +81,27 @@ export const GuestPreview = (props) => {
 
   function onSubmit(payload) {
     if (props?.fbUsersData?.length > 0) {
-      let ind = props.fbUsersData.findIndex((d) => d.email === payload.email);
+      let ind = props.fbUsersData.findIndex(
+        (d) => d.email === payload.email && d.isDenied === false
+      );
+      let ind2 = props.fbUsersData.findIndex(
+        (d) => d.email === payload.email && d.isDenied
+      );
       if (ind > -1) {
         props.submitGuestUserData(payload);
       } else {
-        showSweetAlert({
-          title:
-            "Host hasn't started meeting yet please wait for few more time!",
-          type: "error",
-        });
+        if (ind2 > -1) {
+          props.showSweetAlert({
+            title: "Host Denied permission for the meeting!!",
+            type: "error",
+          });
+        } else {
+          showSweetAlert({
+            title:
+              "Host hasn't started meeting yet please wait for few more time!",
+            type: "error",
+          });
+        }
       }
     } else {
       showSweetAlert({

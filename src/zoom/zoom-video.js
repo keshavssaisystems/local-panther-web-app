@@ -157,6 +157,7 @@ export const ZoomVideoScreen = (props) => {
           email: JSON.parse(localStorage.getItem("userDetails")).EmailId,
           isMeetingStarted: false,
           status: true,
+          isDenied: false,
         };
         database.ref("users/" + urlParams).set([user]);
       }
@@ -166,10 +167,22 @@ export const ZoomVideoScreen = (props) => {
   const checkParticipantActivity = (data) => {
     if (participantData?.length > 0 && participantData[0]?.name) {
       let ind = data.findIndex(
-        (d) => d.email === participantData[0].email && d.isMeetingStarted
+        (d) =>
+          d.email === participantData[0].email &&
+          d.isMeetingStarted &&
+          d.isDenied === false
       );
       if (ind > -1) {
         setShowScreen("load");
+      }
+      let ind2 = data.findIndex(
+        (d) => d.email === participantData[0].email && d.isDenied
+      );
+      if (ind2 > -1) {
+        showSweetAlert({
+          title: "Host Denied permission for the meeting!!",
+          type: "error",
+        });
       }
     }
   };
@@ -332,6 +345,7 @@ export const ZoomVideoScreen = (props) => {
           interviewId={id}
           urlParams={urlParams}
           fbUsersData={fbUsersData}
+          showSweetAlert={(data) => showSweetAlert(data)}
         >
           {" "}
         </GuestPreview>
