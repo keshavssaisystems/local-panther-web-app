@@ -26,7 +26,7 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
   const [lastJDOP, setLastJDOP] = useState("");
   const [generatedHtml, setGeneratedHtml] = useState("");
   const bottomRef = useRef(null);
-  const [bottomHeight, setBottomHeight] = useState(0);
+  const [bottomHeight, setBottomHeight] = useState(156);
 
   const loadAIJDCanvas = useSelector((state) => state.jobType.loadAIJDCanvas);
   useEffect(() => {
