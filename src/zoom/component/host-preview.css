@@ -1,0 +1,60 @@
+.host-prev-cont {
+  .div-title {
+    color: #2f2e2e;
+    font-weight: 400;
+    font-size: 32px;
+    padding: 8px 0px;
+  }
+  .cand-details {
+    color: #2f2e2e;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 4px 0px;
+  }
+  .atten-div {
+    font-weight: 500;
+    color: #038ffe;
+    font-size: 16px;
+    padding: 4px 0px;
+  }
+
+  .btn-div {
+    text-align: center;
+    padding-top: 16px;
+  }
+
+  .waiting-pill {
+    background-color: #fef3c7;
+    color: #b45309;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 4px 8px;
+  }
+
+  .joined-pill {
+    background-color: #d1fae5;
+    color: #14bd66;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 4px 8px;
+  }
+
+  .deny-pill {
+    background-color: #fee2e2;
+    color: #ff406d;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 4px 8px;
+  }
+
+  .badge {
+    padding: 8px 16px;
+    margin-right: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+  }
+}
