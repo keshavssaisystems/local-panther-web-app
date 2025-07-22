@@ -404,7 +404,7 @@ export function UserBox() {
       <Modal size="md" isOpen={success}>
         <SuccessPopUp
           icon={"success"}
-          message={"Push notification settings updated"}
+          message={"Email notification settings updated"}
           callBack={() => close()}
         />
       </Modal>

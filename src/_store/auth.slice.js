@@ -220,10 +220,7 @@ const authSlice = createSlice({
             ? 2
             : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
-      localStorage.setItem(
-        "pushnotification",
-        decodedData?.Pushnotification?.toLowerCase() === "true"
-      );
+      localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
       localStorage.setItem(
         "logo",
         decodedData?.role?.toLowerCase() === "candidate"
@@ -236,6 +233,7 @@ const authSlice = createSlice({
                 ? defLogo[0]?.appconfigurationvalue
                 : ""
       );
+      localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
       if (decodedData?.UserroleId === "2") {
         localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
       }
@@ -350,10 +348,7 @@ const authSlice = createSlice({
               ? 2
               : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
         localStorage.setItem(
           "logo",
           decodedData?.role?.toLowerCase() === "candidate"
@@ -366,6 +361,7 @@ const authSlice = createSlice({
                   ? defLogo[0]?.appconfigurationvalue
                   : ""
         );
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
@@ -408,7 +404,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userroleid");
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
-      localStorage.removeItem("emailnotification");      
+      localStorage.removeItem("emailnotification");
       localStorage.clear();
       localStorage.setItem("logo", logo);
       history.navigate("/login");
@@ -464,10 +460,7 @@ const authSlice = createSlice({
               ? 2
               : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
         localStorage.setItem(
           "logo",
           decodedData?.role?.toLowerCase() === "candidate"
@@ -480,6 +473,7 @@ const authSlice = createSlice({
                   ? defLogo[0]?.appconfigurationvalue
                   : ""
         );
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
@@ -537,10 +531,7 @@ const authSlice = createSlice({
               ? 2
               : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
         localStorage.setItem(
           "logo",
           decodedData?.role?.toLowerCase() === "candidate"
@@ -553,10 +544,7 @@ const authSlice = createSlice({
                   ? defLogo[0]?.appconfigurationvalue
                   : ""
         );
-        localStorage.setItem(
-          "emailnotification",
-          decodedData?.Emailnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },

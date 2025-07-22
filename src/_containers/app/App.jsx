@@ -24,6 +24,7 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
+import { CandidateInterviewFeedback } from "_containers/customer/reports/candidateinterviewfeedback";
 // Admin
 import { OnboardCustomer } from "_containers/admin/customer";
 import {
@@ -502,6 +503,15 @@ export function App() {
                 <CustomerReportCandidateStatus />
               </PrivateRoute>
             }
+          />
+          <Route
+            path="/report/candidate-interview-feedback/:id"
+            element={
+              <PrivateRoute>
+                <CandidateInterviewFeedback />
+              </PrivateRoute>
+            }
+            key={6}
           />
           <Route
             path="/customer-edit-job/:id"
