@@ -313,7 +313,6 @@ export function UpdateScheduleInterviewModal({
                         setDateChange(true);
                         setScheduleDateValidation(false);
                         onScheduleDateChange(date);
-                        onScheduleDateChangeDuration();
                       }}
                       dateFormat="MM/dd/yyyy"
                       placeholderText="Eg. MM/DD/YYYY"
