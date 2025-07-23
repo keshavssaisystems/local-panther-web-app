@@ -43,6 +43,7 @@ export function UpdateScheduleInterviewModal({
   const [scheduledDate, setScheduledDate] = useState(newdate);
   const [dateChange, setDateChange] = useState(false);
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+  const [slotTime, setslotTime] = useState();
   const dispatch = useDispatch();
 
   const toggle = () => {
@@ -112,6 +113,7 @@ export function UpdateScheduleInterviewModal({
   };
 
   const onScheduleDateChangeDuration = async () => {
+    let slotSeletedTime = slotTime;
     let event = {
       target: {
         value: interviewData?.scheduledInterviewDtos?.length > 0 ? interviewData?.scheduledInterviewDtos[0].starttime : interviewData?.starttime // or any valid time string
@@ -342,7 +344,7 @@ export function UpdateScheduleInterviewModal({
                       name="scheduleStartTime"
                       id="scheduleStartTime"
                       invalid={scheduleTimeValidation}
-                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); }}
+                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); setslotTime(time.target.value) }}
                     >
                       <option key={0} value={""}>
                         Select start time
