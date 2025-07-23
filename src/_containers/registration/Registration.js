@@ -236,7 +236,7 @@ export function Registration() {
       currentuserid: 0,
       type: "phone",
       userroleid: 3,
-      password: "Temp@123",
+      // password: "Temp@123",
     };
     let response;
     if (check === "phone") {
@@ -347,6 +347,44 @@ export function Registration() {
     }
     let response = await dispatch(authActions.candRegisterOTPThunk(payload));
     if (response.payload) {
+      if (
+        localStorage.getItem("referralLogdata") &&
+        JSON.parse(localStorage.getItem("referralLogdata"))?.companyid
+      ) {
+        let logData = JSON.parse(localStorage.getItem("referralLogdata"));
+        const userAgent = navigator.userAgent;
+        let os = "Unknown OS";
+
+        if (userAgent.indexOf("Win") != -1) os = "Windows";
+        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
+        if (userAgent.indexOf("X11") != -1) os = "UNIX";
+        if (userAgent.indexOf("Linux") != -1) os = "Linux";
+        if (userAgent.indexOf("Android") != -1) os = "Android";
+        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
+        let payload = {
+          referralLogUrl: window.location.href,
+          companyName: logData?.companyName,
+          // companyid: 0,
+          osversion: "string",
+          ipaddress: localStorage.getItem("publicip")
+            ? localStorage.getItem("publicip")
+            : "Web",
+          loginsource: "Web",
+          logindeviceid: os,
+          logindevice: os,
+          currentUserId: localStorage.getItem("userId")
+            ? Number(localStorage.getItem("userId"))
+            : 0,
+        };
+        console.log(payload);
+        dispatch(
+          authActions.putCompanyReferralLogs({
+            id: logData?.companyreferrallogid,
+            payload,
+          })
+        );
+        localStorage.removeItem("referralLogdata");
+      }
       showSweetAlert({
         title: response.payload.message,
         type: "success",

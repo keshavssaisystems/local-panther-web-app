@@ -19,8 +19,13 @@ const jobTypeSlice = createSlice({
   initialState: {
     jobType: [],
     loading: false,
+    loadAIJDCanvas: false,
   },
-  reducers: {},
+  reducers: {
+    updateLoadAIJDCanvas: (state, { payload }) => {
+      state.loadAIJDCanvas = payload;
+    },
+  },
 
   extraReducers: {
     [getJobTypeThunk.pending]: (state) => {
