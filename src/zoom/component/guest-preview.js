@@ -82,13 +82,19 @@ export const GuestPreview = (props) => {
   function onSubmit(payload) {
     if (props?.fbUsersData?.length > 0) {
       let ind = props.fbUsersData.findIndex(
-        (d) => d.email === payload.email && d.isDenied === false
+        (d) => d.email === payload.email && !d.isDenied && !d.isAllowed
       );
       let ind2 = props.fbUsersData.findIndex(
-        (d) => d.email === payload.email && d.isDenied
+        (d) => d.email === payload.email && d.isDenied && !d.isAllowed
       );
       if (ind > -1) {
         props.submitGuestUserData(payload);
+
+        let users = [...props.fbUsersData];
+        users[ind].isJoined = true;
+        users[ind].name = payload.name;
+
+        database.ref("users/" + props.urlParams).update(users);
       } else {
         if (ind2 > -1) {
           props.showSweetAlert({
@@ -97,8 +103,7 @@ export const GuestPreview = (props) => {
           });
         } else {
           showSweetAlert({
-            title:
-              "Host hasn't started meeting yet please wait for few more time!",
+            title: "You are not authorized person to join this meeting!",
             type: "error",
           });
         }

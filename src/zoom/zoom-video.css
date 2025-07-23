@@ -1,0 +1,25 @@
+.caret-oc {
+  margin-left: -24px;
+}
+
+.zoom-oc {
+  margin: 61px 0px 60px 0px;
+}
+
+.toggle-btn {
+  margin: 8px;
+  transform: rotate(-90deg);
+  position: absolute !important;
+  top: 50%;
+  transition: transform 0.3s ease-in-out;
+  margin-left: -98px;
+}
+
+.toggle-btn-close {
+  margin: 8px;
+  transform: rotate(-90deg);
+  position: absolute !important;
+  top: 50%;
+  transition: transform 0.3s ease-in-out;
+  right: 0%;
+}
