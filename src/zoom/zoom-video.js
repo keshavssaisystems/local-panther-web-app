@@ -7,13 +7,28 @@ import { useDispatch } from "react-redux";
 import { authActions, scheduleInterviewActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
-import { Modal, ModalBody, ModalHeader } from "reactstrap";
+import {
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Offcanvas,
+  OffcanvasHeader,
+  OffcanvasBody,
+  Button,
+  Row,
+  Col,
+} from "reactstrap";
 import { database } from "../firebase/index";
 import "firebase/database";
 import { HostPreview } from "./component/host-preview";
 import { WaitingPreview } from "./component/waiting-screen";
 import { GuestPreview } from "./component/guest-preview";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+
 import "../_containers/sharejob/sharejob.scss";
+import "./zoom-video.css";
+
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
   const [sessionData, setSessionData] = useState([]);
@@ -29,6 +44,12 @@ export const ZoomVideoScreen = (props) => {
   const [participantData, setParticipantData] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const [fbUsersData, setFBUsersData] = useState([]);
+  const [isOpen, setIsOpen] = useState(
+    localStorage.getItem("userroleid") === "2"
+  );
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
   console.log(participantData);
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
@@ -38,6 +59,7 @@ export const ZoomVideoScreen = (props) => {
   let name = userDetails
     ? userDetails.FirstName + " " + userDetails.LastName
     : "Guest";
+  const host = localStorage.getItem("userroleid") === "2";
   const navigate = useNavigate();
   let config = {
     videoSDKJWT: "",
@@ -72,11 +94,16 @@ export const ZoomVideoScreen = (props) => {
     }
 
     document.addEventListener("keydown", keyDownHandler);
-
+    window.addEventListener("beforeunload", handleBeforeUnload);
     const nameRef = database.ref("users/" + urlParams);
     nameRef.on("value", (snapshot) => {
       const data = snapshot.val();
+      setIsLoaded(true);
       if (data) {
+        if (localStorage.getItem("userroleid") === "2") {
+          checkUserJoinedEvent(data, usersData);
+        }
+
         setFBUsersData(data);
         setUsersData(data);
       }
@@ -89,16 +116,32 @@ export const ZoomVideoScreen = (props) => {
       }
       nameRef.off();
       document.removeEventListener("keydown", keyDownHandler);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
+  const handleBeforeUnload = async (event) => {
+    // Optional: Show confirmation dialog
+    event.preventDefault();
+    event.returnValue = ""; // Required for Chrome to show confirmation dialog
+    await UserLeftSession();
+    // Add your cleanup or API call logic here
+    if (localStorage.getItem("userroleid") === "2") {
+      database.ref("users/" + urlParams).remove();
+    }
+  };
   useEffect(() => {
     if (sessionData.length === 0) {
       getToken();
     }
   }, [id]);
   useEffect(() => {
-    if (id && sessionData.length > 0 && uitoolkit && showScreen === "load") {
+    if (
+      id &&
+      sessionData.length > 0 &&
+      uitoolkit &&
+      (showScreen === "load" || showScreen === "host")
+    ) {
       config.videoSDKJWT = sessionData[0].zoomSessionToken;
       config.sessionName = sessionData[0].sessionName;
       config.userName =
@@ -133,8 +176,8 @@ export const ZoomVideoScreen = (props) => {
     ) {
       checkParticipantActivity(fbUsersData);
     }
+
     if (
-      fbUsersData?.length > 0 &&
       participantData?.length > 0 &&
       localStorage.getItem("userroleid") === "3"
     ) {
@@ -145,7 +188,7 @@ export const ZoomVideoScreen = (props) => {
             d.email === JSON.parse(localStorage.getItem("userDetails")).EmailId
         );
         if (ind > -1) {
-          users[ind].status = true;
+          users[ind].isJoined = true;
           database.ref("users/" + urlParams).update(users);
         }
       } else {
@@ -155,8 +198,8 @@ export const ZoomVideoScreen = (props) => {
             " " +
             JSON.parse(localStorage.getItem("userDetails")).LastName,
           email: JSON.parse(localStorage.getItem("userDetails")).EmailId,
-          isMeetingStarted: false,
-          status: true,
+          isJoined: true,
+          isAllowed: false,
           isDenied: false,
         };
         database.ref("users/" + urlParams).set([user]);
@@ -164,13 +207,16 @@ export const ZoomVideoScreen = (props) => {
     }
   }, [fbUsersData, participantData]);
 
+  const toggle = () => setIsOpen(!isOpen);
+
   const checkParticipantActivity = (data) => {
     if (participantData?.length > 0 && participantData[0]?.name) {
       let ind = data.findIndex(
         (d) =>
           d.email === participantData[0].email &&
-          d.isMeetingStarted &&
-          d.isDenied === false
+          d.isJoined &&
+          !d.isDenied &&
+          d.isAllowed
       );
       if (ind > -1) {
         setShowScreen("load");
@@ -187,11 +233,43 @@ export const ZoomVideoScreen = (props) => {
     }
   };
 
+  const checkUserJoinedEvent = (data, usersData) => {
+    const changed = usersData.filter((obj1) => {
+      const obj2 = data.find(
+        (o) => o.isJoined === obj1.isJoined && o.isJoined && !o.isDenied
+      );
+      return obj2 && JSON.stringify(obj1) !== JSON.stringify(obj2);
+    });
+    if (changed) {
+      setIsOpen(true);
+    }
+  };
   const sessionJoined = () => {
     console.log("session joined");
   };
 
+  const UserLeftSession = () => {
+    if (
+      fbUsersData.length > 0 &&
+      participantData.length > 0 &&
+      (localStorage.getItem("userroleid") === "3" ||
+        localStorage.getItem("userroleid") === null)
+    ) {
+      let ind = fbUsersData.findIndex(
+        (d) => d.email === participantData[0].email
+      );
+      if (ind > -1) {
+        let users = [...fbUsersData];
+        users[ind].isJoined = false;
+        users[ind].isAllowed = false;
+        users[ind].isDenied = false;
+        database.ref("users/" + urlParams).update(users);
+      }
+    }
+  };
+
   const sessionClosed = () => {
+    UserLeftSession();
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"
@@ -221,18 +299,21 @@ export const ZoomVideoScreen = (props) => {
           ? "waiting"
           : "guest"
       );
-      if (localStorage.getItem("userroleid") === "3") {
-        setParticipantData([
-          {
-            name:
-              JSON.parse(localStorage.getItem("userDetails")).FirstName +
-              " " +
-              JSON.parse(localStorage.getItem("userDetails")).LastName,
-            email: JSON.parse(localStorage.getItem("userDetails")).EmailId,
-          },
-        ]);
-      }
+
       setSessionData(data);
+      if (localStorage.getItem("userroleid") === "3") {
+        setTimeout(() => {
+          setParticipantData([
+            {
+              name:
+                JSON.parse(localStorage.getItem("userDetails")).FirstName +
+                " " +
+                JSON.parse(localStorage.getItem("userDetails")).LastName,
+              email: JSON.parse(localStorage.getItem("userDetails")).EmailId,
+            },
+          ]);
+        }, 2000);
+      }
     } else {
       showSweetAlert({
         title: response?.error?.message
@@ -296,7 +377,7 @@ export const ZoomVideoScreen = (props) => {
   const submitGuestUserData = (data) => {
     setParticipantData([data]);
     let ind = fbUsersData.findIndex(
-      (d) => d.email === data.email && d.isMeetingStarted
+      (d) => d.email === data.email && d.isJoined && d.isAllowed && !d.isDenied
     );
     if (ind > -1) {
       setShowScreen("load");
@@ -329,33 +410,81 @@ export const ZoomVideoScreen = (props) => {
   return (
     <>
       {/* <div id="previewContainer"></div> */}
-      {showScreen === "host" && (
-        <HostPreview
-          interviewId={id}
-          urlParams={urlParams}
-          usersData={usersData}
-          setUsersData={(data) => setUsersData(data)}
-          fbUsersData={fbUsersData}
-          hostStartMeeting={() => hostStartMeeting()}
-        ></HostPreview>
+      {host && (
+        <Row className="justify-content-end">
+          <Col style={{ textAlign: "end" }}>
+            <Button onClick={toggle} color="primary">
+              {/* <FontAwesomeIcon
+              className="me-1"
+              icon={isOpen ? faArrowDown : faArrowUp}
+            ></FontAwesomeIcon> */}
+              Waiting Room
+            </Button>
+          </Col>
+        </Row>
       )}
-      {showScreen === "guest" && (
+      {showScreen === "guest" && isLoaded && (
         <GuestPreview
           submitGuestUserData={(data) => submitGuestUserData(data)}
           interviewId={id}
           urlParams={urlParams}
           fbUsersData={fbUsersData}
+          database={database}
           showSweetAlert={(data) => showSweetAlert(data)}
         >
           {" "}
         </GuestPreview>
       )}
-      {showScreen === "waiting" && (
-        <WaitingPreview interviewId={id} urlParams={urlParams}></WaitingPreview>
+      {showScreen === "waiting" && isLoaded && (
+        <WaitingPreview
+          fbUsersData={fbUsersData}
+          setParticipantData={setParticipantData}
+          database={database}
+          interviewId={id}
+          urlParams={urlParams}
+        ></WaitingPreview>
       )}
-
-      <div className={!props.authUser ? "share-job-cont" : ""}>
-        <div id="sessionContainer"></div>
+      <div>
+        <div style={{ padding: "0px 20%" }}>
+          <div id="sessionContainer"></div>
+          {host && (
+            <div
+              style={{
+                minHeight: "80vh",
+              }}
+            >
+              <Offcanvas isOpen={isOpen} direction="end" backdrop={false}>
+                <OffcanvasHeader toggle={() => toggle()}>
+                  <b>Attendee</b>
+                </OffcanvasHeader>
+                <OffcanvasBody>
+                  <Button
+                    onClick={toggle}
+                    className="toggle-btn"
+                    color="primary"
+                  >
+                    <FontAwesomeIcon
+                      className="me-1"
+                      icon={isOpen ? faArrowDown : faArrowUp}
+                    ></FontAwesomeIcon>
+                    Waiting Room
+                  </Button>
+                  {showScreen === "host" && (
+                    <HostPreview
+                      interviewId={id}
+                      urlParams={urlParams}
+                      usersData={usersData}
+                      setUsersData={(data) => setUsersData(data)}
+                      fbUsersData={fbUsersData}
+                      hostStartMeeting={() => hostStartMeeting()}
+                      database={database}
+                    ></HostPreview>
+                  )}
+                </OffcanvasBody>
+              </Offcanvas>
+            </div>
+          )}
+        </div>
       </div>
 
       <>
