@@ -43,40 +43,43 @@ export function UpdateScheduleInterviewModal({
   const [scheduledDate, setScheduledDate] = useState(newdate);
   const [dateChange, setDateChange] = useState(false);
   const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+  const [slotTime, setslotTime] = useState();
   const dispatch = useDispatch();
 
   const toggle = () => {
     setModal(!modal);
   };
   useEffect(() => {
-    getTimeArray();
-    let date = new Date(
-      getTimezoneDateTime(
-        interviewData?.scheduledInterviewDtos &&
-          interviewData?.scheduledInterviewDtos
-            ?.length > 0
-          ? interviewData?.scheduledInterviewDtos[0].scheduledate.slice(
-            0,
-            11
-          ) +
-          interviewData?.scheduledInterviewDtos[0]
-            ?.starttime
-          : interviewData?.scheduledate?.slice(0, 11) +
-          interviewData?.starttime,
-        "YYYY-MM-DD HH:mm:ss"
-      )
-    );
-    let event = {
-      target: {
-        value: interviewData?.scheduledInterviewDtos?.length > 0 ? interviewData?.scheduledInterviewDtos[0].starttime : interviewData?.starttime // or any valid time string
-      }
-    };
+    if (isOpen) {
+      getTimeArray();
+      let date = new Date(
+        getTimezoneDateTime(
+          interviewData?.scheduledInterviewDtos &&
+            interviewData?.scheduledInterviewDtos
+              ?.length > 0
+            ? interviewData?.scheduledInterviewDtos[0].scheduledate.slice(
+              0,
+              11
+            ) +
+            interviewData?.scheduledInterviewDtos[0]
+              ?.starttime
+            : interviewData?.scheduledate?.slice(0, 11) +
+            interviewData?.starttime,
+          "YYYY-MM-DD HH:mm:ss"
+        )
+      );
+      let event = {
+        target: {
+          value: interviewData?.scheduledInterviewDtos?.length > 0 ? interviewData?.scheduledInterviewDtos[0].starttime : interviewData?.starttime // or any valid time string
+        }
+      };
 
-    date = date == undefined ? newdate : date;
-    onScheduleDateChange(date).then(() => {
-      getSlotDuration(event);
-    });
-  }, []);
+      date = date == undefined ? newdate : date;
+      onScheduleDateChange(date).then(() => {
+        getSlotDuration(event);
+      });
+    }
+  }, [isOpen]);
   const getTimeArray = () => {
     let timeOptions = [];
     let meridiemArray = ["AM", "PM"];
@@ -109,6 +112,15 @@ export function UpdateScheduleInterviewModal({
     setTimeOption(timeOptions);
   };
 
+  const onScheduleDateChangeDuration = async () => {
+    let slotSeletedTime = slotTime;
+    let event = {
+      target: {
+        value: interviewData?.scheduledInterviewDtos?.length > 0 ? interviewData?.scheduledInterviewDtos[0].starttime : interviewData?.starttime // or any valid time string
+      }
+    };
+    getSlotDuration(event);
+  }
 
 
   const onScheduleDateChange = async (date) => {
@@ -331,7 +343,7 @@ export function UpdateScheduleInterviewModal({
                       name="scheduleStartTime"
                       id="scheduleStartTime"
                       invalid={scheduleTimeValidation}
-                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); }}
+                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); setslotTime(time.target.value) }}
                     >
                       <option key={0} value={""}>
                         Select start time

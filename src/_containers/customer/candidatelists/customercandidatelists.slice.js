@@ -257,13 +257,17 @@ function createExtraActions() {
     );
   }
   function getInterviewSlots() {
-    let id = parseInt(localStorage.getItem("userId"));
+
     return createAsyncThunk(
       `${name}/getInterviewSlots`,
-      async (data) =>
-        await fetchWrapper.get(
+      async (data) => {
+        let id = parseInt(localStorage.getItem("userId"));
+        console.log(id);
+        return await fetchWrapper.get(
           `${newUrl}/ScheduledInterview/GetInterviewSlots?scheduleDate=${data.scheduleDateUTC}&userId=${id}&scheduleInterviewId=${data.scheduleInterviewId}`
         )
+      }
+
     );
   }
 }
@@ -463,7 +467,7 @@ function createExtraReducers() {
             ? action?.payload?.data?.scheduledInterviewList
             : [];
         })
-        .addCase(rejected, (state, action) => {});
+        .addCase(rejected, (state, action) => { });
     }
 
     function getPrescreenDetails() {
@@ -498,7 +502,7 @@ function createExtraReducers() {
             state.prescreenQues = newData;
           }
         })
-        .addCase(rejected, (state, action) => {});
+        .addCase(rejected, (state, action) => { });
     }
 
     function getCustOfferHistory() {
@@ -510,7 +514,7 @@ function createExtraReducers() {
         .addCase(fulfilled, (state, action) => {
           state.custOfferHistory = action?.payload?.data;
         })
-        .addCase(rejected, (state, action) => {});
+        .addCase(rejected, (state, action) => { });
     }
 
     function getofferLetterTemplate() {
