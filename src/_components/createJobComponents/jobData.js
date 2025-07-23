@@ -8,7 +8,14 @@ export const formatAIJobData = async (data) => {
   aiJD.subsidiaryid = 0;
   aiJD.subsidiaryname = "";
   aiJD.jobtitle = data?.job_title ? data?.job_title : "";
-  aiJD.description = data?.description ? data?.description : "";
+  // aiJD.description = data?.description ? data?.description : "";
+  let joDescription = data?.description ? data?.description : "";
+  let updatedJD = "<b>" + joDescription;
+  updatedJD = updatedJD.replaceAll("Title:", "Title:</b>");
+  updatedJD = updatedJD.replaceAll("\n\n", "<BR><BR><b>");
+  updatedJD = updatedJD.replaceAll("\n", "</b><BR>");
+  aiJD.description = updatedJD;
+
   aiJD.companydetails = "";
   if (data?.job_location && data?.job_location?.length > 0) {
     aiJD.joblocationid = data?.job_location[0]?.job_location_id
@@ -46,7 +53,10 @@ export const formatAIJobData = async (data) => {
     ? data?.sponsorship_required
     : false;
 
-  aiJD.issecurityclearancerequired = true;
+  aiJD.issecurityclearancerequired =
+    data?.security_clearance_id && data?.security_clearance_id !== 0
+      ? true
+      : false;
   aiJD.securityclearance = data?.security_clearance
     ? data?.security_clearance
     : "";
@@ -57,18 +67,18 @@ export const formatAIJobData = async (data) => {
 
   //certifications data
   if (data?.certifications && data?.certifications.length > 0) {
-    aiJD.certifications =
-      data?.certifications.length > 0
-        ? data?.certifications.map((x, ind) => ind + 1).join(",")
-        : "";
+    aiJD.certifications = "0";
+    // data?.certifications.length > 0
+    //   ? data?.certifications.map((x, ind) => ind + 1).join(",")
+    //   : "";
     aiJD.jobCertificationDtos =
       data?.certifications && data?.certifications.length > 0
         ? data?.certifications.map((x, ind) => {
-            return {
-              certificationid: ind + 1,
-              certification: x,
-            };
-          })
+          return {
+            certificationid: ind + 1,
+            certification: x,
+          };
+        })
         : "";
   }
 
@@ -79,8 +89,8 @@ export const formatAIJobData = async (data) => {
     aiJD.levelofeducationids =
       data?.level_of_education_data?.length > 0
         ? data?.level_of_education_data
-            .map((x) => x.levelofeducationid)
-            .join(", ")
+          .map((x) => x.levelofeducationid)
+          .join(", ")
         : "";
 
     aiJD.jobLevelofedulcationDtos =
@@ -160,7 +170,8 @@ export const formatAIJobData = async (data) => {
   ) {
     aiJD.jobExperienceScheduleDtos["0"]["jobtypes"] =
       data?.job_Experience_Schedule[0]?.job_Types
-        .map((x) => x.jobtypesid)
+        //.map((x) => x.jobtypesid)
+        .map((x) => x.job_types_id)
         .join(",");
     aiJD.jobExperienceScheduleDtos["0"]["jobTypesDtos"] =
       data?.job_Experience_Schedule[0]?.job_Types.map((x) => {

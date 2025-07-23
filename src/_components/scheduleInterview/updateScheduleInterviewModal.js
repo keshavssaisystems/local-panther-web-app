@@ -16,6 +16,8 @@ import "./scheduledInterview.scss";
 import moment from "moment-timezone";
 import { getTimezoneDateTime } from "_helpers/helper";
 import DatePicker from "react-datepicker";
+import { useDispatch } from "react-redux";
+import { customerCandidateListsActions } from "_store";
 
 export function UpdateScheduleInterviewModal({
   interviewData,
@@ -24,11 +26,13 @@ export function UpdateScheduleInterviewModal({
   isOpen = false,
   onClose,
 }) {
+  console.log(interviewData?.scheduledate)
   const newdate = new Date(
     getTimezoneDateTime(
       moment(interviewData?.scheduledate),
       "YYYY-MM-DD HH:mm:ss"
     )
+
   );
   const [timeOption, setTimeOption] = useState([]);
   const [modal, setModal] = useState(false);
@@ -37,13 +41,41 @@ export function UpdateScheduleInterviewModal({
   const [durationValidation, setDurationValidation] = useState(false);
   const [videoLinkValidation, setVideoLinkValidation] = useState(false);
   const [scheduledDate, setScheduledDate] = useState(newdate);
-
   const [dateChange, setDateChange] = useState(false);
+  const [slotDurationOptions, setSlotDurationOptions] = useState([]);
+  const dispatch = useDispatch();
+
   const toggle = () => {
     setModal(!modal);
   };
   useEffect(() => {
     getTimeArray();
+    let date = new Date(
+      getTimezoneDateTime(
+        interviewData?.scheduledInterviewDtos &&
+          interviewData?.scheduledInterviewDtos
+            ?.length > 0
+          ? interviewData?.scheduledInterviewDtos[0].scheduledate.slice(
+            0,
+            11
+          ) +
+          interviewData?.scheduledInterviewDtos[0]
+            ?.starttime
+          : interviewData?.scheduledate?.slice(0, 11) +
+          interviewData?.starttime,
+        "YYYY-MM-DD HH:mm:ss"
+      )
+    );
+    let event = {
+      target: {
+        value: interviewData?.scheduledInterviewDtos?.length > 0 ? interviewData?.scheduledInterviewDtos[0].starttime : interviewData?.starttime // or any valid time string
+      }
+    };
+
+    date = date == undefined ? newdate : date;
+    onScheduleDateChange(date).then(() => {
+      getSlotDuration(event);
+    });
   }, []);
   const getTimeArray = () => {
     let timeOptions = [];
@@ -76,6 +108,56 @@ export function UpdateScheduleInterviewModal({
     });
     setTimeOption(timeOptions);
   };
+
+
+
+  const onScheduleDateChange = async (date) => {
+    let data = {
+      scheduleDateUTC: moment(date).format("YYYY-MM-DD"),
+      scheduleInterviewId: interviewData?.scheduledInterviewDtos && interviewData?.scheduledInterviewDtos?.length > 0 ? interviewData?.scheduledInterviewDtos[0].scheduleinterviewid : interviewData?.scheduleinterviewid
+    }
+    let res = await dispatch(
+      customerCandidateListsActions.getInterviewSlots(data)
+    );
+    setTimeOption(res?.payload?.data == undefined ? [] : res?.payload?.data);
+  };
+
+  const convertTo12Hour = (time24) => {
+    if (time24 == undefined)
+      return;
+    const [hourStr, minute, second] = time24.split(":");
+    let hour = parseInt(hourStr, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12 || 12; // Convert 0 to 12
+    return `${hour.toString().padStart(2, "0")}:${minute} ${ampm}`;
+  };
+
+  const getSlotDuration = (e) => {
+    let time = 0;
+    for (let i = 0; i < timeOption.length; i++) {
+      if (timeOption[i].slottime >= e.target.value) {
+        if (!timeOption[i].isavailable) {
+          time = timeOption[i].slottime;
+          break;
+        }
+      }
+    }
+    let diff = time != 0 ? subtractTimes(time, e.target.value) : 120;
+    let durations = durationOptions.filter(v => v.name.replaceAll(' min', '') <= diff);
+    setSlotDurationOptions(durations);
+  }
+
+  const subtractTimes = (t1, t2) => {
+    const [h1, m1, s1] = t1.split(":").map(Number);
+    const [h2, m2, s2] = t2.split(":").map(Number);
+    const totalSeconds1 = h1 * 3600 + m1 * 60 + s1;
+    const totalSeconds2 = h2 * 3600 + m2 * 60 + s2;
+    const diff = totalSeconds1 - totalSeconds2;
+    const minutes = Math.floor((diff) / 60);
+
+    return minutes;
+  }
+
   const getFormValidation = (event) => {
     event.preventDefault();
     event.target.elements.scheduleDate.value === ""
@@ -99,15 +181,15 @@ export function UpdateScheduleInterviewModal({
     event.preventDefault();
     let scheduleDateUTC = moment(
       event.target.elements.scheduleDate.value +
-        " " +
-        event.target.elements.scheduleStartTime.value
+      " " +
+      event.target.elements.scheduleStartTime.value
     )
       .tz("Etc/UTC")
       .format("YYYY-MM-DD");
     let scheduleTimeUTC = moment(
       event.target.elements.scheduleDate.value +
-        " " +
-        event.target.elements.scheduleStartTime.value
+      " " +
+      event.target.elements.scheduleStartTime.value
     )
       .tz("Etc/UTC")
       .format("HH:mm:ss");
@@ -115,7 +197,7 @@ export function UpdateScheduleInterviewModal({
     let data = {
       scheduleinterviewid:
         interviewData?.scheduledInterviewDtos &&
-        interviewData?.scheduledInterviewDtos?.length > 0
+          interviewData?.scheduledInterviewDtos?.length > 0
           ? interviewData?.scheduledInterviewDtos[0].scheduleinterviewid
           : interviewData?.scheduleinterviewid,
       jobid: interviewData?.jobid,
@@ -174,8 +256,8 @@ export function UpdateScheduleInterviewModal({
                     <p className="mb-0 mt-1 mr-1">
                       {interviewData?.candidatename === undefined
                         ? interviewData?.firstname +
-                          " " +
-                          interviewData?.lastname
+                        " " +
+                        interviewData?.lastname
                         : interviewData?.candidatename}
                     </p>
                   </div>
@@ -197,27 +279,28 @@ export function UpdateScheduleInterviewModal({
                       selected={
                         dateChange === false
                           ? new Date(
-                              getTimezoneDateTime(
-                                interviewData?.scheduledInterviewDtos &&
-                                  interviewData?.scheduledInterviewDtos
-                                    ?.length > 0
-                                  ? interviewData?.scheduledInterviewDtos[0].scheduledate.slice(
-                                      0,
-                                      11
-                                    ) +
-                                      interviewData?.scheduledInterviewDtos[0]
-                                        ?.starttime
-                                  : interviewData?.scheduledate?.slice(0, 11) +
-                                      interviewData?.starttime,
-                                "YYYY-MM-DD HH:mm:ss"
-                              )
+                            getTimezoneDateTime(
+                              interviewData?.scheduledInterviewDtos &&
+                                interviewData?.scheduledInterviewDtos
+                                  ?.length > 0
+                                ? interviewData?.scheduledInterviewDtos[0].scheduledate.slice(
+                                  0,
+                                  11
+                                ) +
+                                interviewData?.scheduledInterviewDtos[0]
+                                  ?.starttime
+                                : interviewData?.scheduledate?.slice(0, 11) +
+                                interviewData?.starttime,
+                              "YYYY-MM-DD HH:mm:ss"
                             )
+                          )
                           : scheduledDate
                       }
                       onChange={(date) => {
                         setScheduledDate(date);
                         setDateChange(true);
                         setScheduleDateValidation(false);
+                        onScheduleDateChange(date);
                       }}
                       dateFormat="MM/dd/yyyy"
                       placeholderText="Eg. MM/DD/YYYY"
@@ -248,7 +331,7 @@ export function UpdateScheduleInterviewModal({
                       name="scheduleStartTime"
                       id="scheduleStartTime"
                       invalid={scheduleTimeValidation}
-                      onChange={() => setScheduleTimeValidation(false)}
+                      onChange={(time) => { setScheduleTimeValidation(false); getSlotDuration(time); }}
                     >
                       <option key={0} value={""}>
                         Select start time
@@ -256,10 +339,10 @@ export function UpdateScheduleInterviewModal({
                       {timeOption.length > 0 &&
                         timeOption.map((options) => (
                           <option
-                            key={options}
-                            value={options}
+                            key={options.slottime}
+                            value={options.slottime} disabled={!options.isavailable}
                             selected={
-                              String(options) ===
+                              String(convertTo12Hour(options.slottime)) ===
                               String(
                                 getTimezoneDateTime(
                                   moment(
@@ -268,28 +351,28 @@ export function UpdateScheduleInterviewModal({
                                         interviewData?.scheduledInterviewDtos
                                           ?.length > 0
                                         ? interviewData
-                                            ?.scheduledInterviewDtos[0]
-                                            .scheduledate
+                                          ?.scheduledInterviewDtos[0]
+                                          .scheduledate
                                         : interviewData?.scheduledate?.slice(
-                                            0,
-                                            11
-                                          ) + interviewData?.starttime
+                                          0,
+                                          11
+                                        ) + interviewData?.starttime
                                     ).format("YYYY-MM-DD") +
-                                      " " +
-                                      (interviewData?.scheduledInterviewDtos &&
+                                    " " +
+                                    (interviewData?.scheduledInterviewDtos &&
                                       interviewData?.scheduledInterviewDtos
                                         ?.length > 0
-                                        ? interviewData
-                                            ?.scheduledInterviewDtos[0]
-                                            .starttime
-                                        : interviewData?.starttime)
+                                      ? interviewData
+                                        ?.scheduledInterviewDtos[0]
+                                        .starttime
+                                      : interviewData?.starttime)
                                   ).format("YYYY-MM-DD hh:mm A"),
                                   "hh:mm A"
                                 )
                               )
                             }
                           >
-                            {options}{" "}
+                            {convertTo12Hour(options.slottime)}{" "}
                           </option>
                         ))}
                     </Input>
@@ -315,8 +398,8 @@ export function UpdateScheduleInterviewModal({
                       <option key={0} value={""}>
                         Select duration
                       </option>
-                      {durationOptions?.length > 0 &&
-                        durationOptions.map((data) => {
+                      {slotDurationOptions?.length > 0 &&
+                        slotDurationOptions.map((data) => {
                           return (
                             <option
                               value={data.id}
@@ -328,7 +411,7 @@ export function UpdateScheduleInterviewModal({
                                     interviewData?.scheduledInterviewDtos
                                       ?.length > 0
                                     ? interviewData?.scheduledInterviewDtos[0]
-                                        ?.durationid
+                                      ?.durationid
                                     : interviewData?.durationid
                                 )
                               }
@@ -348,12 +431,12 @@ export function UpdateScheduleInterviewModal({
                 <h6 className="mb-0 heading-custom">Format</h6>
                 <p className="mb-0 mt-1 mr-1">
                   {interviewData?.scheduledInterviewDtos &&
-                  interviewData?.scheduledInterviewDtos?.length > 0 &&
-                  interviewData?.scheduledInterviewDtos[0].format !== ""
+                    interviewData?.scheduledInterviewDtos?.length > 0 &&
+                    interviewData?.scheduledInterviewDtos[0].format !== ""
                     ? interviewData?.scheduledInterviewDtos[0]?.format
                     : interviewData?.format === ""
-                    ? "-"
-                    : interviewData?.format}
+                      ? "-"
+                      : interviewData?.format}
                 </p>
               </div>
               {interviewData?.format === "Video" && (
@@ -361,13 +444,13 @@ export function UpdateScheduleInterviewModal({
                   <h6 className="mb-0 heading-custom">Mode</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {interviewData?.scheduledInterviewDtos &&
-                    interviewData?.scheduledInterviewDtos?.length > 0 &&
-                    interviewData?.scheduledInterviewDtos[0]?.isappvideocall ===
+                      interviewData?.scheduledInterviewDtos?.length > 0 &&
+                      interviewData?.scheduledInterviewDtos[0]?.isappvideocall ===
                       true
                       ? "App video call"
                       : interviewData?.isappvideocall === true
-                      ? "App video call"
-                      : "Third-party video conferencing"}
+                        ? "App video call"
+                        : "Third-party video conferencing"}
                   </p>
                 </div>
               )}
@@ -384,7 +467,7 @@ export function UpdateScheduleInterviewModal({
                       placeholder="Enter video link"
                       defaultValue={
                         interviewData?.scheduledInterviewDtos &&
-                        interviewData?.scheduledInterviewDtos?.length > 0
+                          interviewData?.scheduledInterviewDtos?.length > 0
                           ? interviewData?.scheduledInterviewDtos[0]?.videolink
                           : interviewData?.videolink
                       }
@@ -403,14 +486,14 @@ export function UpdateScheduleInterviewModal({
                   <h6 className="mb-0 heading-custom">Interview address</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {interviewData?.scheduledInterviewDtos &&
-                    interviewData?.scheduledInterviewDtos?.length > 0 &&
-                    interviewData?.scheduledInterviewDtos[0]
-                      .interviewaddress !== ""
+                      interviewData?.scheduledInterviewDtos?.length > 0 &&
+                      interviewData?.scheduledInterviewDtos[0]
+                        .interviewaddress !== ""
                       ? interviewData?.scheduledInterviewDtos[0]
-                          .interviewaddress
+                        .interviewaddress
                       : interviewData?.interviewaddress === ""
-                      ? "-"
-                      : interviewData?.interviewaddress}
+                        ? "-"
+                        : interviewData?.interviewaddress}
                   </p>
                 </div>
               )}
@@ -418,28 +501,28 @@ export function UpdateScheduleInterviewModal({
                 <h6 className="mb-0 heading-custom">Message to candidate</h6>
                 <p className="mb-0 mt-1 mr-1">
                   {interviewData?.scheduledInterviewDtos &&
-                  interviewData?.scheduledInterviewDtos?.length > 0 &&
-                  interviewData?.scheduledInterviewDtos[0]
-                    .messagetocandidate !== ""
+                    interviewData?.scheduledInterviewDtos?.length > 0 &&
+                    interviewData?.scheduledInterviewDtos[0]
+                      .messagetocandidate !== ""
                     ? interviewData?.scheduledInterviewDtos[0]
-                        .messagetocandidate
+                      .messagetocandidate
                     : interviewData?.messagetocandidate === ""
-                    ? "-"
-                    : interviewData?.messagetocandidate}
+                      ? "-"
+                      : interviewData?.messagetocandidate}
                 </p>
               </div>
               <div className="detail-padding">
                 <h6 className="mb-0 heading-custom">Interviewers</h6>
                 <p className="mb-0 mt-1 mr-1">
                   {interviewData?.scheduledInterviewDtos &&
-                  interviewData?.scheduledInterviewDtos?.length > 0 &&
-                  interviewData?.scheduledInterviewDtos[0]
-                    .intervieweremailids !== ""
+                    interviewData?.scheduledInterviewDtos?.length > 0 &&
+                    interviewData?.scheduledInterviewDtos[0]
+                      .intervieweremailids !== ""
                     ? interviewData?.scheduledInterviewDtos[0]
-                        .intervieweremailids
+                      .intervieweremailids
                     : interviewData?.intervieweremailids === ""
-                    ? "-"
-                    : interviewData?.intervieweremailids}
+                      ? "-"
+                      : interviewData?.intervieweremailids}
                 </p>
               </div>
               <div className="detail-padding">
@@ -448,14 +531,14 @@ export function UpdateScheduleInterviewModal({
                 </h6>
                 <p className="mb-0 mt-1 mr-1">
                   {interviewData?.scheduledInterviewDtos &&
-                  interviewData?.scheduledInterviewDtos?.length > 0 &&
-                  interviewData?.scheduledInterviewDtos[0]
-                    .textremaindernumbers !== ""
+                    interviewData?.scheduledInterviewDtos?.length > 0 &&
+                    interviewData?.scheduledInterviewDtos[0]
+                      .textremaindernumbers !== ""
                     ? interviewData?.scheduledInterviewDtos[0]
-                        .textremaindernumbers
+                      .textremaindernumbers
                     : interviewData?.textremaindernumbers === ""
-                    ? "-"
-                    : interviewData?.textremaindernumbers}
+                      ? "-"
+                      : interviewData?.textremaindernumbers}
                 </p>
               </div>
             </Col>

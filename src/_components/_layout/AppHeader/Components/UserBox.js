@@ -53,6 +53,12 @@ export function UserBox() {
       ? JSON.parse(localStorage.getItem("pushnotification"))
       : false
   );
+  const [isEmailToggleOn, setIsEmailToggleOn] = useState(
+    localStorage.getItem("emailnotification")
+      ? JSON.parse(localStorage.getItem("emailnotification"))
+      : false
+  );
+
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -181,6 +187,22 @@ export function UserBox() {
     }
   };
 
+  const toggleEmailNotification = async function (value) {
+    setIsEmailToggleOn(value);
+    let id = JSON.parse(localStorage.getItem("userDetails"))?.UserId;
+    let data = {
+      userId: id,
+      emailnotification: value
+    };
+    let response = await dispatch(settingsActions.emailNotifications({ id, data }));
+    if (response.payload) {
+      setSuccess(true);
+      localStorage.setItem("emailnotification", value);
+    } else {
+      setError(true);
+    }
+  }
+
   const rejectReason = () => {
     setRejectReasonModal(true);
   };
@@ -236,7 +258,9 @@ export function UserBox() {
                                     ? isCompanyAdmin
                                       ? "Company Admin"
                                       : "Hiring Manager"
-                                    : userDetail?.role}
+                                    : userDetail?.UserroleId === "1"
+                                      ? "OpenWorX Admin"
+                                      : userDetail?.role}
                                 </div>
                               </div>
                               <div className="widget-content-right me-2">
@@ -259,7 +283,7 @@ export function UserBox() {
                         height:
                           Number(localStorage.getItem("userroleid")) === 1
                             ? "100px"
-                            : "150px",
+                            : "210px",
                       }}
                     >
                       <PerfectScrollbar>
@@ -302,6 +326,17 @@ export function UserBox() {
                               />
                             </NavLink>
                           </NavItem>
+                          <NavItem>
+                            <NavLink>
+                              Email Notifications
+                              <Switch
+                                onChange={() => toggleEmailNotification(!isEmailToggleOn)}
+                                checked={isEmailToggleOn}
+                                className="m-1 ms-auto ml-auto"
+                                id="normal-switch-email"
+                              />
+                            </NavLink>
+                          </NavItem>
                         </Nav>
                       </PerfectScrollbar>
                     </div>
@@ -319,7 +354,9 @@ export function UserBox() {
                     ? isCompanyAdmin
                       ? "Company Admin"
                       : "Hiring Manager"
-                    : userDetail?.role}
+                    : userDetail?.UserroleId === "1"
+                      ? "OpenWorX Admin"
+                      : userDetail?.role}
                 </div>
               </div>
             </div>

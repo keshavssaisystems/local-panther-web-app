@@ -43,7 +43,7 @@ export function EmployerRegistration() {
   const [showEmailOtp, setEmailForm] = useState(false);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [saveOTP, setSaveOTP] = useState([]);
-
+  const [csError, setCSError] = useState(false);
   const [otp, setOtp] = useState({
     mobile: "",
     email: "",
@@ -134,19 +134,25 @@ export function EmployerRegistration() {
   );
 
   const loadOptions = async function (inputValue) {
-    const { data = [] } = await postCompanySearch(inputValue);
-    if (data.companyDetailsList.length > 0) {
-      let filter_data = data.companyDetailsList.map((data) => {
-        return {
-          value: data.companyid,
-          label: data.companyname,
-          email: data.contactemail,
-        };
-      });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (emailRegex.test(inputValue)) {
+      setCSError(false);
+      const { data = [] } = await postCompanySearch(inputValue);
+      if (data.companyDetailsList.length > 0) {
+        let filter_data = data.companyDetailsList.map((data) => {
+          return {
+            value: data.companyid,
+            label: data.companyname,
+            email: data.contactemail,
+          };
+        });
 
-      return filter_data;
+        return filter_data;
+      } else {
+        return [];
+      }
     } else {
-      return [];
+      setCSError(true);
     }
   };
   const onCompanySelected = (evt) => {
@@ -239,6 +245,44 @@ export function EmployerRegistration() {
     );
 
     if (res.payload) {
+      if (
+        localStorage.getItem("referralLogdata") &&
+        JSON.parse(localStorage.getItem("referralLogdata"))?.companyid
+      ) {
+        let logData = JSON.parse(localStorage.getItem("referralLogdata"));
+        const userAgent = navigator.userAgent;
+        let os = "Unknown OS";
+
+        if (userAgent.indexOf("Win") != -1) os = "Windows";
+        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
+        if (userAgent.indexOf("X11") != -1) os = "UNIX";
+        if (userAgent.indexOf("Linux") != -1) os = "Linux";
+        if (userAgent.indexOf("Android") != -1) os = "Android";
+        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
+        let payload = {
+          referralLogUrl: window.location.href,
+          companyName: logData?.companyName,
+          // companyid: 0,
+          osversion: "string",
+          ipaddress: localStorage.getItem("publicip")
+            ? localStorage.getItem("publicip")
+            : "Web",
+          loginsource: "Web",
+          logindeviceid: os,
+          logindevice: os,
+          currentUserId: localStorage.getItem("userId")
+            ? Number(localStorage.getItem("userId"))
+            : 0,
+        };
+        console.log(payload);
+        dispatch(
+          authActions.putCompanyReferralLogs({
+            id: logData?.companyreferrallogid,
+            payload,
+          })
+        );
+        localStorage.removeItem("referralLogdata");
+      }
       //need to redirect
     } else {
       showSweetAlert({
@@ -380,7 +424,14 @@ export function EmployerRegistration() {
               allowCreateWhileLoading={true}
               formatCreateLabel={formatCreateLabel}
               onCreateOption={addNewCompany}
+              className={csError ? "comp-search-reg-error " : "comp-search-reg"}
+              classNamePrefix="react-select"
             />
+            {csError && (
+              <div style={{ color: "red" }}>
+                Please enter valid domain name for company search
+              </div>
+            )}
           </FormGroup>
         </Col>
       </Row>

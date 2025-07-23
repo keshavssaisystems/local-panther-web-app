@@ -1,0 +1,85 @@
+.host-prev-cont {
+  .div-title {
+    color: #2f2e2e;
+    font-weight: 400;
+    font-size: 32px;
+    padding: 8px 0px;
+  }
+  .cand-details {
+    color: #2f2e2e;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 4px 0px;
+  }
+  .atten-div {
+    font-weight: 700;
+
+    font-size: 16px;
+    padding: 4px 0px;
+  }
+
+  .btn-div {
+    text-align: center;
+    padding-top: 16px;
+  }
+
+  .waiting-pill {
+    background-color: #fef3c7;
+    color: #b45309;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 4px 8px;
+    width: max-content;
+  }
+
+  .joined-pill {
+    background-color: #d1fae5;
+    color: #14bd66;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 4px 8px;
+    width: max-content;
+  }
+
+  .deny-pill {
+    background-color: #fee2e2;
+    color: #ff406d;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 4px 8px;
+    width: max-content;
+  }
+
+  .badge {
+    padding: 8px 8px;
+    margin-right: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  .part-name {
+    color: #2f2e2e;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .part-mail {
+    color: #979797;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  .att-list {
+    margin: 4px 0px;
+    padding: 0px;
+  }
+
+  .att-list-li {
+    border-top: 1px solid #cbd5e1;
+    padding: 6px 0px;
+  }
+}

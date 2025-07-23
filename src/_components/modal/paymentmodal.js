@@ -27,6 +27,7 @@ export const PaymentModal = (props) => {
           isAdmin={true}
           selectedCustomer={props.selectedCustomer}
           onClose={() => props.onClose()}
+          userId={props?.userId}
         ></PaymentDetails>
       </ModalBody>
       {/* <ModalFooter>

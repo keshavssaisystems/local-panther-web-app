@@ -4,8 +4,11 @@ import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { authActions } from "_store";
+import { authActions, scheduleInterviewActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { InterviewFeedback } from "_components/scheduleInterview/interviewFeedback";
+import { Modal, ModalBody, ModalHeader } from "reactstrap";
+
 import "../_containers/sharejob/sharejob.scss";
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
@@ -16,8 +19,11 @@ export const ZoomVideoScreen = (props) => {
     title: "",
     description: "",
   });
+
+  const [showFBModal, setShowFBModal] = useState(false);
   let urlParams = rest["*"] ? rest["*"] : "";
-  let id = urlParams.split("-").slice(0)[0];
+  let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
+
   const dispatch = useDispatch();
   let userDetails = JSON.parse(localStorage.getItem("userDetails"));
   let name = userDetails
@@ -44,6 +50,13 @@ export const ZoomVideoScreen = (props) => {
     }
   };
   useEffect(() => {
+    if (
+      localStorage.getItem("userroleid") &&
+      localStorage.getItem("userroleid") === "2"
+    ) {
+      dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+    }
+
     document.addEventListener("keydown", keyDownHandler);
     return () => {
       document.removeEventListener("keydown", keyDownHandler);
@@ -82,7 +95,14 @@ export const ZoomVideoScreen = (props) => {
   };
 
   const sessionClosed = () => {
-    navigate(`/`);
+    if (
+      localStorage.getItem("userroleid") &&
+      localStorage.getItem("userroleid") === "2"
+    ) {
+      setShowFBModal(true);
+    } else {
+      navigate(`/`);
+    }
   };
 
   const getToken = async () => {
@@ -119,7 +139,41 @@ export const ZoomVideoScreen = (props) => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
-    navigate("/");
+    routeToHome();
+  };
+  const routeToHome = () => {
+    if (
+      localStorage.getItem("userroleid") &&
+      localStorage.getItem("userroleid") === "2"
+    ) {
+      navigate("/scheduled-interview");
+    } else {
+      navigate("/");
+    }
+  };
+  const closeModal = () => {
+    setShowFBModal(false);
+  };
+
+  const postFeedbackData = async (payload) => {
+    let res = await dispatch(
+      scheduleInterviewActions.interviewFeedbackThunk({
+        scheduleinterviewid: payload.scheduleinterviewid,
+        payload,
+      })
+    );
+    if (res.payload) {
+      setShowFBModal(false);
+      navigate("/scheduled-interview");
+    } else if (res.error) {
+      setShowFBModal(false);
+      showSweetAlert({
+        title: res?.error?.message
+          ? res?.error?.message
+          : "Something went wrong, please try later!!",
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -139,6 +193,35 @@ export const ZoomVideoScreen = (props) => {
         />
         {showAlert.description}
       </>
+      {showFBModal && (
+        <>
+          {" "}
+          <Modal
+            className="personal-information"
+            size="lg"
+            isOpen={showFBModal}
+          >
+            <ModalHeader toggle={() => closeModal()} charCode="Y">
+              <strong className="card-title-text">Interview Feedback</strong>
+            </ModalHeader>
+            <ModalBody>
+              <h6>Please provide feedback for the interview.</h6>
+              <br />
+              <InterviewFeedback
+                interviewId={id}
+                postFeedbackData={(e) => {
+                  postFeedbackData(e);
+                }}
+                zoomScreen={true}
+                onCancel={() => {
+                  closeModal();
+                  routeToHome();
+                }}
+              ></InterviewFeedback>
+            </ModalBody>
+          </Modal>
+        </>
+      )}
     </>
   );
 };

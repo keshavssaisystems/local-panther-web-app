@@ -138,3 +138,8 @@
   cursor: pointer;
   color: #052f5f !important;
 }
+
+.comp-search-reg-error .react-select__control, .comp-search-reg-error .react-select__control--is-focused {
+   border-color: red !important;  
+   box-shadow: 0 0 0 1px red;
+}

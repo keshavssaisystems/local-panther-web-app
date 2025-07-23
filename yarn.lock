@@ -14479,6 +14479,13 @@ react-sparklines@^1.7.0:
   dependencies:
     prop-types "^15.5.10"
 
+react-speech-recognition@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npmjs.org/react-speech-recognition/-/react-speech-recognition-4.0.1.tgz"
+  integrity sha512-0fIqzLtfY8vuYA6AmJVK7qiabZx0oFKOO+rbiBgFI3COWVGREy0A+gdU16hWXmFebeyrI8JsOLYsWk6WaHUXRw==
+  dependencies:
+    lodash.debounce "^4.0.8"
+
 react-sticky-el@^2.0.9:
   version "2.1.0"
   resolved "https://registry.npmjs.org/react-sticky-el/-/react-sticky-el-2.1.0.tgz"

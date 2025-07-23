@@ -75,7 +75,8 @@ import { TermsAndConditions } from "_containers/static/terms";
 import { PrivacyPolicy } from "_containers/static/privacy";
 import { Support } from "_containers/static/support";
 import { Contact } from "_containers/static/contact";
-
+import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
+import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -737,12 +738,15 @@ export function App() {
        </Routes>
       </> : 
       <>
+      
         {authUser && (
-          <AppHeader
+          
+         <AppHeader
             isSidebarOpen={isSidebarOpen}
             onOpenSidebar={() => onOpenSidebar()}
             onCloseSidebar={() => onCloseSidebar()}
           />
+         
         )}
         {!authUser && hideSidebar && !isExcludedPath && (
           <AppHeader
@@ -753,11 +757,13 @@ export function App() {
           />
         )}
         <div className={authUser ? `app-main` : ""}>
+           <AIJobOffCanvas ></AIJobOffCanvas>
           {authUser && !hideSidebar && (
             <AppSidebar
               isSidebarOpen={isSidebarOpen}
               setIsSidebarOpen={setIsSidebarOpen}
             />
+            
           )}
           <div className={authUser ? `app-main__outer` : ""}>
             <div className={"app-main__inner "}>
@@ -812,13 +818,16 @@ export function App() {
                   path="/payment/:id"
                   element={<Payment authUser={authUser} />}
                 />
+                <Route path="/Unsubscribe/:token" element={<UnsubscribeEmail />} />
               </Routes>
             </div>
             {authUser && <AppFooter />}
             {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
           </div>
         </div>
+        
       </>}
+      
     </>
 
   );

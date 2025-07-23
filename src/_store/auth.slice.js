@@ -136,7 +136,7 @@ export const postCompanyReferralLogs = createAsyncThunk(
 
 export const putCompanyReferralLogs = createAsyncThunk(
   `${name}/putCompanyReferralLogs`,
-  async (id, payload) => {
+  async ({ id, payload }) => {
     const CMPREFFLOGS_END_POINT_PT =
       `${process.env.REACT_APP_MAIN_API_URL}/api/CompanyReferralLogs/Patch/` +
       id;
@@ -210,15 +210,15 @@ const authSlice = createSlice({
         decodedData.role.toLowerCase() === "admin"
           ? 1
           : decodedData.role.toLowerCase() === "employer"
-          ? 2
-          : 3
+            ? 2
+            : 3
       );
       state.userroleid =
         decodedData.role.toLowerCase() === "admin"
           ? 1
           : decodedData.role.toLowerCase() === "employer"
-          ? 2
-          : 3;
+            ? 2
+            : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
       localStorage.setItem(
         "pushnotification",
@@ -229,12 +229,12 @@ const authSlice = createSlice({
         decodedData?.role?.toLowerCase() === "candidate"
           ? ""
           : cmpLogo?.length > 0
-          ? cmpLogo
-          : companyLogo?.length > 0
-          ? companyLogo[0]?.appconfigurationvalue
-          : defLogo?.length > 0
-          ? defLogo[0]?.appconfigurationvalue
-          : ""
+            ? cmpLogo
+            : companyLogo?.length > 0
+              ? companyLogo[0]?.appconfigurationvalue
+              : defLogo?.length > 0
+                ? defLogo[0]?.appconfigurationvalue
+                : ""
       );
       if (decodedData?.UserroleId === "2") {
         localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
@@ -263,7 +263,7 @@ const authSlice = createSlice({
     [forgotPasswordThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => {},
+    [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => { },
     [forgotPasswordThunk.rejected]: (state, action) => {
       state.error = null;
     },
@@ -271,14 +271,14 @@ const authSlice = createSlice({
     [userRegisterThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => { },
     [userRegisterThunk.rejected]: (state, action) => {
       state.error = null;
     },
     [verifyOTPThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => {},
+    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => { },
     [verifyOTPThunk.rejected]: (state, action) => {
       state.error = null;
     },
@@ -286,14 +286,14 @@ const authSlice = createSlice({
     [userRegisterThunkNew.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => { },
     [userRegisterThunkNew.rejected]: (state, action) => {
       state.error = null;
     },
     [generateToken.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [generateToken.fulfilled]: (state, { payload = {} }) => {},
+    [generateToken.fulfilled]: (state, { payload = {} }) => { },
     [generateToken.rejected]: (state, action) => {
       state.error = action.error;
     },
@@ -340,15 +340,15 @@ const authSlice = createSlice({
           decodedData.role.toLowerCase() === "admin"
             ? 1
             : decodedData.role.toLowerCase() === "employer"
-            ? 2
-            : 3
+              ? 2
+              : 3
         );
         state.userroleid =
           decodedData.role.toLowerCase() === "admin"
             ? 1
             : decodedData.role.toLowerCase() === "employer"
-            ? 2
-            : 3;
+              ? 2
+              : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -359,12 +359,12 @@ const authSlice = createSlice({
           decodedData?.role?.toLowerCase() === "candidate"
             ? ""
             : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-            ? companyLogo[0]?.appconfigurationvalue
-            : defLogo?.length > 0
-            ? defLogo[0]?.appconfigurationvalue
-            : ""
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
         );
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
@@ -408,6 +408,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userroleid");
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
+      localStorage.removeItem("emailnotification");      
       localStorage.clear();
       localStorage.setItem("logo", logo);
       history.navigate("/login");
@@ -453,15 +454,15 @@ const authSlice = createSlice({
           decodedData.role.toLowerCase() === "admin"
             ? 1
             : decodedData.role.toLowerCase() === "employer"
-            ? 2
-            : 3
+              ? 2
+              : 3
         );
         state.userroleid =
           decodedData.role.toLowerCase() === "admin"
             ? 1
             : decodedData.role.toLowerCase() === "employer"
-            ? 2
-            : 3;
+              ? 2
+              : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -472,12 +473,12 @@ const authSlice = createSlice({
           decodedData?.role?.toLowerCase() === "candidate"
             ? ""
             : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-            ? companyLogo[0]?.appconfigurationvalue
-            : defLogo?.length > 0
-            ? defLogo[0]?.appconfigurationvalue
-            : ""
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
         );
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
@@ -526,15 +527,15 @@ const authSlice = createSlice({
           decodedData.role.toLowerCase() === "admin"
             ? 1
             : decodedData.role.toLowerCase() === "employer"
-            ? 2
-            : 3
+              ? 2
+              : 3
         );
         state.userroleid =
           decodedData.role.toLowerCase() === "admin"
             ? 1
             : decodedData.role.toLowerCase() === "employer"
-            ? 2
-            : 3;
+              ? 2
+              : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -545,14 +546,17 @@ const authSlice = createSlice({
           decodedData?.role?.toLowerCase() === "candidate"
             ? ""
             : cmpLogo?.length > 0
-            ? cmpLogo
-            : companyLogo?.length > 0
-            ? companyLogo[0]?.appconfigurationvalue
-            : defLogo?.length > 0
-            ? defLogo[0]?.appconfigurationvalue
-            : ""
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
         );
-
+        localStorage.setItem(
+          "emailnotification",
+          decodedData?.Emailnotification?.toLowerCase() === "true"
+        );
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },
@@ -564,12 +568,12 @@ const authSlice = createSlice({
     [candRegisterOTPThunk.rejected]: (state, action) => {
       // do nothing
     },
-    [postCompanyReferralLogs.pending]: (state, { payload }) => {},
-    [postCompanyReferralLogs.fulfilled]: (state, { payload }) => {},
-    [postCompanyReferralLogs.rejected]: (state, action) => {},
-    [putCompanyReferralLogs.pending]: (state, { payload }) => {},
-    [putCompanyReferralLogs.fulfilled]: (state, { payload }) => {},
-    [putCompanyReferralLogs.rejected]: (state, action) => {},
+    [postCompanyReferralLogs.pending]: (state, { payload }) => { },
+    [postCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
+    [postCompanyReferralLogs.rejected]: (state, action) => { },
+    [putCompanyReferralLogs.pending]: (state, { payload }) => { },
+    [putCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
+    [putCompanyReferralLogs.rejected]: (state, action) => { },
   },
 });
 

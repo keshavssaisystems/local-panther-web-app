@@ -40,6 +40,7 @@ export const getSendTimezoneBeckendThunk = createAsyncThunk(
   async () => {
     let UserID = localStorage.getItem("userId");
     let SystemTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(SystemTimezone);
     const DASHBOARD_TIMEZONE_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/UserTimezone/${UserID}?timeZone=${SystemTimezone}`;
     return await fetchWrapper.put(DASHBOARD_TIMEZONE_END_POINT);
   }
