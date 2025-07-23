@@ -180,7 +180,6 @@ export function VideoInterviewDetails({
 
   const generatePDF = async (event) => {
     const element = document.getElementById("sq-pdf-content");
-
     if (element) {
       const pdfOptions = {
         margin: 10,
@@ -188,11 +187,10 @@ export function VideoInterviewDetails({
           scale: 1.2,
           useCORS: true,
         },
-        filename: interviewDetails.candidatename + " inetrviewquestions",
+        filename: interviewDetails.jobtitle + " interview-questions",
         image: { type: "jpeg", quality: 0.98 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
-
       html2pdf().from(element).set(pdfOptions).save();
     }
   };

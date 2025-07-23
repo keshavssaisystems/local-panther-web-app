@@ -5,12 +5,20 @@ import { useDispatch } from "react-redux";
 import { authActions, scheduleInterviewActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 
-import { database } from "../../firebase/index";
+// import { database } from "../../firebase/index";
 import { customerCandidateListsActions } from "_store";
 import "firebase/database";
 import { getTimezoneDateTime } from "_helpers/helper";
 import moment from "moment-timezone";
-import { Button, Row, Badge, Card } from "reactstrap";
+import {
+  Button,
+  Row,
+  Badge,
+  Card,
+  List,
+  ListInlineItem,
+  Col,
+} from "reactstrap";
 import DataTable from "react-data-table-component";
 import { NoDataFound } from "_components/common/nodatafound";
 import half from "../../assets/utils/images/zoom/hourglass-half.svg";
@@ -26,6 +34,7 @@ export const HostPreview = ({
   urlParams,
   usersData,
   hostStartMeeting,
+  database,
 }) => {
   const [interViewData, setInterViewData] = useState([]);
 
@@ -47,17 +56,18 @@ export const HostPreview = ({
   }, [interviewId]);
 
   const handleAllow = (index) => {
-    let users = usersData.map((item) => ({ ...item }));
-    users[index].status = true;
+    let users = [...fbUsersData];
+    users[index].isAllowed = true;
     users[index].isDenied = false;
-    setUsersData(users);
+    database.ref("users/" + urlParams).update(users);
   };
 
   const handleDeny = (index) => {
-    let users = usersData.map((item) => ({ ...item }));
-    users[index].status = false;
+    let users = [...fbUsersData];
+    users[index].isAllowed = false;
     users[index].isDenied = true;
-    setUsersData(users);
+    users[index].isJoined = false;
+    database.ref("users/" + urlParams).update(users);
   };
 
   const showSweetAlert = ({ title, type }) => {
@@ -106,8 +116,8 @@ export const HostPreview = ({
           return {
             name: d,
             email: d,
-            status: false,
-            isMeetingStarted: false,
+            isAllowed: false,
+            isJoined: false,
             isDenied: false,
           };
         });
@@ -117,8 +127,8 @@ export const HostPreview = ({
         let user = {
           name: res?.payload?.data?.scheduledInterviewList[0]?.candidatename,
           email: res?.payload?.data?.scheduledInterviewList[0]?.candidateemail,
-          status: false,
-          isMeetingStarted: false,
+          isAllowed: false,
+          isJoined: false,
           isDenied: false,
         };
 
@@ -127,7 +137,7 @@ export const HostPreview = ({
         let userFBData = [...fbUsersData];
         if (userFBData.length > 0) {
           const updatedArray = cand.map((obj) => {
-            const update = userFBData.find((u) => u.id === obj.id);
+            const update = userFBData.find((u) => u.email === obj.email);
             return update ? { ...obj, ...update } : obj;
           });
           database.ref("users/" + urlParams).update(updatedArray);
@@ -166,7 +176,7 @@ export const HostPreview = ({
       name: <span className="table-title">Status</span>,
       cell: (row, index) => (
         <span className="table-cell" title={row.status}>
-          {fbUsersData?.length > 0 &&
+          {/* {fbUsersData?.length > 0 &&
           fbUsersData[index]?.status === false &&
           fbUsersData[index]?.isMeetingStarted === false &&
           row.isDenied === false ? (
@@ -187,123 +197,194 @@ export const HostPreview = ({
               <img src={cross} height={14} width={14} alt="deny img"></img>{" "}
               Denied
             </div>
-          )}
+          )} */}
         </span>
       ),
     },
 
     {
       name: <span className="table-title">Action</span>,
-      cell: (row, index) => (
-        <span className="table-cell">
-          {row.isDenied === false && row.status === false ? (
-            <>
-              <Badge
-                onClick={() => {
-                  handleDeny(index);
-                }}
-                className="badge"
-                color="danger"
-              >
-                Deny
-              </Badge>
-              <Badge
-                onClick={() => {
-                  handleAllow(index);
-                }}
-                className="badge"
-                color="success"
-              >
-                Allow
-              </Badge>
-            </>
-          ) : row.status === true && row.isDenied === false ? (
-            <>
-              <Badge
-                onClick={() => {
-                  handleDeny(index);
-                }}
-                className="badge"
-                color="danger"
-              >
-                Deny
-              </Badge>
-            </>
-          ) : (
-            <>
-              <Badge
-                onClick={() => {
-                  handleAllow(index);
-                }}
-                className="badge"
-                color="success"
-              >
-                Allow
-              </Badge>
-            </>
-          )}
-        </span>
-      ),
+      cell: (row, index) => <span className="table-cell"></span>,
     },
   ];
 
   return (
     <div className="host-prev-cont">
-      <Card style={{ padding: "32px", borderRadius: "8px" }}>
-        <div className="div-title">Interview Call Management</div>
-        <div className="cand-details">
-          Candidate Interview:{" "}
-          {interViewData?.jobtitle ? interViewData?.jobtitle + " | " : ""}
-          {interViewData?.scheduledate
-            ? getTimezoneDateTime(interViewData.scheduledate, "MMM DD, YYYY") +
-              " | "
-            : ""}
-          {interViewData.starttime
-            ? getTimezoneDateTime(
-                moment(
-                  interViewData.scheduledate.slice(0, 11) +
-                    interViewData.starttime
-                ).format("YYYY-MM-DD HH:mm:ss"),
-                "h:mm A"
-              )
-            : ""}
-        </div>
-        <div className="atten-div">Attendies List</div>
-        <hr style={{ margin: "0px" }} />
-        <div>
-          <>
-            {usersData.length > 0 ? (
-              <DataTable
-                columns={columns}
-                data={usersData}
-                fixedHeader
-                className="admin-list-view"
-              />
-            ) : (
-              <Row className="center-align ">
-                <NoDataFound></NoDataFound>
-              </Row>
-            )}
-          </>
-        </div>
-        <div className="btn-div">
-          <Button
-            className="ps-4  pe-4 pt-2 pb-2"
-            style={{ width: "25%" }}
-            color="primary"
-            onClick={() => hostStartMeeting()}
-          >
-            <img
-              className="me-2"
-              src={camera}
-              height={20}
-              width={12}
-              alt="camera img"
-            ></img>{" "}
-            Start/Join Meeting
-          </Button>
-        </div>
-      </Card>
+      <div className="atten-div">In Meeting</div>
+
+      <div>
+        <>
+          {fbUsersData.length > 0 ? (
+            <List className="att-list">
+              {fbUsersData.map((row, index) => (
+                <>
+                  {row.isJoined && (
+                    <ListInlineItem
+                      className="att-list-li"
+                      style={{ width: "100%" }}
+                    >
+                      <Row>
+                        <Col md={5}>
+                          <div className="part-name">{row.name}</div>
+                          <div className="part-mail">{row.email}</div>
+                        </Col>
+                        <Col style={{ position: "relative" }} md={3}>
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                            }}
+                          >
+                            <>
+                              {row.isJoined &&
+                                !row.isAllowed &&
+                                !row.isDenied && (
+                                  <div className="waiting-pill">
+                                    <img
+                                      src={half}
+                                      height={14}
+                                      width={14}
+                                      alt="waiting img"
+                                    ></img>{" "}
+                                    Waiting
+                                  </div>
+                                )}
+                            </>
+                            <>
+                              {row.isJoined && row.isAllowed && (
+                                <div className="joined-pill">
+                                  <img
+                                    src={check}
+                                    height={14}
+                                    width={14}
+                                    alt="joined img"
+                                  ></img>{" "}
+                                  Joined
+                                </div>
+                              )}
+                            </>
+                            <>
+                              {row.isJoined && row.isDenied && (
+                                <div className="deny-pill">
+                                  <img
+                                    src={cross}
+                                    height={14}
+                                    width={14}
+                                    alt="deny img"
+                                  ></img>{" "}
+                                  Denied
+                                </div>
+                              )}
+                            </>
+                          </div>
+                        </Col>
+                        <Col md={4} style={{ position: "relative" }}>
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: "max-content",
+                            }}
+                          >
+                            {row.isDenied === false &&
+                            row.isAllowed === false ? (
+                              <>
+                                <Badge
+                                  onClick={() => {
+                                    handleDeny(index);
+                                  }}
+                                  className="badge"
+                                  color="danger"
+                                >
+                                  Deny
+                                </Badge>
+                                <Badge
+                                  onClick={() => {
+                                    handleAllow(index);
+                                  }}
+                                  className="badge"
+                                  color="success"
+                                >
+                                  Allow
+                                </Badge>
+                              </>
+                            ) : row.isAllowed === true &&
+                              row.isDenied === false ? (
+                              <>
+                                <Badge
+                                  onClick={() => {
+                                    handleDeny(index);
+                                  }}
+                                  className="badge"
+                                  color="danger"
+                                >
+                                  Deny
+                                </Badge>
+                              </>
+                            ) : (
+                              <>
+                                <Badge
+                                  onClick={() => {
+                                    handleAllow(index);
+                                  }}
+                                  className="badge"
+                                  color="success"
+                                >
+                                  Allow
+                                </Badge>
+                              </>
+                            )}
+                          </div>
+                        </Col>
+                      </Row>
+                    </ListInlineItem>
+                  )}
+                </>
+              ))}
+            </List>
+          ) : (
+            <Row className="center-align ">
+              <NoDataFound></NoDataFound>
+            </Row>
+          )}
+        </>
+      </div>
+      <div className="atten-div">Not Joined</div>
+      <div>
+        <>
+          {fbUsersData.length > 0 ? (
+            <List className="att-list">
+              {fbUsersData.map((row, index) => (
+                <>
+                  {!row.isJoined && (
+                    <ListInlineItem
+                      className="att-list-li"
+                      style={{ width: "100%" }}
+                    >
+                      <Row>
+                        <Col md={5}>
+                          <div className="part-name">{row.name}</div>
+                          <div className="part-mail">{row.email}</div>
+                        </Col>
+                        <Col style={{ position: "relative" }} md={3}></Col>
+                        <Col md={4} style={{ position: "relative" }}></Col>
+                      </Row>
+                    </ListInlineItem>
+                  )}
+                </>
+              ))}
+            </List>
+          ) : (
+            <Row className="center-align ">
+              <NoDataFound></NoDataFound>
+            </Row>
+          )}
+        </>
+      </div>
     </div>
   );
 };
