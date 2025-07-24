@@ -505,8 +505,9 @@ export const ZoomVideoScreen = (props) => {
           show={showAlert.show}
           type={showAlert.type}
           onConfirm={() => closeSweetAlert()}
-        />
-        {showAlert.description}
+        >
+          {showAlert.description}
+        </SweetAlert>
       </>
       {showFBModal && (
         <>
