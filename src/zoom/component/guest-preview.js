@@ -135,7 +135,7 @@ export const GuestPreview = (props) => {
                     type="text"
                     name="fullname"
                     id="name"
-                    placeholder="Enter your name"
+                    placeholder="Enter your full name"
                     {...register("name")}
                     className={` form-control ${
                       errors.name ? "is-invalid error-text" : "input-text"
@@ -151,7 +151,7 @@ export const GuestPreview = (props) => {
                   </Label>
 
                   <input
-                    placeholder="Enter password"
+                    placeholder="Enter your email"
                     name="email"
                     type={"text"}
                     id="email"

@@ -70,7 +70,7 @@ export const HostPreview = ({
     });
     users[index].isAllowed = false;
     users[index].isDenied = true;
-    users[index].isJoined = false;
+    // users[index].isJoined = false;
     database.ref("users/" + urlParams).update(users);
   };
 
