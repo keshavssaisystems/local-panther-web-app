@@ -174,6 +174,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userroleid");
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
+      localStorage.removeItem("emailnotification");
       localStorage.clear();
       localStorage.setItem("logo", logo);
       history.navigate("/login");
@@ -239,6 +240,7 @@ const authSlice = createSlice({
       if (decodedData?.UserroleId === "2") {
         localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
       }
+      localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
       // get return url from location state or default to home page
       const { from } = history.location.state || {
         from: { pathname: "/" },
@@ -369,6 +371,7 @@ const authSlice = createSlice({
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },
@@ -408,7 +411,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userroleid");
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
-      localStorage.removeItem("emailnotification");      
+      localStorage.removeItem("emailnotification");
       localStorage.clear();
       localStorage.setItem("logo", logo);
       history.navigate("/login");
@@ -483,6 +486,7 @@ const authSlice = createSlice({
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },
@@ -553,10 +557,7 @@ const authSlice = createSlice({
                   ? defLogo[0]?.appconfigurationvalue
                   : ""
         );
-        localStorage.setItem(
-          "emailnotification",
-          decodedData?.Emailnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         // get return url from location state or default to home page
         const { from } = history.location.state || {
           from: { pathname: "/" },
