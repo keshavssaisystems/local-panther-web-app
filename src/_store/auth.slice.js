@@ -108,6 +108,42 @@ export const postAddAuditLogs = createAsyncThunk(
   }
 );
 
+// login thunk
+export const loginWithOTP = createAsyncThunk(
+  `${name}/loginWithOTP`,
+  async (payload) => {
+    const LOGIN_OTP_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Auth/OTPLogin`;
+    return await fetchWrapper.post(LOGIN_OTP_END_POINT, payload);
+  }
+);
+
+// cand registration using otp thunk
+export const candRegisterOTPThunk = createAsyncThunk(
+  `${name}/candRegisterOTPThunk`,
+  async (payload) => {
+    const REGISTRATION_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/User/RegisterCandidate`;
+    return await fetchWrapper.post(REGISTRATION_END_POINT, payload);
+  }
+);
+
+export const postCompanyReferralLogs = createAsyncThunk(
+  `${name}/postCompanyReferralLogs`,
+  async (payload) => {
+    const CMPREFFLOGS_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/CompanyReferralLogs`;
+    return await fetchWrapper.post(CMPREFFLOGS_END_POINT, payload);
+  }
+);
+
+export const putCompanyReferralLogs = createAsyncThunk(
+  `${name}/putCompanyReferralLogs`,
+  async ({ id, payload }) => {
+    const CMPREFFLOGS_END_POINT_PT =
+      `${process.env.REACT_APP_MAIN_API_URL}/api/CompanyReferralLogs/Patch/` +
+      id;
+    return await fetchWrapper.put(CMPREFFLOGS_END_POINT_PT, payload);
+  }
+);
+
 // Create the slice
 const authSlice = createSlice({
   name,
@@ -174,15 +210,15 @@ const authSlice = createSlice({
         decodedData.role.toLowerCase() === "admin"
           ? 1
           : decodedData.role.toLowerCase() === "employer"
-          ? 2
-          : 3
+            ? 2
+            : 3
       );
       state.userroleid =
         decodedData.role.toLowerCase() === "admin"
           ? 1
           : decodedData.role.toLowerCase() === "employer"
-          ? 2
-          : 3;
+            ? 2
+            : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
       localStorage.setItem(
         "pushnotification",
@@ -193,14 +229,16 @@ const authSlice = createSlice({
         decodedData?.role?.toLowerCase() === "candidate"
           ? ""
           : cmpLogo?.length > 0
-          ? cmpLogo
-          : companyLogo?.length > 0
-          ? companyLogo[0]?.appconfigurationvalue
-          : defLogo?.length > 0
-          ? defLogo[0]?.appconfigurationvalue
-          : ""
+            ? cmpLogo
+            : companyLogo?.length > 0
+              ? companyLogo[0]?.appconfigurationvalue
+              : defLogo?.length > 0
+                ? defLogo[0]?.appconfigurationvalue
+                : ""
       );
-
+      if (decodedData?.UserroleId === "2") {
+        localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
+      }
       // get return url from location state or default to home page
       const { from } = history.location.state || {
         from: { pathname: "/" },
@@ -225,7 +263,7 @@ const authSlice = createSlice({
     [forgotPasswordThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => {},
+    [forgotPasswordThunk.fulfilled]: (state, { payload = {} }) => { },
     [forgotPasswordThunk.rejected]: (state, action) => {
       state.error = null;
     },
@@ -233,14 +271,14 @@ const authSlice = createSlice({
     [userRegisterThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunk.fulfilled]: (state, { payload = {} }) => { },
     [userRegisterThunk.rejected]: (state, action) => {
       state.error = null;
     },
     [verifyOTPThunk.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => {},
+    [verifyOTPThunk.fulfilled]: (state, { payload = {} }) => { },
     [verifyOTPThunk.rejected]: (state, action) => {
       state.error = null;
     },
@@ -248,14 +286,14 @@ const authSlice = createSlice({
     [userRegisterThunkNew.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => {},
+    [userRegisterThunkNew.fulfilled]: (state, { payload = {} }) => { },
     [userRegisterThunkNew.rejected]: (state, action) => {
       state.error = null;
     },
     [generateToken.pending]: (state, { payload }) => {
       state.error = null;
     },
-    [generateToken.fulfilled]: (state, { payload = {} }) => {},
+    [generateToken.fulfilled]: (state, { payload = {} }) => { },
     [generateToken.rejected]: (state, action) => {
       state.error = action.error;
     },
@@ -275,6 +313,69 @@ const authSlice = createSlice({
     [putRegisterCustomer.fulfilled]: (state, { payload = {} }) => {
       localStorage.setItem("iscustomerreg", payload?.data?.customerid);
       state.error = null;
+
+      if (payload?.data?.token) {
+        let data = payload.data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        state.menuList = menuDtoList;
+        state.user = data;
+        state.token = token;
+        let companyLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "CompanyLogo";
+        });
+        let defLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "DefaultLogo";
+        });
+        let cmpLogo =
+          data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+        localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
+        localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        const decodedData = jwtDecode(token);
+        localStorage.setItem("userId", decodedData.UserId);
+        localStorage.setItem("profileImage", decodedData.Profilephotopath);
+        localStorage.setItem("userLoginInfoId", userLoginInfoId);
+        localStorage.setItem(
+          "userroleid",
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+              ? 2
+              : 3
+        );
+        state.userroleid =
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+              ? 2
+              : 3;
+        localStorage.setItem("userDetails", JSON.stringify(decodedData));
+        localStorage.setItem(
+          "pushnotification",
+          decodedData?.Pushnotification?.toLowerCase() === "true"
+        );
+        localStorage.setItem(
+          "logo",
+          decodedData?.role?.toLowerCase() === "candidate"
+            ? ""
+            : cmpLogo?.length > 0
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
+        );
+        if (decodedData?.UserroleId === "2") {
+          localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
+        }
+        // get return url from location state or default to home page
+        const { from } = history.location.state || {
+          from: { pathname: "/" },
+        };
+        state.loader = false;
+        history.navigate(from);
+      }
     },
     [putRegisterCustomer.rejected]: (state, action) => {
       state.error = action.error;
@@ -307,6 +408,7 @@ const authSlice = createSlice({
       localStorage.removeItem("userroleid");
       localStorage.removeItem("pushnotification");
       localStorage.removeItem("userLoginInfoId");
+      localStorage.removeItem("emailnotification");      
       localStorage.clear();
       localStorage.setItem("logo", logo);
       history.navigate("/login");
@@ -323,6 +425,155 @@ const authSlice = createSlice({
     [postAddAuditLogs.rejected]: (state, action) => {
       // do nothing
     },
+    [loginWithOTP.pending]: (state, { payload }) => {
+      // do nothing
+    },
+    [loginWithOTP.fulfilled]: (state, { payload: { data = {} } = {} }) => {
+      if (data?.token) {
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        state.menuList = menuDtoList;
+        state.user = data;
+        state.token = token;
+        let companyLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "CompanyLogo";
+        });
+        let defLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "DefaultLogo";
+        });
+        let cmpLogo =
+          data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+        localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
+        localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        const decodedData = jwtDecode(token);
+        localStorage.setItem("userId", decodedData.UserId);
+        localStorage.setItem("profileImage", decodedData.Profilephotopath);
+        localStorage.setItem("userLoginInfoId", userLoginInfoId);
+        localStorage.setItem(
+          "userroleid",
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+              ? 2
+              : 3
+        );
+        state.userroleid =
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+              ? 2
+              : 3;
+        localStorage.setItem("userDetails", JSON.stringify(decodedData));
+        localStorage.setItem(
+          "pushnotification",
+          decodedData?.Pushnotification?.toLowerCase() === "true"
+        );
+        localStorage.setItem(
+          "logo",
+          decodedData?.role?.toLowerCase() === "candidate"
+            ? ""
+            : cmpLogo?.length > 0
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
+        );
+        if (decodedData?.UserroleId === "2") {
+          localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
+        }
+        // get return url from location state or default to home page
+        const { from } = history.location.state || {
+          from: { pathname: "/" },
+        };
+        state.loader = false;
+        history.navigate(from);
+      }
+    },
+    [loginWithOTP.rejected]: (state, action) => {
+      // do nothing
+    },
+
+    [candRegisterOTPThunk.pending]: (state, { payload }) => {
+      // do nothing
+    },
+    [candRegisterOTPThunk.fulfilled]: (
+      state,
+      { payload: { data = {} } = {} }
+    ) => {
+      if (data?.token) {
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        state.menuList = menuDtoList;
+        state.user = data;
+        state.token = token;
+        let companyLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "CompanyLogo";
+        });
+        let defLogo = data.appConfigurationDtoList.filter((d) => {
+          return d?.appconfigurationkey === "DefaultLogo";
+        });
+        let cmpLogo =
+          data?.companyList?.length > 0 ? data.companyList[0].logourl : "";
+        localStorage.setItem("menuList", JSON.stringify(menuDtoList)); // temp fix
+        localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        const decodedData = jwtDecode(token);
+        localStorage.setItem("userId", decodedData.UserId);
+        localStorage.setItem("profileImage", decodedData.Profilephotopath);
+        localStorage.setItem("userLoginInfoId", userLoginInfoId);
+        localStorage.setItem(
+          "userroleid",
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+              ? 2
+              : 3
+        );
+        state.userroleid =
+          decodedData.role.toLowerCase() === "admin"
+            ? 1
+            : decodedData.role.toLowerCase() === "employer"
+              ? 2
+              : 3;
+        localStorage.setItem("userDetails", JSON.stringify(decodedData));
+        localStorage.setItem(
+          "pushnotification",
+          decodedData?.Pushnotification?.toLowerCase() === "true"
+        );
+        localStorage.setItem(
+          "logo",
+          decodedData?.role?.toLowerCase() === "candidate"
+            ? ""
+            : cmpLogo?.length > 0
+              ? cmpLogo
+              : companyLogo?.length > 0
+                ? companyLogo[0]?.appconfigurationvalue
+                : defLogo?.length > 0
+                  ? defLogo[0]?.appconfigurationvalue
+                  : ""
+        );
+        localStorage.setItem(
+          "emailnotification",
+          decodedData?.Emailnotification?.toLowerCase() === "true"
+        );
+        // get return url from location state or default to home page
+        const { from } = history.location.state || {
+          from: { pathname: "/" },
+        };
+        state.loader = false;
+        history.navigate(from);
+      }
+    },
+    [candRegisterOTPThunk.rejected]: (state, action) => {
+      // do nothing
+    },
+    [postCompanyReferralLogs.pending]: (state, { payload }) => { },
+    [postCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
+    [postCompanyReferralLogs.rejected]: (state, action) => { },
+    [putCompanyReferralLogs.pending]: (state, { payload }) => { },
+    [putCompanyReferralLogs.fulfilled]: (state, { payload }) => { },
+    [putCompanyReferralLogs.rejected]: (state, action) => { },
   },
 });
 
@@ -341,6 +592,10 @@ export const authActions = {
   logoutThunk,
   putRegisterCustomer,
   postAddAuditLogs,
+  loginWithOTP,
+  candRegisterOTPThunk,
+  postCompanyReferralLogs,
+  putCompanyReferralLogs,
 };
 
 export const authReducer = authSlice.reducer;

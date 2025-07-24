@@ -296,13 +296,13 @@ export function CandCardView({
 
                     <Button
                       outline
-                      title="Reject"
+                      title="Decline"
                       className="btn-icon mb-1"
                       color="primary"
                       onClick={() => setRejectReasonModal(true)}
                       size="sm"
                     >
-                      Reject <BsXCircle></BsXCircle>
+                      Decline <BsXCircle></BsXCircle>
                     </Button>
 
                     <Button

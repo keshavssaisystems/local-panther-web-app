@@ -13,7 +13,7 @@ import { Col, Row, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import logo from "../../assets/utils/images/panther-logo-2.png";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./forgotpassword.scss";
-import { history } from "_helpers";
+
 import { analytics } from "../../firebase/index";
 
 export function ResetPassword() {
@@ -64,7 +64,7 @@ export function ResetPassword() {
             <div className="">
               <Slider {...sliderSettings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
+                  {/* <div
                     className="slide-img-bg"
                     style={{
                       backgroundImage: "url(" + loginBgImg + ")",
@@ -76,7 +76,7 @@ export function ResetPassword() {
                       What makes The OpenWorX community the ideal career
                       partner? We focus on what you want most from your career!
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Slider>
             </div>
@@ -169,7 +169,7 @@ export function ResetPassword() {
                   </div>
                 </Form>
               </div>
-              <div className="text-center mt-5">
+              <div className="text-center mt-5 pb-text">
                 Powered by <br />
                 <img
                   src={footerImg}

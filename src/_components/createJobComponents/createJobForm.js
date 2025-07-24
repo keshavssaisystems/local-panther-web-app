@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef } from "react";
+import React, { useEffect, useState, forwardRef, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -13,18 +13,49 @@ import {
   Col,
   FormText,
 } from "reactstrap";
-import { CKEditor } from "ckeditor4-react";
+// import { CKEditor } from "ckeditor4-react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
 import "./createJob.scss";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import InputMask from "react-input-mask";
 import { useSelector, useDispatch } from "react-redux";
-import { getLocation, getSkillsFilter } from "_store";
+import {
+  getLocation,
+  getSkillsFilter,
+  addLevelOfEducation,
+  educationActions,
+  studyFieldActions,
+  addFieldOfStudy,
+  dropdownActions,
+} from "_store";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
 import { BsPlusSquare } from "react-icons/bs";
 import { locationActions } from "_store";
+import debounce from "lodash/debounce";
 
+import {
+  ClassicEditor,
+  Essentials,
+  Paragraph,
+  Bold,
+  Italic,
+  ToolbarView,
+  Heading,
+  Underline,
+  Strikethrough,
+  Link,
+  BlockQuote,
+  Undo,
+  Alignment,
+} from "ckeditor5";
+
+// import { FormatPainter } from "ckeditor5-premium-features";
+
+import "ckeditor5/ckeditor5.css";
+import "ckeditor5-premium-features/ckeditor5-premium-features.css";
+import CreatableSelect from "react-select/creatable";
 export const CreateJob = forwardRef(
   (
     {
@@ -60,7 +91,7 @@ export const CreateJob = forwardRef(
       const state = prevState.map((x, index) => (tab === index ? !x : false));
       setAccordion(state);
     };
-    console.log(customerDetails);
+
     useEffect((e) => {
       if (type === "new_template" && previousStep !== 3) {
         setZipcodeCityState({
@@ -69,7 +100,6 @@ export const CreateJob = forwardRef(
         });
       }
       if (type === "previous_template" || type === "recommendation_template") {
-        console.log(previousData);
         let data = {
           basicInformation: {
             companyId: previousData?.companyname,
@@ -95,7 +125,14 @@ export const CreateJob = forwardRef(
             issecurityclearancerequired:
               previousData?.issecurityclearancerequired,
             securityclearanceid: previousData?.securityclearanceid,
+            // isdraft:
+            //   type === "previous_template" ? previousData?.isdraft : true,
+            // isdraft:
+            //   previousData?.isdraft !== undefined
+            //     ? previousData?.isdraft
+            //     : true,
           },
+
           experienceSchedule: {
             jobType:
               previousData?.jobExperienceScheduleDtos === null ||
@@ -165,6 +202,7 @@ export const CreateJob = forwardRef(
               ? {}
               : previousData?.jobPrescreenApplicationDtos,
         };
+
         JobDataForPreview(data);
         setZipcodeCityState({
           value:
@@ -197,6 +235,7 @@ export const CreateJob = forwardRef(
     const levelOfEducationOption = useSelector(
       (state) => state.dropdown.levelOfEducationList
     );
+
     const subsidiaryOption = useSelector(
       (state) => state.dropdown.subsidiaryList
     );
@@ -228,6 +267,8 @@ export const CreateJob = forwardRef(
       }
     );
     const [stateData, setStateData] = useState({});
+    const [mustHaveSkills, setMustHaveSkills] = useState([]);
+    const [niceToHaveSkills, setNiceToHaveSkills] = useState([]);
     const customStyles = {
       valueContainer: (provided, state) => ({
         ...provided,
@@ -289,14 +330,15 @@ export const CreateJob = forwardRef(
         ? getCertificationData(jobData.basicInformation)
         : getCertificationData(previousData);
 
-    let educationData =
-      previousStep === 3
-        ? getEducationData(jobData.basicInformation)
-        : getEducationData(previousData);
-    let studyData =
-      previousStep === 3
-        ? getStudyData(jobData.basicInformation)
-        : getStudyData(previousData);
+    // let educationData =
+    //   previousStep === 3
+    //     ? getEducationData(jobData.basicInformation)
+    //     : getEducationData(previousData);
+
+    // let studyData =
+    //   previousStep === 3
+    //     ? getStudyData(jobData.basicInformation)
+    //     : getStudyData(previousData);
     let preValue = {
       companyId: "",
       jobTitle:
@@ -634,6 +676,39 @@ export const CreateJob = forwardRef(
         setPrevKey(new_arr3);
         setPrevKey2(new_arr4);
       }
+
+      if (previousStep === 1 && previousData?.levelofeducationids) {
+        let educationData =
+          previousStep === 3
+            ? getEducationData(jobData.basicInformation)
+            : getEducationData(previousData);
+        setEduArr(educationData);
+      }
+      if (
+        previousStep === 3 &&
+        jobData?.basicInformation?.levelofeducationids
+      ) {
+        let educationData =
+          previousStep === 3
+            ? getEducationData(jobData.basicInformation)
+            : getEducationData(previousData);
+        setEduPrevArr(educationData);
+      }
+
+      if (previousStep === 1 && previousData?.fieldofstudiesids) {
+        let studyData =
+          previousStep === 3
+            ? getStudyData(jobData.basicInformation)
+            : getStudyData(previousData);
+        setStudyFieldArr(studyData);
+      }
+      if (previousStep === 3 && jobData.basicInformation.fieldofstudiesids) {
+        let studyData =
+          previousStep === 3
+            ? getStudyData(jobData.basicInformation)
+            : getStudyData(previousData);
+        setStudyFieldPrevArr(studyData);
+      }
     }, []);
     const [descriptionData, setDescriptionData] = useState(
       previousStep === 3 && preValue.description !== ""
@@ -676,6 +751,12 @@ export const CreateJob = forwardRef(
     const [keyQualificationArr1, setKeyQual1] = useState([]);
     const [keyQualificationArr2, setKeyQual2] = useState([]);
     const [keyQualicationChange, setKeyQualifucationChange] = useState(false);
+    const [eduArr, setEduArr] = useState([]);
+    const [eduPrevArr, setEduPrevArr] = useState([]);
+    const [levelOfEduChange, setLevelOfEduChange] = useState(false);
+    const [studyFieldArr, setStudyFieldArr] = useState([]);
+    const [studyFieldPrevArr, setStudyFieldPrevArr] = useState([]);
+    const [studyFieldChange, setStudyFieldChange] = useState(false);
     const flaggedWordList = useSelector(
       (state) => state.dropdown.flaggedWordsList
     );
@@ -921,7 +1002,12 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
+
+        // isdraft: type === "previous_template" ? previousData?.isdraft : true,
+        // isdraft:
+        //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
       };
+
       let experienceSchedule = {
         jobType: getJobType(eventData.target.elements.jobType),
         workSchedule: workSchedule,
@@ -1034,9 +1120,17 @@ export const CreateJob = forwardRef(
         preScreen: questionArr,
         preCustomScreen: customAnswer === "" ? "Audio" : customAnswer,
       };
+
       JobDataForPreview(data);
       nextPage(true);
     };
+
+    const loadOptionsDeb = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptions(inputValue).then(callback);
+      }, 500),
+      [] // Important: memoize once!
+    );
     const loadOptions = async (inputValue) => {
       if (inputValue.length > 0) {
         const { data = [] } = await getLocation(inputValue);
@@ -1254,6 +1348,13 @@ export const CreateJob = forwardRef(
       setKeyQual2(keyQualification2);
       setMustHaveValidation(false);
     };
+
+    const loadOptionsDeb2 = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptions2(inputValue).then(callback);
+      }, 500),
+      [] // Important: memoize once!
+    );
     const loadOptions2 = async (inputValue) => {
       if (inputValue.length > 0) {
         setLabelVisibility(true);
@@ -1272,14 +1373,23 @@ export const CreateJob = forwardRef(
         } else {
           setSkillExist(true);
         }
-        return data.map(({ skillid: value, ...rest }) => {
+        let skills = data.map(({ skillid: value, ...rest }) => {
           return {
             value: `${value}, ${rest.skillname}`,
             label: `${rest.skillname}`,
           };
         });
+        setMustHaveSkills(skills);
+        return skills;
       }
     };
+
+    const loadOptionsDeb3 = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsoptional(inputValue).then(callback);
+      }, 500),
+      [] // Important: memoize once!
+    );
     const loadOptionsoptional = async (inputValue) => {
       if (inputValue.length > 0) {
         setLabelVisibility(true);
@@ -1298,12 +1408,14 @@ export const CreateJob = forwardRef(
         } else {
           setOptionalSkillExist(true);
         }
-        return data.map(({ skillid: value, ...rest }) => {
+        let skills = data.map(({ skillid: value, ...rest }) => {
           return {
             value: `${value}, ${rest.skillname}`,
             label: `${rest.skillname}`,
           };
         });
+        setNiceToHaveSkills(skills);
+        return skills;
       }
     };
     const handleKeyDown = (event) => {
@@ -1328,6 +1440,26 @@ export const CreateJob = forwardRef(
         setPrevKey(data);
         setKeyQual1(data);
         setMustHaveValidation(false);
+      }
+    };
+
+    const onSelectEduDropdown = function (data) {
+      if (data.length === 0) {
+        setEduArr([]);
+        setEduPrevArr([]);
+      } else {
+        setEduArr(data);
+        setEduPrevArr(data);
+      }
+    };
+
+    const onSelectStudyFieldDropdown = (data) => {
+      if (data.length === 0) {
+        setStudyFieldArr([]);
+        setStudyFieldPrevArr([]);
+      } else {
+        setStudyFieldArr(data);
+        setStudyFieldPrevArr(data);
       }
     };
     const selectOptionalSkills = function (data) {
@@ -1390,6 +1522,30 @@ export const CreateJob = forwardRef(
         ? preValue.securityclearanceid
         : previousValue.securityclearanceid;
     useEffect(() => {
+      if (type === "ai_template") {
+        setZipcodeCityState({
+          value:
+            previousData?.cityid +
+            ", " +
+            previousData?.stateid +
+            ", " +
+            previousData?.cityname +
+            ", " +
+            previousData?.statename,
+          label: previousData?.cityname + ", " + previousData?.statename,
+        });
+        getLocationDetails({
+          value:
+            previousData?.cityid +
+            ", " +
+            previousData?.stateid +
+            ", " +
+            previousData?.cityname +
+            ", " +
+            previousData?.statename,
+          label: previousData?.cityname + ", " + previousData?.statename,
+        });
+      }
       if (previousStep === 3) {
         setZipcodeCityState({
           value:
@@ -1438,6 +1594,91 @@ export const CreateJob = forwardRef(
       customCount2 = customQuestionInput?.length - 1;
     }
     customCount = Number(customCount1) + Number(customCount2);
+
+    const formatCreateLabel2 = (inputValue) => {
+      if (inputValue !== "" && inputValue.length > 2) {
+        return (
+          <span style={{ cursor: "pointer" }}>
+            Add new eductaion -{" "}
+            <span style={{ color: "#545cd8" }}>{inputValue}</span>
+          </span>
+        );
+      } else {
+        return "";
+      }
+    };
+
+    const formatCreateLabel1 = (inputValue) => {
+      if (inputValue !== "" && inputValue.length > 2) {
+        return (
+          <span style={{ cursor: "pointer" }}>
+            Add new field of study -{" "}
+            <span style={{ color: "#545cd8" }}>{inputValue}</span>
+          </span>
+        );
+      } else {
+        return "";
+      }
+    };
+
+    const onCreateEducation = async (data) => {
+      let payload = {
+        levelofeducation1: data,
+        currentUserId: localStorage.getItem("userId")
+          ? Number(localStorage.getItem("userId"))
+          : 0,
+      };
+
+      let res = await dispatch(addLevelOfEducation(payload));
+
+      if (res?.payload && res?.payload?.statusCode === 201) {
+        setLevelOfEduChange(true);
+        let eduData = [...eduArr];
+        eduData.push({
+          value: res.payload.data.levelofeducationid,
+          label: res.payload.data.levelofeducation1,
+        });
+        setEduArr(eduData);
+        let eduPrevData = [...eduPrevArr];
+        eduPrevData.push({
+          value: res.payload.data.levelofeducationid,
+          label: res.payload.data.levelofeducation1,
+        });
+        setEduPrevArr(eduPrevData);
+        dispatch(dropdownActions.getLevelOFEducationThunk());
+      } else {
+        console.log(res?.error);
+      }
+    };
+
+    const onCreateFieldOfStudy = async (data) => {
+      let payload = {
+        fieldofstudy1: data,
+        currentUserId: localStorage.getItem("userId")
+          ? Number(localStorage.getItem("userId"))
+          : 0,
+      };
+
+      let res = await dispatch(addFieldOfStudy(payload));
+      if (res?.payload && res?.payload?.statusCode === 201) {
+        setStudyFieldChange(true);
+        let studyFieldData = [...studyFieldArr];
+        studyFieldData.push({
+          value: res.payload.data.fieldofstudyid,
+          label: res.payload.data.fieldofstudy1,
+        });
+        setStudyFieldArr(studyFieldData);
+        let studyFieldPrevData = [...studyFieldPrevArr];
+        studyFieldPrevData.push({
+          value: res.payload.data.fieldofstudyid,
+          label: res.payload.data.fieldofstudy1,
+        });
+        setStudyFieldPrevArr(studyFieldPrevData);
+        dispatch(dropdownActions.getFieldOfStudyThunk());
+      } else {
+        console.log(res?.error);
+      }
+    };
     return (
       <>
         <div className="form-wizard-content">
@@ -1680,7 +1921,8 @@ export const CreateJob = forwardRef(
                             name={"city"}
                             placeholder="Search city or zipcode"
                             value={zipcodeCityState}
-                            loadOptions={loadOptions}
+                            cacheOptions
+                            loadOptions={loadOptionsDeb}
                             isMulti={false}
                             styles={customStyles}
                             onChange={(e) => getLocationDetails(e, true)}
@@ -1930,16 +2172,31 @@ export const CreateJob = forwardRef(
                           >
                             Level of education
                           </Label>
-                          <Select
-                            defaultValue={
-                              type === "new_template" && previousStep !== 3
+                          <CreatableSelect
+                            // defaultValue={
+                            //   type === "new_template" && previousStep !== 3
+                            //     ? ""
+                            //     : educationData
+                            // }
+                            value={
+                              type === "new_template" &&
+                              previousStep !== 3 &&
+                              levelOfEduChange === false
                                 ? ""
-                                : educationData
+                                : previousStep === 3
+                                ? eduPrevArr
+                                : eduArr
                             }
                             isMulti
                             name="levelofeducationids"
                             options={educationOptions}
                             classNamePrefix="select"
+                            onChange={(evt) => {
+                              onSelectEduDropdown(evt);
+                              setLevelOfEduChange(true);
+                            }}
+                            formatCreateLabel={formatCreateLabel2}
+                            onCreateOption={(e) => onCreateEducation(e)}
                             placeholder="Select level of education"
                           />
                         </FormGroup>
@@ -1952,17 +2209,32 @@ export const CreateJob = forwardRef(
                           >
                             Field of study
                           </Label>
-                          <Select
-                            defaultValue={
-                              type === "new_template" && previousStep !== 3
-                                ? ""
-                                : studyData
-                            }
+                          <CreatableSelect
+                            // defaultValue={
+                            //   type === "new_template" && previousStep !== 3
+                            //     ? ""
+                            //     : studyData
+                            // }
                             isMulti
+                            value={
+                              type === "new_template" &&
+                              previousStep !== 3 &&
+                              studyFieldChange === false
+                                ? ""
+                                : previousStep === 3
+                                ? studyFieldPrevArr
+                                : studyFieldArr
+                            }
+                            onChange={(evt) => {
+                              onSelectStudyFieldDropdown(evt);
+                              setStudyFieldChange(true);
+                            }}
                             name="fieldofstudiesids"
                             options={fieldStudyOptions}
                             classNamePrefix="select"
                             placeholder="Select field of study"
+                            formatCreateLabel={formatCreateLabel1}
+                            onCreateOption={(e) => onCreateFieldOfStudy(e)}
                           />
                         </FormGroup>
                       </Col>
@@ -2017,28 +2289,77 @@ export const CreateJob = forwardRef(
                           </Label>
                           <CKEditor
                             name="description"
+                            editor={ClassicEditor}
                             config={{
-                              removePlugins: "a11yhelp",
-                              debug: false,
+                              licenseKey: "GPL",
+                              plugins: [
+                                Essentials,
+                                Paragraph,
+                                Bold,
+                                Italic,
+                                ToolbarView,
+                                // FormatPainter,
+                                Heading,
+                                Underline,
+                                Strikethrough,
+                                Link,
+
+                                BlockQuote,
+                                // Table,
+                                // MediaEmbed,
+                                // ImageInsert,
+                                Undo,
+                                Alignment,
+                              ],
+                              toolbar: [
+                                "heading",
+                                "|",
+                                "bold",
+                                "italic",
+                                "underline",
+                                "strikethrough",
+                                "|",
+                                "link",
+                                "bulletedList",
+                                "numberedList",
+                                "blockQuote",
+                                "|",
+                                "insertTable",
+                                "mediaEmbed",
+                                "imageUpload",
+                                "|",
+                                "undo",
+                                "redo",
+                                "alignment",
+                                "outdent",
+                                "indent",
+                              ],
                             }}
                             id="description"
                             maxLength={2000}
-                            initData={
+                            data={
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
                                 ? preValue.description
                                 : previousValue.description
                             }
-                            onChange={(e) => {
-                              setupDescriptionData(e.editor.getData());
+                            onChange={(e, editor) => {
+                              setupDescriptionData(editor.getData());
                             }}
                             className={
                               descriptionValidation === true
                                 ? "ckeditor-invalid"
                                 : ""
                             }
-                          />
+                          >
+                            {" "}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: descriptionData,
+                              }}
+                            />
+                          </CKEditor>
                         </FormGroup>
                         {descriptionValidation === true && (
                           <FormText color="danger">
@@ -2489,9 +2810,11 @@ export const CreateJob = forwardRef(
                           <AsyncCreatableSelect
                             name="mustHave"
                             placeholder="Search to select"
-                            loadOptions={loadOptions2}
+                            loadOptions={loadOptionsDeb2}
                             isMulti={true}
+                            closeMenuOnSelect={false}
                             styles={customStyles}
+                            defaultOptions={mustHaveSkills}
                             value={
                               type === "new_template" &&
                               previousStep !== 3 &&
@@ -2531,9 +2854,11 @@ export const CreateJob = forwardRef(
                             name="niceToHave"
                             id="niceToHave"
                             placeholder="Search to select"
-                            loadOptions={loadOptionsoptional}
+                            loadOptions={loadOptionsDeb3}
                             isMulti={true}
+                            closeMenuOnSelect={false}
                             styles={customStyles}
+                            defaultOptions={niceToHaveSkills}
                             value={
                               type === "new_template" &&
                               previousStep !== 3 &&

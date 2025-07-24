@@ -9,7 +9,6 @@ import {
   ListGroup,
   ListGroupItem,
   CardBody,
-  CardFooter,
   Row,
   Col,
   Button,
@@ -20,10 +19,10 @@ import { CreateToDo } from "./createToDo";
 import todoIcon from "../../../assets/utils/images/to-do-list.svg";
 import { candidateDashboardActions } from "_store";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
-import errorIcon from "../../../assets/utils/images/error_icon.png";
+
 import { useSelector, useDispatch } from "react-redux";
 import { formatDate } from "_helpers/helper";
-import { SuccessPopUp } from "_components/common/successPopUp";
+
 import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
 import SweetAlert from "react-bootstrap-sweetalert";

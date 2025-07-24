@@ -208,7 +208,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject"
+            title="Decline"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -264,7 +264,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject candidate"
+            title="Decline candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -299,7 +299,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject candidate"
+            title="Decline candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -330,7 +330,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject offer"
+            title="Decline offer"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -345,7 +345,7 @@ export const CustCandidateListView = (props) => {
           <Button
             // outline
             size="sm"
-            title="Reject candidate"
+            title="Decline candidate"
             onClick={() => onRejectClick(candidaterecommendedjobid)}
             className="btn-icon"
             color="danger"
@@ -788,12 +788,12 @@ export const CustCandidateListView = (props) => {
                 <span>
                   {row?.customerrecommendedjobstatusid === 5 &&
                   row?.candidaterecommendedjobstatusid === 6
-                    ? "Offer rejected by candidate"
+                    ? "Offer declined by candidate"
                     : row?.candidaterecommendedjobstatusid === 6 &&
                       row?.customerrecommendedjobstatusid !== 5
-                    ? "Rejected by candidate"
+                    ? "Declined by candidate"
                     : row?.customerrecommendedjobstatusid === 6
-                    ? "Rejected by customer"
+                    ? "Declined by customer"
                     : "-"}
                   {row?.candidaterecommendedjobstatusid === 6 ? (
                     <>
@@ -838,12 +838,12 @@ export const CustCandidateListView = (props) => {
               selector: (row) =>
                 row?.customerrecommendedjobstatusid === 5 &&
                 row?.candidaterecommendedjobstatusid === 6
-                  ? "Offer rejected by candidate"
+                  ? "Offer declined by candidate"
                   : row?.candidaterecommendedjobstatusid === 6 &&
                     row?.customerrecommendedjobstatusid !== 5
-                  ? "Rejected by candidate"
+                  ? "Declined by candidate"
                   : row?.customerrecommendedjobstatusid === 6
-                  ? "Rejected by customer"
+                  ? "Declined by customer"
                   : "-",
               ignoreRowClick: true,
               button: true,
@@ -1298,11 +1298,14 @@ export const CustCandidateListView = (props) => {
                   row?.scheduledInterviewDtos != null
                     ? getTimezoneDateTime(
                         moment(
-                          row?.scheduledInterviewDtos[0]?.scheduledate
-                        ).format("MM/DD/YYYY") +
-                          (row?.scheduledInterviewDtos[0]?.starttime !== null
-                            ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                            : " 00:00:00")
+                          row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                            0,
+                            11
+                          ) +
+                            (row?.scheduledInterviewDtos[0]?.starttime !== null
+                              ? " " + row?.scheduledInterviewDtos[0]?.starttime
+                              : " 00:00:00")
+                        ).format("YYYY-MM-DD HH:mm:ss")
                       )
                     : ""
                 }
@@ -1310,11 +1313,14 @@ export const CustCandidateListView = (props) => {
                 {row?.scheduledInterviewDtos != null
                   ? getTimezoneDateTime(
                       moment(
-                        row?.scheduledInterviewDtos[0]?.scheduledate
-                      ).format("MM/DD/YYYY") +
-                        (row?.scheduledInterviewDtos[0]?.starttime !== null
-                          ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                          : " 00:00:00")
+                        row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                          0,
+                          11
+                        ) +
+                          (row?.scheduledInterviewDtos[0]?.starttime !== null
+                            ? row?.scheduledInterviewDtos[0]?.starttime
+                            : "00:00:00")
+                      ).format("YYYY-MM-DD HH:mm:ss")
                     )
                   : ""}
               </span>
@@ -1322,12 +1328,15 @@ export const CustCandidateListView = (props) => {
             selector: (row) =>
               row?.scheduledInterviewDtos != null
                 ? getTimezoneDateTime(
-                    moment(row?.scheduledInterviewDtos[0]?.scheduledate).format(
-                      "MM/DD/YYYY"
-                    ) +
-                      (row?.scheduledInterviewDtos[0]?.starttime !== null
-                        ? " " + row?.scheduledInterviewDtos[0]?.starttime
-                        : " 00:00:00")
+                    moment(
+                      row?.scheduledInterviewDtos[0]?.scheduledate?.slice(
+                        0,
+                        11
+                      ) +
+                        (row?.scheduledInterviewDtos[0]?.starttime !== null
+                          ? row?.scheduledInterviewDtos[0]?.starttime
+                          : "00:00:00")
+                    ).format("YYYY-MM-DD HH:mm:ss")
                   )
                 : "",
 
@@ -1354,7 +1363,7 @@ export const CustCandidateListView = (props) => {
                             row?.scheduledInterviewDtos[0]?.isrejected === false
                           ? "Accepted"
                           : row?.scheduledInterviewDtos[0]?.isrejected === true
-                          ? "Rejected"
+                          ? "Declined"
                           : "No response"
                         : row?.scheduledInterviewDtos[0]?.interviewstatusid ===
                           1
@@ -1380,7 +1389,7 @@ export const CustCandidateListView = (props) => {
                           row?.scheduledInterviewDtos[0]?.isrejected === false
                         ? "Accepted"
                         : row?.scheduledInterviewDtos[0]?.isrejected === true
-                        ? "Rejected"
+                        ? "Declined"
                         : "No response"
                       : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
                       ? "Completed"
@@ -1466,7 +1475,7 @@ export const CustCandidateListView = (props) => {
                         row?.scheduledInterviewDtos[0]?.isrejected === false
                       ? "Accepted"
                       : row?.scheduledInterviewDtos[0]?.isrejected === true
-                      ? "Rejected"
+                      ? "Declined"
                       : "No response"
                     : row?.scheduledInterviewDtos[0]?.interviewstatusid === 1
                     ? "Completed"
@@ -1576,7 +1585,15 @@ export const CustCandidateListView = (props) => {
     }
   };
 
-  const onUploadOfferDoc = (file, startdate, pay, finaloffer, payType) => {
+  const onUploadOfferDoc = (
+    file,
+    startdate,
+    pay,
+    finaloffer,
+    payType,
+    selectedTemplate,
+    generatedHtml
+  ) => {
     setOfferUploadLoading(true);
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
@@ -1605,7 +1622,10 @@ export const CustCandidateListView = (props) => {
       "Startdate",
       moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
     );
-
+    if (selectedTemplate && generatedHtml) {
+      form.append("Offerlettertemplateid", selectedTemplate);
+      form.append("Offerlettertemplatefinaltext", generatedHtml);
+    }
     axios
       .post(
         `${process.env.REACT_APP_PANTHER_URL}/api/JobOffer/MakeJobOffer`,
@@ -1631,6 +1651,10 @@ export const CustCandidateListView = (props) => {
       .catch((error) => {
         setOfferUploadLoading(false);
       });
+  };
+
+  const onOfferUploading = (data) => {
+    setOfferUploadLoading(data);
   };
 
   return (
@@ -1747,10 +1771,27 @@ export const CustCandidateListView = (props) => {
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
             onClose={() => setShowUploadOfferModal(false)}
-            uploadOfferDoc={(file, startdate, pay, finaloffer, payType) =>
-              onUploadOfferDoc(file, startdate, pay, finaloffer, payType)
+            uploadOfferDoc={(
+              file,
+              startdate,
+              pay,
+              finaloffer,
+              payType,
+              selectedTemplate,
+              generatedHtml
+            ) =>
+              onUploadOfferDoc(
+                file,
+                startdate,
+                pay,
+                finaloffer,
+                payType,
+                selectedTemplate,
+                generatedHtml
+              )
             }
             loading={offerUploadLoading}
+            updateLoading={(data) => onOfferUploading(data)}
             data={selectedRowData}
           />
         ) : (

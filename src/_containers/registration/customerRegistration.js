@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,13 +7,12 @@ import { useSelector, useDispatch } from "react-redux";
 import InputMask from "react-input-mask";
 import AsyncSelect from "react-select/async";
 
-import Slider from "react-slick";
 import "./registration.scss";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import SweetAlert from "react-bootstrap-sweetalert";
-import bg1 from "../../assets/utils/images/login.png";
+
 import validIcon from "../../assets/utils/images/valid-icon.svg";
-import footerImg from "../../assets/utils/images/panther-logo.png";
+
 import "../static/terms.scss";
 
 import {
@@ -35,9 +34,10 @@ import {
 
 import { history } from "_helpers";
 import errorIcon from "../../assets/utils/images/error_icon.png";
-import { authActions, dropdownActions, addCustomerActions } from "_store";
-import logo from "../../assets/utils/images/panther-logo-2.png";
+import { authActions, dropdownActions } from "_store";
+
 import { getLocationFilter } from "_store";
+import debounce from "lodash/debounce";
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
@@ -502,6 +502,12 @@ export function CustomerRegistration() {
     setShowConfirm(!showConfirm);
   };
 
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
     setCityList(data);
@@ -683,6 +689,41 @@ export function CustomerRegistration() {
       }
       if (otp_new.email.length === 6) {
         verifyEmailOTPDetails(otp_new);
+      }
+    }
+  };
+
+  const handlePaste = (e, check) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim().slice(0, 6);
+    if (!/^\d+$/.test(pasteData)) return;
+
+    const pasted = pasteData.split("");
+    if (check === "email") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`email-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new.email = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails(otp_new);
+      }
+    } else if (check === "mobile") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`mobile-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new.mobile = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails(otp_new);
       }
     }
   };
@@ -1262,7 +1303,8 @@ export function CustomerRegistration() {
                 name="city"
                 placeholder="Search to select"
                 placeholderText="search"
-                loadOptions={loadOptions}
+                cacheOptions
+                loadOptions={loadOptionsDeb}
                 isMulti={false}
                 className={`placeholder-name ${
                   errors.cityid && cityValue === 0
@@ -1311,7 +1353,11 @@ export function CustomerRegistration() {
 
         <div className="mt-4 d-flex align-items-center">
           <h5 className="mb-0 account-text ms-auto me-4">
-            <Link to="/login" style={{ borderBottom: "1px solid #545cd8" }}>
+            <Link
+              to="/login"
+              className="pb-text"
+              style={{ borderBottom: "1px solid #545cd8" }}
+            >
               Already a member? Sign in
             </Link>
           </h5>
@@ -1356,6 +1402,7 @@ export function CustomerRegistration() {
                         onInput={(e) =>
                           handleInputChange("mobile", e.target.value, index)
                         }
+                        onPaste={(e) => handlePaste(e, "mobile")}
                       />
                     </FormGroup>
                   ))}
@@ -1446,6 +1493,7 @@ export function CustomerRegistration() {
                         onInput={(e) =>
                           handleInputChange("email", e.target.value, index)
                         }
+                        onPaste={(e) => handlePaste(e, "email")}
                       />
                     </FormGroup>
                   ))}

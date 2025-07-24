@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Input, Label } from "reactstrap";
+import React, { useEffect } from "react";
+import { Row, Col } from "reactstrap";
 import Slider from "react-slick";
 import logo from "../../assets/utils/images/panther-logo-2.png";
 import bg1 from "../../assets/utils/images/login.png";
@@ -52,7 +52,7 @@ export const Payment = ({ authUser }) => {
               )}
             </Col>
             <Col
-              lg={!authUser ? "7" : "12"}
+              lg={!authUser ? "8" : "12"}
               md="12"
               className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
               style={{ overflow: "auto" }}
@@ -88,11 +88,11 @@ export const Payment = ({ authUser }) => {
               </Col>
             </Col>
             {!authUser ? (
-              <Col lg="5" className="d-xs-none">
+              <Col lg="4" className="d-xs-none">
                 <div className="slider-light">
                   <Slider {...settings}>
                     <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                      <div
+                      {/* <div
                         className="slide-img-bg"
                         style={{
                           backgroundImage: "url(" + bg1 + ")",
@@ -107,7 +107,7 @@ export const Payment = ({ authUser }) => {
                           partner? We focus on what you want most from your
                           career!
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   </Slider>
                 </div>

@@ -13,10 +13,16 @@ import {
   ModalHeader,
   ModalBody,
   Modal,
+  Row,
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
-import { BsPersonVideo2, BsTelephone, BsPerson } from "react-icons/bs";
+import {
+  BsPersonVideo2,
+  BsTelephone,
+  BsPerson,
+  BsDownload,
+} from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
 import { useSelector } from "react-redux";
@@ -29,6 +35,7 @@ import { getTimezoneDateTime, getVideoChannelId } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
 import { USPhoneNumber } from "_helpers/helper";
+import html2pdf from "html2pdf.js";
 export function UpcomingVideoDetails({
   interviewId,
   cancelScheduleData,
@@ -174,6 +181,23 @@ export function UpcomingVideoDetails({
     suggestedQuestionArray = [];
   }
 
+  const generatePDF = async (event) => {
+    const element = document.getElementById("sq-pdf-content");
+    if (element) {
+      const pdfOptions = {
+        margin: 10,
+        html2canvas: {
+          scale: 1.2,
+          useCORS: true,
+        },
+        filename: interviewDetails.jobtitle + " interview-questions",
+        image: { type: "jpeg", quality: 0.98 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+      html2pdf().from(element).set(pdfOptions).save();
+    }
+  };
+
   return (
     <>
       <CardBody>
@@ -244,15 +268,24 @@ export function UpcomingVideoDetails({
             ? "Accepted"
             : interviewDetails?.isrejected === true
             ? interviewDetails?.rejectionreason !== ""
-              ? "Rejected (" + interviewDetails?.rejectionreason + ")"
-              : "Rejected"
+              ? "Declined (" + interviewDetails?.rejectionreason + ")"
+              : "Declined"
             : "No response"}
         </div>
         {interviewDetails?.interviewstatusid !== 0 &&
           interviewDetails?.interviewfeedback !== "" && (
             <div className="p-custom">
               <h6 className="fw-bold mb-0 job-heading">Interview feedback</h6>
-              {interviewDetails?.interviewfeedback}
+              {interviewDetails?.interviewstatus !== "" && (
+                <p className="mb-0">
+                  <b>Reason:</b> {interviewDetails?.interviewstatus}
+                </p>
+              )}
+              {interviewDetails?.interviewfeedback !== "" && (
+                <p className="mb-0">
+                  <b>Description:</b> {interviewDetails?.interviewfeedback}
+                </p>
+              )}
             </div>
           )}
         {showInviteCard === true && (
@@ -510,13 +543,36 @@ export function UpcomingVideoDetails({
         </div>
         {interviewDetails?.suggestedquestion !== "" && (
           <div className="p-3 suggested-question">
-            <h6 className="fw-bold">Suggested Questions</h6>
-            {suggestedQuestionArray?.length > 0 &&
-              suggestedQuestionArray?.map((suggestedQuestion) => (
-                <>
-                  <p className="mb-1">{suggestedQuestion}</p>
-                </>
-              ))}
+            <Row>
+              <Col md="11">
+                <h6 className="fw-bold">Suggested Questions</h6>
+              </Col>
+              {suggestedQuestionArray?.length > 0 && (
+                <Col md="1">
+                  <div
+                    style={{ cursor: "pointer" }}
+                    title="Click here to download suggested questions"
+                    onClick={() => generatePDF()}
+                  >
+                    <h6>
+                      {" "}
+                      <BsDownload />
+                    </h6>
+                  </div>
+                </Col>
+              )}
+            </Row>
+            <div id="sq-pdf-content">
+              {suggestedQuestionArray?.length > 0 && (
+                <ol type="1">
+                  {suggestedQuestionArray?.map((suggestedQuestion) => (
+                    <>
+                      <li className="mb-1 ">{suggestedQuestion}</li>
+                    </>
+                  ))}
+                </ol>
+              )}
+            </div>
             {suggestedQuestionArray?.length === 0 && (
               <p className="mb-0 ">
                 <i> - No suggested question added</i>
@@ -580,7 +636,7 @@ export function UpcomingVideoDetails({
         <SweetAlert
           warning
           showCancel
-          confirmBtnText="Yes, reject interview!"
+          confirmBtnText="Yes, decline interview!"
           confirmBtnBsStyle="danger"
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"
@@ -589,7 +645,7 @@ export function UpcomingVideoDetails({
           onCancel={() => setShowRejectPopup(false)}
           focusCancelBtn
         >
-          You want to reject the interview with{" "}
+          You want to decline the interview with{" "}
           {interviewDetails?.candidatename
             ? interviewDetails?.candidatename
             : interviewDetails?.firstname && interviewDetails?.lastname

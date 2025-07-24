@@ -37,6 +37,14 @@ export const deleteProfileImgThunk = createAsyncThunk(
   }
 );
 
+export const updateProfileData = createAsyncThunk(
+  `${name}/updateProfileData`,
+  async (payload) => {
+    const LOGIN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Candidate/${payload.candidateid}`;
+    return await fetchWrapper.put(LOGIN_END_POINT, payload);
+  }
+);
+
 const jobPreferenceDataSlice = createSlice({
   name,
   initialState: {
@@ -74,6 +82,9 @@ const jobPreferenceDataSlice = createSlice({
     [deleteProfileImgThunk.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [updateProfileData.pending]: (state, { payload }) => {},
+    [updateProfileData.fulfilled]: (state, payload) => {},
+    [updateProfileData.rejected]: (state, action) => {},
   },
 });
 
@@ -83,6 +94,7 @@ export const jobPreferenceDetailsActions = {
   updatejobPreferenceThunk,
   deletejobPreferenceThunk,
   deleteProfileImgThunk,
+  updateProfileData,
 };
 
 export const jobPreferenceDataReducer = jobPreferenceDataSlice.reducer;

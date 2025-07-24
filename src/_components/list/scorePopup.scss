@@ -5,11 +5,32 @@
         font-style: normal;
         font-weight: 500;
         line-height: 16px;
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-left: 0px;
+        padding-right: 8px;
         padding-top: 5px;
-        padding-bottom: 5px;
+        width: 100%;
+        padding-bottom: 0px;
     }
+    .nav-item-header-custom .active{
+        color: #038FFE;
+        font-size: 14px;
+     }
+     .accordion-button {
+        padding: 12px;
+     }
+
+     .accordion-button:not(.collapsed) {
+        background-color: unset;
+     }
+
+    .accordion-body {
+        padding: 4px;
+        margin: 8px;
+        background-color: #F5F5F5;
+        font-size: 12px;
+        font-weight: 300;
+     }
+
     .popup-width{
         width: 303px !important;
     }

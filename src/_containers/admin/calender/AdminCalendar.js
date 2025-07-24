@@ -17,6 +17,7 @@ import { Row, Col, FormGroup, Button, Input } from "reactstrap";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { analytics } from "../../../firebase/index";
+import { getTimezoneDateTime } from "_helpers/helper";
 import "./admincalendar.scss";
 
 export function AdminCalendar({ title }) {
@@ -93,11 +94,11 @@ export function AdminCalendar({ title }) {
   };
 
   const events = scheduledInterviewList.map((item) => {
-    const startDate = moment(
-      moment(item.scheduledate).format("MMM D, YYYY") + " " + item.starttime
-    )
-      .tz("America/New_York")
-      .format("YYYY-MM-DD HH:mm:ss");
+    const startDate = getTimezoneDateTime(
+      moment(item.scheduledate).format("MMM D, YYYY") + " " + item.starttime,
+
+      "YYYY-MM-DD HH:mm:ss"
+    );
 
     const [duration] =
       item.duration !== undefined ? item.duration.split(" ") : [];
@@ -302,7 +303,7 @@ export function AdminCalendar({ title }) {
             </span>
             <span className="legend">
               <div className="ms-3 mb-3 me-0 badge badge-color-red">..</div>{" "}
-              Rejected interview{" "}
+              Declined interview{" "}
             </span>
             <span className="legend">
               <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">..</div>{" "}

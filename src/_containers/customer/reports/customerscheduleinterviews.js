@@ -47,6 +47,7 @@ import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { InterViewDetailModal } from "_components/modal/interviewdetailmodal";
 import { analytics } from "../../../firebase/index";
 import "./customerreport.scss";
+import { getTimezoneDateTime } from "_helpers/helper";
 
 export function CustomerReportScheduledInterviews() {
   const dispatch = useDispatch();
@@ -241,7 +242,12 @@ export function CustomerReportScheduledInterviews() {
           className="table-cell"
           title={
             row.scheduledate
-              ? moment(row.scheduledate).format("MM/DD/YYYY")
+              ? getTimezoneDateTime(
+                  moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                  ),
+                  "MM/DD/YYYY"
+                )
               : ""
           }
         >
@@ -250,7 +256,12 @@ export function CustomerReportScheduledInterviews() {
             onClick={() => onInterviewDetailClick(row.scheduleinterviewid)}
           >
             {row.scheduledate
-              ? moment(row.scheduledate).format("MM/DD/YYYY")
+              ? getTimezoneDateTime(
+                  moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                  ),
+                  "MM/DD/YYYY"
+                )
               : ""}
           </Button>
         </span>
@@ -286,7 +297,7 @@ export function CustomerReportScheduledInterviews() {
   return (
     <>
       <PageTitle
-        heading={"Employer Scheduled Interview Report"}
+        heading={"Hiring Manager Scheduled Interview Report"}
         icon={titlelogo}
       />
       <Row className="cust-report-job-cont">

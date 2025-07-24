@@ -394,17 +394,17 @@ export const CandidateCardView = (props) => {
                 size="sm"
                 onClick={() => onScheduleInterview()}
               >
-                <span>Schedule</span> <BsClock />
+                Schedule <BsClock />
               </Button>
               <Button
                 outline
-                title="reject"
+                title="decline"
                 className="btn-icon mb-1"
                 color="primary"
                 onClick={() => onRejectClick()}
                 size="sm"
               >
-                Reject <BsXCircle></BsXCircle>
+                Decline <BsXCircle></BsXCircle>
               </Button>
             </ButtonGroup>
           </Row>

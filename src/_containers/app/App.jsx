@@ -75,12 +75,14 @@ import { TermsAndConditions } from "_containers/static/terms";
 import { PrivacyPolicy } from "_containers/static/privacy";
 import { Support } from "_containers/static/support";
 import { Contact } from "_containers/static/contact";
-
+import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
+import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -185,7 +187,7 @@ export function App() {
             path="/employers"
             element={
               <PrivateRoute>
-                <CustomerList />
+                <CustomerList isCompanyAdmin={false} />
               </PrivateRoute>
             }
           />
@@ -367,6 +369,7 @@ export function App() {
               </PrivateRoute>
             }
           />
+          
           <Route
             path="/job-list"
             element={
@@ -519,6 +522,55 @@ export function App() {
                 <ChatInterface />
               </PrivateRoute>
             }
+          />
+
+          <Route
+            path="/employers"
+            element={
+              <PrivateRoute>
+                <CustomerList isCompanyAdmin={true} />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/masters"
+            element={
+              <PrivateRoute>
+                <CompanyList isCompanyAdmin={true}/>
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/masters/company"
+            element={
+              <PrivateRoute>
+                <CompanyList isCompanyAdmin={true}/>
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/acl"
+            element={
+              <PrivateRoute>
+                <AdminListing isCompanyAdmin={true} entity="users" />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/acl/users"
+            element={
+              <PrivateRoute>
+                <AdminListing isCompanyAdmin={true} entity="users" />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/report"
+            element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
+          />
+            <Route
+            path="/report/open-jobs"
+            element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
         </>
       );
@@ -686,12 +738,15 @@ export function App() {
        </Routes>
       </> : 
       <>
+      
         {authUser && (
-          <AppHeader
+          
+         <AppHeader
             isSidebarOpen={isSidebarOpen}
             onOpenSidebar={() => onOpenSidebar()}
             onCloseSidebar={() => onCloseSidebar()}
           />
+         
         )}
         {!authUser && hideSidebar && !isExcludedPath && (
           <AppHeader
@@ -702,11 +757,13 @@ export function App() {
           />
         )}
         <div className={authUser ? `app-main` : ""}>
+           <AIJobOffCanvas ></AIJobOffCanvas>
           {authUser && !hideSidebar && (
             <AppSidebar
               isSidebarOpen={isSidebarOpen}
               setIsSidebarOpen={setIsSidebarOpen}
             />
+            
           )}
           <div className={authUser ? `app-main__outer` : ""}>
             <div className={"app-main__inner "}>
@@ -731,6 +788,7 @@ export function App() {
                 />
 
                 <Route path="/login" element={<Login />} />
+                {/* <Route path="/login/:id" element={<Login />} /> */}
                 <Route path="/registration" element={<Registration />} />
                 <Route
                   path="/customer-registration"
@@ -760,13 +818,16 @@ export function App() {
                   path="/payment/:id"
                   element={<Payment authUser={authUser} />}
                 />
+                <Route path="/Unsubscribe/:token" element={<UnsubscribeEmail />} />
               </Routes>
             </div>
             {authUser && <AppFooter />}
             {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
           </div>
         </div>
+        
       </>}
+      
     </>
 
   );

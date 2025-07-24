@@ -1,8 +1,7 @@
 import React from "react";
 import { Container, Col, Row } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import logo from "../../assets/utils/images/panther-logo.png";
-import plogo from "../../assets/utils/images/panther-logo-2.png";
+
 import "./terms.scss";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 
@@ -32,7 +31,7 @@ export function Support() {
             xs={{ order: 1, size: 12 }}
             className="text-start mt-1"
           >
-            <span className="mt-2">Powered by</span>
+            <span className="mt-2 pb-text">Powered by</span>
             <img
               src={footerImg}
               className="logo ms-1"

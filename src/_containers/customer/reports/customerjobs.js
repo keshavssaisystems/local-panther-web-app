@@ -261,7 +261,7 @@ export function CustomerReportJobList() {
       minWidth: "150px",
     },
     {
-      name: <span className="table-title">No. of rejected</span>,
+      name: <span className="table-title">No. of declined</span>,
       cell: (row) => (
         <span className="table-cell" title={row.rejectedcandidates}>
           {row.rejectedcandidates}
@@ -286,7 +286,7 @@ export function CustomerReportJobList() {
 
   return (
     <>
-      <PageTitle heading={"Employer Job List Report"} icon={titlelogo} />
+      <PageTitle heading={"Hiring Manager Job List Report"} icon={titlelogo} />
       <Row className="cust-report-job-cont">
         <Col md="12" lg="12" xl="12">
           <Card className="mb-3">

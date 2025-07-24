@@ -30,6 +30,14 @@ export const deleteEducationThunk = createAsyncThunk(
   }
 );
 
+export const addLevelOfEducation = createAsyncThunk(
+  `${name}/addLevelOfEducation`,
+  async (payload) => {
+    const ADDLOED_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/LevelOfEducations`;
+    return await fetchWrapper.post(ADDLOED_END_POINT, payload);
+  }
+);
+
 const educationDataSlice = createSlice({
   name,
   initialState: {
@@ -60,6 +68,13 @@ const educationDataSlice = createSlice({
     [deleteEducationThunk.rejected]: (state, action) => {
       state.error = action.error;
     },
+    [addLevelOfEducation.pending]: (state, { payload }) => {
+      state.error = null;
+    },
+    [addLevelOfEducation.fulfilled]: (state, payload) => {},
+    [addLevelOfEducation.rejected]: (state, action) => {
+      state.error = action.error;
+    },
   },
 });
 
@@ -68,6 +83,7 @@ export const educationDetailsSlice = {
   addEducationThunk,
   updateEducationThunk,
   deleteEducationThunk,
+  addLevelOfEducation,
 };
 
 export const educationDataReducer = educationDetailsSlice.reducer;

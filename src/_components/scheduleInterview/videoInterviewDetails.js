@@ -11,6 +11,7 @@ import {
   UncontrolledButtonDropdown,
   Card,
   CardBody,
+  Row,
 } from "reactstrap";
 import "./scheduledInterview.scss";
 import { FaEllipsisV } from "react-icons/fa";
@@ -20,6 +21,7 @@ import {
   BsPersonVideo2,
   BsFillTelephoneFill,
   BsPerson,
+  BsDownload,
 } from "react-icons/bs";
 import { ImBin } from "react-icons/im";
 import moment from "moment-timezone";
@@ -34,6 +36,8 @@ import {
 } from "_helpers/helper";
 import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
+import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
+import html2pdf from "html2pdf.js";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -80,26 +84,24 @@ export function VideoInterviewDetails({
   );
 
   let scheduled = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
     "MM/DD/YYYY"
   );
   let currentDay = getTimezoneDateTime(moment(), "YYYY-MM-DD");
   let yesterdayDate = getTimezoneDateTime(
-    moment().subtract(1, "days").format("YYYY-MM-DD"),
+    moment().subtract(1, "days"),
     "YYYY-MM-DD"
   );
-  let tomorrowDate = getTimezoneDateTime(
-    moment().add(1, "days").format("YYYY-MM-DD"),
-    "YYYY-MM-DD"
-  );
+  let tomorrowDate = getTimezoneDateTime(moment().add(1, "days"), "YYYY-MM-DD");
   let scheduledDate = getTimezoneDateTime(
-    moment(interviewDetail?.scheduledate).format("YYYY-MM-DD") +
-      " " +
-      interviewDetail?.starttime,
+    moment(
+      interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+    ).format("YYYY-MM-DD HH:mm:ss"),
     "YYYY-MM-DD"
   );
+
   if (scheduledDate === currentDay) {
     scheduled = "Today";
   }
@@ -176,6 +178,23 @@ export function VideoInterviewDetails({
     window.open(interviewGuideLink[0].name, "_blank");
   };
 
+  const generatePDF = async (event) => {
+    const element = document.getElementById("sq-pdf-content");
+    if (element) {
+      const pdfOptions = {
+        margin: 10,
+        html2canvas: {
+          scale: 1.2,
+          useCORS: true,
+        },
+        filename: interviewDetails.jobtitle + " interview-questions",
+        image: { type: "jpeg", quality: 0.98 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+      html2pdf().from(element).set(pdfOptions).save();
+    }
+  };
+
   return (
     <>
       <div className="dropdown-menu-header">
@@ -229,7 +248,7 @@ export function VideoInterviewDetails({
                           size={"sm"}
                           className="mb-2 btn-transition"
                           outline
-                          title="Reject interview"
+                          title="Decline interview"
                           onClick={(e) => setShowRejectPopup(true)}
                         >
                           <BsXCircleFill className="mb-1" />
@@ -274,8 +293,8 @@ export function VideoInterviewDetails({
             ? "Accepted"
             : interviewDetail?.isrejected === true
             ? interviewDetail?.rejectionreason !== ""
-              ? "Rejected (" + interviewDetail?.rejectionreason + ")"
-              : "Rejected"
+              ? "Declined (" + interviewDetail?.rejectionreason + ")"
+              : "Declined"
             : "No response from candidate"}
         </p>
       </div>
@@ -283,7 +302,16 @@ export function VideoInterviewDetails({
         interviewDetail?.interviewfeedback !== "" && (
           <div className="p-custom">
             <h6 className="fw-bold job-heading">Interview feedback</h6>
-            <p className="mb-0">{interviewDetail?.interviewfeedback}</p>
+            {interviewDetail?.interviewstatus !== "" && (
+              <p className="mb-0">
+                <b>Reason:</b> {interviewDetail?.interviewstatus}
+              </p>
+            )}
+            {interviewDetail?.interviewfeedback !== "" && (
+              <p className="mb-0">
+                <b>Description:</b> {interviewDetail?.interviewfeedback}
+              </p>
+            )}
           </div>
         )}
 
@@ -527,13 +555,37 @@ export function VideoInterviewDetails({
       </div>
       {interviewDetail?.suggestedquestion !== "" && (
         <div className="p-3 suggested-question">
-          <h6 className="fw-bold">Suggested Questions</h6>
-          {suggestedQuestionArray?.length > 0 &&
-            suggestedQuestionArray?.map((suggestedQuestion) => (
-              <>
-                <p className="mb-1">{suggestedQuestion}</p>
-              </>
-            ))}
+          <Row>
+            <Col md="11">
+              {" "}
+              <h6 className="fw-bold">Suggested Questions</h6>
+            </Col>
+            {suggestedQuestionArray?.length > 0 && (
+              <Col md="1">
+                <div
+                  style={{ cursor: "pointer" }}
+                  title="Click here to download suggested questions"
+                  onClick={() => generatePDF()}
+                >
+                  <h6>
+                    {" "}
+                    <BsDownload />
+                  </h6>
+                </div>
+              </Col>
+            )}
+          </Row>
+          <div id="sq-pdf-content">
+            {suggestedQuestionArray?.length > 0 && (
+              <ol type="1">
+                {suggestedQuestionArray?.map((suggestedQuestion) => (
+                  <>
+                    <li className="mb-1 ">{suggestedQuestion}</li>
+                  </>
+                ))}
+              </ol>
+            )}
+          </div>
           {suggestedQuestionArray?.length === 0 && (
             <p className="mb-0 ">
               <i> - No suggested question added</i>
@@ -597,7 +649,7 @@ export function VideoInterviewDetails({
         <SweetAlert
           warning
           showCancel
-          confirmBtnText="Yes, reject interview!"
+          confirmBtnText="Yes, decline interview!"
           confirmBtnBsStyle="danger"
           cancelBtnText="No"
           cancelBtnBsStyle="secondary"

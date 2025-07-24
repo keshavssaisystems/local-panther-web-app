@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Row,
   Col,
@@ -31,6 +31,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import Payment from "payment";
 import { history } from "_helpers";
 import { Link } from "react-router-dom";
+import debounce from "lodash/debounce";
 import "./payment.scss";
 
 export const PaymentDetails = ({
@@ -38,13 +39,18 @@ export const PaymentDetails = ({
   selectedCustomer = {},
   onClose,
   authUser,
+  userId = "",
 }) => {
   const dispatch = useDispatch();
-  const { id } = useParams();
+
+  let { id } = useParams();
+  if (userId) {
+    id = userId;
+  }
   const [companyValue, setCompanyValue] = useState(0);
   const [currencyValue, setCurrencyValue] = useState(1);
   const [sameAsCust, setSameAsCust] = useState(
-    authUser ? authUser : selectedCustomer?.billingdetailstatus
+    authUser ? authUser : userId ? true : selectedCustomer?.billingdetailstatus
   );
   const [cityList, setCityList] = useState([]);
 
@@ -67,7 +73,7 @@ export const PaymentDetails = ({
   const [deletedCard, setDeletedCard] = useState(false);
   const [disableSAC, setDisableSAC] = useState(false);
   const [zipCode, setZipCode] = useState("");
-
+  const [disableCABillStat, setDisableCABillStat] = useState(false);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -79,6 +85,10 @@ export const PaymentDetails = ({
   const userDetails = useSelector((state) => state.payment.userDetails);
   const currencyType = useSelector((state) => state.payment.currencyType);
   const billingDetails = useSelector((state) => state.payment.billingDetails);
+
+  const compBillingDetails = useSelector(
+    (state) => state.payment.compBillingDetails
+  );
   const cardType = useSelector((state) => state.payment.cardType);
   const schema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -136,18 +146,27 @@ export const PaymentDetails = ({
     if (userDetails?.customerid) {
       setDetails(userDetails);
       setDisableSAC(userDetails?.billingdetailstatus);
-      if (userDetails?.billingdetailstatus && (authUser || isAdmin)) {
+      if (
+        !userId &&
+        userDetails?.billingdetailstatus &&
+        (authUser || isAdmin)
+      ) {
         dispatch(paymentActions.getBillingDetails(userDetails?.customerid));
       }
     }
   }, [userDetails]);
 
   useEffect(() => {
-    if (selectedCustomer?.customerid) {
+    if (selectedCustomer?.customerid && !userId) {
       setDisableSAC(selectedCustomer?.billingdetailstatus);
       if (selectedCustomer?.billingdetailstatus) {
         dispatch(paymentActions.updateUserDetails(selectedCustomer));
       }
+    }
+    if (selectedCustomer?.companyid && userId) {
+      dispatch(
+        paymentActions.getBillingDetailsByCompany(selectedCustomer?.companyid)
+      );
     }
   }, [selectedCustomer]);
 
@@ -156,6 +175,13 @@ export const PaymentDetails = ({
       setCardData(billingDetails);
     }
   }, [billingDetails]);
+
+  useEffect(() => {
+    if (compBillingDetails?.billingdetailid) {
+      setDisableCABillStat(compBillingDetails?.billingdetailid);
+      setCardData(compBillingDetails);
+    }
+  }, [compBillingDetails]);
   const setCardData = (billingDetails) => {
     // setCardNumber(formatCreditCardNumber(billingDetails?.creditcardnumber));
     let cardnumber = "XXXX XXXX XXXX " + billingDetails?.creditcardnumber;
@@ -258,6 +284,13 @@ export const PaymentDetails = ({
     setValue("currency", data);
   };
 
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
+
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
     setCityList(data);
@@ -317,7 +350,7 @@ export const PaymentDetails = ({
 
   const handleCallback = async (issuer, isValid) => {
     setIssuer(issuer);
-    if (userDetails?.billingdetailstatus) {
+    if (userDetails?.billingdetailstatus && !userId) {
       setValidCard(true);
     } else {
       let cardTypeNumber = 0;
@@ -373,9 +406,12 @@ export const PaymentDetails = ({
 
   const clearFormData = () => {
     setValue("name", "");
-    setValue("companyid", "");
-    setCompanyValue("");
-    setValue("email", "");
+    if (!userId) {
+      setValue("companyid", "");
+      setCompanyValue("");
+      setValue("email", "");
+    }
+
     setValue("phoneNumber", "");
     setValue("zipcode", "");
     setValue("cityid", "");
@@ -421,7 +457,11 @@ export const PaymentDetails = ({
 
     let payload = {
       billingdetailid: 0,
-      customerid: userDetails?.customerid ? userDetails.customerid : id,
+      customerid: userId
+        ? 0
+        : userDetails?.customerid
+        ? userDetails.customerid
+        : id,
       name: formData.name,
       phonenumber: formData.phoneNumber,
       companyid: formData.companyid,
@@ -494,7 +534,11 @@ export const PaymentDetails = ({
 
   const onDeleteCard = async () => {
     let response = await dispatch(
-      paymentActions.deleteBillingDetails(billingDetails.billingdetailid)
+      paymentActions.deleteBillingDetails(
+        userId
+          ? compBillingDetails.billingdetailid
+          : billingDetails.billingdetailid
+      )
     );
 
     if (!response.payload) {
@@ -503,8 +547,14 @@ export const PaymentDetails = ({
         type: "error",
       });
     } else {
+      if (userId) {
+        setDisableCABillStat(false);
+      }
       setDeletedCard(true);
-      dispatch(paymentActions.updateShowBilling(false));
+      if (!userId) {
+        dispatch(paymentActions.updateShowBilling(false));
+      }
+
       showSweetAlert({
         title: response.payload.message,
         type: "success",
@@ -550,25 +600,27 @@ export const PaymentDetails = ({
         </Col>
         {isAdmin ? <hr /> : <></>}
 
-        <>
-          <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-            <Input
-              type="checkbox"
-              checked={sameAsCust}
-              disabled={userDetails?.billingdetailstatus}
-              onChange={(e) => onSameCustomer(e)}
-            ></Input>
-            <Label disabled={disableSAC} className="ms-1 same-as-cust">
-              Same as employer
-            </Label>
-          </Col>
-          <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-            <span className="sub-text">
-              If this box is checked, pre-populate the data from the Employer
-              details
-            </span>
-          </Col>
-        </>
+        {!userId && (
+          <>
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+              <Input
+                type="checkbox"
+                checked={sameAsCust}
+                disabled={userDetails?.billingdetailstatus}
+                onChange={(e) => onSameCustomer(e)}
+              ></Input>
+              <Label disabled={disableSAC} className="ms-1 same-as-cust">
+                Same as hiring manager
+              </Label>
+            </Col>
+            <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
+              <span className="sub-text">
+                If this box is checked, pre-populate the data from the Employer
+                details
+              </span>
+            </Col>
+          </>
+        )}
 
         <Row>
           <Col
@@ -588,7 +640,11 @@ export const PaymentDetails = ({
                   type="text"
                   name="name"
                   id="name"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   placeholder="Enter Name"
                   {...register("name")}
                   className={`form-control placeholder-name ${
@@ -618,7 +674,7 @@ export const PaymentDetails = ({
                 name="companyid"
                 {...register("companyid")}
                 value={companyValue}
-                disabled={userDetails?.billingdetailstatus}
+                disabled={userDetails?.billingdetailstatus || userId}
                 className={`form-control placeholder-name ${
                   errors.companyid && companyValue === 0 ? "is-invalid" : ""
                 }`}
@@ -658,7 +714,7 @@ export const PaymentDetails = ({
                   name="email"
                   id="email"
                   placeholder="Enter Email"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={userDetails?.billingdetailstatus || userId}
                   {...register("email")}
                   className={`form-control placeholder-name ${
                     errors.email ? "is-invalid" : ""
@@ -688,7 +744,11 @@ export const PaymentDetails = ({
                   placeholder="Enter Phone Number"
                   type="text"
                   mask="(999)-999-9999"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   name="phoneNumber"
                   id="phoneNumber"
                   {...register("phoneNumber")}
@@ -713,7 +773,11 @@ export const PaymentDetails = ({
                   placeholder="Add address"
                   type="textarea"
                   name="address"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   id="address"
                   {...register("address")}
                   className={`form-control placeholder-name ${
@@ -742,14 +806,21 @@ export const PaymentDetails = ({
                 name="city"
                 placeholder="Search to Select"
                 placeholderText="search"
-                loadOptions={loadOptions}
+                cacheOptions
+                loadOptions={loadOptionsDeb}
                 isMulti={false}
                 value={cityValue}
                 className={`placeholder-name ${
                   errors.cityid && !cityValue?.value
                     ? "async-border-red"
                     : "async-no-error"
-                } ${userDetails?.billingdetailstatus ? "disable-ip" : ""}`}
+                } ${
+                  userId
+                    ? disableCABillStat
+                    : userDetails?.billingdetailstatus
+                    ? "disable-ip"
+                    : ""
+                }`}
                 {...register("cityid")}
                 onChange={(e) => setAsyncSelectValue(e)}
               />
@@ -776,7 +847,11 @@ export const PaymentDetails = ({
                 <Input
                   type="text"
                   name="zipcode"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   id="zipcode"
                   placeholder="Enter Zip Code"
                   {...register("zipcode")}
@@ -809,7 +884,13 @@ export const PaymentDetails = ({
                   errors.countryid && !countryValue?.value
                     ? "async-border-red"
                     : "async-no-error"
-                } ${userDetails?.billingdetailstatus ? "disable-ip" : ""}`}
+                } ${
+                  userId
+                    ? disableCABillStat
+                    : userDetails?.billingdetailstatus
+                    ? "disable-ip"
+                    : ""
+                }`}
                 {...register("countryid")}
                 defaultOptions={countryList}
                 onChange={(e) => onSelectCountryDropdown(e)}
@@ -832,7 +913,9 @@ export const PaymentDetails = ({
                 type="select"
                 name="currency"
                 id="currency"
-                disabled={userDetails?.billingdetailstatus}
+                disabled={
+                  userId ? disableCABillStat : userDetails?.billingdetailstatus
+                }
                 placeholder="Select Currency"
                 {...register("currency")}
                 className={`form-control placeholder-name ${
@@ -964,7 +1047,11 @@ export const PaymentDetails = ({
                   }`}
                   placeholder="Card Number"
                   pattern="[\d| ]{16,22}"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   value={cardnumber}
                   onChange={(e) => setCardDetails(e)}
                 />
@@ -996,7 +1083,11 @@ export const PaymentDetails = ({
                   placeholder="MM/YY"
                   pattern="\d\d/\d\d"
                   value={expiry}
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   onChange={(e) => setCardDetails(e)}
                 />
                 <FormFeedback>
@@ -1019,7 +1110,11 @@ export const PaymentDetails = ({
                 <input
                   type="password"
                   name="cvv"
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   id="cvv"
                   className={`form-control placeholder-name ${
                     cvvErr ? "is-invalid" : ""
@@ -1047,7 +1142,11 @@ export const PaymentDetails = ({
                   className={`form-control placeholder-name ${
                     cardholderErr ? "is-invalid" : ""
                   }`}
-                  disabled={userDetails?.billingdetailstatus}
+                  disabled={
+                    userId
+                      ? disableCABillStat
+                      : userDetails?.billingdetailstatus
+                  }
                   placeholder="Enter Cardholder Name"
                   value={cardholder}
                   onChange={(e) => setCardDetails(e)}
@@ -1085,7 +1184,7 @@ export const PaymentDetails = ({
           style={{ textAlign: "end" }}
         >
           {" "}
-          {userDetails?.billingdetailstatus ? (
+          {(userId ? disableCABillStat : userDetails?.billingdetailstatus) ? (
             <Button
               type="cancel"
               color="danger"
@@ -1104,7 +1203,7 @@ export const PaymentDetails = ({
           {!isAdmin && !authUser ? (
             <Link
               to="/login"
-              className="me-2"
+              className="me-2 pb-text"
               style={{ borderBottom: "1px solid #545cd8" }}
             >
               Return to Sign In Page
@@ -1126,7 +1225,7 @@ export const PaymentDetails = ({
               </Button>
             </>
           )}
-          {!userDetails?.billingdetailstatus ? (
+          {(userId ? !disableCABillStat : !userDetails?.billingdetailstatus) ? (
             <Button color="primary" type="submit" className="btn-text ms-2">
               {!isAdmin && !authUser ? "Agreed & Submit" : "Save"}
             </Button>

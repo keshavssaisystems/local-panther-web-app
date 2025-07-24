@@ -1,9 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Card } from "reactstrap";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import custDashIcons from "assets/utils/images/customer/dashboard";
+import avatar1 from "assets/utils/images/avatars/1.jpg";
+import { ProgressCircle } from "_components/common/progress";
+import "./dashboard.scss";
+
 export function DashboardCounts() {
+  const personalInfo_temp = localStorage.getItem("profileImage");
+  const [userDetail, setUserDetail] = useState({});
+  const [profileImg, setProfileImg] = useState("");
+
+  useEffect(() => {
+    setProfileImg(personalInfo_temp);
+  }, [personalInfo_temp]);
+
+  useEffect(() => {
+    const detail = JSON.parse(localStorage.getItem("userDetails")) || {};
+    setUserDetail({ ...detail });
+  }, []);
   const counts = useSelector(
     (state) => state.candidateDashboard.dashboardCounts
   );
@@ -14,7 +30,53 @@ export function DashboardCounts() {
   return (
     <>
       <Row>
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+        <Col xxl={6} xl={6} lg={12} md={12} sm={24}>
+          <Card
+            className={
+              "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
+              "warning border-warning"
+            }
+            style={{
+              height: "68%",
+            }}
+          >
+            <Row>
+              <Col xxl={24} xl={24} lg={24} md={24} sm={24}>
+                <div className="menu-header-content text-start">
+                  <div className="widget-content p-0">
+                    <div className="widget-content-wrapper">
+                      <div className="widget-content-left me-3">
+                        {counts?.profileCompletion && (
+                          <ProgressCircle
+                            avgscore={counts?.profileCompletion / 10}
+                          />
+                        )}
+                        {/* <img
+                          width={42}
+                          height={42}
+                          className="rounded-circle"
+                          src={profileImg ? profileImg : avatar1}
+                          alt=""
+                        /> */}
+                      </div>
+                      <div className="widget-content-left">
+                        <div className="widget-heading">
+                          {userDetail?.FirstName} {userDetail?.LastName}
+                        </div>
+                        <div className="widget-subheading opacity-8 mt-1">
+                          Profile completion
+                        </div>
+                      </div>
+                      <div className="widget-content-right me-2"></div>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+              <Col className="right-align"></Col>
+            </Row>
+          </Card>
+        </Col>
+        <Col xxl={3} xl={3} lg={6} md={6} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -54,7 +116,7 @@ export function DashboardCounts() {
             </div>
           </Card>
         </Col>
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+        <Col xxl={3} xl={3} lg={6} md={6} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -95,7 +157,7 @@ export function DashboardCounts() {
             </div>
           </Card>
         </Col>
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+        <Col xxl={3} xl={3} lg={6} md={6} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -136,7 +198,7 @@ export function DashboardCounts() {
           </Card>
         </Col>
 
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+        <Col xxl={3} xl={3} lg={6} md={6} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -180,7 +242,7 @@ export function DashboardCounts() {
           </Card>
         </Col>
 
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+        <Col xxl={3} xl={3} lg={6} md={6} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -220,7 +282,7 @@ export function DashboardCounts() {
             </div>
           </Card>
         </Col>
-        <Col xxl={2} xl={2} lg={4} md={4} sm={12}>
+        <Col xxl={3} xl={3} lg={6} md={6} sm={12}>
           <Card
             className={
               "widget-chart widget-chart2 text-start mb-3 card-btm-border card-shadow-" +
@@ -248,7 +310,7 @@ export function DashboardCounts() {
                 </Col>
                 <Col>
                   <div className="widget-chart-content">
-                    <div className="widget-title opacity-5 ">Rejected</div>
+                    <div className="widget-title opacity-5 ">Declined</div>
                     <div className="widget-numbers mt-2 fsize-4 mb-2 w-100">
                       <div className="widget-chart-flex ">
                         <div>{counts ? counts.rejectedbycandidate : 0}</div>

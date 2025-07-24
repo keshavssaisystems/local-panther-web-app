@@ -325,7 +325,7 @@ export function CustomerReportInterviewedCandidates() {
   return (
     <>
       <PageTitle
-        heading={"Employer Interviewed Candidates Report"}
+        heading={"Hiring Manager Interviewed Candidates Report"}
         icon={titlelogo}
       />
       <Row className="cust-report-job-cont">

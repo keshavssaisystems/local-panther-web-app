@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import PageTitle from "../../../_components/common/pagetitle";
 import titlelogo from "../../../assets/utils/images/candidate.svg";
-import {
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Button,
-  UncontrolledTooltip,
-} from "reactstrap";
+import { Row, Col, Card, CardBody, Button } from "reactstrap";
 import SelectJobType from "../../../_components/createJobComponents/selectJobType";
 import { CreateJob } from "../../../_components/createJobComponents/createJobForm";
 import JobPreview from "../../../_components/createJobComponents/jobPreview";
@@ -21,6 +14,10 @@ import {
 } from "_store";
 import { PopupWithNextStep } from "_components/common/PopupWithNextStep";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import { ai_response } from "./sampleData";
+import { formatAIJobData, aiJD } from "_components/createJobComponents/jobData";
+import { subscribe } from "_helpers/observerService";
 import "./CreateJob.scss";
 
 export function CreateJobWizard({ type }) {
@@ -34,6 +31,8 @@ export function CreateJobWizard({ type }) {
   const [jobData, setJobData] = useState({});
   const [jobPreviewData, setJobPreviewData] = useState({});
   const [showPopupWithNextStep, setShowPopupWithNextStep] = useState(false);
+  const [aiDescriptionData, setAIDescriptionData] = useState("");
+  const [aiJobDetails, setAIJobDetail] = useState([]);
   const childRef = useRef(null);
   const getJobDetailForEdit = async function () {
     await dispatch(createjobActions.getJobDetailForUpdateThunk(id));
@@ -59,6 +58,13 @@ export function CreateJobWizard({ type }) {
       companyId: localStorage.getItem("companyid"),
       searchType: "JobTitle",
     });
+
+    const unsubscribe = subscribe((data) => {
+      if (data && data?.data) {
+        updateAIJDtoNextStep(data);
+      }
+    });
+    return () => unsubscribe();
   }, []);
   const selectedJobDetailsForEdit = useSelector(
     (state) => state.custJobListReducer.jobDetail
@@ -66,12 +72,13 @@ export function CreateJobWizard({ type }) {
 
   const getOptionsData = (event) => {
     if (
-      event.type === "previous_template" ||
-      event.type === "recommendation_template"
+      (event.type === "previous_template" ||
+        event.type === "recommendation_template") &&
+      event?.jobId
     ) {
       getJobDetail(event.jobId);
     }
-    setJobType(event.type);
+    setJobType(event?.type);
   };
   const getCompanyDetails = async function () {
     await dispatch(
@@ -90,7 +97,6 @@ export function CreateJobWizard({ type }) {
     await dispatch(createjobActions.getPreviousJobListThunk(searchArr));
   };
   const getDataForPreview = (event) => {
-    // debugger;
     setJobPreviewData(event);
   };
   const editJob = (jobData) => {
@@ -116,6 +122,10 @@ export function CreateJobWizard({ type }) {
   };
 
   const createJob = async function (formElement) {
+    if (localStorage.getItem("Aijobeventid")) {
+      formElement.Aijobeventid = Number(localStorage.getItem("Aijobeventid"));
+      localStorage.removeItem("Aijobeventid");
+    }
     await dispatch(createjobActions.getCreatejobThunk(formElement));
   };
   const updateJob = async function (formElement) {
@@ -171,9 +181,12 @@ export function CreateJobWizard({ type }) {
     (state) => state.createJob.recommendedList
   );
   const jobDetail = useSelector((state) => state.createJob.previousJobDetail);
+
   const newJobDetails = useSelector((state) => state.createJob.createjob);
   const publishNewJob = async function () {
-    let jobId = newJobDetails.jobid;
+    let jobId = newJobDetails.jobid
+      ? newJobDetails.jobid
+      : selectedJobDetailsForEdit[0]?.jobid;
     let payload = {
       currentUserId: Number(localStorage.getItem("userId")),
     };
@@ -188,6 +201,11 @@ export function CreateJobWizard({ type }) {
   const getESStatus = (event) => {
     setESStatus(event);
   };
+
+  const onAIDescriptionData = (e) => {
+    setAIDescriptionData(e);
+    setButtonDisable(e === "");
+  };
   const steps = [
     {
       name: "Select option",
@@ -198,6 +216,7 @@ export function CreateJobWizard({ type }) {
           postSearch={(e) => getSearchValue(e)}
           readyForNextStep={(e) => setButtonDisable(e)}
           recommendedJobList={recommendedJobList}
+          aiDescriptionData={(e) => onAIDescriptionData(e)}
         />
       ),
     },
@@ -218,7 +237,11 @@ export function CreateJobWizard({ type }) {
           previousStep={previousStep}
           jobData={jobData}
           previousData={
-            type === "edit" ? selectedJobDetailsForEdit[0] : jobDetail
+            type === "edit"
+              ? selectedJobDetailsForEdit[0]
+              : jobType === "ai_template"
+              ? aiJobDetails
+              : jobDetail
           }
           JobDataForPreview={(e) => getDataForPreview(e)}
           nextPage={(e) => nextPage(e)}
@@ -314,7 +337,43 @@ export function CreateJobWizard({ type }) {
     }
   };
   const next = () => {
+    if (jobType === "ai_template" && aiDescriptionData) {
+      getAIGeneratedJobData();
+    } else {
+      setNavState(compState + 1);
+    }
+  };
+
+  const getAIGeneratedJobData = async () => {
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
+    const config = {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const baseURI = `${process.env.REACT_APP_AI_JD}`;
+    let data = { jd: aiDescriptionData };
+    await axios
+      .post(`${baseURI}/jd_to_job`, data, config)
+      .then(async (result) => {
+        if (result?.data?.job) {
+          let aiJD = await formatAIJobData(result?.data?.job);
+
+          setAIJobDetail(aiJD);
+          setNavState(compState + 1);
+        }
+      })
+      .catch((error) => {});
+  };
+
+  const updateAIJDtoNextStep = (data) => {
+    setAIJobDetail(data.data);
     setNavState(compState + 1);
+    setButtonDisable(false);
   };
 
   const previous = () => {
@@ -380,6 +439,8 @@ export function CreateJobWizard({ type }) {
                               ? type === "edit"
                                 ? "Confirm & update"
                                 : "Confirm & Save as a Draft"
+                              : jobType === "ai_template"
+                              ? "Generate Job Posting"
                               : "Continue"}
                           </Button>
                         )}

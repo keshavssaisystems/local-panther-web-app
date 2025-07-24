@@ -36,8 +36,9 @@ import cx from "classnames";
 import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
+import { getCustomerDropdownList } from "_store";
 
-export const AdminListing = ({ entity }) => {
+export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
   const dispatch = useDispatch();
 
   const [pageSize, setPageSize] = useState(10);
@@ -45,9 +46,15 @@ export const AdminListing = ({ entity }) => {
   let title,
     icon,
     columns = [];
+  const [customerId, setCustomerId] = useState("");
+
+  const { customerList = [] } = useSelector(
+    (state) => state.adminReportReducer
+  );
   useEffect(() => {
     loadData();
     dispatch(getRoles());
+    dispatch(getCustomerDropdownList());
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "Admin listing",
@@ -220,6 +227,9 @@ export const AdminListing = ({ entity }) => {
   ];
 
   useEffect(() => {
+    if (isCompanyAdmin) {
+      setRoleId(2);
+    }
     loadData();
   }, [entity]);
 
@@ -228,6 +238,7 @@ export const AdminListing = ({ entity }) => {
     let urlParams = {
       pageNumber: pageNo,
       pageSize: pageSize,
+      companyId: "",
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -237,6 +248,13 @@ export const AdminListing = ({ entity }) => {
     }
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -357,6 +375,7 @@ export const AdminListing = ({ entity }) => {
     let urlParams = {
       pageNumber: pageNo,
       pageSize: pageSize,
+      companyId: "",
     };
 
     if (status !== "All") {
@@ -364,6 +383,13 @@ export const AdminListing = ({ entity }) => {
     }
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -374,6 +400,7 @@ export const AdminListing = ({ entity }) => {
     let urlParams = {
       pageNumber: pageNo,
       pageSize: pageSize,
+      companyId: "",
     };
     if (searchData !== "") {
       urlParams.searchText = searchData;
@@ -384,6 +411,16 @@ export const AdminListing = ({ entity }) => {
     }
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
+    }
+    if (customerId && customerId !== "") {
+      urlParams.companyId = customerId;
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -396,12 +433,23 @@ export const AdminListing = ({ entity }) => {
       userRoleId: roleId,
       pageNumber: 0,
       pageSize: pageSize,
+      companyId: "",
     };
     if (status !== "All") {
       urlParams.isActive = status;
     }
     if (searchData !== "") {
       urlParams.searchText = searchData;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
+    }
+    if (customerId && customerId !== "") {
+      urlParams.companyId = customerId;
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -412,6 +460,7 @@ export const AdminListing = ({ entity }) => {
     let urlParams = {
       pageSize: pageSize,
       pageNumber: pageNo,
+      companyId: "",
     };
     if (check === "0") {
       setStatus("All");
@@ -429,6 +478,16 @@ export const AdminListing = ({ entity }) => {
     }
     if (searchData !== "") {
       urlParams.searchText = searchData;
+    }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
+    }
+    if (customerId && customerId !== "") {
+      urlParams.companyId = customerId;
     }
     await dispatch(getUsers(urlParams));
     setLoading(false);
@@ -489,6 +548,31 @@ export const AdminListing = ({ entity }) => {
     setLoading(false);
   };
 
+  const onCompanyChange = async (companyId) => {
+    setLoading(true);
+    let urlParams = {
+      pageNumber: pageNo,
+      pageSize: pageSize,
+      companyId: "",
+    };
+    if (searchData !== "") {
+      urlParams.searchText = searchData;
+    }
+
+    if (status !== "All") {
+      urlParams.isActive = status;
+    }
+    if (roleid !== 0) {
+      urlParams.userRoleId = roleid;
+    }
+
+    if (companyId) {
+      urlParams.companyId = companyId;
+    }
+    await dispatch(getUsers(urlParams));
+    setLoading(false);
+  };
+
   return (
     <>
       <Row>
@@ -503,11 +587,20 @@ export const AdminListing = ({ entity }) => {
           <Card className="mb-3">
             <CardBody>
               <Row className="mb-3">
-                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
+                <Col
+                  xxl={isCompanyAdmin ? 3 : 2}
+                  xl={isCompanyAdmin ? 3 : 2}
+                  md={isCompanyAdmin ? 4 : 3}
+                  lg={isCompanyAdmin ? 3 : 2}
+                  sm={12}
+                  xs={12}
+                >
                   <FormGroup>
                     <Input
                       type="select"
                       name="companyid"
+                      value={roleid}
+                      disabled={isCompanyAdmin}
                       onChange={(e) => onSelectRole(e.target.value)}
                     >
                       <option value={0}>All roles</option>
@@ -524,7 +617,14 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col xxl={3} xl={3} md={4} lg={2} sm={12} xs={12}>
+                <Col
+                  xxl={isCompanyAdmin ? 3 : 2}
+                  xl={isCompanyAdmin ? 3 : 2}
+                  md={isCompanyAdmin ? 4 : 3}
+                  lg={isCompanyAdmin ? 3 : 2}
+                  sm={12}
+                  xs={12}
+                >
                   <FormGroup>
                     <Input
                       type="select"
@@ -538,6 +638,34 @@ export const AdminListing = ({ entity }) => {
                     </Input>
                   </FormGroup>
                 </Col>
+                {!isCompanyAdmin && (
+                  <Col xxl={2} xl={2} md={3} lg={2} sm={12} xs={12}>
+                    <FormGroup>
+                      <Input
+                        type="select"
+                        value={customerId}
+                        name="customerid"
+                        id="customerid"
+                        placeholder="Customer ID"
+                        onChange={(e) => {
+                          onCompanyChange(e.target.value);
+                          setCustomerId(e.target.value);
+                        }}
+                      >
+                        <option value={""}>All Company</option>
+                        {customerList?.length > 0 ? (
+                          customerList.map((data) => (
+                            <option value={data.companyid} key={data.companyid}>
+                              {data.companyname}
+                            </option>
+                          ))
+                        ) : (
+                          <></>
+                        )}
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                )}
                 {/* <Col className="col-1"></Col> */}
                 <Col
                   className="right-align"

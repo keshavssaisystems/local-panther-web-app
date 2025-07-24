@@ -28,6 +28,11 @@ export default function PublishJobStep({
       zipcode: reqData.basicInformation.zipcode,
       countryid: 1,
       isdraft: true,
+      // isdraft: type === "edit" ? reqData?.basicInformation?.isdraft : true,
+      // isdraft:
+      //   reqData?.basicInformation?.isdraft !== undefined
+      //     ? reqData?.basicInformation?.isdraft
+      //     : true,
       isclosed: false,
       isactive: true,
       currentUserId: Number(localStorage.getItem("userId")),
@@ -96,8 +101,10 @@ export default function PublishJobStep({
           <div className="results-subtitle mt-4">Successfull!</div>
           <div className="results-title">
             Your job with <b>{reqData.basicInformation.jobTitle}</b> has been
-            successfully {type === "edit" ? "updated" : "created"} & saved as a
-            draft!
+            successfully {type === "edit" ? "updated" : "created"}{" "}
+            {type === "edit" && !reqData.basicInformation.isdraft
+              ? "!"
+              : "& saved as a draft!"}
           </div>
           <div className="mt-3 mb-3" />
           {type === "add" ? (
@@ -132,16 +139,29 @@ export default function PublishJobStep({
               )}
             </div>
           ) : (
-            <div className="text-center">
-              <Button
-                color="primary"
-                size="lg"
-                className="btn-shadow btn-wide"
-                onClick={(e) => navigate(`/job-list`)}
-              >
-                Back to job list
-              </Button>{" "}
-            </div>
+            <>
+              <div className="text-center">
+                {billingStatus === true && customerApproval === true && (
+                  <Button
+                    color="success"
+                    size="lg"
+                    className="btn-shadow btn-wide"
+                    onClick={(e) => publishJob(true)}
+                  >
+                    Publish job
+                  </Button>
+                )}
+                {"      "}
+                <Button
+                  color="primary"
+                  size="lg"
+                  className="btn-shadow btn-wide"
+                  onClick={(e) => navigate(`/job-list`)}
+                >
+                  Back to job list
+                </Button>{" "}
+              </div>
+            </>
           )}
         </div>
       </div>

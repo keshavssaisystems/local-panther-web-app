@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -14,6 +14,8 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
 import footerImg from "../../assets/utils/images/panther-logo.png";
+import { messaging } from "../../firebase";
+import { getPublicIP } from "_helpers/helper";
 import "../static/terms.scss";
 
 import {
@@ -40,6 +42,8 @@ import logo from "../../assets/utils/images/panther-logo-2.png";
 import { getLocationFilter } from "_store";
 import { CustomerRegistration } from "./customerRegistration";
 import { analytics } from "../../firebase/index";
+import debounce from "lodash/debounce";
+import { EmployerRegistration } from "./employerRegistration";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
@@ -72,7 +76,7 @@ export function Registration() {
 
   const [countryValue, setCountryValue] = useState([]);
   const [cityValue, setCityValue] = useState(0);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(1);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -126,23 +130,23 @@ export function Registration() {
         "Please enter valid email"
       ),
     phoneNumber: Yup.string().required("Phone number is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .min(4, "Password must be at least 4 characters")
-      .matches(
-        passwordRegex,
-        "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
-      )
-      .max(30, "Password can be at most 30 characters"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Confirm Password is required")
-      .min(4, "Confirm Password must be at least 4 characters")
-      .max(30, "Confirm Password can be at most 30 characters"),
+    // password: Yup.string()
+    //   .required("Password is required")
+    //   .min(4, "Password must be at least 4 characters")
+    //   .matches(
+    //     passwordRegex,
+    //     "Password must contain atleast 1 special character, 1 uppercase, 1 lowercase and 1 number"
+    //   )
+    //   .max(30, "Password can be at most 30 characters"),
+    // confirmPassword: Yup.string()
+    //   .oneOf([Yup.ref("password"), null], "Passwords must match")
+    //   .required("Confirm Password is required")
+    //   .min(4, "Confirm Password must be at least 4 characters")
+    //   .max(30, "Confirm Password can be at most 30 characters"),
 
-    cityid: Yup.string().required("City, State is required"),
-    stateid: Yup.string(),
-    countryid: Yup.string().required("Country is required"),
+    // cityid: Yup.string().required("City, State is required"),
+    // stateid: Yup.string(),
+    // countryid: Yup.string().required("Country is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
 
@@ -151,6 +155,10 @@ export function Registration() {
     useForm(formOptions);
   const { errors } = formState;
   const [cityList, setCityList] = useState([]);
+  //new reg flow
+  async function onSubmit1(payload) {
+    validateOTP("phone", payload?.firstName ? false : true);
+  }
 
   async function onSubmit(payload) {
     if (!validated.mobile || !validated.email) {
@@ -187,7 +195,7 @@ export function Registration() {
   });
   const [otpDetails, setOTPDetails] = useState([]);
 
-  const validateOTP = async function (check) {
+  const validateOTP = async function (check, showPopup = false) {
     let data;
     if (check === "phone") {
       data = getValues("phoneNumber").replace(/\D/g, "");
@@ -215,19 +223,20 @@ export function Registration() {
       lastname: getValues("lastName"),
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       email: getValues("email"),
-      countryid: countryValue?.value,
-      stateid: parseInt(getValues("stateid")),
-      cityid: cityValue,
-      phoneotp: null,
-      phoneotpgeneratedate: new Date().toISOString(),
-      isphonenumberverify: false,
-      emailotp: null,
-      emailotpgeneratedate: null,
-      isemailverify: false,
+      countryid: null,
+      stateid: null,
+      cityid: null,
+      // phoneotp: null,
+      // phoneotpgeneratedate: new Date().toISOString(),
+      // isphonenumberverify: false,
+      // emailotp: null,
+      // emailotpgeneratedate: null,
+      // isemailverify: false,
       isactive: true,
       currentuserid: 0,
       type: "phone",
       userroleid: 3,
+      // password: "Temp@123",
     };
     let response;
     if (check === "phone") {
@@ -242,6 +251,13 @@ export function Registration() {
       }
 
       if (response?.payload) {
+        if (showPopup) {
+          showSweetAlert({
+            title: response.payload.message,
+            type: "success",
+          });
+        }
+
         setOTPDetails(response.payload.data);
         setOtpForm(true);
       } else {
@@ -284,11 +300,12 @@ export function Registration() {
     }
   };
 
-  const showSweetAlert = ({ title, type }) => {
+  const showSweetAlert = ({ title, type, redirect = false }) => {
     let data = { ...showAlert };
     data.title = title;
     data.type = type;
     data.show = true;
+    data.redirect = redirect;
     SetShowAlert(data);
   };
   const closeSweetAlert = () => {
@@ -296,7 +313,88 @@ export function Registration() {
     data.title = "";
     data.type = "";
     data.show = false;
+    if (data.redirect) {
+      loginWithOTP("phone");
+    }
+    data.redirect = false;
     SetShowAlert(data);
+  };
+
+  const loginWithOTP = async () => {
+    let payload = {
+      cityid: null,
+      countryid: null,
+      email: getValues("email"),
+      firstname: getValues("firstName"),
+      lastname: getValues("lastName"),
+      phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
+      stateid: null,
+    };
+    const permission = await Notification.requestPermission();
+    let data = await getPublicIP();
+    if (data?.ip) {
+      localStorage.setItem("publicip", data.ip);
+    }
+    if (permission === "granted") {
+      // Generate Token
+      const token = await messaging.getToken({
+        vapidKey:
+          "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+      });
+      payload.firebasetoken = token;
+    } else if (permission === "denied") {
+      console.log("You denied for the notification");
+    }
+    let response = await dispatch(authActions.candRegisterOTPThunk(payload));
+    if (response.payload) {
+      if (
+        localStorage.getItem("referralLogdata") &&
+        JSON.parse(localStorage.getItem("referralLogdata"))?.companyid
+      ) {
+        let logData = JSON.parse(localStorage.getItem("referralLogdata"));
+        const userAgent = navigator.userAgent;
+        let os = "Unknown OS";
+
+        if (userAgent.indexOf("Win") != -1) os = "Windows";
+        if (userAgent.indexOf("Mac") != -1) os = "MacOS";
+        if (userAgent.indexOf("X11") != -1) os = "UNIX";
+        if (userAgent.indexOf("Linux") != -1) os = "Linux";
+        if (userAgent.indexOf("Android") != -1) os = "Android";
+        if (userAgent.indexOf("like Mac") != -1) os = "iOS";
+        let payload = {
+          referralLogUrl: window.location.href,
+          companyName: logData?.companyName,
+          // companyid: 0,
+          osversion: "string",
+          ipaddress: localStorage.getItem("publicip")
+            ? localStorage.getItem("publicip")
+            : "Web",
+          loginsource: "Web",
+          logindeviceid: os,
+          logindevice: os,
+          currentUserId: localStorage.getItem("userId")
+            ? Number(localStorage.getItem("userId"))
+            : 0,
+        };
+        console.log(payload);
+        dispatch(
+          authActions.putCompanyReferralLogs({
+            id: logData?.companyreferrallogid,
+            payload,
+          })
+        );
+        localStorage.removeItem("referralLogdata");
+      }
+      showSweetAlert({
+        title: response.payload.message,
+        type: "success",
+      });
+    } else {
+      showSweetAlert({
+        title: response.error.message,
+        type: "error",
+      });
+    }
   };
 
   const verifyMobileOTPDetails = async function (data) {
@@ -317,6 +415,7 @@ export function Registration() {
         showSweetAlert({
           title: response.payload.message,
           type: "success",
+          redirect: true,
         });
         setOtpForm(false);
         setMessage("Phone number verified");
@@ -388,6 +487,13 @@ export function Registration() {
   const toggleConfirmPassword = () => {
     setShowConfirm(!showConfirm);
   };
+
+  const loadOptionsDeb = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptions(inputValue).then(callback);
+    }, 500),
+    [] // Important: memoize once!
+  );
 
   const loadOptions = async function (inputValue) {
     const { data = [] } = await getLocationFilter(inputValue);
@@ -496,6 +602,41 @@ export function Registration() {
       }
     }
   };
+
+  const handlePaste = (e, check) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text").trim().slice(0, 6);
+    if (!/^\d+$/.test(pasteData)) return;
+
+    const pasted = pasteData.split("");
+    if (check === "email") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`email-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new.email = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.email.length === 6) {
+        verifyEmailOTPDetails(otp_new);
+      }
+    } else if (check === "mobile") {
+      let new_data = [...saveOTP];
+      let otp_new = { ...otp };
+      pasted.map((digit, i) => {
+        new_data[i] = digit;
+        document.getElementById(`mobile-${i}`).value = digit;
+      });
+      setSaveOTP(new_data);
+      otp_new.mobile = new_data.join("");
+      setOtp(otp_new);
+      if (otp_new.mobile.length === 6) {
+        verifyMobileOTPDetails(otp_new);
+      }
+    }
+  };
   const onHandleInputChange = (data) => {
     setCountryValue([]);
     reset({ resolver: yupResolver(validationSchema) });
@@ -537,7 +678,7 @@ export function Registration() {
       <div className=" registration-container h-100">
         <Row className="h-100 g-0">
           <Col
-            lg="7"
+            lg="8"
             md="12"
             className="h-100 d-md-flex d-sm-block bg-white justify-content-center align-items-center"
             style={{ overflow: "auto" }}
@@ -577,25 +718,48 @@ export function Registration() {
                     <span className="text-danger">*</span>
                   </Label>
 
-                  {registrationType.map((item, index) => (
-                    <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
-                      <FormGroup check style={{ marginLeft: "5px" }}>
+                  {/* {registrationType.map((item, index) => ( */}
+                  <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
+                    <FormGroup check style={{ marginLeft: "5px" }}>
+                      <div onClick={(evt) => onHandleInputChange(1)}>
                         <Input
                           style={{ fontSize: "18px" }}
                           name="desiredJobType"
                           type="radio"
-                          onChange={(evt) => onHandleInputChange(item.id)}
+                          value={1}
+                          checked={selected === 1}
                         />{" "}
                         <Label
                           check
-                          className="fw-semi-bold"
+                          className="fw-semi-bold reg-link-text"
                           style={{ fontSize: "18px", fontWeight: "600" }}
                         >
-                          {item.name}
+                          Job seekers
                         </Label>
-                      </FormGroup>
-                    </Col>
-                  ))}
+                      </div>
+                    </FormGroup>
+                  </Col>
+                  <Col md={8} lg={8} sm={12} xl={8} xs={12} xxl={6}>
+                    <FormGroup check style={{ marginLeft: "5px" }}>
+                      <div onClick={(evt) => onHandleInputChange(2)}>
+                        <Input
+                          style={{ fontSize: "18px" }}
+                          name="desiredJobType"
+                          type="radio"
+                          value={2}
+                          checked={selected === 2}
+                        />{" "}
+                        <Label
+                          check
+                          className="fw-semi-bold reg-link-text"
+                          style={{ fontSize: "18px", fontWeight: "600" }}
+                        >
+                          Hiring Manager? Register here
+                        </Label>
+                      </div>
+                    </FormGroup>
+                  </Col>
+                  {/* ))} */}
                 </Row>
                 {selected === 0 && (
                   <div className="mt-3 float-end">
@@ -613,7 +777,7 @@ export function Registration() {
               </div>
               <div className="mt-5">
                 {selected === 1 && (
-                  <Form onSubmit={handleSubmit(onSubmit)}>
+                  <Form onSubmit={handleSubmit(onSubmit1)}>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
@@ -679,7 +843,7 @@ export function Registration() {
                               autoComplete="off"
                               disabled={validated.email}
                             />
-                            {!validated.email ? (
+                            {/* {!validated.email ? (
                               <Button
                                 className="grp-btn"
                                 color="light"
@@ -702,7 +866,7 @@ export function Registration() {
                               >
                                 <img src={validIcon} alt="valid-icon" />
                               </Button>
-                            )}{" "}
+                            )}{" "} */}
                             <FormFeedback>{errors.email?.message}</FormFeedback>
                           </InputGroup>
 
@@ -735,7 +899,7 @@ export function Registration() {
                               }
                               disabled={validated.mobile}
                             />
-                            {!validated.mobile ? (
+                            {/* {!validated.mobile ? (
                               <Button
                                 className="grp-btn"
                                 color="light"
@@ -758,7 +922,7 @@ export function Registration() {
                               >
                                 <img src={validIcon} alt="valid-icon" />
                               </Button>
-                            )}{" "}
+                            )}{" "} */}
                             <FormFeedback>
                               {errors.phoneNumber?.message}
                             </FormFeedback>
@@ -770,7 +934,8 @@ export function Registration() {
                           </div>
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
+                      {/* new updated flow */}
+                      {/* <Col md={6}>
                         <FormGroup>
                           <Label for="password" className="input-label">
                             Password <span className="text-danger">*</span>
@@ -837,7 +1002,8 @@ export function Registration() {
                             name="cityid"
                             placeholder="Search to select"
                             placeholderText="search"
-                            loadOptions={loadOptions}
+                            cacheOptions
+                            loadOptions={loadOptionsDeb}
                             isMulti={false}
                             className={`placeholder-name ${
                               errors.cityid && cityValue === 0
@@ -881,12 +1047,13 @@ export function Registration() {
                               : ""}
                           </div>
                         </FormGroup>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <div className="mt-4 d-flex align-items-center">
                       <h5 className="mb-0 account-text ms-auto me-4">
                         <Link
                           to="/login"
+                          className="pb-text"
                           style={{ borderBottom: "1px solid #545cd8" }}
                         >
                           Already a member? Sign in
@@ -894,13 +1061,14 @@ export function Registration() {
                       </h5>
                       <div>
                         <Button color="primary" className=" btn-text" size="lg">
-                          Register
+                          Create account
                         </Button>
                       </div>
                     </div>
                   </Form>
                 )}
-                {selected === 2 && <CustomerRegistration />}
+                {/* {selected === 2 && <CustomerRegistration />} */}
+                {selected === 2 && <EmployerRegistration />}
               </div>
               {selected === 2 ? "" : <br />}
               <br></br>
@@ -918,7 +1086,7 @@ export function Registration() {
                     xs={{ order: 1, size: 12 }}
                     className="text-start mt-1"
                   >
-                    <span className="mt-2">Powered by</span>
+                    <span className="mt-2 pb-text">Powered by</span>
                     <img
                       src={footerImg}
                       className="logo ms-1"
@@ -982,11 +1150,12 @@ export function Registration() {
               </footer>
             </Col>
           </Col>
-          <Col lg="5" className="d-xs-none">
+          <Col lg="4" className="d-xs-none">
             <div className="slider-light">
               <Slider {...settings}>
                 <div className="h-100 d-flex justify-content-center align-items-center bg-plum-plate">
-                  <div
+                  <p className="m-5 slider-content"></p>
+                  {/* <div
                     className="slide-img-bg"
                     style={{
                       backgroundImage: "url(" + bg1 + ")",
@@ -998,7 +1167,7 @@ export function Registration() {
                       What makes The OpenWorX community the ideal career
                       partner? We focus on what you want most from your career!
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </Slider>
             </div>
@@ -1039,6 +1208,7 @@ export function Registration() {
                         onInput={(e) =>
                           handleInputChange("mobile", e.target.value, index)
                         }
+                        onPaste={(e) => handlePaste(e, "mobile")}
                       />
                     </FormGroup>
                   ))}
@@ -1055,7 +1225,7 @@ export function Registration() {
               <Row className="mt-1">
                 <Col>
                   <div className="ms-auto d-flex justify-content-center align-items-center">
-                    {timer > 0 ? (
+                    {/* {timer > 0 ? (
                       <span style={{ marginLeft: "5px" }}>
                         Resend verification code in
                         <span className="otp-link-label"> {timer} </span>
@@ -1069,7 +1239,16 @@ export function Registration() {
                       >
                         Resend verification code
                       </a>
-                    )}
+                    )} */}
+                    <button
+                      href="#"
+                      onClick={() => {
+                        onSubmit1(true);
+                      }}
+                      className="btn-lg btn btn-link otp-link-label"
+                    >
+                      Resend Code
+                    </button>
                   </div>
                 </Col>
               </Row>
@@ -1130,6 +1309,7 @@ export function Registration() {
                         onInput={(e) =>
                           handleInputChange("email", e.target.value, index)
                         }
+                        onPaste={(e) => handlePaste(e, "email")}
                       />
                     </FormGroup>
                   ))}

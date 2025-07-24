@@ -11,7 +11,6 @@ import { scheduleInterviewActions } from "_store";
 import { InterViewDetailModal } from "../../../_components/modal/interviewdetailmodal";
 import { getTimezoneDateTime } from "_helpers/helper";
 import "./calendar.scss";
-import { faLessThanEqual } from "@fortawesome/free-solid-svg-icons";
 import { analytics } from "../../../firebase/index";
 
 export function CandidateSchedules() {

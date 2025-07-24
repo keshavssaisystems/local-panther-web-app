@@ -1,0 +1,29 @@
+.guest-cont {
+  padding-top: 60px;
+  position: absolute;
+  width: 96%;
+  text-align: center;
+  .div-title {
+    color: #2f2e2e;
+    font-size: 36px;
+    font-weight: 500;
+  }
+
+  .div-subt {
+    color: #2f2e2e;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .card-div {
+    padding: 32px;
+    border-radius: 8px;
+    max-width: 510px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .form-div {
+    text-align: left;
+  }
+}

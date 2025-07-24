@@ -8,6 +8,7 @@ export function CompanyFilter({
   onChange,
   isMulti = false,
   value,
+  disabled = false,
 }) {
   const loadOptions = async (inputValue) => {
     if (inputValue.length > 2) {
@@ -26,6 +27,7 @@ export function CompanyFilter({
       onChange={(e) => onChange(name, e.value, e)}
       isMulti={isMulti}
       value={value}
+      isDisabled={disabled}
     />
   );
 }

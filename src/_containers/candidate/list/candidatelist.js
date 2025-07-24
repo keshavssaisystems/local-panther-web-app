@@ -22,7 +22,6 @@ import {
   custJobListActions,
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
-import { CandRescheduleModal } from "_components/modal/candreschedulemodal";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
 
@@ -663,7 +662,7 @@ export const CandidateList = (props) => {
                 toggle("rejected");
               }}
             >
-              Rejected
+              Declined
             </Button>
           </ButtonGroup>
         </Col>
@@ -783,9 +782,8 @@ export const CandidateList = (props) => {
                         style={{ textAlign: "center" }}
                         className="center-middle-align"
                       >
-                        <Col>
-                          {" "}
-                          <NoDataFound></NoDataFound>
+                        <Col xs="12" sm="12" md="8" lg="6" xl="6">
+                          <NoDataFound text="Thanks for signing up with OpenWorX! While there isn't a perfect match right now, your profile stays active and will automatically be considered as new jobs are added. We'll reach out as soon as the right opportunity aligns with your experience and qualifications."></NoDataFound>
                         </Col>
                       </Row>
                     ) : (
@@ -1117,7 +1115,7 @@ export const CandidateList = (props) => {
                   <Col>
                     <img src={infoIcon} alt="" />
                     <span style={{ display: "flex" }}>
-                      A rejected job refers to a decision to decline an offer or
+                      A declined job refers to a decision to decline an offer or
                       a customer rescinding it, indicating that the individual
                       has decided not to work for the customer or has changed
                       their hiring decision.
