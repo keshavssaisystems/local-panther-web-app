@@ -106,7 +106,8 @@ export function ScheduleInterviewModal({
   const getSlotDuration = (e) => {
     let time = 0;
     for (let i = 0; i < timeOption.length; i++) {
-      if (timeOption[i].slottime >= e.target.value) {
+      // if (timeOption[i].slottime >= e.target.value) {
+      if (moment(timeOption[i].slottime, "HH:mm:ss").toDate() >= moment(e.target.value, "HH:mm:ss").toDate()) {
         if (!timeOption[i].isavailable) {
           time = timeOption[i].slottime;
           break;
