@@ -1271,7 +1271,7 @@ export const CustCandidateListView = (props) => {
             ]
       : [
         {
-          name: <span className="table-title">Candidate name</span>,
+          name: <span className="table-title">Candidate</span>,
           id: "Candidate",
           cell: (row) => (
             <span title={row.firstname + " " + row.lastname}>
@@ -1343,7 +1343,7 @@ export const CustCandidateListView = (props) => {
           width: "16%",
         },
         {
-          name: <span className="table-title">Prescreen</span>,
+          name: <span className="table-title">Pre-screen</span>,
           cell: (row) =>
             row.candidateprescreenstatus === "NA" ? (
               "-"
