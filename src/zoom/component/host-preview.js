@@ -56,17 +56,21 @@ export const HostPreview = ({
   }, [interviewId]);
 
   const handleAllow = (index) => {
-    let users = [...fbUsersData];
+    let users = fbUsersData.map((item) => {
+      return { ...item };
+    });
     users[index].isAllowed = true;
     users[index].isDenied = false;
     database.ref("users/" + urlParams).update(users);
   };
 
   const handleDeny = (index) => {
-    let users = [...fbUsersData];
+    let users = fbUsersData.map((item) => {
+      return { ...item };
+    });
     users[index].isAllowed = false;
     users[index].isDenied = true;
-    users[index].isJoined = false;
+    // users[index].isJoined = false;
     database.ref("users/" + urlParams).update(users);
   };
 
