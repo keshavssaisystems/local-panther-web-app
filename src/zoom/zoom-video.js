@@ -28,6 +28,7 @@ import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 import "../_containers/sharejob/sharejob.scss";
 import "./zoom-video.css";
+import ZoomVideo from "@zoom/videosdk";
 
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
@@ -49,7 +50,7 @@ export const ZoomVideoScreen = (props) => {
   );
 
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const [hostLeave, setIsHostLeave] = useState(false);
   console.log(participantData);
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
@@ -68,6 +69,11 @@ export const ZoomVideoScreen = (props) => {
     sessionPasscode: "",
     role: "",
     features: ["video", "audio", "users", "chat", "share", "settings"],
+    feedback: false,
+    videoWebRtcMode: "auto",
+    featuresOptions: {
+      feedback: { enable: false },
+    },
   };
 
   // let token = generateSignature(ZOOM_APP_KEY, ZOOM_APP_SECRET, id, 1, id, name);
@@ -86,11 +92,33 @@ export const ZoomVideoScreen = (props) => {
   // }, []);
 
   useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const endScreen = document.querySelector(
+        "button[id='leave-meeting-button']"
+      ); // or other DOM clues
+      if (endScreen) {
+        if (localStorage.getItem("userroleid") === "2") {
+          endScreen.addEventListener("click", () => {
+            updateLocatSorageUsersData();
+          });
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"
     ) {
       dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
+      // interval = setInterval(() => {
+      //   debugger;
+      //   const button = document.getElementById("leave-meeting-button"); // Replace with actual selector
+      //   if (button) {
+      //     button.addEventListener("click", handleClick);
+      //     clearInterval(interval); // Found it, stop polling
+      //   }
+      // }, 500);
     }
 
     document.addEventListener("keydown", keyDownHandler);
@@ -111,14 +139,21 @@ export const ZoomVideoScreen = (props) => {
 
     // Cleanup listener on unmount
     return () => {
-      if (localStorage.getItem("userroleid") === "2") {
+      if (localStorage.getItem("userroleid") === "2" && !hostLeave) {
         database.ref("users/" + urlParams).remove();
       }
       nameRef.off();
       document.removeEventListener("keydown", keyDownHandler);
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", () => updateLocatSorageUsersData());
+      observer.disconnect();
     };
   }, []);
+
+  const handleClick = () => {
+    debugger;
+    console.log("Observed external button clicked!");
+  };
 
   const handleBeforeUnload = async (event) => {
     // Optional: Show confirmation dialog
@@ -126,11 +161,12 @@ export const ZoomVideoScreen = (props) => {
     event.returnValue = ""; // Required for Chrome to show confirmation dialog
     await UserLeftSession();
     // Add your cleanup or API call logic here
-    if (localStorage.getItem("userroleid") === "2") {
+    if (localStorage.getItem("userroleid") === "2" && !hostLeave) {
       database.ref("users/" + urlParams).remove();
     }
 
     if (sessionContainer && localStorage.getItem("userroleid") === "2") {
+      debugger;
       uitoolkit.closeSession(sessionContainer);
       uitoolkit.offSessionJoined(sessionJoined);
       uitoolkit.offSessionClosed(sessionClosed);
@@ -159,16 +195,21 @@ export const ZoomVideoScreen = (props) => {
           : sessionData[0].userIdentity;
       config.sessionPasscode = sessionData[0].sessionPassword;
       config.role = sessionData[0].roleType;
-      config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
 
+      config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
+      config.feedback = false;
+      console.log(config);
       uitoolkit.joinSession(sessionContainer, config);
+
       uitoolkit.onSessionJoined(sessionJoined);
       uitoolkit.onSessionClosed(sessionClosed);
     }
 
     return () => {
       if (sessionContainer) {
+        debugger;
         uitoolkit.closeSession(sessionContainer);
+        // uitoolkit.offSessionDestroyed(sessionDestroyed);
         uitoolkit.offSessionJoined(sessionJoined);
         uitoolkit.offSessionClosed(sessionClosed);
       }
@@ -258,6 +299,8 @@ export const ZoomVideoScreen = (props) => {
     console.log("session joined");
   };
 
+  const onBtnClicked = (evt) => {};
+
   const UserLeftSession = () => {
     if (
       fbUsersData.length > 0 &&
@@ -278,7 +321,7 @@ export const ZoomVideoScreen = (props) => {
     }
   };
 
-  const sessionClosed = async () => {
+  const sessionClosed = async (evt) => {
     await UserLeftSession();
     if (
       localStorage.getItem("userroleid") &&
@@ -288,6 +331,10 @@ export const ZoomVideoScreen = (props) => {
     } else {
       navigate(`/`);
     }
+  };
+
+  const sessionDestroyed = (evt) => {
+    console.log(evt);
   };
 
   const getToken = async () => {
@@ -351,6 +398,7 @@ export const ZoomVideoScreen = (props) => {
   };
   const routeToHome = async () => {
     await UserLeftSession();
+
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"
@@ -418,6 +466,11 @@ export const ZoomVideoScreen = (props) => {
     setShowScreen("load");
   };
 
+  const updateLocatSorageUsersData = () => {
+    debugger;
+    localStorage.setItem("zoomusersList", JSON.stringify(fbUsersData));
+  };
+
   return (
     <>
       {/* <div id="previewContainer"></div> */}
@@ -456,7 +509,8 @@ export const ZoomVideoScreen = (props) => {
         ></WaitingPreview>
       )}
       <div>
-        <div style={{ padding: !props.authUser ? "5% 20%" : "15px 20%" }}>
+        {/* <div style={{ padding: !props.authUser ? "5% 20%" : "15px 20%" }}> */}
+        <div>
           <div id="sessionContainer"></div>
           {host && (
             <div
