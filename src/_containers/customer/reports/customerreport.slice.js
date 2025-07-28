@@ -190,21 +190,22 @@ export const getReportCandidateInterviewList = createAsyncThunk(
       pageSize: 10,
     };
     console.log(payload);
-
-    // & parameter=@jobid=${
-    //       payload.jobid ? payload.jobid : null
-    //     }, @customerrecommendedjobstatusid=${
-    //       payload.customerrecommendedjobstatusid
-    //         ? payload.customerrecommendedjobstatusid
-    //         : null
-
     // @hiringmanager='cait',@date='2025-07-07',@interviewstatusid=7,@jobtitle='st',@candidate='St'
     const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
-      }/Report/GetReportBySP?storedProcedure=Report_CandidateInterviewFeedback&parameter=@hiringmanager=${payload.hiringmanager ? payload.hiringmanager : null},@jobtitle=${payload.jobtitle ? payload.jobtitle : null},@candidate=${payload.candidate ? payload.candidate : null}`;
+      }/Report/GetReportBySP?storedProcedure=Report_CandidateInterviewFeedback&parameter=@hiringmanager=${payload.hiringmanager ? payload.hiringmanager : null},@jobtitle=${payload.jobtitle ? payload.jobtitle : null},@candidate=${payload.candidate ? payload.candidate : null},@companyid=${payload.companyid ? payload.companyid : null}`;
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
   }
 );
 
+
+export const getHiringMangerList = createAsyncThunk(
+  `${name}/getHiringMangerList`,
+  async (companyIdId = {}) => {
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }Common/GetCommonDropdown?searchText=userListByCompany&commonId=${companyIdId}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
 // Create the slice
 const customerReportSlice = createSlice({
   name,
@@ -381,7 +382,16 @@ const customerReportSlice = createSlice({
     [getReportCandidateInterviewList.fulfilled]: (state, { payload = {} }) => {
       state.candidateInterviewFeedbacks = payload?.data;
     },
-    [getReportCandidateInterviewList.rejected]: (state, action) => { }
+    [getReportCandidateInterviewList.rejected]: (state, action) => { },
+
+    [getHiringMangerList.pending]: (state) => {
+      state.hiringmangers = [];
+    },
+    [getHiringMangerList.fulfilled]: (state, { payload = {} }) => {
+      state.hiringmangers = payload?.data;
+    },
+    [getHiringMangerList.rejected]: (state, action) => { }
+
   },
 
 });
@@ -402,7 +412,8 @@ export const customerReportActions = {
   getCustReportJobDetail,
   getCustReportSchdIntvDetail,
   getReportSubsidiaryList,
-  getReportCandidateInterviewList
+  getReportCandidateInterviewList,
+  getHiringMangerList
 };
 
 export const customerReportReducer = customerReportSlice.reducer;

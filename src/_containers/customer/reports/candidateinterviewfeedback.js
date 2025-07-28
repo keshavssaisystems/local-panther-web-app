@@ -33,8 +33,10 @@ import {
   getJobDropdown,
   getCustReportJobDetail,
   getCustReportSchdIntvDetail,
-  getReportCandidateInterviewList
+  getReportCandidateInterviewList,
+  getHiringMangerList
 } from "./customerreport.slice";
+import { getCustomerDropdownList } from "_store";
 import { useParams } from "react-router-dom";
 
 import DataTable from "react-data-table-component";
@@ -62,7 +64,9 @@ export function CandidateInterviewFeedback() {
   const [showJDModal, setShowJDModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
-    let [hiringmanagerId, setHiringMangerId] = useState();
+  let [hiringmanagerId, setHiringMangerId] = useState();
+  const [customerId, setCustomerId] = useState("");
+  const [roleId, setRoleId] = useState();
   const candidateInterviewFeedbackList = useSelector(
     (state) => state?.customerReportReducer?.candidateInterviewFeedbacks
   );
@@ -80,12 +84,22 @@ export function CandidateInterviewFeedback() {
   const candidateDropDownList = useSelector(
     (state) => state?.customerReportReducer?.candidateDropDownList
   );
+
+  const hiringManagerDownList = useSelector(
+    (state) => state?.customerReportReducer?.hiringmangers
+  );
+  const { customerList = [] } = useSelector(
+    (state) => state.adminReportReducer
+  );
   useEffect(() => {
+    setRoleId(Number(localStorage.getItem("userroleid")));
     let userId = Number(localStorage.getItem("userId"));
+    let companyId = Number(localStorage.getItem("companyid"));
     onGetReportCandidateInterviewList({});
     dispatch(getScheduledCandidatesForCustomerDropdown(userId));
     dispatch(getJobDropdown());
-
+    dispatch(getHiringMangerList(companyId));
+    dispatch(getCustomerDropdownList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -100,20 +114,18 @@ export function CandidateInterviewFeedback() {
     if (candidateInterviewFeedbackList?.length > 0) {
       let filteredData = candidateInterviewFeedbackList.map((data) => {
         return {
-          "Job code": data.jobid,
-          Title: data.jobtitle,
-          Status: data.jobstatus,
           "Candidate name": data.candidatename,
-          "Scheduled date": data.scheduledate
-            ? moment(data.scheduledate).format("MM/DD/YYYY")
-            : "",
-          Interviewers: data.intervieweremailids,
-          "Meeting status": data.meetingstatus,
+          "Job title": data.jobtitle,
+          "Hiring Manager name": data.hiringmanegername,
+          "Interview date & time": data.scheduledate ? getTimezoneDateTime(moment(data.scheduledate.slice(0, 11) + data.starttime).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY HH:mm:ss") : "",
+          "Interviewer Feedback": data.interviewtatus,
+          "Current Candidate Status": data.recommendedjobstatus,
+          "Company Name": data.companyname
         };
       });
       setExcelData([
         {
-          sheetName: "ScheduleInterviews",
+          sheetName: "InterviewFeedbacks",
           details: filteredData,
         },
       ]);
@@ -218,18 +230,12 @@ export function CandidateInterviewFeedback() {
     {
       name: <span className="table-title">Hiring Manager Name</span>,
       cell: (row) => (
-        <span className="table-cell" title={row.jobtitle}>
-          <Button
-            className="no-padding"
-            color="link"
-            onClick={() => openJobDetails(row.jobid)}
-          >
-            {row.jobtitle}
-          </Button>
+        <span className="table-cell" title={row.hiringmanegername}>
+          {row.hiringmanegername}
         </span>
       ),
       sortable: true,
-      selector: (row) => row.jobtitle,
+      selector: (row) => row.hiringmanegername,
       minWidth: "300px",
     },
 
@@ -244,24 +250,20 @@ export function CandidateInterviewFeedback() {
                 moment(row.scheduledate.slice(0, 11) + row.starttime).format(
                   "YYYY-MM-DD HH:mm:ss"
                 ),
-                "MM/DD/YYYY"
+                "MM/DD/YYYY HH:mm:ss"
               )
               : ""
           }
         >
-          <Button
-            color="link"
-            onClick={() => onInterviewDetailClick(row.scheduleinterviewid)}
-          >
-            {row.scheduledate
-              ? getTimezoneDateTime(
-                moment(row.scheduledate.slice(0, 11) + row.starttime).format(
-                  "YYYY-MM-DD HH:mm:ss"
-                ),
-                "MM/DD/YYYY"
-              )
-              : ""}
-          </Button>
+          {row.scheduledate
+            ? getTimezoneDateTime(
+              moment(row.scheduledate.slice(0, 11) + row.starttime).format(
+                "YYYY-MM-DD HH:mm:ss"
+              ),
+              "MM/DD/YYYY HH:mm:ss"
+            )
+            : ""}
+
         </span>
       ),
       sortable: true,
@@ -349,7 +351,7 @@ export function CandidateInterviewFeedback() {
             <CardBody>
               <Row>
                 <Col lg="2" md="4" sm="12" sx="12">
-                  <FormGroup>                    
+                  <FormGroup>
                     <Input
                       type="select"
                       value={candidateId}
@@ -380,7 +382,7 @@ export function CandidateInterviewFeedback() {
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">
-                  <FormGroup>                    
+                  <FormGroup>
                     <Input
                       type="select"
                       value={jobId}
@@ -419,10 +421,10 @@ export function CandidateInterviewFeedback() {
                       }}
                     >
                       <option value={""}>Select a Hiring Manger</option>
-                      {jobDropDownList?.length > 0 ? (
-                        jobDropDownList.map((data) => (
-                          <option value={data.hiringmanagerId} key={data.hiringmanagerId}>
-                            {data.hiringmanager}
+                      {hiringManagerDownList?.length > 0 ? (
+                        hiringManagerDownList.map((data) => (
+                          <option value={data.id} key={data.id}>
+                            {data.name}
                           </option>
                         ))
                       ) : (
@@ -431,6 +433,36 @@ export function CandidateInterviewFeedback() {
                     </Input>
                   </FormGroup>
                 </Col>
+                {roleId === 1 ?
+                  <Col lg="2" md="4" sm="12" sx="12">
+                    <FormGroup>
+                      <Input
+                        type="select"
+                        value={customerId}
+                        name="customerid"
+                        id="customerid"
+                        placeholder="Customer ID"
+                        onChange={(e) => {
+                          handleChange("companyid", e.target.value);
+                          setCustomerId(e.target.value);
+                        }}
+                      >
+                        <option value={""}>All Company</option>
+                        {customerList?.length > 0 ? (
+                          customerList.map((data) => (
+                            <option value={data.companyid} key={data.companyid}>
+                              {data.companyname}
+                            </option>
+                          ))
+                        ) : (
+                          <></>
+                        )}
+                      </Input>
+                    </FormGroup>
+                  </Col> : <></>}
+
+
+
                 <Col lg="2" md="4" sm="12" sx="12" style={{ display: "none" }}>
                   <FormGroup>
                     <InputGroup>

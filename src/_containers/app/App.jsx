@@ -357,6 +357,14 @@ export function App() {
             path="/report/ats-candidates/:id"
             element={<ATSCandidate title={"ATS Candidate Report"} />}
           />
+           <Route
+            path="/candidate-interview-feedback"
+            element={
+              <PrivateRoute>
+                <CandidateInterviewFeedback />
+              </PrivateRoute>
+            }
+          />
         </>
       );
     } else if (userroleid === 2) {
