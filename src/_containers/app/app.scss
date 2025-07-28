@@ -45,12 +45,22 @@ body {
   .no-padding {
     padding: 0px;
   }
+
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    display: unset;
+  }
 }
 
 .cke_notification {
   display: none !important;
 }
-
 
 .pb-text {
   color: #052f5f;

@@ -98,7 +98,7 @@ export const GuestPreview = (props) => {
       } else {
         if (ind2 > -1) {
           props.showSweetAlert({
-            title: "Host Denied permission for the meeting!!",
+            title: "Host denied permission for the meeting!!",
             type: "error",
           });
         } else {
