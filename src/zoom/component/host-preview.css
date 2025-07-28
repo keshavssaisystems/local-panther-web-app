@@ -31,6 +31,7 @@
     border-radius: 8px;
     padding: 4px 8px;
     width: max-content;
+    display: flex;
   }
 
   .joined-pill {
@@ -41,6 +42,7 @@
     border-radius: 8px;
     padding: 4px 8px;
     width: max-content;
+    display: flex;
   }
 
   .deny-pill {
@@ -51,6 +53,7 @@
     border-radius: 8px;
     padding: 4px 8px;
     width: max-content;
+    display: flex;
   }
 
   .badge {

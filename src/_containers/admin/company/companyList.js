@@ -564,6 +564,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
           onClose={() => onCloseBDModal()}
           isAdmin={true}
           userId={userDetails?.InternalUserId}
+          companyid={selectedCustomer?.companyid}
         />
       ) : (
         <></>
