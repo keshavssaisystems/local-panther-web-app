@@ -90,6 +90,19 @@ export function EmployerRegistration() {
         return;
       }
     }
+
+    if (selectedComp.value && selectedComp.value !== "0") {
+      let ind = formData?.empemail?.indexOf(selectedComp?.email?.split("@")[1]);
+      if (ind === -1) {
+        showSweetAlert({
+          title:
+            "The hiring manager email domain should match with company email domain for registration.",
+          type: "error",
+        });
+        return;
+      }
+    }
+
     let name = formData.empname.split(" ");
     let payload = {
       email: getValues("empemail"),

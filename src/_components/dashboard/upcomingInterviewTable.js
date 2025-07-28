@@ -204,8 +204,10 @@ export function UpcomingInterviewTable({ tableData }) {
     }
     if (mode === "video") {
       if (data.isappvideocall) {
-        setLink(id);
-        setAppShowInterview(true);
+        navigate(`/video-screen/${id}`);
+        // setLink(id);
+
+        // setAppShowInterview(true);
       } else {
         setLink(data.videolink);
         setShowInterview(true);

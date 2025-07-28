@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import uitoolkit from "@zoom/videosdk-ui-toolkit";
 import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
@@ -31,6 +31,7 @@ import "./zoom-video.css";
 
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
+
   const [sessionData, setSessionData] = useState([]);
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -44,12 +45,14 @@ export const ZoomVideoScreen = (props) => {
   const [participantData, setParticipantData] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const [fbUsersData, setFBUsersData] = useState([]);
+  const fbUserRef = useRef(fbUsersData);
+
   const [isOpen, setIsOpen] = useState(
     localStorage.getItem("userroleid") === "2"
   );
 
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const [hostLeave, setIsHostLeave] = useState(false);
   console.log(participantData);
   let urlParams = rest["*"] ? rest["*"] : "";
   let id = urlParams.length > 0 ? urlParams.split("-").slice(0)[0] : 0;
@@ -68,6 +71,9 @@ export const ZoomVideoScreen = (props) => {
     sessionPasscode: "",
     role: "",
     features: ["video", "audio", "users", "chat", "share", "settings"],
+    featuresOptions: {
+      feedback: { enable: false },
+    },
   };
 
   // let token = generateSignature(ZOOM_APP_KEY, ZOOM_APP_SECRET, id, 1, id, name);
@@ -81,11 +87,21 @@ export const ZoomVideoScreen = (props) => {
     }
   };
 
-  // useEffect(() => {
-
-  // }, []);
-
   useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const endScreen = document.querySelector(
+        "button[id='leave-meeting-button']"
+      ); // or other DOM clues
+      if (endScreen) {
+        if (localStorage.getItem("userroleid") === "2") {
+          endScreen.addEventListener("click", () => {
+            updateLocatSorageUsersData();
+          });
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"
@@ -103,7 +119,6 @@ export const ZoomVideoScreen = (props) => {
         if (localStorage.getItem("userroleid") === "2") {
           checkUserJoinedEvent(data, usersData);
         }
-
         setFBUsersData(data);
         setUsersData(data);
       }
@@ -111,14 +126,20 @@ export const ZoomVideoScreen = (props) => {
 
     // Cleanup listener on unmount
     return () => {
-      if (localStorage.getItem("userroleid") === "2") {
+      if (localStorage.getItem("userroleid") === "2" && !hostLeave) {
         database.ref("users/" + urlParams).remove();
       }
       nameRef.off();
       document.removeEventListener("keydown", keyDownHandler);
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", () => updateLocatSorageUsersData());
+      observer.disconnect();
     };
   }, []);
+
+  const handleClick = () => {
+    console.log("Observed external button clicked!");
+  };
 
   const handleBeforeUnload = async (event) => {
     // Optional: Show confirmation dialog
@@ -126,14 +147,18 @@ export const ZoomVideoScreen = (props) => {
     event.returnValue = ""; // Required for Chrome to show confirmation dialog
     await UserLeftSession();
     // Add your cleanup or API call logic here
-    if (localStorage.getItem("userroleid") === "2") {
+    if (localStorage.getItem("userroleid") === "2" && !hostLeave) {
       database.ref("users/" + urlParams).remove();
     }
 
-    if (sessionContainer && localStorage.getItem("userroleid") === "2") {
-      uitoolkit.closeSession(sessionContainer);
-      uitoolkit.offSessionJoined(sessionJoined);
-      uitoolkit.offSessionClosed(sessionClosed);
+    if (
+      sessionContainer &&
+      uitoolkit &&
+      localStorage.getItem("userroleid") === "2"
+    ) {
+      // uitoolkit?.closeSession(sessionContainer);
+      uitoolkit?.offSessionJoined(sessionJoined);
+      uitoolkit?.offSessionClosed(sessionClosed);
     }
   };
   useEffect(() => {
@@ -159,23 +184,34 @@ export const ZoomVideoScreen = (props) => {
           : sessionData[0].userIdentity;
       config.sessionPasscode = sessionData[0].sessionPassword;
       config.role = sessionData[0].roleType;
-      config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
 
-      uitoolkit.joinSession(sessionContainer, config);
-      uitoolkit.onSessionJoined(sessionJoined);
-      uitoolkit.onSessionClosed(sessionClosed);
+      config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
+      config.feedback = false;
+      console.log(config);
+      uitoolkit?.joinSession(sessionContainer, config);
+      uitoolkit?.onSessionDestroyed(sessionDestroyed);
+      uitoolkit?.onSessionJoined(sessionJoined);
+      uitoolkit?.onSessionClosed(sessionClosed);
     }
 
     return () => {
-      if (sessionContainer) {
-        uitoolkit.closeSession(sessionContainer);
-        uitoolkit.offSessionJoined(sessionJoined);
-        uitoolkit.offSessionClosed(sessionClosed);
+      if (
+        sessionContainer &&
+        uitoolkit &&
+        sessionData.length > 0 &&
+        (showScreen === "load" || showScreen === "host")
+      ) {
+        // uitoolkit?.closeSession(sessionContainer);
+
+        uitoolkit?.offSessionJoined(sessionJoined);
+        uitoolkit?.offSessionClosed(sessionClosed);
+        // uitoolkit.destroy();
       }
     };
   }, [id, sessionData, uitoolkit, showScreen]);
 
   useEffect(() => {
+    fbUserRef.current = fbUsersData;
     if (
       localStorage.getItem("userroleid") === "3" ||
       (localStorage.getItem("userroleid") === null && fbUsersData?.length > 0)
@@ -258,6 +294,13 @@ export const ZoomVideoScreen = (props) => {
     console.log("session joined");
   };
 
+  const sessionDestroyed = () => {
+    if (uitoolkit) {
+      uitoolkit.destroy();
+    }
+  };
+  const onBtnClicked = (evt) => {};
+
   const UserLeftSession = () => {
     if (
       fbUsersData.length > 0 &&
@@ -278,7 +321,7 @@ export const ZoomVideoScreen = (props) => {
     }
   };
 
-  const sessionClosed = async () => {
+  const sessionClosed = async (evt) => {
     await UserLeftSession();
     if (
       localStorage.getItem("userroleid") &&
@@ -347,10 +390,12 @@ export const ZoomVideoScreen = (props) => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
+
     routeToHome();
   };
   const routeToHome = async () => {
     await UserLeftSession();
+
     if (
       localStorage.getItem("userroleid") &&
       localStorage.getItem("userroleid") === "2"
@@ -418,6 +463,12 @@ export const ZoomVideoScreen = (props) => {
     setShowScreen("load");
   };
 
+  const updateLocatSorageUsersData = () => {
+    let data = fbUserRef.current;
+    localStorage.setItem("zoomusersList" + urlParams, JSON.stringify(data));
+    setIsHostLeave(true);
+  };
+
   return (
     <>
       {/* <div id="previewContainer"></div> */}
@@ -456,8 +507,9 @@ export const ZoomVideoScreen = (props) => {
         ></WaitingPreview>
       )}
       <div>
-        <div style={{ padding: !props.authUser ? "5% 20%" : "15px 20%" }}>
-          <div id="sessionContainer"></div>
+        {/* <div style={{ padding: !props.authUser ? "5% 20%" : "15px 20%" }}> */}
+        <div>
+          <div style={{ height: "75vh" }} id="sessionContainer"></div>
           {host && (
             <div
               style={{

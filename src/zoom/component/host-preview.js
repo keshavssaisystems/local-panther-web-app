@@ -138,7 +138,17 @@ export const HostPreview = ({
 
         cand.push(user);
         setUsersData(cand);
-        let userFBData = [...fbUsersData];
+        let userFBData =
+          localStorage.getItem("zoomusersList" + urlParams) &&
+          localStorage.getItem("zoomusersList" + urlParams).length > 5
+            ? JSON.parse(localStorage.getItem("zoomusersList" + urlParams))
+            : [...fbUsersData];
+        if (
+          localStorage.getItem("zoomusersList" + urlParams) &&
+          localStorage.getItem("zoomusersList" + urlParams).length > 5
+        ) {
+          localStorage.removeItem("zoomusersList" + urlParams);
+        }
         if (userFBData.length > 0) {
           const updatedArray = cand.map((obj) => {
             const update = userFBData.find((u) => u.email === obj.email);
