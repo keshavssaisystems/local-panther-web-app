@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import uitoolkit from "@zoom/videosdk-ui-toolkit";
 import "@zoom/videosdk-ui-toolkit/dist/videosdk-ui-toolkit.css";
 
@@ -28,10 +28,10 @@ import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 import "../_containers/sharejob/sharejob.scss";
 import "./zoom-video.css";
-import ZoomVideo from "@zoom/videosdk";
 
 export const ZoomVideoScreen = (props) => {
   const { ...rest } = useParams();
+
   const [sessionData, setSessionData] = useState([]);
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -45,6 +45,8 @@ export const ZoomVideoScreen = (props) => {
   const [participantData, setParticipantData] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const [fbUsersData, setFBUsersData] = useState([]);
+  const fbUserRef = useRef(fbUsersData);
+
   const [isOpen, setIsOpen] = useState(
     localStorage.getItem("userroleid") === "2"
   );
@@ -69,8 +71,6 @@ export const ZoomVideoScreen = (props) => {
     sessionPasscode: "",
     role: "",
     features: ["video", "audio", "users", "chat", "share", "settings"],
-    feedback: false,
-    videoWebRtcMode: "auto",
     featuresOptions: {
       feedback: { enable: false },
     },
@@ -86,10 +86,6 @@ export const ZoomVideoScreen = (props) => {
       }
     }
   };
-
-  // useEffect(() => {
-
-  // }, []);
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -111,14 +107,6 @@ export const ZoomVideoScreen = (props) => {
       localStorage.getItem("userroleid") === "2"
     ) {
       dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
-      // interval = setInterval(() => {
-      //   debugger;
-      //   const button = document.getElementById("leave-meeting-button"); // Replace with actual selector
-      //   if (button) {
-      //     button.addEventListener("click", handleClick);
-      //     clearInterval(interval); // Found it, stop polling
-      //   }
-      // }, 500);
     }
 
     document.addEventListener("keydown", keyDownHandler);
@@ -131,7 +119,6 @@ export const ZoomVideoScreen = (props) => {
         if (localStorage.getItem("userroleid") === "2") {
           checkUserJoinedEvent(data, usersData);
         }
-
         setFBUsersData(data);
         setUsersData(data);
       }
@@ -151,7 +138,6 @@ export const ZoomVideoScreen = (props) => {
   }, []);
 
   const handleClick = () => {
-    debugger;
     console.log("Observed external button clicked!");
   };
 
@@ -165,11 +151,14 @@ export const ZoomVideoScreen = (props) => {
       database.ref("users/" + urlParams).remove();
     }
 
-    if (sessionContainer && localStorage.getItem("userroleid") === "2") {
-      debugger;
-      uitoolkit.closeSession(sessionContainer);
-      uitoolkit.offSessionJoined(sessionJoined);
-      uitoolkit.offSessionClosed(sessionClosed);
+    if (
+      sessionContainer &&
+      uitoolkit &&
+      localStorage.getItem("userroleid") === "2"
+    ) {
+      // uitoolkit?.closeSession(sessionContainer);
+      uitoolkit?.offSessionJoined(sessionJoined);
+      uitoolkit?.offSessionClosed(sessionClosed);
     }
   };
   useEffect(() => {
@@ -199,24 +188,30 @@ export const ZoomVideoScreen = (props) => {
       config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
       config.feedback = false;
       console.log(config);
-      uitoolkit.joinSession(sessionContainer, config);
-
-      uitoolkit.onSessionJoined(sessionJoined);
-      uitoolkit.onSessionClosed(sessionClosed);
+      uitoolkit?.joinSession(sessionContainer, config);
+      uitoolkit?.onSessionDestroyed(sessionDestroyed);
+      uitoolkit?.onSessionJoined(sessionJoined);
+      uitoolkit?.onSessionClosed(sessionClosed);
     }
 
     return () => {
-      if (sessionContainer) {
-        debugger;
-        uitoolkit.closeSession(sessionContainer);
-        // uitoolkit.offSessionDestroyed(sessionDestroyed);
-        uitoolkit.offSessionJoined(sessionJoined);
-        uitoolkit.offSessionClosed(sessionClosed);
+      if (
+        sessionContainer &&
+        uitoolkit &&
+        sessionData.length > 0 &&
+        (showScreen === "load" || showScreen === "host")
+      ) {
+        // uitoolkit?.closeSession(sessionContainer);
+
+        uitoolkit?.offSessionJoined(sessionJoined);
+        uitoolkit?.offSessionClosed(sessionClosed);
+        // uitoolkit.destroy();
       }
     };
   }, [id, sessionData, uitoolkit, showScreen]);
 
   useEffect(() => {
+    fbUserRef.current = fbUsersData;
     if (
       localStorage.getItem("userroleid") === "3" ||
       (localStorage.getItem("userroleid") === null && fbUsersData?.length > 0)
@@ -299,6 +294,11 @@ export const ZoomVideoScreen = (props) => {
     console.log("session joined");
   };
 
+  const sessionDestroyed = () => {
+    if (uitoolkit) {
+      uitoolkit.destroy();
+    }
+  };
   const onBtnClicked = (evt) => {};
 
   const UserLeftSession = () => {
@@ -331,10 +331,6 @@ export const ZoomVideoScreen = (props) => {
     } else {
       navigate(`/`);
     }
-  };
-
-  const sessionDestroyed = (evt) => {
-    console.log(evt);
   };
 
   const getToken = async () => {
@@ -394,6 +390,7 @@ export const ZoomVideoScreen = (props) => {
     data.type = "";
     data.show = false;
     SetShowAlert(data);
+
     routeToHome();
   };
   const routeToHome = async () => {
@@ -467,8 +464,9 @@ export const ZoomVideoScreen = (props) => {
   };
 
   const updateLocatSorageUsersData = () => {
-    debugger;
-    localStorage.setItem("zoomusersList", JSON.stringify(fbUsersData));
+    let data = fbUserRef.current;
+    localStorage.setItem("zoomusersList" + urlParams, JSON.stringify(data));
+    setIsHostLeave(true);
   };
 
   return (
@@ -511,7 +509,7 @@ export const ZoomVideoScreen = (props) => {
       <div>
         {/* <div style={{ padding: !props.authUser ? "5% 20%" : "15px 20%" }}> */}
         <div>
-          <div id="sessionContainer"></div>
+          <div style={{ height: "75vh" }} id="sessionContainer"></div>
           {host && (
             <div
               style={{

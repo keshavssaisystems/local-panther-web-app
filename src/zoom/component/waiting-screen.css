@@ -27,6 +27,7 @@
       font-weight: 400;
       color: #052f5f;
       line-height: 16px;
+      display: flex;
     }
 
     .next-line {
@@ -34,6 +35,7 @@
       font-size: 20px;
       font-weight: 300;
       line-height: 16px;
+      display: flex;
     }
   }
 
