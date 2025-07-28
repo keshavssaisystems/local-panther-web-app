@@ -62,8 +62,9 @@ export function CandidateInterviewFeedback() {
   const [showJDModal, setShowJDModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
-  const schdInterviewList = useSelector(
-    (state) => state?.customerReportReducer?.schdInterviewList
+    let [hiringmanagerId, setHiringMangerId] = useState();
+  const candidateInterviewFeedbackList = useSelector(
+    (state) => state?.customerReportReducer?.candidateInterviewFeedbacks
   );
   const loading = useSelector((state) => state?.customerReportReducer?.loading);
   const jobDetail = useSelector(
@@ -96,8 +97,8 @@ export function CandidateInterviewFeedback() {
   }, []);
 
   useEffect(() => {
-    if (schdInterviewList?.length > 0) {
-      let filteredData = schdInterviewList.map((data) => {
+    if (candidateInterviewFeedbackList?.length > 0) {
+      let filteredData = candidateInterviewFeedbackList.map((data) => {
         return {
           "Job code": data.jobid,
           Title: data.jobtitle,
@@ -117,12 +118,12 @@ export function CandidateInterviewFeedback() {
         },
       ]);
     }
-  }, [schdInterviewList]);
+  }, [candidateInterviewFeedbackList]);
 
   const onGetReportCandidateInterviewList = (filter) => {
     let data = {
       ...filter,
-      reportId: id,
+      //reportId: id,
     };
     dispatch(getReportCandidateInterviewList(data));
   };
@@ -198,7 +199,7 @@ export function CandidateInterviewFeedback() {
       minWidth: "200px",
     },
     {
-      name: <span className="table-title">Title</span>,
+      name: <span className="table-title">Job title</span>,
       cell: (row) => (
         <span className="table-cell" title={row.jobtitle}>
           <Button
@@ -270,25 +271,36 @@ export function CandidateInterviewFeedback() {
     {
       name: <span className="table-title">Interviewer Feedback</span>,
       cell: (row) => (
-        <span className="table-cell" title={row.intervieweremailids}>
-          {row.intervieweremailids}
+        <span className="table-cell" title={row.interviewtatus}>
+          {row.interviewtatus}
         </span>
       ),
       sortable: true,
-      selector: (row) => row.intervieweremailids,
+      selector: (row) => row.interviewtatus,
       minWidth: "350px",
     },
     {
       name: <span className="table-title">Current Candidate Status</span>,
       cell: (row) => (
-        <span className="table-cell" title={row.meetingstatus}>
-          {row.meetingstatus}
+        <span className="table-cell" title={row.recommendedjobstatus}>
+          {row.recommendedjobstatus}
         </span>
       ),
       sortable: true,
-      selector: (row) => row.meetingstatus,
+      selector: (row) => row.recommendedjobstatus,
       minWidth: "150px",
     },
+    {
+      name: <span className="table-title">Company Name</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.companyname}>
+          {row.companyname}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.companyname,
+      minWidth: "150px",
+    }
   ];
 
   return (
@@ -337,18 +349,7 @@ export function CandidateInterviewFeedback() {
             <CardBody>
               <Row>
                 <Col lg="2" md="4" sm="12" sx="12">
-                  <FormGroup>
-                    {/* <Label for="candidateid">Candidate Id</Label> */}
-                    {/* <Input
-                      name="candidateid"
-                      id="candidateid"
-                      placeholder="Candidate Id"
-                      value={candidateId}
-                      onChange={(e) => {
-                        handleChange("candidateid", e.target.value);
-                        setCandidateId(e.target.value);
-                      }}
-                    /> */}
+                  <FormGroup>                    
                     <Input
                       type="select"
                       value={candidateId}
@@ -356,7 +357,7 @@ export function CandidateInterviewFeedback() {
                       id="candidateid"
                       placeholder="Candidate Id"
                       onChange={(e) => {
-                        handleChange("candidateid", e.target.value);
+                        handleChange("candidate", e.target.value);
                         setCandidateId(e.target.value);
                       }}
                     >
@@ -379,18 +380,7 @@ export function CandidateInterviewFeedback() {
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">
-                  <FormGroup>
-                    {/* <Label for="jobid">Job Id</Label> */}
-                    {/* <Input
-                      name="jobid"
-                      id="jobid"
-                      placeholder="Job Id"
-                      value={jobId}
-                      onChange={(e) => {
-                        handleChange("jobid", e.target.value);
-                        setJobId(e.target.value);
-                      }}
-                    /> */}
+                  <FormGroup>                    
                     <Input
                       type="select"
                       value={jobId}
@@ -398,7 +388,7 @@ export function CandidateInterviewFeedback() {
                       id="jobid"
                       placeholder="Job Id"
                       onChange={(e) => {
-                        handleChange("jobid", e.target.value);
+                        handleChange("jobtitle", e.target.value);
                         setJobId(e.target.value);
                       }}
                     >
@@ -416,6 +406,32 @@ export function CandidateInterviewFeedback() {
                   </FormGroup>
                 </Col>
                 <Col lg="2" md="4" sm="12" sx="12">
+                  <FormGroup>
+                    <Input
+                      type="select"
+                      value={hiringmanagerId}
+                      name="hiringmanagerId"
+                      id="hiringmanagerId"
+                      placeholder="Hiring Manger"
+                      onChange={(e) => {
+                        handleChange("hiringmanager", e.target.value);
+                        setJobId(e.target.value);
+                      }}
+                    >
+                      <option value={""}>Select a Hiring Manger</option>
+                      {jobDropDownList?.length > 0 ? (
+                        jobDropDownList.map((data) => (
+                          <option value={data.hiringmanagerId} key={data.hiringmanagerId}>
+                            {data.hiringmanager}
+                          </option>
+                        ))
+                      ) : (
+                        <></>
+                      )}
+                    </Input>
+                  </FormGroup>
+                </Col>
+                <Col lg="2" md="4" sm="12" sx="12" style={{ display: "none" }}>
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -438,7 +454,7 @@ export function CandidateInterviewFeedback() {
                     </InputGroup>
                   </FormGroup>
                 </Col>
-                <Col lg="2" md="4" sm="12" sx="12">
+                <Col lg="2" md="4" sm="12" sx="12" style={{ display: "none" }}>
                   <FormGroup>
                     <InputGroup>
                       <div className="input-group-text">
@@ -491,10 +507,10 @@ export function CandidateInterviewFeedback() {
                   </>
                 ) : (
                   <>
-                    {schdInterviewList.length > 0 ? (
+                    {candidateInterviewFeedbackList?.length > 0 ? (
                       <DataTable
                         columns={columns}
-                        data={schdInterviewList}
+                        data={candidateInterviewFeedbackList}
                         fixedHeader
                         pagination
                         className="cust-rep-list-view"

@@ -505,7 +505,7 @@ export function App() {
             }
           />
           <Route
-            path="/report/candidate-interview-feedback/:id"
+            path="/candidate-interview-feedback"
             element={
               <PrivateRoute>
                 <CandidateInterviewFeedback />
