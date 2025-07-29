@@ -29,7 +29,7 @@
         "@types/markerclustererplus": "^2.1.33",
         "@wojtekmaj/react-datetimerange-picker": "^3.4.2",
         "@zoom/videosdk": "^1.9.0",
-        "@zoom/videosdk-ui-toolkit": "^2.2.0-1",
+        "@zoom/videosdk-ui-toolkit": "^2.2.0-2",
         "animate-sass": "^0.8.2",
         "apexcharts": "^3.33.0",
         "aphrodite": "^2.4.0",
