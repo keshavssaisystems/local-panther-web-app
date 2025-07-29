@@ -221,10 +221,7 @@ const authSlice = createSlice({
             ? 2
             : 3;
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
-      localStorage.setItem(
-        "pushnotification",
-        decodedData?.Pushnotification?.toLowerCase() === "true"
-      );
+      localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
       localStorage.setItem(
         "logo",
         decodedData?.role?.toLowerCase() === "candidate"
@@ -237,6 +234,7 @@ const authSlice = createSlice({
                 ? defLogo[0]?.appconfigurationvalue
                 : ""
       );
+      localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
       if (decodedData?.UserroleId === "2") {
         localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
       }
@@ -352,10 +350,7 @@ const authSlice = createSlice({
               ? 2
               : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
         localStorage.setItem(
           "logo",
           decodedData?.role?.toLowerCase() === "candidate"
@@ -368,6 +363,7 @@ const authSlice = createSlice({
                   ? defLogo[0]?.appconfigurationvalue
                   : ""
         );
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
@@ -467,10 +463,7 @@ const authSlice = createSlice({
               ? 2
               : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
         localStorage.setItem(
           "logo",
           decodedData?.role?.toLowerCase() === "candidate"
@@ -483,6 +476,7 @@ const authSlice = createSlice({
                   ? defLogo[0]?.appconfigurationvalue
                   : ""
         );
+        localStorage.setItem("emailnotification", decodedData?.Emailnotification?.toLowerCase() === "true");
         if (decodedData?.UserroleId === "2") {
           localStorage.setItem("isCompanyAdmin", data?.isCompanyAdmin);
         }
@@ -541,10 +535,7 @@ const authSlice = createSlice({
               ? 2
               : 3;
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
-        localStorage.setItem(
-          "pushnotification",
-          decodedData?.Pushnotification?.toLowerCase() === "true"
-        );
+        localStorage.setItem("pushnotification", decodedData?.Pushnotification?.toLowerCase() === "true");
         localStorage.setItem(
           "logo",
           decodedData?.role?.toLowerCase() === "candidate"
