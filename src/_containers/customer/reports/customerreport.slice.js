@@ -13,13 +13,10 @@ export const getCustReportJobList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_JOB_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
-      payload.startDate ? `'${payload.startDate}'` : null
-    },@enddate=${
-      payload.endDate ? `'${payload.endDate}'` : null
-    },@subsidiaryid=${payload.subsidiaryid ? payload.subsidiaryid : null}`;
+    const GET_CUST_REPORT_JOB_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${payload.startDate ? `'${payload.startDate}'` : null
+      },@enddate=${payload.endDate ? `'${payload.endDate}'` : null
+      },@subsidiaryid=${payload.subsidiaryid ? payload.subsidiaryid : null}`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_LIST_END_POINT);
   }
 );
@@ -34,15 +31,11 @@ export const getCustReportScheduleIVList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_SCHDINV_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
-      payload.startDate ? `'${payload.startDate}'` : null
-    },@enddate=${
-      payload.endDate ? `'${payload.endDate}'` : null
-    },@candidateid=${payload.candidateid ? payload.candidateid : null},@jobid=${
-      payload.jobid ? payload.jobid : null
-    }`;
+    const GET_CUST_REPORT_SCHDINV_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${payload.startDate ? `'${payload.startDate}'` : null
+      },@enddate=${payload.endDate ? `'${payload.endDate}'` : null
+      },@candidateid=${payload.candidateid ? payload.candidateid : null},@jobid=${payload.jobid ? payload.jobid : null
+      }`;
     return await fetchWrapper.get(GET_CUST_REPORT_SCHDINV_LIST_END_POINT);
   }
 );
@@ -57,15 +50,11 @@ export const getCustReportIVDCandList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_IVD_CND_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${
-      payload.startDate ? `'${payload.startDate}'` : null
-    },@enddate=${
-      payload.endDate ? `'${payload.endDate}'` : null
-    },@candidateid=${payload.candidateid ? payload.candidateid : null},@jobid=${
-      payload.jobid ? payload.jobid : null
-    }`;
+    const GET_CUST_REPORT_IVD_CND_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportData?reportId=${payload.reportId}&parameter=@startdate=${payload.startDate ? `'${payload.startDate}'` : null
+      },@enddate=${payload.endDate ? `'${payload.endDate}'` : null
+      },@candidateid=${payload.candidateid ? payload.candidateid : null},@jobid=${payload.jobid ? payload.jobid : null
+      }`;
     return await fetchWrapper.get(GET_CUST_REPORT_IVD_CND_LIST_END_POINT);
   }
 );
@@ -80,11 +69,9 @@ export const getCustReportJobAgingList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_JOB_AGING_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@jobid=${
-      payload.jobid ? payload.jobid : null
-    }`;
+    const GET_CUST_REPORT_JOB_AGING_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportData?reportId=${payload.reportId}&parameter=@jobid=${payload.jobid ? payload.jobid : null
+      }`;
     return await fetchWrapper.get(GET_CUST_REPORT_JOB_AGING_LIST_END_POINT);
   }
 );
@@ -99,15 +86,12 @@ export const getCustReportMatchedCandList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${payload.reportId}&parameter=@jobid=${
-      payload.jobid ? payload.jobid : null
-    },@customerrecommendedjobstatusid=${
-      payload.customerrecommendedjobstatusid
+    const GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportData?reportId=${payload.reportId}&parameter=@jobid=${payload.jobid ? payload.jobid : null
+      },@customerrecommendedjobstatusid=${payload.customerrecommendedjobstatusid
         ? payload.customerrecommendedjobstatusid
         : null
-    }`;
+      }`;
     return await fetchWrapper.get(GET_CUST_REPORT_MATCH_CAND_LIST_END_POINT);
   }
 );
@@ -122,15 +106,12 @@ export const getCustReporCandStatList = createAsyncThunk(
       pageSize: 10,
     };
 
-    const GET_CUST_REPORT_CAND_STAT_LIST_END_POINT = `${
-      process.env.REACT_APP_NEW_API_URL
-    }/Report/GetReportData?reportId=${
-      payload.reportId
-    }&parameter=@customerrecommendedjobstatusid=${
-      payload.customerrecommendedjobstatusid
+    const GET_CUST_REPORT_CAND_STAT_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportData?reportId=${payload.reportId
+      }&parameter=@customerrecommendedjobstatusid=${payload.customerrecommendedjobstatusid
         ? payload.customerrecommendedjobstatusid
         : null
-    }`;
+      }`;
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_STAT_LIST_END_POINT);
   }
 );
@@ -198,6 +179,33 @@ export const getReportSubsidiaryList = createAsyncThunk(
   }
 );
 
+
+// get report candidate interview feedback List
+export const getReportCandidateInterviewList = createAsyncThunk(
+  `${name}/getReportCandidateInterviewList`,
+  async (payload = {}) => {
+    payload = {
+      ...payload,
+      pageNumber: 1,
+      pageSize: 10,
+    };
+    console.log(payload);
+    // @hiringmanager='cait',@date='2025-07-07',@interviewstatusid=7,@jobtitle='st',@candidate='St'
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }/Report/GetReportBySP?storedProcedure=Report_CandidateInterviewFeedback&parameter=@hiringmanager=${payload.hiringmanager ? payload.hiringmanager : null},@jobtitle=${payload.jobtitle ? payload.jobtitle : null},@candidate=${payload.candidate ? payload.candidate : null},@company=${payload.companyid ? payload.companyid : null}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
+
+
+export const getHiringMangerList = createAsyncThunk(
+  `${name}/getHiringMangerList`,
+  async (companyIdId = {}) => {
+    const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
+      }Common/GetCommonDropdown?searchText=userListByCompany&commonId=${companyIdId}`;
+    return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
+  }
+);
 // Create the slice
 const customerReportSlice = createSlice({
   name,
@@ -309,7 +317,7 @@ const customerReportSlice = createSlice({
     [getCandidateDropdown.fulfilled]: (state, action) => {
       state.candidateDropDownList = action?.payload?.data;
     },
-    [getCandidateDropdown.rejected]: (state, action) => {},
+    [getCandidateDropdown.rejected]: (state, action) => { },
 
     // job dropdown list
     [getJobDropdown.pending]: (state) => {
@@ -318,7 +326,7 @@ const customerReportSlice = createSlice({
     [getJobDropdown.fulfilled]: (state, action) => {
       state.jobDropDownList = action?.payload?.data;
     },
-    [getJobDropdown.rejected]: (state, action) => {},
+    [getJobDropdown.rejected]: (state, action) => { },
 
     // recommended status dropdown list
     [getRecommendedJobStatus.pending]: (state) => {
@@ -327,7 +335,7 @@ const customerReportSlice = createSlice({
     [getRecommendedJobStatus.fulfilled]: (state, action) => {
       state.recommendedJobStatusList = action?.payload?.data;
     },
-    [getRecommendedJobStatus.rejected]: (state, action) => {},
+    [getRecommendedJobStatus.rejected]: (state, action) => { },
 
     // scheduled candidates for customer dropdown list
     [getScheduledCandidatesForCustomerDropdown.pending]: (state) => {
@@ -336,7 +344,7 @@ const customerReportSlice = createSlice({
     [getScheduledCandidatesForCustomerDropdown.fulfilled]: (state, action) => {
       state.candidateDropDownList = action?.payload?.data;
     },
-    [getScheduledCandidatesForCustomerDropdown.rejected]: (state, action) => {},
+    [getScheduledCandidatesForCustomerDropdown.rejected]: (state, action) => { },
 
     // customer report job detail
     [getCustReportJobDetail.pending]: (state) => {
@@ -347,7 +355,7 @@ const customerReportSlice = createSlice({
       data.push(payload.data);
       state.jobDetail = data;
     },
-    [getCustReportJobDetail.rejected]: (state, action) => {},
+    [getCustReportJobDetail.rejected]: (state, action) => { },
     // customer report schdeule interview detail
     [getCustReportSchdIntvDetail.pending]: (state) => {
       state.scheduleInterviewDetail = [];
@@ -357,7 +365,7 @@ const customerReportSlice = createSlice({
         ? payload?.data?.scheduledInterviewList
         : [];
     },
-    [getCustReportSchdIntvDetail.rejected]: (state, action) => {},
+    [getCustReportSchdIntvDetail.rejected]: (state, action) => { },
     // customer report subsidiary list
     [getReportSubsidiaryList.pending]: (state) => {
       state.subsidiaryList = [];
@@ -365,8 +373,27 @@ const customerReportSlice = createSlice({
     [getReportSubsidiaryList.fulfilled]: (state, { payload = {} }) => {
       state.subsidiaryList = payload?.data ? payload?.data : [];
     },
-    [getReportSubsidiaryList.rejected]: (state, action) => {},
+    [getReportSubsidiaryList.rejected]: (state, action) => { },
+
+    // Candidate interview Feedback
+    [getReportCandidateInterviewList.pending]: (state) => {
+      state.candidateInterviewFeedbacks = [];
+    },
+    [getReportCandidateInterviewList.fulfilled]: (state, { payload = {} }) => {
+      state.candidateInterviewFeedbacks = payload?.data;
+    },
+    [getReportCandidateInterviewList.rejected]: (state, action) => { },
+
+    [getHiringMangerList.pending]: (state) => {
+      state.hiringmangers = [];
+    },
+    [getHiringMangerList.fulfilled]: (state, { payload = {} }) => {
+      state.hiringmangers = payload?.data;
+    },
+    [getHiringMangerList.rejected]: (state, action) => { }
+
   },
+
 });
 
 // Export the actions and reducer
@@ -385,6 +412,8 @@ export const customerReportActions = {
   getCustReportJobDetail,
   getCustReportSchdIntvDetail,
   getReportSubsidiaryList,
+  getReportCandidateInterviewList,
+  getHiringMangerList
 };
 
 export const customerReportReducer = customerReportSlice.reducer;
