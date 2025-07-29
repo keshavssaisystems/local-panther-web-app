@@ -248,6 +248,7 @@ export function UpcomingInterviews() {
             onClick={() => checkInterview(row.format, row)}
           >
             <img
+              style={{ cursor: "pointer" }}
               src={row.format === "Video" ? videoIcon : personIcon}
               alt="interview-icon"
             />

@@ -183,7 +183,6 @@ export const ZoomVideoScreen = (props) => {
           : sessionData[0].userIdentity;
       config.sessionPasscode = sessionData[0].sessionPassword;
       config.role = sessionData[0].roleType;
-
       config.sessionIdleTimeoutMins = sessionData[0].sessionIdleTimeoutMins;
       config.feedback = false;
       console.log(config);
