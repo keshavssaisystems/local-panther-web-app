@@ -341,15 +341,17 @@ export const HostPreview = ({
                               </>
                             ) : (
                               <>
-                                <Badge
-                                  onClick={() => {
-                                    handleAllow(index);
-                                  }}
-                                  className="badge"
-                                  color="success"
-                                >
-                                  Allow
-                                </Badge>
+                                {row.isDenied === false && (
+                                  <Badge
+                                    onClick={() => {
+                                      handleAllow(index);
+                                    }}
+                                    className="badge"
+                                    color="success"
+                                  >
+                                    Allow
+                                  </Badge>
+                                )}
                               </>
                             )}
                           </div>
@@ -367,7 +369,7 @@ export const HostPreview = ({
           )}
         </>
       </div>
-      <div className="atten-div">Not Joined</div>
+      <div className="atten-div mt-4">Not Joined</div>
       <div>
         <>
           {fbUsersData.length > 0 ? (

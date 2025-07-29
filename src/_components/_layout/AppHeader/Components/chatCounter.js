@@ -25,7 +25,7 @@ export function ChatCounter() {
       : [];
   return (
     <>
-      <button className="mb-0 me-0 btn-icon btn-icon-only btn btn-link btn-sm">
+      <button className="mb-0 me-0 btn-icon btn-icon-only btn btn-link btn-sm me-2">
         <i
           className="lnr-bubble btn-icon-wrapper font-size-xlg"
           id="Tooltip-1"
