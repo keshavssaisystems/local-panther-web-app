@@ -1555,16 +1555,8 @@ export function PersonalInformation(props) {
                     <Row>
                       <label>
                         <div className="dropZone float-end" id="dragbox">
-                          <Button
-                            style={{
-                              width: "auto",
-                              backgroundColor: "#2F479B",
-                              borderColor: "#2F479B",
-                            }}
-                            className="mb-2 mt-0 btn-icon btn-text float-end"
-                            color="primary"
-                          >
-                            <span className="me-2">Upload</span>
+                          <Button className="mb-2 mt-0" color="primary">
+                            Upload
                           </Button>
                         </div>
                       </label>
@@ -1574,17 +1566,8 @@ export function PersonalInformation(props) {
                 {file && (
                   <Col>
                     <FormGroup>
-                      <Button
-                        style={{
-                          width: "auto",
-                          backgroundColor: "#2F2E2E",
-                          borderColor: "#2F2E2E",
-                        }}
-                        className="mb-2 me-2 btn-icon btn-text"
-                        color="primary"
-                        onClick={() => deleteImg()}
-                      >
-                        <span>Delete</span>
+                      <Button className="mb-2 me-2" onClick={() => deleteImg()}>
+                        Delete
                       </Button>
                     </FormGroup>
                   </Col>

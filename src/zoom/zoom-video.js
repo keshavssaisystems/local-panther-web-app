@@ -29,7 +29,7 @@ import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import "../_containers/sharejob/sharejob.scss";
 import "./zoom-video.css";
 
-export const ZoomVideoScreen = (props) => {
+export default function ZoomVideoScreen(props) {
   const { ...rest } = useParams();
 
   const [sessionData, setSessionData] = useState([]);
@@ -595,4 +595,4 @@ export const ZoomVideoScreen = (props) => {
       )}
     </>
   );
-};
+}

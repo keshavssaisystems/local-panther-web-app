@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense  } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
@@ -60,7 +60,7 @@ import { Skills } from "_containers/admin/masters/skills";
 import { FlaggedWord } from "_containers/admin/masters/flaggedWords";
 
 import { CompanyList } from "_containers/admin/company/companyList";
-import { ZoomVideoScreen } from "zoom/zoom-video";
+// import { ZoomVideoScreen } from "zoom/zoom-video";
 import { ToastContainer, toast } from "react-toastify";
 import { Row, Button } from "reactstrap";
 import { candidateDashboardActions, getProfileActions } from "_store";
@@ -79,6 +79,7 @@ import { Support } from "_containers/static/support";
 import { Contact } from "_containers/static/contact";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
+const  ZoomVideoScreen = React.lazy(() => import ("zoom/zoom-video"));;
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -735,6 +736,7 @@ export function App() {
 
   return (
     <>
+     <Suspense fallback={<div>Loading Zoom UI...</div>}>
     {isExcludedPath ? 
       <>
        <Routes forceRefresh={true}>
@@ -846,7 +848,7 @@ export function App() {
         </div>
         
       </>}
-      
+      </Suspense>
     </>
 
   );
