@@ -25,6 +25,7 @@ import { CandidateProfile } from "_containers/candidate/candidateProfile";
 import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
 import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
+import { CandidateInterviewFeedback } from "_containers/customer/reports/candidateinterviewfeedback";
 // Admin
 import { OnboardCustomer } from "_containers/admin/customer";
 import {
@@ -357,6 +358,14 @@ export function App() {
             path="/report/ats-candidates/:id"
             element={<ATSCandidate title={"ATS Candidate Report"} />}
           />
+           <Route
+            path="/candidate-interview-feedback"
+            element={
+              <PrivateRoute>
+                <CandidateInterviewFeedback />
+              </PrivateRoute>
+            }
+          />
         </>
       );
     } else if (userroleid === 2) {
@@ -503,6 +512,15 @@ export function App() {
                 <CustomerReportCandidateStatus />
               </PrivateRoute>
             }
+          />
+          <Route
+            path="/candidate-interview-feedback"
+            element={
+              <PrivateRoute>
+                <CandidateInterviewFeedback />
+              </PrivateRoute>
+            }
+            key={6}
           />
           <Route
             path="/customer-edit-job/:id"
