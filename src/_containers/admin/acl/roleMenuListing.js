@@ -30,7 +30,7 @@ import { AddEditMenuMapping } from "../common/addEditMenuMapping";
 import { AddEditRole } from "../common/addEditRole";
 import { analytics } from "../../../firebase/index";
 
-export const RoleMenuListing = ({ entity }) => {
+export default function RoleMenuListing({ entity }) {
   const dispatch = useDispatch();
   const { data } = useSelector((state) => state?.adminListing ?? {});
 
@@ -413,4 +413,4 @@ export const RoleMenuListing = ({ entity }) => {
       </div>
     </>
   );
-};
+}

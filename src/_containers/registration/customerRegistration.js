@@ -42,7 +42,7 @@ import debounce from "lodash/debounce";
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*#^?&(),./+=._-]{6,}$/;
 
-export function CustomerRegistration() {
+export default function CustomerRegistration() {
   const dispatch = useDispatch();
   const [locationData, setLocation] = useState([]);
 

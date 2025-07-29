@@ -19,7 +19,7 @@ import custDashIcons from "assets/utils/images/customer/dashboard";
 import { ApprovalPendingList } from "_components/dashboard/approvalPendingList";
 import { analytics } from "../../../firebase/index";
 
-export function AdminDashboard() {
+export default function AdminDashboard() {
   const dispatch = useDispatch();
   const getDashboardCounts = async function () {
     await dispatch(adminDashboardSliceActions.getDashboardCountThunk());
