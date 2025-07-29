@@ -192,7 +192,7 @@ export const getReportCandidateInterviewList = createAsyncThunk(
     console.log(payload);
     // @hiringmanager='cait',@date='2025-07-07',@interviewstatusid=7,@jobtitle='st',@candidate='St'
     const GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT = `${process.env.REACT_APP_NEW_API_URL
-      }/Report/GetReportBySP?storedProcedure=Report_CandidateInterviewFeedback&parameter=@hiringmanager=${payload.hiringmanager ? payload.hiringmanager : null},@jobtitle=${payload.jobtitle ? payload.jobtitle : null},@candidate=${payload.candidate ? payload.candidate : null},@companyid=${payload.companyid ? payload.companyid : null}`;
+      }/Report/GetReportBySP?storedProcedure=Report_CandidateInterviewFeedback&parameter=@hiringmanager=${payload.hiringmanager ? payload.hiringmanager : null},@jobtitle=${payload.jobtitle ? payload.jobtitle : null},@candidate=${payload.candidate ? payload.candidate : null},@company=${payload.companyid ? payload.companyid : null}`;
     return await fetchWrapper.get(GET_CUST_REPORT_CAND_INTERVIEW_FEEDBACK_LIST_END_POINT);
   }
 );
