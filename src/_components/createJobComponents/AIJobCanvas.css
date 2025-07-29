@@ -1,3 +1,12 @@
+.offcanvas {
+  width: 40% !important;
+}
+
+@media only screen and (max-width: 769px) and (min-width: 320px) {
+  .offcanvas {
+    width: 1000% !important;
+  }
+}
 .jd-covas-body {
   .error-div {
     background-color: #fff1f1;
@@ -26,12 +35,12 @@
     margin: 4px 0px;
   }
 
-  .canvas-jd-detail-div {
+  /* .canvas-jd-detail-div {
     max-height: 65vh;
     overflow: auto;
-  }
+  } */
 
-  @media only screen and (max-width: 1439px) and (min-width: 1025px) {
+  /* @media only screen and (max-width: 1439px) and (min-width: 1025px) {
     .canvas-jd-detail-div {
       max-height: 68vh;
     }
@@ -47,5 +56,5 @@
     .canvas-jd-detail-div {
       max-height: 62vh;
     }
-  }
+  } */
 }

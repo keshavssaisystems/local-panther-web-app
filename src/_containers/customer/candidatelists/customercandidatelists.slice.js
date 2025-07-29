@@ -48,7 +48,7 @@ function createExtraActions() {
     getPrescreenDetails: getPrescreenDetails(),
     getCustOfferHistory: getCustOfferHistory(),
     getofferLetterTemplate: getofferLetterTemplate(),
-    getInterviewSlots: getInterviewSlots()
+    getInterviewSlots: getInterviewSlots(),
   };
 
   function getDrpDwnJobLists() {
@@ -257,13 +257,17 @@ function createExtraActions() {
     );
   }
   function getInterviewSlots() {
-    debugger;
-       let id = parseInt(localStorage.getItem("userId"));
+
     return createAsyncThunk(
-      `${name}/getInterviewSlots`, async (data) =>
-      await fetchWrapper.get(
-        `${newUrl}/ScheduledInterview/GetInterviewSlots?scheduleDate=${data.scheduleDateUTC}&userId=${id}&scheduleInterviewId=${data.scheduleInterviewId}`
-      )
+      `${name}/getInterviewSlots`,
+      async (data) => {
+        let id = parseInt(localStorage.getItem("userId"));
+        console.log(id);
+        return await fetchWrapper.get(
+          `${newUrl}/ScheduledInterview/GetInterviewSlots?scheduleDate=${data.scheduleDateUTC}&userId=${id}&scheduleInterviewId=${data.scheduleInterviewId}`
+        )
+      }
+
     );
   }
 }
@@ -529,8 +533,7 @@ function createExtraReducers() {
     }
 
     function getInterviewSlots() {
-      let { pending, fulfilled, rejected } =
-        extraActions.getInterviewSlots;
+      let { pending, fulfilled, rejected } = extraActions.getInterviewSlots;
       builder
         .addCase(pending, (state) => {
           state.interviewSlots = [];

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Row,
   Col,
@@ -25,10 +25,40 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
   const [loadInput, setLoadInput] = useState(false);
   const [lastJDOP, setLastJDOP] = useState("");
   const [generatedHtml, setGeneratedHtml] = useState("");
+  const bottomRef = useRef(null);
+  const [bottomHeight, setBottomHeight] = useState(156);
+
   const loadAIJDCanvas = useSelector((state) => state.jobType.loadAIJDCanvas);
   useEffect(() => {
     setIsOpen(loadAIJDCanvas);
   }, [loadAIJDCanvas]);
+
+  useEffect(() => {
+    // Function to update height
+    const updateBottomHeight = () => {
+      if (bottomRef.current) {
+        setBottomHeight(bottomRef.current.offsetHeight);
+      }
+    };
+
+    updateBottomHeight(); // Initial height
+
+    // Resize observer for dynamic changes
+    const resizeObserver = new ResizeObserver(() => {
+      updateBottomHeight();
+    });
+
+    if (bottomRef.current) {
+      resizeObserver.observe(bottomRef.current);
+    }
+
+    window.addEventListener("resize", updateBottomHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateBottomHeight);
+      resizeObserver.disconnect();
+    };
+  }, []);
   const toggleOffcanvas = () => {
     dispatch(jobTypeActions.updateLoadAIJDCanvas(!isOpen));
     setInput1("");
@@ -154,7 +184,7 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
       <Row className="mt-4">
         <Col md={12} className="ml-15">
           <Offcanvas
-            style={{ width: "40%" }}
+            className="offcanvas-div"
             isOpen={isOpen}
             // toggle={toggleOffcanvas}
             direction="end"
@@ -163,9 +193,25 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
               Generate Job with OpenWorX Agent
             </OffcanvasHeader>
             <hr style={{ margin: "0px" }}></hr>
-            <OffcanvasBody className="jd-covas-body" style={{ padding: "8px" }}>
+            <OffcanvasBody
+              className="jd-covas-body"
+              style={{
+                padding: "8px",
+                height: "calc(100vh - 60px)",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <div style={{ padding: "4px" }}>
-                <div className="canvas-jd-detail-div">
+                <div
+                  style={{
+                    height: `calc(100vh - 84px - ${bottomHeight}px)`,
+                    overflowY: "auto",
+                    marginBottom: "4px",
+                  }}
+                  className="canvas-jd-detail-div"
+                >
                   {loadInput ? (
                     <div
                       style={{
@@ -188,9 +234,8 @@ export default function AIJobOffCanvas({ aiDescriptionData }) {
                   )}
                 </div>
                 <div
+                  ref={bottomRef}
                   style={{
-                    position: "absolute",
-                    bottom: "16px",
                     width: "calc(100% - 24px)",
                     textAlign: "center",
                   }}

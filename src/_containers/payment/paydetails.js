@@ -40,6 +40,7 @@ export const PaymentDetails = ({
   onClose,
   authUser,
   userId = "",
+  companyId = "",
 }) => {
   const dispatch = useDispatch();
 

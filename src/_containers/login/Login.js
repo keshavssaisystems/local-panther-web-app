@@ -447,11 +447,10 @@ export function Login() {
                               id="email"
                               placeholder="Enter email or phone"
                               {...register("email")}
-                              className={`login-field-input placeholder-text form-control ${
-                                errors.email
+                              className={`login-field-input placeholder-text form-control ${errors.email
                                   ? "is-invalid error-text"
                                   : "input-text"
-                              }`}
+                                }`}
                             />
                             <div className="invalid-feedback">
                               {errors.email?.message}
@@ -483,9 +482,8 @@ export function Login() {
                                 type={showPassword ? "text" : "password"}
                                 id="password"
                                 {...register("password")}
-                                className={`login-field-input placeholder-text form-control ${
-                                  errors.password ? "is-invalid" : ""
-                                }`}
+                                className={`login-field-input placeholder-text form-control ${errors.password ? "is-invalid" : ""
+                                  }`}
                               />
                               <InputGroupText
                                 onClick={(evt) => togglePasswordVisibility()}

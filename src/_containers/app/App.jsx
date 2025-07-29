@@ -15,6 +15,7 @@ import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
 import { AppSidebar } from "_components/_layout/AppSidebar";
 import { AppFooter } from "_components/_layout/AppFooter";
+
 import "./app.scss";
 import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";

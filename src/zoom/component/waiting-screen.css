@@ -1,0 +1,61 @@
+.waiting-cont {
+  position: absolute;
+  width: 96%;
+  text-align: center;
+
+  .div-title {
+    color: #2f2e2e;
+    font-size: 36px;
+    font-weight: 500;
+  }
+
+  .div-subt {
+    color: #2f2e2e;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  .content-cont {
+    background-color: #f0f9ff;
+    padding: 32px;
+    border-radius: 8px;
+    border-left: 5px #038ffe solid;
+    text-align: left;
+
+    .first-line {
+      font-size: 24px;
+      font-weight: 400;
+      color: #052f5f;
+      line-height: 16px;
+      display: flex;
+    }
+
+    .next-line {
+      color: #052f5f;
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 16px;
+      display: flex;
+    }
+  }
+
+  .card-div {
+    padding: 32px;
+    border-radius: 8px;
+    max-width: 635px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .end-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #2f2e2e;
+  }
+
+  .end-subt {
+    font-size: 16px;
+    font-weight: 300;
+    color: #2f2e2e;
+  }
+}
