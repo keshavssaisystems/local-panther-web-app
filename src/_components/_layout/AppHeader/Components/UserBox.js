@@ -305,7 +305,7 @@ export function UserBox() {
                               </NavLink>
                             </NavItem>
                           )}
-                          {Number(localStorage.getItem("userroleid")) === 2 && (
+                          {Number(localStorage.getItem("userroleid")) === 2 && isCompanyAdmin === false && (
                             <NavItem>
                               <NavLink>
                                 <Link
