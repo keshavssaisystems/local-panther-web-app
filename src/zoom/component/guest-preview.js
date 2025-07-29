@@ -129,7 +129,7 @@ export const GuestPreview = (props) => {
               <Col md={12}>
                 <FormGroup>
                   <Label for="email" className="input-label">
-                    Your Full Name <span className="required-icon">*</span>
+                    Your full name <span className="required-icon">*</span>
                   </Label>
                   <input
                     type="text"
@@ -147,7 +147,7 @@ export const GuestPreview = (props) => {
               <Col md={12}>
                 <FormGroup>
                   <Label for="email" className="input-label">
-                    Your Email <span className="required-icon">*</span>
+                    Your email <span className="required-icon">*</span>
                   </Label>
 
                   <input
