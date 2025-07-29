@@ -115,13 +115,12 @@ export const ZoomVideoScreen = (props) => {
     nameRef.on("value", (snapshot) => {
       const data = snapshot.val();
       setIsLoaded(true);
-      if (data) {
-        if (localStorage.getItem("userroleid") === "2") {
-          checkUserJoinedEvent(data, usersData);
-        }
-        setFBUsersData(data);
-        setUsersData(data);
+
+      if (localStorage.getItem("userroleid") === "2") {
+        checkUserJoinedEvent(data, usersData);
       }
+      setFBUsersData(data ? data : []);
+      setUsersData(data ? data : []);
     });
 
     // Cleanup listener on unmount
@@ -202,10 +201,9 @@ export const ZoomVideoScreen = (props) => {
         (showScreen === "load" || showScreen === "host")
       ) {
         // uitoolkit?.closeSession(sessionContainer);
-
         uitoolkit?.offSessionJoined(sessionJoined);
         uitoolkit?.offSessionClosed(sessionClosed);
-        // uitoolkit.destroy();
+        uitoolkit.destroy();
       }
     };
   }, [id, sessionData, uitoolkit, showScreen]);
@@ -296,7 +294,7 @@ export const ZoomVideoScreen = (props) => {
 
   const sessionDestroyed = () => {
     if (uitoolkit) {
-      uitoolkit.destroy();
+      uitoolkit?.destroy();
     }
   };
   const onBtnClicked = (evt) => {};
@@ -569,7 +567,13 @@ export const ZoomVideoScreen = (props) => {
             size="lg"
             isOpen={showFBModal}
           >
-            <ModalHeader toggle={() => closeModal()} charCode="Y">
+            <ModalHeader
+              toggle={() => {
+                closeModal();
+                routeToHome();
+              }}
+              charCode="Y"
+            >
               <strong className="card-title-text">Interview Feedback</strong>
             </ModalHeader>
             <ModalBody>
