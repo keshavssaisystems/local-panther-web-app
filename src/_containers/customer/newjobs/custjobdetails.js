@@ -31,6 +31,7 @@ export function CustJobDetail({
   isModal = false,
   isShare = false,
   isAdmin = false,
+  hiringManagerId
 }) {
   let internalUserId = JSON.parse(
     localStorage.getItem("userDetails")
@@ -295,7 +296,7 @@ export function CustJobDetail({
         jobDetail.totalRecommendedCandidates === null
           ? 0
           : jobDetail.totalRecommendedCandidates,
-      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: matchedIcon,
     },
     {

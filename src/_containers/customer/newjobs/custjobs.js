@@ -20,7 +20,7 @@ export const CustJobList = () => {
   const [selectedOpt, setSelectedOpt] = useState("JobTitle");
   const [searchText, setSearchText] = useState("");
   const [jobStatus, setJobStatus] = useState("");
-
+  const [hiringManagerId, setHiringMangerId] = useState("");
   const dispatch = useDispatch();
   const getCompanyDetails = async function () {
     await dispatch(
@@ -44,6 +44,7 @@ export const CustJobList = () => {
   }
 
   useEffect(() => {
+    setHiringMangerId(localStorage.getItem("userId"));
     getCompanyDetails();
     onPageChange(page);
     if (analytics) {
@@ -70,6 +71,7 @@ export const CustJobList = () => {
       companyId: localStorage.getItem("companyid"),
       searchType: selectedOpt,
       jobStatus: jobStatus,
+      hiringManagerId: hiringManagerId,
     };
     getJobList(filterOnPageChange);
   };
@@ -130,9 +132,25 @@ export const CustJobList = () => {
       companyId: localStorage.getItem("companyid"),
       searchType: selectedOpt,
       jobStatus: event,
+      hiringManagerId: hiringManagerId
     };
     getJobList(filterOnPageChange);
   };
+
+  const onJobHiringMangerChange = (event) => {
+    setHiringMangerId(event);
+    let filterOnPageChange = {
+      pageSize: custListPageSize,
+      pageNumber: page,
+      searchText: searchText ?? "",
+      companyId: localStorage.getItem("companyid"),
+      searchType: selectedOpt,
+      jobStatus: jobStatus,
+      hiringManagerId: event,
+    };
+    getJobList(filterOnPageChange);
+  };
+
   return (
     <>
       <Row>
@@ -148,6 +166,9 @@ export const CustJobList = () => {
           searchText={searchText}
           setSearchText={setSearchText}
           onJobStatusChange={onJobStatusChange}
+          onJobHiringMangerChange={onJobHiringMangerChange}
+          hiringManagerId={hiringManagerId}
+          setHiringMangerId={setHiringMangerId}
         />
 
         <Row>
@@ -240,6 +261,7 @@ export const CustJobList = () => {
                               type={"Open"}
                               publishJob={(e) => publishNewJob(e)}
                               closeJob={(e) => closeJob(e)}
+                              hiringManagerId={hiringManagerId}
                             ></CustJobDetail>
                           </>
                         ) : (
