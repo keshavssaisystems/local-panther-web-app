@@ -19,15 +19,15 @@ export function SuccessPopUp(props) {
             {props?.message}
           </div>
           <div className="mb-0 d-flex justify-content-center popup-message">
-            {props.tryAgain !== false ? (
+            {/* {props.tryAgain !== false ? (
               <span>
                 {props?.icon === "success"
-                  ? "successfully"
+                  ? ""
                   : "Please try again"}
               </span>
             ) : (
               ""
-            )}
+            )} */}
           </div>
 
           <div className="margin-custom">
