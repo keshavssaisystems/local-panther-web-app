@@ -182,7 +182,7 @@ export function UserBox() {
     let response = await dispatch(settingsActions.notifications({ id, data }));
     if (response.payload) {
       setSuccess(true);
-      setMessage("Push notification settings updated");
+      setMessage("Push notification settings updated successfully");
       localStorage.setItem("pushnotification", value);
     } else {
       setError(true);
@@ -199,7 +199,7 @@ export function UserBox() {
     let response = await dispatch(settingsActions.emailNotifications({ id, data }));
     if (response.payload) {
       setSuccess(true);
-      setMessage("Email notification settings updated");
+      setMessage("Email notification settings updated successfully");
       localStorage.setItem("emailnotification", value);
     } else {
       setError(true);
