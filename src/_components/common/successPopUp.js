@@ -18,8 +18,8 @@ export function SuccessPopUp(props) {
           <div className="m-3 d-flex justify-content-center popup-message">
             {props?.message}
           </div>
-          {/* <div className="mb-0 d-flex justify-content-center popup-message">
-            {props.tryAgain !== false ? (
+          <div className="mb-0 d-flex justify-content-center popup-message">
+            {/* {props.tryAgain !== false ? (
               <span>
                 {props?.icon === "success"
                   ? ""
@@ -27,8 +27,8 @@ export function SuccessPopUp(props) {
               </span>
             ) : (
               ""
-            )}
-          </div> */}
+            )} */}
+          </div>
 
           <div className="margin-custom">
             <Row>
