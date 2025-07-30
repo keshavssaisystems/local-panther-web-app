@@ -22,7 +22,7 @@ export function SuccessPopUp(props) {
             {props.tryAgain !== false ? (
               <span>
                 {props?.icon === "success"
-                  ? "successfully"
+                  ? ""
                   : "Please try again"}
               </span>
             ) : (
