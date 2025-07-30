@@ -68,8 +68,9 @@ export function CustomerSlider({ data }) {
     }
     if (mode === "video") {
       if (data.isappvideocall) {
-        setLink(id);
-        setAppShowInterview(true);
+        navigateTo(id);
+        // setLink(id);
+        // setAppShowInterview(true);
       } else {
         setLink(data.videolink);
         setShowInterview(true);

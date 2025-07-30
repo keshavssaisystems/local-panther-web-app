@@ -98,7 +98,7 @@ export const GuestPreview = (props) => {
       } else {
         if (ind2 > -1) {
           props.showSweetAlert({
-            title: "Host Denied permission for the meeting!!",
+            title: "Host denied permission for the meeting!!",
             type: "error",
           });
         } else {
@@ -129,13 +129,13 @@ export const GuestPreview = (props) => {
               <Col md={12}>
                 <FormGroup>
                   <Label for="email" className="input-label">
-                    Your Full Name <span className="required-icon">*</span>
+                    Your full name <span className="required-icon">*</span>
                   </Label>
                   <input
                     type="text"
                     name="fullname"
                     id="name"
-                    placeholder="Enter your name"
+                    placeholder="Enter your full name"
                     {...register("name")}
                     className={` form-control ${
                       errors.name ? "is-invalid error-text" : "input-text"
@@ -147,11 +147,11 @@ export const GuestPreview = (props) => {
               <Col md={12}>
                 <FormGroup>
                   <Label for="email" className="input-label">
-                    Your Email <span className="required-icon">*</span>
+                    Your email <span className="required-icon">*</span>
                   </Label>
 
                   <input
-                    placeholder="Enter password"
+                    placeholder="Enter your email"
                     name="email"
                     type={"text"}
                     id="email"

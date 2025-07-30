@@ -130,7 +130,9 @@ export function AppHeader({
               </div>
               <div className="app-header-right">
                 {userroleid !== 1 && <ChatCounter />}
-                <NotificationCounter></NotificationCounter>
+                <span>
+                  <NotificationCounter></NotificationCounter>
+                </span>
                 <UserBox />
                 <CompleteCandProfileModal
                   isOpen={showCPModal}

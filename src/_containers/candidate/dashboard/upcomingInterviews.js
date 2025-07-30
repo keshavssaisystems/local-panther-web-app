@@ -213,8 +213,9 @@ export function UpcomingInterviews() {
       });
     } else if (mode === "Video") {
       if (data.isappvideocall) {
-        setLink(id);
-        setAppShowInterview(true);
+        navigateTo(id);
+        // setLink(id);
+        // setAppShowInterview(true);
       } else {
         setLink(data.videolink);
         setShowInterview(true);
@@ -247,6 +248,7 @@ export function UpcomingInterviews() {
             onClick={() => checkInterview(row.format, row)}
           >
             <img
+              style={{ cursor: "pointer" }}
               src={row.format === "Video" ? videoIcon : personIcon}
               alt="interview-icon"
             />

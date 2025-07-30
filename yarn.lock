@@ -5809,10 +5809,10 @@
   resolved "https://registry.npmjs.org/@yr/monotone-cubic-spline/-/monotone-cubic-spline-1.0.3.tgz"
   integrity sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==
 
-"@zoom/videosdk-ui-toolkit@^1.10.8-1":
-  version "1.10.8-1"
-  resolved "https://registry.npmjs.org/@zoom/videosdk-ui-toolkit/-/videosdk-ui-toolkit-1.10.8-1.tgz"
-  integrity sha512-zwh0e+4/tKgwbXgebn9GTgN+zcP4lehtHZWjmrZxwrT6ZogWnB5l1sRzHIQg3rqAMkmTjzx86KRsje5uSKgJpA==
+"@zoom/videosdk-ui-toolkit@^2.2.0-2":
+  version "2.2.0-2"
+  resolved "https://registry.npmjs.org/@zoom/videosdk-ui-toolkit/-/videosdk-ui-toolkit-2.2.0-2.tgz"
+  integrity sha512-+Fcp21F339xNEdXxlVnVO0Zij7vB7O54xJWGHsTT+wB438UA5ODMZkBEfqCAmMw16Ma5wMPWRiOIbf55PuMv7w==
 
 "@zoom/videosdk@^1.9.0":
   version "1.10.8"

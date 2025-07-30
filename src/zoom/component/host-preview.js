@@ -70,7 +70,7 @@ export const HostPreview = ({
     });
     users[index].isAllowed = false;
     users[index].isDenied = true;
-    users[index].isJoined = false;
+    // users[index].isJoined = false;
     database.ref("users/" + urlParams).update(users);
   };
 
@@ -138,7 +138,17 @@ export const HostPreview = ({
 
         cand.push(user);
         setUsersData(cand);
-        let userFBData = [...fbUsersData];
+        let userFBData =
+          localStorage.getItem("zoomusersList" + urlParams) &&
+          localStorage.getItem("zoomusersList" + urlParams).length > 5
+            ? JSON.parse(localStorage.getItem("zoomusersList" + urlParams))
+            : [...fbUsersData];
+        if (
+          localStorage.getItem("zoomusersList" + urlParams) &&
+          localStorage.getItem("zoomusersList" + urlParams).length > 5
+        ) {
+          localStorage.removeItem("zoomusersList" + urlParams);
+        }
         if (userFBData.length > 0) {
           const updatedArray = cand.map((obj) => {
             const update = userFBData.find((u) => u.email === obj.email);
@@ -331,15 +341,17 @@ export const HostPreview = ({
                               </>
                             ) : (
                               <>
-                                <Badge
-                                  onClick={() => {
-                                    handleAllow(index);
-                                  }}
-                                  className="badge"
-                                  color="success"
-                                >
-                                  Allow
-                                </Badge>
+                                {row.isDenied === false && (
+                                  <Badge
+                                    onClick={() => {
+                                      handleAllow(index);
+                                    }}
+                                    className="badge"
+                                    color="success"
+                                  >
+                                    Allow
+                                  </Badge>
+                                )}
                               </>
                             )}
                           </div>
@@ -357,7 +369,7 @@ export const HostPreview = ({
           )}
         </>
       </div>
-      <div className="atten-div">Not Joined</div>
+      <div className="atten-div mt-4">Not Joined</div>
       <div>
         <>
           {fbUsersData.length > 0 ? (
