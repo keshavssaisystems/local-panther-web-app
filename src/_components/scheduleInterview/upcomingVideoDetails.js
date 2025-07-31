@@ -36,6 +36,8 @@ import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
 import { USPhoneNumber } from "_helpers/helper";
 import html2pdf from "html2pdf.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
 export function UpcomingVideoDetails({
   interviewId,
   cancelScheduleData,
@@ -372,7 +374,14 @@ export function UpcomingVideoDetails({
                         rel="noopener noreferrer"
                         exact
                       >
-                        Click here to join
+                        <Button color="success" size="sm">
+                          <FontAwesomeIcon
+                            style={{ fontSize: "16px" }}
+                            className="me-2"
+                            icon={faVideo}
+                          />{" "}
+                          Join
+                        </Button>
                       </a>{" "}
                       the interview
                     </p>
@@ -382,13 +391,20 @@ export function UpcomingVideoDetails({
                 interviewDetails?.format === "Video" && (
                   <div className="p-custom">
                     <p className="mb-0">
-                      <a href="/" onClick={(e) => e.preventDefault()}>
+                      <a href="/">
                         <NavLink
                           to={`/video-screen/${id}`}
                           target="_blank"
                           exact
                         >
-                          Click here to join
+                          <Button color="success" size="sm">
+                            <FontAwesomeIcon
+                              style={{ fontSize: "16px" }}
+                              className="me-2"
+                              icon={faVideo}
+                            />
+                            Join
+                          </Button>
                         </NavLink>
                       </a>{" "}
                       the in-app interview

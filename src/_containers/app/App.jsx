@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense  } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
@@ -79,34 +79,61 @@ import { getPublicIP } from "_helpers/helper";
 // import { Contact } from "_containers/static/contact";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
-const  ZoomVideoScreen = React.lazy(() => import ("zoom/zoom-video"));
-const AIJobOffCanvas = React.lazy(() => import ("_components/createJobComponents/AIJobOffCanvas"));
+const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
+const AIJobOffCanvas = React.lazy(() =>
+  import("_components/createJobComponents/AIJobOffCanvas")
+);
 
-const Support =  React.lazy(() => import ("_containers/static/support"));
-const PrivacyPolicy =  React.lazy(() => import ("_containers/static/privacy"));
-const TermsAndConditions =  React.lazy(() => import ("_containers/static/terms"));
-const AdmCandidateList =  React.lazy(() => import ("_containers/admin/candidates/candidatesList"));
-const ForgotPassword =  React.lazy(() => import ("_containers/forgotpassword/forgotPassword"));
-const CustomerDashboard = React.lazy(() => import ("_containers/customer/dashboard/customerDashboard"));
-const CustomerReportJobList = React.lazy(() => import ("_containers/customer/reports/customerjobs"));
-const CustomerCandidateLists = React.lazy(() => import ("_containers/customer/candidatelists/customercandidatelists"));
-const CandidateList = React.lazy(() => import ("_containers/candidate/list/candidatelist"));
-const CustJobList = React.lazy(() => import ("_containers/customer/newjobs/custjobs"));
-const Contact = React.lazy(() => import ("_containers/static/contact"));
-const AdminListing = React.lazy(() => import ("_containers/admin/common/adminListing"));
-const RoleMenuListing = React.lazy(() => import ("_containers/admin/acl/roleMenuListing"));
-const AdminDashboard = React.lazy(() => import ("_containers/admin/dashboard/adminDashboard"));
-const CustomerRegistration = React.lazy(() => import ("_containers/registration/customerRegistration"));
-const  Calendar  = React.lazy(() => import ("_containers/customer/common/calendar"));
-const CandidateDashboard = React.lazy(() => import ("_containers/candidate/dashboard/dashboard"));
-
+const Support = React.lazy(() => import("_containers/static/support"));
+const PrivacyPolicy = React.lazy(() => import("_containers/static/privacy"));
+const TermsAndConditions = React.lazy(() => import("_containers/static/terms"));
+const AdmCandidateList = React.lazy(() =>
+  import("_containers/admin/candidates/candidatesList")
+);
+const ForgotPassword = React.lazy(() =>
+  import("_containers/forgotpassword/forgotPassword")
+);
+const CustomerDashboard = React.lazy(() =>
+  import("_containers/customer/dashboard/customerDashboard")
+);
+const CustomerReportJobList = React.lazy(() =>
+  import("_containers/customer/reports/customerjobs")
+);
+const CustomerCandidateLists = React.lazy(() =>
+  import("_containers/customer/candidatelists/customercandidatelists")
+);
+const CandidateList = React.lazy(() =>
+  import("_containers/candidate/list/candidatelist")
+);
+const CustJobList = React.lazy(() =>
+  import("_containers/customer/newjobs/custjobs")
+);
+const Contact = React.lazy(() => import("_containers/static/contact"));
+const AdminListing = React.lazy(() =>
+  import("_containers/admin/common/adminListing")
+);
+const RoleMenuListing = React.lazy(() =>
+  import("_containers/admin/acl/roleMenuListing")
+);
+const AdminDashboard = React.lazy(() =>
+  import("_containers/admin/dashboard/adminDashboard")
+);
+const CustomerRegistration = React.lazy(() =>
+  import("_containers/registration/customerRegistration")
+);
+const Calendar = React.lazy(() =>
+  import("_containers/customer/common/calendar")
+);
+const CandidateDashboard = React.lazy(() =>
+  import("_containers/candidate/dashboard/dashboard")
+);
 
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -160,7 +187,7 @@ export function App() {
   history.navigate = useNavigate();
   const location = useLocation();
   history.location = useLocation();
-  const excludedPaths = ['/terms', '/privacy', '/contact', '/support'];
+  const excludedPaths = ["/terms", "/privacy", "/contact", "/support"];
   const isExcludedPath = excludedPaths.includes(location.pathname);
   console.log(isExcludedPath);
   useEffect(() => {
@@ -380,7 +407,7 @@ export function App() {
             path="/report/ats-candidates/:id"
             element={<ATSCandidate title={"ATS Candidate Report"} />}
           />
-           <Route
+          <Route
             path="/candidate-interview-feedback"
             element={
               <PrivateRoute>
@@ -401,7 +428,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-          
+
           <Route
             path="/job-list"
             element={
@@ -573,23 +600,23 @@ export function App() {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/masters"
             element={
               <PrivateRoute>
-                <CompanyList isCompanyAdmin={true}/>
+                <CompanyList isCompanyAdmin={true} />
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/masters/company"
             element={
               <PrivateRoute>
-                <CompanyList isCompanyAdmin={true}/>
+                <CompanyList isCompanyAdmin={true} />
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/acl"
             element={
               <PrivateRoute>
@@ -597,7 +624,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/acl/users"
             element={
               <PrivateRoute>
@@ -605,11 +632,11 @@ export function App() {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/report"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
-            <Route
+          <Route
             path="/report/open-jobs"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
@@ -757,120 +784,125 @@ export function App() {
 
   return (
     <>
-     <Suspense fallback={<div>Loading UI...</div>}>
-    {isExcludedPath ? 
-      <>
-       <Routes forceRefresh={true}>
-       <Route
-          path="/contact"
-          element={ <Contact /> }
-        />
-        <Route
-          path="/privacy"
-          element={ <PrivacyPolicy /> }
-        />
-        <Route
-          path="/terms"
-          element={ <TermsAndConditions /> }
-        />
-        <Route
-          path="/support"
-          element={ <Support /> }
-        />
-       </Routes>
-      </> : 
-      <>
-      
-        {authUser && (
-          
-         <AppHeader
-            isSidebarOpen={isSidebarOpen}
-            onOpenSidebar={() => onOpenSidebar()}
-            onCloseSidebar={() => onCloseSidebar()}
-          />
-         
-        )}
-        {!authUser && hideSidebar && !isExcludedPath && (
-          <AppHeader
-            unAuth={true}
-            isSidebarOpen={isSidebarOpen}
-            onOpenSidebar={() => onOpenSidebar()}
-            onCloseSidebar={() => onCloseSidebar()}
-          />
-        )}
-        <div className={authUser ? `app-main` : ""}>
-           <AIJobOffCanvas ></AIJobOffCanvas>
-          {authUser && !hideSidebar && (
-            <AppSidebar
-              isSidebarOpen={isSidebarOpen}
-              setIsSidebarOpen={setIsSidebarOpen}
-            />
-            
-          )}
-          <div className={authUser ? `app-main__outer` : ""}>
-            <div className={"app-main__inner "}>
-              <ToastContainer />
-              <Routes forceRefresh={true}>
-                {renderRoutes(userroleid)}
-                <Route
-                  path="/security"
-                  element={
-                    <PrivateRoute>
-                      <CandidateUnderConstruction title={"Security"} />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/notification"
-                  element={
-                    <PrivateRoute>
-                      <Notifications />
-                    </PrivateRoute>
-                  }
-                />
-
-                <Route path="/login" element={<Login />} />
-                {/* <Route path="/login/:id" element={<Login />} /> */}
-                <Route path="/registration" element={<Registration />} />
-                <Route
-                  path="/customer-registration"
-                  element={<CustomerRegistration />}
-                />
-                <Route
-                  path="/registration-success"
-                  element={<RegistrationSuccess />}
-                />
-                <Route
-                  path="/forgot-password-success"
-                  element={<ForgotPasswordSuccess />}
-                />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                {/* for firebase */}
-                {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
-                {/* for zoom */}
-                <Route
-                  path="/video-screen/*"
-                  element={<ZoomVideoScreen authUser={authUser} />}
-                />
-                <Route
-                  path="/job-detail/:id"
-                  element={<ShareJobDetails authUser={authUser} />}
-                />
-                <Route
-                  path="/payment/:id"
-                  element={<Payment authUser={authUser} />}
-                />
-                <Route path="/Unsubscribe/:token" element={<UnsubscribeEmail />} />
-              </Routes>
-            </div>
-            {authUser && <AppFooter />}
-            {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
+      <Suspense
+        fallback={
+          <div
+            style={{
+              height: "calc(100vh - 160px)",
+              width: "100vw",
+              top: "50%",
+              left: "50%",
+              transform: "translate(50%, 50%)",
+            }}
+          >
+            {" "}
+            <div className="loader-cust"></div>
           </div>
-        </div>
-        
-      </>}
+        }
+      >
+        {isExcludedPath ? (
+          <>
+            <Routes forceRefresh={true}>
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsAndConditions />} />
+              <Route path="/support" element={<Support />} />
+            </Routes>
+          </>
+        ) : (
+          <>
+            {authUser && (
+              <AppHeader
+                isSidebarOpen={isSidebarOpen}
+                onOpenSidebar={() => onOpenSidebar()}
+                onCloseSidebar={() => onCloseSidebar()}
+              />
+            )}
+            {!authUser && hideSidebar && !isExcludedPath && (
+              <AppHeader
+                unAuth={true}
+                isSidebarOpen={isSidebarOpen}
+                onOpenSidebar={() => onOpenSidebar()}
+                onCloseSidebar={() => onCloseSidebar()}
+              />
+            )}
+            <div className={authUser ? `app-main` : ""}>
+              <AIJobOffCanvas></AIJobOffCanvas>
+              {authUser && !hideSidebar && (
+                <AppSidebar
+                  isSidebarOpen={isSidebarOpen}
+                  setIsSidebarOpen={setIsSidebarOpen}
+                />
+              )}
+              <div className={authUser ? `app-main__outer` : ""}>
+                <div className={"app-main__inner "}>
+                  <ToastContainer />
+                  <Routes forceRefresh={true}>
+                    {renderRoutes(userroleid)}
+                    <Route
+                      path="/security"
+                      element={
+                        <PrivateRoute>
+                          <CandidateUnderConstruction title={"Security"} />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/notification"
+                      element={
+                        <PrivateRoute>
+                          <Notifications />
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route path="/login" element={<Login />} />
+                    {/* <Route path="/login/:id" element={<Login />} /> */}
+                    <Route path="/registration" element={<Registration />} />
+                    <Route
+                      path="/customer-registration"
+                      element={<CustomerRegistration />}
+                    />
+                    <Route
+                      path="/registration-success"
+                      element={<RegistrationSuccess />}
+                    />
+                    <Route
+                      path="/forgot-password-success"
+                      element={<ForgotPasswordSuccess />}
+                    />
+                    <Route
+                      path="/forgot-password"
+                      element={<ForgotPassword />}
+                    />
+                    {/* for firebase */}
+                    {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
+                    {/* for zoom */}
+                    <Route
+                      path="/video-screen/*"
+                      element={<ZoomVideoScreen authUser={authUser} />}
+                    />
+                    <Route
+                      path="/job-detail/:id"
+                      element={<ShareJobDetails authUser={authUser} />}
+                    />
+                    <Route
+                      path="/payment/:id"
+                      element={<Payment authUser={authUser} />}
+                    />
+                    <Route
+                      path="/Unsubscribe/:token"
+                      element={<UnsubscribeEmail />}
+                    />
+                  </Routes>
+                </div>
+                {authUser && <AppFooter />}
+                {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
+              </div>
+            </div>
+          </>
+        )}
       </Suspense>
     </>
-
   );
 }

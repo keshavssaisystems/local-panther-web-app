@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardHeader,
   Card,
@@ -21,6 +21,8 @@ import customerIcons from "assets/utils/images/customer";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { scheduleInterviewActions, candidateListActions } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
 
 export function ScheduleDetails({
   interviewDetail,
@@ -134,10 +136,34 @@ export function ScheduleDetails({
   };
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleId, setRescheduleId] = useState("");
+  const [linkDisabled, setLinkDisabled] = useState(false);
+  // useEffect(() => {
+  // const intervalId = setInterval(() => {
+  //   debugger;
+  //   let scheduledTime = getTimezoneDateTime(
+  //     moment(
+  //       interviewDetail?.scheduledate.slice(0, 11) + interviewDetail.starttime
+  //     ).format("YYYY-MM-DD HH:mm:ss"),
+
+  //     "MM/DD/YYYY HH:mm:ss"
+  //   );
+
+  //   let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  //   let minutes = moment(now, "YYYY-MM-DD HH:mm:ss").diff(
+  //     (scheduledDate, "YYYY-MM-DD HH:mm:ss"),
+  //     "minutes"
+  //   );
+  //   setLinkDisabled(minutes <= 15);
+  // }, 6000);
+
+  // return () => clearInterval(intervalId); // Cleanup on unmount
+  // }, []);
+
   const submitReject = async (comment) => {
     setRejectReasonModal(false);
     onBtnClick(rejectType, candidaterecommendedjobid, comment);
   };
+
   const onBtnClick = async (type, candidaterecommendedjobid, reason) => {
     if (type === "acceptInterview") {
       let res = await dispatch(
@@ -412,11 +438,25 @@ export function ScheduleDetails({
                                   <div className="p-custom">
                                     <p className="mb-0">
                                       <a
+                                        className={
+                                          linkDisabled ? "no-click" : ""
+                                        }
                                         href={interviewDetail.videolink}
                                         target={"_blank"}
                                         rel="noreferrer"
                                       >
-                                        Click here to join
+                                        <Button
+                                          disabled={linkDisabled}
+                                          color="success"
+                                          size="sm"
+                                        >
+                                          <FontAwesomeIcon
+                                            style={{ fontSize: "16px" }}
+                                            className="me-2"
+                                            icon={faVideo}
+                                          />
+                                          Join
+                                        </Button>
                                       </a>{" "}
                                       the interview
                                     </p>
@@ -428,13 +468,29 @@ export function ScheduleDetails({
                                 interviewDetail?.isrejected === false && (
                                   <div className="p-custom">
                                     <p className="mb-0">
-                                      <a href="/">
+                                      <a
+                                        className={
+                                          linkDisabled ? "no-click" : ""
+                                        }
+                                        href="/"
+                                      >
                                         <NavLink
                                           to={`/video-screen/${id}`}
                                           target="_blank"
                                           exact
                                         >
-                                          Click here to join
+                                          <Button
+                                            disabled={linkDisabled}
+                                            color="success"
+                                            size="sm"
+                                          >
+                                            <FontAwesomeIcon
+                                              style={{ fontSize: "16px" }}
+                                              className="me-2"
+                                              icon={faVideo}
+                                            />
+                                            Join
+                                          </Button>
                                         </NavLink>
                                       </a>{" "}
                                       the in-app interview
