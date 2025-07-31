@@ -25,7 +25,7 @@ import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
 
-export const CandidateList = (props) => {
+export default function CandidateList(props) {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
   const internalUserId =
     JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId ?? 0;
@@ -1357,4 +1357,4 @@ export const CandidateList = (props) => {
       </Row>
     </>
   );
-};
+}

@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./terms.scss";
 
-export function TermsAndConditions() {
+export default function TermsAndConditions() {
   return (
     <>
       <Container className="my-5">

@@ -3,13 +3,13 @@ import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
+// import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
 import { UploadData } from "_containers/admin/uploadData";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
-import { CustomerRegistration } from "_containers/registration/customerRegistration";
+// import { CustomerRegistration } from "_containers/registration/customerRegistration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
@@ -17,13 +17,13 @@ import { AppSidebar } from "_components/_layout/AppSidebar";
 import { AppFooter } from "_components/_layout/AppFooter";
 
 import "./app.scss";
-import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
+// import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
-import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
-import { CandidateList } from "_containers/candidate/list/candidatelist";
+// import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
+// import { CandidateList } from "_containers/candidate/list/candidatelist";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
-import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
-import { CustJobList } from "_containers/customer/newjobs/custjobs";
+// import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
+// import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
 import { CandidateInterviewFeedback } from "_containers/customer/reports/candidateinterviewfeedback";
 // Admin
@@ -40,20 +40,20 @@ import {
   NonPublishedJobs,
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
-import { Calendar } from "_containers/customer/common/calendar";
-import { CustomerReportJobList } from "_containers/customer/reports/customerjobs";
+// import { Calendar } from "_containers/customer/common/calendar";
+// import { CustomerReportJobList } from "_containers/customer/reports/customerjobs";
 import { CustomerReportScheduledInterviews } from "_containers/customer/reports/customerscheduleinterviews";
 import { CustomerReportInterviewedCandidates } from "_containers/customer/reports/customerinterviewdcandidates";
 import { CustomerReportJobAging } from "_containers/customer/reports/customerjobaging";
 import { CustomerReportMatchedCandidate } from "_containers/customer/reports/customermatchedjoblist";
 import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
-import { CustomerVideoScreen } from "../../firebase/customerVideo";
-import { CandVideoScreen } from "../../firebase/candvideo";
-import { AdminListing } from "_containers/admin/common/adminListing";
-import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
+// import { CustomerVideoScreen } from "../../firebase/customerVideo";
+// import { CandVideoScreen } from "../../firebase/candvideo";
+// import { AdminListing } from "_containers/admin/common/adminListing";
+// import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 
 import { messaging, analytics } from "../../firebase/index";
-import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
+// import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
@@ -71,15 +71,36 @@ import { SubsidaryList } from "_containers/admin/masters/subsidary";
 import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
 import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
-import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
+// import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
 import { getPublicIP } from "_helpers/helper";
-import { TermsAndConditions } from "_containers/static/terms";
-import { PrivacyPolicy } from "_containers/static/privacy";
-import { Support } from "_containers/static/support";
-import { Contact } from "_containers/static/contact";
+// import { TermsAndConditions } from "_containers/static/terms";
+// import { PrivacyPolicy } from "_containers/static/privacy";
+// import { Support } from "_containers/static/support";
+// import { Contact } from "_containers/static/contact";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
-import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
-const  ZoomVideoScreen = React.lazy(() => import ("zoom/zoom-video"));;
+// import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
+const  ZoomVideoScreen = React.lazy(() => import ("zoom/zoom-video"));
+const AIJobOffCanvas = React.lazy(() => import ("_components/createJobComponents/AIJobOffCanvas"));
+
+const Support =  React.lazy(() => import ("_containers/static/support"));
+const PrivacyPolicy =  React.lazy(() => import ("_containers/static/privacy"));
+const TermsAndConditions =  React.lazy(() => import ("_containers/static/terms"));
+const AdmCandidateList =  React.lazy(() => import ("_containers/admin/candidates/candidatesList"));
+const ForgotPassword =  React.lazy(() => import ("_containers/forgotpassword/forgotPassword"));
+const CustomerDashboard = React.lazy(() => import ("_containers/customer/dashboard/customerDashboard"));
+const CustomerReportJobList = React.lazy(() => import ("_containers/customer/reports/customerjobs"));
+const CustomerCandidateLists = React.lazy(() => import ("_containers/customer/candidatelists/customercandidatelists"));
+const CandidateList = React.lazy(() => import ("_containers/candidate/list/candidatelist"));
+const CustJobList = React.lazy(() => import ("_containers/customer/newjobs/custjobs"));
+const Contact = React.lazy(() => import ("_containers/static/contact"));
+const AdminListing = React.lazy(() => import ("_containers/admin/common/adminListing"));
+const RoleMenuListing = React.lazy(() => import ("_containers/admin/acl/roleMenuListing"));
+const AdminDashboard = React.lazy(() => import ("_containers/admin/dashboard/adminDashboard"));
+const CustomerRegistration = React.lazy(() => import ("_containers/registration/customerRegistration"));
+const  Calendar  = React.lazy(() => import ("_containers/customer/common/calendar"));
+const CandidateDashboard = React.lazy(() => import ("_containers/candidate/dashboard/dashboard"));
+
+
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -527,14 +548,14 @@ export function App() {
             path="/customer-edit-job/:id"
             element={<CreateJobWizard type={"edit"} />}
           />
-          <Route
+          {/* <Route
             path="/cust-video"
             element={
               <PrivateRoute>
                 <CustomerVideoScreen />
               </PrivateRoute>
             }
-          />
+          /> */}
           <Route
             path="/chat"
             element={
@@ -705,14 +726,14 @@ export function App() {
               </PrivateRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/cand-video"
             element={
               <PrivateRoute>
                 <CandVideoScreen />
               </PrivateRoute>
             }
-          />
+          /> */}
           <Route
             path="/chat"
             element={
@@ -736,7 +757,7 @@ export function App() {
 
   return (
     <>
-     <Suspense fallback={<div>Loading Zoom UI...</div>}>
+     <Suspense fallback={<div>Loading UI...</div>}>
     {isExcludedPath ? 
       <>
        <Routes forceRefresh={true}>

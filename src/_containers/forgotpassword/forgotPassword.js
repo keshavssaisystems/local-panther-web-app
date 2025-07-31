@@ -28,7 +28,7 @@ import "./forgotpassword.scss";
 import { history } from "_helpers";
 import { analytics } from "../../firebase/index";
 
-export function ForgotPassword() {
+export default function ForgotPassword() {
   const dispatch = useDispatch();
   const [emailError, setError] = useState(false);
   const [message, setMessage] = useState("");

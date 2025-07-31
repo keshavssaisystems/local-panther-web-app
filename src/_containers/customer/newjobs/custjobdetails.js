@@ -31,6 +31,7 @@ export function CustJobDetail({
   isModal = false,
   isShare = false,
   isAdmin = false,
+  hiringManagerId
 }) {
   let internalUserId = JSON.parse(
     localStorage.getItem("userDetails")

@@ -33,7 +33,7 @@ import { OfferHistory } from "_components/modal/offerhistorymoal";
 import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
 import { analytics } from "../../../firebase/index";
 import cx from "classnames";
-export const CustomerCandidateLists = (props) => {
+export default function CustomerCandidateLists(props) {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState(props.type || "matched");
   const [pageNo, setPageNo] = useState(1);
@@ -1154,4 +1154,4 @@ export const CustomerCandidateLists = (props) => {
       </>
     </>
   );
-};
+}

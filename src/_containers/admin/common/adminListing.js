@@ -38,7 +38,7 @@ import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
 import { getCustomerDropdownList } from "_store";
 
-export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
+export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
 
   const [pageSize, setPageSize] = useState(10);
@@ -857,4 +857,4 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
       </div>
     </>
   );
-};
+}
