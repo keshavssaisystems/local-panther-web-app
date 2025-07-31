@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 import "./terms.scss";
 
-export function Contact() {
+export default function Contact() {
   return (
     <>
       <Container className="my-5">

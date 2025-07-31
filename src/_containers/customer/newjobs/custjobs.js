@@ -14,7 +14,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import moment from "moment/moment";
 import { analytics } from "../../../firebase/index";
 
-export const CustJobList = () => {
+export default function CustJobList() {
   const [page, setPage] = useState(1);
   const [placeHolder, setPlaceHolder] = useState("Search job title");
   const [selectedOpt, setSelectedOpt] = useState("JobTitle");
@@ -328,4 +328,4 @@ export const CustJobList = () => {
       </Row>
     </>
   );
-};
+}

@@ -41,7 +41,7 @@ import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import "./customerreport.scss";
 import { analytics } from "../../../firebase/index";
 
-export function CustomerReportJobList() {
+export default function CustomerReportJobList() {
   const dispatch = useDispatch();
   const { id } = useParams();
 

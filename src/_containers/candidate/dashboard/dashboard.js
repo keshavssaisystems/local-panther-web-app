@@ -24,7 +24,7 @@ import infoIcon from "assets/utils/images/yellow-info-big.svg";
 import { analytics } from "../../../firebase/index";
 import { JobPreferences } from "../jobPreferences";
 import { history } from "_helpers";
-export function CandidateDashboard() {
+export default function CandidateDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

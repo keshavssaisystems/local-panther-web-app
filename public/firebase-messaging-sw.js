@@ -16,8 +16,9 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging.isSupported() ? firebase.messaging() : null;
-
+export const messaging = firebase.messaging.isSupported() ? firebase.messaging() : null;
+export const analytics = firebase.analytics(initApp);
+export const database = firebase.database();
 //messaging.onBackgroundMessage((payload) => {
 //  console.log(
 //    "[firebase-messaging-sw.js] Received background message ",

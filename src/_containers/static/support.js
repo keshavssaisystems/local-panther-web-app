@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./terms.scss";
 import footerImg from "../../assets/utils/images/panther-logo.png";
 
-export function Support() {
+export default function Support() {
   return (
     <>
       <Container className="my-5">
