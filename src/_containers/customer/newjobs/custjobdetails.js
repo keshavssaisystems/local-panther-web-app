@@ -296,7 +296,7 @@ export function CustJobDetail({
         jobDetail.totalRecommendedCandidates === null
           ? 0
           : jobDetail.totalRecommendedCandidates,
-      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
       icon: matchedIcon,
     },
     {
