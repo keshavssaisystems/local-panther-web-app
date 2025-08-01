@@ -136,29 +136,31 @@ export function ScheduleDetails({
   };
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [rescheduleId, setRescheduleId] = useState("");
-  const [linkDisabled, setLinkDisabled] = useState(false);
-  // useEffect(() => {
-  // const intervalId = setInterval(() => {
-  //   debugger;
-  //   let scheduledTime = getTimezoneDateTime(
-  //     moment(
-  //       interviewDetail?.scheduledate.slice(0, 11) + interviewDetail.starttime
-  //     ).format("YYYY-MM-DD HH:mm:ss"),
+  const [linkDisabled, setLinkDisabled] = useState(true);
+  useEffect(() => {
+    checkLinkEnableDisable();
+    const intervalId = setInterval(() => {
+      checkLinkEnableDisable();
+    }, 60000);
 
-  //     "MM/DD/YYYY HH:mm:ss"
-  //   );
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, []);
 
-  //   let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  //   let minutes = moment(now, "YYYY-MM-DD HH:mm:ss").diff(
-  //     (scheduledDate, "YYYY-MM-DD HH:mm:ss"),
-  //     "minutes"
-  //   );
-  //   setLinkDisabled(minutes <= 15);
-  // }, 6000);
+  const checkLinkEnableDisable = () => {
+    let scheduledTime = getTimezoneDateTime(
+      moment(
+        interviewDetail?.scheduledate.slice(0, 11) + interviewDetail.starttime
+      ).format("YYYY-MM-DD HH:mm:ss"),
 
-  // return () => clearInterval(intervalId); // Cleanup on unmount
-  // }, []);
+      "MM/DD/YYYY HH:mm:ss"
+    );
 
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+    let revminutes = moment(now).diff(scheduledTime, "minutes");
+
+    setLinkDisabled(!(revminutes < 120 && minutes < 15));
+  };
   const submitReject = async (comment) => {
     setRejectReasonModal(false);
     onBtnClick(rejectType, candidaterecommendedjobid, comment);
