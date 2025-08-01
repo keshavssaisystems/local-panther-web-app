@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardHeader,
   Col,
@@ -61,7 +61,16 @@ export function VideoInterviewDetails({
   const [showNotes, setShowNotes] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const [feedbackModal, setFeedbackModal] = useState(false);
+  const [linkDisabled, setLinkDisabled] = useState(true);
 
+  useEffect(() => {
+    checkLinkEnableDisable();
+    const intervalId = setInterval(() => {
+      checkLinkEnableDisable();
+    }, 60000);
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, []);
   let interviewDetail = [];
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
@@ -195,6 +204,22 @@ export function VideoInterviewDetails({
       };
       html2pdf().from(element).set(pdfOptions).save();
     }
+  };
+
+  const checkLinkEnableDisable = () => {
+    let scheduledTime = getTimezoneDateTime(
+      moment(
+        interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+      ).format("YYYY-MM-DD HH:mm:ss"),
+
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+    let revminutes = moment(now).diff(scheduledTime, "minutes");
+
+    setLinkDisabled(!(revminutes < 120 && minutes < 15));
   };
 
   return (
@@ -391,12 +416,13 @@ export function VideoInterviewDetails({
                 <div className="p-custom">
                   <p className="mb-0">
                     <a
+                      className={linkDisabled ? "no-click" : ""}
                       href={"https://" + interviewDetail.videolink}
                       target={"_blank"}
                       rel="noopener noreferrer"
                       exact
                     >
-                      <Button color="success" size="sm">
+                      <Button disabled={linkDisabled} color="success" size="sm">
                         <FontAwesomeIcon
                           style={{ fontSize: "16px" }}
                           className="me-2"
@@ -413,9 +439,17 @@ export function VideoInterviewDetails({
               interviewDetail?.format === "Video" && (
                 <div className="p-custom">
                   <p className="mb-0">
-                    <a href="/" onClick={(e) => toggle()}>
+                    <a
+                      className={linkDisabled ? "no-click" : ""}
+                      href="/"
+                      onClick={(e) => toggle()}
+                    >
                       <NavLink to={`/video-screen/${id}`} target="_blank" exact>
-                        <Button color="success" size="sm">
+                        <Button
+                          disabled={linkDisabled}
+                          color="success"
+                          size="sm"
+                        >
                           <FontAwesomeIcon
                             style={{ fontSize: "16px" }}
                             className="me-2"
