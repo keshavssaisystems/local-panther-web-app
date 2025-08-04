@@ -51,6 +51,7 @@ export default function CustomerCandidateLists(props) {
   const [oHModal, setOHModal] = useState(false);
   const [candidateName, setCandidateName] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [hiringManagerId, setHiringManagerId] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
@@ -78,6 +79,7 @@ export default function CustomerCandidateLists(props) {
   const custOfferHistory = useSelector(
     (state) => state.customerCandidateList.custOfferHistory
   );
+  const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
 
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
@@ -380,6 +382,31 @@ export default function CustomerCandidateLists(props) {
               Declined
             </Button>
           </ButtonGroup>
+        </Col>
+        <Col xs={12} sm={8} lg={6} md={6} xl={4} xxl={3}>
+          <Input
+            type="select"
+            title="Hiring Manger"
+            value={hiringManagerId}
+            name="hiringmanagerId"
+            id="hiringmanagerId"
+            placeholder="Hiring Manger"
+            onChange={(e) => {
+              setHiringManagerId(e.target.value);
+              // getJobHiringMangerData(e.target.value);
+            }}
+          >
+            <option value={""}>Select a Hiring Manger</option>
+            {hiringManagerDownList?.length > 0 ? (
+              hiringManagerDownList.map((data) => (
+                <option value={data.id} key={data.id}>
+                  {data.name}
+                </option>
+              ))
+            ) : (
+              <></>
+            )}
+          </Input>
         </Col>
         <Col
           xs={12}
