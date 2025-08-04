@@ -20,9 +20,11 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -30,7 +32,9 @@ export default function CustomerDashboard() {
     title: "",
     description: "",
   });
-
+  const [isCompanyAdmin, setIsCompanyAdmin] = useState(
+    JSON.parse(localStorage.getItem("userDetails"))?.isCompanyAdmin || false
+  );
   const [confAlert, SetConfAlert] = useState({
     show: false,
     type: "success",
@@ -51,6 +55,8 @@ export default function CustomerDashboard() {
       if (
         res?.payload?.data?.billingdetailstatus !== undefined &&
         !res?.payload?.data?.billingdetailstatus
+        && res?.payload?.data?.companyBillingdetailstatus !== undefined
+        && !res?.payload?.data?.companyBillingdetailstatus
       ) {
         setShowRemModal(true);
       }
@@ -68,6 +74,12 @@ export default function CustomerDashboard() {
       )
     );
   };
+
+  const handleBillDetailUpdate = () => {
+    setShowRemModal(false);
+    setShowPaymentModal(true);
+  };
+
   useEffect(() => {
     if (
       localStorage.getItem("companyreferrallogid") &&
@@ -259,10 +271,26 @@ export default function CustomerDashboard() {
           <BillDetailRemModal
             isOpen={showRemModal}
             onClose={() => setShowRemModal(false)}
+            onUpdate={handleBillDetailUpdate}
           ></BillDetailRemModal>
         ) : (
           <></>
         )}
+      </>
+      <> {showPaymentModal ? (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          //selectedCustomer={}
+          // onClose={() => onCloseBDModal()}
+          isAdmin={true}
+          userId={JSON.parse(localStorage.getItem("userDetails")).InternalUserId}
+          companyid={JSON.parse(localStorage.getItem("userDetails"))?.companyid}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      ) : (
+        <></>
+      )}
+
       </>
       <>
         <SweetAlert

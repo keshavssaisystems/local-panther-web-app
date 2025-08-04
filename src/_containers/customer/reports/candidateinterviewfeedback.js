@@ -119,6 +119,7 @@ export function CandidateInterviewFeedback() {
           "Hiring Manager name": data.hiringmanegername,
           "Interview date & time": data.scheduledate ? getTimezoneDateTime(moment(data.scheduledate.slice(0, 11) + data.starttime).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY HH:mm:ss") : "",
           "Interviewer Feedback": data.interviewtatus,
+          "Interviewer Comment": data.interviewfeedbackcomment,
           "Current Candidate Status": data.recommendedjobstatus,
           "Company Name": data.companyname
         };
@@ -279,6 +280,17 @@ export function CandidateInterviewFeedback() {
       ),
       sortable: true,
       selector: (row) => row.interviewtatus,
+      minWidth: "350px",
+    },
+      {
+      name: <span className="table-title">Interviewer Comment</span>,
+      cell: (row) => (
+        <span className="table-cell" title={row.interviewfeedbackcomment}>
+          {row.interviewfeedbackcomment}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.interviewfeedbackcomment,
       minWidth: "350px",
     },
     {

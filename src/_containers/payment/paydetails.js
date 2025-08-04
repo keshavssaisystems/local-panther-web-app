@@ -196,6 +196,23 @@ export const PaymentDetails = ({
     setValue("address", billingDetails?.address);
     setValue("zipcode", billingDetails?.zipcode);
     setZipCode(billingDetails?.zipcode);
+
+
+    setValue("cityid", String(billingDetails.cityid));
+    setCityValue({
+      value: billingDetails.cityid,
+      label: `${billingDetails.cityname + ", " + billingDetails.statename}`,
+    });
+    setValue("stateid", billingDetails.stateid);
+    setValue("countryid", String(billingDetails.countryid));
+    setCountryValue({
+      value: billingDetails.countryid,
+      label: `${billingDetails.countryname}`,
+    });
+
+
+
+
   };
   const setDetails = (userDetails) => {
     setValue("name", userDetails.firstname + " " + userDetails.lastname);
@@ -461,8 +478,8 @@ export const PaymentDetails = ({
       customerid: userId
         ? 0
         : userDetails?.customerid
-        ? userDetails.customerid
-        : id,
+          ? userDetails.customerid
+          : id,
       name: formData.name,
       phonenumber: formData.phoneNumber,
       companyid: formData.companyid,
@@ -648,11 +665,10 @@ export const PaymentDetails = ({
                   }
                   placeholder="Enter Name"
                   {...register("name")}
-                  className={`form-control placeholder-name ${
-                    errors.name ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${errors.name ? "is-invalid" : ""
+                    }`}
                   maxLength={50}
-                  // onChange={(e) => setCardDetails(e)}
+                // onChange={(e) => setCardDetails(e)}
                 />
                 <FormFeedback>{errors?.name?.message}</FormFeedback>
               </InputGroup>
@@ -676,9 +692,8 @@ export const PaymentDetails = ({
                 {...register("companyid")}
                 value={companyValue}
                 disabled={userDetails?.billingdetailstatus || userId}
-                className={`form-control placeholder-name ${
-                  errors.companyid && companyValue === 0 ? "is-invalid" : ""
-                }`}
+                className={`form-control placeholder-name ${errors.companyid && companyValue === 0 ? "is-invalid" : ""
+                  }`}
                 onChange={(e) => onSelectCompanyDropdown(e.target.value)}
               >
                 <option value={0}>Select Company</option>
@@ -717,9 +732,8 @@ export const PaymentDetails = ({
                   placeholder="Enter Email"
                   disabled={userDetails?.billingdetailstatus || userId}
                   {...register("email")}
-                  className={`form-control placeholder-name ${
-                    errors.email ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${errors.email ? "is-invalid" : ""
+                    }`}
                   autoComplete="off"
                   maxLength={70}
                 />
@@ -753,10 +767,9 @@ export const PaymentDetails = ({
                   name="phoneNumber"
                   id="phoneNumber"
                   {...register("phoneNumber")}
-                  className={`form-control placeholder-name ${
-                    errors.phoneNumber ? "is-invalid" : ""
-                  }`}
-                  // maxLength={20}
+                  className={`form-control placeholder-name ${errors.phoneNumber ? "is-invalid" : ""
+                    }`}
+                // maxLength={20}
                 />
 
                 <FormFeedback>{errors.phoneNumber?.message}</FormFeedback>
@@ -781,10 +794,9 @@ export const PaymentDetails = ({
                   }
                   id="address"
                   {...register("address")}
-                  className={`form-control placeholder-name ${
-                    errors.address ? "is-invalid" : ""
-                  }`}
-                  // maxLength={20}
+                  className={`form-control placeholder-name ${errors.address ? "is-invalid" : ""
+                    }`}
+                // maxLength={20}
                 />
 
                 <FormFeedback>{errors.address?.message}</FormFeedback>
@@ -811,17 +823,15 @@ export const PaymentDetails = ({
                 loadOptions={loadOptionsDeb}
                 isMulti={false}
                 value={cityValue}
-                className={`placeholder-name ${
-                  errors.cityid && !cityValue?.value
-                    ? "async-border-red"
-                    : "async-no-error"
-                } ${
-                  userId
+                className={`placeholder-name ${errors.cityid && !cityValue?.value
+                  ? "async-border-red"
+                  : "async-no-error"
+                  } ${userId
                     ? disableCABillStat
                     : userDetails?.billingdetailstatus
-                    ? "disable-ip"
-                    : ""
-                }`}
+                      ? "disable-ip"
+                      : ""
+                  }`}
                 {...register("cityid")}
                 onChange={(e) => setAsyncSelectValue(e)}
               />
@@ -856,9 +866,8 @@ export const PaymentDetails = ({
                   id="zipcode"
                   placeholder="Enter Zip Code"
                   {...register("zipcode")}
-                  className={`form-control placeholder-name ${
-                    errors.zipcode ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${errors.zipcode ? "is-invalid" : ""
+                    }`}
                   autoComplete="off"
                   onInput={(e) => {
                     getZipLocationData(e.target.value);
@@ -881,17 +890,15 @@ export const PaymentDetails = ({
                 placeholderText="search"
                 isMulti={false}
                 value={countryValue}
-                className={`placeholder-name ${
-                  errors.countryid && !countryValue?.value
-                    ? "async-border-red"
-                    : "async-no-error"
-                } ${
-                  userId
+                className={`placeholder-name ${errors.countryid && !countryValue?.value
+                  ? "async-border-red"
+                  : "async-no-error"
+                  } ${userId
                     ? disableCABillStat
                     : userDetails?.billingdetailstatus
-                    ? "disable-ip"
-                    : ""
-                }`}
+                      ? "disable-ip"
+                      : ""
+                  }`}
                 {...register("countryid")}
                 defaultOptions={countryList}
                 onChange={(e) => onSelectCountryDropdown(e)}
@@ -919,9 +926,8 @@ export const PaymentDetails = ({
                 }
                 placeholder="Select Currency"
                 {...register("currency")}
-                className={`form-control placeholder-name ${
-                  errors.currency && currencyValue === 0 ? "is-invalid" : ""
-                }`}
+                className={`form-control placeholder-name ${errors.currency && currencyValue === 0 ? "is-invalid" : ""
+                  }`}
                 autoComplete="off"
                 onChange={(e) => onSelectCurrencyDropdown(e.target.value)}
               >
@@ -1041,11 +1047,10 @@ export const PaymentDetails = ({
                   type="tel"
                   name="cardnumber"
                   id={"cardnumber"}
-                  className={`form-control placeholder-name ${
-                    cardNumberErr || (!validCard && cardnumber !== "")
-                      ? "is-invalid"
-                      : ""
-                  }`}
+                  className={`form-control placeholder-name ${cardNumberErr || (!validCard && cardnumber !== "")
+                    ? "is-invalid"
+                    : ""
+                    }`}
                   placeholder="Card Number"
                   pattern="[\d| ]{16,22}"
                   disabled={
@@ -1061,8 +1066,8 @@ export const PaymentDetails = ({
                   {cardNumberErr
                     ? "Card number is required"
                     : !validCard && cardnumber !== ""
-                    ? "Invalid card number"
-                    : ""}
+                      ? "Invalid card number"
+                      : ""}
                 </FormFeedback>
               </InputGroup>
             </FormGroup>
@@ -1078,9 +1083,8 @@ export const PaymentDetails = ({
                   type="tel"
                   name="expiry"
                   id="expiry"
-                  className={`form-control placeholder-name ${
-                    expiryErr || invalidExp ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${expiryErr || invalidExp ? "is-invalid" : ""
+                    }`}
                   placeholder="MM/YY"
                   pattern="\d\d/\d\d"
                   value={expiry}
@@ -1117,9 +1121,8 @@ export const PaymentDetails = ({
                       : userDetails?.billingdetailstatus
                   }
                   id="cvv"
-                  className={`form-control placeholder-name ${
-                    cvvErr ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${cvvErr ? "is-invalid" : ""
+                    }`}
                   placeholder="CVV"
                   pattern="\d{3,4}"
                   value={cvv}
@@ -1140,9 +1143,8 @@ export const PaymentDetails = ({
                   type="text"
                   name="cardholder"
                   id={"cardholder"}
-                  className={`form-control placeholder-name ${
-                    cardholderErr ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${cardholderErr ? "is-invalid" : ""
+                    }`}
                   disabled={
                     userId
                       ? disableCABillStat
