@@ -86,9 +86,20 @@ function createExtraActions() {
         customerRecommendedJobStatusId,
         jobId,
         searchText,
+        actionbyId = "",
       }) => {
         let recommendedStatus = "";
         let isCandidate = "";
+        let actionBy = "";
+        actionBy = customerRecommendedJobStatusId == "" ? `&jobPostedBy=${actionbyId}` ://matched section- blank
+          customerRecommendedJobStatusId == 1 ? `&customerLikeBy=${actionbyId}` : //liked section-1
+            customerRecommendedJobStatusId == 2 ? `&customerMaybeBy=${actionbyId}` : //maybe section-2
+              customerRecommendedJobStatusId == 3 ? `&jobPostedBy=${actionbyId}` : //applied section-3
+                customerRecommendedJobStatusId == 4 ? `&customerScheduledBy=${actionbyId}` :   //interview section
+                  customerRecommendedJobStatusId == 5 ? `&jobPostedBy=${actionbyId}` :   ////Accespted section-5 Candidate accepts, so added job posted by field for filtering
+                    customerRecommendedJobStatusId == 6 ? `&customerRejectedBy=${actionbyId}` : //rejected section-6
+                      customerRecommendedJobStatusId == 7 ? `&customerOfferedBy=${actionbyId}` : "";  //offered section- 7
+
         switch (customerRecommendedJobStatusId) {
           case 4:
             isCandidate = false;
@@ -117,11 +128,11 @@ function createExtraActions() {
         }
         if (jobId !== undefined) {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&jobId=${jobId}&isActive=true&searchText=${searchText}${actionBy}`
           );
         } else {
           return await fetchWrapper.get(
-            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}`
+            `${newUrl}/CandidateRecommendedJob/GetFilterRecommendedJobAndCandidateList?isCandidate=${isCandidate}&pageSize=${pageSize}&pageNumber=${pageNumber}${recommendedStatus}&isActive=true&searchText=${searchText}${actionBy}`
           );
         }
       }
