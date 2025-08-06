@@ -33,6 +33,9 @@ import { OfferHistory } from "_components/modal/offerhistorymoal";
 import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
 import { analytics } from "../../../firebase/index";
 import cx from "classnames";
+
+import { getHiringMangerList } from "_store";
+
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState(props.type || "matched");
@@ -51,6 +54,7 @@ export default function CustomerCandidateLists(props) {
   const [oHModal, setOHModal] = useState(false);
   const [candidateName, setCandidateName] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [actionbyId, setActionbyId] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
@@ -78,6 +82,7 @@ export default function CustomerCandidateLists(props) {
   const custOfferHistory = useSelector(
     (state) => state.customerCandidateList.custOfferHistory
   );
+  const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
 
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
@@ -106,6 +111,11 @@ export default function CustomerCandidateLists(props) {
     }
   }, [props.type, id]);
 
+  useEffect(() => {
+    let companyId = Number(localStorage.getItem("companyid"));
+    dispatch(getHiringMangerList(companyId));
+  }, [dispatch])
+
   const returnStatusId = (type) => {
     if (type === "liked") {
       return 1;
@@ -133,6 +143,7 @@ export default function CustomerCandidateLists(props) {
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
       searchText: clearText ? "" : searchText,
+      actionbyId: actionbyId
     };
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
@@ -263,16 +274,18 @@ export default function CustomerCandidateLists(props) {
   return (
     <>
       <Row className="customercandidatelist">
-        <Col
-          xs={12}
-          sm={12}
-          md={12}
-          lg={8}
-          xl={8}
-          xxl={8}
-          className="mb-3 tab-selection-text"
+        <div
+          className="candidate-toolbar-flex"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '1rem',
+            width: '100%',
+            marginBottom: 24,
+          }}
         >
-          <ButtonGroup size="md" className="cust-btn-tabs">
+          <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
             <Button
               color="primary"
               disabled={loading}
@@ -379,26 +392,38 @@ export default function CustomerCandidateLists(props) {
             >
               Declined
             </Button>
+
           </ButtonGroup>
-        </Col>
-        <Col
-          xs={12}
-          sm={12}
-          md={12}
-          lg={4}
-          xl={4}
-          xxl={4}
-          className="mb-3 right-align"
-        >
+          <Input
+            type="select"
+            title="Hiring Manger"
+            value={actionbyId}
+            name="hiringmanagerId"
+            id="hiringmanagerId"
+            placeholder="Hiring Manger"
+            style={{ minWidth: 140, maxWidth: 200, flex: '0 1 160px' }}
+            onChange={(e) => {
+              setActionbyId(e.target.value);
+              // getJobHiringMangerData(e.target.value);
+            }}
+          >
+            <option value={""}>Select a Hiring Manger</option>
+            {hiringManagerDownList?.length > 0 ? (
+              hiringManagerDownList.map((data) => (
+                <option value={data.id} key={data.id}>
+                  {data.name}
+                </option>
+              ))
+            ) : null}
+          </Input>
           <div
             className={cx(
-              "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-              {
-                active: true,
-              }
+              "candidate-search-wrapper search-wrapper candidate-seacrh-mt",
+              { active: true }
             )}
+            style={{ minWidth: 90, maxWidth: 140, flex: '0 1 110px' }}
           >
-            <div className="input-holder float-end">
+            <div className="input-holder">
               <input
                 type="text"
                 className="search-input search-placeholder"
@@ -406,6 +431,7 @@ export default function CustomerCandidateLists(props) {
                 value={searchText}
                 onInput={(evt) => setSearchText(evt.target.value)}
                 placeholder="Search by Job Title"
+                style={{ width: '100%' }}
               />
               <button
                 className="btn-close"
@@ -416,35 +442,16 @@ export default function CustomerCandidateLists(props) {
               </button>
             </div>
           </div>
-          {/* {jobList?.length > 0 ? (
-            <Input
-              value={selectedJobId}
-              onChange={(evt) => onSelectClick(evt)}
-              type="select"
-              id="customerJobList"
-              name="customerJobList"
-            >
-              <option selected value="">
-                All jobs
-              </option>
-              {jobList.map((data) => {
-                return (
-                  <option value={data.jobid} key={data.jobid}>
-                    {data?.jobtitle && data?.cityname && data?.statename
-                      ? data.jobtitle +
-                        " ," +
-                        data?.cityname +
-                        " ," +
-                        data?.statename
-                      : data.jobtitle}
-                  </option>
-                );
-              })}
-            </Input>
-          ) : (
-            <></>
-          )} */}
-        </Col>
+          <style>{`
+        @media (max-width: 1100px) {
+          .candidate-toolbar-flex {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+        }
+      `}</style>
+        </div>
 
         <Col>
           <TabContent activeTab={activeTab}>
@@ -1060,6 +1067,7 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          showActionInterestColumns={true}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
