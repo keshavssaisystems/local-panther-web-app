@@ -271,6 +271,12 @@ export default function CustomerCandidateLists(props) {
     setPageNo(1);
     onGetPageList(1, props.type || activeTab, id ? id : "");
   };
+
+  useEffect(() => {
+    setPageNo(1);
+    onGetPageList(1, props.type || activeTab, id ? id : "");
+  }, [actionbyId]);
+
   return (
     <>
       <Row className="customercandidatelist">
@@ -404,7 +410,6 @@ export default function CustomerCandidateLists(props) {
             style={{ minWidth: 140, maxWidth: 200, flex: '0 1 160px' }}
             onChange={(e) => {
               setActionbyId(e.target.value);
-              // getJobHiringMangerData(e.target.value);
             }}
           >
             <option value={""}>Select a Hiring Manger</option>
