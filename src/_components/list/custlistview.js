@@ -1698,7 +1698,7 @@ export const CustCandidateListView = (props) => {
         {showIDModal ? (
           <InterviewDetailsModal
             isOpen={showIDModal}
-            type={selectedIDData.format}
+            type={selectedIDData?.format}
             onClose={() => onCloseIdModal()}
             interviewDetail={selectedIDData}
             postNotesData={() => onCloseIdModal()}

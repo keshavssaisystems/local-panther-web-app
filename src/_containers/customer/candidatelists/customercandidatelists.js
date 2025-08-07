@@ -85,11 +85,11 @@ export default function CustomerCandidateLists(props) {
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
 
   // // Set default actionbyId after hiringManagerDownList is loaded
-  // useEffect(() => {
-  //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
-  //     setActionbyId(localStorage.getItem("userId"));
-  //   }
-  // }, [hiringManagerDownList]);
+  useEffect(() => {
+    if (hiringManagerDownList && hiringManagerDownList.length > 0) {
+      setActionbyId(localStorage.getItem("userId"));
+    }
+  }, [hiringManagerDownList]);
 
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
@@ -99,10 +99,6 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
-    if (window?.location?.pathname?.includes("candidate-list")) {
-      console.log("Fetching candidate list for type:", props.type || activeTab);
-      onGetPageList(pageNo, props.type || activeTab, "");
-    }
 
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -110,6 +106,13 @@ export default function CustomerCandidateLists(props) {
         page_location: window.location.pathname,
         page_path: window.location.pathname,
       });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (window?.location?.pathname?.includes("candidate-list")) {
+      console.log("Fetching candidate list for type:", props.type || activeTab);
+      onGetPageList(pageNo, props.type || activeTab, "");
     }
   }, [props.type, actionbyId]);
 
@@ -282,12 +285,6 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(1, props.type || activeTab, id ? id : "");
   };
 
-  // useEffect(() => {
-  //   console.log("actionbyId changed:", actionbyId);
-  //   setPageNo(1);
-  //   onGetPageList(1, props.type || activeTab, id ? id : "");
-  // }, [actionbyId]);
-
   return (
     <>
       <Row className="customercandidatelist">
@@ -418,7 +415,7 @@ export default function CustomerCandidateLists(props) {
             name="hiringmanagerId"
             id="hiringmanagerId"
             placeholder="Hiring Manger"
-            style={{ minWidth: 140, maxWidth: 200, flex: '0 1 160px' }}
+            style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
             onChange={(e) => {
               setActionbyId(e.target.value);
             }}
