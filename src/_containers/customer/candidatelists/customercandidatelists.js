@@ -84,6 +84,13 @@ export default function CustomerCandidateLists(props) {
   );
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
 
+  // // Set default actionbyId after hiringManagerDownList is loaded
+  // useEffect(() => {
+  //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
+  //     setActionbyId(localStorage.getItem("userId"));
+  //   }
+  // }, [hiringManagerDownList]);
+
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
     dispatch(customerCandidateListsActions.getRejectDropDown());
@@ -93,6 +100,7 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
     if (window?.location?.pathname?.includes("candidate-list")) {
+      console.log("Fetching candidate list for type:", props.type || activeTab);
       onGetPageList(pageNo, props.type || activeTab, "");
     }
 
@@ -103,17 +111,19 @@ export default function CustomerCandidateLists(props) {
         page_path: window.location.pathname,
       });
     }
-  }, []);
+  }, [props.type, actionbyId]);
 
   useEffect(() => {
+    console.log("Fetching job's list candidate for type:", id || props.type || activeTab);
     if (id) {
       onGetPageList(pageNo, props.type || activeTab, id);
     }
-  }, [props.type, id]);
+  }, [props.type, id, actionbyId]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
     dispatch(getHiringMangerList(companyId));
+
   }, [dispatch])
 
   const returnStatusId = (type) => {
@@ -272,10 +282,11 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(1, props.type || activeTab, id ? id : "");
   };
 
-  useEffect(() => {
-    setPageNo(1);
-    onGetPageList(1, props.type || activeTab, id ? id : "");
-  }, [actionbyId]);
+  // useEffect(() => {
+  //   console.log("actionbyId changed:", actionbyId);
+  //   setPageNo(1);
+  //   onGetPageList(1, props.type || activeTab, id ? id : "");
+  // }, [actionbyId]);
 
   return (
     <>
