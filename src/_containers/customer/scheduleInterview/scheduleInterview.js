@@ -32,6 +32,8 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -138,8 +140,8 @@ export function ScheduleInterview({ fromDashboard }) {
     allInterviews.forEach((upcomingInterview) => {
       let startDate = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-          " " +
-          upcomingInterview.starttime,
+        " " +
+        upcomingInterview.starttime,
         "YYYY-MM-DD HH:mm:ss"
       );
       let durationArr =
@@ -165,28 +167,28 @@ export function ScheduleInterview({ fromDashboard }) {
           upcomingInterview?.isreschedulerequested === true
             ? "rgb(215 174 255 / 50%)"
             : upcomingInterview?.interviewstatusid !== 0
-            ? upcomingInterview?.interviewstatusid === 1
-              ? "rgb(143 208 255 / 50%)"
-              : "rgb(202 202 202 / 50%)"
-            : upcomingInterview.isaccepted === true &&
-              upcomingInterview.isrejected === false
-            ? "rgb(137 222 178 / 50%)"
-            : upcomingInterview.isrejected === true
-            ? "rgb(255 143 143 / 50%)"
-            : "rgb(250 219 145 / 50%)",
+              ? upcomingInterview?.interviewstatusid === 1
+                ? "rgb(143 208 255 / 50%)"
+                : "rgb(202 202 202 / 50%)"
+              : upcomingInterview.isaccepted === true &&
+                upcomingInterview.isrejected === false
+                ? "rgb(137 222 178 / 50%)"
+                : upcomingInterview.isrejected === true
+                  ? "rgb(255 143 143 / 50%)"
+                  : "rgb(250 219 145 / 50%)",
         textcolor:
           upcomingInterview?.isreschedulerequested === true
             ? "#2D0059"
             : upcomingInterview?.interviewstatusid !== 0
-            ? upcomingInterview?.interviewstatusid === 1
-              ? "#004271"
-              : "#2D2D2D"
-            : upcomingInterview.isaccepted === true &&
-              upcomingInterview.isrejected === false
-            ? "#005027"
-            : upcomingInterview.isrejected === true
-            ? "#520000"
-            : "#5C4100",
+              ? upcomingInterview?.interviewstatusid === 1
+                ? "#004271"
+                : "#2D2D2D"
+              : upcomingInterview.isaccepted === true &&
+                upcomingInterview.isrejected === false
+                ? "#005027"
+                : upcomingInterview.isrejected === true
+                  ? "#520000"
+                  : "#5C4100",
       };
       upData.push(interviewData);
     });
@@ -202,7 +204,16 @@ export function ScheduleInterview({ fromDashboard }) {
         formData,
       })
     );
-    setUpdateSuccess(true);
+    // setUpdateSuccess(true);
+    dispatch(showSnackbar({
+      message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
+      type: SNACKBAR_TYPES.SUCCESS,
+      position: SNACKBAR_POSITION.TOP_CENTER,
+      autoClose: true,
+      autoCloseDelay: 2000,
+      maxWidth: 500,
+    }));
+
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
   };
   const [toggleVar, setToggleVar] = useState(fromDashboard);
@@ -225,7 +236,7 @@ export function ScheduleInterview({ fromDashboard }) {
   );
   let selectedJobDetails =
     upcomingInterviews.scheduledInterviewList !== undefined &&
-    upcomingInterviews.scheduledInterviewList.length > 0
+      upcomingInterviews.scheduledInterviewList.length > 0
       ? upcomingInterviews.scheduledInterviewList[0]
       : [];
   const getSelectedInterview = (scheduleinterviewid) => {
@@ -363,15 +374,15 @@ export function ScheduleInterview({ fromDashboard }) {
     syncData.forEach((syncDataElement) => {
       if (
         weekfirstday <
-          getTimezoneDateTime(
-            moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          ) &&
+        getTimezoneDateTime(
+          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        ) &&
         weeklastday >
-          getTimezoneDateTime(
-            moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          )
+        getTimezoneDateTime(
+          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        )
       ) {
         let startDate = getTimezoneDateTime(
           syncDataElement.start.dateTime,
@@ -398,20 +409,20 @@ export function ScheduleInterview({ fromDashboard }) {
     availableInterview.forEach((blockedData) => {
       if (
         weekfirstday <
-          getTimezoneDateTime(
-            moment(blockedData.scheduledate).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          ) &&
+        getTimezoneDateTime(
+          moment(blockedData.scheduledate).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        ) &&
         weeklastday >
-          getTimezoneDateTime(
-            moment(blockedData.scheduledate).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          )
+        getTimezoneDateTime(
+          moment(blockedData.scheduledate).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        )
       ) {
         let startDate = getTimezoneDateTime(
           moment(blockedData.scheduledate).format("MMM D, YYYY") +
-            " " +
-            blockedData.starttime,
+          " " +
+          blockedData.starttime,
           "YYYY-MM-DD HH:mm:ss"
         );
         let durationArr =
@@ -437,7 +448,7 @@ export function ScheduleInterview({ fromDashboard }) {
   }
   overallData = availData.concat(msBlockData);
 
-  const postMessageData = (formData) => {};
+  const postMessageData = (formData) => { };
   const rejectScheduleData = (scheduledInterviewId) => {
     rejectInterview(scheduledInterviewId);
     getUpdatedScheduleList();
@@ -678,9 +689,9 @@ export function ScheduleInterview({ fromDashboard }) {
                             interviewDetails={
                               selectedJobData.scheduleinterviewid === undefined
                                 ? upcomingInterviews?.scheduledInterviewList
-                                    ?.length > 0
+                                  ?.length > 0
                                   ? upcomingInterviews
-                                      ?.scheduledInterviewList[0]
+                                    ?.scheduledInterviewList[0]
                                   : []
                                 : selectedJobData
                             }

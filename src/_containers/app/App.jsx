@@ -78,6 +78,8 @@ import { getPublicIP } from "_helpers/helper";
 // import { Support } from "_containers/static/support";
 // import { Contact } from "_containers/static/contact";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
+import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
+import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -837,6 +839,7 @@ export function App() {
               <div className={authUser ? `app-main__outer` : ""}>
                 <div className={"app-main__inner "}>
                   <ToastContainer />
+                  <EnhancedSnackbar />
                   <Routes forceRefresh={true}>
                     {renderRoutes(userroleid)}
                     <Route
@@ -894,6 +897,8 @@ export function App() {
                       path="/Unsubscribe/:token"
                       element={<UnsubscribeEmail />}
                     />
+                    {/* <Route path="/snackbar-demo" element={<SnackbarDemo />} /> */}
+                    <Route path="/enhanced-snackbar-examples" element={<EnhancedSnackbarExamples />} />
                   </Routes>
                 </div>
                 {authUser && <AppFooter />}

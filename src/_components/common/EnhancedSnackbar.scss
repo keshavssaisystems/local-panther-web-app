@@ -1,0 +1,360 @@
+.enhanced-snackbar {
+  position: fixed;
+  z-index: 2147483647; /* ensure above header and other overlays */
+  pointer-events: none;
+  
+  &__container {
+    pointer-events: auto;
+    margin: 10px;
+    // box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  &__alert {
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 0;
+    position: relative;
+    
+    // Override Reactstrap Alert styles for better appearance
+    &.alert-success {
+      color: #155724;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+    
+    &.alert-danger {
+      color: #721c24;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+    
+    &.alert-warning {
+      color: #856404;
+      background-color: #fff3cd;
+      border: 1px solid #ffeaa7;
+    }
+    
+    &.alert-info {
+      color: #0c5460;
+      background-color: #d1ecf1;
+      border: 1px solid #bee5eb;
+    }
+  }
+  
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  &__icon {
+    flex-shrink: 0;
+    font-size: 16px;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+  }
+  
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  &__title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  
+  &__message {
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+  
+  &__subtitle {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+  
+  &__timestamp {
+    font-size: 11px;
+    opacity: 0.6;
+    margin-top: 4px;
+  }
+  
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  
+  &__action-btn,
+  &__undo-btn,
+  &__close-btn {
+    padding: 4px 6px;
+    font-size: 12px;
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s;
+    border-radius: 4px;
+    
+    &:hover {
+      opacity: 0.7;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  &__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  &__progress-bar {
+    /* This class is applied to the reactstrap .progress wrapper */
+    height: 2px !important;
+    border-radius: 0;
+    background-color: transparent;
+  }
+
+  /* Ensure the inner bar animates smoothly and matches the thin height */
+  &__progress-bar .progress-bar {
+    height: 2px !important;
+    line-height: 2px;
+    border-radius: 0;
+    transition: width 0.2s linear;
+  }
+  
+  // Multiline support
+  &__alert--multiline {
+    .enhanced-snackbar__content {
+      align-items: flex-start;
+    }
+    
+    .enhanced-snackbar__actions {
+      align-self: flex-start;
+    }
+  }
+  
+  // Close button alignments
+  &__actions {
+    &.snackbar-close-top {
+      align-self: flex-start;
+    }
+    
+    &.snackbar-close-center {
+      align-self: center;
+    }
+    
+    &.snackbar-close-bottom {
+      align-self: flex-end;
+    }
+  }
+  
+  // Rich text styles
+  &__message {
+    strong {
+      font-weight: 600;
+    }
+    
+    em {
+      font-style: italic;
+    }
+    
+    u {
+      text-decoration: underline;
+    }
+    
+    code {
+      background: rgba(0, 0, 0, 0.1);
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    
+    .snackbar-link {
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+    
+    strong, em, u, code {
+      color: inherit;
+    }
+  }
+  
+  // Position variants
+  &--top-center {
+    top: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  &--top-right {
+    top: 20px;
+    right: 20px;
+  }
+  
+  &--top-left {
+    top: 20px;
+    left: 20px;
+  }
+  
+  &--bottom-center {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  &--bottom-right {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  &--bottom-left {
+    bottom: 20px;
+    left: 20px;
+  }
+  
+  // Animation variants
+  &__container {
+    &--slideIn {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    &--fadeIn {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    &--bounceIn {
+      animation: bounceIn 0.5s ease-out;
+    }
+    
+    &--zoomIn {
+      animation: zoomIn 0.3s ease-out;
+    }
+  }
+  
+  // Theme variants
+  /* Do not force a white background in light theme so alert variants can show their colors */
+  /* Light theme intentionally has no overrides */
+  
+  &--dark {
+    .enhanced-snackbar__alert {
+      background: #333;
+      color: white;
+    }
+  }
+  
+  // RTL support
+  &[dir="rtl"] {
+    .enhanced-snackbar__content {
+      flex-direction: row-reverse;
+    }
+    
+    .enhanced-snackbar__actions {
+      flex-direction: row-reverse;
+    }
+  }
+  
+  // Mobile responsiveness
+  @media (max-width: 768px) {
+    &__container {
+      margin: 5px;
+    }
+    
+    &__alert {
+      padding: 12px;
+    }
+    
+    &__content {
+      gap: 8px;
+    }
+    
+    &__actions {
+      flex-direction: row;
+      gap: 8px;
+    }
+    
+    &--top-center,
+    &--bottom-center {
+      left: 10px;
+      right: 10px;
+      transform: none;
+    }
+  }
+}
+
+// Animations
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
