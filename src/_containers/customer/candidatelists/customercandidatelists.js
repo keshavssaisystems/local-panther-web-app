@@ -8,7 +8,10 @@ import {
   Row,
   Col,
   Input,
+  InputGroup
 } from "reactstrap";
+
+import { BsSearch } from "react-icons/bs";
 import classnames from "classnames";
 import { CandidateCardView } from "_components/list/cardview";
 import { CustCandidateListView } from "_components/list/custlistview";
@@ -299,162 +302,188 @@ export default function CustomerCandidateLists(props) {
             marginBottom: 24,
           }}
         >
-          <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "matched" })
-              }
-              onClick={() => {
-                toggle("matched");
-              }}
-            >
-              Matched
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition " +
-                classnames({ active: activeTab === "maybe" })
-              }
-              onClick={() => {
-                toggle("maybe");
-              }}
-            >
-              Maybe
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "liked" })
-              }
-              onClick={() => {
-                toggle("liked");
-              }}
-            >
-              Liked
-            </Button>
+          <Row>
+            <Col xs="12" sm="12" md="6" lg="8">
+              <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "matched" })
+                  }
+                  onClick={() => {
+                    toggle("matched");
+                  }}
+                >
+                  Matched
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition " +
+                    classnames({ active: activeTab === "maybe" })
+                  }
+                  onClick={() => {
+                    toggle("maybe");
+                  }}
+                >
+                  Maybe
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "liked" })
+                  }
+                  onClick={() => {
+                    toggle("liked");
+                  }}
+                >
+                  Liked
+                </Button>
 
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "applied" })
-              }
-              onClick={() => {
-                toggle("applied");
-              }}
-            >
-              Applied
-            </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "applied" })
+                  }
+                  onClick={() => {
+                    toggle("applied");
+                  }}
+                >
+                  Applied
+                </Button>
 
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "scheduled" })
-              }
-              onClick={() => {
-                toggle("scheduled");
-              }}
-            >
-              Interviews
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "offers" })
-              }
-              onClick={() => {
-                toggle("offers");
-              }}
-            >
-              Offer
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "accepted" })
-              }
-              onClick={() => {
-                toggle("accepted");
-              }}
-            >
-              Accepted
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "rejected" })
-              }
-              onClick={() => {
-                toggle("rejected");
-              }}
-            >
-              Declined
-            </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "scheduled" })
+                  }
+                  onClick={() => {
+                    toggle("scheduled");
+                  }}
+                >
+                  Interviews
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "offers" })
+                  }
+                  onClick={() => {
+                    toggle("offers");
+                  }}
+                >
+                  Offer
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "accepted" })
+                  }
+                  onClick={() => {
+                    toggle("accepted");
+                  }}
+                >
+                  Accepted
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "rejected" })
+                  }
+                  onClick={() => {
+                    toggle("rejected");
+                  }}
+                >
+                  Declined
+                </Button>
 
-          </ButtonGroup>
-          <Input
-            type="select"
-            title="Hiring Manger"
-            value={actionbyId}
-            name="hiringmanagerId"
-            id="hiringmanagerId"
-            placeholder="Hiring Manger"
-            style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
-            onChange={(e) => {
-              setActionbyId(e.target.value);
-            }}
-          >
-            <option value={""}>Select a Hiring Manger</option>
-            {hiringManagerDownList?.length > 0 ? (
-              hiringManagerDownList.map((data) => (
-                <option value={data.id} key={data.id}>
-                  {data.name}
-                </option>
-              ))
-            ) : null}
-          </Input>
-          <div
-            className={cx(
-              "candidate-search-wrapper search-wrapper candidate-seacrh-mt",
-              { active: true }
-            )}
-            style={{ minWidth: 90, maxWidth: 140, flex: '0 1 110px' }}
-          >
-            <div className="input-holder">
-              <input
-                type="text"
-                className="search-input search-placeholder"
-                id="search-input"
-                value={searchText}
-                onInput={(evt) => setSearchText(evt.target.value)}
-                placeholder="Search by Job Title"
-                style={{ width: '100%' }}
-              />
-              <button
-                className="btn-close"
-                onClick={(evt) => onClearSearch()}
-              />
-              <button onClick={(evt) => onSearchJob()} className="search-icon">
-                <span />
-              </button>
-            </div>
-          </div>
+              </ButtonGroup></Col>
+            <Col xs="12" sm="12" md="6" lg="2">
+              <Input
+                type="select"
+                title="Hiring Manger"
+                value={actionbyId}
+                name="hiringmanagerId"
+                id="hiringmanagerId"
+                placeholder="Hiring Manger"
+                style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+                onChange={(e) => {
+                  setActionbyId(e.target.value);
+                }}
+              >
+                <option value={""}>Select a Hiring Manger</option>
+                {hiringManagerDownList?.length > 0 ? (
+                  hiringManagerDownList.map((data) => (
+                    <option value={data.id} key={data.id}>
+                      {data.name}
+                    </option>
+                  ))
+                ) : null}
+              </Input></Col>
+            <Col xs="12" sm="12" md="6" lg="2">
+              <InputGroup>
+
+                <Input
+                  type="text"
+                  id="search-input"
+                  value={searchText}
+                  onInput={(evt) => setSearchText(evt.target.value)}
+                  placeholder="Search by Job Title"
+                />
+                <Button
+                  color={"primary"}
+                  className="input-group-text"
+                  onClick={(evt) => onSearchJob()}
+                >
+                  <BsSearch />
+                </Button>
+              </InputGroup>
+              {/* <div
+                className={cx(
+                  "candidate-search-wrapper search-wrapper candidate-seacrh-mt",
+                  { active: true }
+                )}
+                style={{ minWidth: 90, maxWidth: 100, flex: '0 1 110px' }}
+              >
+                <input
+                  type="text"
+                  className="search-input search-placeholder"
+                  id="search-input"
+                  value={searchText}
+                  onInput={(evt) => setSearchText(evt.target.value)}
+                  placeholder="Search by Job Title"
+                  style={{ width: '100%' }}
+                />
+                <button
+                  className="btn-close"
+                  onClick={(evt) => onClearSearch()}
+                />
+                <button onClick={(evt) => onSearchJob()} className="search-icon">
+                  <span />
+                </button>
+
+              </div> */}
+
+            </Col>
+          </Row>
+
+
+
           <style>{`
         @media (max-width: 1100px) {
           .candidate-toolbar-flex {
