@@ -91,8 +91,8 @@ export function ChangePassword(props) {
       settingsActions.changePassword({ password_data })
     );
     if (!response.payload) {
-      setError(true);
-      setMessage(response.error.message);
+      // setError(true);
+      // setMessage(response.error.message);
       dispatch(showSnackbar({
         message: response.error.message,
         type: SNACKBAR_TYPES.ERROR,
@@ -106,7 +106,7 @@ export function ChangePassword(props) {
       dispatch(showSnackbar({
         message: GENERAL_MESSAGES.PASSWORD_CHANGED_SUCCESS,
         type: SNACKBAR_TYPES.SUCCESS,
-        position: SNACKBAR_POSITION.BOTTOM_CENTER,
+        position: SNACKBAR_POSITION.TOP_CENTER,
         autoClose: true,
         autoCloseDelay: 2000,
         maxWidth: 500,

@@ -137,7 +137,7 @@ export const CustCandidateListView = (props) => {
         autoClose: true,
         autoCloseDelay: 3000,
         maxWidth: 500,
-      }));      
+      }));
 
     } else {
       // props.showSweetAlert({
@@ -186,7 +186,7 @@ export const CustCandidateListView = (props) => {
         autoClose: true,
         autoCloseDelay: 3000,
         maxWidth: 500,
-      }));      
+      }));
 
     } else {
       // props.showSweetAlert({
@@ -1631,17 +1631,36 @@ export const CustCandidateListView = (props) => {
 
     if (res.payload?.statusCode === 204) {
       setShowIRSModal(false);
-      props.showSweetAlert({
-        title: res.payload.message,
-        type: "success",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message,
+      //   type: "success",
+      // });
 
       props.updateList();
+
+      dispatch(showSnackbar({
+        message: res.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      
     } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -1696,16 +1715,32 @@ export const CustCandidateListView = (props) => {
         setOfferUploadLoading(false);
         if (result.data.statusCode === 200) {
           setShowUploadOfferModal(false);
-          props.showSweetAlert({
-            title: result.data.message,
-            type: "success",
-          });
+          // props.showSweetAlert({
+          //   title: result.data.message,
+          //   type: "success",
+          // });
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
           props.updateList();
         } else {
-          props.showSweetAlert({
-            title: result.data.message || result.data.status,
-            type: "danger",
-          });
+          // props.showSweetAlert({
+          //   title: result.data.message || result.data.status,
+          //   type: "danger",
+          // });
+          dispatch(showSnackbar({
+            message: result.data.message || result.data.status,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
         }
       })
       .catch((error) => {

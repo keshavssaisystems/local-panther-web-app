@@ -40,9 +40,13 @@ export const CARD_MESSAGES = {
 export const GENERAL_MESSAGES = {
   PASSWORD_CHANGED_SUCCESS: 'Password changed successfully!',
   PASSWORD_CHANGE_SUCCESS_TIMEOUT: 300,
-  SOMETHING_WENT_WRONG: 'Something went wrong!',
+  // SOMETHING_WENT_WRONG: 'Something went wrong!',
   PUSH_NOTIFICATION_SETTINGS_UPDATED_SUCCESS: 'Push notification settings updated successfully!',
   EMAIL_NOTIFICATION_SETTINGS_UPDATED_SUCCESS: 'Email notification settings updated successfully!',
   DELETED_NOTIFICATION_SUCCESS: 'Deleted notification successfully!',
+  SOMETHING_WENT_WRONG: 'Something went wrong, please try again later',
+  PASSWORD_RESET_EMAIL_SENT: 'Password has been sent to registered email ID',
+  USER_CREATED_SUCCESSFULLY: 'User created successfully!',
+  EMAIL_ID_ALREADY_EXISTS: 'Email id already exists!'
 
 };

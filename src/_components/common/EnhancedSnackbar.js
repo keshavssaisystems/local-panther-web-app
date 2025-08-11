@@ -12,6 +12,7 @@ import {
   FaLink
 } from 'react-icons/fa';
 import './EnhancedSnackbar.scss';
+import { createPortal } from 'react-dom';
 
 export const EnhancedSnackbar = () => {
   const dispatch = useDispatch();
@@ -199,7 +200,9 @@ export const EnhancedSnackbar = () => {
 
   if (!snackbar.isOpen) return null;
 
-  return (
+  if (!snackbar.isOpen) return null;
+
+  const markup =  (
     <div
       className={`enhanced-snackbar enhanced-snackbar--${snackbar.position} enhanced-snackbar--${snackbar.theme} ${snackbar.customClassName}`}
       style={{
@@ -306,4 +309,5 @@ export const EnhancedSnackbar = () => {
       )}
     </div>
   );
+  return createPortal(markup, document.body);
 };
