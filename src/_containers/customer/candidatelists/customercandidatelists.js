@@ -38,9 +38,11 @@ import { analytics } from "../../../firebase/index";
 import cx from "classnames";
 
 import { getHiringMangerList } from "_store";
+import { set } from "lodash";
 
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
+  const { jobPostedbyId } = useParams();
   const [activeTab, setActiveTab] = useState(props.type || "matched");
   const [pageNo, setPageNo] = useState(1);
 
@@ -91,6 +93,9 @@ export default function CustomerCandidateLists(props) {
   useEffect(() => {
     if (hiringManagerDownList && hiringManagerDownList.length > 0) {
       setActionbyId(localStorage.getItem("userId"));
+    }
+    if (id && jobPostedbyId) {
+      setActionbyId(jobPostedbyId);
     }
   }, [hiringManagerDownList]);
 
@@ -303,7 +308,7 @@ export default function CustomerCandidateLists(props) {
           }}
         >
           <Row>
-            <Col xs="12" sm="12" md="6" lg="8">
+            <Col xs="12" sm="12" md="6" lg={jobPostedbyId === undefined ? 8 : 9}>
               <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
                 <Button
                   color="primary"
@@ -413,29 +418,31 @@ export default function CustomerCandidateLists(props) {
                 </Button>
 
               </ButtonGroup></Col>
-            <Col xs="12" sm="12" md="6" lg="2">
-              <Input
-                type="select"
-                title="Hiring Manger"
-                value={actionbyId}
-                name="hiringmanagerId"
-                id="hiringmanagerId"
-                placeholder="Hiring Manger"
-                style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
-                onChange={(e) => {
-                  setActionbyId(e.target.value);
-                }}
-              >
-                <option value={""}>Select a Hiring Manger</option>
-                {hiringManagerDownList?.length > 0 ? (
-                  hiringManagerDownList.map((data) => (
-                    <option value={data.id} key={data.id}>
-                      {data.name}
-                    </option>
-                  ))
-                ) : null}
-              </Input></Col>
-            <Col xs="12" sm="12" md="6" lg="2">
+
+            {jobPostedbyId === undefined ? <Col xs="12" sm="12" md="6" lg="2"><Input
+              type="select"
+              title="Hiring Manger"
+              value={actionbyId}
+              name="hiringmanagerId"
+              id="hiringmanagerId"
+              placeholder="Hiring Manger"
+              style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+              onChange={(e) => {
+                setActionbyId(e.target.value);
+              }}
+            >
+              <option value={""}>Select a Hiring Manger</option>
+              {hiringManagerDownList?.length > 0 ? (
+                hiringManagerDownList.map((data) => (
+                  <option value={data.id} key={data.id}>
+                    {data.name}
+                  </option>
+                ))
+              ) : null}
+            </Input></Col> : <></>
+            }
+
+            <Col xs="12" sm="12" md="6" lg={jobPostedbyId === undefined ? 2 : 3}>
               <InputGroup>
 
                 <Input
