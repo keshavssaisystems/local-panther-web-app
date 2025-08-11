@@ -179,7 +179,7 @@ export default function CustomerCandidateLists(props) {
       setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      navigate(`/customer-candidate-${activetab}/${id}`);
+      navigate(`/customer-candidate-${activetab}/${id}/${jobPostedbyId}`);
     } else {
       setSearchText("");
       setPageNo(1);
@@ -293,6 +293,15 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(1, props.type || activeTab, id ? id : "");
   };
 
+  const resetPageURL = () => {
+    if (id && jobPostedbyId) {
+      navigate(`/candidate-list`);
+    }
+    else {
+      onSearchJob();
+    }
+  }
+
   return (
     <>
       <Row className="customercandidatelist">
@@ -308,7 +317,7 @@ export default function CustomerCandidateLists(props) {
           }}
         >
           <Row>
-            <Col xs="12" sm="12" md="6" lg={jobPostedbyId === undefined ? 8 : 9}>
+            <Col xs="12" sm="12" md="6" lg={8}>
               <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
                 <Button
                   color="primary"
@@ -419,7 +428,7 @@ export default function CustomerCandidateLists(props) {
 
               </ButtonGroup></Col>
 
-            {jobPostedbyId === undefined ? <Col xs="12" sm="12" md="6" lg="2"><Input
+            <Col xs="12" sm="12" md="6" lg="2"><Input
               type="select"
               title="Hiring Manger"
               value={actionbyId}
@@ -429,6 +438,7 @@ export default function CustomerCandidateLists(props) {
               style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
               onChange={(e) => {
                 setActionbyId(e.target.value);
+                resetPageURL();
               }}
             >
               <option value={""}>Select a Hiring Manger</option>
@@ -439,10 +449,9 @@ export default function CustomerCandidateLists(props) {
                   </option>
                 ))
               ) : null}
-            </Input></Col> : <></>
-            }
-
-            <Col xs="12" sm="12" md="6" lg={jobPostedbyId === undefined ? 2 : 3}>
+            </Input>
+            </Col>
+            <Col xs="12" sm="12" md="6" lg={2}>
               <InputGroup>
 
                 <Input
@@ -455,7 +464,7 @@ export default function CustomerCandidateLists(props) {
                 <Button
                   color={"primary"}
                   className="input-group-text"
-                  onClick={(evt) => onSearchJob()}
+                  onClick={(evt) => { resetPageURL(); }}
                 >
                   <BsSearch />
                 </Button>
@@ -487,6 +496,8 @@ export default function CustomerCandidateLists(props) {
               </div> */}
 
             </Col>
+
+
           </Row>
 
 
