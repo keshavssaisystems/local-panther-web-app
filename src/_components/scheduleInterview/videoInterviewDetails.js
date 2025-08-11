@@ -124,8 +124,8 @@ export function VideoInterviewDetails({
   }
   let startTime = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
-      " " +
-      interviewDetails?.starttime,
+    " " +
+    interviewDetails?.starttime,
     "hh:mm A"
   );
   let startDate =
@@ -215,11 +215,18 @@ export function VideoInterviewDetails({
       "MM/DD/YYYY HH:mm:ss"
     );
 
+    let endTime = getTimezoneDateTime(
+      moment(
+        interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+      ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
     let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
     let minutes = moment(scheduledTime).diff(now, "minutes");
-    let revminutes = moment(now).diff(scheduledTime, "minutes");
+    // let revminutes = moment(now).diff(scheduledTime, "minutes");
+    let revminutes = moment(now).diff(endTime, "minutes");
 
-    setLinkDisabled(!(revminutes < 120 && minutes < 15));
+    setLinkDisabled(!(revminutes < 0 && minutes < 15));
   };
 
   return (
@@ -232,8 +239,8 @@ export function VideoInterviewDetails({
                 {interviewDetail?.candidatename
                   ? interviewDetail?.candidatename
                   : interviewDetail?.firstname && interviewDetail?.lastname
-                  ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-                  : ""}
+                    ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+                    : ""}
               </h6>
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -309,20 +316,20 @@ export function VideoInterviewDetails({
         <p className="mb-0">
           {interviewDetail?.isreschedulerequested === true
             ? "Requested for reschedule (" +
-              interviewDetail?.reschedulerequestedreason +
-              ")"
+            interviewDetail?.reschedulerequestedreason +
+            ")"
             : interviewDetail?.interviewstatusid !== 0
-            ? interviewDetail?.interviewstatusid === 2
-              ? "Completed but candidate not joined"
-              : "Completed"
-            : interviewDetail?.isaccepted === true &&
-              interviewDetail?.isrejected === false
-            ? "Accepted"
-            : interviewDetail?.isrejected === true
-            ? interviewDetail?.rejectionreason !== ""
-              ? "Declined (" + interviewDetail?.rejectionreason + ")"
-              : "Declined"
-            : "No response from candidate"}
+              ? interviewDetail?.interviewstatusid === 2
+                ? "Completed but candidate not joined"
+                : "Completed"
+              : interviewDetail?.isaccepted === true &&
+                interviewDetail?.isrejected === false
+                ? "Accepted"
+                : interviewDetail?.isrejected === true
+                  ? interviewDetail?.rejectionreason !== ""
+                    ? "Declined (" + interviewDetail?.rejectionreason + ")"
+                    : "Declined"
+                  : "No response from candidate"}
         </p>
       </div>
       {interviewDetail?.interviewstatusid !== 0 &&
@@ -668,8 +675,8 @@ export function VideoInterviewDetails({
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
-            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-            : ""}
+              ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
@@ -690,8 +697,8 @@ export function VideoInterviewDetails({
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
-            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-            : ""}
+              ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
@@ -712,8 +719,8 @@ export function VideoInterviewDetails({
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
-            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-            : ""}
+              ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
