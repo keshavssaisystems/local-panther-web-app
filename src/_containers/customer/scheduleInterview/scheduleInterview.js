@@ -33,7 +33,7 @@ import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
 import { hiringManagerActions } from "_store/dropDownHiringManager.slice";
-import { use } from "react";
+import { use, useRef } from "react";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -50,7 +50,7 @@ export function ScheduleInterview({ fromDashboard }) {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
-  const [hiringManagerId, setHiringManagerId] = useState("");
+  const [hiringManagerId, setHiringManagerId] = useState(Number(localStorage.getItem("userId")));
 
   const views = {
     month: true,
@@ -108,7 +108,7 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-      userList: hiringManagerId,
+      userList: hiringManagerId.toString(),
     });
     getCandidateList(
       selectedJobId,
@@ -202,20 +202,19 @@ export function ScheduleInterview({ fromDashboard }) {
           id: upcomingInterview.scheduleinterviewid,
           data: upcomingInterview,
           format: null,
-          // title:
-          //   upcomingInterview.candidatename +
-          //   " (" +
-          //   upcomingInterview.jobtitle +
-          //   ")",
-          title: getTimezoneDateTime(
-            moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-            " " +
-            upcomingInterview.starttime,
-            "hh:mm"
-          ) + " - " + getTimezoneDateTime(
-            moment(startDate).add(durationArr[0], "m"),
-            "hh:mm"
-          ),
+          title:
+            upcomingInterview.candidatename +
+            " (" +
+            upcomingInterview.jobtitle +
+            ") " + getTimezoneDateTime(
+              moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
+              " " +
+              upcomingInterview.starttime,
+              "hh:mm"
+            ) + " - " + getTimezoneDateTime(
+              moment(startDate).add(durationArr[0], "m"),
+              "hh:mm"
+            ),
           start: new Date(startDate),
           end: new Date(endDate),
           color: "rgb(250 219 145 / 50%)",
@@ -287,9 +286,12 @@ export function ScheduleInterview({ fromDashboard }) {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
-    setPopupData(event.data);
-    setOpenModal(true);
-    setPopupType(event.format);
+    if (Number(localStorage.getItem("userId")) === hiringManagerIdRef.current ||
+      hiringManagerIdRef.current === '') {
+      setPopupData(event.data);
+      setOpenModal(true);
+      setPopupType(event.format);
+    }
   }, []);
 
   const postNotesData = (notesData) => {
@@ -532,6 +534,11 @@ export function ScheduleInterview({ fromDashboard }) {
     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
   }, [dispatch, hiringManagerId]);
 
+  const hiringManagerIdRef = useRef(hiringManagerId);
+  useEffect(() => {
+    hiringManagerIdRef.current = hiringManagerId;
+  }, [hiringManagerId]);
+
   return (
     <>
       <PageTitle heading="Calendar" icon={titlelogo} />
@@ -630,10 +637,10 @@ export function ScheduleInterview({ fromDashboard }) {
                   md={4}
                   lg={4}
                   xl={4}
-                  className="mb-3 right-align"
+                  className="mb-3 right-align" style={{ display: "none" }}
                 >
                   <div>
-                    <Row style={{ display: "none" }}>
+                    <Row >
                       <Col md={7} className="mt-1 right-align">
                         <span className="right-align">
                           Connect microsoft calendar using
@@ -651,7 +658,7 @@ export function ScheduleInterview({ fromDashboard }) {
                 </Col>
               )}
 
-              {toggleVar === "calendar" && (<Col
+              {(toggleVar === "calendar" || toggleVar === "availabilty") && (<Col
                 xs={12}
                 sm={12}
                 md={4}
@@ -667,7 +674,8 @@ export function ScheduleInterview({ fromDashboard }) {
                 placeholder="Hiring Manger"
                 style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
                 onChange={(e) => {
-                  setHiringManagerId(e.target.value);
+                  console.log("Selected:", e.target.value);
+                  setHiringManagerId(Number(e.target.value));
                 }}
               >
                   <option value={""}>Select a Hiring Manger</option>
