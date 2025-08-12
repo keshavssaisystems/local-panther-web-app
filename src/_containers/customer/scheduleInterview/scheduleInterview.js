@@ -108,7 +108,7 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
-      userList: hiringManagerId.toString(),
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
     });
     getCandidateList(
       selectedJobId,
@@ -277,6 +277,7 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: page,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString()
     };
     getUpcomingData(filterOnPageChange);
     setSelectedJobData({});
