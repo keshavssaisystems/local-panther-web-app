@@ -47,6 +47,7 @@ export const GENERAL_MESSAGES = {
   SOMETHING_WENT_WRONG: 'Something went wrong, please try again later',
   PASSWORD_RESET_EMAIL_SENT: 'Password has been sent to registered email ID',
   USER_CREATED_SUCCESSFULLY: 'User created successfully!',
-  EMAIL_ID_ALREADY_EXISTS: 'Email id already exists!'
+  EMAIL_ID_ALREADY_EXISTS: 'Email id already exists!',
+  CANDIDATE_UPDATED_SUCCESSFULLY: 'Candidate updated successfully!'
 
 };

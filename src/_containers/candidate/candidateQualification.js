@@ -21,6 +21,8 @@ import { QualificationModal } from "./qualificationModal";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "react-loaders";
 import { NoProfileData } from "_components/common/noProfileData";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function CandidateQualification(props) {
   const [isPersonalModal, setPersonalModal] = useState(false);
@@ -52,10 +54,29 @@ export function CandidateQualification(props) {
     let response = await dispatch(profileActions.deleteQualification(deleteId));
 
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+      closeModal();
+
+      closeModal();
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
     }
   };
 
