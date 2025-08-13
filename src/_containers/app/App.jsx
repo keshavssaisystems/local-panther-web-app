@@ -465,37 +465,37 @@ export function App() {
           />
 
           <Route
-            path="/customer-candidate-matched/:id"
+            path="/customer-candidate-matched/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"matched"} />}
           />
 
           <Route
-            path="/customer-candidate-liked/:id"
+            path="/customer-candidate-liked/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"liked"} />}
           />
           <Route
-            path="/customer-candidate-maybe/:id"
+            path="/customer-candidate-maybe/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"maybe"} />}
           />
           <Route
-            path="/customer-candidate-applied/:id"
+            path="/customer-candidate-applied/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"applied"} />}
           />
           <Route
-            path="/customer-candidate-scheduled/:id"
+            path="/customer-candidate-scheduled/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"scheduled"} />}
           />
           <Route
-            path="/customer-candidate-accepted/:id"
+            path="/customer-candidate-accepted/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"accepted"} />}
           />
           <Route
-            path="/customer-candidate-rejected/:id"
+            path="/customer-candidate-rejected/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
           <Route
-            path="/customer-candidate-offers/:id"
+            path="/customer-candidate-offers/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"offers"} />}
           />
 

@@ -154,12 +154,22 @@ export function ScheduleDetails({
 
       "MM/DD/YYYY HH:mm:ss"
     );
-
+    let endTime = getTimezoneDateTime(
+      moment(
+        interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+      ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
     let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
     let minutes = moment(scheduledTime).diff(now, "minutes");
-    let revminutes = moment(now).diff(scheduledTime, "minutes");
+    let revminutes = moment(now).diff(endTime, "minutes");
+    setLinkDisabled(!(revminutes < 0 && minutes < 15));
 
-    setLinkDisabled(!(revminutes < 120 && minutes < 15));
+    // let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    // let minutes = moment(scheduledTime).diff(now, "minutes");
+    // let revminutes = moment(now).diff(scheduledTime, "minutes");
+
+    // setLinkDisabled(!(revminutes < 120 && minutes < 15));
   };
   const submitReject = async (comment) => {
     setRejectReasonModal(false);
@@ -258,9 +268,9 @@ export function ScheduleDetails({
 
                   <span className="interview-details-label">
                     {interviewDetail.companyname !== "" ||
-                    interviewDetail.cityname !== "" ||
-                    interviewDetail.statename !== "" ||
-                    interviewDetail.countryname !== "" ? (
+                      interviewDetail.cityname !== "" ||
+                      interviewDetail.statename !== "" ||
+                      interviewDetail.countryname !== "" ? (
                       <div className="mt-1" style={{ fontSize: "12px" }}>
                         <i className="pe-7s-map-marker location-icon"> </i>
                         <span className="location-text">
@@ -277,7 +287,7 @@ export function ScheduleDetails({
                 <div className="align-right float-end">
                   <ButtonGroup size="sm">
                     {interviewDetail !== undefined &&
-                    interviewDetail?.isactive === true ? (
+                      interviewDetail?.isactive === true ? (
                       <>
                         {interviewDetail?.isreschedulerequested === false && (
                           <>
@@ -379,15 +389,15 @@ export function ScheduleDetails({
                       {interviewDetail?.isreschedulerequested === true
                         ? "Requested for reschedule"
                         : interviewDetail?.interviewstatusid !== 0
-                        ? interviewDetail?.interviewstatusid === 2
-                          ? "Completed but candidate not joined"
-                          : "Completed"
-                        : interviewDetail?.isaccepted === true &&
-                          interviewDetail?.isrejected === false
-                        ? "Accepted"
-                        : interviewDetail?.isrejected === true
-                        ? "Declined"
-                        : "You have not responded"}
+                          ? interviewDetail?.interviewstatusid === 2
+                            ? "Completed but candidate not joined"
+                            : "Completed"
+                          : interviewDetail?.isaccepted === true &&
+                            interviewDetail?.isrejected === false
+                            ? "Accepted"
+                            : interviewDetail?.isrejected === true
+                              ? "Declined"
+                              : "You have not responded"}
                     </p>
                   </div>
                   {interviewDetail?.isreschedulerequested === false && (
@@ -405,8 +415,8 @@ export function ScheduleDetails({
                             {interviewDetail.candidatephonenumber === undefined
                               ? ""
                               : USPhoneNumber(
-                                  interviewDetail.candidatephonenumber
-                                )}
+                                interviewDetail.candidatephonenumber
+                              )}
                           </p>
                         </div>
                       )}
@@ -421,14 +431,14 @@ export function ScheduleDetails({
                       {getTimezoneDateTime(
                         moment(
                           interviewDetail?.scheduledate.slice(0, 11) +
-                            interviewDetail?.starttime
+                          interviewDetail?.starttime
                         ).format("YYYY-MM-DD HH:mm:ss"),
                         "YYYY-MM-DD"
                       ) >=
-                      getTimezoneDateTime(
-                        moment().format("YYYY-MM-DD"),
-                        "YYYY-MM-DD"
-                      ) ? (
+                        getTimezoneDateTime(
+                          moment().format("YYYY-MM-DD"),
+                          "YYYY-MM-DD"
+                        ) ? (
                         <>
                           {!isAdmin ? (
                             <>

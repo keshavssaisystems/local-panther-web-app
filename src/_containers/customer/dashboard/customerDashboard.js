@@ -94,7 +94,7 @@ export default function CustomerDashboard() {
     getDashboardCounts();
     getDashboardJobsDataCount();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(localStorage.getItem("userId")));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
@@ -185,7 +185,7 @@ export default function CustomerDashboard() {
     data.description = "Are you sure want to delete this notification?";
     SetConfAlert(data);
   };
-
+  let userId = localStorage.getItem("userId");
   let cardOptions = [
     {
       title: "Open jobs",
@@ -206,14 +206,14 @@ export default function CustomerDashboard() {
       count: dashboardCounts.offerscount,
       className: "danger",
       icon: custDashIcons.offer,
-      path: "customer-candidate-offers/0",
+      path: `customer-candidate-offers/0/${userId}`,
     },
     {
       title: "Liked candidates",
       count: dashboardCounts.newcandidatelikedcount,
       className: "success",
       icon: custDashIcons.liked,
-      path: "/customer-candidate-liked/0",
+      path: `/customer-candidate-liked/0/${userId}`,
     },
     {
       title: "Matched candidate pending to review",
@@ -228,7 +228,7 @@ export default function CustomerDashboard() {
       count: dashboardCounts.appliedcount,
       className: "danger",
       icon: custDashIcons.applied,
-      path: "customer-candidate-applied/0",
+      path: `customer-candidate-applied/0/${userId}`,
     },
   ];
 

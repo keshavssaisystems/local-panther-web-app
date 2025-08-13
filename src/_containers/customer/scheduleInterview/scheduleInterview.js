@@ -32,8 +32,13 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
+
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+
+import { hiringManagerActions } from "_store/dropDownHiringManager.slice";
+import { use, useRef } from "react";
+
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -50,6 +55,8 @@ export function ScheduleInterview({ fromDashboard }) {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
+  const [hiringManagerId, setHiringManagerId] = useState(Number(localStorage.getItem("userId")));
+
   const views = {
     month: true,
     week: true,
@@ -69,6 +76,7 @@ export function ScheduleInterview({ fromDashboard }) {
     getUpdatedScheduleList();
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
+    dispatch(hiringManagerActions.getHiringManager(Number(localStorage.getItem("companyid"))));
   }, []);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
@@ -96,15 +104,16 @@ export function ScheduleInterview({ fromDashboard }) {
     await dispatch(graphActions.getgraphThunk({ startDate, endDate }));
   };
   const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
-
+  const hiringManagerDownList = useSelector((state) => state.hiringManager?.hiringManagers);
   const getUpdatedScheduleList = () => {
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
     });
     getCandidateList(
       selectedJobId,
@@ -137,6 +146,7 @@ export function ScheduleInterview({ fromDashboard }) {
 
   let upData = [];
   if (allInterviews !== undefined && allInterviews.length > 0) {
+    upData = [];
     allInterviews.forEach((upcomingInterview) => {
       let startDate = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
@@ -152,45 +162,72 @@ export function ScheduleInterview({ fromDashboard }) {
         moment(startDate).add(durationArr[0], "m"),
         "YYYY-MM-DD HH:mm:ss"
       );
-      let interviewData = {
-        id: upcomingInterview.scheduleinterviewid,
-        data: upcomingInterview,
-        format: upcomingInterview.format,
-        title:
-          upcomingInterview.candidatename +
-          " (" +
-          upcomingInterview.jobtitle +
-          ")",
-        start: new Date(startDate),
-        end: new Date(endDate),
-        color:
-          upcomingInterview?.isreschedulerequested === true
-            ? "rgb(215 174 255 / 50%)"
-            : upcomingInterview?.interviewstatusid !== 0
-              ? upcomingInterview?.interviewstatusid === 1
-                ? "rgb(143 208 255 / 50%)"
-                : "rgb(202 202 202 / 50%)"
-              : upcomingInterview.isaccepted === true &&
-                upcomingInterview.isrejected === false
-                ? "rgb(137 222 178 / 50%)"
-                : upcomingInterview.isrejected === true
-                  ? "rgb(255 143 143 / 50%)"
-                  : "rgb(250 219 145 / 50%)",
-        textcolor:
-          upcomingInterview?.isreschedulerequested === true
-            ? "#2D0059"
-            : upcomingInterview?.interviewstatusid !== 0
-              ? upcomingInterview?.interviewstatusid === 1
-                ? "#004271"
-                : "#2D2D2D"
-              : upcomingInterview.isaccepted === true &&
-                upcomingInterview.isrejected === false
-                ? "#005027"
-                : upcomingInterview.isrejected === true
-                  ? "#520000"
-                  : "#5C4100",
-      };
-      upData.push(interviewData);
+
+      if (localStorage.getItem("userId") === hiringManagerId || hiringManagerId === '') {
+        let interviewData = {
+          id: upcomingInterview.scheduleinterviewid,
+          data: upcomingInterview,
+          format: upcomingInterview.format,
+          title:
+            upcomingInterview.candidatename +
+            " (" +
+            upcomingInterview.jobtitle +
+            ")",
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color:
+            upcomingInterview?.isreschedulerequested === true
+              ? "rgb(215 174 255 / 50%)"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 1
+                  ? "rgb(143 208 255 / 50%)"
+                  : "rgb(202 202 202 / 50%)"
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "rgb(137 222 178 / 50%)"
+                  : upcomingInterview.isrejected === true
+                    ? "rgb(255 143 143 / 50%)"
+                    : "rgb(250 219 145 / 50%)",
+          textcolor:
+            upcomingInterview?.isreschedulerequested === true
+              ? "#2D0059"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 1
+                  ? "#004271"
+                  : "#2D2D2D"
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "#005027"
+                  : upcomingInterview.isrejected === true
+                    ? "#520000"
+                    : "#5C4100",
+        };
+        upData.push(interviewData);
+      } else {
+        let interviewData = {
+          id: upcomingInterview.scheduleinterviewid,
+          data: upcomingInterview,
+          format: null,
+          title:
+            upcomingInterview.candidatename +
+            " (" +
+            upcomingInterview.jobtitle +
+            ") " + getTimezoneDateTime(
+              moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
+              " " +
+              upcomingInterview.starttime,
+              "hh:mm"
+            ) + " - " + getTimezoneDateTime(
+              moment(startDate).add(durationArr[0], "m"),
+              "hh:mm"
+            ),
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color: "rgb(250 219 145 / 50%)",
+          textcolor: "#5C4100",
+        };
+        upData.push(interviewData);
+      }
     });
   }
   const getFormData = (formData) => {
@@ -204,6 +241,7 @@ export function ScheduleInterview({ fromDashboard }) {
         formData,
       })
     );
+    
     // setUpdateSuccess(true);
     dispatch(showSnackbar({
       message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
@@ -215,6 +253,7 @@ export function ScheduleInterview({ fromDashboard }) {
     }));
 
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
+
   };
   const [toggleVar, setToggleVar] = useState(fromDashboard);
   const toggle = (tab) => {
@@ -254,6 +293,7 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: page,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString()
     };
     getUpcomingData(filterOnPageChange);
     setSelectedJobData({});
@@ -263,9 +303,12 @@ export function ScheduleInterview({ fromDashboard }) {
     setOpenModal(false);
   };
   const handleSelectEvent = useCallback((event) => {
-    setPopupData(event.data);
-    setOpenModal(true);
-    setPopupType(event.format);
+    if (Number(localStorage.getItem("userId")) === hiringManagerIdRef.current ||
+      hiringManagerIdRef.current === '') {
+      setPopupData(event.data);
+      setOpenModal(true);
+      setPopupType(event.format);
+    }
   }, []);
 
   const postNotesData = (notesData) => {
@@ -280,11 +323,12 @@ export function ScheduleInterview({ fromDashboard }) {
         notesdata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: ""
     });
     getCandidateList(
       selectedJobId,
@@ -306,7 +350,7 @@ export function ScheduleInterview({ fromDashboard }) {
         invitedata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -336,7 +380,7 @@ export function ScheduleInterview({ fromDashboard }) {
       })
     );
     onCloseIdModal();
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -501,6 +545,17 @@ export function ScheduleInterview({ fromDashboard }) {
       })
     );
   };
+
+  useEffect(() => {
+    upData = [];
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+  }, [dispatch, hiringManagerId]);
+
+  const hiringManagerIdRef = useRef(hiringManagerId);
+  useEffect(() => {
+    hiringManagerIdRef.current = hiringManagerId;
+  }, [hiringManagerId]);
+
   return (
     <>
       <PageTitle heading="Calendar" icon={titlelogo} />
@@ -599,10 +654,10 @@ export function ScheduleInterview({ fromDashboard }) {
                   md={4}
                   lg={4}
                   xl={4}
-                  className="mb-3 right-align"
+                  className="mb-3 right-align" style={{ display: "none" }}
                 >
                   <div>
-                    <Row style={{ display: "none" }}>
+                    <Row >
                       <Col md={7} className="mt-1 right-align">
                         <span className="right-align">
                           Connect microsoft calendar using
@@ -619,6 +674,36 @@ export function ScheduleInterview({ fromDashboard }) {
                   </div>
                 </Col>
               )}
+
+              {(toggleVar === "calendar" || toggleVar === "availabilty") && (<Col
+                xs={12}
+                sm={12}
+                md={4}
+                lg={4}
+                xl={4}
+                className="mb-3 right-align"
+              >  <Input
+                type="select"
+                title="Hiring Manger"
+                value={hiringManagerId}
+                name="hiringmanagerId"
+                id="hiringmanagerId"
+                placeholder="Hiring Manger"
+                style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+                onChange={(e) => {
+                  console.log("Selected:", e.target.value);
+                  setHiringManagerId(Number(e.target.value));
+                }}
+              >
+                  <option value={""}>Select a Hiring Manger</option>
+                  {hiringManagerDownList?.length > 0 ? (
+                    hiringManagerDownList.map((data) => (
+                      <option value={data.id} key={data.id}>
+                        {data.name}
+                      </option>
+                    ))
+                  ) : null}
+                </Input></Col>)}
             </Row>
 
             {toggleVar === "availabilty" && (
@@ -635,6 +720,8 @@ export function ScheduleInterview({ fromDashboard }) {
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
+                    step={30}
+                    timeslots={1}
                     events={overallData}
                     startAccessor="start"
                     endAccessor="end"
@@ -790,6 +877,8 @@ export function ScheduleInterview({ fromDashboard }) {
                     onSelectEvent={handleSelectEvent}
                     views={views}
                     messages={messages}
+                    step={30}
+                    timeslots={1}
                   />
                 </CardBody>
               </Card>

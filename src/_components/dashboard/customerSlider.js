@@ -48,6 +48,7 @@ export function CustomerSlider({ data }) {
       data?.scheduleinterviewid,
       data?.candidateid
     );
+  
     if (mode === "phone") {
       showSweetAlert({
         title: `Please join the interview on phone - ${USPhoneNumber(
@@ -58,11 +59,10 @@ export function CustomerSlider({ data }) {
     }
     if (mode === "in-person") {
       showSweetAlert({
-        title: `Scheduled at - ${
-          data?.interviewaddress === undefined || data?.interviewaddress === ""
-            ? "No address provided"
-            : data?.interviewaddress
-        }`,
+        title: `Scheduled at - ${data?.interviewaddress === undefined || data?.interviewaddress === ""
+          ? "No address provided"
+          : data?.interviewaddress
+          }`,
         type: "success",
       });
     }
@@ -92,6 +92,55 @@ export function CustomerSlider({ data }) {
   const navigateToThirdPartyLink = (link) => {
     window.open(`${link}`, "_blank", "rel=noopener noreferrer");
   };
+
+  const isPast1 = (options) => {
+    console.log('time', moment(
+      options.scheduledate.slice(0, 11) + options.starttime
+    ).isBefore(moment()));
+    return moment(
+      options.scheduledate.slice(0, 11) + options.starttime
+    ).isBefore(moment())
+  };
+
+  const isPast = (options) => {
+    let scheduledTime = getTimezoneDateTime(
+      moment(
+        options?.scheduledate.slice(0, 11) + options?.starttime
+      ).format("YYYY-MM-DD HH:mm:ss"),
+
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+    let startTime = getTimezoneDateTime(
+      moment(options?.scheduledate).format("MMM D, YYYY") +
+      " " +
+      options?.starttime,
+      "hh:mm A"
+    );
+    let startDate =
+      moment(options?.scheduledate).format("MMM D, YYYY") +
+      " " +
+      startTime;
+    let durationArr =
+      options?.duration !== undefined
+        ? options?.duration.split(" ")
+        : [];
+    let endTime = getTimezoneDateTime(
+      moment(
+        options?.scheduledate.slice(0, 11) + options?.starttime
+      ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+
+    console.log("scheduledTime", endTime);
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+    let revminutes = moment(now).diff(endTime, "minutes");
+
+    return (!(revminutes < 0 && minutes < 15));
+  };
+
   return (
     <>
       <div className="customer-slider">
@@ -130,14 +179,15 @@ export function CustomerSlider({ data }) {
                           {getTimezoneDateTime(
                             moment(
                               options.scheduledate.slice(0, 11) +
-                                options.starttime
+                              options.starttime
                             ).format("YYYY-MM-DD HH:mm:ss"),
                             "MM/DD/YYYY"
                           )}
                         </div>
                       </div>
                       <div className="widget-content-right">
-                        <div>
+                        <div className={isPast(options) ? "no-click" : ""}
+                        >
                           {options?.format === "Video" ? (
                             <img
                               src={videoIcon}
@@ -172,7 +222,7 @@ export function CustomerSlider({ data }) {
                           {getTimezoneDateTime(
                             moment(
                               options.scheduledate.slice(0, 11) +
-                                options.starttime
+                              options.starttime
                             ).format("YYYY-MM-DD HH:mm:ss"),
                             "h:mm A"
                           )}
