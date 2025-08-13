@@ -34,6 +34,9 @@ import { scheduleInterviewActions } from "_store";
 import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
 import axios from "axios";
 
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export const CustCandidateListView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showIDModal, setShowIDModal] = useState(false);
@@ -48,6 +51,7 @@ export const CustCandidateListView = (props) => {
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
 
+  // Use Redux dispatch for snackbar
   const dispatch = useDispatch();
   const durationOptions = useSelector(
     (state) => state.scheduleInterview.duration
@@ -119,16 +123,37 @@ export const CustCandidateListView = (props) => {
 
     setShowReModal(false);
     if (res.payload.statusCode === 204) {
-      props.showSweetAlert({
-        title: "Candidate status updated successfully!!!",
-        type: "success",
-      });
+      // props.showSweetAlert({
+      //   title: "Candidate status updated successfully!!!2",
+      //   type: "success",
+      // });      
+
       props.updateList();
+
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   };
 
@@ -146,17 +171,37 @@ export const CustCandidateListView = (props) => {
     );
     if (res.payload?.statusCode === 201) {
       setShowSchdIntSModal(false);
-      props.showSweetAlert({
-        title: "Interview scheduled successfully!",
-        type: "success",
-      });
+      // props.showSweetAlert({
+      //   title: "Interview scheduled successfully!",
+      //   type: "success",
+      // });            
 
       props.updateList();
+
+      debugger;
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.INTERVIEW_SCHEDULED_SUCCESSFULLY,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -1586,17 +1631,36 @@ export const CustCandidateListView = (props) => {
 
     if (res.payload?.statusCode === 204) {
       setShowIRSModal(false);
-      props.showSweetAlert({
-        title: res.payload.message,
-        type: "success",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message,
+      //   type: "success",
+      // });
 
       props.updateList();
+
+      dispatch(showSnackbar({
+        message: res.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      
     } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -1651,16 +1715,32 @@ export const CustCandidateListView = (props) => {
         setOfferUploadLoading(false);
         if (result.data.statusCode === 200) {
           setShowUploadOfferModal(false);
-          props.showSweetAlert({
-            title: result.data.message,
-            type: "success",
-          });
+          // props.showSweetAlert({
+          //   title: result.data.message,
+          //   type: "success",
+          // });
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
           props.updateList();
         } else {
-          props.showSweetAlert({
-            title: result.data.message || result.data.status,
-            type: "danger",
-          });
+          // props.showSweetAlert({
+          //   title: result.data.message || result.data.status,
+          //   type: "danger",
+          // });
+          dispatch(showSnackbar({
+            message: result.data.message || result.data.status,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
         }
       })
       .catch((error) => {
@@ -1813,6 +1893,7 @@ export const CustCandidateListView = (props) => {
           <></>
         )}
       </>
+
     </>
   );
 };

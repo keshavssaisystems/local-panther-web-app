@@ -38,6 +38,10 @@ import { analytics } from "../../../firebase/index";
 import cx from "classnames";
 
 import { getHiringMangerList } from "_store";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 import { set } from "lodash";
 
 export default function CustomerCandidateLists(props) {
@@ -197,33 +201,71 @@ export default function CustomerCandidateLists(props) {
       )}`
     );
   };
-  let successMessage = "Candidate status updated successfully!";
+  // let successMessage = CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS;
   const onActionClick = async (evt, type) => {
     if (type === "like") {
       let res = await dispatch(
         customerCandidateListsActions.putLikedCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
       }
     } else if (type === "maybe") {
       let res = await dispatch(
         customerCandidateListsActions.putMayBeCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
       }
     }
   };
@@ -276,10 +318,19 @@ export default function CustomerCandidateLists(props) {
       setOHModal(true);
       setCandidateName(row.firstname + " " + row.lastname);
     } else {
-      showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   };
 

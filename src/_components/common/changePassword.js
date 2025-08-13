@@ -20,6 +20,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { SuccessPopUp } from "./successPopUp";
+import { authActions } from "_store";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function ChangePassword(props) {
   const dispatch = useDispatch();
@@ -67,6 +70,15 @@ export function ChangePassword(props) {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors, isSubmitting } = formState;
 
+  const logout = () => {
+    let userLoginInfoId = localStorage.getItem("userLoginInfoId");
+    if (userLoginInfoId) {
+      dispatch(authActions.logoutThunk(userLoginInfoId));
+    } else {
+      dispatch(authActions.logout());
+    }
+  };
+
   async function onSubmit(payload) {
     let password_data = {
       userId: JSON.parse(localStorage.getItem("userDetails"))?.UserId,
@@ -79,10 +91,30 @@ export function ChangePassword(props) {
       settingsActions.changePassword({ password_data })
     );
     if (!response.payload) {
-      setError(true);
-      setMessage(response.error.message);
+      // setError(true);
+      // setMessage(response.error.message);
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
     } else {
-      setSuccess(true);
+      // setSuccess(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.PASSWORD_CHANGED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+
+      setTimeout(() => {
+        logout();
+      }, GENERAL_MESSAGES.PASSWORD_CHANGE_SUCCESS_TIMEOUT);
     }
   }
 
@@ -104,9 +136,8 @@ export function ChangePassword(props) {
                       type={currentPassword ? "text" : "password"}
                       id="currentPassword"
                       {...register("currentPassword")}
-                      className={`form-control placeholder-name ${
-                        errors.currentPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control placeholder-name ${errors.currentPassword ? "is-invalid" : ""
+                        }`}
                       maxLength={30}
                     />
                     <InputGroupText
@@ -137,9 +168,8 @@ export function ChangePassword(props) {
                       type={showPassword ? "text" : "password"}
                       id="newPassword"
                       {...register("newPassword")}
-                      className={`form-control placeholder-name ${
-                        errors.newPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control placeholder-name ${errors.newPassword ? "is-invalid" : ""
+                        }`}
                       maxLength={30}
                     />
                     <InputGroupText
@@ -169,9 +199,8 @@ export function ChangePassword(props) {
                       type={confirmPassword ? "text" : "password"}
                       id="confirmPassword"
                       {...register("confirmPassword")}
-                      className={`form-control placeholder-name ${
-                        errors.confirmPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control placeholder-name ${errors.confirmPassword ? "is-invalid" : ""
+                        }`}
                       maxLength={30}
                     />
                     <InputGroupText

@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AlertModal } from "_components/modal/alertModal";
 import { history } from "_helpers";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export const NotificationCounter = () => {
   const dispatch = useDispatch();
   const userId = localStorage.getItem("userId");
@@ -53,15 +56,35 @@ export const NotificationCounter = () => {
       candidateDashboardActions.deleteNotifications({ id })
     );
     if (res?.payload?.statusCode === 200) {
-      showSweetAlert({
-        title: "Deleted notification successfully.",
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: "Deleted notification successfully.",
+      //   type: "success",
+      // });
+
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.DELETED_NOTIFICATION_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+
     } else {
-      showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+
     }
   };
 
