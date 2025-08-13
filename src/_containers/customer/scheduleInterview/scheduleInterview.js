@@ -32,8 +32,13 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 import { hiringManagerActions } from "_store/dropDownHiringManager.slice";
 import { use, useRef } from "react";
+
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -157,6 +162,7 @@ export function ScheduleInterview({ fromDashboard }) {
         moment(startDate).add(durationArr[0], "m"),
         "YYYY-MM-DD HH:mm:ss"
       );
+
       if (localStorage.getItem("userId") === hiringManagerId || hiringManagerId === '') {
         let interviewData = {
           id: upcomingInterview.scheduleinterviewid,
@@ -222,7 +228,6 @@ export function ScheduleInterview({ fromDashboard }) {
         };
         upData.push(interviewData);
       }
-
     });
   }
   const getFormData = (formData) => {
@@ -236,8 +241,19 @@ export function ScheduleInterview({ fromDashboard }) {
         formData,
       })
     );
-    setUpdateSuccess(true);
-    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+    
+    // setUpdateSuccess(true);
+    dispatch(showSnackbar({
+      message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
+      type: SNACKBAR_TYPES.SUCCESS,
+      position: SNACKBAR_POSITION.TOP_CENTER,
+      autoClose: true,
+      autoCloseDelay: 2000,
+      maxWidth: 500,
+    }));
+
+    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+
   };
   const [toggleVar, setToggleVar] = useState(fromDashboard);
   const toggle = (tab) => {

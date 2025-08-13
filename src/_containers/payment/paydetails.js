@@ -33,6 +33,8 @@ import { history } from "_helpers";
 import { Link } from "react-router-dom";
 import debounce from "lodash/debounce";
 import "./payment.scss";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CARD_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export const PaymentDetails = ({
   isAdmin = false,
@@ -452,10 +454,20 @@ export const PaymentDetails = ({
       cardholder === ""
     ) {
       if (!validCard) {
-        showSweetAlert({
-          title: "Please enter valid card details.",
-          type: "error",
-        });
+        // showSweetAlert({
+        //   title: "Please enter valid card details.",
+        //   type: "error",
+        // });
+
+        dispatch(showSnackbar({
+          message: CARD_MESSAGES.PLEASE_ENTER_VALID_CARD_DETAILS,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
       }
       setCardNumberErr(cardnumber === "");
       setCVVErr(cvv === "");
@@ -505,19 +517,38 @@ export const PaymentDetails = ({
     );
 
     if (!response.payload) {
-      showSweetAlert({
-        title: response.error.message,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: response.error.message,
+      //   type: "error",
+      // });
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
       setDeletedCard(false);
       if (authUser) {
         dispatch(paymentActions.updateShowBilling(true));
       }
-      showSweetAlert({
-        title: response.payload.message,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: response.payload.message,
+      //   type: "success",
+      // });
+
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   };
 
@@ -560,10 +591,19 @@ export const PaymentDetails = ({
     );
 
     if (!response.payload) {
-      showSweetAlert({
-        title: response.error.message,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: response.error.message,
+      //   type: "error",
+      // });
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
       if (userId) {
         setDisableCABillStat(false);
@@ -573,10 +613,20 @@ export const PaymentDetails = ({
         dispatch(paymentActions.updateShowBilling(false));
       }
 
-      showSweetAlert({
-        title: response.payload.message,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: response.payload.message,
+      //   type: "success",
+      // });
+
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
       let data = { ...userDetails };
       data.billingdetailstatus = false;
       setCardNumber("");

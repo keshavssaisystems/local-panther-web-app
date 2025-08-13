@@ -32,6 +32,9 @@ import customerIcons from "assets/utils/images/customer";
 import { ScorePopup } from "./scorePopup";
 import SweetAlert from "react-bootstrap-sweetalert";
 
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export const CandidateCardView = (props) => {
   const [showAModal, setShowAModal] = useState(false);
   const [showReModal, setShowReModal] = useState(false);
@@ -57,10 +60,20 @@ export const CandidateCardView = (props) => {
     if (res.payload.statusCode === 204) {
       setShowRejSModal(true);
     } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   };
 
@@ -86,17 +99,36 @@ export const CandidateCardView = (props) => {
     );
     if (res.payload.statusCode === 201) {
       setShowSchdIntSModal(false);
-      props.showSweetAlert({
-        title: "Interview scheduled successfully!",
-        type: "success",
-      });
-
+      // props.showSweetAlert({
+      //   title: "Interview scheduled successfully!",
+      //   type: "success",
+      // });
       props.updateList();
+
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.INTERVIEW_SCHEDULED_SUCCESSFULLY,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
-      props.showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // props.showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   };
 
@@ -164,22 +196,19 @@ export const CandidateCardView = (props) => {
                 >
                   {" "}
                   {data.iscurrentlyworking
-                    ? `${
-                        data.startdate === null
-                          ? "NA"
-                          : moment(data.startdate).format("YYYY")
-                      } - Present`
-                    : `${
-                        data.startdate === null
-                          ? "NA"
-                          : moment(data.startdate).format("YYYY")
-                      } - ${
-                        data.enddate === null
-                          ? index === 0
-                            ? "Present"
-                            : "NA"
-                          : moment(data.enddate).format("YYYY")
-                      }`}
+                    ? `${data.startdate === null
+                      ? "NA"
+                      : moment(data.startdate).format("YYYY")
+                    } - Present`
+                    : `${data.startdate === null
+                      ? "NA"
+                      : moment(data.startdate).format("YYYY")
+                    } - ${data.enddate === null
+                      ? index === 0
+                        ? "Present"
+                        : "NA"
+                      : moment(data.enddate).format("YYYY")
+                    }`}
                 </Col>
               </>
             );
@@ -209,7 +238,7 @@ export const CandidateCardView = (props) => {
                 <Col xs={7} sm={7} md={7} lg={7} xl={8} xxl={9}>
                   <div className="card-title">
                     {props?.data?.candidateQualificationsDtos &&
-                    props?.data?.candidateQualificationsDtos.length > 0
+                      props?.data?.candidateQualificationsDtos.length > 0
                       ? props?.data?.candidateQualificationsDtos[0]?.jobtitle
                       : "-"}
                   </div>
@@ -218,17 +247,17 @@ export const CandidateCardView = (props) => {
                       <FiMapPin size={"16px"} />
                     </span>{" "}
                     {props?.data?.recommendedationCandidateShortList &&
-                    props?.data?.recommendedationCandidateShortList.length > 0
+                      props?.data?.recommendedationCandidateShortList.length > 0
                       ? (props?.data?.recommendedationCandidateShortList[0]
-                          ?.cityname
-                          ? `${props?.data?.recommendedationCandidateShortList[0]?.cityname}, `
-                          : "") +
-                        "" +
-                        (props?.data?.recommendedationCandidateShortList[0]
+                        ?.cityname
+                        ? `${props?.data?.recommendedationCandidateShortList[0]?.cityname}, `
+                        : "") +
+                      "" +
+                      (props?.data?.recommendedationCandidateShortList[0]
+                        ?.statename
+                        ? props?.data?.recommendedationCandidateShortList[0]
                           ?.statename
-                          ? props?.data?.recommendedationCandidateShortList[0]
-                              ?.statename
-                          : "")
+                        : "")
                       : ""}
                   </p>
                 </Col>
@@ -443,7 +472,7 @@ export const CandidateCardView = (props) => {
           // />
           <>
             <SweetAlert
-              title={"Candidate status updated successfully!"}
+              title={"Candidate status updated successfully!cv"}
               show={showRejSModal}
               type={"success"}
               onConfirm={() => onCloseRejSModal()}
