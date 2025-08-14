@@ -25,7 +25,8 @@ export const CANDIDATE_MESSAGES = {
   CANDIDATE_REJECTED_SUCCESS: 'Candidate rejected successfully!',
   CANDIDATE_ACCEPTED_SUCCESS: 'Candidate accepted successfully!',
   OFFER_UPLOADED_SUCCESS: 'Offer uploaded successfully!',
-  INTERVIEW_RESCHEDULED_SUCCESS: 'Interview rescheduled successfully!'
+  INTERVIEW_RESCHEDULED_SUCCESS: 'Interview rescheduled successfully!',
+  JOB_STATUS_UPDATED_SUCCESS: 'Job status updated successfully!'
 };
 
 // Card Details
@@ -48,6 +49,7 @@ export const GENERAL_MESSAGES = {
   PASSWORD_RESET_EMAIL_SENT: 'Password has been sent to registered email ID',
   USER_CREATED_SUCCESSFULLY: 'User created successfully!',
   EMAIL_ID_ALREADY_EXISTS: 'Email id already exists!',
-  CANDIDATE_UPDATED_SUCCESSFULLY: 'Candidate updated successfully!'
+  CANDIDATE_UPDATED_SUCCESSFULLY: 'Candidate updated successfully!',
+  PROFILE_DETAILS_UPDATED_SUCCESSFULLY: 'Profile details updated successfully!'
 
 };
