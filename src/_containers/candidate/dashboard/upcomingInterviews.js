@@ -38,6 +38,8 @@ import moment from "moment-timezone";
 
 import { USPhoneNumber } from "_helpers/helper";
 import { useNavigate } from "react-router-dom";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function UpcomingInterviews() {
   const [pageNo, setPageNo] = useState(1);
@@ -122,8 +124,8 @@ export function UpcomingInterviews() {
   const getStartTime = function (interviewDetail) {
     let startTime = getTimezoneDateTime(
       moment(interviewDetail?.scheduledate).format("MMM D, YYYY") +
-        " " +
-        interviewDetail?.starttime,
+      " " +
+      interviewDetail?.starttime,
       "hh:mm a"
     );
     let startDate =
@@ -212,6 +214,17 @@ export function UpcomingInterviews() {
         type: "success",
       });
     } else if (mode === "Video") {
+      if (isPast(data)) {
+        dispatch(showSnackbar({
+          message: "You can join the interview before 15 minutes of the scheduled time.",
+          type: SNACKBAR_TYPES.WARNING,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        }));
+        return;
+      }
       if (data.isappvideocall) {
         navigateTo(id);
         // setLink(id);
@@ -222,16 +235,53 @@ export function UpcomingInterviews() {
       }
     } else if (mode === "In-person") {
       showSweetAlert({
-        title: `Scheduled at - ${
-          data?.interviewaddress === undefined || data?.interviewaddress === ""
-            ? "No address provided"
-            : data?.interviewaddress
-        }`,
+        title: `Scheduled at - ${data?.interviewaddress === undefined || data?.interviewaddress === ""
+          ? "No address provided"
+          : data?.interviewaddress
+          }`,
         type: "success",
       });
     }
   };
 
+  const isPast = (options) => {
+    let scheduledTime = getTimezoneDateTime(
+      moment(
+        options?.scheduledate.slice(0, 11) + options?.starttime
+      ).format("YYYY-MM-DD HH:mm:ss"),
+
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+    let startTime = getTimezoneDateTime(
+      moment(options?.scheduledate).format("MMM D, YYYY") +
+      " " +
+      options?.starttime,
+      "hh:mm A"
+    );
+    let startDate =
+      moment(options?.scheduledate).format("MMM D, YYYY") +
+      " " +
+      startTime;
+    let durationArr =
+      options?.duration !== undefined
+        ? options?.duration.split(" ")
+        : [];
+    let endTime = getTimezoneDateTime(
+      moment(
+        options?.scheduledate.slice(0, 11) + options?.starttime
+      ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+
+    console.log("scheduledTime", endTime);
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+    let revminutes = moment(now).diff(endTime, "minutes");
+
+    return (!(revminutes < 0 && minutes < 15));
+  };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };
     data.title = title;

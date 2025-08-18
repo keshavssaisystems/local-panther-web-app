@@ -19,10 +19,11 @@ import successIcon from "../../assets/utils/images/success_icon.svg";
 import { CertificationsModal } from "./certificationsModal";
 import "./profile.scss";
 import Loader from "react-loaders";
-
 import PerfectScrollbar from "react-perfect-scrollbar";
-
 import { NoProfileData } from "_components/common/noProfileData";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function CertificationDetails(props) {
   const dispatch = useDispatch();
@@ -76,10 +77,27 @@ export function CertificationDetails(props) {
       certificateDetailsSlice.deletecertificateThunk(deleteId)
     );
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      handlePageChange();
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -126,11 +144,11 @@ export function CertificationDetails(props) {
                                 {certificationDetails[index].certificationtype}{" "}
                                 {certificationDetails[index]
                                   .certificationname !== "" &&
-                                certificationDetails[index]
-                                  .certificationname !== null
+                                  certificationDetails[index]
+                                    .certificationname !== null
                                   ? " - " +
-                                    certificationDetails[index]
-                                      .certificationname
+                                  certificationDetails[index]
+                                    .certificationname
                                   : ""}
                               </strong>
                               <div className="float-end">
@@ -158,7 +176,7 @@ export function CertificationDetails(props) {
                                   : "Yes"}
                               </p>
                               {certificationDetails[index].startdate &&
-                              certificationDetails[index].enddate ? (
+                                certificationDetails[index].enddate ? (
                                 <p
                                   className="mb-1 mt-1 card-p-text-black"
                                   style={{ fontWeight: "600px" }}
@@ -169,7 +187,7 @@ export function CertificationDetails(props) {
                               ) : (
                                 <div>
                                   {certificationDetails[index].startdate ||
-                                  certificationDetails[index].enddate ? (
+                                    certificationDetails[index].enddate ? (
                                     <p
                                       className="mb-1 mt-1 card-p-text-black"
                                       style={{ fontWeight: "600px" }}

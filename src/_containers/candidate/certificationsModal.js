@@ -23,6 +23,9 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
 import "./profile.scss";
 
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export function CertificationsModal(props) {
   const dispatch = useDispatch();
   const [check, setCheck] = useState(props.check);
@@ -363,10 +366,27 @@ export function CertificationsModal(props) {
     }
 
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      closeModal();
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
     }
   }
   return (
@@ -444,9 +464,8 @@ export function CertificationsModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("certificateType", evt.target.value)
                   }
-                  className={`form-control ${
-                    formDetails.typeError ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${formDetails.typeError ? "is-invalid" : ""
+                    }`}
                 >
                   <option key={0}>Select Certification Type</option>
                   {typeList?.length > 0 &&
@@ -520,11 +539,10 @@ export function CertificationsModal(props) {
                 onChange={(evt) =>
                   onHandleInputChange("fromMonth", evt.target.value)
                 }
-                className={`form-control ${
-                  formDetails.fromMonthReq || formDetails.fromDateValid
+                className={`form-control ${formDetails.fromMonthReq || formDetails.fromDateValid
                     ? "is-invalid"
                     : ""
-                }`}
+                  }`}
               >
                 <option key={0}>Select month</option>
                 {monthList?.length > 0 &&
@@ -560,11 +578,10 @@ export function CertificationsModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("fromYear", evt.target.value)
                   }
-                  className={`form-control ${
-                    formDetails.fromYearReq || formDetails.fromDateValid
+                  className={`form-control ${formDetails.fromYearReq || formDetails.fromDateValid
                       ? "is-invalid"
                       : ""
-                  }`}
+                    }`}
                 >
                   <option key={0}>Select year</option>
                   {yearList?.length > 0 &&
@@ -604,9 +621,8 @@ export function CertificationsModal(props) {
                   onHandleInputChange("toMonth", evt.target.value)
                 }
                 disabled={formDetails.isexpired}
-                className={`form-control ${
-                  formDetails.toMonthReq ? "is-invalid" : ""
-                }`}
+                className={`form-control ${formDetails.toMonthReq ? "is-invalid" : ""
+                  }`}
               >
                 <option key={0}>Select month</option>
                 {monthList?.length > 0 &&
@@ -635,9 +651,8 @@ export function CertificationsModal(props) {
                   onHandleInputChange("toYear", evt.target.value)
                 }
                 disabled={formDetails.isexpired}
-                className={`form-control ${
-                  formDetails.toYearReq ? "is-invalid" : ""
-                }`}
+                className={`form-control ${formDetails.toYearReq ? "is-invalid" : ""
+                  }`}
               >
                 <option key={0}>Select year</option>
                 {yearList?.length > 0 &&
