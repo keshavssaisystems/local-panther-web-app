@@ -17,8 +17,10 @@ import { getLanguageFilter } from "_store";
 import "./profile.scss";
 import errorIcon from "../../assets/utils/images/error_icon.png";
 import successIcon from "../../assets/utils/images/success_icon.svg";
-
 import AsyncCreatableSelect from "react-select/async-creatable";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function AdditionalInfoModal(props) {
   const dispatch = useDispatch();
@@ -196,10 +198,27 @@ export function AdditionalInfoModal(props) {
     );
 
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      closeModal();
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
