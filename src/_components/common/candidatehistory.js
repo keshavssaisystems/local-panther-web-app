@@ -15,6 +15,7 @@ export const CandidateHistTable = (props) => {
                     style={{
                         background: row?.BGColor,
                         color: row?.TextColor,
+                        margin: '5px 0',
                         padding: '4px 10px',
                         borderRadius: '20px',           // makes it round like a pill
                         display: 'inline-block'
