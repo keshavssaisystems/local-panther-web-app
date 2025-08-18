@@ -360,7 +360,7 @@ export default function CustomerCandidateLists(props) {
 
   const onCandidateHistoryClick = async (candidateId, row) => {
     setCandidateName(row?.firstname + " " + row?.lastname);
-    let response = await dispatch(getProfileActions.getCandidateHistory(candidateId));
+    let response = await dispatch(getProfileActions.getCandidateHistory(row.candidaterecommendedjobid));
     if (response?.payload) {
       setCandidateHistoryList(response?.payload);
       setShowCandidateHistoryModal(true);
