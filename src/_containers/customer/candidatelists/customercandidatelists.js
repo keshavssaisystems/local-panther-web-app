@@ -25,6 +25,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { CandidateHistoryModal } from "_components/modal/candidatehistorymodal";
 import {
   getProfileActions,
   dropdownActions,
@@ -64,8 +65,11 @@ export default function CustomerCandidateLists(props) {
   const [candidateName, setCandidateName] = useState("");
   const [searchText, setSearchText] = useState("");
   const [actionbyId, setActionbyId] = useState("");
+  const [candidateHistoryList, setCandidateHistoryList] = useState([]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
@@ -296,6 +300,7 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
+
   const onPrescreenActionClick = async (type, row) => {
     await dispatch(
       customerCandidateListsActions.getPrescreenDetails({
@@ -352,6 +357,19 @@ export default function CustomerCandidateLists(props) {
       onSearchJob();
     }
   }
+
+  const onCandidateHistoryClick = async (candidateId, row) => {
+    setCandidateName(row?.firstname + " " + row?.lastname);
+    let response = await dispatch(getProfileActions.getCandidateHistory(candidateId));
+    if (response?.payload) {
+      setCandidateHistoryList(response?.payload);
+      setShowCandidateHistoryModal(true);
+    }
+    else {
+      setCandidateHistoryList([]);
+      setShowCandidateHistoryModal(false);
+    }
+  };
 
   return (
     <>
@@ -698,6 +716,9 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -775,6 +796,9 @@ export default function CustomerCandidateLists(props) {
                           }
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
+                          }
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -855,6 +879,9 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -935,6 +962,9 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1017,6 +1047,9 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1097,6 +1130,9 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1179,6 +1215,9 @@ export default function CustomerCandidateLists(props) {
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
                           showActionInterestColumns={true}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1267,6 +1306,20 @@ export default function CustomerCandidateLists(props) {
             name={candidateName}
             activeTab={activeTab}
           ></OfferHistory>
+        ) : (
+          <></>
+        )}
+      </>
+      <>
+        {showCandidateHistoryModal ? (
+          <>
+            <CandidateHistoryModal
+              isOpen={showCandidateHistoryModal}
+              onClose={() => setShowCandidateHistoryModal(false)}
+              candidateHistoryList={candidateHistoryList}
+              candidateName={candidateName}
+            />
+          </>
         ) : (
           <></>
         )}
