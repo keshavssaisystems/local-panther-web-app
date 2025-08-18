@@ -296,6 +296,7 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
+
   const onPrescreenActionClick = async (type, row) => {
     await dispatch(
       customerCandidateListsActions.getPrescreenDetails({
@@ -352,6 +353,13 @@ export default function CustomerCandidateLists(props) {
       onSearchJob();
     }
   }
+
+  const onCandidateHistoryClick = async (candidateId) => {
+    let response = await dispatch(getProfileActions.getCandidateHistory(candidateId));
+    if (response?.payload) {
+      setShowProfileModal(true);
+    }
+  };
 
   return (
     <>
@@ -698,6 +706,9 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId) =>
+                            onCandidateHistoryClick(candidateId)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">

@@ -519,6 +519,10 @@ export const CustCandidateListView = (props) => {
             ) : (
               <></>
             )}
+            <DropdownItem onClick={() => props.onCandidateHistory(candidateid)}>
+              <i className="dropdown-icon lnr-layers"></i>
+              <span>Candidate History</span>
+            </DropdownItem>
           </DropdownMenu>
         </UncontrolledButtonDropdown>
       </div>
