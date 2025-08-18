@@ -197,7 +197,7 @@ const getProfileSlice = createSlice({
         state.loader = false;
         let filter_data = action.payload;
         let organization = filter_data.candidateQualificationsDtos.filter(
-          (x) => x.iscurrentlyworking == true
+          (x) => x.iscurrentlyworking === true
         );
 
         let data = {
@@ -205,7 +205,7 @@ const getProfileSlice = createSlice({
           organization:
             organization.length > 0 ? organization[0].company : "Not Working",
           eligibility: state.dropdownLists.eligibilityDropDown.find(
-            (x) => x.id == filter_data.employmenteligiblity
+            (x) => x.id === filter_data.employmenteligiblity
           )?.name,
           readyToWork: filter_data.isreadytoworkimmediately ? "Yes" : "No",
           phonenumber: filter_data.phonenumber,
@@ -370,8 +370,8 @@ const getProfileSlice = createSlice({
         state.error = action.error;
       })
       .addCase(getCandidateHistory.pending, (state) => { })
-      .addCase(getCandidateHistory.fulfilled, (state, action) => { 
-        state.candidateHistory = get(action, 'payload.data', []);
+      .addCase(getCandidateHistory.fulfilled, (state, action) => {
+        state.candidateHistory = get(action, 'payload', []);
       })
       .addCase(getCandidateHistory.rejected, (state, action) => { })
 
