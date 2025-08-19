@@ -352,9 +352,9 @@ export default function CustomerCandidateLists(props) {
     if (id && jobPostedbyId) {
       navigate(`/candidate-list`);
     }
-    else {
-      onSearchJob();
-    }
+    // else {
+    //   onSearchJob();
+    // }
   }
 
   const onCandidateHistoryClick = async (candidateId, row) => {
