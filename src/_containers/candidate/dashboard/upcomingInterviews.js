@@ -214,7 +214,7 @@ export function UpcomingInterviews() {
         type: "success",
       });
     } else if (mode === "Video") {
-      if (isPast(data)) {
+      if (isBefore(data)) {
         dispatch(showSnackbar({
           message: "You can join the interview before 15 minutes of the scheduled time.",
           type: SNACKBAR_TYPES.WARNING,
@@ -225,6 +225,19 @@ export function UpcomingInterviews() {
         }));
         return;
       }
+      
+      if (isAfter(data)) {
+        dispatch(showSnackbar({
+          message: "You can not join the interview after the scheduled time.",
+          type: SNACKBAR_TYPES.WARNING,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        }));
+        return;
+      }
+      
       if (data.isappvideocall) {
         navigateTo(id);
         // setLink(id);
@@ -247,7 +260,7 @@ export function UpcomingInterviews() {
   const isPast = (options) => {
     let scheduledTime = getTimezoneDateTime(
       moment(
-        options?.scheduledate.slice(0, 11) + options?.starttime
+        options?.scheduledate + " " + options?.starttime
       ).format("YYYY-MM-DD HH:mm:ss"),
 
       "MM/DD/YYYY HH:mm:ss"
@@ -269,7 +282,7 @@ export function UpcomingInterviews() {
         : [];
     let endTime = getTimezoneDateTime(
       moment(
-        options?.scheduledate.slice(0, 11) + options?.starttime
+        options?.scheduledate + " " + options?.starttime
       ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
       "MM/DD/YYYY HH:mm:ss"
     );
@@ -281,6 +294,40 @@ export function UpcomingInterviews() {
     let revminutes = moment(now).diff(endTime, "minutes");
 
     return (!(revminutes < 0 && minutes < 15));
+  };
+
+
+
+  const isBefore = (options) => {
+    let scheduledTime = getTimezoneDateTime(moment(options?.scheduledate + " " + options?.starttime).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY HH:mm:ss");
+
+    let startTime = getTimezoneDateTime(moment(options?.scheduledate).format("MMM D, YYYY") + " " + options?.starttime, "hh:mm A");
+    let startDate = moment(options?.scheduledate).format("MMM D, YYYY") + " " + startTime;
+    let durationArr = options?.duration !== undefined ? options?.duration.split(" ") : [];
+
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+
+    return (!(minutes < 15));
+  };
+
+
+  const isAfter = (options) => {
+    let durationArr =
+      options?.duration !== undefined
+        ? options?.duration.split(" ")
+        : [];
+    let endTime = getTimezoneDateTime(
+      moment(
+        options?.scheduledate + " " + options?.starttime
+      ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let revminutes = moment(now).diff(endTime, "minutes");
+
+    return (!(revminutes <= 0));
   };
   const showSweetAlert = ({ title, type }) => {
     let data = { ...showAlert };

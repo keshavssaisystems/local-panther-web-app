@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Card, CardBody, Row, Col } from "reactstrap";
 import Slider from "react-slick";
 import "./dashboard.scss";
@@ -16,7 +17,11 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { useNavigate } from "react-router-dom";
 import { NoDataFound } from "_components/common/nodatafound";
 import custDashIcons from "assets/utils/images/customer/dashboard";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 export function CustomerSlider({ data }) {
+  const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -48,7 +53,7 @@ export function CustomerSlider({ data }) {
       data?.scheduleinterviewid,
       data?.candidateid
     );
-  
+
     if (mode === "phone") {
       showSweetAlert({
         title: `Please join the interview on phone - ${USPhoneNumber(
@@ -67,7 +72,33 @@ export function CustomerSlider({ data }) {
       });
     }
     if (mode === "video") {
+      if (isBefore(data)) {
+        dispatch(showSnackbar({
+          message: "You can join the interview before 15 minutes of the scheduled time.",
+          type: SNACKBAR_TYPES.WARNING,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        }));
+        return;
+      }
+
+      if (isAfter(data)) {
+        dispatch(showSnackbar({
+          message: "You can not join the interview after the scheduled time.",
+          type: SNACKBAR_TYPES.WARNING,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 2000,
+          maxWidth: 500,
+        }));
+        return;
+      }
+
       if (data.isappvideocall) {
+
+
         navigateTo(id);
         // setLink(id);
         // setAppShowInterview(true);
@@ -93,14 +124,34 @@ export function CustomerSlider({ data }) {
     window.open(`${link}`, "_blank", "rel=noopener noreferrer");
   };
 
-  const isPast1 = (options) => {
-    console.log('time', moment(
-      options.scheduledate.slice(0, 11) + options.starttime
-    ).isBefore(moment()));
-    return moment(
-      options.scheduledate.slice(0, 11) + options.starttime
-    ).isBefore(moment())
+
+
+  const isBefore = (options) => {
+    let scheduledTime = getTimezoneDateTime(moment(options?.scheduledate.slice(0, 11) + options?.starttime).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY HH:mm:ss");
+
+    let startTime = getTimezoneDateTime(moment(options?.scheduledate).format("MMM D, YYYY") + " " + options?.starttime, "hh:mm A");
+    let startDate = moment(options?.scheduledate).format("MMM D, YYYY") + " " + startTime; let durationArr = options?.duration !== undefined ? options?.duration.split(" ") : [];
+
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+
+    return (!(minutes <= 15));
   };
+
+  const isAfter = (options) => {
+
+    let durationArr = options?.duration !== undefined ? options?.duration.split(" ") : [];
+    let endTime = getTimezoneDateTime(moment(options?.scheduledate.slice(0, 11) + options?.starttime).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY HH:mm:ss");
+
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+    let revminutes = moment(now).diff(endTime, "minutes");
+
+    return (!(revminutes <= 0));
+  };
+
+
+
 
   const isPast = (options) => {
     let scheduledTime = getTimezoneDateTime(
@@ -186,8 +237,7 @@ export function CustomerSlider({ data }) {
                         </div>
                       </div>
                       <div className="widget-content-right">
-                        <div className={isPast(options) ? "no-click" : ""}
-                        >
+                        <div>
                           {options?.format === "Video" ? (
                             <img
                               src={videoIcon}
