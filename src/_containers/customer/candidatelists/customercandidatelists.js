@@ -64,7 +64,8 @@ export default function CustomerCandidateLists(props) {
   const [oHModal, setOHModal] = useState(false);
   const [candidateName, setCandidateName] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [actionbyId, setActionbyId] = useState("");
+  // const [actionbyId, setActionbyId] = useState();
+  const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
   const [candidateHistoryList, setCandidateHistoryList] = useState([]);
 
   const navigate = useNavigate();
@@ -97,15 +98,15 @@ export default function CustomerCandidateLists(props) {
   );
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
 
-  // // Set default actionbyId after hiringManagerDownList is loaded
-  useEffect(() => {
-    if (hiringManagerDownList && hiringManagerDownList.length > 0) {
-      setActionbyId(localStorage.getItem("userId"));
-    }
-    if (id && jobPostedbyId) {
-      setActionbyId(jobPostedbyId);
-    }
-  }, [hiringManagerDownList]);
+  // // // Set default actionbyId after hiringManagerDownList is loaded
+  // useEffect(() => {
+  //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
+  //     setActionbyId(localStorage.getItem("userId"));
+  //   }
+  //   if (id && jobPostedbyId) {
+  //     setActionbyId(jobPostedbyId);
+  //   }
+  // }, [hiringManagerDownList]);
 
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
@@ -127,13 +128,11 @@ export default function CustomerCandidateLists(props) {
 
   useEffect(() => {
     if (window?.location?.pathname?.includes("candidate-list")) {
-      console.log("Fetching candidate list for type:", props.type || activeTab);
       onGetPageList(pageNo, props.type || activeTab, "");
     }
   }, [props.type, actionbyId]);
 
   useEffect(() => {
-    console.log("Fetching job's list candidate for type:", id || props.type || activeTab);
     if (id) {
       onGetPageList(pageNo, props.type || activeTab, id);
     }

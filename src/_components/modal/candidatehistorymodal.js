@@ -12,7 +12,7 @@ import { CandidateHistTable } from "_components/common/candidatehistory";
 export const CandidateHistoryModal = (props) => {
     return (
         <Modal
-            size="lg"
+            size="xl"
             toggle={() => props.onClose()}
             isOpen={props.isOpen}
             backdrop={true}

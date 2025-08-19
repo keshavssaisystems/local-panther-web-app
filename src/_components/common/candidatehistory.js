@@ -21,15 +21,17 @@ export const CandidateHistTable = (props) => {
                         display: 'inline-block'
                     }}
                 >
-                    <span> {row.ActionType}</span>
+                    {row.ActionType}
                 </div>),
             selector: (row) => (row?.ActionType ? row?.ActionType : "-"),
+            grow: 2
         },
         {
             name: <span className="table-title">Action date</span>,
             id: "Action date",
-            cell: (row) => row?.ActionDateTime ? getTimezoneDateTime(moment(row?.ActionDateTime), "MM/DD/YYYY hh:mm A") : "-",
-            selector: (row) => (row?.ActionDateTime ? row?.ActionDateTime : "-"),
+            cell: (row) => row?.ActionDateTime ? getTimezoneDateTime(moment(row?.ActionDateTime).format("YYYY-MM-DD HH:mm:ss"), "MM/DD/YYYY hh:mm A") : "-",
+            selector: (row) => (row?.ActionDateTime ? getTimezoneDateTime(moment(row?.ActionDateTime), "MM/DD/YYYY hh:mm A") : "-"),
+            grow: 1
         },
 
         {
@@ -37,6 +39,7 @@ export const CandidateHistTable = (props) => {
             id: "Action by",
             cell: (row) => row?.CutomerName ? row?.CutomerName : "-",
             selector: (row) => (row?.CutomerName ? row?.CutomerName : "-"),
+            grow: 1
         },
 
         {
@@ -44,6 +47,7 @@ export const CandidateHistTable = (props) => {
             id: "Comments",
             cell: (row) => row?.Comments ? row?.Comments : "-",
             selector: (row) => (row?.Comments ? row?.Comments : "-"),
+            grow: 2
         }
     ]);
 
