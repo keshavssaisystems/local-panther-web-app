@@ -250,6 +250,15 @@ export const admAddCandidate = createAsyncThunk(
   }
 );
 
+
+export const updateIsVisibleToOthersById = createAsyncThunk(
+  `${name}/updateIsVisibleToOthersById`,
+  async (customerId) => {
+    const PUT_VISIBILITY_STATS = `${baseUrl}/Customer/UpdateIsVisibleToOthersById/${customerId}`;
+    return await fetchWrapper.put(PUT_VISIBILITY_STATS);
+  }
+);
+
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -625,9 +634,21 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
-    [admAddCandidate.pending]: (state) => {},
-    [admAddCandidate.fulfilled]: (state, { payload = {} }) => {},
-    [admAddCandidate.rejected]: (state, action) => {},
+    [admAddCandidate.pending]: (state) => { },
+    [admAddCandidate.fulfilled]: (state, { payload = {} }) => { },
+    [admAddCandidate.rejected]: (state, action) => { },
+
+    [updateIsVisibleToOthersById.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateIsVisibleToOthersById.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateIsVisibleToOthersById.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   },
 });
 
@@ -661,6 +682,7 @@ export const adminListingActions = {
   getAdmCandidateList,
   sendEmailInvitation,
   admAddCandidate,
+  updateIsVisibleToOthersById
 };
 
 export const adminListingReducer = adminListingSlice.reducer;
