@@ -447,7 +447,7 @@ export default function CustomerCandidateLists(props) {
             marginBottom: 24,
           }}
         >
-          <Row>
+          <Row className="g-2" style={{ width: '100%' }}>
             <Col xs="12" sm="12" md="6" lg={8}>
               <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
                 <Button
@@ -981,16 +981,17 @@ export default function CustomerCandidateLists(props) {
             <TabPane tabId="scheduled">
               <Card className="mb-3">
                 <CardBody>
-                  <Row>
-                    <Col>
+                  <Row className="g-2">
+                    <Col xs="12" sm="12" md="6" lg="3">
                       <Input
+                        className="w-100"
                         type="select"
                         title="Interview Status"
                         value={interviewStatusId}
                         name="interviewStatusId"
                         id="InterviewStatus"
                         placeholder="Interview Status"
-                        style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+                        style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
                         onChange={(e) => {
                           setInterviewStatusId(e.target.value);
                         }}                      >
@@ -1004,7 +1005,7 @@ export default function CustomerCandidateLists(props) {
                         ) : null}
                       </Input>
                     </Col>
-                    <Col>
+                    <Col xs="12" sm="12" md="6" lg="3">
                       <Input
                         type="select"
                         title="Interview Status"
@@ -1012,7 +1013,7 @@ export default function CustomerCandidateLists(props) {
                         name="interviewFeedbackStatusId"
                         id="InterviewFeedbackStatus"
                         placeholder="Interview Feedback Status"
-                        style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+                        style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
                         onChange={(e) => {
                           setInterviewFeedbackStatusId(e.target.value);
                         }}                      >
@@ -1026,20 +1027,21 @@ export default function CustomerCandidateLists(props) {
                         ) : null}
                       </Input>
                     </Col>
-                    <Col>
-                      <InputGroup>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <InputGroup  style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
                         <div className="input-group-text">
                           <FontAwesomeIcon icon={faCalendarAlt} />
                         </div>
                         <DatePicker
                           name="startDate"
                           id="startDate"
-                          placeholderText="MM/DD/YYYY"
+                          placeholderText="From"
                           className="form-control"
                           selected={startDate}
                           maxDate={endDate}
                           showMonthDropdown
                           showYearDropdown
+                         
                           onChange={(date) => {
                             // handleDateChange("startDate", date);
                             setStartDate(date);
@@ -1047,15 +1049,15 @@ export default function CustomerCandidateLists(props) {
                         />
                       </InputGroup>
                     </Col>
-                    <Col>
-                      <InputGroup>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <InputGroup  style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
                         <div className="input-group-text">
                           <FontAwesomeIcon icon={faCalendarAlt} />
                         </div>
                         <DatePicker
                           name="endDate"
                           id="endDate"
-                          placeholderText="MM/DD/YYYY"
+                          placeholderText="To"
                           className="form-control"
                           selected={endDate}
                           minDate={startDate}
@@ -1068,7 +1070,7 @@ export default function CustomerCandidateLists(props) {
                         />
                       </InputGroup>
                     </Col>
-                    <Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
                       <Button
                         color="primary"
                         onClick={() => {
