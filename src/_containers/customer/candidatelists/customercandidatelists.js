@@ -196,6 +196,7 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
+    clearInterviewFilters();
     if (id) {
       setSearchText("");
       setPageNo(1);
@@ -388,23 +389,50 @@ export default function CustomerCandidateLists(props) {
   };
 
   const handleInterviewFilters = async () => {
+    let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
+    let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
     let candObj = {
       pageNumber: pageNo,
       pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
       customerRecommendedJobStatusId: returnStatusId(activeTab),
       jobId: id || "",
-      searchText: searchText ? "" : searchText,
+      searchText: searchText ? searchText : "",
       actionbyId: actionbyId,
       interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
       candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
       interviewScheduleDateStart: startDate ?
-        moment(startDate).format("YYYY-MM-DD") : null,
-      interviewScheduleDateEnd: endDate ? moment(endDate).format("YYYY-MM-DD") : null
+        moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
+      interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
     };
     console.log(candObj)
-    dispatch(customerCandidateListsActions.getCandidateLists(candObj));
+    getInterviewListByFilters(candObj);
   }
 
+  const getInterviewListByFilters = async (filter) => {
+    dispatch(customerCandidateListsActions.getCandidateLists(filter));
+  }
+
+  const clearInterviewFilters = () => {
+    setInterviewFeedbackStatusId(0);
+    setStartDate(null);
+    setEndDate(null);
+    setInterviewStatusId(0);
+  };
+
+  const onInterviewSearchClear = () => {
+    clearInterviewFilters();
+
+    let candObj = {
+      pageNumber: pageNo,
+      pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
+      customerRecommendedJobStatusId: returnStatusId(activeTab),
+      jobId: id || "",
+      searchText: searchText ? searchText : "",
+      actionbyId: actionbyId
+    };
+
+    getInterviewListByFilters(candObj);
+  };
   return (
     <>
       <Row className="customercandidatelist">
@@ -1047,7 +1075,16 @@ export default function CustomerCandidateLists(props) {
                           handleInterviewFilters()
                         }}
                       >
-                        Submit
+                        <FontAwesomeIcon icon={faSearch} /> Search
+                      </Button>
+
+                      <Button
+                        // style={{ background: "rgb(47 71 155)" }}
+                        color="link"
+                        type="button"
+                        onClick={() => onInterviewSearchClear()}
+                      >
+                        Clear
                       </Button>
                     </Col>
                   </Row>
