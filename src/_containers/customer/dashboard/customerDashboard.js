@@ -245,7 +245,7 @@ export default function CustomerDashboard() {
           </Col>
           <Col sm="12" md="6" lg="6">
             <HorizonatalBarGraph
-              graphData={dashboardGraphData.scheduledInterveiwDtos}
+              graphData={dashboardGraphData?.scheduledInterveiwDtos ? dashboardGraphData?.scheduledInterveiwDtos : []}
             />
           </Col>
           <Col sm="12" md="6" lg="6">
