@@ -52,15 +52,15 @@ export function HorizonatalBarGraph({ graphData }) {
     series: [
       {
         name: "Declined",
-        data: [graphData?.rejected, 0, 0],
+        data: [graphData?.rejected ? graphData?.rejected : 0, 0, 0],
       },
       {
         name: "Scheduled",
-        data: [0, graphData?.scheduled, 0],
+        data: [0, graphData?.scheduled ? graphData?.scheduled : 0, 0],
       },
       {
         name: "Accepted",
-        data: [0, 0, graphData?.accepted],
+        data: [0, 0, graphData?.accepted ? graphData?.accepted : 0],
       },
     ],
     legend: {

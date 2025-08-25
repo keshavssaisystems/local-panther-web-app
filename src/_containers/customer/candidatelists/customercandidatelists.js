@@ -8,7 +8,9 @@ import {
   Row,
   Col,
   Input,
-  InputGroup
+  InputGroup,
+  Card,
+  CardBody
 } from "reactstrap";
 
 import { BsSearch } from "react-icons/bs";
@@ -37,13 +39,20 @@ import { OfferHistory } from "_components/modal/offerhistorymoal";
 import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
 import { analytics } from "../../../firebase/index";
 import cx from "classnames";
-
+import moment from "moment";
 import { getHiringMangerList } from "_store";
 
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+import DatePicker from "react-datepicker";
 import { set } from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarAlt,
+  faSearch,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
+import { ca } from "date-fns/locale";
 
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
@@ -67,10 +76,14 @@ export default function CustomerCandidateLists(props) {
   // const [actionbyId, setActionbyId] = useState();
   const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
   const [candidateHistoryList, setCandidateHistoryList] = useState([]);
-
+  const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState(0);
+  const [interviewStatusId, setInterviewStatusId] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
+
+  let [startDate, setStartDate] = useState();
+  let [endDate, setEndDate] = useState();
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
@@ -97,7 +110,8 @@ export default function CustomerCandidateLists(props) {
     (state) => state.customerCandidateList.custOfferHistory
   );
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
-
+  const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
+  const [interviewStatus, setInterviewStatus] = useState([]);
   // // // Set default actionbyId after hiringManagerDownList is loaded
   // useEffect(() => {
   //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
@@ -116,7 +130,7 @@ export default function CustomerCandidateLists(props) {
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
-
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "employer job list",
@@ -182,6 +196,7 @@ export default function CustomerCandidateLists(props) {
     onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
+    clearInterviewFilters();
     if (id) {
       setSearchText("");
       setPageNo(1);
@@ -357,6 +372,9 @@ export default function CustomerCandidateLists(props) {
     // }
   }
 
+  const searchCandidate = async () => {
+    onSearchJob();
+  };
   const onCandidateHistoryClick = async (candidateId, row) => {
     setCandidateName(row?.firstname + " " + row?.lastname);
     let response = await dispatch(getProfileActions.getCandidateHistory(row.candidaterecommendedjobid));
@@ -370,6 +388,51 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
+  const handleInterviewFilters = async () => {
+    let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
+    let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
+    let candObj = {
+      pageNumber: pageNo,
+      pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
+      customerRecommendedJobStatusId: returnStatusId(activeTab),
+      jobId: id || "",
+      searchText: searchText ? searchText : "",
+      actionbyId: actionbyId,
+      interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
+      candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
+      interviewScheduleDateStart: startDate ?
+        moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
+      interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
+    };
+    console.log(candObj)
+    getInterviewListByFilters(candObj);
+  }
+
+  const getInterviewListByFilters = async (filter) => {
+    dispatch(customerCandidateListsActions.getCandidateLists(filter));
+  }
+
+  const clearInterviewFilters = () => {
+    setInterviewFeedbackStatusId(0);
+    setStartDate(null);
+    setEndDate(null);
+    setInterviewStatusId(0);
+  };
+
+  const onInterviewSearchClear = () => {
+    clearInterviewFilters();
+
+    let candObj = {
+      pageNumber: pageNo,
+      pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
+      customerRecommendedJobStatusId: returnStatusId(activeTab),
+      jobId: id || "",
+      searchText: searchText ? searchText : "",
+      actionbyId: actionbyId
+    };
+
+    getInterviewListByFilters(candObj);
+  };
   return (
     <>
       <Row className="customercandidatelist">
@@ -384,7 +447,7 @@ export default function CustomerCandidateLists(props) {
             marginBottom: 24,
           }}
         >
-          <Row>
+          <Row className="g-2" style={{ width: '100%' }}>
             <Col xs="12" sm="12" md="6" lg={8}>
               <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
                 <Button
@@ -532,7 +595,7 @@ export default function CustomerCandidateLists(props) {
                 <Button
                   color={"primary"}
                   className="input-group-text"
-                  onClick={(evt) => { resetPageURL(); }}
+                  onClick={(evt) => { searchCandidate(); }}
                 >
                   <BsSearch />
                 </Button>
@@ -916,7 +979,122 @@ export default function CustomerCandidateLists(props) {
               </p>
             </TabPane>
             <TabPane tabId="scheduled">
-              <div className="p-3 tab-info">
+              <Card className="mb-3">
+                <CardBody>
+                  <Row className="g-2">
+                    <Col xs="12" sm="12" md="6" lg="3">
+                      <Input
+                        className="w-100"
+                        type="select"
+                        title="Interview Status"
+                        value={interviewStatusId}
+                        name="interviewStatusId"
+                        id="InterviewStatus"
+                        placeholder="Interview Status"
+                        style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
+                        onChange={(e) => {
+                          setInterviewStatusId(e.target.value);
+                        }}                      >
+                        <option value={""}>Select Interview Status</option>
+                        {interviewStatus?.length > 0 ? (
+                          interviewStatus.map((data) => (
+                            <option value={data.id} key={data.id}>
+                              {data.name}
+                            </option>
+                          ))
+                        ) : null}
+                      </Input>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="3">
+                      <Input
+                        type="select"
+                        title="Interview Status"
+                        value={interviewFeedbackStatusId}
+                        name="interviewFeedbackStatusId"
+                        id="InterviewFeedbackStatus"
+                        placeholder="Interview Feedback Status"
+                        style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
+                        onChange={(e) => {
+                          setInterviewFeedbackStatusId(e.target.value);
+                        }}                      >
+                        <option value={""}>Select Interview Feedback Status</option>
+                        {interviewFeedbackStatus?.length > 0 ? (
+                          interviewFeedbackStatus.map((data) => (
+                            <option value={data.id} key={data.id}>
+                              {data.name}
+                            </option>
+                          ))
+                        ) : null}
+                      </Input>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <InputGroup  style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
+                        <div className="input-group-text">
+                          <FontAwesomeIcon icon={faCalendarAlt} />
+                        </div>
+                        <DatePicker
+                          name="startDate"
+                          id="startDate"
+                          placeholderText="From"
+                          className="form-control"
+                          selected={startDate}
+                          maxDate={endDate}
+                          showMonthDropdown
+                          showYearDropdown
+                         
+                          onChange={(date) => {
+                            // handleDateChange("startDate", date);
+                            setStartDate(date);
+                          }}
+                        />
+                      </InputGroup>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <InputGroup  style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
+                        <div className="input-group-text">
+                          <FontAwesomeIcon icon={faCalendarAlt} />
+                        </div>
+                        <DatePicker
+                          name="endDate"
+                          id="endDate"
+                          placeholderText="To"
+                          className="form-control"
+                          selected={endDate}
+                          minDate={startDate}
+                          showMonthDropdown
+                          showYearDropdown
+                          onChange={(date) => {
+                            // handleDateChange("startDate", date);
+                            setEndDate(date);
+                          }}
+                        />
+                      </InputGroup>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <Button
+                        color="primary"
+                        onClick={() => {
+                          handleInterviewFilters()
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faSearch} /> Search
+                      </Button>
+
+                      <Button
+                        // style={{ background: "rgb(47 71 155)" }}
+                        color="link"
+                        type="button"
+                        onClick={() => onInterviewSearchClear()}
+                      >
+                        Clear
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+
+              <div className="p-3 tab-info" style={{ display: "none" }}>
+
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
