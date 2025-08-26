@@ -1,5 +1,6 @@
 .card-schedule-interview {
   padding-left: 0px !important;
+
   .btn-primary {
     color: #fff;
     font-weight: 500 !important;
@@ -7,6 +8,7 @@
     background-color: #2f479b;
     border-color: #2f479b;
   }
+
   .btn-success {
     color: #fff;
     font-weight: 500 !important;
@@ -14,16 +16,19 @@
     background-color: #3ac47d;
     border-color: #3ac47d;
   }
+
   .badge-color-blue {
     color: #2f479b;
     background-color: #2f479b;
     border: 1px solid #2f479b;
   }
+
   .badge-color-white {
     color: #fff;
     background-color: #fff;
     border: 1px solid #2f479b;
   }
+
   .rbc-toolbar button {
     color: #fff;
     display: inline-block;
@@ -40,6 +45,7 @@
     text-transform: capitalize;
     font-size: 0.88rem;
   }
+
   .company-logo {
     width: 150px;
     height: 40px;
@@ -61,9 +67,11 @@
     font-weight: 500 !important;
     padding-left: 1rem !important;
   }
+
   .border-right {
     border-right: 1px solid #dedbdb;
   }
+
   .mr-2 {
     margin-right: 0.5rem !important;
   }
@@ -81,35 +89,47 @@
   .rbc-time-header {
     margin-left: 77px !important;
   }
+
   .badge-color-yellow {
     color: rgb(250 219 145 / 20%);
     background-color: rgb(250 219 145 / 50%);
     border-color: rgb(250 219 145 / 50%);
   }
+
   .badge-color-green {
     color: rgb(137 222 178 / 20%);
     background-color: rgb(137 222 178 / 50%);
     border-color: rgb(137 222 178 / 50%);
   }
+
   .badge-color-red {
     color: rgb(255 143 143 / 20%);
     background-color: rgb(255 143 143 / 50%);
     border-color: rgb(255 143 143 / 50%);
   }
+
   .badge-color-skyblue {
     color: rgb(143 208 255 / 20%);
     background-color: rgb(143 208 255 / 50%);
     border-color: rgb(143 208 255 / 50%);
   }
+
   .badge-color-grey {
     color: rgb(202 202 202 / 20%);
     background-color: rgb(202 202 202 / 50%);
     border-color: rgb(202 202 202 / 50%);
   }
+
   .badge-color-darkblue {
     color: rgb(215 174 255 / 20%);
     background-color: rgb(215 174 255 / 50%);
     border-color: rgb(215 174 255 / 50%);
+  }
+
+  .badge-color-lime-green {
+    color: rgb(143 208 255 / 20%);
+    background-color: #0CED2EA3;
+    border-color: rgb(143 208 255 / 50%);
   }
 
   .legend {
