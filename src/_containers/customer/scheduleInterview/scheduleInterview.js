@@ -182,11 +182,11 @@ export function ScheduleInterview({ fromDashboard }) {
               : upcomingInterview?.interviewstatusid !== 0
                 ? upcomingInterview?.interviewstatusid === 1   //Selected for Offer
                   ? "rgb(143 208 255 / 50%)"
-                  // : upcomingInterview?.interviewstatusid === 2  //Candidate missed interview
-                  //   ? "rgb(200 159 159 / 50%)"
-                  : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
-                    ? "rgb(12 237 46 / 64%)"
-                    : "rgb(202 202 202 / 50%)" //Candidate missed interview and Hold
+                  : upcomingInterview?.interviewstatusid === 4  //On Hold
+                    ? "rgb(211 152 45 / 91%)"
+                    : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                      ? "rgb(12 237 46 / 64%)"
+                      : "rgb(202 202 202 / 50%)" //Candidate missed interview 
                 : upcomingInterview.isaccepted === true &&
                   upcomingInterview.isrejected === false
                   ? "rgb(137 222 178 / 50%)"
@@ -234,11 +234,11 @@ export function ScheduleInterview({ fromDashboard }) {
               : upcomingInterview?.interviewstatusid !== 0
                 ? upcomingInterview?.interviewstatusid === 1   //Selected for Offer
                   ? "rgb(143 208 255 / 50%)"
-                  // : upcomingInterview?.interviewstatusid === 2  //Candidate missed interview
-                  //   ? "rgb(200 159 159 / 50%)"
-                  : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
-                    ? "rgb(12 237 46 / 64%)"
-                    : "rgb(202 202 202 / 50%)" //Candidate missed interview and Hold
+                  : upcomingInterview?.interviewstatusid === 4  //On Hold
+                    ? "rgb(211 152 45 / 91%)"
+                    : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                      ? "rgb(12 237 46 / 64%)"
+                      : "rgb(202 202 202 / 50%)" //Candidate missed interview
                 : upcomingInterview.isaccepted === true &&
                   upcomingInterview.isrejected === false
                   ? "rgb(137 222 178 / 50%)"
@@ -885,13 +885,21 @@ export function ScheduleInterview({ fromDashboard }) {
                       <div className="ms-3 mb-3 me-0 badge badge-color-grey">
                         ..
                       </div>{" "}
-                      Not joined/Missed
+                      Not joined
                     </span>
+
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-goldenrod">
+                        ..
+                      </div>{" "}
+                      Hold
+                    </span>
+
                     <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
                         ..
                       </div>{" "}
-                      Requested for reschedule
+                      Reschedule Requested
                     </span>
                   </div>
                   <Calendar
