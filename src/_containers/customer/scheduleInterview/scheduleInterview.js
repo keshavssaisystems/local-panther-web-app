@@ -163,7 +163,8 @@ export function ScheduleInterview({ fromDashboard }) {
         "YYYY-MM-DD HH:mm:ss"
       );
 
-      if (localStorage.getItem("userId") === hiringManagerId || hiringManagerId === '') {
+      if (Number(localStorage.getItem("userId")) === hiringManagerId || hiringManagerId === '') {
+
         let interviewData = {
           id: upcomingInterview.scheduleinterviewid,
           data: upcomingInterview,
@@ -179,9 +180,13 @@ export function ScheduleInterview({ fromDashboard }) {
             upcomingInterview?.isreschedulerequested === true
               ? "rgb(215 174 255 / 50%)"
               : upcomingInterview?.interviewstatusid !== 0
-                ? upcomingInterview?.interviewstatusid === 1
+                ? upcomingInterview?.interviewstatusid === 1   //Selected for Offer
                   ? "rgb(143 208 255 / 50%)"
-                  : "rgb(202 202 202 / 50%)"
+                  // : upcomingInterview?.interviewstatusid === 2  //Candidate missed interview
+                  //   ? "rgb(200 159 159 / 50%)"
+                  : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                    ? "rgb(12 237 46 / 64%)"
+                    : "rgb(202 202 202 / 50%)" //Candidate missed interview and Hold
                 : upcomingInterview.isaccepted === true &&
                   upcomingInterview.isrejected === false
                   ? "rgb(137 222 178 / 50%)"
@@ -223,8 +228,36 @@ export function ScheduleInterview({ fromDashboard }) {
             ),
           start: new Date(startDate),
           end: new Date(endDate),
-          color: "rgb(250 219 145 / 50%)",
-          textcolor: "#5C4100",
+          color:
+            upcomingInterview?.isreschedulerequested === true
+              ? "rgb(215 174 255 / 50%)"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 1   //Selected for Offer
+                  ? "rgb(143 208 255 / 50%)"
+                  // : upcomingInterview?.interviewstatusid === 2  //Candidate missed interview
+                  //   ? "rgb(200 159 159 / 50%)"
+                  : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                    ? "rgb(12 237 46 / 64%)"
+                    : "rgb(202 202 202 / 50%)" //Candidate missed interview and Hold
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "rgb(137 222 178 / 50%)"
+                  : upcomingInterview.isrejected === true
+                    ? "rgb(255 143 143 / 50%)"
+                    : "rgb(250 219 145 / 50%)",
+          textcolor:
+            upcomingInterview?.isreschedulerequested === true
+              ? "#2D0059"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 1
+                  ? "#004271"
+                  : "#2D2D2D"
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "#005027"
+                  : upcomingInterview.isrejected === true
+                    ? "#520000"
+                    : "#5C4100",
         };
         upData.push(interviewData);
       }
@@ -241,7 +274,7 @@ export function ScheduleInterview({ fromDashboard }) {
         formData,
       })
     );
-    
+
     // setUpdateSuccess(true);
     dispatch(showSnackbar({
       message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
@@ -840,13 +873,19 @@ export function ScheduleInterview({ fromDashboard }) {
                       <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
                         ..
                       </div>{" "}
-                      Interview completed
+                      Selected for Offer
+                    </span>
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-lime-green">
+                        ..
+                      </div>{" "}
+                      Not selected for Offer
                     </span>
                     <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-grey">
                         ..
                       </div>{" "}
-                      Not joined
+                      Not joined/Missed
                     </span>
                     <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
