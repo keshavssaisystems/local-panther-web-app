@@ -142,13 +142,17 @@ export default function CustomerCandidateLists(props) {
 
   useEffect(() => {
     if (window?.location?.pathname?.includes("candidate-list")) {
-      onGetPageList(pageNo, props.type || activeTab, "");
+      setPageNo(1);
+      let pageno = 1;
+      onGetPageList(pageno, props.type || activeTab, "");
     }
   }, [props.type, actionbyId]);
 
   useEffect(() => {
     if (id) {
-      onGetPageList(pageNo, props.type || activeTab, id);
+      setPageNo(1);
+      let pageno = 1;
+      onGetPageList(pageno, props.type || activeTab, id);
     }
   }, [props.type, id, actionbyId]);
 
@@ -187,6 +191,19 @@ export default function CustomerCandidateLists(props) {
       searchText: clearText ? "" : searchText,
       actionbyId: actionbyId
     };
+
+    if (activeTab === 'scheduled') {
+      let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
+      let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
+      candObj = {
+        ...candObj,
+        interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
+        candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
+        interviewScheduleDateStart: startDate ?
+          moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
+        interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
+      };
+    }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
   };
@@ -404,7 +421,7 @@ export default function CustomerCandidateLists(props) {
         moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
       interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
     };
-    console.log(candObj)
+    // console.log(candObj)
     getInterviewListByFilters(candObj);
   }
 
@@ -982,7 +999,7 @@ export default function CustomerCandidateLists(props) {
               <Card className="mb-3">
                 <CardBody>
                   <Row className="g-2">
-                    <Col xs="12" sm="12" md="6" lg="3">
+                    <Col xs="12" sm="12" md="6" lg="3" style={{ display: 'none' }}>
                       <Input
                         className="w-100"
                         type="select"
@@ -1028,7 +1045,7 @@ export default function CustomerCandidateLists(props) {
                       </Input>
                     </Col>
                     <Col xs="12" sm="12" md="6" lg="2">
-                      <InputGroup  style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
+                      <InputGroup style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
                         <div className="input-group-text">
                           <FontAwesomeIcon icon={faCalendarAlt} />
                         </div>
@@ -1041,7 +1058,7 @@ export default function CustomerCandidateLists(props) {
                           maxDate={endDate}
                           showMonthDropdown
                           showYearDropdown
-                         
+
                           onChange={(date) => {
                             // handleDateChange("startDate", date);
                             setStartDate(date);
@@ -1050,7 +1067,7 @@ export default function CustomerCandidateLists(props) {
                       </InputGroup>
                     </Col>
                     <Col xs="12" sm="12" md="6" lg="2">
-                      <InputGroup  style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
+                      <InputGroup style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
                         <div className="input-group-text">
                           <FontAwesomeIcon icon={faCalendarAlt} />
                         </div>
