@@ -180,11 +180,11 @@ export function ScheduleInterview({ fromDashboard }) {
             upcomingInterview?.isreschedulerequested === true
               ? "rgb(215 174 255 / 50%)"
               : upcomingInterview?.interviewstatusid !== 0
-                ? upcomingInterview?.interviewstatusid === 1   //Selected for Offer
+                ? upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
                   ? "rgb(143 208 255 / 50%)"
                   : upcomingInterview?.interviewstatusid === 4  //On Hold
                     ? "rgb(211 152 45 / 91%)"
-                    : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                    : upcomingInterview?.interviewstatusid === 1   //Selected for Offer
                       ? "rgb(12 237 46 / 64%)"
                       : "rgb(202 202 202 / 50%)" //Candidate missed interview 
                 : upcomingInterview.isaccepted === true &&
@@ -232,11 +232,11 @@ export function ScheduleInterview({ fromDashboard }) {
             upcomingInterview?.isreschedulerequested === true
               ? "rgb(215 174 255 / 50%)"
               : upcomingInterview?.interviewstatusid !== 0
-                ? upcomingInterview?.interviewstatusid === 1   //Selected for Offer
+                ? upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
                   ? "rgb(143 208 255 / 50%)"
                   : upcomingInterview?.interviewstatusid === 4  //On Hold
                     ? "rgb(211 152 45 / 91%)"
-                    : upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                    : upcomingInterview?.interviewstatusid === 1   //Selected for Offer
                       ? "rgb(12 237 46 / 64%)"
                       : "rgb(202 202 202 / 50%)" //Candidate missed interview
                 : upcomingInterview.isaccepted === true &&
@@ -870,13 +870,13 @@ export function ScheduleInterview({ fromDashboard }) {
                       Declined interview
                     </span>
                     <span className="legend">
-                      <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-lime-green">
                         ..
                       </div>{" "}
                       Selected for Offer
                     </span>
                     <span className="legend">
-                      <div className="ms-3 mb-3 me-0 badge badge-color-lime-green">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
                         ..
                       </div>{" "}
                       Not selected for Offer
