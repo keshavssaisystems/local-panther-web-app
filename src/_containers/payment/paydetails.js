@@ -125,6 +125,7 @@ export const PaymentDetails = ({
     dispatch(paymentActions.getpaymentCurrencyType());
     dispatch(paymentActions.getCardTypeDrpDwn());
     setValue("currency", 1);
+    setValue("companyid", companyId);
     // setSameAsCust(
     //   selectedCustomer?.billingdetailstatus
     //     ? selectedCustomer?.billingdetailstatus
@@ -147,7 +148,7 @@ export const PaymentDetails = ({
   }, [id, sameAsCust]);
   useEffect(() => {
     if (userDetails?.customerid) {
-      setDetails(userDetails);
+      if (!(userDetails?.billingdetailstatus)) setDetails(userDetails);
       setDisableSAC(userDetails?.billingdetailstatus);
       if (
         !userId &&
@@ -185,8 +186,15 @@ export const PaymentDetails = ({
       setCardData(compBillingDetails);
     }
   }, [compBillingDetails]);
+
   const setCardData = (billingDetails) => {
-    // setCardNumber(formatCreditCardNumber(billingDetails?.creditcardnumber));
+    setSameAsCust(billingDetails?.issameashiringmanager ? billingDetails?.issameashiringmanager : false);
+    setValue("name", billingDetails.name);
+    setValue("companyid", String(billingDetails.companyid));
+    setCompanyValue(billingDetails.companyid);
+    setValue("email", billingDetails.email);
+    setValue("address", billingDetails.address);
+    setValue("phoneNumber", billingDetails.phonenumber);
     let cardnumber = "XXXX XXXX XXXX " + billingDetails?.creditcardnumber;
     setCardNumber(cardnumber);
     setCardNumberErr(false);
@@ -199,7 +207,6 @@ export const PaymentDetails = ({
     setValue("zipcode", billingDetails?.zipcode);
     setZipCode(billingDetails?.zipcode);
 
-
     setValue("cityid", String(billingDetails.cityid));
     setCityValue({
       value: billingDetails.cityid,
@@ -211,11 +218,8 @@ export const PaymentDetails = ({
       value: billingDetails.countryid,
       label: `${billingDetails.countryname}`,
     });
-
-
-
-
   };
+
   const setDetails = (userDetails) => {
     setValue("name", userDetails.firstname + " " + userDetails.lastname);
     setValue("companyid", String(userDetails.companyid));
@@ -225,33 +229,8 @@ export const PaymentDetails = ({
     setValue("phoneNumber", userDetails.phonenumber);
     setValue("zipcode", userDetails.zipcode);
     setZipCode(userDetails.zipcode);
-    // let cityData = [
-    //   // {
-    //   {
-    //     value: userDetails.cityid,
-    //     label: `${userDetails.cityname + ", " + userDetails.statename}`,
-    //   },
-    //   //   cityid: userDetails.cityid,
-    //   //   countryid: userDetails.countryid,
-    //   //   countryname: userDetails.countryname,
-    //   //   location: userDetails.cityname,
-    //   //   stateid: userDetails.stateid,
-    //   //   statename: userDetails.statename,
-    //   //   zipcode: null,
-    //   // },
-    // ];
-    // setDefaultCityList(cityData);
-
-    // let countryData = [
-    //   {
-    //     value: userDetails.countryid,
-    //     label: userDetails.countryname,
-    //   },
-    // ];
-    // setCountryList(countryData);
     setValue("currency", 1);
     setCurrencyValue(1);
-
     setValue("cityid", String(userDetails.cityid));
     setCityValue({
       value: userDetails.cityid,
@@ -427,8 +406,9 @@ export const PaymentDetails = ({
   const clearFormData = () => {
     setValue("name", "");
     if (!userId) {
-      setValue("companyid", "");
-      setCompanyValue("");
+      // Below code is commented as per the User Story 13174
+      // setValue("companyid", "");
+      // setCompanyValue("");
       setValue("email", "");
     }
 
@@ -510,6 +490,7 @@ export const PaymentDetails = ({
         ? Number(localStorage.getItem("userId"))
         : 0,
       cardholdername: cardholder,
+      Issameashiringmanager: sameAsCust ? sameAsCust : false
     };
 
     let response = await dispatch(
@@ -517,10 +498,6 @@ export const PaymentDetails = ({
     );
 
     if (!response.payload) {
-      // showSweetAlert({
-      //   title: response.error.message,
-      //   type: "error",
-      // });
       dispatch(showSnackbar({
         message: response.error.message,
         type: SNACKBAR_TYPES.ERROR,
@@ -535,11 +512,6 @@ export const PaymentDetails = ({
       if (authUser) {
         dispatch(paymentActions.updateShowBilling(true));
       }
-      // showSweetAlert({
-      //   title: response.payload.message,
-      //   type: "success",
-      // });
-
       dispatch(showSnackbar({
         message: response.payload.message,
         type: SNACKBAR_TYPES.SUCCESS,
@@ -591,10 +563,6 @@ export const PaymentDetails = ({
     );
 
     if (!response.payload) {
-      // showSweetAlert({
-      //   title: response.error.message,
-      //   type: "error",
-      // });
       dispatch(showSnackbar({
         message: response.error.message,
         type: SNACKBAR_TYPES.ERROR,
@@ -612,11 +580,6 @@ export const PaymentDetails = ({
       if (!userId) {
         dispatch(paymentActions.updateShowBilling(false));
       }
-
-      // showSweetAlert({
-      //   title: response.payload.message,
-      //   type: "success",
-      // });
 
       dispatch(showSnackbar({
         message: response.payload.message,
@@ -671,15 +634,19 @@ export const PaymentDetails = ({
         {!userId && (
           <>
             <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
-              <Input
+              <FormGroup><Input
                 type="checkbox"
+                name="sameAsCust"
+                {...register("sameAsCust")}
                 checked={sameAsCust}
                 disabled={userDetails?.billingdetailstatus}
                 onChange={(e) => onSameCustomer(e)}
+
               ></Input>
-              <Label disabled={disableSAC} className="ms-1 same-as-cust">
-                Same as hiring manager
-              </Label>
+                <Label disabled={disableSAC} className="ms-1 same-as-cust">
+                  Same as hiring manager
+                </Label>
+              </FormGroup>
             </Col>
             <Col xs={12} sm={12} md={12} lg={12} xl={12} xxl={12}>
               <span className="sub-text">
@@ -741,7 +708,7 @@ export const PaymentDetails = ({
                 name="companyid"
                 {...register("companyid")}
                 value={companyValue}
-                disabled={userDetails?.billingdetailstatus || userId}
+                disabled={true ? true : userDetails?.billingdetailstatus || userId}
                 className={`form-control placeholder-name ${errors.companyid && companyValue === 0 ? "is-invalid" : ""
                   }`}
                 onChange={(e) => onSelectCompanyDropdown(e.target.value)}
