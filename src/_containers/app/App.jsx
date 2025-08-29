@@ -80,6 +80,7 @@ import { getPublicIP } from "_helpers/helper";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
+
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -97,6 +98,10 @@ const ForgotPassword = React.lazy(() =>
 );
 const CustomerDashboard = React.lazy(() =>
   import("_containers/customer/dashboard/customerDashboard")
+);
+
+const Squarepayment = React.lazy(() =>
+  import("_containers/square-payment/squarepayment")
 );
 const CustomerReportJobList = React.lazy(() =>
   import("_containers/customer/reports/customerjobs")
@@ -430,7 +435,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-
+         
           <Route
             path="/job-list"
             element={
@@ -504,6 +509,10 @@ export function App() {
           <Route
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}
+          />
+           <Route
+            path="/card-payment"
+            element={<Squarepayment />}
           />
 
           <Route
