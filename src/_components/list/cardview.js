@@ -58,7 +58,15 @@ export const CandidateCardView = (props) => {
     );
     setShowReModal(false);
     if (res.payload.statusCode === 204) {
-      setShowRejSModal(true);
+      // setShowRejSModal(true);    
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     } else {
       // props.showSweetAlert({
       //   title: res.payload.message || res.payload.status,
@@ -472,7 +480,7 @@ export const CandidateCardView = (props) => {
           // />
           <>
             <SweetAlert
-              title={"Candidate status updated successfully!cv"}
+              title={"Candidate status updated successfully!"}
               show={showRejSModal}
               type={"success"}
               onConfirm={() => onCloseRejSModal()}
