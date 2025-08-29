@@ -504,7 +504,7 @@ export function EmployerRegistration() {
               </FormGroup>
             </Col>
             {/* {selectedComp?.value && selectedComp.value !== "0" && ( */}
-            {selectedComp?.value && selectedComp.value === "0" && (
+            {(!selectedComp?.value) && (
               <Col md={6}>
                 <FormGroup>
                   <Label for="companyemail" className="input-label">
@@ -560,7 +560,7 @@ export function EmployerRegistration() {
               <FormGroup>
                 <Label for="empphone" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
-                    ? "Contact Person Mobile"
+                    ? "Company Admin Mobile"
                     : "Hiring Manager Mobile"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
@@ -589,7 +589,7 @@ export function EmployerRegistration() {
               <FormGroup>
                 <Label for="empemail" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
-                    ? "Contact Person Company Email"
+                    ? "Company Admin Email"
                     : "Hiring Manager Email"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
@@ -600,7 +600,7 @@ export function EmployerRegistration() {
                     id="empemail"
                     placeholder={
                       selectedComp.value && selectedComp.value === "0"
-                        ? "Contact person company email id"
+                        ? "Company admin email id"
                         : "Hiring manager email id"
                     }
                     {...register("empemail")}
