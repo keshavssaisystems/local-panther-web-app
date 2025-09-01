@@ -665,7 +665,7 @@ export const CustomerUploadOffer = (props) => {
               Back
             </Button>
           )}
-          <Button
+          {props.loading === false && (<Button
             color="primary"
             className="me-2"
             onClick={() => onUploadClick()}
@@ -675,7 +675,7 @@ export const CustomerUploadOffer = (props) => {
               : showPdfPrev && activeTab === 2
                 ? "Confirm & Submit"
                 : "Generate offer"}
-          </Button>
+          </Button>)}
           <Button color="secondary" onClick={() => props.onClose()}>
             Close
           </Button>
