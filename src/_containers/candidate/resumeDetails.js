@@ -242,7 +242,7 @@ export function ResumeDetails(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".pdf,.doc,.docx",
+    accept: ".pdf,.doc,.docx, .jpg, .jpeg, .png",
   });
   const onCancel = (acceptedFiles) => {
     setSelectedFile(null);
@@ -375,7 +375,7 @@ export function ResumeDetails(props) {
 
                     <Row>
                       <div className="file-info mt-2">
-                        Support formats: .doc, .docx and .pdf up to 5 MB
+                        Support formats: .pdf, .doc, .docx, .jpg, .jpeg and .png up to 5 MB
                       </div>
                     </Row>
                     <Row>

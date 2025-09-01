@@ -170,7 +170,7 @@ export function JobPreferences(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".pdf,.doc,.docx",
+    accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png",
   });
   const onCancel = (acceptedFiles) => {
     setSelectedFile(null);
@@ -1144,7 +1144,7 @@ export function JobPreferences(props) {
                                 </div>
                                 <div className="mb-2">
                                   <i>
-                                    Supported formats: PDF, DOC, DOCX. Max size:
+                                    Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG. Max size:
                                     5MB{" "}
                                   </i>
                                 </div>
