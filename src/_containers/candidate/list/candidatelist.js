@@ -25,7 +25,10 @@ import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import { OfferHistory } from "_components/modal/offerhistorymoal";
 
-export const CandidateList = (props) => {
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
+export default function CandidateList(props) {
   const [activeTab, setActiveTab] = useState(props.type || "matched");
   const internalUserId =
     JSON.parse(localStorage.getItem("userDetails"))?.InternalUserId ?? 0;
@@ -160,7 +163,8 @@ export const CandidateList = (props) => {
       onCandidateCardActions("applied", rec?.candidaterecommendedjobid);
     }
   };
-  let successMessage = "Job status updated successfully!";
+  // let successMessage = "Job status updated successfully!";
+  let successMessage = CANDIDATE_MESSAGES.JOB_STATUS_UPDATED_SUCCESS;
 
   const onCandidateCardActions = async (
     type,
@@ -172,16 +176,34 @@ export const CandidateList = (props) => {
         candidateListActions.candidateLike(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({
-          title: successMessage,
-          type: "success",
-        });
+        // showSweetAlert({
+        //   title: successMessage,
+        //   type: "success",
+        // });
+
+        dispatch(showSnackbar({
+          message: successMessage,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "rejected") {
       let payload = {
@@ -196,52 +218,118 @@ export const CandidateList = (props) => {
         })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: successMessage,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "maybe") {
       let res = await dispatch(
         candidateListActions.candidateMayBe(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: successMessage,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "applied") {
       let res = await dispatch(
         candidateListActions.candidateApply(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: successMessage,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "accepted") {
       let res = await dispatch(
         candidateListActions.candidateAccept(candidaterecommendedjobid)
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: successMessage,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "acceptInterview") {
       let res = await dispatch(
@@ -250,13 +338,29 @@ export const CandidateList = (props) => {
         })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        // showSweetAlert({ title: res.payload.message, type: "success" });
+        dispatch(showSnackbar({
+          message: res.payload.message,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "rejectInterview") {
       let payload = {
@@ -269,13 +373,29 @@ export const CandidateList = (props) => {
         })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        // showSweetAlert({ title: res.payload.message, type: "success" });
+        dispatch(showSnackbar({
+          message: res.payload.message,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     } else if (type === "rescheduleInterview") {
       setShowRescheduleModal(true);
@@ -291,13 +411,29 @@ export const CandidateList = (props) => {
         })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: successMessage,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
         toggle(activeTab, pageNo);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
       }
     }
   };
@@ -496,32 +632,65 @@ export const CandidateList = (props) => {
                 if (fileData.length - 1 === index) {
                   setPreScreenLoading(false);
                   setShowPSModal(false);
-                  showSweetAlert({
-                    title: result.data.message,
-                    type: "success",
-                  });
+                  // showSweetAlert({
+                  //   title: result.data.message,
+                  //   type: "success",
+                  // });
+                  dispatch(showSnackbar({
+                    message: result.data.message,
+                    type: SNACKBAR_TYPES.SUCCESS,
+                    position: SNACKBAR_POSITION.TOP_CENTER,
+                    autoClose: true,
+                    autoCloseDelay: 3000,
+                    maxWidth: 500,
+                  }));
                 }
               } else {
                 setPreScreenLoading(false);
-                showSweetAlert({
-                  title: result.data.message || result.data.status,
-                  type: "danger",
-                });
+                // showSweetAlert({
+                //   title: result.data.message || result.data.status,
+                //   type: "danger",
+                // });
+                dispatch(showSnackbar({
+                  message: result.data.message || result.data.status,
+                  type: SNACKBAR_TYPES.ERROR,
+                  position: SNACKBAR_POSITION.TOP_CENTER,
+                  autoClose: true,
+                  autoCloseDelay: 3000,
+                  maxWidth: 500,
+                }));
               }
             })
-            .catch((error) => {});
+            .catch((error) => { });
         });
       } else {
         setPreScreenLoading(false);
         setShowPSModal(false);
-        showSweetAlert({ title: res.payload.message, type: "success" });
+        // showSweetAlert({ title: res.payload.message, type: "success" });
+        dispatch(showSnackbar({
+          message: res.payload.message,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
       }
     } else {
       setPreScreenLoading(false);
-      showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -535,13 +704,30 @@ export const CandidateList = (props) => {
 
     if (res?.payload?.statusCode === 204) {
       setShowRescheduleModal(false);
-      showSweetAlert({ title: res.payload.message, type: "success" });
+      // showSweetAlert({ title: res.payload.message, type: "success" });
+      dispatch(showSnackbar({
+        message: res.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
       toggle(activeTab, pageNo);
     } else {
-      showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
   const onShowOHModal = async (row) => {
@@ -555,10 +741,18 @@ export const CandidateList = (props) => {
       setOHModal(true);
       setCompanyName(row.companyname);
     } else {
-      showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
   return (
@@ -752,7 +946,7 @@ export const CandidateList = (props) => {
                       {!jdLoading ? (
                         <>
                           {jobDetail?.length > 0 &&
-                          candidateJobList?.length > 0 ? (
+                            candidateJobList?.length > 0 ? (
                             <>
                               <CandJobDetail
                                 jobDetails={jobDetail}
@@ -1357,4 +1551,4 @@ export const CandidateList = (props) => {
       </Row>
     </>
   );
-};
+}

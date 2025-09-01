@@ -20,9 +20,11 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
+import { PaymentModal } from "_components/modal/paymentmodal";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const dispatch = useDispatch();
   const [showAlert, SetShowAlert] = useState({
     show: false,
@@ -30,7 +32,9 @@ export default function CustomerDashboard() {
     title: "",
     description: "",
   });
-
+  const [isCompanyAdmin, setIsCompanyAdmin] = useState(
+    JSON.parse(localStorage.getItem("userDetails"))?.isCompanyAdmin || false
+  );
   const [confAlert, SetConfAlert] = useState({
     show: false,
     type: "success",
@@ -51,6 +55,8 @@ export default function CustomerDashboard() {
       if (
         res?.payload?.data?.billingdetailstatus !== undefined &&
         !res?.payload?.data?.billingdetailstatus
+        && res?.payload?.data?.companyBillingdetailstatus !== undefined
+        && !res?.payload?.data?.companyBillingdetailstatus
       ) {
         setShowRemModal(true);
       }
@@ -68,6 +74,12 @@ export default function CustomerDashboard() {
       )
     );
   };
+
+  const handleBillDetailUpdate = () => {
+    setShowRemModal(false);
+    setShowPaymentModal(true);
+  };
+
   useEffect(() => {
     if (
       localStorage.getItem("companyreferrallogid") &&
@@ -82,7 +94,7 @@ export default function CustomerDashboard() {
     getDashboardCounts();
     getDashboardJobsDataCount();
     dispatch(scheduleInterviewActions.getUpcomingInterviewListThunk());
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(localStorage.getItem("userId")));
     dispatch(customerDashboardActions.getSendTimezoneBeckendThunk());
     dispatch(
       dropdownActions.getSubsidiaryListThunk(localStorage.getItem("companyid"))
@@ -173,7 +185,7 @@ export default function CustomerDashboard() {
     data.description = "Are you sure want to delete this notification?";
     SetConfAlert(data);
   };
-
+  let userId = localStorage.getItem("userId");
   let cardOptions = [
     {
       title: "Open jobs",
@@ -194,14 +206,14 @@ export default function CustomerDashboard() {
       count: dashboardCounts.offerscount,
       className: "danger",
       icon: custDashIcons.offer,
-      path: "customer-candidate-offers/0",
+      path: `customer-candidate-offers/0/${userId}`,
     },
     {
       title: "Liked candidates",
       count: dashboardCounts.newcandidatelikedcount,
       className: "success",
       icon: custDashIcons.liked,
-      path: "/customer-candidate-liked/0",
+      path: `/customer-candidate-liked/0/${userId}`,
     },
     {
       title: "Matched candidate pending to review",
@@ -216,7 +228,7 @@ export default function CustomerDashboard() {
       count: dashboardCounts.appliedcount,
       className: "danger",
       icon: custDashIcons.applied,
-      path: "customer-candidate-applied/0",
+      path: `customer-candidate-applied/0/${userId}`,
     },
   ];
 
@@ -233,7 +245,7 @@ export default function CustomerDashboard() {
           </Col>
           <Col sm="12" md="6" lg="6">
             <HorizonatalBarGraph
-              graphData={dashboardGraphData.scheduledInterveiwDtos}
+              graphData={dashboardGraphData?.scheduledInterveiwDtos ? dashboardGraphData?.scheduledInterveiwDtos : []}
             />
           </Col>
           <Col sm="12" md="6" lg="6">
@@ -259,10 +271,26 @@ export default function CustomerDashboard() {
           <BillDetailRemModal
             isOpen={showRemModal}
             onClose={() => setShowRemModal(false)}
+            onUpdate={handleBillDetailUpdate}
           ></BillDetailRemModal>
         ) : (
           <></>
         )}
+      </>
+      <> {showPaymentModal ? (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          //selectedCustomer={}
+          // onClose={() => onCloseBDModal()}
+          isAdmin={true}
+          userId={JSON.parse(localStorage.getItem("userDetails")).InternalUserId}
+          companyid={JSON.parse(localStorage.getItem("userDetails"))?.companyid}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      ) : (
+        <></>
+      )}
+
       </>
       <>
         <SweetAlert

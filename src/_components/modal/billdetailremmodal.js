@@ -7,6 +7,12 @@ export const BillDetailRemModal = (props) => {
     let userId = localStorage.getItem("userDetails")
       ? Number(JSON.parse(localStorage.getItem("userDetails")).InternalUserId)
       : 0;
+
+    let isCompanyAdmin = JSON.parse(localStorage.getItem("isCompanyAdmin")) || false;
+    if (isCompanyAdmin) {
+      props.onUpdate(); 
+      return;
+    }
     history.navigate("/payment/" + userId);
     props.onClose();
   };

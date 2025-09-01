@@ -260,7 +260,7 @@ export function CreateJobWizard({ type }) {
       name: "Create job",
       component: (
         <PublishJobStep
-          companyId={customerDetails.companyid}
+          companyId={customerDetails?.companyid}
           reqData={jobPreviewData}
           responseData={(e) => requiredData(e)}
           publishJob={() => publishNewJob()}

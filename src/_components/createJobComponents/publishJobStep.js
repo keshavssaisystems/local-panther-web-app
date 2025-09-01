@@ -118,7 +118,8 @@ export default function PublishJobStep({
                 Create new job
               </Button>{" "}
               {"   "}
-              {billingStatus === true && customerApproval === true ? (
+              {(billingStatus === true || customerDetails?.companyBillingdetailstatus ===
+                true) && customerApproval === true ? (
                 <Button
                   color="success"
                   size="lg"
@@ -141,16 +142,17 @@ export default function PublishJobStep({
           ) : (
             <>
               <div className="text-center">
-                {billingStatus === true && customerApproval === true && (
-                  <Button
-                    color="success"
-                    size="lg"
-                    className="btn-shadow btn-wide"
-                    onClick={(e) => publishJob(true)}
-                  >
-                    Publish job
-                  </Button>
-                )}
+                {(billingStatus === true || customerDetails?.companyBillingdetailstatus ===
+                  true) && customerApproval === true && (
+                    <Button
+                      color="success"
+                      size="lg"
+                      className="btn-shadow btn-wide"
+                      onClick={(e) => publishJob(true)}
+                    >
+                      Publish job
+                    </Button>
+                  )}
                 {"      "}
                 <Button
                   color="primary"

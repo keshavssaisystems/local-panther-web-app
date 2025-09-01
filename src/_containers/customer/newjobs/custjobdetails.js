@@ -31,6 +31,7 @@ export function CustJobDetail({
   isModal = false,
   isShare = false,
   isAdmin = false,
+  hiringManagerId,
 }) {
   let internalUserId = JSON.parse(
     localStorage.getItem("userDetails")
@@ -122,6 +123,7 @@ export function CustJobDetail({
         .map((item) => item.jobtypes)
         .join(", ");
     } else if (
+      jobDetail?.jobExperienceScheduleDtos?.length > 0 &&
       jobDetail?.jobExperienceScheduleDtos[0]?.jobtypes !== "" &&
       jobDetail?.jobExperienceScheduleDtos[0]?.jobTypesDtos?.length === 0
     ) {
@@ -151,6 +153,7 @@ export function CustJobDetail({
         .map((item) => item.shifts)
         .join(", ");
     } else if (
+      jobDetail?.jobExperienceScheduleDtos?.length > 0 &&
       jobDetail?.jobExperienceScheduleDtos[0].shifts !== "" &&
       jobDetail?.jobExperienceScheduleDtos[0]?.shiftsDtos?.length === 0
     ) {
@@ -206,6 +209,7 @@ export function CustJobDetail({
         .map((item) => item.workschedules)
         .join(", ");
     } else if (
+      jobDetail?.jobExperienceScheduleDtos?.length > 0 &&
       jobDetail?.jobExperienceScheduleDtos[0].workschedules !== "" &&
       jobDetail?.jobExperienceScheduleDtos[0]?.workSchedulesDtos?.length === 0
     ) {
@@ -295,7 +299,7 @@ export function CustJobDetail({
         jobDetail.totalRecommendedCandidates === null
           ? 0
           : jobDetail.totalRecommendedCandidates,
-      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-matched/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: matchedIcon,
     },
     {
@@ -304,7 +308,7 @@ export function CustJobDetail({
         jobDetail.totalMaybeCandidates === null
           ? 0
           : jobDetail.totalMaybeCandidates,
-      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-maybe/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: maybeIcon,
     },
     {
@@ -313,7 +317,7 @@ export function CustJobDetail({
         jobDetail.totalLikedCandidates === null
           ? 0
           : jobDetail.totalLikedCandidates,
-      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-liked/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: likedIcon,
     },
     {
@@ -322,7 +326,7 @@ export function CustJobDetail({
         jobDetail.totalAppliedCandidates === null
           ? 0
           : jobDetail.totalAppliedCandidates,
-      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: appliedIcon,
     },
     {
@@ -331,7 +335,7 @@ export function CustJobDetail({
         jobDetail.totalScheduledCandidates === null
           ? 0
           : jobDetail.totalScheduledCandidates,
-      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-scheduled/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: scheduledIcon,
     },
     {
@@ -340,7 +344,7 @@ export function CustJobDetail({
         jobDetail.totalOfferedCandidates === null
           ? 0
           : jobDetail.totalOfferedCandidates,
-      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-offers/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: offersIcon,
     },
     {
@@ -349,7 +353,7 @@ export function CustJobDetail({
         jobDetail.totalAcceptedCandidates === null
           ? 0
           : jobDetail.totalAcceptedCandidates,
-      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-accepted/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: acceptedIcon,
     },
     {
@@ -358,7 +362,7 @@ export function CustJobDetail({
         jobDetail.totalRejectedCandidates === null
           ? 0
           : jobDetail.totalRejectedCandidates,
-      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}`,
+      action: `/customer-candidate-rejected/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: rejectedIcon,
     },
   ];
@@ -409,7 +413,7 @@ export function CustJobDetail({
                         <p className="mb-0 mt-0">
                           {jobDetail.companyname}
                           {jobDetail?.subsidiaryid !== undefined &&
-                            jobDetail?.subsidiaryid !== 0
+                          jobDetail?.subsidiaryid !== 0
                             ? " (" + jobDetail?.subsidiaryname + ")"
                             : ""}
                         </p>
@@ -434,7 +438,9 @@ export function CustJobDetail({
                           >
                             <FiEdit className="mb-1" /> Edit job
                           </Button>
-                          {(billingStatus === true || customerDetails?.companyBillingdetailstatus === true) &&
+                          {(billingStatus === true ||
+                            customerDetails?.companyBillingdetailstatus ===
+                              true) &&
                             customerApproval === true && (
                               <Button
                                 color="primary"
@@ -505,7 +511,9 @@ export function CustJobDetail({
                                 </SweetAlert>
                               </>
                             )}
-                          {billingStatus === false && customerDetails?.companyBillingdetailstatus === false &&
+                          {billingStatus === false &&
+                            customerDetails?.companyBillingdetailstatus ===
+                              false &&
                             customerApproval === true && (
                               <>
                                 <Button
@@ -628,7 +636,7 @@ export function CustJobDetail({
               heading={"Experience"}
               detail={
                 jobDetail?.jobExperienceScheduleDtos &&
-                  jobDetail?.jobExperienceScheduleDtos[0]?.experiencelevel
+                jobDetail?.jobExperienceScheduleDtos[0]?.experiencelevel
                   ? jobDetail?.jobExperienceScheduleDtos[0]?.experiencelevel
                   : "-"
               }
@@ -643,7 +651,7 @@ export function CustJobDetail({
               heading={"Hiring timeline"}
               detail={
                 jobDetail?.jobExperienceScheduleDtos &&
-                  jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
+                jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
                   ? jobDetail?.jobExperienceScheduleDtos[0]?.hiringtimeline
                   : "-"
               }
@@ -705,7 +713,7 @@ export function CustJobDetail({
               heading={"About company"}
               detail={
                 jobDetail.companydetails !== "" &&
-                  jobDetail.companydetails !== null
+                jobDetail.companydetails !== null
                   ? jobDetail.companydetails
                   : "-"
               }
@@ -714,19 +722,19 @@ export function CustJobDetail({
               heading={"Benefits"}
               detail={
                 jobDetail?.jobPaymentBenefitDtos &&
-                  jobDetail?.jobPaymentBenefitDtos[0]?.benefits
+                jobDetail?.jobPaymentBenefitDtos[0]?.benefits
                   ? jobDetail?.jobPaymentBenefitDtos[0]?.benefits
                   : "-"
               }
             />
             {jobDetail?.jobKeyQualificationDtos &&
-              jobDetail?.jobKeyQualificationDtos?.length > 0 ? (
+            jobDetail?.jobKeyQualificationDtos?.length > 0 ? (
               <>
                 <HeadingAndDetailWithoutIcon
                   heading={"Additional crieteria for the role"}
                   detail={
                     jobDetail?.jobKeyQualificationDtos &&
-                      jobDetail?.jobKeyQualificationDtos?.length > 0
+                    jobDetail?.jobKeyQualificationDtos?.length > 0
                       ? returnAdditionalCriteria()
                       : "-"
                   }
@@ -737,13 +745,13 @@ export function CustJobDetail({
               <></>
             )}
             {jobDetail?.jobPrescreenApplicationDtos &&
-              jobDetail?.jobPrescreenApplicationDtos?.length > 0 ? (
+            jobDetail?.jobPrescreenApplicationDtos?.length > 0 ? (
               <>
                 <HeadingAndDetailWithoutIcon
                   heading={"Pre-screen applicants"}
                   detail={
                     jobDetail?.jobPrescreenApplicationDtos &&
-                      jobDetail?.jobPrescreenApplicationDtos?.length > 0
+                    jobDetail?.jobPrescreenApplicationDtos?.length > 0
                       ? returnPrescreenInfo()
                       : "-"
                   }

@@ -400,8 +400,41 @@ export function EmployerRegistration() {
                     placement="bottom"
                     target={"info-new-comp"}
                   >
-                    When you add a new company, an hiring manager profile will
-                    be created automatically.
+                    Adding a company creates an admin account assigned to the selected person.
+                  </UncontrolledTooltip>
+                  <img
+                    id="info-new-comp"
+                    src={infoIcon}
+                    alt="info icon"
+                    height={14}
+                    width={14}
+                  />
+                </>
+              )}
+              {!selectedComp?.value && (
+                <>
+                  <UncontrolledTooltip
+                    placement="bottom"
+                    target={"info-no-comp"}
+                  >
+                    If your company is already registered, it will appear in the search result.
+                  </UncontrolledTooltip>
+                  <img
+                    id="info-no-comp"
+                    src={infoIcon}
+                    alt="info icon"
+                    height={14}
+                    width={14}
+                  />
+                </>
+              )}
+              {(selectedComp?.value) && (selectedComp?.value != "0") && (
+                <>
+                  <UncontrolledTooltip
+                    placement="bottom"
+                    target={"info-new-comp"}
+                  >
+                    Your account will be created under this company with the role of Hiring Manager.
                   </UncontrolledTooltip>
                   <img
                     id="info-new-comp"
@@ -416,7 +449,7 @@ export function EmployerRegistration() {
 
             <AsyncCreatableSelect
               name="mustHave"
-              placeholder="Search company using your email"
+              placeholder="Enter your email to find your company"
               loadOptions={loadOptionsDeb}
               value={selectedComp}
               // defaultOptions={[{ value: "", key: "" }]}
@@ -461,17 +494,17 @@ export function EmployerRegistration() {
                   name="companyname"
                   disabled={selectedComp?.value && selectedComp?.value !== "0"}
                   id="companyname"
-                  placeholder="Enter company name"
+                  placeholder="Company name"
                   {...register("companyname")}
-                  className={`form-control placeholder-name ${
-                    errors.companyname ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${errors.companyname ? "is-invalid" : ""
+                    }`}
                   maxLength={50}
                 />
                 <FormFeedback>{errors.companyname?.message}</FormFeedback>
               </FormGroup>
             </Col>
-            {selectedComp?.value && selectedComp.value !== "0" && (
+            {/* {selectedComp?.value && selectedComp.value !== "0" && ( */}
+            {(!selectedComp?.value) && (
               <Col md={6}>
                 <FormGroup>
                   <Label for="companyemail" className="input-label">
@@ -485,11 +518,10 @@ export function EmployerRegistration() {
                       disabled={
                         selectedComp?.value && selectedComp?.value !== "0"
                       }
-                      placeholder="Enter company email id"
+                      placeholder="Company email id"
                       {...register("companyemail")}
-                      className={`form-control placeholder-name ${
-                        errors.companyemail ? "is-invalid" : ""
-                      }`}
+                      className={`form-control placeholder-name ${errors.companyemail ? "is-invalid" : ""
+                        }`}
                       maxLength={50}
                       autoComplete="off"
                     />
@@ -513,13 +545,12 @@ export function EmployerRegistration() {
                   id="empname"
                   placeholder={
                     selectedComp.value && selectedComp.value === "0"
-                      ? "Enter contact person name"
-                      : "Enter hiring manager name"
+                      ? "Contact person name"
+                      : "Hiring manager name"
                   }
                   {...register("empname")}
-                  className={`form-control placeholder-name ${
-                    errors.empname ? "is-invalid" : ""
-                  }`}
+                  className={`form-control placeholder-name ${errors.empname ? "is-invalid" : ""
+                    }`}
                   maxLength={50}
                 />
                 <FormFeedback>{errors.empname?.message}</FormFeedback>
@@ -529,7 +560,7 @@ export function EmployerRegistration() {
               <FormGroup>
                 <Label for="empphone" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
-                    ? "Contact Person Mobile"
+                    ? "Company Admin Mobile"
                     : "Hiring Manager Mobile"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
@@ -538,17 +569,16 @@ export function EmployerRegistration() {
                   <InputMask
                     placeholder={
                       selectedComp.value && selectedComp.value === "0"
-                        ? "Enter contact person mobile number"
-                        : "Enter hiring manager mobile number"
+                        ? "Admin mobile number"
+                        : "Hiring manager mobile number"
                     }
                     type="text"
                     mask="(999)-999-9999"
                     name="empphone"
                     id="empphone"
                     {...register("empphone")}
-                    className={`form-control placeholder-name ${
-                      errors.empphone ? "is-invalid" : ""
-                    }`}
+                    className={`form-control placeholder-name ${errors.empphone ? "is-invalid" : ""
+                      }`}
                   />
 
                   <FormFeedback>{errors.empphone?.message}</FormFeedback>
@@ -559,7 +589,7 @@ export function EmployerRegistration() {
               <FormGroup>
                 <Label for="empemail" className="input-label">
                   {selectedComp.value && selectedComp.value === "0"
-                    ? "Contact Person Company Email"
+                    ? "Company Admin Email"
                     : "Hiring Manager Email"}{" "}
                   <span className="text-danger">*</span>
                 </Label>
@@ -570,13 +600,12 @@ export function EmployerRegistration() {
                     id="empemail"
                     placeholder={
                       selectedComp.value && selectedComp.value === "0"
-                        ? "Enter contact person company email id"
-                        : "Enter hiring manager email id"
+                        ? "Company admin email id"
+                        : "Hiring manager email id"
                     }
                     {...register("empemail")}
-                    className={`form-control placeholder-name ${
-                      errors.empemail ? "is-invalid" : ""
-                    }`}
+                    className={`form-control placeholder-name ${errors.empemail ? "is-invalid" : ""
+                      }`}
                     maxLength={50}
                     autoComplete="off"
                   />

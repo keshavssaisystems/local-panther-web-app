@@ -37,8 +37,10 @@ import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
 import { getCustomerDropdownList } from "_store";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
-export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
+export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
 
   const [pageSize, setPageSize] = useState(10);
@@ -127,7 +129,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
                 target={"rr_" + row?.userId}
               >
                 {row?.deactivationreason !== "" ||
-                row?.deactivationreason !== undefined
+                  row?.deactivationreason !== undefined
                   ? row?.deactivationreason
                   : "-"}
               </UncontrolledTooltip>
@@ -316,15 +318,35 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
 
     let response = await dispatch(settingsActions.deactivateUser({ id, data }));
     if (response.payload) {
-      showSweetAlert({
-        title: `${response.payload.message}`,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: `${response.payload.message}`,
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
+
     } else {
-      showSweetAlert({
-        title: `${response.error.message}`,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: `${response.error.message}`,
+      //   type: "error",
+      // });
+
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
     }
   };
 
@@ -339,15 +361,34 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     }
     if (response.payload) {
       setIsDelete(false);
-      showSweetAlert({
-        title: response.payload.message,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: response.payload.message,
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
+
     } else {
-      showSweetAlert({
-        title: response.error.message,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: response.error.message,
+      //   type: "error",
+      // });
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
     }
   };
 
@@ -503,15 +544,33 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     };
     let response = dispatch(resetPassword(payload));
     if (response?.error) {
-      showSweetAlert({
-        title: response?.error?.message,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: response?.error?.message,
+      //   type: "error",
+      // });
+      dispatch(showSnackbar({
+        message: response?.error?.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     } else {
-      showSweetAlert({
-        title: "Password has been sent to registered email ID",
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: "Password has been sent to registered email ID",
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.PASSWORD_RESET_EMAIL_SENT,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
+
     }
   };
 
@@ -857,4 +916,4 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
       </div>
     </>
   );
-};
+}

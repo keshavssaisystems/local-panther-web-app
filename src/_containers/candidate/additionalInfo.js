@@ -20,6 +20,9 @@ import { AdditionalInfoModal } from "./additionalInfoModal";
 import { useSelector } from "react-redux";
 import { NoProfileData } from "_components/common/noProfileData";
 
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export function AdditionalInformation(props) {
   const dispatch = useDispatch();
   const [isPersonalModal, setPersonalModal] = useState(false);
@@ -105,10 +108,30 @@ export function AdditionalInformation(props) {
     );
     setDeleteConfirm(false);
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      handlePageChange();
+
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   }
 
@@ -120,8 +143,8 @@ export function AdditionalInformation(props) {
           <CardHeader className="card-title-text  text-capitalize ">
             Additional information
             {getResponse?.[0]?.summary === "" &&
-            getResponse?.[0]?.additionalInfo === "" &&
-            getResponse?.[0]?.language?.length === 0 ? (
+              getResponse?.[0]?.additionalInfo === "" &&
+              getResponse?.[0]?.language?.length === 0 ? (
               <div className="float-end me-2 ms-auto">
                 <Label className="link-text" onClick={(evt) => edit("add")}>
                   Add
@@ -135,27 +158,27 @@ export function AdditionalInformation(props) {
             {!loader ? (
               <div>
                 {getResponse?.[0]?.summary !== "" ||
-                getResponse?.[0]?.additionalInfo !== "" ||
-                getResponse?.[0]?.language?.length > 0 ? (
+                  getResponse?.[0]?.additionalInfo !== "" ||
+                  getResponse?.[0]?.language?.length > 0 ? (
                   <div>
                     {getResponse.map((item) => (
                       <div>
                         {(item.additionalInfo ||
                           item.summary ||
                           item.language?.length > 0) && (
-                          <div className="float-end">
-                            <BsPencil
-                              className="icons"
-                              onClick={(evt) => edit("edit", item)}
-                            />{" "}
-                            <BsTrash3
-                              className="icons"
-                              onClick={() =>
-                                deleteModal(item.candidateadditioninformationid)
-                              }
-                            />
-                          </div>
-                        )}
+                            <div className="float-end">
+                              <BsPencil
+                                className="icons"
+                                onClick={(evt) => edit("edit", item)}
+                              />{" "}
+                              <BsTrash3
+                                className="icons"
+                                onClick={() =>
+                                  deleteModal(item.candidateadditioninformationid)
+                                }
+                              />
+                            </div>
+                          )}
 
                         {item.summary !== "" && (
                           <div>

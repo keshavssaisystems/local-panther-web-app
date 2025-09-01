@@ -32,7 +32,7 @@ import { NoDataFound } from "_components/common/nodatafound";
 import Loader from "react-loaders";
 import { NewCandidateModal } from "./newCandidateModal";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
-export const AdmCandidateList = () => {
+export default function AdmCandidateList() {
   const dispatch = useDispatch();
   const [pageNo, setPageNo] = useState(1);
   const [showProfile, setShowProfile] = useState(false);
@@ -642,4 +642,4 @@ export const AdmCandidateList = () => {
       </>
     </>
   );
-};
+}

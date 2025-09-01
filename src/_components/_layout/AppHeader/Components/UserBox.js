@@ -40,6 +40,8 @@ import Switch from "react-switch";
 import { DeactivateReasonModal } from "_components/modal/deactivateReason";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { Link } from "react-router-dom";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function UserBox() {
   const authUser = useSelector((x) => x?.auth?.token);
@@ -139,12 +141,29 @@ export function UserBox() {
     if (response.payload) {
       setDeactivateConfirm(false);
       setRejectReasonModal(false);
-      showSweetAlert({
-        title: `${response.payload.message}`,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: `${response.payload.message}`,
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
   const showSweetAlert = ({ title, type }) => {
@@ -181,11 +200,29 @@ export function UserBox() {
 
     let response = await dispatch(settingsActions.notifications({ id, data }));
     if (response.payload) {
-      setSuccess(true);
-      setMessage("Push notification settings updated successfully");
+      // setSuccess(true);
+      // setMessage("Push notification settings updated successfully");
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.PUSH_NOTIFICATION_SETTINGS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
       localStorage.setItem("pushnotification", value);
     } else {
-      setError(true);
+      // setError(true);
+
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -198,11 +235,29 @@ export function UserBox() {
     };
     let response = await dispatch(settingsActions.emailNotifications({ id, data }));
     if (response.payload) {
-      setSuccess(true);
-      setMessage("Email notification settings updated successfully");
+      // setSuccess(true);
+      // setMessage("Email notification settings updated successfully");
+
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.EMAIL_NOTIFICATION_SETTINGS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
       localStorage.setItem("emailnotification", value);
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   }
 

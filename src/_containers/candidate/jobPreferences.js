@@ -35,11 +35,13 @@ import Dropzone from "react-dropzone";
 import axios from "axios";
 import { formatDate } from "_helpers/helper";
 import { BsDownload, BsUpload, BsInfoCircle } from "react-icons/bs";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
 
-  const selectDate = function () {};
+  const selectDate = function () { };
 
   const [jobTypes, setJobTypes] = useState([]);
   const [save, setSave] = useState(false);
@@ -168,7 +170,7 @@ export function JobPreferences(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".pdf,.doc,.docx",
+    accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png",
   });
   const onCancel = (acceptedFiles) => {
     setSelectedFile(null);
@@ -311,13 +313,13 @@ export function JobPreferences(props) {
               .join(", "),
             pay:
               (rest.minimumbasepay && rest.payperiodtype) ||
-              (rest.minimumbasepay != "" && rest.payperiodtype != "")
+                (rest.minimumbasepay != "" && rest.payperiodtype != "")
                 ? rest.minimumbasepay + "  " + rest.payperiodtype
                 : rest.minimumbasepay
-                ? rest.minimumbasepay
-                : rest.payperiodtype
-                ? rest.payperiodtype
-                : "",
+                  ? rest.minimumbasepay
+                  : rest.payperiodtype
+                    ? rest.payperiodtype
+                    : "",
             relocate: rest.willingtorelocate ? true : false,
             workType: "",
             traveldistance: rest.traveldistance,
@@ -695,7 +697,7 @@ export function JobPreferences(props) {
         anywhereonlynear: parseInt(rest.anywhereonlynear),
         locationids:
           parseInt(rest.anywhereonlynear) === 1 ||
-          parseInt(rest.anywhereonlynear) === 0
+            parseInt(rest.anywhereonlynear) === 0
             ? ""
             : rest.locationids,
         desiredworktypeids: rest.desiredworktypeids,
@@ -705,8 +707,8 @@ export function JobPreferences(props) {
           workType?.length === 1 && workType["0"] === "1"
             ? ""
             : showDistance
-            ? rest.traveldistance
-            : "",
+              ? rest.traveldistance
+              : "",
       };
     });
 
@@ -726,12 +728,25 @@ export function JobPreferences(props) {
     }
     setSave(false);
     if (response.payload) {
-      setSuccess(true);
-      setMessage(
-        props.isCompleteProfile
-          ? "Profile details updated successfully!"
-          : response.payload.message
-      );
+      // setSuccess(true);
+      // setMessage(
+      //   props.isCompleteProfile
+      //     ? "Profile details updated successfully!"
+      //     : response.payload.message
+      // );
+
+      dispatch(showSnackbar({
+        message: props.isCompleteProfile
+          ? GENERAL_MESSAGES.PROFILE_DETAILS_UPDATED_SUCCESSFULLY
+          : response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      closeModal();
+
       if (props.isCompleteProfile) {
         let payload = {
           candidateid: localStorage.getItem("admcandid")
@@ -751,7 +766,15 @@ export function JobPreferences(props) {
         await dispatch(jobPreferenceDetailsActions.updateProfileData(payload));
       }
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   }
 
@@ -762,10 +785,27 @@ export function JobPreferences(props) {
     );
     setDeleteConfirm(false);
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   };
 
@@ -1104,7 +1144,7 @@ export function JobPreferences(props) {
                                 </div>
                                 <div className="mb-2">
                                   <i>
-                                    Supported formats: PDF, DOC, DOCX. Max size:
+                                    Supported formats: PDF, DOC, DOCX, JPG, JPEG, PNG. Max size:
                                     5MB{" "}
                                   </i>
                                 </div>

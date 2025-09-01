@@ -1,15 +1,15 @@
-import React, { useEffect, useState, Suspense  } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { history } from "_helpers";
 import { PrivateRoute } from "_components";
-import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
+// import { AdminDashboard } from "_containers/admin/dashboard/adminDashboard";
 import { UploadData } from "_containers/admin/uploadData";
 import { ScheduleInterview } from "_containers/customer/scheduleInterview/scheduleInterview";
 import { CreateJobWizard } from "_containers/customer/createJob/createJobWizard";
 import { Login } from "_containers/login/Login";
 import { Registration } from "_containers/registration/Registration";
-import { CustomerRegistration } from "_containers/registration/customerRegistration";
+// import { CustomerRegistration } from "_containers/registration/customerRegistration";
 import { RegistrationSuccess } from "_containers/registration/RegistrationSuccess";
 import { RecommendedJobList } from "_containers/candidate/RecommendedJobList";
 import { AppHeader } from "_components/_layout/AppHeader";
@@ -17,13 +17,13 @@ import { AppSidebar } from "_components/_layout/AppSidebar";
 import { AppFooter } from "_components/_layout/AppFooter";
 
 import "./app.scss";
-import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
+// import { ForgotPassword } from "_containers/forgotpassword/forgotPassword";
 import { ForgotPasswordSuccess } from "_containers/forgotpassword/forgotPasswordSuccess";
-import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
-import { CandidateList } from "_containers/candidate/list/candidatelist";
+// import { CustomerCandidateLists } from "_containers/customer/candidatelists/customercandidatelists";
+// import { CandidateList } from "_containers/candidate/list/candidatelist";
 import { CandidateProfile } from "_containers/candidate/candidateProfile";
-import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
-import { CustJobList } from "_containers/customer/newjobs/custjobs";
+// import { CandidateDashboard } from "_containers/candidate/dashboard/dashboard";
+// import { CustJobList } from "_containers/customer/newjobs/custjobs";
 import { CandidateUnderConstruction } from "_containers/candidate/common/candidateUnderConstruction";
 import { CandidateInterviewFeedback } from "_containers/customer/reports/candidateinterviewfeedback";
 // Admin
@@ -40,20 +40,20 @@ import {
   NonPublishedJobs,
 } from "_containers/admin";
 import { CandidateSchedules } from "_containers/candidate/calendar/candidateSchedules";
-import { Calendar } from "_containers/customer/common/calendar";
-import { CustomerReportJobList } from "_containers/customer/reports/customerjobs";
+// import { Calendar } from "_containers/customer/common/calendar";
+// import { CustomerReportJobList } from "_containers/customer/reports/customerjobs";
 import { CustomerReportScheduledInterviews } from "_containers/customer/reports/customerscheduleinterviews";
 import { CustomerReportInterviewedCandidates } from "_containers/customer/reports/customerinterviewdcandidates";
 import { CustomerReportJobAging } from "_containers/customer/reports/customerjobaging";
 import { CustomerReportMatchedCandidate } from "_containers/customer/reports/customermatchedjoblist";
 import { CustomerReportCandidateStatus } from "_containers/customer/reports/customercandidatestatuslist";
-import { CustomerVideoScreen } from "../../firebase/customerVideo";
-import { CandVideoScreen } from "../../firebase/candvideo";
-import { AdminListing } from "_containers/admin/common/adminListing";
-import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
+// import { CustomerVideoScreen } from "../../firebase/customerVideo";
+// import { CandVideoScreen } from "../../firebase/candvideo";
+// import { AdminListing } from "_containers/admin/common/adminListing";
+// import { RoleMenuListing } from "_containers/admin/acl/roleMenuListing";
 
 import { messaging, analytics } from "../../firebase/index";
-import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
+// import CustomerDashboard from "_containers/customer/dashboard/customerDashboard";
 import { ChatInterface } from "_containers/common/chats/chatInterface";
 import { CustomerList } from "_containers/admin/customer/customerList";
 import { Skills } from "_containers/admin/masters/skills";
@@ -71,21 +71,71 @@ import { SubsidaryList } from "_containers/admin/masters/subsidary";
 import { BullhornCandidate } from "_containers/admin/reports/bullhornCandidate";
 import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
-import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
+// import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
 import { getPublicIP } from "_helpers/helper";
-import { TermsAndConditions } from "_containers/static/terms";
-import { PrivacyPolicy } from "_containers/static/privacy";
-import { Support } from "_containers/static/support";
-import { Contact } from "_containers/static/contact";
+// import { TermsAndConditions } from "_containers/static/terms";
+// import { PrivacyPolicy } from "_containers/static/privacy";
+// import { Support } from "_containers/static/support";
+// import { Contact } from "_containers/static/contact";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
-import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
-const  ZoomVideoScreen = React.lazy(() => import ("zoom/zoom-video"));;
+import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
+import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
+// import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
+const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
+const AIJobOffCanvas = React.lazy(() =>
+  import("_components/createJobComponents/AIJobOffCanvas")
+);
+
+const Support = React.lazy(() => import("_containers/static/support"));
+const PrivacyPolicy = React.lazy(() => import("_containers/static/privacy"));
+const TermsAndConditions = React.lazy(() => import("_containers/static/terms"));
+const AdmCandidateList = React.lazy(() =>
+  import("_containers/admin/candidates/candidatesList")
+);
+const ForgotPassword = React.lazy(() =>
+  import("_containers/forgotpassword/forgotPassword")
+);
+const CustomerDashboard = React.lazy(() =>
+  import("_containers/customer/dashboard/customerDashboard")
+);
+const CustomerReportJobList = React.lazy(() =>
+  import("_containers/customer/reports/customerjobs")
+);
+const CustomerCandidateLists = React.lazy(() =>
+  import("_containers/customer/candidatelists/customercandidatelists")
+);
+const CandidateList = React.lazy(() =>
+  import("_containers/candidate/list/candidatelist")
+);
+const CustJobList = React.lazy(() =>
+  import("_containers/customer/newjobs/custjobs")
+);
+const Contact = React.lazy(() => import("_containers/static/contact"));
+const AdminListing = React.lazy(() =>
+  import("_containers/admin/common/adminListing")
+);
+const RoleMenuListing = React.lazy(() =>
+  import("_containers/admin/acl/roleMenuListing")
+);
+const AdminDashboard = React.lazy(() =>
+  import("_containers/admin/dashboard/adminDashboard")
+);
+const CustomerRegistration = React.lazy(() =>
+  import("_containers/registration/customerRegistration")
+);
+const Calendar = React.lazy(() =>
+  import("_containers/customer/common/calendar")
+);
+const CandidateDashboard = React.lazy(() =>
+  import("_containers/candidate/dashboard/dashboard")
+);
+
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (authUser) {
@@ -139,7 +189,7 @@ export function App() {
   history.navigate = useNavigate();
   const location = useLocation();
   history.location = useLocation();
-  const excludedPaths = ['/terms', '/privacy', '/contact', '/support'];
+  const excludedPaths = ["/terms", "/privacy", "/contact", "/support"];
   const isExcludedPath = excludedPaths.includes(location.pathname);
   console.log(isExcludedPath);
   useEffect(() => {
@@ -359,7 +409,7 @@ export function App() {
             path="/report/ats-candidates/:id"
             element={<ATSCandidate title={"ATS Candidate Report"} />}
           />
-           <Route
+          <Route
             path="/candidate-interview-feedback"
             element={
               <PrivateRoute>
@@ -380,7 +430,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-          
+
           <Route
             path="/job-list"
             element={
@@ -415,37 +465,37 @@ export function App() {
           />
 
           <Route
-            path="/customer-candidate-matched/:id"
+            path="/customer-candidate-matched/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"matched"} />}
           />
 
           <Route
-            path="/customer-candidate-liked/:id"
+            path="/customer-candidate-liked/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"liked"} />}
           />
           <Route
-            path="/customer-candidate-maybe/:id"
+            path="/customer-candidate-maybe/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"maybe"} />}
           />
           <Route
-            path="/customer-candidate-applied/:id"
+            path="/customer-candidate-applied/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"applied"} />}
           />
           <Route
-            path="/customer-candidate-scheduled/:id"
+            path="/customer-candidate-scheduled/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"scheduled"} />}
           />
           <Route
-            path="/customer-candidate-accepted/:id"
+            path="/customer-candidate-accepted/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"accepted"} />}
           />
           <Route
-            path="/customer-candidate-rejected/:id"
+            path="/customer-candidate-rejected/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"rejected"} />}
           />
 
           <Route
-            path="/customer-candidate-offers/:id"
+            path="/customer-candidate-offers/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"offers"} />}
           />
 
@@ -527,14 +577,14 @@ export function App() {
             path="/customer-edit-job/:id"
             element={<CreateJobWizard type={"edit"} />}
           />
-          <Route
+          {/* <Route
             path="/cust-video"
             element={
               <PrivateRoute>
                 <CustomerVideoScreen />
               </PrivateRoute>
             }
-          />
+          /> */}
           <Route
             path="/chat"
             element={
@@ -552,23 +602,23 @@ export function App() {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/masters"
             element={
               <PrivateRoute>
-                <CompanyList isCompanyAdmin={true}/>
+                <CompanyList isCompanyAdmin={true} />
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/masters/company"
             element={
               <PrivateRoute>
-                <CompanyList isCompanyAdmin={true}/>
+                <CompanyList isCompanyAdmin={true} />
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/acl"
             element={
               <PrivateRoute>
@@ -576,7 +626,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/acl/users"
             element={
               <PrivateRoute>
@@ -584,11 +634,11 @@ export function App() {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/report"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
-            <Route
+          <Route
             path="/report/open-jobs"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
@@ -705,14 +755,14 @@ export function App() {
               </PrivateRoute>
             }
           />
-          <Route
+          {/* <Route
             path="/cand-video"
             element={
               <PrivateRoute>
                 <CandVideoScreen />
               </PrivateRoute>
             }
-          />
+          /> */}
           <Route
             path="/chat"
             element={
@@ -736,120 +786,128 @@ export function App() {
 
   return (
     <>
-     <Suspense fallback={<div>Loading Zoom UI...</div>}>
-    {isExcludedPath ? 
-      <>
-       <Routes forceRefresh={true}>
-       <Route
-          path="/contact"
-          element={ <Contact /> }
-        />
-        <Route
-          path="/privacy"
-          element={ <PrivacyPolicy /> }
-        />
-        <Route
-          path="/terms"
-          element={ <TermsAndConditions /> }
-        />
-        <Route
-          path="/support"
-          element={ <Support /> }
-        />
-       </Routes>
-      </> : 
-      <>
-      
-        {authUser && (
-          
-         <AppHeader
-            isSidebarOpen={isSidebarOpen}
-            onOpenSidebar={() => onOpenSidebar()}
-            onCloseSidebar={() => onCloseSidebar()}
-          />
-         
-        )}
-        {!authUser && hideSidebar && !isExcludedPath && (
-          <AppHeader
-            unAuth={true}
-            isSidebarOpen={isSidebarOpen}
-            onOpenSidebar={() => onOpenSidebar()}
-            onCloseSidebar={() => onCloseSidebar()}
-          />
-        )}
-        <div className={authUser ? `app-main` : ""}>
-           <AIJobOffCanvas ></AIJobOffCanvas>
-          {authUser && !hideSidebar && (
-            <AppSidebar
-              isSidebarOpen={isSidebarOpen}
-              setIsSidebarOpen={setIsSidebarOpen}
-            />
-            
-          )}
-          <div className={authUser ? `app-main__outer` : ""}>
-            <div className={"app-main__inner "}>
-              <ToastContainer />
-              <Routes forceRefresh={true}>
-                {renderRoutes(userroleid)}
-                <Route
-                  path="/security"
-                  element={
-                    <PrivateRoute>
-                      <CandidateUnderConstruction title={"Security"} />
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/notification"
-                  element={
-                    <PrivateRoute>
-                      <Notifications />
-                    </PrivateRoute>
-                  }
-                />
-
-                <Route path="/login" element={<Login />} />
-                {/* <Route path="/login/:id" element={<Login />} /> */}
-                <Route path="/registration" element={<Registration />} />
-                <Route
-                  path="/customer-registration"
-                  element={<CustomerRegistration />}
-                />
-                <Route
-                  path="/registration-success"
-                  element={<RegistrationSuccess />}
-                />
-                <Route
-                  path="/forgot-password-success"
-                  element={<ForgotPasswordSuccess />}
-                />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                {/* for firebase */}
-                {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
-                {/* for zoom */}
-                <Route
-                  path="/video-screen/*"
-                  element={<ZoomVideoScreen authUser={authUser} />}
-                />
-                <Route
-                  path="/job-detail/:id"
-                  element={<ShareJobDetails authUser={authUser} />}
-                />
-                <Route
-                  path="/payment/:id"
-                  element={<Payment authUser={authUser} />}
-                />
-                <Route path="/Unsubscribe/:token" element={<UnsubscribeEmail />} />
-              </Routes>
-            </div>
-            {authUser && <AppFooter />}
-            {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
+      <Suspense
+        fallback={
+          <div
+            style={{
+              height: "calc(100vh - 160px)",
+              width: "100vw",
+              top: "50%",
+              left: "50%",
+              transform: "translate(50%, 50%)",
+            }}
+          >
+            {" "}
+            <div className="loader-cust"></div>
           </div>
-        </div>
-        
-      </>}
+        }
+      >
+        {isExcludedPath ? (
+          <>
+            <Routes forceRefresh={true}>
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsAndConditions />} />
+              <Route path="/support" element={<Support />} />
+            </Routes>
+          </>
+        ) : (
+          <>
+            {authUser && (
+              <AppHeader
+                isSidebarOpen={isSidebarOpen}
+                onOpenSidebar={() => onOpenSidebar()}
+                onCloseSidebar={() => onCloseSidebar()}
+              />
+            )}
+            {!authUser && hideSidebar && !isExcludedPath && (
+              <AppHeader
+                unAuth={true}
+                isSidebarOpen={isSidebarOpen}
+                onOpenSidebar={() => onOpenSidebar()}
+                onCloseSidebar={() => onCloseSidebar()}
+              />
+            )}
+            <div className={authUser ? `app-main` : ""}>
+              <AIJobOffCanvas></AIJobOffCanvas>
+              {authUser && !hideSidebar && (
+                <AppSidebar
+                  isSidebarOpen={isSidebarOpen}
+                  setIsSidebarOpen={setIsSidebarOpen}
+                />
+              )}
+              <div className={authUser ? `app-main__outer` : ""}>
+                <div className={"app-main__inner "}>
+                  <ToastContainer />
+                  <EnhancedSnackbar />
+                  <Routes forceRefresh={true}>
+                    {renderRoutes(userroleid)}
+                    <Route
+                      path="/security"
+                      element={
+                        <PrivateRoute>
+                          <CandidateUnderConstruction title={"Security"} />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/notification"
+                      element={
+                        <PrivateRoute>
+                          <Notifications />
+                        </PrivateRoute>
+                      }
+                    />
+
+                    <Route path="/login" element={<Login />} />
+                    {/* <Route path="/login/:id" element={<Login />} /> */}
+                    <Route path="/registration" element={<Registration />} />
+                    <Route
+                      path="/customer-registration"
+                      element={<CustomerRegistration />}
+                    />
+                    <Route
+                      path="/registration-success"
+                      element={<RegistrationSuccess />}
+                    />
+                    <Route
+                      path="/forgot-password-success"
+                      element={<ForgotPasswordSuccess />}
+                    />
+                    <Route
+                      path="/forgot-password"
+                      element={<ForgotPassword />}
+                    />
+                    {/* for firebase */}
+                    {/* <Route path="/video-screen/:id" element={<VideoScreen />} /> */}
+                    {/* for zoom */}
+                    <Route
+                      path="/video-screen/*"
+                      element={<ZoomVideoScreen authUser={authUser} />}
+                    />
+                    <Route
+                      path="/job-detail/:id"
+                      element={<ShareJobDetails authUser={authUser} />}
+                    />
+                    <Route
+                      path="/payment/:id"
+                      element={<Payment authUser={authUser} />}
+                    />
+                    <Route
+                      path="/Unsubscribe/:token"
+                      element={<UnsubscribeEmail />}
+                    />
+                    {/* <Route path="/snackbar-demo" element={<SnackbarDemo />} /> */}
+                    <Route path="/enhanced-snackbar-examples" element={<EnhancedSnackbarExamples />} />
+                  </Routes>
+                </div>
+                {authUser && <AppFooter />}
+                {!authUser && hideSidebar && !isExcludedPath && <AppFooter />}
+              </div>
+            </div>
+          </>
+        )}
       </Suspense>
     </>
-
   );
 }
