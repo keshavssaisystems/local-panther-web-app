@@ -463,7 +463,10 @@ export default function CustomerCandidateLists(props) {
       }
       let response = await dispatch(dropdownActions.getJobsListThunk(filter));
       if (response?.payload) {
-        setFilteredItems(response.payload);
+        setFilteredItems(response.payload);       
+      }
+      else {
+        setFilteredItems([]);
       }
     }
   }
@@ -624,47 +627,48 @@ export default function CustomerCandidateLists(props) {
             </Col>
             <Col xs="12" sm="12" md="6" lg={2}>
               <InputGroup>
-
-                <Input
-                  type="text"
-                  id="search-input"
-                  value={searchText}
-                  // onInput={(evt) => setSearchText(evt.target.value)}
-                  placeholder="Search by Job Title"
-                  onInput={(e) => {
-                    setSearchText(e.target.value)
-                    searchJobDropdown(e.target.value)
-                  }}
-                  maxLength={50}
-                  autoComplete="off"
-                />
-                {filteredItems.length > 0 && (
-                  <ul
-                    style={{
-                      listStyle: "none",
-                      margin: 0,
-                      padding: "4px",
-                      border: "1px solid #ccc",
-                      borderTop: "none",
-                      position: "absolute",
-                      width: "100%",
-                      background: "#fff",
-                      zIndex: 1000,
-                      maxHeight: "150px",
-                      overflowY: "auto",
+                <div style={{ position: "relative" }}>
+                  <Input
+                    type="text"
+                    id="search-input"
+                    value={searchText}
+                    // onInput={(evt) => setSearchText(evt.target.value)}
+                    placeholder="Search by Job Title"
+                    onInput={(e) => {
+                      setSearchText(e.target.value)
+                      searchJobDropdown(e.target.value)
                     }}
-                  >
-                    {filteredItems.map((item, index) => (
-                      <li
-                        key={index}
-                        style={{ padding: "6px", cursor: "pointer" }}
-                        onClick={() => handleSelectJobTitle(item)}
-                      >
-                        {item.jobtitle}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                    maxLength={50}
+                    autoComplete="off"
+                  />
+                  {filteredItems.length > 0 && (
+                    <ul
+                      style={{
+                        listStyle: "none",
+                        margin: 0,
+                        padding: "4px",
+                        border: "1px solid #ccc",
+                        borderTop: "none",
+                        position: "absolute",
+                        width: "100%",
+                        background: "#fff",
+                        zIndex: 1000,
+                        maxHeight: "150px",
+                        overflowY: "auto",
+                      }}
+                    >
+                      {filteredItems.map((item, index) => (
+                        <li
+                          key={index}
+                          style={{ padding: "6px", cursor: "pointer" }}
+                          onClick={() => handleSelectJobTitle(item)}
+                        >
+                          {item.jobtitle}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>               
                 <Button
                   color={"primary"}
                   className="input-group-text"
