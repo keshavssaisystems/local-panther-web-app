@@ -169,6 +169,16 @@ export const getFlaggedWordsListThunk = createAsyncThunk(
   }
 );
 
+export const getJobsListThunk = createAsyncThunk(
+  `${name}/getJobsListThunk`,
+  async (payload) => {
+    let parameter = "@companyid=" + (payload.companyId ? payload.companyId : "") + ",@isClose=0,@searchText=" + (payload.searchText ? payload.searchText : "");
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Report/GetReportBySP?storedProcedure=Report_JobDropdownList&parameter=${parameter}`;
+    let response = await fetchWrapper.get(DROPDOWN_END_POINT);
+    return response.data;
+  }
+);
+
 // Create the slice
 const dropdownSlice = createSlice({
   name,
@@ -192,6 +202,7 @@ const dropdownSlice = createSlice({
     closeJobReasonList: [],
     flaggedWordsList: [],
     loading: false,
+    jobsDropdownList: []
   },
   reducers: {},
 
@@ -409,7 +420,18 @@ const dropdownSlice = createSlice({
       state.error = action.error;
       state.loading = true;
     },
-  },
+    [getJobsListThunk.pending]: (state) => {
+      state.loading = true;
+    },
+    [getJobsListThunk.fulfilled]: (state, action) => {
+      state.jobsDropdownList = action.payload.data;
+      state.loading = false;
+    },
+    [getJobsListThunk.rejected]: (state, action) => {
+      state.error = action.error;
+      state.loading = true;
+    }
+  }
 });
 
 // Export the actions and reducer
@@ -434,6 +456,7 @@ export const dropdownActions = {
   getSecurityClearanceListThunk,
   getCloseJobReasonListThunk,
   getFlaggedWordsListThunk,
+  getJobsListThunk
 };
 
 export const dropdownReducer = dropdownSlice.reducer;

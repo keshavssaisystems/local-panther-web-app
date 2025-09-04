@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchWrapper } from "../../../_helpers";
+import { get } from "lodash";
 
 // create slice
 const name = "customerCandidateList";
@@ -48,7 +49,7 @@ function createExtraActions() {
     getPrescreenDetails: getPrescreenDetails(),
     getCustOfferHistory: getCustOfferHistory(),
     getofferLetterTemplate: getofferLetterTemplate(),
-    getInterviewSlots: getInterviewSlots(),
+    getInterviewSlots: getInterviewSlots()
   };
 
   function getDrpDwnJobLists() {
