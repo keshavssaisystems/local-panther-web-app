@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 
 import { postSquareCardDetails } from "./squarepayment.slice";
 import { post } from "jquery";
-export default function Squarepayment() {
+export default function Squarepayment(props) {
     const dispatch = useDispatch();
   return (
     <PaymentForm
