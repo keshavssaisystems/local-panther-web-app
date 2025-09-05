@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   TabContent,
@@ -459,11 +459,11 @@ export default function CustomerCandidateLists(props) {
       let filter = {
         companyId: 2,
         isClose: 0,
-        searchText: title
+        searchText: title.replaceAll(" ", "_"),
       }
       let response = await dispatch(dropdownActions.getJobsListThunk(filter));
       if (response?.payload) {
-        setFilteredItems(response.payload);       
+        setFilteredItems(response.payload);
       }
       else {
         setFilteredItems([]);
@@ -476,6 +476,21 @@ export default function CustomerCandidateLists(props) {
     setFilteredItems([]); // close suggestions
   };
 
+  const wrapperRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setFilteredItems([]);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
   return (
     <>
       <Row className="customercandidatelist">
@@ -627,7 +642,7 @@ export default function CustomerCandidateLists(props) {
             </Col>
             <Col xs="12" sm="12" md="6" lg={2}>
               <InputGroup>
-                <div style={{ position: "relative" }}>
+                <div ref={wrapperRef} style={{ position: "relative" }}>
                   <Input
                     type="text"
                     id="search-input"
@@ -668,7 +683,7 @@ export default function CustomerCandidateLists(props) {
                       ))}
                     </ul>
                   )}
-                </div>               
+                </div>
                 <Button
                   color={"primary"}
                   className="input-group-text"
