@@ -54,6 +54,7 @@ export function VideoInterviewDetails({
   fromCustList, // Optional from customer schedule list
   toggle,
   postFeedbackData,
+  onAcceptClick
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
@@ -248,6 +249,9 @@ export function VideoInterviewDetails({
   };
 
   console.log("scheduledDate >= new Date().toISOString().slice(0, 10)", scheduledDate >= new Date().toISOString().slice(0, 10));
+
+
+
   return (
     <>
       <div className="dropdown-menu-header">
@@ -352,6 +356,18 @@ export function VideoInterviewDetails({
                     : "Declined"
                   : "No response from candidate"}
         </p>
+      </div>
+      <div className="p-custom">
+        <Button
+          outline
+          size="sm"
+          className="mb-2 ms-1 btn-transition"
+          color="danger"
+          title="Make Offer"
+          onClick={() => onAcceptClick(interviewDetail)}
+        >
+          Make Offer
+        </Button>
       </div>
       {interviewDetail?.interviewstatusid !== 0 &&
         interviewDetail?.interviewfeedback !== "" && (
