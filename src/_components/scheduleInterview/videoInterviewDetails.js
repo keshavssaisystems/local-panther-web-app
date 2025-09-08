@@ -54,6 +54,7 @@ export function VideoInterviewDetails({
   fromCustList, // Optional from customer schedule list
   toggle,
   postFeedbackData,
+  onAcceptClick
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
@@ -248,6 +249,9 @@ export function VideoInterviewDetails({
   };
 
   console.log("scheduledDate >= new Date().toISOString().slice(0, 10)", scheduledDate >= new Date().toISOString().slice(0, 10));
+
+
+
   return (
     <>
       <div className="dropdown-menu-header">
@@ -332,27 +336,46 @@ export function VideoInterviewDetails({
       <div className="p-custom">
         <p className="mb-0">Applied for {interviewDetail?.jobtitle}</p>
       </div>
-      <div className="p-custom">
-        <h6 className="fw-bold job-heading">Status</h6>
-        <p className="mb-0">
-          {interviewDetail?.isreschedulerequested === true
-            ? "Requested for reschedule (" +
-            interviewDetail?.reschedulerequestedreason +
-            ")"
-            : interviewDetail?.interviewstatusid !== 0
-              ? interviewDetail?.interviewstatusid === 2
-                ? "Completed but candidate not joined"
-                : "Completed"
-              : interviewDetail?.isaccepted === true &&
-                interviewDetail?.isrejected === false
-                ? "Accepted"
-                : interviewDetail?.isrejected === true
-                  ? interviewDetail?.rejectionreason !== ""
-                    ? "Declined (" + interviewDetail?.rejectionreason + ")"
-                    : "Declined"
-                  : "No response from candidate"}
-        </p>
+      <div className="p-custom row">
+
+        <div className="col-8">
+          <h6 className="fw-bold job-heading">Status</h6>
+          <p className="mb-0">
+            {interviewDetail?.isreschedulerequested === true
+              ? "Requested for reschedule (" +
+              interviewDetail?.reschedulerequestedreason +
+              ")"
+              : interviewDetail?.interviewstatusid !== 0
+                ? interviewDetail?.interviewstatusid === 2
+                  ? "Completed but candidate not joined"
+                  : "Completed"
+                : interviewDetail?.isaccepted === true &&
+                  interviewDetail?.isrejected === false
+                  ? "Accepted"
+                  : interviewDetail?.isrejected === true
+                    ? interviewDetail?.rejectionreason !== ""
+                      ? "Declined (" + interviewDetail?.rejectionreason + ")"
+                      : "Declined"
+                    : "No response from candidate"}
+          </p>
+        </div>
+        <div className="col-4">
+          {interviewDetail?.interviewstatusid === 1 && <div className="d-block text-left right-align">
+            <Button
+              size="sm"
+              className="mb-2 mr-2 btn-primary"
+              color="primary"
+              title="Make an Offer"
+              onClick={() => interviewDetail?.iscustomeroffered === true ? null : onAcceptClick(interviewDetail)}
+              disabled={interviewDetail?.iscustomeroffered === true}
+            >
+            {interviewDetail?.iscustomeroffered === true?" Offer generated":" Make an offer"}
+            </Button>
+
+          </div>}
+        </div>
       </div>
+
       {interviewDetail?.interviewstatusid !== 0 &&
         interviewDetail?.interviewfeedback !== "" && (
           <div className="p-custom">

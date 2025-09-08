@@ -25,6 +25,7 @@ import {
   customerCandidateListsActions,
   scheduleInterviewActions,
   graphActions,
+  getJobDetail,
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -38,7 +39,8 @@ import { showSnackbar } from "_store/snackbar.slice";
 
 import { hiringManagerActions } from "_store/dropDownHiringManager.slice";
 import { use, useRef } from "react";
-
+import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
+import axios from "axios";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -56,6 +58,9 @@ export function ScheduleInterview({ fromDashboard }) {
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
   const [hiringManagerId, setHiringManagerId] = useState(Number(localStorage.getItem("userId")));
+  const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState("");
+  const [offerUploadLoading, setOfferUploadLoading] = useState(false);
 
   const views = {
     month: true,
@@ -589,6 +594,103 @@ export function ScheduleInterview({ fromDashboard }) {
     hiringManagerIdRef.current = hiringManagerId;
   }, [hiringManagerId]);
 
+  const onAcceptClick = async (row) => {
+    // if (row.iscustomeroffered === true) {
+    //   dispatch(showSnackbar({
+    //     message: GENERAL_MESSAGES.OFFER_ALREADY_SENT,
+    //   }));
+    //   return; // Stop further processing if offer is already sent
+    // }
+    //Enable upload offer modal from here
+    let response = await dispatch(getJobDetail({ jobId: Number(row.jobid) }));
+    if (response?.payload?.statusCode === 200) {
+      row = { ...row, jobPaymentBenefitDtos: response?.payload?.data?.jobPaymentBenefitDtos };
+    } else if (response?.payload?.data?.length > 0) {
+    }
+    setSelectedRowData(row);
+    setShowUploadOfferModal(true);
+    onCloseIdModal();
+  };
+  const onUploadOfferDoc = (
+    file,
+    startdate,
+    pay,
+    finaloffer,
+    payType,
+    selectedTemplate,
+    generatedHtml
+  ) => {
+    setOfferUploadLoading(true);
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+    form.append(
+      "Candidaterecommendedjobid",
+      selectedRowData.candidaterecommendedjobid
+    );
+    form.append("Offerfile", file[0]);
+    form.append(
+      "CurrentUserId",
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+    form.append("Isfinaloffer", finaloffer);
+    form.append("Salary", pay);
+    form.append("Payperiodtype", payType);
+    form.append(
+      "Startdate",
+      moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
+    );
+    if (selectedTemplate && generatedHtml) {
+      form.append("Offerlettertemplateid", selectedTemplate);
+      form.append("Offerlettertemplatefinaltext", generatedHtml);
+    }
+    axios
+      .post(
+        `${process.env.REACT_APP_PANTHER_URL}/api/JobOffer/MakeJobOffer`,
+        form,
+        config
+      )
+      .then((result) => {
+        setOfferUploadLoading(false);
+        if (result.data.statusCode === 200) {
+          setShowUploadOfferModal(false);
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+          //props.updateList();
+        } else {
+          dispatch(showSnackbar({
+            message: result.data.message || result.data.status,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+        }
+      })
+      .catch((error) => {
+        setOfferUploadLoading(false);
+      });
+  };
+
+  const onOfferUploading = (data) => {
+    setOfferUploadLoading(data);
+  };
+
   return (
     <>
       <PageTitle heading="Calendar" icon={titlelogo} />
@@ -964,6 +1066,7 @@ export function ScheduleInterview({ fromDashboard }) {
           acceptInterview={(e) => acceptScheduleData(e)}
           rejectInterview={(e) => rejectScheduleData(e)}
           postFeedbackData={(e) => postFeedbackData(e)}
+          onAcceptClick={() => onAcceptClick(popupData)}
         />
         <UpdateScheduleInterviewModal
           interviewData={popupData}
@@ -982,6 +1085,38 @@ export function ScheduleInterview({ fromDashboard }) {
           onConfirm={(e) => setUpdateSuccess(false)}
         ></SweetAlert>
       )}
+      <>
+        {showUploadOfferModal ? (
+          <CustomerUploadOffer
+            isOpen={showUploadOfferModal}
+            onClose={() => setShowUploadOfferModal(false)}
+            uploadOfferDoc={(
+              file,
+              startdate,
+              pay,
+              finaloffer,
+              payType,
+              selectedTemplate,
+              generatedHtml
+            ) =>
+              onUploadOfferDoc(
+                file,
+                startdate,
+                pay,
+                finaloffer,
+                payType,
+                selectedTemplate,
+                generatedHtml
+              )
+            }
+            loading={offerUploadLoading}
+            updateLoading={(data) => onOfferUploading(data)}
+            data={selectedRowData}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }
