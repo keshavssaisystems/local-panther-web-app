@@ -17,6 +17,7 @@ export function InterviewDetailsModal({
   rejectInterview,
   fromCustList, // for customer list
   postFeedbackData,
+  onAcceptClick
 }) {
   const [modal, setModal] = useState(false);
 
@@ -50,6 +51,7 @@ export function InterviewDetailsModal({
             fromCustList={fromCustList}
             toggle={toggle}
             postFeedbackData={(e) => postFeedbackData(e)}
+            onAcceptClick={() => onAcceptClick(interviewDetail)}
           />
         </ModalBody>
       </Modal>
