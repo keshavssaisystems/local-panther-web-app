@@ -25,6 +25,7 @@ import {
   customerCandidateListsActions,
   scheduleInterviewActions,
   graphActions,
+  getJobDetail,
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -57,6 +58,9 @@ export function ScheduleInterview({ fromDashboard }) {
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
   const [hiringManagerId, setHiringManagerId] = useState(Number(localStorage.getItem("userId")));
+  const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState("");
+  const [offerUploadLoading, setOfferUploadLoading] = useState(false);
 
   const views = {
     month: true,
@@ -589,14 +593,23 @@ export function ScheduleInterview({ fromDashboard }) {
   useEffect(() => {
     hiringManagerIdRef.current = hiringManagerId;
   }, [hiringManagerId]);
-  const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
-  const [selectedRowData, setSelectedRowData] = useState("");
 
-  const [offerUploadLoading, setOfferUploadLoading] = useState(false);
   const onAcceptClick = async (row) => {
+    // if (row.iscustomeroffered === true) {
+    //   dispatch(showSnackbar({
+    //     message: GENERAL_MESSAGES.OFFER_ALREADY_SENT,
+    //   }));
+    //   return; // Stop further processing if offer is already sent
+    // }
     //Enable upload offer modal from here
+    let response = await dispatch(getJobDetail({ jobId: Number(row.jobid) }));
+    if (response?.payload?.statusCode === 200) {
+      row = { ...row, jobPaymentBenefitDtos: response?.payload?.data?.jobPaymentBenefitDtos };
+    } else if (response?.payload?.data?.length > 0) {
+    }
     setSelectedRowData(row);
     setShowUploadOfferModal(true);
+    onCloseIdModal();
   };
   const onUploadOfferDoc = (
     file,
