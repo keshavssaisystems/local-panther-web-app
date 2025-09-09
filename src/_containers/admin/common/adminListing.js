@@ -39,7 +39,7 @@ import { analytics } from "../../../firebase/index";
 import { getCustomerDropdownList } from "_store";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+import { PaymentModal } from "_components/modal/paymentmodal";
 export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
 
@@ -100,16 +100,16 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       sortable: true,
     },
     {
-      name: "First name",
-      id: "firstName",
-      selector: (row) => row.firstname,
+      name: "User name",
+      id: "userName",
+      selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
-    {
-      name: "Last name",
-      selector: (row) => row.lastname,
-      sortable: true,
-    },
+    // {
+    //   name: "Last name",
+    //   selector: (row) => row.lastname,
+    //   sortable: true,
+    // },
 
     {
       name: "Email",
@@ -146,6 +146,87 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       selector: (row) =>
         row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
       sortable: true,
+    },
+
+    {
+      name: "Company admin",
+      id: "admin",
+      selector: (row) => (
+        <>
+          {<>
+            <div
+              title="Make company admin"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+            // onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isvisibletoothers,
+                  "switch-off": !row.isvisibletoothers,
+                })}
+                size="sm"
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
+    {
+      name: "Visibility",
+      id: "visibility",
+      selector: (row) => (
+        <>
+          {<>
+            <div
+              title="Active/Inactive visibility"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+            // onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isvisibletoothers,
+                  "switch-off": !row.isvisibletoothers,
+                })}
+                size="sm"
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
+
+    {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button color="link" onClick={() => onViewBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
     },
     {
       name: "Action",
@@ -225,7 +306,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       ),
       sortable: false,
       minWidth: "200px",
-    },
+    }
   ];
 
   useEffect(() => {
@@ -632,6 +713,24 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     setLoading(false);
   };
 
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+   // getCustomerDetails(pageSize, pageNo);
+    setSelectedCustomer([]);
+  };
+
   return (
     <>
       <Row>
@@ -914,6 +1013,17 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
           </SweetAlert>
         )}
       </div>
+
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 }
