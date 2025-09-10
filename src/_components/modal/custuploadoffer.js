@@ -205,8 +205,6 @@ export const CustomerUploadOffer = (props) => {
         (props?.data?.cityname ? props?.data?.cityname : "") +
         (props?.data?.statename ? ", " + props?.data?.statename : ""),
       cityStateZip:
-        (props?.data?.cityname ? props?.data?.cityname : "") +
-        (props?.data?.statename ? ", " + props?.data?.statename : "") +
         (props?.data?.zipcode ? ", " + props?.data?.zipcode : ""),
       candidateFirstName: props.data.firstname ? props.data.firstname : props.data?.candidatename?.split(" ")[0],
       companyName: props.data.companyname,
