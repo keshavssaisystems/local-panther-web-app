@@ -40,6 +40,12 @@ import { getCustomerDropdownList } from "_store";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { PaymentModal } from "_components/modal/paymentmodal";
+import {
+  getCustomers,
+  verifyCustomer,
+  updateIsVisibleToOthersById
+} from "_containers/admin/_redux/adminListing.slice";
+
 export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
 
@@ -191,7 +197,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
               data-on-label="ON"
               data-off-label="OFF"
               style={{ verticalAlign: "bottom", cursor: "pointer" }}
-            // onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
+              onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
             >
               <div
                 className={cx("switch-animate", {
@@ -727,9 +733,60 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
 
   const onCloseBDModal = () => {
     setOpenBDModal(false);
-   // getCustomerDetails(pageSize, pageNo);
+    // getCustomerDetails(pageSize, pageNo);
     setSelectedCustomer([]);
   };
+
+
+  const toggleVisibility = async function (value, row) {
+    let response = await dispatch(updateIsVisibleToOthersById(row.customerid));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getUsersList();
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const updateCompanyAdmin = async function (value, row) {
+    let response = await dispatch(updateIsVisibleToOthersById(row.userid));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getUsersList();
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
 
   return (
     <>
