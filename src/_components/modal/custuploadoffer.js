@@ -204,10 +204,8 @@ export const CustomerUploadOffer = (props) => {
       candidateAddress:
         (props?.data?.cityname ? props?.data?.cityname : "") +
         (props?.data?.statename ? ", " + props?.data?.statename : ""),
-      cityStateZip:
-        (props?.data?.cityname ? props?.data?.cityname : "") +
-        (props?.data?.statename ? ", " + props?.data?.statename : "") +
-        (props?.data?.zipcode ? ", " + props?.data?.zipcode : ""),
+      cityStateZip:        
+        (props?.data?.zipcode ? ", " + props?.data?.zipcode : " "),
       candidateFirstName: props.data.firstname,
       companyName: props.data.companyname,
       jobTitle: props.data.jobtitle,
