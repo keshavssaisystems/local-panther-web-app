@@ -259,6 +259,13 @@ export const updateIsVisibleToOthersById = createAsyncThunk(
   }
 );
 
+export const updateIsCompanyAdminByUserId = createAsyncThunk(
+  `${name}/updateIsCompanyAdminByUserId`,
+  async (userid) => {
+    const PUT_VISIBILITY_STATS = `${baseUrl}/User/InCompanyAdmin/${userid}`;
+    return await fetchWrapper.put(PUT_VISIBILITY_STATS);
+  }
+);
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -649,7 +656,18 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
-  },
+    [updateIsCompanyAdminByUserId.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateIsCompanyAdminByUserId.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateIsCompanyAdminByUserId.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    }
+  }
 });
 
 // Export the actions and reducer
@@ -682,7 +700,9 @@ export const adminListingActions = {
   getAdmCandidateList,
   sendEmailInvitation,
   admAddCandidate,
-  updateIsVisibleToOthersById
+  updateIsVisibleToOthersById,
+  updateIsCompanyAdminByUserId,
+
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

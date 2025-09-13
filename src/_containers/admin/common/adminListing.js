@@ -43,7 +43,8 @@ import { PaymentModal } from "_components/modal/paymentmodal";
 import {
   getCustomers,
   verifyCustomer,
-  updateIsVisibleToOthersById
+  updateIsVisibleToOthersById,
+  updateIsCompanyAdminByUserId
 } from "_containers/admin/_redux/adminListing.slice";
 
 export default function AdminListing({ entity, isCompanyAdmin = false }) {
@@ -158,6 +159,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       name: "Company admin",
       id: "admin",
       selector: (row) => (
+
         <>
           {<>
             <div
@@ -165,15 +167,20 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
               className="switch has-switch  me-2"
               data-on-label="ON"
               data-off-label="OFF"
-              style={{ verticalAlign: "bottom", cursor: "pointer" }}
-            // onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
+              style={{
+                verticalAlign: "bottom",
+                opacity: row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "0.5" : "1",
+                cursor: row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "pointer" : "not-allowed",
+              }}
+              onClick={() => row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) && toggleCompanyAdmin(!row.iscompanyadmin, row)}
             >
               <div
                 className={cx("switch-animate", {
-                  "switch-on": row.isvisibletoothers,
-                  "switch-off": !row.isvisibletoothers,
+                  "switch-on": row.iscompanyadmin,
+                  "switch-off": !row.iscompanyadmin,
                 })}
                 size="sm"
+                disabled={row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId)}
               >
                 <input type="checkbox" />
                 <span className="switch-left">ON</span>
@@ -763,8 +770,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     }
   }
 
-  const updateCompanyAdmin = async function (value, row) {
-    let response = await dispatch(updateIsVisibleToOthersById(row.userid));
+  const toggleCompanyAdmin = async function (value, row) {
+    let response = await dispatch(updateIsCompanyAdminByUserId(row.userId));
     if (response?.payload) {
       dispatch(showSnackbar({
         message: response?.payload?.message,
