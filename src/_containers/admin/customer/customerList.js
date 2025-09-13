@@ -308,7 +308,7 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
         <>
           {<>
             <div
-              title="Active/Inactive user"
+              title="Active/Inactive visibility"
               className="switch has-switch  me-2"
               data-on-label="ON"
               data-off-label="OFF"
