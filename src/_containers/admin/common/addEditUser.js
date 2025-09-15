@@ -22,7 +22,7 @@ export const AddEditUser = (props) => {
   const dispatch = useDispatch();
   const rolesList = useSelector((state) => state.adminListing.rolesList);
   console.log(rolesList);
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   /*
   companyid

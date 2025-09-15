@@ -720,7 +720,7 @@ export function PersonalInformation(props) {
 
     axios
       .put(
-        `${process.env.REACT_APP_PANTHER_URL}/api/User/UpdateProfilePhoto/` +
+        `${process.env.REACT_APP_MAIN_API_URL}/api/User/UpdateProfilePhoto/` +
         userDetails.UserId,
         form,
         config

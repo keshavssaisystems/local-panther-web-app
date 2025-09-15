@@ -58,7 +58,7 @@ export function ResumeDetails(props) {
   const [selectedFile, setSelectedFile] = useState();
   const [showUpload, setShowUpload] = useState(true);
 
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
 
   useEffect(() => {
     getFileName();

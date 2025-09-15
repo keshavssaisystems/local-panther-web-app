@@ -3,11 +3,12 @@ import { fetchWrapper } from "_helpers";
 
 // create slice name
 const name = "chat";
-const userId = Number(localStorage.getItem("userId"));
+
 // getCustomerListThunk thunk
 export const getCustomerListThunk = createAsyncThunk(
   `${name}/getCustomerListThunk`,
   async () => {
+    let userId = Number(localStorage.getItem("userId"));
     const CUSTOMER_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=ScheduledCustomerListByUserId&commonId=${userId}`;
     return await fetchWrapper.get(CUSTOMER_LIST);
   }
@@ -17,6 +18,7 @@ export const getCustomerListThunk = createAsyncThunk(
 export const getCandidateListThunk = createAsyncThunk(
   `${name}/getCandidateListThunk`,
   async () => {
+    let userId = Number(localStorage.getItem("userId"));
     const CANDIDATE_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=ScheduledCandidateListByUserId&commonId=${userId}`;
     return await fetchWrapper.get(CANDIDATE_LIST);
   }
@@ -26,6 +28,7 @@ export const getCandidateListThunk = createAsyncThunk(
 export const getCompletedCustomerListThunk = createAsyncThunk(
   `${name}/getCompletedCustomerListThunk`,
   async () => {
+    let userId = Number(localStorage.getItem("userId"));
     const CUSTOMER_LIST = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=GetCompletedInterviewCustomerList&commonId=${userId}`;
     return await fetchWrapper.get(CUSTOMER_LIST);
   }
@@ -44,6 +47,7 @@ const chatSlice = createSlice({
   extraReducers: {
     [getCustomerListThunk.pending]: (state) => {
       state.loading = true;
+      state.customerList = [];
     },
     [getCustomerListThunk.fulfilled]: (state, action) => {
       state.customerList = action.payload.data;
@@ -55,6 +59,7 @@ const chatSlice = createSlice({
     },
     [getCandidateListThunk.pending]: (state) => {
       state.loading = true;
+      state.candidateList = [];
     },
     [getCandidateListThunk.fulfilled]: (state, action) => {
       state.candidateList = action.payload.data;
