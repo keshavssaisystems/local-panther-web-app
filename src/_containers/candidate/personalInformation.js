@@ -386,9 +386,9 @@ export function PersonalInformation(props) {
         new_data.email === "" ||
         new_data.cityid == 0 ||
         new_data.employmenteligiblity === 0 ||
-        new_data.zipcode === "" ||
-        new_data.gender?.[0]?.value == 0 ||
-        new_data.ethinicity?.[0]?.value == 0
+        new_data.zipcode === ""
+        // || new_data.gender?.[0]?.value == 0 ||
+        // new_data.ethinicity?.[0]?.value == 0
       ) {
         return;
       }
@@ -1338,7 +1338,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Gender <span className="required-icon">*</span>
+                          Gender
                         </Label>
 
                         <AsyncSelect
@@ -1348,16 +1348,20 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={genderSelect}
                           onChange={(evt) => onSelectGenderDropdown(evt)}
-                          className={`placeholder-name ${save && getResponse?.gender?.[0]?.value == 0
+                          className="placeholder-name"
+                        />
+                        {/* 
+                        
+                        className={`placeholder-name ${save && getResponse?.gender?.[0]?.value == 0
                             ? "async-border-red"
                             : ""
                             }`}
-                        />
+                            
                         <div className="error-class">
                           {save && getResponse?.gender?.[0]?.value == 0
                             ? "Gender is required"
                             : ""}
-                        </div>
+                        </div> */}
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1365,7 +1369,7 @@ export function PersonalInformation(props) {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="race" className="fw-semi-bold">
-                          Race/Etnicity <span className="required-icon">*</span>
+                          Race/Etnicity
                         </Label>
                         <AsyncSelect
                           name="race"
@@ -1374,16 +1378,13 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={raceSelect}
                           onChange={(evt) => onSelectRaceDropdown(evt)}
-                          className={`placeholder-name ${save && getResponse?.ethinicity?.[0]?.value == 0
-                            ? "async-border-red"
-                            : ""
-                            }`}
+                          className="placeholder-name"
                         />
-                        <div className="error-class">
+                        {/* <div className="error-class">
                           {save && getResponse?.ethinicity?.[0]?.value == 0
                             ? "Race/Ethnicity is required"
                             : ""}
-                        </div>
+                        </div> */}
                       </FormGroup>
                     </Col>
 
@@ -1453,7 +1454,7 @@ export function PersonalInformation(props) {
                     <Col md={4}>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Availability to work
+                          Availability to start
                         </Label>
                         <AsyncSelect
                           name="distance"
