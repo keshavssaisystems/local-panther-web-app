@@ -56,7 +56,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     icon,
     columns = [];
   const [customerId, setCustomerId] = useState("");
-
+  const [deactivateConfirm, setDeactivateConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
   const { customerList = [] } = useSelector(
     (state) => state.adminReportReducer
   );
@@ -172,7 +173,9 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                 opacity: row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "0.5" : "1",
                 cursor: row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "pointer" : "not-allowed",
               }}
-              onClick={() => row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) && toggleCompanyAdmin(!row.iscompanyadmin, row)}
+              //() => toggleCompanyAdmin()
+              onClick={() => row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId)
+                && openConfirmationModal(`you want to ${!row.iscompanyadmin ? "make" : "remove"} this user as company admin?`, 'CompanyAdmin', !row.iscompanyadmin, row)}
             >
               <div
                 className={cx("switch-animate", {
@@ -204,7 +207,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
               data-on-label="ON"
               data-off-label="OFF"
               style={{ verticalAlign: "bottom", cursor: "pointer" }}
-              onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
+              onClick={() => openConfirmationModal(`you want to ${!row.isvisibletoothers ? "enable" : "disable"} visibility for this user?`, 'Visibility', !row.isvisibletoothers, row)}
             >
               <div
                 className={cx("switch-animate", {
@@ -795,6 +798,33 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     }
   }
 
+  const [actionType, setActionType] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const openConfirmationModal = (message, actionType, isActive, row) => {
+    setConfirmMessage(message);
+    setDeactivateConfirm(true);
+    setSelectedRowData(row);
+    setActionType(actionType);
+    setSelectedValue(isActive);
+  }
+
+  const handleConfirmationClose = (status) => {
+    setDeactivateConfirm(false);
+    if (status) {
+      getUsersList();
+    }
+  };
+  const confirmationAction = () => {
+    if (actionType === 'CompanyAdmin') {
+      toggleCompanyAdmin(selectedValue, selectedRowData);
+    }
+    else if (actionType === 'Visibility') {
+      toggleVisibility(selectedValue, selectedRowData);
+    }
+    setDeactivateConfirm(false);
+  }
+
   return (
     <>
       <Row>
@@ -1088,6 +1118,44 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       ) : (
         <></>
       )}
+
+      <Modal size="md" isOpen={deactivateConfirm}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              {confirmMessage}
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    style={{ background: "#2f479b", borderColor: "#2f479b" }}
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => confirmationAction()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    style={{ background: "#2f2e2e", borderColor: "#2f2e2e" }}
+                    className="success-close-btn"
+                    onClick={(evt) => setDeactivateConfirm(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
     </>
   );
 }
