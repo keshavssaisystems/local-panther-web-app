@@ -31,6 +31,15 @@ export function ChatInterface() {
   const getCustomerList = async function () {
     await dispatch(chatActions.getCustomerListThunk());
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (userRole !== 2) getCustomerList();
+    }, 30000); // 30000 ms = 30 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
   const newChatUserList = useSelector((state) => state.chat.candidateList);
   const newChatUserCustomerList = useSelector(
     (state) => state.chat.customerList
