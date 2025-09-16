@@ -35,7 +35,7 @@ import debounce from "lodash/debounce";
 import "./payment.scss";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CARD_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+// import Squarepayment from "src/_containers/square-payment/squarepayment";
 export const PaymentDetails = ({
   isAdmin = false,
   selectedCustomer = {},
@@ -1000,6 +1000,8 @@ export const PaymentDetails = ({
             height={22}
           ></img>
         </Col>
+
+
         <Row>
           <Col xs={12} sm={12} md={12} lg={6} xl={4} xxl={4}>
             <FormGroup>

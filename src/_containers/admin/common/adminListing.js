@@ -39,6 +39,13 @@ import { analytics } from "../../../firebase/index";
 import { getCustomerDropdownList } from "_store";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { PaymentModal } from "_components/modal/paymentmodal";
+import {
+  getCustomers,
+  verifyCustomer,
+  updateIsVisibleToOthersById,
+  updateIsCompanyAdminByUserId
+} from "_containers/admin/_redux/adminListing.slice";
 
 export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
@@ -49,7 +56,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     icon,
     columns = [];
   const [customerId, setCustomerId] = useState("");
-
+  const [deactivateConfirm, setDeactivateConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
   const { customerList = [] } = useSelector(
     (state) => state.adminReportReducer
   );
@@ -100,16 +108,16 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       sortable: true,
     },
     {
-      name: "First name",
-      id: "firstName",
-      selector: (row) => row.firstname,
+      name: "User name",
+      id: "userName",
+      selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
-    {
-      name: "Last name",
-      selector: (row) => row.lastname,
-      sortable: true,
-    },
+    // {
+    //   name: "Last name",
+    //   selector: (row) => row.lastname,
+    //   sortable: true,
+    // },
 
     {
       name: "Email",
@@ -146,6 +154,95 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       selector: (row) =>
         row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
       sortable: true,
+    },
+
+    {
+      name: "Company admin",
+      id: "admin",
+      selector: (row) => (
+
+        <>
+          {<>
+            <div
+              title="Make company admin"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{
+                verticalAlign: "bottom",
+                opacity: row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "0.5" : "1",
+                cursor: row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "pointer" : "not-allowed",
+              }}
+              //() => toggleCompanyAdmin()
+              onClick={() => row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId)
+                && openConfirmationModal(`you want to ${!row.iscompanyadmin ? "make" : "remove"} this user as company admin?`, 'CompanyAdmin', !row.iscompanyadmin, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.iscompanyadmin,
+                  "switch-off": !row.iscompanyadmin,
+                })}
+                size="sm"
+                disabled={row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId)}
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
+    {
+      name: "Visibility",
+      id: "visibility",
+      selector: (row) => (
+        <>
+          {<>
+            <div
+              title="Active/Inactive visibility"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+              onClick={() => openConfirmationModal(`you want to ${!row.isvisibletoothers ? "enable" : "disable"} visibility for this user?`, 'Visibility', !row.isvisibletoothers, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isvisibletoothers,
+                  "switch-off": !row.isvisibletoothers,
+                })}
+                size="sm"
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
+
+    {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button color="link" onClick={() => onViewBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
     },
     {
       name: "Action",
@@ -225,7 +322,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
       ),
       sortable: false,
       minWidth: "200px",
-    },
+    }
   ];
 
   useEffect(() => {
@@ -632,6 +729,102 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     setLoading(false);
   };
 
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    // getCustomerDetails(pageSize, pageNo);
+    setSelectedCustomer([]);
+  };
+
+
+  const toggleVisibility = async function (value, row) {
+    let response = await dispatch(updateIsVisibleToOthersById(row.customerid));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getUsersList();
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const toggleCompanyAdmin = async function (value, row) {
+    let response = await dispatch(updateIsCompanyAdminByUserId(row.userId));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getUsersList();
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const [actionType, setActionType] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const openConfirmationModal = (message, actionType, isActive, row) => {
+    setConfirmMessage(message);
+    setDeactivateConfirm(true);
+    setSelectedRowData(row);
+    setActionType(actionType);
+    setSelectedValue(isActive);
+  }
+
+  const handleConfirmationClose = (status) => {
+    setDeactivateConfirm(false);
+    if (status) {
+      getUsersList();
+    }
+  };
+  const confirmationAction = () => {
+    if (actionType === 'CompanyAdmin') {
+      toggleCompanyAdmin(selectedValue, selectedRowData);
+    }
+    else if (actionType === 'Visibility') {
+      toggleVisibility(selectedValue, selectedRowData);
+    }
+    setDeactivateConfirm(false);
+  }
+
   return (
     <>
       <Row>
@@ -914,6 +1107,55 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
           </SweetAlert>
         )}
       </div>
+
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
+      )}
+
+      <Modal size="md" isOpen={deactivateConfirm}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              {confirmMessage}
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    style={{ background: "#2f479b", borderColor: "#2f479b" }}
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => confirmationAction()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    style={{ background: "#2f2e2e", borderColor: "#2f2e2e" }}
+                    className="success-close-btn"
+                    onClick={(evt) => setDeactivateConfirm(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
     </>
   );
 }
