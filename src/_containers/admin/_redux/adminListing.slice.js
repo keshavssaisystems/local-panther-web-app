@@ -12,7 +12,7 @@ import { fetchWrapper } from "_helpers";
 
 // create slice name
 const name = "adminListing";
-const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
 
 const urlParams = {
   isActive: true,

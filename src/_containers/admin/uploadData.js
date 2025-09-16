@@ -35,7 +35,7 @@ export function UploadData(props) {
 
   const [acceptedFile, setAcceptedFiles] = useState([]);
 
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
 
   const uploadFile = async function () {
     setLoader(true);
