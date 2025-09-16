@@ -91,7 +91,7 @@ const initialState = {
 export const getCandidate = createAsyncThunk(
   "candidate/getCandidate",
   async (candidateid) => {
-    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Candidate/GetCandidateById/${candidateid}`
     );
@@ -151,7 +151,7 @@ export const getAvailability = createAsyncThunk(
 export const updateProfileImage = createAsyncThunk(
   "candidate/getCandidate",
   async (candidateid) => {
-    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Candidate/GetCandidateById/${candidateid}`
     );
@@ -174,7 +174,7 @@ export const getCandidateHistory = createAsyncThunk(
   `candidate/getCandidateHistory`,
 
   async (candidateId) => {
-    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Report/GetReportBySP?storedProcedure=Report_CandidateRecommendedJob_Event_History&parameter=${candidateId}`
     );

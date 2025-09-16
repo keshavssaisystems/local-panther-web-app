@@ -152,7 +152,7 @@ export function JobPreferences(props) {
     );
 
     axios
-      .post(`${process.env.REACT_APP_PANTHER_URL}/PostResume`, form, config)
+      .post(`${process.env.REACT_APP_MAIN_API_URL}/PostResume`, form, config)
       .then((result) => {
         if (result.data) {
           if (result.data.status === "Success") {

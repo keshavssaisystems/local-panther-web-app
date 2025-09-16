@@ -79,7 +79,7 @@ export const AddEditCompany = (props) => {
 
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
   const authData = localStorage.getItem("token")
     ? localStorage.getItem("token")
     : "";

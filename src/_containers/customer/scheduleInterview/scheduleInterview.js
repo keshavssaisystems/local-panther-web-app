@@ -654,7 +654,7 @@ export function ScheduleInterview({ fromDashboard }) {
     }
     axios
       .post(
-        `${process.env.REACT_APP_PANTHER_URL}/api/JobOffer/MakeJobOffer`,
+        `${process.env.REACT_APP_MAIN_API_URL}/api/JobOffer/MakeJobOffer`,
         form,
         config
       )

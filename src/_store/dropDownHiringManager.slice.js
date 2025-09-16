@@ -9,7 +9,7 @@ const initialState = {
 
 // Define the async action
 export const getHiringManager = createAsyncThunk("hiringManager/getHiringManager", async (companyIdId) => {
-    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     return await fetchWrapper.get(
         `${baseUrl}/Common/GetCommonDropdown?searchText=userListByCompany&commonId=${companyIdId}`
     );

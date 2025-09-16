@@ -623,7 +623,7 @@ export default function CandidateList(props) {
 
           const res = await axios
             .post(
-              `${process.env.REACT_APP_PANTHER_URL}/api/JobCandidatePrescreenApplication/CandidatePrecreenAnswerFileUpload`,
+              `${process.env.REACT_APP_MAIN_API_URL}/api/JobCandidatePrescreenApplication/CandidatePrecreenAnswerFileUpload`,
               form,
               config
             )
