@@ -42,6 +42,7 @@ import { CustJobDetailModal } from "_components/modal/custjobdetailmodal";
 import { analytics } from "../../../firebase/index";
 import { getCustomers } from "_containers/admin/_redux/adminListing.slice";
 import "./adminreports.scss";
+import { pageSize } from "_helpers/constants";
 
 export function OpenJobs({ title, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
@@ -52,6 +53,7 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     loading = false,
     jobDetail = [],
     subsidiaryList = [],
+    totalOpenJobs = 0,
   } = useSelector((state) => state?.adminReportReducer ?? {});
   const customersList = useSelector(
     (state) => state?.adminListing?.customersList
@@ -71,7 +73,9 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
 
   const [excelData, setExcelData] = useState([]);
   const [showJDModal, setShowJDModal] = useState(false);
-
+  const [perPage, setPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  // const totalRows = useSelector((state) => state?.adminReportReducer?.totalOpenJobs ?? 0);
   useEffect(() => {
     if (isCompanyAdmin) {
       let userDetails = localStorage.getItem("userDetails")
@@ -137,11 +141,13 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
         ...filter,
         [name]: value,
         ["subsidiaryid"]: "",
+        pageNumber: 1,
       });
     } else {
       setFilter({
         ...filter,
         [name]: value,
+        pageNumber: 1,
       });
     }
   };
@@ -150,6 +156,7 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     setFilter({
       ...filter,
       [name]: moment(value).format("YYYY-MM-DD"),
+      pageNumber: 1,
     });
   };
 
@@ -158,6 +165,7 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     setFilter({
       ...filter,
       [name]: value,
+      pageNumber: 1,
     });
   };
 
@@ -166,15 +174,49 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     setFilter({
       ...filter,
       [name]: value,
+      pageNumber: 1,
     });
   };
 
+  const handlePageChange = (page) => {
+    setFilter({
+      ...filter,
+      ["pageNumber"]: page,
+    });
+    setCurrentPage(page);
+    { }
+    let data = { ...filter };
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails") ? JSON.parse(localStorage.getItem("userDetails")) : {};     
+      data.companyId = Number(userDetails.CompanyId);
+    }
+    data.pageNumber = page;
+    dispatch(openJobsThunk(data));
+  }
+
+  const handleRowsPerPageChange = (newPerPage, page) => {
+    const updatedFilter = {
+      ...filter,
+      pageNumber: page,
+      pageSize: newPerPage,
+    };
+      if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails") ? JSON.parse(localStorage.getItem("userDetails")) : {};     
+      updatedFilter.companyId = Number(userDetails.CompanyId);
+    }
+    setPerPage(newPerPage);
+    setFilter(updatedFilter);
+    dispatch(openJobsThunk(updatedFilter));
+  };
+
   const applyFilter = () => {
+    setCurrentPage(1);
+    setFilter({ ...filter, pageNumber: 1 });
     if (isCompanyAdmin) {
       let userDetails = localStorage.getItem("userDetails")
         ? JSON.parse(localStorage.getItem("userDetails"))
         : {};
-      let data = { ...filter };
+      let data = { ...filter, pageNumber: 1, pageSize: perPage };
       data.companyId = Number(userDetails.CompanyId);
       dispatch(openJobsThunk(data));
     } else {
@@ -186,12 +228,14 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
     setFilter({});
     setStartDate(null);
     setEndDate(null);
-    setCompany([]);
+   
     setSkill([]);
     setLocation([]);
     setSubsidiaryId("");
     setCustomer("");
     setJobStatus("");
+    setCurrentPage(1);
+    setPerPage(10);
     if (isCompanyAdmin) {
       let userDetails = localStorage.getItem("userDetails")
         ? JSON.parse(localStorage.getItem("userDetails"))
@@ -199,6 +243,7 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
 
       dispatch(openJobsThunk({ companyId: Number(userDetails.CompanyId) }));
     } else {
+       setCompany([]);
       dispatch(openJobsThunk());
     }
   };
@@ -680,10 +725,10 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
                       <FormGroup>
                         <Input
                           type="select"
-                          name="customer"
+                          name="customerId"
                           value={customer}
                           onChange={(e) =>
-                            handleEmployerChange("customer", e.target.value)
+                            handleEmployerChange("customerId", e.target.value)
                           }
                         >
                           <option value={0}>All Employees</option>
@@ -753,8 +798,14 @@ export function OpenJobs({ title, isCompanyAdmin = false }) {
                     <DataTable
                       columns={columns}
                       data={data}
+                      paginationPerPage={perPage}
+                      paginationDefaultPage={currentPage}
                       fixedHeader
                       pagination
+                      paginationServer
+                      paginationTotalRows={totalOpenJobs}
+                      onChangePage={handlePageChange}
+                      onChangeRowsPerPage={handleRowsPerPageChange}
                       className="admin-list-view"
                     />
                   ) : (
