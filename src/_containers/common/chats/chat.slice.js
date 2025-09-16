@@ -71,6 +71,7 @@ const chatSlice = createSlice({
     },
     [getCompletedCustomerListThunk.pending]: (state) => {
       state.loading = true;
+      state.completedCustomerList = [];
     },
     [getCompletedCustomerListThunk.fulfilled]: (state, action) => {
       state.completedCustomerList = action.payload.data;

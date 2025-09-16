@@ -8,12 +8,19 @@
   }
 }
 
+@media screen and (min-width: 2000px) {
+  .app-footer .app-footer__inner {
+    padding-left: 26.5rem !important;
+  }
+}
+
 @include media-breakpoint-down(md) {
   .app-main {
     display: block;
   }
 
   .dropdown-menu {
+
     &::before,
     &::after {
       display: none;
@@ -62,7 +69,7 @@
           &.visible {
             padding: 0.5em 0 0 2rem;
 
-            & > .metismenu-item > .metismenu-link {
+            &>.metismenu-item>.metismenu-link {
               height: 2.3em;
             }
           }
@@ -134,7 +141,7 @@
           margin-top: 5px;
         }
 
-        & + .header-btn-lg {
+        &+.header-btn-lg {
           display: none;
         }
       }
@@ -164,8 +171,9 @@
 
     &.header-text-light {
       .app-header__menu {
-        & > span .btn,
-        & > .btn {
+
+        &>span .btn,
+        &>.btn {
           background: rgba(255, 255, 255, 0.1);
           border-color: rgba(255, 255, 255, 0.1);
         }
@@ -215,6 +223,7 @@
 
     .page-title-actions,
     .page-title-subheading {
+
       .breadcrumb-item,
       .breadcrumb {
         display: inline-block;
@@ -293,7 +302,7 @@
   }
 
   .tabs-lg-alternate.card-header {
-    & > .nav .nav-item {
+    &>.nav .nav-item {
       .widget-number {
         font-size: 1.5rem;
       }
@@ -306,6 +315,7 @@
 }
 
 @include media-breakpoint-between(xs, md) {
+
   .app-page-title .page-title-icon,
   .ui-theme-settings {
     display: none;
@@ -364,8 +374,7 @@
 
   .app-page-title {
     padding: math.div($grid-gutter-width, 2);
-    margin: (-(math.div($grid-gutter-width, 2)))
-      (-(math.div($grid-gutter-width, 2))) $grid-gutter-width;
+    margin: (-(math.div($grid-gutter-width, 2))) (-(math.div($grid-gutter-width, 2))) $grid-gutter-width;
   }
 
   .body-tabs.body-tabs-layout {
@@ -374,7 +383,7 @@
     padding: 0 math.div($grid-gutter-width, 2);
   }
 
-  .app-main .app-main__inner > .RRT__container > .RRT__panel {
+  .app-main .app-main__inner>.RRT__container>.RRT__panel {
     margin-top: math.div($grid-gutter-width, 2);
   }
 
@@ -406,9 +415,8 @@
         line-height: 1;
       }
 
-      & > .nav {
-        margin: math.div($layout-spacer-x, 2) 0
-          (-(math.div($layout-spacer-x, 2)));
+      &>.nav {
+        margin: math.div($layout-spacer-x, 2) 0 (-(math.div($layout-spacer-x, 2)));
         display: table !important;
         width: 100%;
 
