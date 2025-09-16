@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { yearActions, monthActions } from "_store";
-import { Row, Col, Alert } from "reactstrap";
+import { Row, Col, Alert, Button } from "reactstrap";
 import Loader from "react-loaders";
 import { useDispatch, useSelector } from "react-redux";
 import PageTitle from "../../_components/common/pagetitle";
@@ -35,6 +35,7 @@ import {
 } from "_store";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { analytics } from "../../firebase/index";
+import AIProfileOffCanvas from "_components/createProfileComponents/AIProfileOffCanvas";
 
 export function CandidateProfile() {
   const dispatch = useDispatch();
@@ -243,12 +244,12 @@ export function CandidateProfile() {
         profileData?.qualificationsInfo?.length === 0 ? false : true;
       sectionValidation.jobPreference =
         profileData?.jobPreferenceInfo?.length === 0 ||
-        profileData?.jobPreferenceInfo === null
+          profileData?.jobPreferenceInfo === null
           ? false
           : true;
       sectionValidation.employmentEligiblity =
         profileData?.personalInfo?.employmenteligiblity === null ||
-        profileData?.personalInfo?.employmenteligiblity === 0
+          profileData?.personalInfo?.employmenteligiblity === 0
           ? false
           : true;
       sectionValidation.employmentEligiblity === false
@@ -339,8 +340,23 @@ export function CandidateProfile() {
     setShowJopPrefPopup(false);
   };
 
+  const handleAIProfile = () => {
+    setShowAIProfile(true);
+    dispatch(getProfileActions.updateLoadAIProfileCanvas(true));
+  };
+  const [showAIProfile, setShowAIProfile] = useState(false);
   return (
     <div className="profile-view">
+      <div className="row profile-header" style={{ marginBottom: "20px" }}>
+        <div className="col-5">
+          <h4 className="profile-title">Profile</h4>
+        </div>
+        <div className="col-7 profile-summary">
+          <div className="float-end">
+            <Button type="button" className="me-2 save-btn btn btn-secondary" onClick={() => handleAIProfile()}>Update Profile with AI</Button>
+          </div>
+        </div>
+      </div>
       <div className="profile-view">
         {localStorage.getItem("publicip") ? (
           <></>
@@ -477,6 +493,9 @@ export function CandidateProfile() {
           <Loader active={true} type="line-scale-pulse-out-rapid" />
         </div>
       )}
+
+      {showAIProfile && <AIProfileOffCanvas
+      />}
     </div>
   );
 }
