@@ -370,12 +370,12 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                                 </div>
                             ) : (<>
                                 <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
-                                {aiResponse && aiResponse?.educations && (<EducationAIProfile aiResponse={aiResponse?.educations}></EducationAIProfile>)}
-                                <EducationModal
+                                {aiResponse && aiResponse?.EducationList && (<EducationAIProfile aiResponse={aiResponse?.EducationList}></EducationAIProfile>)}
+                                {/* <EducationModal
                                     onCallEducation={() => handlePageChange()}
                                     selected={selectedData}
                                     check={"add"}
-                                />
+                                /> */}
 
                             </>
                             )}
