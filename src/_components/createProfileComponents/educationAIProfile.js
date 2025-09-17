@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addLevelOfEducation, educationActions, addFieldOfStudy, studyFieldActions, } from "_store";
 
 export function EducationAIProfile(props) {
     let educationData = props?.aiResponse;
+    const dispatch = useDispatch();
+
+
+    const studyFieldList = useSelector((state) => state.getStudyField.studyFieldList);
+    const [countryList, setCountryList] = useState([]);
+    const [stateList, setStateList] = useState([]);
+    const [cityList, setCityList] = useState([]);
+    const [monthList, setMonthList] = useState(useSelector((state) => state.monthList.user.data));
+    const [yearList, setYearList] = useState(useSelector((state) => state.yearList.user.data));
+    const educationList = useSelector((state) => state.educationLevelReducer.educationList);
+    console.log("educationData", educationList);
     return (
         <div>
             <h5>Education</h5>
@@ -39,7 +52,11 @@ export function EducationAIProfile(props) {
                             <div className="col-md-6">
                                 <label>Level of education</label>
                                 <select className="form-control" defaultValue="Master">
-                                    <option>Master's Degree</option>
+                                    {educationList?.map((key, index) => (
+                                        <option key={index} value={key.value}>
+                                            {key.label}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="col-md-6">

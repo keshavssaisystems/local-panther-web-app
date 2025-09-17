@@ -15,7 +15,7 @@ import { set, update } from "lodash";
 import Spinner from "reactstrap/lib/Spinner";
 import axios from "axios";
 import { EducationAIProfile } from "./educationAIProfile";
-
+import { EducationModal } from "_containers/candidate/educationModal";
 export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(true);
@@ -322,6 +322,10 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         //     );
         // }
     }
+    const [selectedData, setSelectedData] = useState({});
+    const handlePageChange = () => {
+
+    };
 
     return (
         <div>
@@ -367,7 +371,11 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                             ) : (<>
                                 <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
                                 {aiResponse && aiResponse?.educations && (<EducationAIProfile aiResponse={aiResponse?.educations}></EducationAIProfile>)}
-
+                                <EducationModal
+                                    onCallEducation={() => handlePageChange()}
+                                    selected={selectedData}
+                                    check={"add"}
+                                />
 
                             </>
                             )}
