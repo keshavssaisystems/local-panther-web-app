@@ -15,7 +15,6 @@ import { set, update } from "lodash";
 import Spinner from "reactstrap/lib/Spinner";
 import axios from "axios";
 import { EducationAIProfile } from "./educationAIProfile";
-import { EducationModal } from "_containers/candidate/educationModal";
 export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(true);
@@ -26,7 +25,8 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const bottomRef = useRef(null);
     const [bottomHeight, setBottomHeight] = useState(156);
     const loadAIProfileCanvas = useSelector((state) => state.getProfile?.loadAIProfileCanvas);
-    const [aiResponse, setAIResponse] = useState([]);
+    const [aiResponse, setAIResponse] = useState({ EducationList: [] });
+    const [educationData, setEducationData] = useState([]);
     useEffect(() => {
         setIsOpen(loadAIProfileCanvas);
     }, [loadAIProfileCanvas]);
@@ -64,10 +64,10 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             .post(`${baseURI}/candidate_profile_update`, data, config)
             .then(async (result) => {
                 console.log("result", result);
-                if (result?.data?.job && result?.data?.job?.length > 0) {
+                if (result?.data?.Profile_data && result?.data?.Profile_data?.length > 0) {
+                    setEducationData(result?.data?.Profile_data[0]?.EducationList || []);
                     let html = generatedHtml;
-                    let newHtml = await getGeneratedHtml(result?.data?.job[0]);
-                    //     setLastJDOP(result?.data?.job[0]);
+                    let newHtml = await getGeneratedHtml(result?.data?.Profile_data[0]);
                     html += newHtml;
                     setGeneratedHtml(html);
                     setInput1("");
@@ -97,22 +97,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             text += error;
         }
         else if (data) {
-            let updatedData = "<b>"
             setAIResponse(data);
-            // if (data?.certifications) {
-            //     //+ data?.certifications;
-            //     updatedData += getCertifictateHTML(data);
-            // }
-            // // let updatedData = "<b> Certifications</b>";
-            // // console.log("data?.certifications", data?.certifications);
-            // updatedData = updatedData.replaceAll("Certifications:", "Certifications:</b>");
-            // updatedData = updatedData.replaceAll("\n\n", "<BR><BR><b>");
-            // //   let updatedJD = "<b>" + data?.job_description;
-            // //   updatedJD = updatedJD.replaceAll("Title:", "Title:</b>");
-            // //   updatedJD = updatedJD.replaceAll("\n\n", "<BR><BR><b>");
-            // //   updatedJD = updatedJD.replaceAll("\n", "</b><BR>");
-            // let htmlData = `<div class="desc-div">${updatedData}</div>`;
-            // text += htmlData;
         }
         return text;
     };
@@ -327,6 +312,12 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
 
     };
 
+    const submitProfileData = () => {
+        let updatedData = { ...aiResponse };
+        //updatedData.EducationList = educationData;
+        console.log("submitted data", updatedData);
+        // Call your API or update your state with the updatedData
+    };
     return (
         <div>
             <Offcanvas direction="end" isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}>
@@ -370,7 +361,16 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                                 </div>
                             ) : (<>
                                 <div dangerouslySetInnerHTML={{ __html: generatedHtml }} />
-                                {aiResponse && aiResponse?.EducationList && (<EducationAIProfile aiResponse={aiResponse?.EducationList}></EducationAIProfile>)}
+                                {aiResponse && aiResponse?.EducationList?.length > 0 && (
+                                    <EducationAIProfile educationData={aiResponse?.EducationList} //setEducationData={setAIResponse}
+                                        setEducationData={(newList) => {
+                                            console.log("newList", newList)
+                                            setAIResponse((prev) => ({ ...prev, EducationList: newList }))
+                                        }
+                                        }
+                                    >
+
+                                    </EducationAIProfile>)}
                                 {/* <EducationModal
                                     onCallEducation={() => handlePageChange()}
                                     selected={selectedData}
@@ -382,7 +382,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                         </div>
                         <div ref={bottomRef} style={{ width: "calc(100% - 24px)", textAlign: "center", }}>
                             <SpeechToTextInput setInput1={setInput1} input1={input1} handleUpdateData={() => handleUpdateData()} loadInput={loadInput} />
-                            <Button className="mt-2" color="primary">
+                            <Button className="mt-2" color="primary" onClick={() => submitProfileData()}>
                                 Use this draft and proceed
                             </Button>
                         </div>

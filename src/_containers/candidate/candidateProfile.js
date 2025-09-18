@@ -351,9 +351,11 @@ export function CandidateProfile() {
         <div className="col-5">
           <h4 className="profile-title">Profile</h4>
         </div>
+
         <div className="col-7 profile-summary">
           <div className="float-end">
             <Button type="button" className="me-2 save-btn btn btn-secondary" onClick={() => handleAIProfile()}>Update Profile with AI</Button>
+            {/* <AIProfileOffCanvas></AIProfileOffCanvas> */}
           </div>
         </div>
       </div>
