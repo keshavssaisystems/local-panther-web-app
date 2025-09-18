@@ -16,8 +16,8 @@ export const firebaseConfig = {
   measurementId: "G-K5T2MCQPGY",
 };
 const initApp = firebase.initializeApp(firebaseConfig);
-export const messaging = firebase.messaging.isSupported()
-  ? firebase.messaging()
+export const messaging = firebase?.messaging?.isSupported()
+  ? firebase?.messaging()
   : null;
 export const analytics = firebase.analytics(initApp);
 export const database = firebase.database();

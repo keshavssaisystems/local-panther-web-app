@@ -235,14 +235,19 @@ export function EmployerRegistration() {
         userroleid: 2,
       };
     }
-    const permission = await Notification.requestPermission();
+    let permission = "denied";
+      try {
+        if ('Notification' in window) {
+          permission = await Notification?.requestPermission();
+        }
+      } catch (e) { console.log(e) }
     let ipdata = await getPublicIP();
     if (ipdata?.ip) {
       localStorage.setItem("publicip", ipdata.ip);
     }
     if (permission === "granted") {
       // Generate Token
-      const token = await messaging.getToken({
+      const token = await messaging?.getToken({
         vapidKey:
           "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
       });
