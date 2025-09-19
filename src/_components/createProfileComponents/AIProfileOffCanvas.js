@@ -12,20 +12,20 @@ import { convertDateToYYYMMDD, extractDatePart, checkDateValidation, } from "_he
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { QualificationAIProfile } from "./qualificationAIProfile";
+import SkillAIProfile from "./skillAIProfile";
 
 export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(true);
     const [input1, setInput1] = useState("");
     const [loadInput, setLoadInput] = useState(false);
-    const [lastJDOP, setLastJDOP] = useState("");
     const [generatedHtml, setGeneratedHtml] = useState("");
     const bottomRef = useRef(null);
     const [bottomHeight, setBottomHeight] = useState(156);
     const loadAIProfileCanvas = useSelector((state) => state.getProfile?.loadAIProfileCanvas);
     const [aiResponse, setAIResponse] = useState({ EducationList: [] });
     const [educationData, setEducationData] = useState([]);
-    const [qualifactionDataData, setQualifactionData] = useState([]);
+    const [qualifactionData, setQualifactionData] = useState([]);
     useEffect(() => {
         setIsOpen(loadAIProfileCanvas);
     }, [loadAIProfileCanvas]);
@@ -155,18 +155,13 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         return text;
     };
 
-    const [selectedData, setSelectedData] = useState({});
-    const handlePageChange = () => {
-
-    };
-
     const isValidQualification = () => {
         let new_data = { ...aiResponse };
         let valid = true;
         for (let i = 0; i < new_data.QualificationList.length; i++) {
             if (new_data.QualificationList[0].operation != "delete") {
                 if (new_data.QualificationList[i].jobtitle == "") {
-                    new_data[i].error = true;
+                    new_data.QualificationList[i].error = true;
                     valid = false;
                 }
                 if (
@@ -210,7 +205,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const submitProfileData = async () => {
         let updatedData = { ...aiResponse };
         console.log("submitted data", updatedData);
-        if (updatedData?.EducationList?.length === 0 && updatedData?.QualificationList?.length === 0) {
+        if (updatedData?.EducationList?.length === 0 && updatedData?.QualificationList?.length === 0 && updatedData?.SkillsList?.length === 0) {
             return;
         }
         const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
@@ -239,6 +234,14 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         }
 
         if (!isValidQualification(updatedData?.QualificationList)) {
+             dispatch(showSnackbar({
+                        message: "Qaulification data is not valid",
+                        type: SNACKBAR_TYPES.WARNING,
+                        position: SNACKBAR_POSITION.TOP_CENTER,
+                        autoClose: true,
+                        autoCloseDelay: 2000,
+                        maxWidth: 500,
+                    }));
             return;
         }
 
@@ -280,7 +283,8 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         var data = {
             profile_data: {
                 educationList: educations,
-                qualificationList: qualifactions
+                qualificationList: qualifactions,
+                skillsList: updatedData?.SkillsList || []
             }
         }
 
@@ -299,11 +303,17 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                     setAIResponse([]);
                     setEducationData([]);
                     setIsOpen(false)
-                }
-
-
-                console.log(response)
-            }).catch((error) => { });
+                }               
+            }).catch((error) => {
+                 dispatch(showSnackbar({
+                        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+                        type: SNACKBAR_TYPES.ERROR,
+                        position: SNACKBAR_POSITION.TOP_CENTER,
+                        autoClose: true,
+                        autoCloseDelay: 2000,
+                        maxWidth: 500,
+                    }));
+             });
     };
 
     const closeAIProfile = () => {
@@ -373,6 +383,16 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                                         }
                                     >
                                     </QualificationAIProfile>
+                                )}
+                                <br />
+                                {aiResponse && aiResponse?.SkillsList?.length > 0 && (
+                                    <SkillAIProfile skillData={aiResponse?.SkillsList}
+                                        setSkillData={(newList) => {
+                                            console.log("newSkillList", newList)
+                                            setAIResponse((prev) => ({ ...prev, SkillsList: newList }))
+                                        }
+                                        }
+                                    >    </SkillAIProfile>
                                 )}
                             </>
                             )}
