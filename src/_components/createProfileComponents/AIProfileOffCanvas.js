@@ -11,6 +11,7 @@ import { EducationAIProfile } from "./educationAIProfile";
 import { convertDateToYYYMMDD, extractDatePart, checkDateValidation, } from "_helpers/helper";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { QualificationAIProfile } from "./qualificationAIProfile";
 
 export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const dispatch = useDispatch();
@@ -24,6 +25,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const loadAIProfileCanvas = useSelector((state) => state.getProfile?.loadAIProfileCanvas);
     const [aiResponse, setAIResponse] = useState({ EducationList: [] });
     const [educationData, setEducationData] = useState([]);
+    const [qualifactionDataData, setQualifactionData] = useState([]);
     useEffect(() => {
         setIsOpen(loadAIProfileCanvas);
     }, [loadAIProfileCanvas]);
@@ -61,7 +63,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             .post(`${baseURI}/candidate_profile_update`, data, config)
             .then(async (result) => {
                 console.log("result", result);
-                let profileData = result?.data?.Profile_data[0];
+                let profileData = result?.data?.Profile_data;
 
                 if (profileData) {
 
@@ -89,9 +91,36 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
 
                         profileData.EducationList = Educations;
                     }
+                    if (profileData?.QualificationList?.length > 0) {
+                        let qualifications = profileData?.QualificationList?.map((q) => ({
+                            ...q,
+                            iscurrentlyworking: false,
+                            startdate: "",
+                            enddate: "",
+                            fromDateSelect: {
+                                month: '',
+                                year: '',
+                            },
+                            toDateSelect: {
+                                month: '',
+                                year: '',
+                            },
+                            error: '',
+                            fromDateValid: false,
+                            fromMonthReq: false,
+                            fromYearReq: false,
+                            toMonthReq: false,
+                            toYearReq: false
+                        }))
+                        profileData.QualificationList = qualifications;
+                    }
+
 
                     let html = generatedHtml;
-                    let newHtml = await getGeneratedHtml(profileData);
+                    //let newHtml = await getGeneratedHtml(result?.data?.Profile_data[0]);
+                    let newHtml = await getGeneratedHtml(result?.data?.Profile_data);
+                    //setAIResponse(profileData[0]);
+                    setAIResponse(profileData);
                     html += newHtml;
                     setGeneratedHtml(html);
                     setInput1("");
@@ -121,224 +150,69 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             text += error;
         }
         else if (data) {
-            setAIResponse(data);
+
         }
         return text;
     };
-    const getCertifictateHTML = (data) => {
-        let updatedData = "<b>"
-        // if (data?.certifications) {
-        //     return (
-        //         ` <div>
-        //             <h5>Education</h5>
 
-        //             {/* Updated Card */}
-        //             <div
-        //                 style={{
-        //                     border: "2px solid #facc15",
-        //                     borderRadius: "8px",
-        //                     padding: "16px",
-        //                     backgroundColor: "#fefce8",
-        //                     marginBottom: "20px",
-        //                     position: "relative",
-        //                 }}
-        //             >
-        //                 <span
-        //                     style={{
-        //                         position: "absolute",
-        //                         top: "-10px",
-        //                         right: "10px",
-        //                         background: "#f59e0b",
-        //                         color: "white",
-        //                         padding: "2px 8px",
-        //                         borderRadius: "6px",
-        //                         fontSize: "12px",
-        //                     }}
-        //                 >
-        //                     Updated
-        //                 </span>
-
-        //                 <div className="row mb-2">
-        //                     <div className="col-md-6">
-        //                         <label>Level of education</label>
-        //                         <select className="form-control" defaultValue="Master">
-        //                             <option>Master's Degree</option>
-        //                         </select>
-        //                     </div>
-        //                     <div className="col-md-6">
-        //                         <label>Field of study</label>
-        //                         <select className="form-control" defaultValue="CS">
-        //                             <option>Computer Science</option>
-        //                         </select>
-        //                     </div>
-        //                 </div>
-
-        //                 <div className="mb-2">
-        //                     <label>School</label>
-        //                     <input
-        //                         type="text"
-        //                         className="form-control"
-        //                         defaultValue="International College of Arts and Science (UG)"
-        //                     />
-        //                 </div>
-
-        //                 <div className="row mb-2">
-        //                     <div className="col-md-6">
-        //                         <label>City, State</label>
-        //                         <select className="form-control" defaultValue="LA">
-        //                             <option>Los Angeles, California</option>
-        //                         </select>
-        //                     </div>
-        //                     <div className="col-md-6">
-        //                         <label>Country</label>
-        //                         <select className="form-control" defaultValue="USA">
-        //                             <option>USA</option>
-        //                         </select>
-        //                     </div>
-        //                 </div>
-
-        //                 <div className="row mb-2">
-        //                     <div className="col-md-6">
-        //                         <label>From</label>
-        //                         <div className="d-flex gap-2">
-        //                             <select className="form-control" defaultValue="Jan">
-        //                                 <option>Jan</option>
-        //                             </select>
-        //                             <select className="form-control" defaultValue="2020">
-        //                                 <option>2020</option>
-        //                             </select>
-        //                         </div>
-        //                     </div>
-        //                     <div className="col-md-6">
-        //                         <label>To</label>
-        //                         <div className="d-flex gap-2">
-        //                             <select className="form-control" defaultValue="Aug">
-        //                                 <option>Aug</option>
-        //                             </select>
-        //                             <select className="form-control" defaultValue="2025">
-        //                                 <option>2025</option>
-        //                             </select>
-        //                         </div>
-        //                     </div>
-        //                 </div>
-        //             </div>
-
-        //             {/* Deleted Card */}
-        //             <div
-        //                 style={{
-        //                     border: "2px dashed red",
-        //                     borderRadius: "8px",
-        //                     padding: "16px",
-        //                     backgroundColor: "#fef2f2",
-        //                     position: "relative",
-        //                 }}
-        //             >
-        //                 <span
-        //                     style={{
-        //                         position: "absolute",
-        //                         top: "-10px",
-        //                         right: "10px",
-        //                         background: "red",
-        //                         color: "white",
-        //                         padding: "2px 8px",
-        //                         borderRadius: "6px",
-        //                         fontSize: "12px",
-        //                     }}
-        //                 >
-        //                     Deleted
-        //                 </span>
-
-        //                 <div style={{ opacity: 0.6, pointerEvents: "none" }}>
-        //                     <div className="row mb-2">
-        //                         <div className="col-md-6">
-        //                             <label>Level of education</label>
-        //                             <select className="form-control" disabled defaultValue="HSC">
-        //                                 <option>Higher Secondary Certificate (HSC)</option>
-        //                             </select>
-        //                         </div>
-        //                         <div className="col-md-6">
-        //                             <label>Field of study</label>
-        //                             <select className="form-control" disabled defaultValue="Science">
-        //                                 <option>Science</option>
-        //                             </select>
-        //                         </div>
-        //                     </div>
-
-        //                     <div className="mb-2">
-        //                         <label>School</label>
-        //                         <input
-        //                             type="text"
-        //                             className="form-control"
-        //                             disabled
-        //                             defaultValue="John Higher Secondary School"
-        //                         />
-        //                     </div>
-
-        //                     <div className="row mb-2">
-        //                         <div className="col-md-6">
-        //                             <label>City, State</label>
-        //                             <select className="form-control" disabled>
-        //                                 <option>Los Angeles, California</option>
-        //                             </select>
-        //                         </div>
-        //                         <div className="col-md-6">
-        //                             <label>Country</label>
-        //                             <select className="form-control" disabled>
-        //                                 <option>USA</option>
-        //                             </select>
-        //                         </div>
-        //                     </div>
-
-        //                     <div className="row mb-2">
-        //                         <div className="col-md-6">
-        //                             <label>From</label>
-        //                             <div className="d-flex gap-2">
-        //                                 <select className="form-control" disabled>
-        //                                     <option>Jan</option>
-        //                                 </select>
-        //                                 <select className="form-control" disabled>
-        //                                     <option>2014</option>
-        //                                 </select>
-        //                             </div>
-        //                         </div>
-        //                         <div className="col-md-6">
-        //                             <label>To</label>
-        //                             <div className="d-flex gap-2">
-        //                                 <select className="form-control" disabled>
-        //                                     <option>Mar</option>
-        //                                 </select>
-        //                                 <select className="form-control" disabled>
-        //                                     <option>2016</option>
-        //                                 </select>
-        //                             </div>
-        //                         </div>
-        //                     </div>
-        //                 </div>
-
-        //                 <h6
-        //                     style={{
-        //                         textAlign: "center",
-        //                         marginTop: "10px",
-        //                         color: "red",
-        //                         fontWeight: "bold",
-        //                         transform: "rotate(-10deg)",
-        //                     }}
-        //                 >
-        //                     DELETED
-        //                 </h6>
-        //             </div>
-        //         </div>`
-        //     );
-        // }
-    }
     const [selectedData, setSelectedData] = useState({});
     const handlePageChange = () => {
 
     };
 
+    const isValidQualification = () => {
+        let new_data = { ...aiResponse };
+        let valid = true;
+        for (let i = 0; i < new_data.QualificationList.length; i++) {
+            if (new_data.QualificationList[0].operation != "delete") {
+                if (new_data.QualificationList[i].jobtitle == "") {
+                    new_data[i].error = true;
+                    valid = false;
+                }
+                if (
+                    new_data.QualificationList[i].fromDateSelect.month == "" ||
+                    !new_data.QualificationList[i].fromDateSelect.month
+                ) {
+                    new_data.QualificationList[i].fromDateReq = true;
+                    valid = false;
+                }
+                if (
+                    new_data.QualificationList[i].fromDateSelect.year == "" ||
+                    !new_data.QualificationList[i].fromDateSelect.year
+                ) {
+                    new_data.QualificationList[i].fromYearReq = true;
+                    valid = false;
+                }
+
+                if (
+                    new_data.QualificationList[i].toDateSelect.month == "" ||
+                    !new_data.QualificationList[i].toDateSelect.month
+                ) {
+                    new_data.QualificationList[i].toDateReq = true;
+                    valid = false;
+                }
+
+                if (
+                    new_data.QualificationList[i].toDateSelect.year == "" ||
+                    !new_data.QualificationList[i].toDateSelect.year
+                ) {
+                    new_data.QualificationList[i].toYearReq = true;
+                    valid = false;
+                }
+                if (new_data.QualificationList[i].fromDateValid) {
+                    valid = false;
+                }
+                setAIResponse(new_data);
+            }
+        }
+        return valid;
+    }
     const submitProfileData = async () => {
         let updatedData = { ...aiResponse };
         console.log("submitted data", updatedData);
+        if (updatedData?.EducationList?.length === 0 && updatedData?.QualificationList?.length === 0) {
+            return;
+        }
         const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
         const config = {
             headers: {
@@ -349,6 +223,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
 
         const baseURI = `${process.env.REACT_APP_NEW_API_URL}`;
         let educations = [];
+        let qualifactions = [];
         // let error_data = [...updatedData];
         for (let i = 0; i < updatedData.EducationList.length; i++) {
             if (updatedData.EducationList[i].operation != "delete") {
@@ -363,11 +238,15 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             }
         }
 
+        if (!isValidQualification(updatedData?.QualificationList)) {
+            return;
+        }
+
         updatedData.EducationList.map((value, key) => {
             var education = {
                 candidateeducationid: value.candidateeducationid,
-                startdate: value.operation === "delete" ? null : convertDateToYYYMMDD(value.fromDateSelect),
-                enddate: value.operation === "delete" ? null : convertDateToYYYMMDD(value.toDateSelect),
+                startdate: value.operation === "delete" ? null : value.fromDateSelect ? convertDateToYYYMMDD(value.fromDateSelect) : null,
+                enddate: value.operation === "delete" ? null : value.toDateSelect ? convertDateToYYYMMDD(value.toDateSelect) : null,
                 fieldofstudy: value.fieldofstudy,
                 fieldofstudyid: value.fieldofstudyid,
                 levelofeducation: value.levelofeducation,
@@ -381,10 +260,27 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             educations.push(education);
         })
 
+        updatedData.QualificationList.map((value, key) => {
+            var qualifaction = {
+                candidatequalificationid: value.candidatequalificationid,
+                startdate: value.operation === "delete" ? null : convertDateToYYYMMDD(value.fromDateSelect),
+                enddate: value.operation === "delete" || value.iscurrentlyworking ? null : convertDateToYYYMMDD(value.toDateSelect),
+                company: value.company,
+                iscurrentlyworking: value.iscurrentlyworking,
+                jobtitle: value.jobtitle,
+                jobdescription: value.jobdescription,
+                operation: value.operation,
+                countryid: value.countryid,
+                cityid: value.cityid,
+                stateid: value.stateid
+            }
+            qualifactions.push(qualifaction);
+        })
+
         var data = {
             profile_data: {
-                educationList: educations
-
+                educationList: educations,
+                qualificationList: qualifactions
             }
         }
 
@@ -409,9 +305,15 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                 console.log(response)
             }).catch((error) => { });
     };
+
+    const closeAIProfile = () => {
+        setAIResponse([]);
+        setEducationData([]);
+        setIsOpen(false)
+    }
     return (
         <div>
-            <Offcanvas direction="end" isOpen={isOpen} toggle={() => setIsOpen(!isOpen)}>
+            <Offcanvas direction="end" isOpen={isOpen} toggle={() => closeAIProfile()}>
                 <OffcanvasHeader toggle={() => toggleOffcanvas()}>Update Profile with OpenWorx Agent</OffcanvasHeader>
                 <hr style={{ margin: "0px" }}></hr>
                 <OffcanvasBody
@@ -461,6 +363,17 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                                         }
                                     >
                                     </EducationAIProfile>)}
+                                <br />
+                                {aiResponse && aiResponse?.QualificationList?.length > 0 && (
+                                    <QualificationAIProfile qualificationData={aiResponse?.QualificationList}
+                                        setQualificationData={(newList) => {
+                                            console.log("newList", newList)
+                                            setAIResponse((prev) => ({ ...prev, QualificationList: newList }))
+                                        }
+                                        }
+                                    >
+                                    </QualificationAIProfile>
+                                )}
                             </>
                             )}
                         </div>
