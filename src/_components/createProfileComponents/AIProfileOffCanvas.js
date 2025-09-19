@@ -1,12 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-    Row,
-    Col,
-    Button,
-    Offcanvas,
-    OffcanvasHeader,
-    OffcanvasBody,
-} from "reactstrap";
+import { Row, Col, Button, Offcanvas, OffcanvasHeader, OffcanvasBody, } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { use } from "react";
 import { getProfileActions } from "_store";
@@ -15,6 +8,10 @@ import { set, update } from "lodash";
 import Spinner from "reactstrap/lib/Spinner";
 import axios from "axios";
 import { EducationAIProfile } from "./educationAIProfile";
+import { convertDateToYYYMMDD, extractDatePart, checkDateValidation, } from "_helpers/helper";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
 export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(true);
@@ -64,10 +61,37 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
             .post(`${baseURI}/candidate_profile_update`, data, config)
             .then(async (result) => {
                 console.log("result", result);
-                if (result?.data?.Profile_data && result?.data?.Profile_data?.length > 0) {
-                    setEducationData(result?.data?.Profile_data[0]?.EducationList || []);
+                let profileData = result?.data?.Profile_data[0];
+
+                if (profileData) {
+
+                    if (profileData?.EducationList?.length > 0) {
+                        let Educations = profileData?.EducationList?.map((edu) => ({
+                            ...edu,
+                            iscurrentlystudying: false,
+                            startdate: "",
+                            enddate: "",
+                            fromDateSelect: {
+                                month: '',
+                                year: '',
+                            },
+                            toDateSelect: {
+                                month: '',
+                                year: '',
+                            },
+                            error: '',
+                            fromDateValid: false,
+                            fromMonthReq: false,
+                            fromYearReq: false,
+                            toMonthReq: false,
+                            toYearReq: false
+                        }))
+
+                        profileData.EducationList = Educations;
+                    }
+
                     let html = generatedHtml;
-                    let newHtml = await getGeneratedHtml(result?.data?.Profile_data[0]);
+                    let newHtml = await getGeneratedHtml(profileData);
                     html += newHtml;
                     setGeneratedHtml(html);
                     setInput1("");
@@ -312,11 +336,78 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
 
     };
 
-    const submitProfileData = () => {
+    const submitProfileData = async () => {
         let updatedData = { ...aiResponse };
-        //updatedData.EducationList = educationData;
         console.log("submitted data", updatedData);
-        // Call your API or update your state with the updatedData
+        const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
+        const config = {
+            headers: {
+                "content-type": "application/json",
+                Authorization: `Bearer ${authData}`,
+            },
+        };
+
+        const baseURI = `${process.env.REACT_APP_NEW_API_URL}`;
+        let educations = [];
+        // let error_data = [...updatedData];
+        for (let i = 0; i < updatedData.EducationList.length; i++) {
+            if (updatedData.EducationList[i].operation != "delete") {
+                if (updatedData.EducationList[i].levelofeducation === "") {
+                    updatedData.EducationList[i].error = true;
+                    setAIResponse(updatedData);
+                    return;
+                }
+                if (updatedData.EducationList[i].fromMonthReq || updatedData.EducationList[i].fromYearReq || updatedData.EducationList[i].toMonthReq || updatedData.EducationList[i].toYearReq) {
+                    return;
+                }
+            }
+        }
+
+        updatedData.EducationList.map((value, key) => {
+            var education = {
+                candidateeducationid: value.candidateeducationid,
+                startdate: value.operation === "delete" ? null : convertDateToYYYMMDD(value.fromDateSelect),
+                enddate: value.operation === "delete" ? null : convertDateToYYYMMDD(value.toDateSelect),
+                fieldofstudy: value.fieldofstudy,
+                fieldofstudyid: value.fieldofstudyid,
+                levelofeducation: value.levelofeducation,
+                levelofeducationid: value.levelofeducationid,
+                operation: value.operation,
+                school: value.school,
+                countryid: value.countryid,
+                cityid: value.cityid,
+                stateid: value.stateid
+            }
+            educations.push(education);
+        })
+
+        var data = {
+            profile_data: {
+                educationList: educations
+
+            }
+        }
+
+        await axios
+            .post(`${baseURI}/Candidate/UpdateCandidateProfile`, data, config)
+            .then(async (response) => {
+                if (response.data) {
+                    dispatch(showSnackbar({
+                        message: response.data.message,
+                        type: SNACKBAR_TYPES.SUCCESS,
+                        position: SNACKBAR_POSITION.TOP_CENTER,
+                        autoClose: true,
+                        autoCloseDelay: 2000,
+                        maxWidth: 500,
+                    }));
+                    setAIResponse([]);
+                    setEducationData([]);
+                    setIsOpen(false)
+                }
+
+
+                console.log(response)
+            }).catch((error) => { });
     };
     return (
         <div>
@@ -369,14 +460,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                                         }
                                         }
                                     >
-
                                     </EducationAIProfile>)}
-                                {/* <EducationModal
-                                    onCallEducation={() => handlePageChange()}
-                                    selected={selectedData}
-                                    check={"add"}
-                                /> */}
-
                             </>
                             )}
                         </div>
