@@ -13,6 +13,7 @@ import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/
 import { showSnackbar } from "_store/snackbar.slice";
 import { QualificationAIProfile } from "./qualificationAIProfile";
 import SkillAIProfile from "./skillAIProfile";
+import "./AIProfileCanvas.scss";
 
 export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const dispatch = useDispatch();
