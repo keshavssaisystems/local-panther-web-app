@@ -339,6 +339,7 @@ export function ScheduleInterview({ fromDashboard }) {
 
   const onCloseIdModal = () => {
     setOpenModal(false);
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
   };
   const handleSelectEvent = useCallback((event) => {
     if (Number(localStorage.getItem("userId")) === hiringManagerIdRef.current ||
@@ -670,6 +671,7 @@ export function ScheduleInterview({ fromDashboard }) {
             autoCloseDelay: 3000,
             maxWidth: 500,
           }));
+           dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
           //props.updateList();
         } else {
           dispatch(showSnackbar({
@@ -690,6 +692,10 @@ export function ScheduleInterview({ fromDashboard }) {
   const onOfferUploading = (data) => {
     setOfferUploadLoading(data);
   };
+
+  const closeOfferModal=()=>{
+     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+  }
 
   return (
     <>
@@ -1089,7 +1095,10 @@ export function ScheduleInterview({ fromDashboard }) {
         {showUploadOfferModal ? (
           <CustomerUploadOffer
             isOpen={showUploadOfferModal}
-            onClose={() => setShowUploadOfferModal(false)}
+            onClose={() => {
+              setShowUploadOfferModal(false);
+              closeOfferModal();
+            }}
             uploadOfferDoc={(
               file,
               startdate,
