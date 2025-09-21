@@ -166,8 +166,8 @@ export function CandidateQualification(props) {
                 <PerfectScrollbar>
                   <Row>
                     {qualificationDetails?.length > 0 ? (
-                      qualificationDetails.map((item) => (
-                        <div className="mb-4">
+                      qualificationDetails.map((item, index) => (
+                        <div className="mb-4" key={index}>
                           <Col>
                             <strong className="me-2 content-title">
                               {item.jobtitle}{" "}
@@ -264,8 +264,8 @@ export function CandidateQualification(props) {
                     </span>
                   </Row>
                   <Row className="mt-3">
-                    {qualificationDetails?.map((item) => (
-                      <div>
+                    {qualificationDetails?.map((item,index) => (
+                      <div key={index}>
                         <Col>
                           <strong className="me-2 content-title">
                             {item.jobtitle}{" "}

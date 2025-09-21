@@ -416,6 +416,7 @@ export function CandidateSkills(props) {
                 {getResponse?.length > 0 ? (
                   getResponse.map((item) => (
                     <Button
+                      key={item.skillname}
                       className="
                        mb-2 me-2 skills-view btn-shadow btn-outline-2x"
                       outline
@@ -580,6 +581,7 @@ export function CandidateSkills(props) {
                 <Row className="skills-div mb-3 mt-2">
                   {skills?.map((item) => (
                     <Button
+                      key={item.label}
                       className="
                        m-2 skills-view-popup btn-shadow btn-outline-2x"
                       outline

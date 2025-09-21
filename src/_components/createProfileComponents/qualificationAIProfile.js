@@ -330,8 +330,7 @@ export function QualificationAIProfile({ qualificationData, setQualificationData
                 {formDetails?.map((item, index) => (
                     (item?.operation === "add" || item?.operation === "update") &&
                     (
-
-                        <Form>
+                        <Form key={index}>
                             <div
                                 key={index}
                                 style={{
@@ -633,8 +632,7 @@ export function QualificationAIProfile({ qualificationData, setQualificationData
                 {/* Deleted Card */}
                 {formDetails?.map((item, index) => (
                     item?.operation === "delete" && (
-
-                        <div
+                        <div key={index}
                             style={{
                                 border: "2px dashed red",
                                 borderRadius: "8px",

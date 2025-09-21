@@ -408,9 +408,9 @@ export function EducationAIProfile({ educationData, setEducationData }) {
                     (edu?.operation === "add" || edu?.operation === "update") &&
                     (
 
-                        <Form>
+                        <Form key={index}>
                             <div
-                                key={index}
+                                
                                 style={{
                                     border: "2px solid #facc15",
                                     borderRadius: "8px",
@@ -685,7 +685,7 @@ export function EducationAIProfile({ educationData, setEducationData }) {
                 {formDetails?.map((edu, index) => (
                     edu?.operation === "delete" && (
 
-                        <div
+                        <div key={index}
                             style={{
                                 border: "2px dashed red",
                                 borderRadius: "8px",
