@@ -32,6 +32,7 @@ import {
   getProfileActions,
   dropdownActions,
   scheduleInterviewActions,
+  custJobListActions
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
@@ -115,6 +116,7 @@ export default function CustomerCandidateLists(props) {
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
   const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const [interviewStatus, setInterviewStatus] = useState([]);
+  const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
   // // // Set default actionbyId after hiringManagerDownList is loaded
   // useEffect(() => {
   //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
@@ -156,14 +158,21 @@ export default function CustomerCandidateLists(props) {
       setPageNo(1);
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, id);
+
     }
   }, [props.type, id, actionbyId]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
     dispatch(getHiringMangerList(companyId));
-
+    if (id) {
+      dispatch(custJobListActions.getJobDetail({ jobId: id }));
+    }
   }, [dispatch])
+
+  useEffect(() => {
+    setSearchText(jobDetail[0]?.jobtitle);
+  }, [jobDetail])
 
   const returnStatusId = (type) => {
     if (type === "liked") {
@@ -218,15 +227,15 @@ export default function CustomerCandidateLists(props) {
   const toggle = (activetab) => {
     clearInterviewFilters();
     if (id) {
-      setSearchText("");
+      //setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
       navigate(`/customer-candidate-${activetab}/${id}/${jobPostedbyId}`);
     } else {
-      setSearchText("");
+      //setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      onGetPageList(pageNo, activetab, "", true);
+      onGetPageList(pageNo, activetab, "", false);
     }
   };
 
@@ -771,7 +780,7 @@ export default function CustomerCandidateLists(props) {
                         {candidateList.map((data, ind) => {
                           return (
                             <Col
-                              key={data.jobapplicationid}
+                              key={ind}
                               className="card-col"
                             >
                               <CandidateCardView
