@@ -359,7 +359,7 @@ export function CandidateProfile() {
 
         <div className="col-7 profile-summary">
           <div className="float-end">
-            <Button type="button" className="me-2 save-btn btn btn-secondary" onClick={() => handleAIProfile()}>Update Profile with AI</Button>
+            <Button type="button" className="me-2 save-btn btn btn-secondary" onClick={() => handleAIProfile()}>Update Profile with OpenWorx Agent</Button>
             {/* <AIProfileOffCanvas></AIProfileOffCanvas> */}
           </div>
         </div>
