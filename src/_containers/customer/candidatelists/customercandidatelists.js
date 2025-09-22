@@ -168,10 +168,15 @@ export default function CustomerCandidateLists(props) {
     if (id) {
       dispatch(custJobListActions.getJobDetail({ jobId: id }));
     }
+    else {
+      setSearchText('');
+    }
   }, [dispatch])
 
   useEffect(() => {
-    setSearchText(jobDetail[0]?.jobtitle);
+    if (id) {
+      setSearchText(jobDetail[0]?.jobtitle);
+    }
   }, [jobDetail])
 
   const returnStatusId = (type) => {
