@@ -345,6 +345,11 @@ export function CandidateProfile() {
     dispatch(getProfileActions.updateLoadAIProfileCanvas(true));
   };
   const [showAIProfile, setShowAIProfile] = useState(false);
+
+  const closeOffcanvas = () => {
+    loadPage();
+  }
+
   return (
     <div className="profile-view">
       <div className="row profile-header" style={{ marginBottom: "20px" }}>
@@ -496,7 +501,7 @@ export function CandidateProfile() {
         </div>
       )}
 
-      {showAIProfile && <AIProfileOffCanvas
+      {showAIProfile && <AIProfileOffCanvas closeOffcanvas={closeOffcanvas}
       />}
     </div>
   );
