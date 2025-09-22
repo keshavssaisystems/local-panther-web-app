@@ -27,16 +27,13 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
     const [aiResponse, setAIResponse] = useState({ EducationList: [] });
     const [educationData, setEducationData] = useState([]);
     const [qualifactionData, setQualifactionData] = useState([]);
+    const [isUpdateButtonDisable, setIsUpdateButtonDisable] = useState(true);
     useEffect(() => {
         setIsOpen(loadAIProfileCanvas);
     }, [loadAIProfileCanvas]);
 
     const toggleOffcanvas = () => {
-        dispatch(getProfileActions.updateLoadAIProfileCanvas(!isOpen));
-        setIsOpen(!isOpen);
-        setInput1("");
-        setAIResponse([]);
-        setEducationData([]);        
+        clearControls();
     };
 
     const getMonth = (date) => {
@@ -151,6 +148,14 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                         }
                     });
                 }
+
+                if ((profileData?.EducationList === undefined || profileData?.EducationList?.length === 0) &&
+                    (profileData?.QualificationList === undefined || profileData?.QualificationList?.length === 0) &&
+                    (profileData?.SkillsList === undefined || profileData?.SkillsList?.length === 0)) {
+                    setIsUpdateButtonDisable(true);
+                    return;
+                }
+                setIsUpdateButtonDisable(false);
             })
             .catch((error) => { });
         setLoadInput(false);
@@ -228,6 +233,14 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
             if ((updatedData?.EducationList === undefined || updatedData?.EducationList?.length === 0) &&
                 (updatedData?.QualificationList === undefined || updatedData?.QualificationList?.length === 0) &&
                 (updatedData?.SkillsList === undefined || updatedData?.SkillsList?.length === 0)) {
+                dispatch(showSnackbar({
+                    message: "No data available for update the profile",
+                    type: SNACKBAR_TYPES.WARNING,
+                    position: SNACKBAR_POSITION.TOP_CENTER,
+                    autoClose: true,
+                    autoCloseDelay: 2000,
+                    maxWidth: 500,
+                }));
                 return;
             }
         const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
@@ -322,11 +335,7 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                         autoCloseDelay: 2000,
                         maxWidth: 500,
                     }));
-                    setAIResponse([]);
-                    setEducationData([]);
-                    setIsOpen(false);
-                    dispatch(getProfileActions.updateLoadAIProfileCanvas(false));
-                    closeOffcanvas();
+                    clearControls();
                 }
             }).catch((error) => {
                 dispatch(showSnackbar({
@@ -341,14 +350,22 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
     };
 
     const closeAIProfile = () => {
+        clearControls();
+    }
+
+    const clearControls = () => {
         setAIResponse([]);
         setEducationData([]);
-        setIsOpen(false)
+        setIsOpen(false);
+        dispatch(getProfileActions.updateLoadAIProfileCanvas(false));
+        closeOffcanvas();
+        setGeneratedHtml('');
+        setIsUpdateButtonDisable(true);
     }
     return (
         <div>
             <Offcanvas direction="end" isOpen={isOpen} toggle={() => closeAIProfile()} backdrop="static">
-                <OffcanvasHeader toggle={() => toggleOffcanvas()}>Update Profile with OpenWorx Agent</OffcanvasHeader>
+                <OffcanvasHeader toggle={() => toggleOffcanvas()}>Update Profile with OpenWorX Agent</OffcanvasHeader>
                 <hr style={{ margin: "0px" }}></hr>
                 <OffcanvasBody
                     className="jd-covas-body"
@@ -423,8 +440,9 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                         </div>
                         <div ref={bottomRef} style={{ width: "calc(100% - 24px)", textAlign: "center", }}>
                             <SpeechToTextInput setInput1={setInput1} input1={input1} handleUpdateData={() => handleUpdateData()} loadInput={loadInput} />
-                            <Button className="mt-2" color="primary" onClick={() => submitProfileData()}>
-                                Use this draft and proceed
+                            <Button className="mt-2" color="primary" onClick={() => submitProfileData()}
+                                disabled={isUpdateButtonDisable}>
+                                Update Profile
                             </Button>
                         </div>
                     </div>
