@@ -35,6 +35,8 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         dispatch(getProfileActions.updateLoadAIProfileCanvas(!isOpen));
         setIsOpen(!isOpen);
         setInput1("");
+        setAIResponse([]);
+        setEducationData([]);
     };
 
 
