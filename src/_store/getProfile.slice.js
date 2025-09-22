@@ -83,7 +83,8 @@ const initialState = {
     localStorage.getItem("profileImage") === ""
       ? null
       : localStorage.getItem("profileImage"),
-  candidateHistory: []
+  candidateHistory: [],
+  loadAIProfileCanvas: false,
 };
 
 // Define the async action
@@ -185,7 +186,11 @@ export const getCandidateHistory = createAsyncThunk(
 const getProfileSlice = createSlice({
   name: "getProfile",
   initialState,
-  reducers: {},
+   reducers: {
+    updateLoadAIProfileCanvas: (state, { payload }) => {
+      state.loadAIProfileCanvas = payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getCandidate.pending, (state) => {

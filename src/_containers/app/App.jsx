@@ -135,6 +135,9 @@ const CandidateDashboard = React.lazy(() =>
   import("_containers/candidate/dashboard/dashboard")
 );
 
+const AIProfileOffCanvas = React.lazy(() =>
+  import("_components/createProfileComponents/AIProfileOffCanvas")
+);
 export function App() {
   const authUser = useSelector((state) => state.auth.token);
   const userroleid = useSelector((state) => state.auth.userroleid);
@@ -435,7 +438,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-         
+
           <Route
             path="/job-list"
             element={
@@ -510,7 +513,7 @@ export function App() {
             path="/calendar-poc"
             element={<Calendar title={"Microsoft Calendar"} />}
           />
-           <Route
+          <Route
             path="/card-payment"
             element={<Squarepayment />}
           />
@@ -838,7 +841,9 @@ export function App() {
               />
             )}
             <div className={authUser ? `app-main` : ""}>
+              {/* <AIProfileOffCanvas>  </AIProfileOffCanvas> */}
               <AIJobOffCanvas></AIJobOffCanvas>
+              
               {authUser && !hideSidebar && (
                 <AppSidebar
                   isSidebarOpen={isSidebarOpen}

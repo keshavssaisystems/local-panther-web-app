@@ -1,0 +1,60 @@
+.offcanvas {
+  width: 40% !important;
+}
+
+@media only screen and (max-width: 769px) and (min-width: 320px) {
+  .offcanvas {
+    width: 1000% !important;
+  }
+}
+.jd-covas-body {
+  .error-div {
+    background-color: #fff1f1;
+    padding: 10px;
+    border-radius: 8px;
+    color: #ff406d;
+    margin: 4px 0px;
+  }
+
+  .command-div-ext {
+    text-align: -webkit-right;
+    width: 100%;
+    position: relative;
+    margin: 4px 0px;
+  }
+  .command-div {
+    background-color: #d9edff;
+    padding: 10px;
+    border-radius: 8px;
+    color: #2f2e2e;
+    text-align: end;
+    width: fit-content;
+  }
+
+  .desc-div {
+    margin: 4px 0px;
+  }
+
+  /* .canvas-jd-detail-div {
+    max-height: 65vh;
+    overflow: auto;
+  } */
+
+  /* @media only screen and (max-width: 1439px) and (min-width: 1025px) {
+    .canvas-jd-detail-div {
+      max-height: 68vh;
+    }
+  }
+
+  @media only screen and (max-width: 1024px) and (min-width: 767px) {
+    .canvas-jd-detail-div {
+      max-height: 66vh;
+    }
+  }
+
+  @media only screen and (max-width: 767px) and (min-width: 0px) {
+    .canvas-jd-detail-div {
+      max-height: 62vh;
+    }
+  } */
+}
