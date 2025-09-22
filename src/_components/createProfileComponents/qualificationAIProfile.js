@@ -699,10 +699,10 @@ export function QualificationAIProfile({ qualificationData, setQualificationData
                                         <label>From</label>
                                         <div className="d-flex gap-2">
                                             <select className="form-control" disabled>
-                                                <option>{item?.fromMonth}</option>
+                                                <option>{item?.fromDateSelect?.month}</option>
                                             </select>
                                             <select className="form-control" disabled>
-                                                <option>{item?.fromYear}</option>
+                                                <option>{item?.fromDateSelect?.year}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -710,10 +710,10 @@ export function QualificationAIProfile({ qualificationData, setQualificationData
                                         <label>To</label>
                                         <div className="d-flex gap-2">
                                             <select className="form-control" disabled>
-                                                <option>{item?.toMonth}</option>
+                                                <option>{item?.toDateSelect?.month}</option>
                                             </select>
                                             <select className="form-control" disabled>
-                                                <option>{item?.toYear}</option>
+                                                <option>{item?.toDateSelect?.year}</option>
                                             </select>
                                         </div>
                                     </div>
