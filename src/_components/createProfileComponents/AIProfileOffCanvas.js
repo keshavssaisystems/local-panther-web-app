@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Row, Col, Button, Offcanvas, OffcanvasHeader, OffcanvasBody, } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { use } from "react";
-import { getProfileActions } from "_store";
+import { getmonth, getProfileActions } from "_store";
 import { SpeechToTextInput } from "_components/common/speechToTextInput";
 import { set, update } from "lodash";
 import Spinner from "reactstrap/lib/Spinner";
@@ -15,7 +15,7 @@ import { QualificationAIProfile } from "./qualificationAIProfile";
 import SkillAIProfile from "./skillAIProfile";
 import "./AIProfileCanvas.scss";
 
-export default function AIProfileOffCanvas({ aiDescriptionData }) {
+export default function AIProfileOffCanvas({ closeOffcanvas }) {
     const dispatch = useDispatch();
     const [isOpen, setIsOpen] = useState(true);
     const [input1, setInput1] = useState("");
@@ -36,10 +36,25 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         setIsOpen(!isOpen);
         setInput1("");
         setAIResponse([]);
-        setEducationData([]);
+        setEducationData([]);        
     };
 
+    const getMonth = (date) => {
+        return new Date(date).toLocaleString("en-US", {
+            month: "long"
+        });
+    }
 
+    const getMonthInt = (date) => {
+        return new Date(date).toLocaleString("en-US", {
+            month: "numeric"
+        });
+    }
+    const getYear = (date) => {
+        return new Date(date).toLocaleString("en-US", {
+            year: "numeric"
+        });
+    }
     const handleUpdateData = async () => {
         setLoadInput(true);
         const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
@@ -74,15 +89,15 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                         let Educations = profileData?.EducationList?.map((edu) => ({
                             ...edu,
                             iscurrentlystudying: false,
-                            startdate: "",
-                            enddate: "",
+                            startdate: edu?.startdate ? edu?.startdate : "",
+                            enddate: edu?.enddate ? edu?.enddate : "",
                             fromDateSelect: {
-                                month: '',
-                                year: '',
+                                month: edu?.operation === 'delete' ? getMonth(edu?.startdate) : getMonthInt(edu?.startdate),
+                                year: getYear(edu?.startdate)
                             },
                             toDateSelect: {
-                                month: '',
-                                year: '',
+                                month: edu?.operation === 'delete' ? getMonth(edu?.enddate) : getMonthInt(edu?.enddate),
+                                year: getYear(edu?.enddate)
                             },
                             error: '',
                             fromDateValid: false,
@@ -97,16 +112,16 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                     if (profileData?.QualificationList?.length > 0) {
                         let qualifications = profileData?.QualificationList?.map((q) => ({
                             ...q,
-                            iscurrentlyworking: false,
-                            startdate: "",
-                            enddate: "",
+                            iscurrentlyworking: q?.iscurrentlyworking,
+                            startdate: q?.startdate ? q?.startdate : "",
+                            enddate: q?.enddate ? q?.enddate : "",
                             fromDateSelect: {
-                                month: '',
-                                year: '',
+                                month: q?.operation === 'delete' ? q?.startdate ? getMonth(q?.startdate) : '' : q?.startdate ? getMonthInt(q?.startdate) : '',
+                                year: q?.startdate ? getYear(q?.startdate) : ''
                             },
                             toDateSelect: {
-                                month: '',
-                                year: '',
+                                month: q?.operation === 'delete' ? q?.enddate ? getMonth(q?.enddate) : '' : q?.enddate ? getMonthInt(q?.enddate) : '',
+                                year: q?.enddate ? getYear(q?.enddate) : ''
                             },
                             error: '',
                             fromDateValid: false,
@@ -161,7 +176,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
     const isValidQualification = () => {
         let new_data = { ...aiResponse };
         let valid = true;
-        for (let i = 0; i < new_data.QualificationList.length; i++) {
+        for (let i = 0; i < new_data.QualificationList?.length; i++) {
             if (new_data.QualificationList[0].operation != "delete") {
                 if (new_data.QualificationList[i].jobtitle == "") {
                     new_data.QualificationList[i].error = true;
@@ -207,10 +222,14 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
     }
     const submitProfileData = async () => {
         let updatedData = { ...aiResponse };
+
         console.log("submitted data", updatedData);
-        if (updatedData?.EducationList?.length === 0 && updatedData?.QualificationList?.length === 0 && updatedData?.SkillsList?.length === 0) {
-            return;
-        }
+        if (updatedData)
+            if ((updatedData?.EducationList === undefined || updatedData?.EducationList?.length === 0) &&
+                (updatedData?.QualificationList === undefined || updatedData?.QualificationList?.length === 0) &&
+                (updatedData?.SkillsList === undefined || updatedData?.SkillsList?.length === 0)) {
+                return;
+            }
         const authData = localStorage.getItem("token") ? localStorage.getItem("token") : "";
         const config = {
             headers: {
@@ -237,14 +256,14 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
         }
 
         if (!isValidQualification(updatedData?.QualificationList)) {
-             dispatch(showSnackbar({
-                        message: "Qaulification data is not valid",
-                        type: SNACKBAR_TYPES.WARNING,
-                        position: SNACKBAR_POSITION.TOP_CENTER,
-                        autoClose: true,
-                        autoCloseDelay: 2000,
-                        maxWidth: 500,
-                    }));
+            dispatch(showSnackbar({
+                message: "Qaulification data is not valid",
+                type: SNACKBAR_TYPES.WARNING,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 2000,
+                maxWidth: 500,
+            }));
             return;
         }
 
@@ -305,18 +324,20 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
                     }));
                     setAIResponse([]);
                     setEducationData([]);
-                    setIsOpen(false)
-                }               
+                    setIsOpen(false);
+                    dispatch(getProfileActions.updateLoadAIProfileCanvas(false));
+                    closeOffcanvas();
+                }
             }).catch((error) => {
-                 dispatch(showSnackbar({
-                        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
-                        type: SNACKBAR_TYPES.ERROR,
-                        position: SNACKBAR_POSITION.TOP_CENTER,
-                        autoClose: true,
-                        autoCloseDelay: 2000,
-                        maxWidth: 500,
-                    }));
-             });
+                dispatch(showSnackbar({
+                    message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+                    type: SNACKBAR_TYPES.ERROR,
+                    position: SNACKBAR_POSITION.TOP_CENTER,
+                    autoClose: true,
+                    autoCloseDelay: 2000,
+                    maxWidth: 500,
+                }));
+            });
     };
 
     const closeAIProfile = () => {
@@ -326,7 +347,7 @@ export default function AIProfileOffCanvas({ aiDescriptionData }) {
     }
     return (
         <div>
-            <Offcanvas direction="end" isOpen={isOpen} toggle={() => closeAIProfile()}>
+            <Offcanvas direction="end" isOpen={isOpen} toggle={() => closeAIProfile()} backdrop="static">
                 <OffcanvasHeader toggle={() => toggleOffcanvas()}>Update Profile with OpenWorx Agent</OffcanvasHeader>
                 <hr style={{ margin: "0px" }}></hr>
                 <OffcanvasBody
