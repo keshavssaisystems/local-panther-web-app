@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getUsers,
   getRoles,
+  getRolesForCompanyAdmin,
   deleteUser,
   deleteRole,
   resetPassword,
@@ -63,7 +64,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
   );
   useEffect(() => {
     loadData();
-    dispatch(getRoles());
+
+    dispatch(isCompanyAdmin ? getRolesForCompanyAdmin() : getRoles());
     dispatch(getCustomerDropdownList());
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -74,7 +76,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     }
   }, []);
   const { data } = useSelector((state) => state?.adminListing ?? {});
-  const rolesList = useSelector((state) => state.adminListing.rolesList);
+  const rolesList = useSelector((state) => isCompanyAdmin ? state.adminListing.rolesListforCompanyAdmin : state.adminListing.rolesList);
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -699,6 +701,16 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
+    }
+    if (customerId && customerId !== "") {
+      urlParams.companyId = customerId;
+    }
     await dispatch(getUsers(urlParams));
 
     setLoading(false);
@@ -852,11 +864,13 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                       type="select"
                       name="companyid"
                       value={roleid}
-                      disabled={isCompanyAdmin}
+                      // disabled={isCompanyAdmin}
                       onChange={(e) => onSelectRole(e.target.value)}
                     >
                       <option value={0}>All roles</option>
-                      {rolesList?.length > 0 &&
+                      {
+
+                        !isCompanyAdmin && rolesList?.length > 0 &&
                         rolesList?.map((options) => (
                           <option
                             key={options.userroleid}
@@ -864,6 +878,16 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                           >
                             {" "}
                             {options.rolename}{" "}
+                          </option>
+                        ))}
+                      {isCompanyAdmin && rolesList?.length > 0 &&
+                        rolesList?.map((options) => (
+                          <option
+                            key={options.id}
+                            value={options.id}
+                          >
+                            {" "}
+                            {options.name}{" "}
                           </option>
                         ))}
                     </Input>

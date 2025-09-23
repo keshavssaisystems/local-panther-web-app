@@ -79,7 +79,6 @@ export const deleteRole = createAsyncThunk(`${name}/deleteRole`, async (id) => {
   return await fetchWrapper.delete(DELETE_ROLE);
 });
 
-//  https://panther-api-dev.azurewebsites.net/api/UserRoles?pageSize=500
 export const getRoles = createAsyncThunk(`${name}/getRoles`, async () => {
   const GET_ROLES_STATS = `${baseUrl}/UserRoles/GetUserRolesDropdown`;
   return await fetchWrapper.get(GET_ROLES_STATS);
@@ -94,6 +93,12 @@ export const getRolesList = createAsyncThunk(
     return await fetchWrapper.get(GET_ROLES_STATS);
   }
 );
+
+export const getRolesForCompanyAdmin = createAsyncThunk(`${name}/getRolesForCompanyAdmin`, async () => {
+  const GET_ROLES_STATS = `${baseUrl}/Common/GetCommonDropdown?searchText=UserRolesForCompanyAdmin`;
+  return await fetchWrapper.get(GET_ROLES_STATS);
+});
+
 
 export const resetPassword = createAsyncThunk(
   `${name}/resetPassword`,
@@ -286,6 +291,7 @@ const adminListingSlice = createSlice({
     candTotalRecords: 0,
     candListLoading: false,
     customersList: [],
+    rolesListforCompanyAdmin: []
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -666,7 +672,25 @@ const adminListingSlice = createSlice({
     [updateIsCompanyAdminByUserId.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
-    }
+    },
+    [getRolesForCompanyAdmin.pending]: (state) => {
+
+    },
+    [getRolesForCompanyAdmin.fulfilled]: (state, action) => {
+
+    },
+    [getRolesForCompanyAdmin.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getRolesForCompanyAdmin.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+      state.rolesListforCompanyAdmin = payload ? payload?.data : [];
+    },
+    [getRolesForCompanyAdmin.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
   }
 });
 
