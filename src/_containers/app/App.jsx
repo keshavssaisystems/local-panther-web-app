@@ -148,7 +148,7 @@ export function App() {
   useEffect(() => {
     if (authUser) {
       updatePushNotifications();
-      messaging.onMessage((payload) => {
+      messaging?.onMessage((payload) => {
         let isProfilePage = window.location.pathname.indexOf("/profile") !== -1;
         toast(
           <Row>
