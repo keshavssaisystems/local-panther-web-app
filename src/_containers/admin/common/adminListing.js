@@ -327,10 +327,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     }
   ];
 
-  useEffect(() => {
-    if (isCompanyAdmin) {
-      setRoleId(2);
-    }
+  useEffect(() => {   
     loadData();
   }, [entity]);
 
@@ -347,6 +344,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     if (status !== "All") {
       urlParams.isActive = status;
     }
+    urlParams.userRoleId = 0;
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
