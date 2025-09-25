@@ -34,6 +34,8 @@ import {
   addFieldOfStudy,
   studyFieldActions,
 } from "_store";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function EducationModal(props) {
   const [check, setCheck] = useState(props.check);
@@ -562,10 +564,27 @@ export function EducationModal(props) {
     }
 
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+      closeModal();
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
     }
   }
 
@@ -825,9 +844,8 @@ export function EducationModal(props) {
                   id={"monthList"}
                   name={"monthList"}
                   type={"select"}
-                  className={`form-control ${
-                    item.fromMonthReq || item.fromDateValid ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${item.fromMonthReq || item.fromDateValid ? "is-invalid" : ""
+                    }`}
                   onChange={(evt) =>
                     onHandleInputChange("fromMonth", evt.target.value, index)
                   }
@@ -863,9 +881,8 @@ export function EducationModal(props) {
                     onChange={(evt) =>
                       onHandleInputChange("fromYear", evt.target.value, index)
                     }
-                    className={`form-control ${
-                      item.fromYearReq || item.fromDateValid ? "is-invalid" : ""
-                    }`}
+                    className={`form-control ${item.fromYearReq || item.fromDateValid ? "is-invalid" : ""
+                      }`}
                   >
                     <option key={0}>Select year</option>
                     {yearList?.length > 0 &&
@@ -905,9 +922,8 @@ export function EducationModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("toMonth", evt.target.value, index)
                   }
-                  className={`form-control ${
-                    item.toMonthReq ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${item.toMonthReq ? "is-invalid" : ""
+                    }`}
                 >
                   <option key={0}>Select month</option>
                   {monthList?.length > 0 &&
@@ -936,9 +952,8 @@ export function EducationModal(props) {
                   onChange={(evt) =>
                     onHandleInputChange("toYear", evt.target.value, index)
                   }
-                  className={`form-control ${
-                    item.toYearReq ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${item.toYearReq ? "is-invalid" : ""
+                    }`}
                 >
                   <option key={0}>Select year</option>
                   {yearList?.length > 0 &&

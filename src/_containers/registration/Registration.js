@@ -330,14 +330,19 @@ export function Registration() {
       phonenumber: getValues("phoneNumber").replace(/\D/g, ""),
       stateid: null,
     };
-    const permission = await Notification.requestPermission();
+      let permission = "denied";
+      try {
+        if ('Notification' in window) {
+          permission = await Notification?.requestPermission();
+        }
+      } catch (e) { console.log(e) }
     let data = await getPublicIP();
     if (data?.ip) {
       localStorage.setItem("publicip", data.ip);
     }
     if (permission === "granted") {
       // Generate Token
-      const token = await messaging.getToken({
+      const token = await messaging?.getToken({
         vapidKey:
           "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
       });
@@ -754,7 +759,7 @@ export function Registration() {
                           className="fw-semi-bold reg-link-text"
                           style={{ fontSize: "18px", fontWeight: "600" }}
                         >
-                          Hiring Manager? Register here
+                          New Company or Hiring Manager? Register here
                         </Label>
                       </div>
                     </FormGroup>

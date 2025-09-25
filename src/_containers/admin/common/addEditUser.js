@@ -10,6 +10,8 @@ import { Form, FormGroup, Label, Row, Col, Button, Input } from "reactstrap";
 
 import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
@@ -20,7 +22,7 @@ export const AddEditUser = (props) => {
   const dispatch = useDispatch();
   const rolesList = useSelector((state) => state.adminListing.rolesList);
   console.log(rolesList);
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
   /*
   companyid
@@ -131,26 +133,53 @@ export const AddEditUser = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              showSweetAlert({
-                title: `${result.data.message}`,
-                type: "success",
-              });
+              // showSweetAlert({
+              //   title: `${result.data.message}`,
+              //   type: "success",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.SUCCESS,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
+              setSuccess(false);
+              setError(false);
+              props.callBack();
             } else {
               setError(true);
-              showSweetAlert({
-                title: `${result.data.message}`,
-                type: "warning",
-              });
+              // showSweetAlert({
+              //   title: `${result.data.message}`,
+              //   type: "warning",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.ERROR,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 4000,
+                maxWidth: 500,
+              }));
             }
           } else {
             setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later!!",
-              type: "error",
-            });
+            // showSweetAlert({
+            //   title: "Something went wrong, please try again later!!",
+            //   type: "error",
+            // });
+            dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     } else {
       form.append("UserId", data.userId);
       axios
@@ -159,26 +188,51 @@ export const AddEditUser = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              showSweetAlert({
-                title: `${result.data.message}`,
-                type: "success",
-              });
+              // showSweetAlert({
+              //   title: `${result.data.message}`,
+              //   type: "success",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.SUCCESS,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 4000,
+                maxWidth: 500,
+              }));
+
             } else {
               setError(true);
-              showSweetAlert({
-                title: `${result.data.message}`,
-                type: "waning",
-              });
+              // showSweetAlert({
+              //   title: `${result.data.message}`,
+              //   type: "waning",
+              // });
+              dispatch(showSnackbar({
+                message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+                type: SNACKBAR_TYPES.ERROR,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
             }
           } else {
             setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later!!",
-              type: "error",
-            });
+            // showSweetAlert({
+            //   title: "Something went wrong, please try again later!!",
+            //   type: "error",
+            // });
+            dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
 
@@ -258,11 +312,10 @@ export const AddEditUser = (props) => {
                   name="role"
                   placeholder="role"
                   disabled={isView}
-                  className={`field-input placeholder-text form-control ${
-                    errors?.roleid && roleId === 0
-                      ? "is-invalid error-text"
-                      : "input-text"
-                  }`}
+                  className={`field-input placeholder-text form-control ${errors?.roleid && roleId === 0
+                    ? "is-invalid error-text"
+                    : "input-text"
+                    }`}
                   {...register("roleid")}
                   onChange={(evt) => selectRole(evt.target.value)}
                 >
@@ -339,9 +392,8 @@ export const AddEditUser = (props) => {
                   name="firstname"
                   {...register("firstname")}
                   placeholder="Enter first name"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.firstname ? "is-invalid error-text" : "input-text"
-                  }`}
+                  className={`field-input placeholder-text form-control ${errors?.firstname ? "is-invalid error-text" : "input-text"
+                    }`}
                   maxLength={50}
                   disabled={isView}
                 />
@@ -376,9 +428,8 @@ export const AddEditUser = (props) => {
                   name="lastname"
                   {...register("lastname")}
                   placeholder="Enter last name"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.lastname ? "is-invalid error-text" : "input-text"
-                  }`}
+                  className={`field-input placeholder-text form-control ${errors?.lastname ? "is-invalid error-text" : "input-text"
+                    }`}
                   maxLength={50}
                   disabled={isView}
                 />
@@ -398,9 +449,8 @@ export const AddEditUser = (props) => {
                   name="email"
                   {...register("email")}
                   placeholder="Enter email"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.email ? "is-invalid error-text" : "input-text"
-                  }`}
+                  className={`field-input placeholder-text form-control ${errors?.email ? "is-invalid error-text" : "input-text"
+                    }`}
                   maxLength={70}
                   disabled={isView}
                 />
@@ -417,9 +467,8 @@ export const AddEditUser = (props) => {
                   name="phonenumber"
                   {...register("phonenumber")}
                   placeholder="Enter phone number"
-                  className={`field-input placeholder-text form-control ${
-                    errors?.phonenumber ? "is-invalid error-text" : "input-text"
-                  }`}
+                  className={`field-input placeholder-text form-control ${errors?.phonenumber ? "is-invalid error-text" : "input-text"
+                    }`}
                   disabled={isView}
                 />
                 <div className="invalid-feedback">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardHeader,
   Col,
@@ -38,6 +38,8 @@ import { NavLink } from "react-router-dom";
 import { InterviewFeedback } from "./interviewFeedback";
 import currentOffer from "assets/utils/images/job-detail-icons/currentoffer.svg";
 import html2pdf from "html2pdf.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
 
 export function VideoInterviewDetails({
   interviewId,
@@ -52,6 +54,7 @@ export function VideoInterviewDetails({
   fromCustList, // Optional from customer schedule list
   toggle,
   postFeedbackData,
+  onAcceptClick
 }) {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [showAcceptPopup, setShowAcceptPopup] = useState(false);
@@ -59,7 +62,34 @@ export function VideoInterviewDetails({
   const [showNotes, setShowNotes] = useState(false);
   const [showInviteCard, setShowInviteCard] = useState(false);
   const [feedbackModal, setFeedbackModal] = useState(false);
+  const [linkDisabled, setLinkDisabled] = useState(true);
+  const [isPastInterview, setIsPastInterview] = useState(false);
 
+  useEffect(() => {
+    if (interviewDetails) {
+      const scheduledDate = moment(
+        interviewDetails?.scheduledate.slice(0, 11) + interviewDetails?.starttime,
+        "YYYY-MM-DD HH:mm:ss"
+      );
+
+      // compare only date parts (ignoring time)
+      if (scheduledDate.isBefore(moment(), "day")) {
+        setIsPastInterview(true);
+      } else {
+        setIsPastInterview(false);
+      }
+    }
+
+  }, [interviewDetails]);
+
+  useEffect(() => {
+    checkLinkEnableDisable();
+    const intervalId = setInterval(() => {
+      checkLinkEnableDisable();
+    }, 60000);
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, []);
   let interviewDetail = [];
   const allInterview = useSelector(
     (state) => state.scheduleInterview.allInterview
@@ -113,8 +143,8 @@ export function VideoInterviewDetails({
   }
   let startTime = getTimezoneDateTime(
     moment(interviewDetails?.scheduledate).format("MMM D, YYYY") +
-      " " +
-      interviewDetails?.starttime,
+    " " +
+    interviewDetails?.starttime,
     "hh:mm A"
   );
   let startDate =
@@ -195,6 +225,33 @@ export function VideoInterviewDetails({
     }
   };
 
+  const checkLinkEnableDisable = () => {
+    let scheduledTime = getTimezoneDateTime(
+      moment(
+        interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+      ).format("YYYY-MM-DD HH:mm:ss"),
+
+      "MM/DD/YYYY HH:mm:ss"
+    );
+
+    let endTime = getTimezoneDateTime(
+      moment(
+        interviewDetail?.scheduledate.slice(0, 11) + interviewDetail?.starttime
+      ).add(durationArr[0], "m").format("YYYY-MM-DD HH:mm:ss"),
+      "MM/DD/YYYY HH:mm:ss"
+    );
+    let now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    let minutes = moment(scheduledTime).diff(now, "minutes");
+    // let revminutes = moment(now).diff(scheduledTime, "minutes");
+    let revminutes = moment(now).diff(endTime, "minutes");
+
+    setLinkDisabled(!(revminutes < 0 && minutes < 15));
+  };
+
+  console.log("scheduledDate >= new Date().toISOString().slice(0, 10)", scheduledDate >= new Date().toISOString().slice(0, 10));
+
+
+
   return (
     <>
       <div className="dropdown-menu-header">
@@ -205,68 +262,70 @@ export function VideoInterviewDetails({
                 {interviewDetail?.candidatename
                   ? interviewDetail?.candidatename
                   : interviewDetail?.firstname && interviewDetail?.lastname
-                  ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-                  : ""}
+                    ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+                    : ""}
               </h6>
             </Col>
             <Col style={{ display: "flex", justifyContent: "flex-end" }}>
               {fromCustList ? (
                 <></>
               ) : refreshData === false ? (
-                <>
-                  <Button
-                    outline={!showInviteCard}
-                    size="sm"
-                    className="mb-2 mr-2 btn-transition"
-                    color="primary"
-                    onClick={() => setShowInviteCard(!showInviteCard)}
-                  >
-                    {" "}
-                    Invite to interview{" "}
-                  </Button>
 
-                  <ButtonGroup size={"sm"}>
-                    {interviewDetail?.isaccepted === false &&
-                      interviewDetail?.isactive === true && (
-                        <Button
-                          name="format"
-                          color={"success"}
-                          size={"sm"}
-                          className="mb-2 btn-transition"
-                          outline
-                          title="Accept interview"
-                          onClick={(e) => setShowAcceptPopup(true)}
-                        >
-                          <BsFillCheckCircleFill className="mb-1" />
-                        </Button>
-                      )}
-                    {interviewDetail?.isrejected === false &&
-                      interviewDetail?.isactive === true && (
-                        <Button
-                          name="format"
-                          color={"danger"}
-                          size={"sm"}
-                          className="mb-2 btn-transition"
-                          outline
-                          title="Decline interview"
-                          onClick={(e) => setShowRejectPopup(true)}
-                        >
-                          <BsXCircleFill className="mb-1" />
-                        </Button>
-                      )}
-                  </ButtonGroup>
+                isPastInterview ? (<></>) : (
+                  <>
+                    <Button
+                      outline={!showInviteCard}
+                      size="sm"
+                      className="mb-2 mr-2 btn-transition"
+                      color="primary"
+                      onClick={() => setShowInviteCard(!showInviteCard)}
+                    >
+                      {" "}
+                      Invite to interview{" "}
+                    </Button>
 
-                  <Button
-                    outline
-                    size="sm"
-                    className="mb-2 ms-1 btn-transition"
-                    color="danger"
-                    title="Cancel"
-                    onClick={(e) => setShowCancelPopup(true)}
-                  >
-                    <ImBin className="mb-1" />
-                  </Button>
-                </>
+                    <ButtonGroup size={"sm"}>
+                      {interviewDetail?.isaccepted === false &&
+                        interviewDetail?.isactive === true && (
+                          <Button
+                            name="format"
+                            color={"success"}
+                            size={"sm"}
+                            className="mb-2 btn-transition"
+                            outline
+                            title="Accept interview"
+                            onClick={(e) => setShowAcceptPopup(true)}
+                          >
+                            <BsFillCheckCircleFill className="mb-1" />
+                          </Button>
+                        )}
+                      {interviewDetail?.isrejected === false &&
+                        interviewDetail?.isactive === true && (
+                          <Button
+                            name="format"
+                            color={"danger"}
+                            size={"sm"}
+                            className="mb-2 btn-transition"
+                            outline
+                            title="Decline interview"
+                            onClick={(e) => setShowRejectPopup(true)}
+                          >
+                            <BsXCircleFill className="mb-1" />
+                          </Button>
+                        )}
+                    </ButtonGroup>
+
+                    <Button
+                      outline
+                      size="sm"
+                      className="mb-2 ms-1 btn-transition"
+                      color="danger"
+                      title="Cancel"
+                      onClick={(e) => setShowCancelPopup(true)}
+                    >
+                      <ImBin className="mb-1" />
+                    </Button>
+                  </>)
               ) : (
                 <></>
               )}
@@ -277,27 +336,46 @@ export function VideoInterviewDetails({
       <div className="p-custom">
         <p className="mb-0">Applied for {interviewDetail?.jobtitle}</p>
       </div>
-      <div className="p-custom">
-        <h6 className="fw-bold job-heading">Status</h6>
-        <p className="mb-0">
-          {interviewDetail?.isreschedulerequested === true
-            ? "Requested for reschedule (" +
+      <div className="p-custom row">
+
+        <div className="col-8">
+          <h6 className="fw-bold job-heading">Status</h6>
+          <p className="mb-0">
+            {interviewDetail?.isreschedulerequested === true
+              ? "Requested for reschedule (" +
               interviewDetail?.reschedulerequestedreason +
               ")"
-            : interviewDetail?.interviewstatusid !== 0
-            ? interviewDetail?.interviewstatusid === 2
-              ? "Completed but candidate not joined"
-              : "Completed"
-            : interviewDetail?.isaccepted === true &&
-              interviewDetail?.isrejected === false
-            ? "Accepted"
-            : interviewDetail?.isrejected === true
-            ? interviewDetail?.rejectionreason !== ""
-              ? "Declined (" + interviewDetail?.rejectionreason + ")"
-              : "Declined"
-            : "No response from candidate"}
-        </p>
+              : interviewDetail?.interviewstatusid !== 0
+                ? interviewDetail?.interviewstatusid === 2
+                  ? "Completed but candidate not joined"
+                  : "Completed"
+                : interviewDetail?.isaccepted === true &&
+                  interviewDetail?.isrejected === false
+                  ? "Accepted"
+                  : interviewDetail?.isrejected === true
+                    ? interviewDetail?.rejectionreason !== ""
+                      ? "Declined (" + interviewDetail?.rejectionreason + ")"
+                      : "Declined"
+                    : "No response from candidate"}
+          </p>
+        </div>
+        <div className="col-4">
+          {interviewDetail?.interviewstatusid === 1 && <div className="d-block text-left right-align">
+            <Button
+              size="sm"
+              className="mb-2 mr-2 btn-primary"
+              color="primary"
+              title="Make an Offer"
+              onClick={() => interviewDetail?.iscustomeroffered === true ? null : onAcceptClick(interviewDetail)}
+              disabled={interviewDetail?.iscustomeroffered === true}
+            >
+            {interviewDetail?.iscustomeroffered === true?" Offer generated":" Make an offer"}
+            </Button>
+
+          </div>}
+        </div>
       </div>
+
       {interviewDetail?.interviewstatusid !== 0 &&
         interviewDetail?.interviewfeedback !== "" && (
           <div className="p-custom">
@@ -389,12 +467,20 @@ export function VideoInterviewDetails({
                 <div className="p-custom">
                   <p className="mb-0">
                     <a
+                      className={linkDisabled ? "no-click" : ""}
                       href={"https://" + interviewDetail.videolink}
                       target={"_blank"}
                       rel="noopener noreferrer"
                       exact
                     >
-                      Click here to join
+                      <Button disabled={linkDisabled} color="success" size="sm">
+                        <FontAwesomeIcon
+                          style={{ fontSize: "16px" }}
+                          className="me-2"
+                          icon={faVideo}
+                        />
+                        Join
+                      </Button>
                     </a>{" "}
                     the interview
                   </p>
@@ -404,9 +490,24 @@ export function VideoInterviewDetails({
               interviewDetail?.format === "Video" && (
                 <div className="p-custom">
                   <p className="mb-0">
-                    <a href="/" onClick={(e) => toggle()}>
+                    <a
+                      className={linkDisabled ? "no-click" : ""}
+                      href="/"
+                      onClick={(e) => toggle()}
+                    >
                       <NavLink to={`/video-screen/${id}`} target="_blank" exact>
-                        Click here to join
+                        <Button
+                          disabled={linkDisabled}
+                          color="success"
+                          size="sm"
+                        >
+                          <FontAwesomeIcon
+                            style={{ fontSize: "16px" }}
+                            className="me-2"
+                            icon={faVideo}
+                          />
+                          Join
+                        </Button>
                       </NavLink>
                     </a>{" "}
                     the in-app interview
@@ -618,8 +719,8 @@ export function VideoInterviewDetails({
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
-            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-            : ""}
+              ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
@@ -640,8 +741,8 @@ export function VideoInterviewDetails({
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
-            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-            : ""}
+              ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+              : ""}
           !
         </SweetAlert>
       )}
@@ -662,8 +763,8 @@ export function VideoInterviewDetails({
           {interviewDetail?.candidatename
             ? interviewDetail?.candidatename
             : interviewDetail?.firstname && interviewDetail?.lastname
-            ? interviewDetail?.firstname + " " + interviewDetail?.lastname
-            : ""}
+              ? interviewDetail?.firstname + " " + interviewDetail?.lastname
+              : ""}
           !
         </SweetAlert>
       )}

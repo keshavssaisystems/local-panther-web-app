@@ -1,0 +1,66 @@
+.skills-container {
+  border: 2px solid #facc15;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fefce8;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.skills-badge {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background: #f59e0b;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-chip {
+  display: flex;
+  align-items: center;
+  background: #e3eafc;
+  color: #2d3a8c;
+  border: 1.5px solid #b6c5f5;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 4px;
+  position: relative;   /* important for the strike */
+  overflow: hidden;
+}
+
+.skill-chip.invalid {
+  background: #fff0f0;
+  color: #d32f2f;
+  border: 1.5px solid #d32f2f;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🔴 Horizontal strike-through */
+.skill-chip.invalid::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #d32f2f;
+  transform: translateY(-50%);
+}
+.skill-remove {
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 17px;
+}

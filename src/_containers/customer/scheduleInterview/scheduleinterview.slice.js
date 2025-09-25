@@ -34,8 +34,8 @@ export const postScheduleInterviewThunk = createAsyncThunk(
 // getUpcomingInterviewListThunk thunk
 export const getUpcomingInterviewListThunk = createAsyncThunk(
   `${name}/getUpcomingInterviewListThunk`,
-  async ({ pageNo, start, end }) => {
-    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=${pageNo}&isActive=true&startDate=${start}&endDate=${end}`;
+  async ({ pageNo, start, end, userList }) => {
+    const UPCOMING_INTEVRIEW_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageSize=5&pageNumber=${pageNo}&isActive=true&startDate=${start}&endDate=${end}&userList=${userList}`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT);
   }
 );
@@ -91,8 +91,9 @@ export const updateScheduledInterviewThunk = createAsyncThunk(
 // getUpcomingInterviewListWOPaginationThunk thunk
 export const getAllInterviewThunk = createAsyncThunk(
   `${name}/getAllInterviewThunk`,
-  async () => {
-    const UPCOMING_INTEVRIEW_END_POINT_V3 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&isPaginationRequired=false`;
+  async (userList) => {
+    
+    const UPCOMING_INTEVRIEW_END_POINT_V3 = `${process.env.REACT_APP_MAIN_API_URL}/api/ScheduledInterview?pageNumber=1&isActive=true&isPaginationRequired=false&userList=${userList}`;
     return await fetchWrapper.get(UPCOMING_INTEVRIEW_END_POINT_V3);
   }
 );
@@ -241,6 +242,13 @@ const scheduleInterviewSlice = createSlice({
       state.upcomingInterview.scheduledInterviewList = modifyUpcoming;
       state.allInterview.scheduledInterviewList = modifyAllInterview;
     },
+    clearAllInterviews: (state) => {
+      if (state.allInterview && Array.isArray(state.allInterview.scheduledInterviewList)) {
+        state.allInterview.scheduledInterviewList = [];
+      } else if (state.allInterview) {
+        state.allInterview.scheduledInterviewList = [];
+      }
+    },
   },
 
   extraReducers: {
@@ -348,7 +356,7 @@ const scheduleInterviewSlice = createSlice({
       state.allInterview = action.payload.data;
       state.loading = false;
     },
-    [getAllInterviewThunk.rejected]: (state, action) => {},
+    [getAllInterviewThunk.rejected]: (state, action) => { },
     [getSchedulesByCandidateId.pending]: (state) => {
       state.loading = true;
     },

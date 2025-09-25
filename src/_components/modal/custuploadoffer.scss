@@ -2,3 +2,25 @@
   min-height: 30vh;
   line-height: 30vh;
 }
+
+.tab-pane-wrapper {
+  position: relative;
+  min-height: 200px; /* 👈 ensures overlay has space */
+}
+
+.overlay-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.6); /* semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; /* make sure it sits above content */
+}
+
+.loader-spinner {
+  z-index: 1000;
+}

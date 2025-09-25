@@ -12,7 +12,7 @@ import { fetchWrapper } from "_helpers";
 
 // create slice name
 const name = "adminListing";
-const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
 
 const urlParams = {
   isActive: true,
@@ -79,7 +79,6 @@ export const deleteRole = createAsyncThunk(`${name}/deleteRole`, async (id) => {
   return await fetchWrapper.delete(DELETE_ROLE);
 });
 
-//  https://panther-api-dev.azurewebsites.net/api/UserRoles?pageSize=500
 export const getRoles = createAsyncThunk(`${name}/getRoles`, async () => {
   const GET_ROLES_STATS = `${baseUrl}/UserRoles/GetUserRolesDropdown`;
   return await fetchWrapper.get(GET_ROLES_STATS);
@@ -94,6 +93,12 @@ export const getRolesList = createAsyncThunk(
     return await fetchWrapper.get(GET_ROLES_STATS);
   }
 );
+
+export const getRolesForCompanyAdmin = createAsyncThunk(`${name}/getRolesForCompanyAdmin`, async () => {
+  const GET_ROLES_STATS = `${baseUrl}/Common/GetCommonDropdown?searchText=UserRolesForCompanyAdmin`;
+  return await fetchWrapper.get(GET_ROLES_STATS);
+});
+
 
 export const resetPassword = createAsyncThunk(
   `${name}/resetPassword`,
@@ -250,6 +255,22 @@ export const admAddCandidate = createAsyncThunk(
   }
 );
 
+
+export const updateIsVisibleToOthersById = createAsyncThunk(
+  `${name}/updateIsVisibleToOthersById`,
+  async (customerId) => {
+    const PUT_VISIBILITY_STATS = `${baseUrl}/Customer/UpdateIsVisibleToOthersById/${customerId}`;
+    return await fetchWrapper.put(PUT_VISIBILITY_STATS);
+  }
+);
+
+export const updateIsCompanyAdminByUserId = createAsyncThunk(
+  `${name}/updateIsCompanyAdminByUserId`,
+  async (userid) => {
+    const PUT_VISIBILITY_STATS = `${baseUrl}/User/InCompanyAdmin/${userid}`;
+    return await fetchWrapper.put(PUT_VISIBILITY_STATS);
+  }
+);
 // Create the slice
 const adminListingSlice = createSlice({
   name,
@@ -270,6 +291,7 @@ const adminListingSlice = createSlice({
     candTotalRecords: 0,
     candListLoading: false,
     customersList: [],
+    rolesListforCompanyAdmin: []
   },
   reducers: {
     logout: (state, { payload }) => {
@@ -625,10 +647,51 @@ const adminListingSlice = createSlice({
       state.loading = false;
       state.error = action.error;
     },
-    [admAddCandidate.pending]: (state) => {},
-    [admAddCandidate.fulfilled]: (state, { payload = {} }) => {},
-    [admAddCandidate.rejected]: (state, action) => {},
-  },
+    [admAddCandidate.pending]: (state) => { },
+    [admAddCandidate.fulfilled]: (state, { payload = {} }) => { },
+    [admAddCandidate.rejected]: (state, action) => { },
+
+    [updateIsVisibleToOthersById.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateIsVisibleToOthersById.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateIsVisibleToOthersById.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [updateIsCompanyAdminByUserId.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [updateIsCompanyAdminByUserId.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+    },
+    [updateIsCompanyAdminByUserId.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+    [getRolesForCompanyAdmin.pending]: (state) => {
+
+    },
+    [getRolesForCompanyAdmin.fulfilled]: (state, action) => {
+
+    },
+    [getRolesForCompanyAdmin.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getRolesForCompanyAdmin.fulfilled]: (state, { payload = {} }) => {
+      state.loading = false;
+      state.rolesListforCompanyAdmin = payload ? payload?.data : [];
+    },
+    [getRolesForCompanyAdmin.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.error;
+    },
+  }
 });
 
 // Export the actions and reducer
@@ -661,6 +724,9 @@ export const adminListingActions = {
   getAdmCandidateList,
   sendEmailInvitation,
   admAddCandidate,
+  updateIsVisibleToOthersById,
+  updateIsCompanyAdminByUserId,
+
 };
 
 export const adminListingReducer = adminListingSlice.reducer;

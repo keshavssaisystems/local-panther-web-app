@@ -283,6 +283,17 @@ export function CandCardView({
                       Like <BsHandThumbsUp></BsHandThumbsUp>
                     </Button> */}
 
+   <Button
+                      outline
+                      title="Apply"
+                      className="btn-icon mb-1"
+                      color="primary"
+                      size="sm"
+                      onClick={() => onBtnClick("applied")}
+                    >
+                      Apply <BsCheckCircle />
+                    </Button>
+                    
                     <Button
                       outline
                       title="Maybe"
@@ -305,16 +316,7 @@ export function CandCardView({
                       Decline <BsXCircle></BsXCircle>
                     </Button>
 
-                    <Button
-                      outline
-                      title="Apply"
-                      className="btn-icon mb-1"
-                      color="primary"
-                      size="sm"
-                      onClick={() => onBtnClick("applied")}
-                    >
-                      Apply <BsCheckCircle />
-                    </Button>
+                 
                   </ButtonGroup>
                 </Row>
               </Col>

@@ -25,6 +25,7 @@ import {
   customerCandidateListsActions,
   scheduleInterviewActions,
   graphActions,
+  getJobDetail,
 } from "_store";
 import { UpdateScheduleInterviewModal } from "_components/scheduleInterview/updateScheduleInterviewModal";
 import { getTimezoneDateTime } from "_helpers/helper";
@@ -32,6 +33,14 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 import { Login } from "@microsoft/mgt-react";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+
+import { hiringManagerActions } from "_store/dropDownHiringManager.slice";
+import { use, useRef } from "react";
+import { CustomerUploadOffer } from "_components/modal/custuploadoffer";
+import axios from "axios";
 
 Providers.globalProvider = new Msal2Provider({
   clientId: process.env.REACT_APP_API_KEY,
@@ -48,6 +57,11 @@ export function ScheduleInterview({ fromDashboard }) {
   const [openModal, setOpenModal] = useState(false);
   const [popupData, setPopupData] = useState({});
   const [popupType, setPopupType] = useState("Video");
+  const [hiringManagerId, setHiringManagerId] = useState(Number(localStorage.getItem("userId")));
+  const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState("");
+  const [offerUploadLoading, setOfferUploadLoading] = useState(false);
+
   const views = {
     month: true,
     week: true,
@@ -67,6 +81,7 @@ export function ScheduleInterview({ fromDashboard }) {
     getUpdatedScheduleList();
     dispatch(scheduleInterviewActions.getInterviewGuideListThunk());
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
+    dispatch(hiringManagerActions.getHiringManager(Number(localStorage.getItem("companyid"))));
   }, []);
   const onSelectClick = (evt) => {
     setSelectedJobId(evt.target.value);
@@ -94,15 +109,16 @@ export function ScheduleInterview({ fromDashboard }) {
     await dispatch(graphActions.getgraphThunk({ startDate, endDate }));
   };
   const microsoftCalenderData = useSelector((state) => state.graph.graph.value);
-
+  const hiringManagerDownList = useSelector((state) => state.hiringManager?.hiringManagers);
   const getUpdatedScheduleList = () => {
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     dispatch(scheduleInterviewActions.getDurationThunk());
     dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString(),
     });
     getCandidateList(
       selectedJobId,
@@ -135,11 +151,12 @@ export function ScheduleInterview({ fromDashboard }) {
 
   let upData = [];
   if (allInterviews !== undefined && allInterviews.length > 0) {
+    upData = [];
     allInterviews.forEach((upcomingInterview) => {
       let startDate = getTimezoneDateTime(
         moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
-          " " +
-          upcomingInterview.starttime,
+        " " +
+        upcomingInterview.starttime,
         "YYYY-MM-DD HH:mm:ss"
       );
       let durationArr =
@@ -150,45 +167,105 @@ export function ScheduleInterview({ fromDashboard }) {
         moment(startDate).add(durationArr[0], "m"),
         "YYYY-MM-DD HH:mm:ss"
       );
-      let interviewData = {
-        id: upcomingInterview.scheduleinterviewid,
-        data: upcomingInterview,
-        format: upcomingInterview.format,
-        title:
-          upcomingInterview.candidatename +
-          " (" +
-          upcomingInterview.jobtitle +
-          ")",
-        start: new Date(startDate),
-        end: new Date(endDate),
-        color:
-          upcomingInterview?.isreschedulerequested === true
-            ? "rgb(215 174 255 / 50%)"
-            : upcomingInterview?.interviewstatusid !== 0
-            ? upcomingInterview?.interviewstatusid === 1
-              ? "rgb(143 208 255 / 50%)"
-              : "rgb(202 202 202 / 50%)"
-            : upcomingInterview.isaccepted === true &&
-              upcomingInterview.isrejected === false
-            ? "rgb(137 222 178 / 50%)"
-            : upcomingInterview.isrejected === true
-            ? "rgb(255 143 143 / 50%)"
-            : "rgb(250 219 145 / 50%)",
-        textcolor:
-          upcomingInterview?.isreschedulerequested === true
-            ? "#2D0059"
-            : upcomingInterview?.interviewstatusid !== 0
-            ? upcomingInterview?.interviewstatusid === 1
-              ? "#004271"
-              : "#2D2D2D"
-            : upcomingInterview.isaccepted === true &&
-              upcomingInterview.isrejected === false
-            ? "#005027"
-            : upcomingInterview.isrejected === true
-            ? "#520000"
-            : "#5C4100",
-      };
-      upData.push(interviewData);
+
+      if (Number(localStorage.getItem("userId")) === hiringManagerId || hiringManagerId === '') {
+
+        let interviewData = {
+          id: upcomingInterview.scheduleinterviewid,
+          data: upcomingInterview,
+          format: upcomingInterview.format,
+          title:
+            upcomingInterview.candidatename +
+            " (" +
+            upcomingInterview.jobtitle +
+            ")",
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color:
+            upcomingInterview?.isreschedulerequested === true
+              ? "rgb(215 174 255 / 50%)"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                  ? "rgb(143 208 255 / 50%)"
+                  : upcomingInterview?.interviewstatusid === 4  //On Hold
+                    ? "rgb(211 152 45 / 91%)"
+                    : upcomingInterview?.interviewstatusid === 1   //Selected for Offer
+                      ? "rgb(12 237 46 / 64%)"
+                      : "rgb(202 202 202 / 50%)" //Candidate missed interview 
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "rgb(137 222 178 / 50%)"
+                  : upcomingInterview.isrejected === true
+                    ? "rgb(255 143 143 / 50%)"
+                    : "rgb(250 219 145 / 50%)",
+          textcolor:
+            upcomingInterview?.isreschedulerequested === true
+              ? "#2D0059"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 1
+                  ? "#004271"
+                  : "#2D2D2D"
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "#005027"
+                  : upcomingInterview.isrejected === true
+                    ? "#520000"
+                    : "#5C4100",
+        };
+        upData.push(interviewData);
+      } else {
+        let interviewData = {
+          id: upcomingInterview.scheduleinterviewid,
+          data: upcomingInterview,
+          format: null,
+          title:
+            upcomingInterview.candidatename +
+            " (" +
+            upcomingInterview.jobtitle +
+            ") " + getTimezoneDateTime(
+              moment(upcomingInterview.scheduledate).format("MMM D, YYYY") +
+              " " +
+              upcomingInterview.starttime,
+              "hh:mm"
+            ) + " - " + getTimezoneDateTime(
+              moment(startDate).add(durationArr[0], "m"),
+              "hh:mm"
+            ),
+          start: new Date(startDate),
+          end: new Date(endDate),
+          color:
+            upcomingInterview?.isreschedulerequested === true
+              ? "rgb(215 174 255 / 50%)"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 3  //Candidate not selected for an offer
+                  ? "rgb(143 208 255 / 50%)"
+                  : upcomingInterview?.interviewstatusid === 4  //On Hold
+                    ? "rgb(211 152 45 / 91%)"
+                    : upcomingInterview?.interviewstatusid === 1   //Selected for Offer
+                      ? "rgb(12 237 46 / 64%)"
+                      : "rgb(202 202 202 / 50%)" //Candidate missed interview
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "rgb(137 222 178 / 50%)"
+                  : upcomingInterview.isrejected === true
+                    ? "rgb(255 143 143 / 50%)"
+                    : "rgb(250 219 145 / 50%)",
+          textcolor:
+            upcomingInterview?.isreschedulerequested === true
+              ? "#2D0059"
+              : upcomingInterview?.interviewstatusid !== 0
+                ? upcomingInterview?.interviewstatusid === 1
+                  ? "#004271"
+                  : "#2D2D2D"
+                : upcomingInterview.isaccepted === true &&
+                  upcomingInterview.isrejected === false
+                  ? "#005027"
+                  : upcomingInterview.isrejected === true
+                    ? "#520000"
+                    : "#5C4100",
+        };
+        upData.push(interviewData);
+      }
     });
   }
   const getFormData = (formData) => {
@@ -202,8 +279,19 @@ export function ScheduleInterview({ fromDashboard }) {
         formData,
       })
     );
-    setUpdateSuccess(true);
+
+    // setUpdateSuccess(true);
+    dispatch(showSnackbar({
+      message: CANDIDATE_MESSAGES.INTERVIEW_UPDATED_SUCCESS,
+      type: SNACKBAR_TYPES.SUCCESS,
+      position: SNACKBAR_POSITION.TOP_CENTER,
+      autoClose: true,
+      autoCloseDelay: 2000,
+      maxWidth: 500,
+    }));
+
     dispatch(scheduleInterviewActions.getAllInterviewThunk());
+
   };
   const [toggleVar, setToggleVar] = useState(fromDashboard);
   const toggle = (tab) => {
@@ -225,7 +313,7 @@ export function ScheduleInterview({ fromDashboard }) {
   );
   let selectedJobDetails =
     upcomingInterviews.scheduledInterviewList !== undefined &&
-    upcomingInterviews.scheduledInterviewList.length > 0
+      upcomingInterviews.scheduledInterviewList.length > 0
       ? upcomingInterviews.scheduledInterviewList[0]
       : [];
   const getSelectedInterview = (scheduleinterviewid) => {
@@ -243,6 +331,7 @@ export function ScheduleInterview({ fromDashboard }) {
       pageNo: page,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: hiringManagerId === undefined ? '' : hiringManagerId.toString()
     };
     getUpcomingData(filterOnPageChange);
     setSelectedJobData({});
@@ -250,11 +339,15 @@ export function ScheduleInterview({ fromDashboard }) {
 
   const onCloseIdModal = () => {
     setOpenModal(false);
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
   };
   const handleSelectEvent = useCallback((event) => {
-    setPopupData(event.data);
-    setOpenModal(true);
-    setPopupType(event.format);
+    if (Number(localStorage.getItem("userId")) === hiringManagerIdRef.current ||
+      hiringManagerIdRef.current === '') {
+      setPopupData(event.data);
+      setOpenModal(true);
+      setPopupType(event.format);
+    }
   }, []);
 
   const postNotesData = (notesData) => {
@@ -269,11 +362,12 @@ export function ScheduleInterview({ fromDashboard }) {
         notesdata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
       end: moment().add("1", "w").format("YYYY-MM-DDTHH:mm:ss"),
+      userList: ""
     });
     getCandidateList(
       selectedJobId,
@@ -295,7 +389,7 @@ export function ScheduleInterview({ fromDashboard }) {
         invitedata,
       })
     );
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -325,7 +419,7 @@ export function ScheduleInterview({ fromDashboard }) {
       })
     );
     onCloseIdModal();
-    dispatch(scheduleInterviewActions.getAllInterviewThunk());
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
     getUpcomingData({
       pageNo: 1,
       start: moment().format("YYYY-MM-DDTHH:mm:ss"),
@@ -363,15 +457,15 @@ export function ScheduleInterview({ fromDashboard }) {
     syncData.forEach((syncDataElement) => {
       if (
         weekfirstday <
-          getTimezoneDateTime(
-            moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          ) &&
+        getTimezoneDateTime(
+          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        ) &&
         weeklastday >
-          getTimezoneDateTime(
-            moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          )
+        getTimezoneDateTime(
+          moment(syncDataElement.start.dateTime).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        )
       ) {
         let startDate = getTimezoneDateTime(
           syncDataElement.start.dateTime,
@@ -398,20 +492,20 @@ export function ScheduleInterview({ fromDashboard }) {
     availableInterview.forEach((blockedData) => {
       if (
         weekfirstday <
-          getTimezoneDateTime(
-            moment(blockedData.scheduledate).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          ) &&
+        getTimezoneDateTime(
+          moment(blockedData.scheduledate).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        ) &&
         weeklastday >
-          getTimezoneDateTime(
-            moment(blockedData.scheduledate).format("YYYY-MM-DD"),
-            "YYYY-MM-DD"
-          )
+        getTimezoneDateTime(
+          moment(blockedData.scheduledate).format("YYYY-MM-DD"),
+          "YYYY-MM-DD"
+        )
       ) {
         let startDate = getTimezoneDateTime(
           moment(blockedData.scheduledate).format("MMM D, YYYY") +
-            " " +
-            blockedData.starttime,
+          " " +
+          blockedData.starttime,
           "YYYY-MM-DD HH:mm:ss"
         );
         let durationArr =
@@ -437,7 +531,7 @@ export function ScheduleInterview({ fromDashboard }) {
   }
   overallData = availData.concat(msBlockData);
 
-  const postMessageData = (formData) => {};
+  const postMessageData = (formData) => { };
   const rejectScheduleData = (scheduledInterviewId) => {
     rejectInterview(scheduledInterviewId);
     getUpdatedScheduleList();
@@ -490,6 +584,119 @@ export function ScheduleInterview({ fromDashboard }) {
       })
     );
   };
+
+  useEffect(() => {
+    upData = [];
+    dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+  }, [dispatch, hiringManagerId]);
+
+  const hiringManagerIdRef = useRef(hiringManagerId);
+  useEffect(() => {
+    hiringManagerIdRef.current = hiringManagerId;
+  }, [hiringManagerId]);
+
+  const onAcceptClick = async (row) => {
+    // if (row.iscustomeroffered === true) {
+    //   dispatch(showSnackbar({
+    //     message: GENERAL_MESSAGES.OFFER_ALREADY_SENT,
+    //   }));
+    //   return; // Stop further processing if offer is already sent
+    // }
+    //Enable upload offer modal from here
+    let response = await dispatch(getJobDetail({ jobId: Number(row.jobid) }));
+    if (response?.payload?.statusCode === 200) {
+      row = { ...row, jobPaymentBenefitDtos: response?.payload?.data?.jobPaymentBenefitDtos };
+    } else if (response?.payload?.data?.length > 0) {
+    }
+    setSelectedRowData(row);
+    setShowUploadOfferModal(true);
+    onCloseIdModal();
+  };
+  const onUploadOfferDoc = (
+    file,
+    startdate,
+    pay,
+    finaloffer,
+    payType,
+    selectedTemplate,
+    generatedHtml
+  ) => {
+    setOfferUploadLoading(true);
+    const authData = localStorage.getItem("token")
+      ? localStorage.getItem("token")
+      : "";
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        Authorization: `Bearer ${authData}`,
+      },
+    };
+
+    const form = new FormData();
+    form.append(
+      "Candidaterecommendedjobid",
+      selectedRowData.candidaterecommendedjobid
+    );
+    form.append("Offerfile", file[0]);
+    form.append(
+      "CurrentUserId",
+      JSON.parse(localStorage.getItem("userDetails")).UserId
+    );
+    form.append("Isfinaloffer", finaloffer);
+    form.append("Salary", pay);
+    form.append("Payperiodtype", payType);
+    form.append(
+      "Startdate",
+      moment(startdate).tz("Etc/UTC").format("YYYY-MM-DD")
+    );
+    if (selectedTemplate && generatedHtml) {
+      form.append("Offerlettertemplateid", selectedTemplate);
+      form.append("Offerlettertemplatefinaltext", generatedHtml);
+    }
+    axios
+      .post(
+        `${process.env.REACT_APP_MAIN_API_URL}/api/JobOffer/MakeJobOffer`,
+        form,
+        config
+      )
+      .then((result) => {
+        setOfferUploadLoading(false);
+        if (result.data.statusCode === 200) {
+          setShowUploadOfferModal(false);
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+           dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+          //props.updateList();
+        } else {
+          dispatch(showSnackbar({
+            message: result.data.message || result.data.status,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 3000,
+            maxWidth: 500,
+          }));
+        }
+      })
+      .catch((error) => {
+        setOfferUploadLoading(false);
+      });
+  };
+
+  const onOfferUploading = (data) => {
+    setOfferUploadLoading(data);
+  };
+
+  const closeOfferModal=()=>{
+     dispatch(scheduleInterviewActions.getAllInterviewThunk(hiringManagerId));
+  }
+
   return (
     <>
       <PageTitle heading="Calendar" icon={titlelogo} />
@@ -588,10 +795,10 @@ export function ScheduleInterview({ fromDashboard }) {
                   md={4}
                   lg={4}
                   xl={4}
-                  className="mb-3 right-align"
+                  className="mb-3 right-align" style={{ display: "none" }}
                 >
                   <div>
-                    <Row style={{ display: "none" }}>
+                    <Row >
                       <Col md={7} className="mt-1 right-align">
                         <span className="right-align">
                           Connect microsoft calendar using
@@ -608,6 +815,36 @@ export function ScheduleInterview({ fromDashboard }) {
                   </div>
                 </Col>
               )}
+
+              {(toggleVar === "calendar" || toggleVar === "availabilty") && (<Col
+                xs={12}
+                sm={12}
+                md={4}
+                lg={4}
+                xl={4}
+                className="mb-3 right-align"
+              >  <Input
+                type="select"
+                title="Hiring Manger"
+                value={hiringManagerId}
+                name="hiringmanagerId"
+                id="hiringmanagerId"
+                placeholder="Hiring Manger"
+                style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+                onChange={(e) => {
+                  console.log("Selected:", e.target.value);
+                  setHiringManagerId(Number(e.target.value));
+                }}
+              >
+                  <option value={""}>Select a Hiring Manger</option>
+                  {hiringManagerDownList?.length > 0 ? (
+                    hiringManagerDownList.map((data) => (
+                      <option value={data.id} key={data.id}>
+                        {data.name}
+                      </option>
+                    ))
+                  ) : null}
+                </Input></Col>)}
             </Row>
 
             {toggleVar === "availabilty" && (
@@ -624,6 +861,8 @@ export function ScheduleInterview({ fromDashboard }) {
                   <Calendar
                     defaultView="week"
                     localizer={localizer}
+                    step={30}
+                    timeslots={1}
                     events={overallData}
                     startAccessor="start"
                     endAccessor="end"
@@ -678,9 +917,9 @@ export function ScheduleInterview({ fromDashboard }) {
                             interviewDetails={
                               selectedJobData.scheduleinterviewid === undefined
                                 ? upcomingInterviews?.scheduledInterviewList
-                                    ?.length > 0
+                                  ?.length > 0
                                   ? upcomingInterviews
-                                      ?.scheduledInterviewList[0]
+                                    ?.scheduledInterviewList[0]
                                   : []
                                 : selectedJobData
                             }
@@ -739,10 +978,16 @@ export function ScheduleInterview({ fromDashboard }) {
                       Declined interview
                     </span>
                     <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-lime-green">
+                        ..
+                      </div>{" "}
+                      Selected for Offer
+                    </span>
+                    <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-skyblue">
                         ..
                       </div>{" "}
-                      Interview completed
+                      Not selected for Offer
                     </span>
                     <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-grey">
@@ -750,11 +995,19 @@ export function ScheduleInterview({ fromDashboard }) {
                       </div>{" "}
                       Not joined
                     </span>
+
+                    <span className="legend">
+                      <div className="ms-3 mb-3 me-0 badge badge-color-goldenrod">
+                        ..
+                      </div>{" "}
+                      Hold
+                    </span>
+
                     <span className="legend">
                       <div className="ms-3 mb-3 me-0 badge badge-color-darkblue">
                         ..
                       </div>{" "}
-                      Requested for reschedule
+                      Reschedule Requested
                     </span>
                   </div>
                   <Calendar
@@ -779,6 +1032,8 @@ export function ScheduleInterview({ fromDashboard }) {
                     onSelectEvent={handleSelectEvent}
                     views={views}
                     messages={messages}
+                    step={30}
+                    timeslots={1}
                   />
                 </CardBody>
               </Card>
@@ -817,6 +1072,7 @@ export function ScheduleInterview({ fromDashboard }) {
           acceptInterview={(e) => acceptScheduleData(e)}
           rejectInterview={(e) => rejectScheduleData(e)}
           postFeedbackData={(e) => postFeedbackData(e)}
+          onAcceptClick={() => onAcceptClick(popupData)}
         />
         <UpdateScheduleInterviewModal
           interviewData={popupData}
@@ -835,6 +1091,41 @@ export function ScheduleInterview({ fromDashboard }) {
           onConfirm={(e) => setUpdateSuccess(false)}
         ></SweetAlert>
       )}
+      <>
+        {showUploadOfferModal ? (
+          <CustomerUploadOffer
+            isOpen={showUploadOfferModal}
+            onClose={() => {
+              setShowUploadOfferModal(false);
+              closeOfferModal();
+            }}
+            uploadOfferDoc={(
+              file,
+              startdate,
+              pay,
+              finaloffer,
+              payType,
+              selectedTemplate,
+              generatedHtml
+            ) =>
+              onUploadOfferDoc(
+                file,
+                startdate,
+                pay,
+                finaloffer,
+                payType,
+                selectedTemplate,
+                generatedHtml
+              )
+            }
+            loading={offerUploadLoading}
+            updateLoading={(data) => onOfferUploading(data)}
+            data={selectedRowData}
+          />
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
 }

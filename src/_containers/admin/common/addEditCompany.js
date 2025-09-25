@@ -28,6 +28,8 @@ import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
 import debounce from "lodash/debounce";
 import "./adminListing.scss";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export const AddEditCompany = (props) => {
   const dispatch = useDispatch();
@@ -77,7 +79,7 @@ export const AddEditCompany = (props) => {
 
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
   const authData = localStorage.getItem("token")
     ? localStorage.getItem("token")
     : "";
@@ -302,26 +304,53 @@ export const AddEditCompany = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              showSweetAlert({
-                title: result.data.message,
-                type: "success",
-              });
+              // showSweetAlert({
+              //   title: result.data.message,
+              //   type: "success",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.SUCCESS,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
+
             } else {
-              showSweetAlert({
-                title: result.data.message,
-                type: "error",
-              });
+              // showSweetAlert({
+              //   title: result.data.message,
+              //   type: "error",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.ERROR,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
+
               setError(true);
             }
           } else {
             setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later",
-              type: "warning",
-            });
+            // showSweetAlert({
+            //   title: "Something went wrong, please try again later",
+            //   type: "warning",
+            // });
+            dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
+
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     } else {
       form.append("Companyid", data.companyid);
       axios
@@ -330,26 +359,52 @@ export const AddEditCompany = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              showSweetAlert({
-                title: result.data.message,
-                type: "success",
-              });
+              // showSweetAlert({
+              //   title: result.data.message,
+              //   type: "success",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.SUCCESS,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
+              onClose();
             } else {
-              showSweetAlert({
-                title: result.data.message,
-                type: "error",
-              });
+              // showSweetAlert({
+              //   title: result.data.message,
+              //   type: "error",
+              // });
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.ERROR,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
               setError(true);
             }
           } else {
             setError(true);
-            showSweetAlert({
-              title: "Something went wrong, please try again later",
-              type: "warning",
-            });
+            // showSweetAlert({
+            //   title: "Something went wrong, please try again later",
+            //   type: "warning",
+            // });
+            dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
+
           }
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   };
   const onDrop = (acceptedFiles) => {
@@ -375,8 +430,8 @@ export const AddEditCompany = (props) => {
           {isViewMode
             ? "View Company Details"
             : isAddMode
-            ? "Add New Company"
-            : "Edit Company"}
+              ? "Add New Company"
+              : "Edit Company"}
         </strong>
       </ModalHeader>
       <ModalBody>
@@ -395,9 +450,8 @@ export const AddEditCompany = (props) => {
                     defaultValue={isAddMode ? "" : data?.companyname}
                     onInput={(e) => handleInputChange(e, "company")}
                     placeholder="Enter company"
-                    className={`field-input placeholder-text form-control ${
-                      companyValidation ? "is-invalid error-text" : "input-text"
-                    }`}
+                    className={`field-input placeholder-text form-control ${companyValidation ? "is-invalid error-text" : "input-text"
+                      }`}
                     maxLength={50}
                   />
                   <div className="invalid-feedback">
@@ -434,11 +488,10 @@ export const AddEditCompany = (props) => {
                     onInput={(e) => handleInputChange(e, "description")}
                     placeholder="Enter description"
                     defaultValue={isAddMode ? "" : data?.description}
-                    className={`field-input placeholder-text form-control ${
-                      errors?.aboutCompany
-                        ? "is-invalid error-text"
-                        : "input-text"
-                    }`}
+                    className={`field-input placeholder-text form-control ${errors?.aboutCompany
+                      ? "is-invalid error-text"
+                      : "input-text"
+                      }`}
                   />
                 </FormGroup>
               </Col>
@@ -499,9 +552,8 @@ export const AddEditCompany = (props) => {
                     defaultValue={isAddMode ? "" : data?.contactemail}
                     maxLength={50}
                     placeholder="Enter email"
-                    className={`field-input placeholder-text form-control ${
-                      errors?.email ? "is-invalid error-text" : "input-text"
-                    }`}
+                    className={`field-input placeholder-text form-control ${errors?.email ? "is-invalid error-text" : "input-text"
+                      }`}
                   />
                   <div className="invalid-feedback">
                     {errors?.email?.message}
@@ -521,25 +573,24 @@ export const AddEditCompany = (props) => {
                     loadOptions={loadOptionsDeb}
                     cacheOptions
                     isMulti={false}
-                    className={`placeholder-name ${
-                      locationValidation ? "async-border-red" : "async-no-error"
-                    }`}
+                    className={`placeholder-name ${locationValidation ? "async-border-red" : "async-no-error"
+                      }`}
                     {...register("city")}
                     onChange={(e) => handleInputChange(e, "location")}
                     defaultValue={
                       isAddMode
                         ? []
                         : {
-                            value:
-                              data?.cityid +
-                              ", " +
-                              data?.stateid +
-                              ", " +
-                              data?.cityname +
-                              ", " +
-                              data?.statename,
-                            label: data?.cityname + ", " + data?.statename,
-                          }
+                          value:
+                            data?.cityid +
+                            ", " +
+                            data?.stateid +
+                            ", " +
+                            data?.cityname +
+                            ", " +
+                            data?.statename,
+                          label: data?.cityname + ", " + data?.statename,
+                        }
                     }
                   />
                   <div className="async-error-text">
@@ -561,9 +612,8 @@ export const AddEditCompany = (props) => {
                     isMulti={false}
                     {...register("countryid")}
                     defaultOptions={countryList}
-                    className={`placeholder-name ${
-                      countryValidation ? "async-border-red" : "async-no-error"
-                    }`}
+                    className={`placeholder-name ${countryValidation ? "async-border-red" : "async-no-error"
+                      }`}
                     onChange={(e) => handleInputChange(e, "country")}
                     // onMenuOpen={() => checkCityValid()}
 
@@ -571,9 +621,9 @@ export const AddEditCompany = (props) => {
                       isAddMode
                         ? []
                         : {
-                            value: 1,
-                            label: data?.countryname,
-                          }
+                          value: 1,
+                          label: data?.countryname,
+                        }
                     }
                   />
                   <div className="async-error-text">
@@ -594,9 +644,8 @@ export const AddEditCompany = (props) => {
                     onInput={(e) => handleInputChange(e, "zipcode")}
                     placeholder="Enter zipcode"
                     defaultValue={isAddMode ? "" : data?.zipcode}
-                    className={`field-input placeholder-text form-control ${
-                      errors?.zipcode ? "is-invalid error-text" : "input-text"
-                    }`}
+                    className={`field-input placeholder-text form-control ${errors?.zipcode ? "is-invalid error-text" : "input-text"
+                      }`}
                   />
                   <div className="invalid-feedback">
                     {errors?.zipcode?.message}

@@ -59,6 +59,11 @@ import { candidateDashboardReducer } from "./dashboard.slice";
 import { SettingsReducer } from "./settings.slice";
 import { paymentReducer } from "_containers/payment/payment.slice";
 
+import { snackbarReducer } from "./snackbar.slice";
+
+import { hiringManagerReducer } from "./dropDownHiringManager.slice";
+
+
 export * from "./candidateProfile.slice";
 export * from "./auth.slice";
 export * from "./users.slice";
@@ -117,6 +122,7 @@ export * from "./dropDownYear.slice";
 export * from "./dashboard.slice";
 export * from "./settings.slice";
 export * from "../_containers/payment/payment.slice";
+export * from "./snackbar.slice";
 
 // export all customer slice fn
 export * from "_containers/customer/reports/customerreport.slice";
@@ -180,5 +186,16 @@ export const store = configureStore({
     candidateDashboard: candidateDashboardReducer,
     getSettings: SettingsReducer,
     payment: paymentReducer,
+    snackbar: snackbarReducer,
+    hiringManager: hiringManagerReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: [
+          'snackbar.actions',
+          'snackbar.icon',
+        ],
+      },
+    }),
 });

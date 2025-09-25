@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getUsers,
   getRoles,
+  getRolesForCompanyAdmin,
   deleteUser,
   deleteRole,
   resetPassword,
@@ -37,8 +38,17 @@ import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
 import { getCustomerDropdownList } from "_store";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+import { PaymentModal } from "_components/modal/paymentmodal";
+import {
+  getCustomers,
+  verifyCustomer,
+  updateIsVisibleToOthersById,
+  updateIsCompanyAdminByUserId
+} from "_containers/admin/_redux/adminListing.slice";
 
-export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
+export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const dispatch = useDispatch();
 
   const [pageSize, setPageSize] = useState(10);
@@ -47,13 +57,15 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     icon,
     columns = [];
   const [customerId, setCustomerId] = useState("");
-
+  const [deactivateConfirm, setDeactivateConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
   const { customerList = [] } = useSelector(
     (state) => state.adminReportReducer
   );
   useEffect(() => {
     loadData();
-    dispatch(getRoles());
+
+    dispatch(isCompanyAdmin ? getRolesForCompanyAdmin() : getRoles());
     dispatch(getCustomerDropdownList());
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -64,7 +76,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     }
   }, []);
   const { data } = useSelector((state) => state?.adminListing ?? {});
-  const rolesList = useSelector((state) => state.adminListing.rolesList);
+  const rolesList = useSelector((state) => isCompanyAdmin ? state.adminListing.rolesListforCompanyAdmin : state.adminListing.rolesList);
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -98,16 +110,16 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
       sortable: true,
     },
     {
-      name: "First name",
-      id: "firstName",
-      selector: (row) => row.firstname,
+      name: "User name",
+      id: "userName",
+      selector: (row) => row.firstname + " " + row.lastname,
       sortable: true,
     },
-    {
-      name: "Last name",
-      selector: (row) => row.lastname,
-      sortable: true,
-    },
+    // {
+    //   name: "Last name",
+    //   selector: (row) => row.lastname,
+    //   sortable: true,
+    // },
 
     {
       name: "Email",
@@ -127,7 +139,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
                 target={"rr_" + row?.userId}
               >
                 {row?.deactivationreason !== "" ||
-                row?.deactivationreason !== undefined
+                  row?.deactivationreason !== undefined
                   ? row?.deactivationreason
                   : "-"}
               </UncontrolledTooltip>
@@ -144,6 +156,95 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
       selector: (row) =>
         row.phonenumber ? USPhoneNumber(row.phonenumber) : "-",
       sortable: true,
+    },
+
+    {
+      name: "Company admin",
+      id: "admin",
+      selector: (row) => (
+
+        <>
+          {<>
+            <div
+              title="Make company admin"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{
+                verticalAlign: "bottom",
+                opacity: row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "0.5" : "1",
+                cursor: row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId) ? "pointer" : "not-allowed",
+              }}
+              //() => toggleCompanyAdmin()
+              onClick={() => row.userId !== Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId)
+                && openConfirmationModal(`you want to ${!row.iscompanyadmin ? "make" : "remove"} this user as company admin?`, 'CompanyAdmin', !row.iscompanyadmin, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.iscompanyadmin,
+                  "switch-off": !row.iscompanyadmin,
+                })}
+                size="sm"
+                disabled={row.userId === Number(JSON.parse(localStorage.getItem("userDetails"))?.UserId)}
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
+    {
+      name: "Visibility",
+      id: "visibility",
+      selector: (row) => (
+        <>
+          {<>
+            <div
+              title="Active/Inactive visibility"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+              onClick={() => openConfirmationModal(`you want to ${!row.isvisibletoothers ? "enable" : "disable"} visibility for this user?`, 'Visibility', !row.isvisibletoothers, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isvisibletoothers,
+                  "switch-off": !row.isvisibletoothers,
+                })}
+                size="sm"
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
+
+    {
+      name: "Billing",
+      id: "billing",
+      selector: (row) => (
+        <>
+          {row.billingdetailstatus ? (
+            <Button color="link" onClick={() => onViewBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>View</span>
+            </Button>
+          ) : (
+            <Button color="link" onClick={() => onAddBilling(row)}>
+              <span style={{ textDecoration: "underline" }}>Add</span>
+            </Button>
+          )}
+        </>
+      ),
     },
     {
       name: "Action",
@@ -223,13 +324,10 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
       ),
       sortable: false,
       minWidth: "200px",
-    },
+    }
   ];
 
-  useEffect(() => {
-    if (isCompanyAdmin) {
-      setRoleId(2);
-    }
+  useEffect(() => {   
     loadData();
   }, [entity]);
 
@@ -246,6 +344,7 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     if (status !== "All") {
       urlParams.isActive = status;
     }
+    urlParams.userRoleId = 0;
     if (roleid !== 0) {
       urlParams.userRoleId = roleid;
     }
@@ -316,15 +415,35 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
 
     let response = await dispatch(settingsActions.deactivateUser({ id, data }));
     if (response.payload) {
-      showSweetAlert({
-        title: `${response.payload.message}`,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: `${response.payload.message}`,
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
+
     } else {
-      showSweetAlert({
-        title: `${response.error.message}`,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: `${response.error.message}`,
+      //   type: "error",
+      // });
+
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
     }
   };
 
@@ -339,15 +458,34 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     }
     if (response.payload) {
       setIsDelete(false);
-      showSweetAlert({
-        title: response.payload.message,
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: response.payload.message,
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
+
     } else {
-      showSweetAlert({
-        title: response.error.message,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: response.error.message,
+      //   type: "error",
+      // });
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
     }
   };
 
@@ -503,15 +641,33 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     };
     let response = dispatch(resetPassword(payload));
     if (response?.error) {
-      showSweetAlert({
-        title: response?.error?.message,
-        type: "error",
-      });
+      // showSweetAlert({
+      //   title: response?.error?.message,
+      //   type: "error",
+      // });
+      dispatch(showSnackbar({
+        message: response?.error?.message,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     } else {
-      showSweetAlert({
-        title: "Password has been sent to registered email ID",
-        type: "success",
-      });
+      // showSweetAlert({
+      //   title: "Password has been sent to registered email ID",
+      //   type: "success",
+      // });
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.PASSWORD_RESET_EMAIL_SENT,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      CloseModal();
+
     }
   };
 
@@ -543,6 +699,16 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     if (searchData !== "") {
       urlParams.searchText = searchData;
     }
+    if (isCompanyAdmin) {
+      let userDetails = localStorage.getItem("userDetails")
+        ? JSON.parse(localStorage.getItem("userDetails"))
+        : {};
+
+      urlParams.companyId = Number(userDetails.CompanyId);
+    }
+    if (customerId && customerId !== "") {
+      urlParams.companyId = customerId;
+    }
     await dispatch(getUsers(urlParams));
 
     setLoading(false);
@@ -573,6 +739,102 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
     setLoading(false);
   };
 
+  const [openBDModal, setOpenBDModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
+  const onAddBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onViewBilling = (row) => {
+    setSelectedCustomer(row);
+    setOpenBDModal(true);
+  };
+
+  const onCloseBDModal = () => {
+    setOpenBDModal(false);
+    // getCustomerDetails(pageSize, pageNo);
+    setSelectedCustomer([]);
+  };
+
+
+  const toggleVisibility = async function (value, row) {
+    let response = await dispatch(updateIsVisibleToOthersById(row.customerid));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getUsersList();
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const toggleCompanyAdmin = async function (value, row) {
+    let response = await dispatch(updateIsCompanyAdminByUserId(row.userId));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getUsersList();
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const [actionType, setActionType] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const openConfirmationModal = (message, actionType, isActive, row) => {
+    setConfirmMessage(message);
+    setDeactivateConfirm(true);
+    setSelectedRowData(row);
+    setActionType(actionType);
+    setSelectedValue(isActive);
+  }
+
+  const handleConfirmationClose = (status) => {
+    setDeactivateConfirm(false);
+    if (status) {
+      getUsersList();
+    }
+  };
+  const confirmationAction = () => {
+    if (actionType === 'CompanyAdmin') {
+      toggleCompanyAdmin(selectedValue, selectedRowData);
+    }
+    else if (actionType === 'Visibility') {
+      toggleVisibility(selectedValue, selectedRowData);
+    }
+    setDeactivateConfirm(false);
+  }
+
   return (
     <>
       <Row>
@@ -600,11 +862,13 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
                       type="select"
                       name="companyid"
                       value={roleid}
-                      disabled={isCompanyAdmin}
+                      // disabled={isCompanyAdmin}
                       onChange={(e) => onSelectRole(e.target.value)}
                     >
                       <option value={0}>All roles</option>
-                      {rolesList?.length > 0 &&
+                      {
+
+                        !isCompanyAdmin && rolesList?.length > 0 &&
                         rolesList?.map((options) => (
                           <option
                             key={options.userroleid}
@@ -612,6 +876,16 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
                           >
                             {" "}
                             {options.rolename}{" "}
+                          </option>
+                        ))}
+                      {isCompanyAdmin && rolesList?.length > 0 &&
+                        rolesList?.map((options) => (
+                          <option
+                            key={options.id}
+                            value={options.id}
+                          >
+                            {" "}
+                            {options.name}{" "}
                           </option>
                         ))}
                     </Input>
@@ -855,6 +1129,55 @@ export const AdminListing = ({ entity, isCompanyAdmin = false }) => {
           </SweetAlert>
         )}
       </div>
+
+      {openBDModal ? (
+        <PaymentModal
+          isOpen={openBDModal}
+          selectedCustomer={selectedCustomer}
+          onClose={() => onCloseBDModal()}
+          isAdmin={true}
+        />
+      ) : (
+        <></>
+      )}
+
+      <Modal size="md" isOpen={deactivateConfirm}>
+        <Card>
+          <CardBody>
+            <div className="d-flex justify-content-center mb-3">
+              <img src={errorIcon} alt="success-icon" />
+            </div>
+            <div className="mb-0 d-flex justify-content-center rejected-success-text">
+              Are you sure
+            </div>
+            <div className="mb-3 d-flex justify-content-center rejected-success-text">
+              {" "}
+              {confirmMessage}
+            </div>
+            <div>
+              <Row>
+                <Col className="d-flex justify-content-center">
+                  <Button
+                    style={{ background: "#2f479b", borderColor: "#2f479b" }}
+                    className="me-2 accept-modal-btn"
+                    onClick={(evt) => confirmationAction()}
+                  >
+                    YES
+                  </Button>
+                  <Button
+                    style={{ background: "#2f2e2e", borderColor: "#2f2e2e" }}
+                    className="success-close-btn"
+                    onClick={(evt) => setDeactivateConfirm(false)}
+                  >
+                    NO
+                  </Button>
+                </Col>
+              </Row>
+            </div>
+          </CardBody>
+        </Card>
+      </Modal>
+
     </>
   );
-};
+}

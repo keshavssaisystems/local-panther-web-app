@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { fetchWrapper } from "_helpers";
+import { get } from "lodash";
 
 const initialState = {
   user: {
@@ -82,13 +83,15 @@ const initialState = {
     localStorage.getItem("profileImage") === ""
       ? null
       : localStorage.getItem("profileImage"),
+  candidateHistory: [],
+  loadAIProfileCanvas: false,
 };
 
 // Define the async action
 export const getCandidate = createAsyncThunk(
   "candidate/getCandidate",
   async (candidateid) => {
-    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Candidate/GetCandidateById/${candidateid}`
     );
@@ -148,7 +151,7 @@ export const getAvailability = createAsyncThunk(
 export const updateProfileImage = createAsyncThunk(
   "candidate/getCandidate",
   async (candidateid) => {
-    const baseUrl = `${process.env.REACT_APP_PANTHER_URL}/api`;
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
     const response = await fetchWrapper.get(
       `${baseUrl}/Candidate/GetCandidateById/${candidateid}`
     );
@@ -165,11 +168,29 @@ export const updateEmploymentEligibilityThunk = createAsyncThunk(
     return await fetchWrapper.put(CANDIDATE_PUT_ENDPOINT, payload);
   }
 );
+
+
+export const getCandidateHistory = createAsyncThunk(
+  `candidate/getCandidateHistory`,
+
+  async (candidateId) => {
+    const baseUrl = `${process.env.REACT_APP_MAIN_API_URL}/api`;
+    const response = await fetchWrapper.get(
+      `${baseUrl}/Report/GetReportBySP?storedProcedure=Report_CandidateRecommendedJob_Event_History&parameter=${candidateId}`
+    );
+
+    return response.data; // Assuming your API response has a "data" property
+  }
+);
 // Create the slice
 const getProfileSlice = createSlice({
   name: "getProfile",
   initialState,
-  reducers: {},
+   reducers: {
+    updateLoadAIProfileCanvas: (state, { payload }) => {
+      state.loadAIProfileCanvas = payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getCandidate.pending, (state) => {
@@ -181,7 +202,7 @@ const getProfileSlice = createSlice({
         state.loader = false;
         let filter_data = action.payload;
         let organization = filter_data.candidateQualificationsDtos.filter(
-          (x) => x.iscurrentlyworking == true
+          (x) => x.iscurrentlyworking === true
         );
 
         let data = {
@@ -189,7 +210,7 @@ const getProfileSlice = createSlice({
           organization:
             organization.length > 0 ? organization[0].company : "Not Working",
           eligibility: state.dropdownLists.eligibilityDropDown.find(
-            (x) => x.id == filter_data.employmenteligiblity
+            (x) => x.id === filter_data.employmenteligiblity
           )?.name,
           readyToWork: filter_data.isreadytoworkimmediately ? "Yes" : "No",
           phonenumber: filter_data.phonenumber,
@@ -352,7 +373,14 @@ const getProfileSlice = createSlice({
       })
       .addCase(updateEmploymentEligibilityThunk.rejected, (state, action) => {
         state.error = action.error;
-      });
+      })
+      .addCase(getCandidateHistory.pending, (state) => { })
+      .addCase(getCandidateHistory.fulfilled, (state, action) => {
+        state.candidateHistory = get(action, 'payload', []);
+      })
+      .addCase(getCandidateHistory.rejected, (state, action) => { })
+
+      ;
   },
 });
 
@@ -365,5 +393,6 @@ export const getProfileActions = {
   getDistanceDetails,
   getAvailability,
   updateEmploymentEligibilityThunk,
+  getCandidateHistory
 };
 export const getProfileReducer = getProfileSlice.reducer;

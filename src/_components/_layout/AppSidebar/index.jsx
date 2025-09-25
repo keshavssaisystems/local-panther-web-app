@@ -31,12 +31,12 @@ export const AppSidebar = (props) => {
           ),
           ...(subMenuList?.length
             ? {
-                subNav: subMenuList.map(({ submenuname: title, path }) => ({
-                  title,
-                  itemId: path,
-                  elemBefore: () => <FontAwesomeIcon icon={faBars} />,
-                })),
-              }
+              subNav: subMenuList.map(({ submenuname: title, path }) => ({
+                title,
+                itemId: path,
+                elemBefore: () => <FontAwesomeIcon icon={faBars} />,
+              })),
+            }
             : {}),
         })
       );
@@ -54,24 +54,30 @@ export const AppSidebar = (props) => {
       navigate(itemId);
     }
   };
+
+  const getActiveItemId = (pathname) => {
+    if (pathname.startsWith("/customer-candidate-")) {
+      return "/candidate-list"; // This should match the itemId of your sidebar menu
+    }
+    return pathname;
+  };
+
   return (
     <>
       {/* Sidebar Overlay */}
 
       <div
-        className={`appsidebar  overflow-y-auto  bg-white ${
-          props.isSidebarOpen ? "sidebar-open-main" : ""
-        } `}
-        // onMouseEnter={() => onEnterToSidebar()}
-        // onMouseLeave={() => onLeaveToSidebar()}
+        className={`appsidebar  overflow-y-auto  bg-white ${props.isSidebarOpen ? "sidebar-open-main" : ""
+          } `}
+      // onMouseEnter={() => onEnterToSidebar()}
+      // onMouseLeave={() => onLeaveToSidebar()}
       >
         <div
-          className={`${
-            props.isSidebarOpen ? "sidebar-open" : "sidebar-close"
-          }`}
+          className={`${props.isSidebarOpen ? "sidebar-open" : "sidebar-close"
+            }`}
         >
           <Navigation
-            activeItemId={location.pathname}
+            activeItemId={getActiveItemId(location.pathname)}
             onSelect={({ itemId }) => {
               onNavigate(itemId);
             }}

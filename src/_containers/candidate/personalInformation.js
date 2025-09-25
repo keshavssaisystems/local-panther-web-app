@@ -35,6 +35,8 @@ import imgHover from "../../assets/utils/images/profile-pic-hover.svg";
 import { profileActions, jobPreferenceDetailsActions } from "_store";
 import { getLocationFilter } from "_store";
 import debounce from "lodash/debounce";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function PersonalInformation(props) {
   const dispatch = useDispatch();
@@ -384,9 +386,9 @@ export function PersonalInformation(props) {
         new_data.email === "" ||
         new_data.cityid == 0 ||
         new_data.employmenteligiblity === 0 ||
-        new_data.zipcode === "" ||
-        new_data.gender?.[0]?.value == 0 ||
-        new_data.ethinicity?.[0]?.value == 0
+        new_data.zipcode === ""
+        // || new_data.gender?.[0]?.value == 0 ||
+        // new_data.ethinicity?.[0]?.value == 0
       ) {
         return;
       }
@@ -436,10 +438,29 @@ export function PersonalInformation(props) {
 
     let response = await dispatch(profileActions.insertPersonalInfo(post_data));
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      debugger;
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
     } else {
-      setError(true);
+      debugger;
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
+
     }
     setContactModal(false);
   }
@@ -699,15 +720,24 @@ export function PersonalInformation(props) {
 
     axios
       .put(
-        `${process.env.REACT_APP_PANTHER_URL}/api/User/UpdateProfilePhoto/` +
-          userDetails.UserId,
+        `${process.env.REACT_APP_MAIN_API_URL}/api/User/UpdateProfilePhoto/` +
+        userDetails.UserId,
         form,
         config
       )
       .then((result) => {
         if (result.data.statusCode == 204) {
-          setSuccess(true);
-          setMessage(result.data.message);
+          // setSuccess(true);
+          // setMessage(result.data.message);
+          dispatch(showSnackbar({
+            message: result.data.message,
+            type: SNACKBAR_TYPES.SUCCESS,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 2000,
+            maxWidth: 500,
+          }));
+
           localStorage.setItem(
             "profileImage",
             result.data.data.profilephotopath
@@ -715,12 +745,20 @@ export function PersonalInformation(props) {
           setProfileImage(result.data.data.profilephotopath);
           setFile(true);
         } else {
-          setError(true);
+          // setError(true);
+          dispatch(showSnackbar({
+            message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+            type: SNACKBAR_TYPES.ERROR,
+            position: SNACKBAR_POSITION.TOP_CENTER,
+            autoClose: true,
+            autoCloseDelay: 2000,
+            maxWidth: 500,
+          }));
           setFile(false);
         }
         setEditImg(false);
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const deleteImg = async function () {
@@ -729,12 +767,28 @@ export function PersonalInformation(props) {
       jobPreferenceDetailsActions.deleteProfileImgThunk(id)
     );
     if (response.payload) {
-      setSuccess(true);
-      setMessage(response.payload.message);
+      // setSuccess(true);
+      // setMessage(response.payload.message);
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
       localStorage.setItem("profileImage", "");
       setProfileImage("");
     } else {
-      setError(true);
+      // setError(true);
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 2000,
+        maxWidth: 500,
+      }));
     }
     setEditImg(false);
     props.onCallBack();
@@ -759,8 +813,8 @@ export function PersonalInformation(props) {
                             isHovered
                               ? imgHover
                               : profileImage == ""
-                              ? profileImg
-                              : profileImage
+                                ? profileImg
+                                : profileImage
                           }
                           onMouseEnter={handleMouseEnter}
                           onMouseLeave={handleMouseLeave}
@@ -779,10 +833,10 @@ export function PersonalInformation(props) {
                             </span>
                             {selectedCandidate.personalInfo.pronounname !==
                               "" && (
-                              <span className="candidate-label">
-                                ( {selectedCandidate.personalInfo.pronounname} )
-                              </span>
-                            )}
+                                <span className="candidate-label">
+                                  ( {selectedCandidate.personalInfo.pronounname} )
+                                </span>
+                              )}
                           </strong>
                           {/* {selectedCandidate.personalInfo.position && (
                             <p className="widget-description text-focus content-text mt-0">
@@ -792,9 +846,9 @@ export function PersonalInformation(props) {
                           <p className="candidate-label mt-0 mb-0">
                             {selectedCandidate.personalInfo.organization !=
                               "Not Working" &&
-                            selectedCandidate.personalInfo.organization != ""
+                              selectedCandidate.personalInfo.organization != ""
                               ? "at " +
-                                selectedCandidate.personalInfo.organization
+                              selectedCandidate.personalInfo.organization
                               : ""}
                           </p>
                         </div>
@@ -807,7 +861,7 @@ export function PersonalInformation(props) {
                                   {!selectedCandidate.personalInfo.eligibility
                                     ? "NA"
                                     : selectedCandidate.personalInfo
-                                        .eligibility}
+                                      .eligibility}
                                 </strong>
                               </Label>
                             </Col>
@@ -819,7 +873,7 @@ export function PersonalInformation(props) {
                                     .availabilitytowork === ""
                                     ? "NA"
                                     : selectedCandidate.personalInfo
-                                        .availabilitytowork}{" "}
+                                      .availabilitytowork}{" "}
                                 </strong>
                               </Label>
                             </Col>
@@ -858,19 +912,19 @@ export function PersonalInformation(props) {
                       <Row>
                         <Col className="mb-2">
                           {selectedCandidate.personalInfo.city !== "" ||
-                          selectedCandidate.personalInfo.country !== "" ? (
+                            selectedCandidate.personalInfo.country !== "" ? (
                             <div>
                               <BsPinMap className="personal-sec-icon me-2" />
                               <span className="content-text">
                                 {selectedCandidate.personalInfo.city
                                   ? selectedCandidate.personalInfo.city +
-                                    ", " +
-                                    selectedCandidate.personalInfo.state
+                                  ", " +
+                                  selectedCandidate.personalInfo.state
                                   : ""}
 
                                 {selectedCandidate.personalInfo.country
                                   ? ", " +
-                                    selectedCandidate.personalInfo.country
+                                  selectedCandidate.personalInfo.country
                                   : ""}
                               </span>
                             </div>
@@ -1039,11 +1093,10 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("firstname", evt.target.value)
                           }
-                          className={`field-input placeholder-text form-control ${
-                            getResponse.firstname === ""
-                              ? "is-invalid error-text"
-                              : ""
-                          }`}
+                          className={`field-input placeholder-text form-control ${getResponse.firstname === ""
+                            ? "is-invalid error-text"
+                            : ""
+                            }`}
                         />
                         <div className="invalid-feedback">
                           {getResponse.firstname == ""
@@ -1067,9 +1120,8 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("lastname", evt.target.value)
                           }
-                          className={`field-input placeholder-text form-control ${
-                            getResponse.lastname == "" ? "is-invalid" : ""
-                          }`}
+                          className={`field-input placeholder-text form-control ${getResponse.lastname == "" ? "is-invalid" : ""
+                            }`}
                         />
 
                         <div className="invalid-feedback">
@@ -1097,12 +1149,11 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("phonenumber", evt.target.value)
                           }
-                          className={`field-input placeholder-text form-control ${
-                            getResponse.phonenumber == "" ||
+                          className={`field-input placeholder-text form-control ${getResponse.phonenumber == "" ||
                             getResponse.phoneError
-                              ? "is-invalid"
-                              : ""
-                          }`}
+                            ? "is-invalid"
+                            : ""
+                            }`}
                         />
                         <div className="invalid-feedback">
                           {getResponse.phonenumber == ""
@@ -1111,7 +1162,7 @@ export function PersonalInformation(props) {
                         </div>
                         <div className="invalid-feedback">
                           {getResponse.phonenumber != "" &&
-                          getResponse.phoneError
+                            getResponse.phoneError
                             ? "Phone number is not valid"
                             : ""}
                         </div>
@@ -1132,11 +1183,10 @@ export function PersonalInformation(props) {
                           onInput={(evt) =>
                             onHandleInputChange("email", evt.target.value)
                           }
-                          className={`field-input placeholder-text form-control ${
-                            getResponse.email == "" || requiredErrors.emailError
-                              ? "is-invalid"
-                              : ""
-                          }`}
+                          className={`field-input placeholder-text form-control ${getResponse.email == "" || requiredErrors.emailError
+                            ? "is-invalid"
+                            : ""
+                            }`}
                         />
                         <div className="invalid-feedback">
                           {getResponse.email == "" ? "Email is required" : ""}
@@ -1171,9 +1221,8 @@ export function PersonalInformation(props) {
                           value={citySelect}
                           defaultOptions={locationData}
                           onChange={(evt) => onSelectCityDropdown(evt)}
-                          className={`location-dropdown ${
-                            requiredErrors.cityError ? "async-border-red" : ""
-                          }`}
+                          className={`location-dropdown ${requiredErrors.cityError ? "async-border-red" : ""
+                            }`}
                         />
                         <div className="error-class">
                           {requiredErrors.cityError
@@ -1196,11 +1245,10 @@ export function PersonalInformation(props) {
                           value={countrySelect}
                           onChange={(evt) => onSelectCountryDropdown(evt)}
                           onMenuOpen={() => checkCityValid()}
-                          className={`location-dropdown ${
-                            requiredErrors.countryError
-                              ? "async-border-red"
-                              : ""
-                          }`}
+                          className={`location-dropdown ${requiredErrors.countryError
+                            ? "async-border-red"
+                            : ""
+                            }`}
                         />
                         <div className="error-class">
                           {requiredErrors.countryError
@@ -1245,9 +1293,8 @@ export function PersonalInformation(props) {
                             onHandleInputChange("zip", evt.target.value)
                           }
                           placeholder="Enter zip code"
-                          className={`field-input placeholder-text form-control ${
-                            getResponse.zipcode === "" ? "is-invalid" : ""
-                          }`}
+                          className={`field-input placeholder-text form-control ${getResponse.zipcode === "" ? "is-invalid" : ""
+                            }`}
                         />
                         <div className="invalid-feedback">
                           {getResponse.zipcode === ""
@@ -1291,7 +1338,7 @@ export function PersonalInformation(props) {
                     <Col>
                       <FormGroup>
                         <Label for="gender" className="fw-semi-bold">
-                          Gender <span className="required-icon">*</span>
+                          Gender
                         </Label>
 
                         <AsyncSelect
@@ -1301,17 +1348,20 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={genderSelect}
                           onChange={(evt) => onSelectGenderDropdown(evt)}
-                          className={`placeholder-name ${
-                            save && getResponse?.gender?.[0]?.value == 0
-                              ? "async-border-red"
-                              : ""
-                          }`}
+                          className="placeholder-name"
                         />
+                        {/* 
+                        
+                        className={`placeholder-name ${save && getResponse?.gender?.[0]?.value == 0
+                            ? "async-border-red"
+                            : ""
+                            }`}
+                            
                         <div className="error-class">
                           {save && getResponse?.gender?.[0]?.value == 0
                             ? "Gender is required"
                             : ""}
-                        </div>
+                        </div> */}
                       </FormGroup>
                     </Col>
                   </Row>
@@ -1319,7 +1369,7 @@ export function PersonalInformation(props) {
                     <Col md={6}>
                       <FormGroup>
                         <Label for="race" className="fw-semi-bold">
-                          Race/Etnicity <span className="required-icon">*</span>
+                          Race/Etnicity
                         </Label>
                         <AsyncSelect
                           name="race"
@@ -1328,17 +1378,13 @@ export function PersonalInformation(props) {
                           isMulti={false}
                           value={raceSelect}
                           onChange={(evt) => onSelectRaceDropdown(evt)}
-                          className={`placeholder-name ${
-                            save && getResponse?.ethinicity?.[0]?.value == 0
-                              ? "async-border-red"
-                              : ""
-                          }`}
+                          className="placeholder-name"
                         />
-                        <div className="error-class">
+                        {/* <div className="error-class">
                           {save && getResponse?.ethinicity?.[0]?.value == 0
                             ? "Race/Ethnicity is required"
                             : ""}
-                        </div>
+                        </div> */}
                       </FormGroup>
                     </Col>
 
@@ -1382,8 +1428,8 @@ export function PersonalInformation(props) {
                             style={{
                               borderColor:
                                 save &&
-                                (getResponse.employmenteligiblity === 0 ||
-                                  !getResponse.employmenteligiblity)
+                                  (getResponse.employmenteligiblity === 0 ||
+                                    !getResponse.employmenteligiblity)
                                   ? "#d92550"
                                   : "",
                             }}
@@ -1397,8 +1443,8 @@ export function PersonalInformation(props) {
                   </Row>
                   <div className="error-class">
                     {save &&
-                    (getResponse.employmenteligiblity === 0 ||
-                      !getResponse.employmenteligiblity)
+                      (getResponse.employmenteligiblity === 0 ||
+                        !getResponse.employmenteligiblity)
                       ? "Employment eligibility is required"
                       : ""}
                   </div>
@@ -1408,7 +1454,7 @@ export function PersonalInformation(props) {
                     <Col md={4}>
                       <FormGroup>
                         <Label for="zipCode" className="fw-semi-bold">
-                          Availability to work
+                          Availability to start
                         </Label>
                         <AsyncSelect
                           name="distance"

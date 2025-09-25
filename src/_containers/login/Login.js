@@ -34,7 +34,6 @@ import { getPublicIP, detectInputType } from "_helpers/helper";
 import { VerifyEmailPhoneOTPModal } from "_components/modal/verifyEmailPhoneOTP";
 
 import "./login.scss";
-
 export function Login() {
   const dispatch = useDispatch();
 
@@ -65,6 +64,16 @@ export function Login() {
     title: "",
     description: "",
   });
+
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(reg => console.log('Service Worker registered:', reg))
+        .catch(err => console.error('Service Worker registration failed:', err));
+    }
+  }, []);
+
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -149,16 +158,24 @@ export function Login() {
     firebasemessaging(payload);
   }
   const firebasemessaging = async (payload) => {
-    const permission = await Notification.requestPermission();
+    let permission = "denied";
+    try {
+      if ('Notification' in window) {
+        permission = await Notification?.requestPermission();
+      }
+    } catch (e) { console.log(e) }
+
     let data = await getPublicIP();
     if (data?.ip) {
       localStorage.setItem("publicip", data.ip);
     }
     if (permission === "granted") {
+      const registration = await navigator.serviceWorker.ready;
       // Generate Token
-      const token = await messaging.getToken({
+      const token = await messaging?.getToken({
         vapidKey:
           "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
+        serviceWorkerRegistration: registration,
       });
       payload.firebasetoken = token;
       let res = await dispatch(authActions.loginThunk(payload));
@@ -255,14 +272,19 @@ export function Login() {
     }
 
     if (!isModal) {
-      const permission = await Notification.requestPermission();
+      let permission = "denied";
+      try {
+        if ('Notification' in window) {
+          permission = await Notification?.requestPermission();
+        }
+      } catch (e) { console.log(e) }
       let data = await getPublicIP();
       if (data?.ip) {
         localStorage.setItem("publicip", data.ip);
       }
       if (permission === "granted") {
         // Generate Token
-        const token = await messaging.getToken({
+        const token = await messaging?.getToken({
           vapidKey:
             "BHjlQysiVHS7rlDZRZpJC1mD8g9I8zm7l0bDS2cOKZOHD1-s0nmcACoFXkHZtowJ3v3MFS_kTU94lfMBA8o111c",
         });
@@ -448,8 +470,8 @@ export function Login() {
                               placeholder="Enter email or phone"
                               {...register("email")}
                               className={`login-field-input placeholder-text form-control ${errors.email
-                                  ? "is-invalid error-text"
-                                  : "input-text"
+                                ? "is-invalid error-text"
+                                : "input-text"
                                 }`}
                             />
                             <div className="invalid-feedback">

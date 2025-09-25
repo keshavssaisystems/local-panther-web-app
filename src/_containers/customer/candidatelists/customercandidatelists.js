@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   TabContent,
@@ -8,7 +8,12 @@ import {
   Row,
   Col,
   Input,
+  InputGroup,
+  Card,
+  CardBody
 } from "reactstrap";
+
+import { BsSearch } from "react-icons/bs";
 import classnames from "classnames";
 import { CandidateCardView } from "_components/list/cardview";
 import { CustCandidateListView } from "_components/list/custlistview";
@@ -22,10 +27,12 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
+import { CandidateHistoryModal } from "_components/modal/candidatehistorymodal";
 import {
   getProfileActions,
   dropdownActions,
   scheduleInterviewActions,
+  custJobListActions
 } from "_store";
 import infoIcon from "assets/utils/images/info-circle-fill.svg";
 import { PrescreenModal } from "_components/modal/prescreenmodal";
@@ -33,8 +40,24 @@ import { OfferHistory } from "_components/modal/offerhistorymoal";
 import { NoCandidateAvailable } from "_components/common/noCandidateAvailable";
 import { analytics } from "../../../firebase/index";
 import cx from "classnames";
-export const CustomerCandidateLists = (props) => {
+import moment from "moment";
+import { getHiringMangerList } from "_store";
+
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+import DatePicker from "react-datepicker";
+import { set } from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCalendarAlt,
+  faSearch,
+  faFileExcel,
+} from "@fortawesome/free-solid-svg-icons";
+import { ca } from "date-fns/locale";
+
+export default function CustomerCandidateLists(props) {
   const { id } = useParams();
+  const { jobPostedbyId } = useParams();
   const [activeTab, setActiveTab] = useState(props.type || "matched");
   const [pageNo, setPageNo] = useState(1);
 
@@ -51,8 +74,19 @@ export const CustomerCandidateLists = (props) => {
   const [oHModal, setOHModal] = useState(false);
   const [candidateName, setCandidateName] = useState("");
   const [searchText, setSearchText] = useState("");
+  // const [actionbyId, setActionbyId] = useState();
+  const [actionbyId, setActionbyId] = useState(id && jobPostedbyId || localStorage.getItem("userId"));
+  const [candidateHistoryList, setCandidateHistoryList] = useState([]);
+  const [interviewFeedbackStatusId, setInterviewFeedbackStatusId] = useState(0);
+  const [interviewStatusId, setInterviewStatusId] = useState("");
+
+  const [filteredItems, setFilteredItems] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showCandidateHistoryModal, setShowCandidateHistoryModal] = useState(false);
+
+  let [startDate, setStartDate] = useState();
+  let [endDate, setEndDate] = useState();
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
@@ -78,6 +112,20 @@ export const CustomerCandidateLists = (props) => {
   const custOfferHistory = useSelector(
     (state) => state.customerCandidateList.custOfferHistory
   );
+  // const filteredItems = useSelector((state) => state.dropdown.jobsDropdownList);
+  const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
+  const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
+  const [interviewStatus, setInterviewStatus] = useState([]);
+  const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
+  // // // Set default actionbyId after hiringManagerDownList is loaded
+  // useEffect(() => {
+  //   if (hiringManagerDownList && hiringManagerDownList.length > 0) {
+  //     setActionbyId(localStorage.getItem("userId"));
+  //   }
+  //   if (id && jobPostedbyId) {
+  //     setActionbyId(jobPostedbyId);
+  //   }
+  // }, [hiringManagerDownList]);
 
   useEffect(() => {
     dispatch(customerCandidateListsActions.getDrpDwnJobLists());
@@ -87,10 +135,7 @@ export const CustomerCandidateLists = (props) => {
     dispatch(dropdownActions.getJobTypeThunk2());
     dispatch(dropdownActions.getWorkScheduleThunk2());
     dispatch(dropdownActions.getShiftThunk2());
-    if (window?.location?.pathname?.includes("candidate-list")) {
-      onGetPageList(pageNo, props.type || activeTab, "");
-    }
-
+    dispatch(scheduleInterviewActions.getInterviewStatusDropDownThunk());
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "employer job list",
@@ -101,10 +146,38 @@ export const CustomerCandidateLists = (props) => {
   }, []);
 
   useEffect(() => {
-    if (id) {
-      onGetPageList(pageNo, props.type || activeTab, id);
+    if (window?.location?.pathname?.includes("candidate-list")) {
+      setPageNo(1);
+      let pageno = 1;
+      onGetPageList(pageno, props.type || activeTab, "");
     }
-  }, [props.type, id]);
+  }, [props.type, actionbyId]);
+
+  useEffect(() => {
+    if (id) {
+      setPageNo(1);
+      let pageno = 1;
+      onGetPageList(pageno, props.type || activeTab, id);
+
+    }
+  }, [props.type, id, actionbyId]);
+
+  useEffect(() => {
+    let companyId = Number(localStorage.getItem("companyid"));
+    dispatch(getHiringMangerList(companyId));
+    if (id) {
+      dispatch(custJobListActions.getJobDetail({ jobId: id }));
+    }
+    else {
+      setSearchText('');
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    if (id) {
+      setSearchText(jobDetail[0]?.jobtitle);
+    }
+  }, [jobDetail])
 
   const returnStatusId = (type) => {
     if (type === "liked") {
@@ -133,7 +206,21 @@ export const CustomerCandidateLists = (props) => {
       customerRecommendedJobStatusId: returnStatusId(type),
       jobId: id || "",
       searchText: clearText ? "" : searchText,
+      actionbyId: actionbyId
     };
+
+    if (activeTab === 'scheduled') {
+      let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
+      let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
+      candObj = {
+        ...candObj,
+        interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
+        candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
+        interviewScheduleDateStart: startDate ?
+          moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
+        interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
+      };
+    }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
   };
@@ -143,16 +230,17 @@ export const CustomerCandidateLists = (props) => {
     onGetPageList(page, props.type || activeTab, id);
   };
   const toggle = (activetab) => {
+    clearInterviewFilters();
     if (id) {
-      setSearchText("");
+      //setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      navigate(`/customer-candidate-${activetab}/${id}`);
+      navigate(`/customer-candidate-${activetab}/${id}/${jobPostedbyId}`);
     } else {
-      setSearchText("");
+      //setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      onGetPageList(pageNo, activetab, "", true);
+      onGetPageList(pageNo, activetab, "", false);
     }
   };
 
@@ -165,33 +253,71 @@ export const CustomerCandidateLists = (props) => {
       )}`
     );
   };
-  let successMessage = "Candidate status updated successfully!";
+  // let successMessage = CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS;
   const onActionClick = async (evt, type) => {
     if (type === "like") {
       let res = await dispatch(
         customerCandidateListsActions.putLikedCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
       }
     } else if (type === "maybe") {
       let res = await dispatch(
         customerCandidateListsActions.putMayBeCandidate({ id: evt })
       );
       if (res.payload.statusCode === 204) {
-        showSweetAlert({ title: successMessage, type: "success" });
+        // showSweetAlert({ title: successMessage, type: "success" });
+        dispatch(showSnackbar({
+          message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+          type: SNACKBAR_TYPES.SUCCESS,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
         onGetPageList(pageNo, props.type || activeTab, id);
       } else {
-        showSweetAlert({
-          title: res.payload.message || res.payload.status,
-          type: "danger",
-        });
+        // showSweetAlert({
+        //   title: res.payload.message || res.payload.status,
+        //   type: "danger",
+        // });
+        dispatch(showSnackbar({
+          message: res.payload.message || res.payload.status,
+          type: SNACKBAR_TYPES.ERROR,
+          position: SNACKBAR_POSITION.TOP_CENTER,
+          autoClose: true,
+          autoCloseDelay: 3000,
+          maxWidth: 500,
+        }));
+
       }
     }
   };
@@ -222,6 +348,7 @@ export const CustomerCandidateLists = (props) => {
     }
   };
 
+
   const onPrescreenActionClick = async (type, row) => {
     await dispatch(
       customerCandidateListsActions.getPrescreenDetails({
@@ -244,10 +371,19 @@ export const CustomerCandidateLists = (props) => {
       setOHModal(true);
       setCandidateName(row.firstname + " " + row.lastname);
     } else {
-      showSweetAlert({
-        title: res.payload.message || res.payload.status,
-        type: "danger",
-      });
+      // showSweetAlert({
+      //   title: res.payload.message || res.payload.status,
+      //   type: "danger",
+      // });
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
     }
   };
 
@@ -260,191 +396,359 @@ export const CustomerCandidateLists = (props) => {
     setPageNo(1);
     onGetPageList(1, props.type || activeTab, id ? id : "");
   };
+
+  const resetPageURL = () => {
+    if (id && jobPostedbyId) {
+      navigate(`/candidate-list`);
+    }
+    // else {
+    //   onSearchJob();
+    // }
+  }
+
+  const searchCandidate = async () => {
+    onSearchJob();
+  };
+  const onCandidateHistoryClick = async (candidateId, row) => {
+    setCandidateName(row?.firstname + " " + row?.lastname);
+    let response = await dispatch(getProfileActions.getCandidateHistory(row.candidaterecommendedjobid));
+    if (response?.payload) {
+      setCandidateHistoryList(response?.payload);
+      setShowCandidateHistoryModal(true);
+    }
+    else {
+      setCandidateHistoryList([]);
+      setShowCandidateHistoryModal(false);
+    }
+  };
+
+  const handleInterviewFilters = async () => {
+    let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
+    let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
+    let candObj = {
+      pageNumber: pageNo,
+      pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
+      customerRecommendedJobStatusId: returnStatusId(activeTab),
+      jobId: id || "",
+      searchText: searchText ? searchText : "",
+      actionbyId: actionbyId,
+      interviewStatusId: interviewFeedbackStatusId ? interviewFeedbackStatusId !== 0 ? Number(interviewFeedbackStatusId) : null : null,
+      candidateInterviewStatusId: interviewStatusId ? interviewStatusId !== 0 ? interviewStatusId : null : null,
+      interviewScheduleDateStart: startDate ?
+        moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
+      interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
+    };
+    // console.log(candObj)
+    getInterviewListByFilters(candObj);
+  }
+
+  const getInterviewListByFilters = async (filter) => {
+    dispatch(customerCandidateListsActions.getCandidateLists(filter));
+  }
+
+  const clearInterviewFilters = () => {
+    setInterviewFeedbackStatusId(0);
+    setStartDate(null);
+    setEndDate(null);
+    setInterviewStatusId(0);
+  };
+
+  const onInterviewSearchClear = () => {
+    clearInterviewFilters();
+
+    let candObj = {
+      pageNumber: pageNo,
+      pageSize: activeTab === "matched" ? cardPageSize : listPageSize,
+      customerRecommendedJobStatusId: returnStatusId(activeTab),
+      jobId: id || "",
+      searchText: searchText ? searchText : "",
+      actionbyId: actionbyId
+    };
+
+    getInterviewListByFilters(candObj);
+  };
+
+  const searchJobDropdown = async (title) => {
+    if (title?.length >= 3) {
+      let filter = {
+        companyId: 2,
+        isClose: 0,
+        searchText: title.replaceAll(" ", "_"),
+      }
+      let response = await dispatch(dropdownActions.getJobsListThunk(filter));
+      if (response?.payload) {
+        setFilteredItems(response.payload);
+      }
+      else {
+        setFilteredItems([]);
+      }
+    }
+  }
+
+  const handleSelectJobTitle = (value) => {
+    setSearchText(value.jobtitle);
+    setFilteredItems([]); // close suggestions
+  };
+
+  const wrapperRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setFilteredItems([]);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
   return (
     <>
       <Row className="customercandidatelist">
-        <Col
-          xs={12}
-          sm={12}
-          md={12}
-          lg={8}
-          xl={8}
-          xxl={8}
-          className="mb-3 tab-selection-text"
+        <div
+          className="candidate-toolbar-flex"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '1rem',
+            width: '100%',
+            marginBottom: 24,
+          }}
         >
-          <ButtonGroup size="md" className="cust-btn-tabs">
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "matched" })
-              }
-              onClick={() => {
-                toggle("matched");
-              }}
-            >
-              Matched
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition " +
-                classnames({ active: activeTab === "maybe" })
-              }
-              onClick={() => {
-                toggle("maybe");
-              }}
-            >
-              Maybe
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "liked" })
-              }
-              onClick={() => {
-                toggle("liked");
-              }}
-            >
-              Liked
-            </Button>
+          <Row className="g-2" style={{ width: '100%' }}>
+            <Col xs="12" sm="12" md="6" lg={8}>
+              <ButtonGroup size="md" className="cust-btn-tabs" style={{ flexWrap: 'wrap', minWidth: 320, maxWidth: '100%' }}>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "matched" })
+                  }
+                  onClick={() => {
+                    toggle("matched");
+                  }}
+                >
+                  Matched
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition " +
+                    classnames({ active: activeTab === "maybe" })
+                  }
+                  onClick={() => {
+                    toggle("maybe");
+                  }}
+                >
+                  Maybe
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "liked" })
+                  }
+                  onClick={() => {
+                    toggle("liked");
+                  }}
+                >
+                  Liked
+                </Button>
 
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "applied" })
-              }
-              onClick={() => {
-                toggle("applied");
-              }}
-            >
-              Applied
-            </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "applied" })
+                  }
+                  onClick={() => {
+                    toggle("applied");
+                  }}
+                >
+                  Applied
+                </Button>
 
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "scheduled" })
-              }
-              onClick={() => {
-                toggle("scheduled");
-              }}
-            >
-              Interviews
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "offers" })
-              }
-              onClick={() => {
-                toggle("offers");
-              }}
-            >
-              Offer
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "accepted" })
-              }
-              onClick={() => {
-                toggle("accepted");
-              }}
-            >
-              Accepted
-            </Button>
-            <Button
-              color="primary"
-              disabled={loading}
-              className={
-                "border-0 btn-transition  " +
-                classnames({ active: activeTab === "rejected" })
-              }
-              onClick={() => {
-                toggle("rejected");
-              }}
-            >
-              Declined
-            </Button>
-          </ButtonGroup>
-        </Col>
-        <Col
-          xs={12}
-          sm={12}
-          md={12}
-          lg={4}
-          xl={4}
-          xxl={4}
-          className="mb-3 right-align"
-        >
-          <div
-            className={cx(
-              "candidate-search-wrapper search-wrapper candidate-seacrh-mt float-end",
-              {
-                active: true,
-              }
-            )}
-          >
-            <div className="input-holder float-end">
-              <input
-                type="text"
-                className="search-input search-placeholder"
-                id="search-input"
-                value={searchText}
-                onInput={(evt) => setSearchText(evt.target.value)}
-                placeholder="Search by Job Title"
-              />
-              <button
-                className="btn-close"
-                onClick={(evt) => onClearSearch()}
-              />
-              <button onClick={(evt) => onSearchJob()} className="search-icon">
-                <span />
-              </button>
-            </div>
-          </div>
-          {/* {jobList?.length > 0 ? (
-            <Input
-              value={selectedJobId}
-              onChange={(evt) => onSelectClick(evt)}
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "scheduled" })
+                  }
+                  onClick={() => {
+                    toggle("scheduled");
+                  }}
+                >
+                  Interviews
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "offers" })
+                  }
+                  onClick={() => {
+                    toggle("offers");
+                  }}
+                >
+                  Offer
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "accepted" })
+                  }
+                  onClick={() => {
+                    toggle("accepted");
+                  }}
+                >
+                  Accepted
+                </Button>
+                <Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "rejected" })
+                  }
+                  onClick={() => {
+                    toggle("rejected");
+                  }}
+                >
+                  Declined
+                </Button>
+
+              </ButtonGroup></Col>
+
+            <Col xs="12" sm="12" md="6" lg="2"><Input
               type="select"
-              id="customerJobList"
-              name="customerJobList"
+              title="Hiring Manger"
+              value={actionbyId}
+              name="hiringmanagerId"
+              id="hiringmanagerId"
+              placeholder="Hiring Manger"
+              style={{ minWidth: 200, maxWidth: 220, flex: '0 1 160px' }}
+              onChange={(e) => {
+                setActionbyId(e.target.value);
+                resetPageURL();
+              }}
             >
-              <option selected value="">
-                All jobs
-              </option>
-              {jobList.map((data) => {
-                return (
-                  <option value={data.jobid} key={data.jobid}>
-                    {data?.jobtitle && data?.cityname && data?.statename
-                      ? data.jobtitle +
-                        " ," +
-                        data?.cityname +
-                        " ," +
-                        data?.statename
-                      : data.jobtitle}
+              <option value={""}>Select a Hiring Manger</option>
+              {hiringManagerDownList?.length > 0 ? (
+                hiringManagerDownList.map((data) => (
+                  <option value={data.id} key={data.id}>
+                    {data.name}
                   </option>
-                );
-              })}
+                ))
+              ) : null}
             </Input>
-          ) : (
-            <></>
-          )} */}
-        </Col>
+            </Col>
+            <Col xs="12" sm="12" md="6" lg={2}>
+              <InputGroup>
+                <div ref={wrapperRef} style={{ position: "relative" }}>
+                  <Input
+                    type="text"
+                    id="search-input"
+                    value={searchText}
+                    // onInput={(evt) => setSearchText(evt.target.value)}
+                    placeholder="Search by Job Title"
+                    onInput={(e) => {
+                      setSearchText(e.target.value)
+                      searchJobDropdown(e.target.value)
+                    }}
+                    maxLength={50}
+                    autoComplete="off"
+                  />
+                  {filteredItems.length > 0 && (
+                    <ul
+                      style={{
+                        listStyle: "none",
+                        margin: 0,
+                        padding: "4px",
+                        border: "1px solid #ccc",
+                        borderTop: "none",
+                        position: "absolute",
+                        width: "100%",
+                        background: "#fff",
+                        zIndex: 1000,
+                        maxHeight: "150px",
+                        overflowY: "auto",
+                      }}
+                    >
+                      {filteredItems.map((item, index) => (
+                        <li
+                          key={index}
+                          style={{ padding: "6px", cursor: "pointer" }}
+                          onClick={() => handleSelectJobTitle(item)}
+                        >
+                          {item.jobtitle}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <Button
+                  color={"primary"}
+                  className="input-group-text"
+                  onClick={(evt) => { searchCandidate(); }}
+                >
+                  <BsSearch />
+                </Button>
+              </InputGroup>
+              {/* <div
+                className={cx(
+                  "candidate-search-wrapper search-wrapper candidate-seacrh-mt",
+                  { active: true }
+                )}
+                style={{ minWidth: 90, maxWidth: 100, flex: '0 1 110px' }}
+              >
+                <input
+                  type="text"
+                  className="search-input search-placeholder"
+                  id="search-input"
+                  value={searchText}
+                  onInput={(evt) => setSearchText(evt.target.value)}
+                  placeholder="Search by Job Title"
+                  style={{ width: '100%' }}
+                />
+                <button
+                  className="btn-close"
+                  onClick={(evt) => onClearSearch()}
+                />
+                <button onClick={(evt) => onSearchJob()} className="search-icon">
+                  <span />
+                </button>
+
+              </div> */}
+
+            </Col>
+
+
+          </Row>
+
+
+
+          <style>{`
+        @media (max-width: 1100px) {
+          .candidate-toolbar-flex {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+          }
+        }
+      `}</style>
+        </div>
 
         <Col>
           <TabContent activeTab={activeTab}>
@@ -481,7 +785,7 @@ export const CustomerCandidateLists = (props) => {
                         {candidateList.map((data, ind) => {
                           return (
                             <Col
-                              key={data.jobapplicationid}
+                              key={ind}
                               className="card-col"
                             >
                               <CandidateCardView
@@ -580,6 +884,9 @@ export const CustomerCandidateLists = (props) => {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -657,6 +964,9 @@ export const CustomerCandidateLists = (props) => {
                           }
                           onBuildResume={(candidateId) =>
                             onBuildResumeClick(candidateId)
+                          }
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
                           }
                         />
                         {totalRecords > listPageSize ? (
@@ -737,6 +1047,9 @@ export const CustomerCandidateLists = (props) => {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -772,7 +1085,122 @@ export const CustomerCandidateLists = (props) => {
               </p>
             </TabPane>
             <TabPane tabId="scheduled">
-              <div className="p-3 tab-info">
+              <Card className="mb-3">
+                <CardBody>
+                  <Row className="g-2">
+                    <Col xs="12" sm="12" md="6" lg="3" style={{ display: 'none' }}>
+                      <Input
+                        className="w-100"
+                        type="select"
+                        title="Interview Status"
+                        value={interviewStatusId}
+                        name="interviewStatusId"
+                        id="InterviewStatus"
+                        placeholder="Interview Status"
+                        style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
+                        onChange={(e) => {
+                          setInterviewStatusId(e.target.value);
+                        }}                      >
+                        <option value={""}>Select Interview Status</option>
+                        {interviewStatus?.length > 0 ? (
+                          interviewStatus.map((data) => (
+                            <option value={data.id} key={data.id}>
+                              {data.name}
+                            </option>
+                          ))
+                        ) : null}
+                      </Input>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="3">
+                      <Input
+                        type="select"
+                        title="Interview Status"
+                        value={interviewFeedbackStatusId}
+                        name="interviewFeedbackStatusId"
+                        id="InterviewFeedbackStatus"
+                        placeholder="Interview Feedback Status"
+                        style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}
+                        onChange={(e) => {
+                          setInterviewFeedbackStatusId(e.target.value);
+                        }}                      >
+                        <option value={""}>Select Interview Feedback Status</option>
+                        {interviewFeedbackStatus?.length > 0 ? (
+                          interviewFeedbackStatus.map((data) => (
+                            <option value={data.id} key={data.id}>
+                              {data.name}
+                            </option>
+                          ))
+                        ) : null}
+                      </Input>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <InputGroup style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
+                        <div className="input-group-text">
+                          <FontAwesomeIcon icon={faCalendarAlt} />
+                        </div>
+                        <DatePicker
+                          name="startDate"
+                          id="startDate"
+                          placeholderText="From"
+                          className="form-control"
+                          selected={startDate}
+                          maxDate={endDate}
+                          showMonthDropdown
+                          showYearDropdown
+
+                          onChange={(date) => {
+                            // handleDateChange("startDate", date);
+                            setStartDate(date);
+                          }}
+                        />
+                      </InputGroup>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <InputGroup style={{ minWidth: '50%', maxWidth: '80%', flex: '0 1 160px' }}>
+                        <div className="input-group-text">
+                          <FontAwesomeIcon icon={faCalendarAlt} />
+                        </div>
+                        <DatePicker
+                          name="endDate"
+                          id="endDate"
+                          placeholderText="To"
+                          className="form-control"
+                          selected={endDate}
+                          minDate={startDate}
+                          showMonthDropdown
+                          showYearDropdown
+                          onChange={(date) => {
+                            // handleDateChange("startDate", date);
+                            setEndDate(date);
+                          }}
+                        />
+                      </InputGroup>
+                    </Col>
+                    <Col xs="12" sm="12" md="6" lg="2">
+                      <Button
+                        color="primary"
+                        onClick={() => {
+                          handleInterviewFilters()
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faSearch} /> Search
+                      </Button>
+
+                      <Button
+                        // style={{ background: "rgb(47 71 155)" }}
+                        color="link"
+                        type="button"
+                        onClick={() => onInterviewSearchClear()}
+                      >
+                        Clear
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Card>
+
+              <div className="p-3 tab-info" style={{ display: "none" }}>
+
                 <Row>
                   <Col>
                     <img src={infoIcon} alt="" />
@@ -817,6 +1245,9 @@ export const CustomerCandidateLists = (props) => {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -899,6 +1330,9 @@ export const CustomerCandidateLists = (props) => {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -979,6 +1413,9 @@ export const CustomerCandidateLists = (props) => {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1060,6 +1497,10 @@ export const CustomerCandidateLists = (props) => {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          showActionInterestColumns={true}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1152,6 +1593,20 @@ export const CustomerCandidateLists = (props) => {
           <></>
         )}
       </>
+      <>
+        {showCandidateHistoryModal ? (
+          <>
+            <CandidateHistoryModal
+              isOpen={showCandidateHistoryModal}
+              onClose={() => setShowCandidateHistoryModal(false)}
+              candidateHistoryList={candidateHistoryList}
+              candidateName={candidateName}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     </>
   );
-};
+}

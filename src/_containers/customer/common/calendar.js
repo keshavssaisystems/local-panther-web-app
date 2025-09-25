@@ -7,7 +7,7 @@ import "./underConstruction.scss";
 // import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
 // import { Login } from "@microsoft/mgt-react";
 
-export function Calendar({ title }) {
+export default function Calendar({ title }) {
   // Providers.globalProvider = new Msal2Provider({
   //   clientId: "01cb8e5a-fe72-418c-accc-3e1ec332768c",
   // });

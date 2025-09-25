@@ -1714,7 +1714,7 @@ export const CreateJob = forwardRef(
                             id={"companyName"}
                             name={"companyName"}
                             type={"text"}
-                            value={customerDetails.companyname}
+                            value={customerDetails?.companyname}
                             disabled
                           />
                           {companyValidation === true && (

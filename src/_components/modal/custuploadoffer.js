@@ -200,15 +200,13 @@ export const CustomerUploadOffer = (props) => {
         : "",
       Letterhead: "Offer Letter",
       date: moment().format("MM/DD/YYYY"),
-      candidateFullName: props.data.firstname + " " + props.data.lastname,
+      candidateFullName: props.data.candidatename ? props.data.candidatename : props.data.firstname + " " + props.data.lastname,
       candidateAddress:
         (props?.data?.cityname ? props?.data?.cityname : "") +
         (props?.data?.statename ? ", " + props?.data?.statename : ""),
       cityStateZip:
-        (props?.data?.cityname ? props?.data?.cityname : "") +
-        (props?.data?.statename ? ", " + props?.data?.statename : "") +
         (props?.data?.zipcode ? ", " + props?.data?.zipcode : ""),
-      candidateFirstName: props.data.firstname,
+      candidateFirstName: props.data.firstname ? props.data.firstname : props.data?.candidatename?.split(" ")[0],
       companyName: props.data.companyname,
       jobTitle: props.data.jobtitle,
       startDate: moment(startDate)?.format("YYYY-MM-DD").toString(),
@@ -302,43 +300,44 @@ export const CustomerUploadOffer = (props) => {
     >
       <ModalHeader toggle={() => props.onClose()}>Make Offer</ModalHeader>
       <ModalBody
-        style={{ maxHeight: "75vh", overflow: "auto", minHeight: "40vh" }}
+        style={{ maxHeight: "75vh", overflow: "auto", minHeight: "65vh" }}
       >
-        {props.loading ? (
-          <div className="offer-loading-div">
-            <Loader
-              type="line-scale-pulse-out-rapid"
-              className="d-flex justify-content-center"
-            />
-          </div>
-        ) : (
-          <div>
-            <Nav fill pills>
-              <NavItem>
-                <NavLink
-                  active={activeTab === 2}
-                  // className={activeTab === 2 ? "active" : ""}
-                  onClick={() => {
-                    setActiveTab(2);
-                  }}
-                >
-                  System Generated Offer
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  active={activeTab === 1}
-                  // className={activeTab === 1 ? "active" : ""}
-                  onClick={() => {
-                    setActiveTab(1);
-                  }}
-                >
-                  Manual Upload Offer
-                </NavLink>
-              </NavItem>
-              <TabContent activeTab={activeTab}>
-                <hr style={{ margin: "0px", marginBottom: "1rem" }}></hr>
-                <TabPane tabId={1}>
+        <div>
+          <Nav fill pills>
+            <NavItem>
+              <NavLink
+                active={activeTab === 2}
+                // className={activeTab === 2 ? "active" : ""}
+                onClick={() => {
+                  setActiveTab(2);
+                }}
+              >
+                System Generated Offer
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                active={activeTab === 1}
+                // className={activeTab === 1 ? "active" : ""}
+                onClick={() => {
+                  setActiveTab(1);
+                }}
+              >
+                Manual Upload Offer
+              </NavLink>
+            </NavItem>
+            <TabContent activeTab={activeTab}>
+              <hr style={{ margin: "0px", marginBottom: "1rem" }}></hr>
+              <TabPane tabId={1}>
+                <div className="tab-pane-wrapper">
+                  {props.loading && (
+                    <div className="overlay-loader">
+                      <Loader
+                        type="line-scale-pulse-out-rapid"
+                        className="d-flex justify-content-center"
+                      />
+                    </div>
+                  )}
                   <Row>
                     {" "}
                     <Col xs={12} sm={12} md={12} lg={4} xl={4} xxl={4}>
@@ -466,8 +465,18 @@ export const CustomerUploadOffer = (props) => {
                       <Label className="ps-1"> Is final offer</Label>
                     </Col>
                   </Row>
-                </TabPane>
-                <TabPane tabId={2}>
+                </div>
+              </TabPane>
+              <TabPane tabId={2}>
+                <div className="tab-pane-wrapper">
+                  {props.loading && (
+                    <div className="overlay-loader">
+                      <Loader
+                        type="line-scale-pulse-out-rapid"
+                        className="d-flex justify-content-center"
+                      />
+                    </div>
+                  )}
                   <Row>
                     {" "}
                     {!showPdfPrev && (
@@ -635,11 +644,13 @@ export const CustomerUploadOffer = (props) => {
                       </>
                     )}
                   </Row>
-                </TabPane>
-              </TabContent>
-            </Nav>
-          </div>
-        )}
+
+                </div>
+              </TabPane>
+            </TabContent>
+          </Nav>
+        </div>
+
       </ModalBody>
       <ModalFooter>
         <ButtonGroup>
@@ -652,7 +663,7 @@ export const CustomerUploadOffer = (props) => {
               Back
             </Button>
           )}
-          <Button
+          {props.loading === false && (<Button
             color="primary"
             className="me-2"
             onClick={() => onUploadClick()}
@@ -660,9 +671,9 @@ export const CustomerUploadOffer = (props) => {
             {activeTab === 1
               ? "Upload File"
               : showPdfPrev && activeTab === 2
-              ? "Confirm & Submit"
-              : "Generate offer"}
-          </Button>
+                ? "Confirm & Submit"
+                : "Generate offer"}
+          </Button>)}
           <Button color="secondary" onClick={() => props.onClose()}>
             Close
           </Button>

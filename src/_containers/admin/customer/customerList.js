@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getCustomers,
   verifyCustomer,
+  updateIsVisibleToOthersById
 } from "_containers/admin/_redux/adminListing.slice";
 import { settingsActions } from "_store";
 import cx from "classnames";
@@ -27,8 +28,10 @@ import { AddUpdateCustomer } from "./addUpdateCustomer";
 import SweetAlert from "react-bootstrap-sweetalert";
 import "./customer.scss";
 import customerIcons from "assets/utils/images/customer";
-
+import Switch from "react-switch";
 import { PaymentModal } from "_components/modal/paymentmodal";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export const CustomerList = ({ isCompanyAdmin = false }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -105,10 +108,10 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
         row.cityname === "" && row.statename === ""
           ? ""
           : row.cityname === "" && row.statename !== ""
-          ? row.statename
-          : row.cityname !== "" && row.statename === ""
-          ? row.cityname
-          : row.cityname + ", " + row.statename,
+            ? row.statename
+            : row.cityname !== "" && row.statename === ""
+              ? row.cityname
+              : row.cityname + ", " + row.statename,
       sortable: true,
     },
     {
@@ -263,10 +266,10 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
         row.cityname === "" && row.statename === ""
           ? ""
           : row.cityname === "" && row.statename !== ""
-          ? row.statename
-          : row.cityname !== "" && row.statename === ""
-          ? row.cityname
-          : row.cityname + ", " + row.statename,
+            ? row.statename
+            : row.cityname !== "" && row.statename === ""
+              ? row.cityname
+              : row.cityname + ", " + row.statename,
       sortable: true,
     },
     {
@@ -298,7 +301,64 @@ export const CustomerList = ({ isCompanyAdmin = false }) => {
       selector: (row) => row.email,
       sortable: true,
     },
+    {
+      name: "Visibility",
+      id: "visibility",
+      selector: (row) => (
+        <>
+          {<>
+            <div
+              title="Active/Inactive visibility"
+              className="switch has-switch  me-2"
+              data-on-label="ON"
+              data-off-label="OFF"
+              style={{ verticalAlign: "bottom", cursor: "pointer" }}
+              onClick={() => toggleVisibility(!row.isvisibletoothers, row)}
+            >
+              <div
+                className={cx("switch-animate", {
+                  "switch-on": row.isvisibletoothers,
+                  "switch-off": !row.isvisibletoothers,
+                })}
+                size="sm"
+              >
+                <input type="checkbox" />
+                <span className="switch-left">ON</span>
+                <label>&nbsp;</label>
+                <span className="switch-right">OFF</span>
+              </div>
+            </div></>
+          }
+        </>
+      ),
+    },
   ];
+
+
+  const toggleVisibility = async function (value, row) {    
+    let response = await dispatch(updateIsVisibleToOthersById(row.customerid));
+    if (response?.payload) {
+      dispatch(showSnackbar({
+        message: response?.payload?.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+
+      getCustomerDetails(pageSize, pageNo, 0);
+    } else {
+      dispatch(showSnackbar({
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
 
   const onApprove = async (row, check) => {
     let payload = {

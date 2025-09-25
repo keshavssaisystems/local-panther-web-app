@@ -29,6 +29,8 @@ import errorIcon from "../../assets/utils/images/error_icon.png";
 
 import { ProfilePDF } from "./profilePDF";
 import CardHeader from "react-bootstrap/esm/CardHeader";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 
 export function ResumeDetails(props) {
   const dispatch = useDispatch();
@@ -56,7 +58,7 @@ export function ResumeDetails(props) {
   const [selectedFile, setSelectedFile] = useState();
   const [showUpload, setShowUpload] = useState(true);
 
-  let url = `${process.env.REACT_APP_PANTHER_URL}`;
+  let url = `${process.env.REACT_APP_MAIN_API_URL}`;
 
   useEffect(() => {
     getFileName();
@@ -121,11 +123,28 @@ export function ResumeDetails(props) {
         )
         .then((result) => {
           if (result.data.statusCode == 204) {
-            setSuccess(true);
-            setMessage(result.data.message);
+            // setSuccess(true);
+            // setMessage(result.data.message);
+            dispatch(showSnackbar({
+              message: result.data.message,
+              type: SNACKBAR_TYPES.SUCCESS,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
+            closeModal();
             setShowUpload(false);
           } else {
-            setError(true);
+            // setError(true);
+            dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
           }
         })
         .catch((error) => {
@@ -150,14 +169,38 @@ export function ResumeDetails(props) {
         .then((result) => {
           if (result.data) {
             if (result.data.status === "Success") {
-              setSuccess(true);
-              setMessage(result.data.message);
+              // setSuccess(true);
+              // setMessage(result.data.message);
+              dispatch(showSnackbar({
+                message: result.data.message,
+                type: SNACKBAR_TYPES.SUCCESS,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
               setShowUpload(false);
             } else {
-              setError(true);
+              // setError(true);
+              dispatch(showSnackbar({
+                message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+                type: SNACKBAR_TYPES.ERROR,
+                position: SNACKBAR_POSITION.TOP_CENTER,
+                autoClose: true,
+                autoCloseDelay: 3000,
+                maxWidth: 500,
+              }));
             }
           } else {
-            setError(true);
+            // setError(true);
+            dispatch(showSnackbar({
+              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+              type: SNACKBAR_TYPES.ERROR,
+              position: SNACKBAR_POSITION.TOP_CENTER,
+              autoClose: true,
+              autoCloseDelay: 3000,
+              maxWidth: 500,
+            }));
           }
         })
         .catch((error) => {
@@ -199,7 +242,7 @@ export function ResumeDetails(props) {
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: ".pdf,.doc,.docx",
+    accept: ".pdf,.doc,.docx, .jpg, .jpeg, .png",
   });
   const onCancel = (acceptedFiles) => {
     setSelectedFile(null);
@@ -219,7 +262,7 @@ export function ResumeDetails(props) {
   const handlePrint = function () {
     setBuildModal(true);
   };
-  const handleChange = function (data) {};
+  const handleChange = function (data) { };
 
   const toggle = function (data) {
     setActiveTab(data);
@@ -332,7 +375,7 @@ export function ResumeDetails(props) {
 
                     <Row>
                       <div className="file-info mt-2">
-                        Support formats: .doc, .docx and .pdf up to 5 MB
+                        Support formats: .pdf, .doc, .docx, .jpg, .jpeg and .png up to 5 MB
                       </div>
                     </Row>
                     <Row>
