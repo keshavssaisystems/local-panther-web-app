@@ -470,8 +470,9 @@ export default function CustomerCandidateLists(props) {
 
   const searchJobDropdown = async (title) => {
     if (title?.length >= 3) {
+      let companyId = Number(localStorage.getItem("companyid"));
       let filter = {
-        companyId: 2,
+        companyId: companyId,
         isClose: 0,
         searchText: title.replaceAll(" ", "_"),
       }

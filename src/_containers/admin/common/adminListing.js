@@ -65,7 +65,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
   useEffect(() => {
     loadData();
 
-    dispatch(isCompanyAdmin ? getRolesForCompanyAdmin() : getRoles());
+    dispatch(getRolesForCompanyAdmin());
+    dispatch(getRoles());
     dispatch(getCustomerDropdownList());
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -76,7 +77,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     }
   }, []);
   const { data } = useSelector((state) => state?.adminListing ?? {});
-  const rolesList = useSelector((state) => isCompanyAdmin ? state.adminListing.rolesListforCompanyAdmin : state.adminListing.rolesList);
+  const rolesList = useSelector((state) => state.adminListing.rolesList);
+  const userRoleList = useSelector((state) => state.adminListing.rolesListforCompanyAdmin);
   const totalRecords = useSelector((state) => state.adminListing?.totalRecords);
   const [error, setError] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -327,7 +329,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
     }
   ];
 
-  useEffect(() => {   
+  useEffect(() => {
     loadData();
   }, [entity]);
 
@@ -878,8 +880,8 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                             {options.rolename}{" "}
                           </option>
                         ))}
-                      {isCompanyAdmin && rolesList?.length > 0 &&
-                        rolesList?.map((options) => (
+                      {isCompanyAdmin && userRoleList?.length > 0 &&
+                        userRoleList?.map((options) => (
                           <option
                             key={options.id}
                             value={options.id}
