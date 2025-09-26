@@ -17,7 +17,7 @@ export default function SkillAIProfile({ skillData, setSkillData }) {
                 <h5>Skills</h5>
                 <Form>
                     <div className="skills-container">
-                        <span className="skills-badge">Updated</span>
+                        <span className="skills-badge">Update</span>
                         <div className="skills-list">
                             {skills?.map((skill, index) => (
                                 <span

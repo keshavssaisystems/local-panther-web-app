@@ -670,7 +670,7 @@ export function EducationAIProfile({ educationData, setEducationData }) {
 
                         <div key={index} className="ai-section-delete">
                             <span className="ai-badge-delete">
-                                Deleted
+                                Delete
                             </span>
 
                             <div style={{ opacity: 0.6, pointerEvents: "none" }}>
