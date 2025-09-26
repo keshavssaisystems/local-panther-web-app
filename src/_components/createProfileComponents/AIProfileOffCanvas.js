@@ -80,6 +80,17 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                 console.log("result", result);
                 let profileData = result?.data?.Profile_data;
 
+                if (profileData?.EducationList?.length === 0 && profileData?.QualificationList?.length === 0 && profileData?.SkillsList?.length === 0) {
+                    dispatch(showSnackbar({
+                        message: "No data available for update the profile",
+                        type: SNACKBAR_TYPES.WARNING,
+                        position: SNACKBAR_POSITION.TOP_CENTER,
+                        autoClose: true,
+                        autoCloseDelay: 2000,
+                        maxWidth: 500,
+                    }));
+                    return;
+                }
                 if (profileData) {
 
                     if (profileData?.EducationList?.length > 0) {

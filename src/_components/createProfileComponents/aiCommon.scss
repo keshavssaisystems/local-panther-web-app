@@ -1,0 +1,55 @@
+.ai-section {
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.ai-update {
+    border: 2px solid #facc15;
+    background-color: #fefce8;
+}
+
+.ai-new {
+    border: 2px solid #22c55e;
+    background-color: #f0fdf4;
+}
+
+.ai-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+
+.badge-new {
+    background: #22c55e;
+}
+
+.badge-update {
+    background: #f59e0b;
+}
+
+.ai-section-delete {
+    border: 2px dashed red;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #fef2f2;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.ai-badge-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+}
