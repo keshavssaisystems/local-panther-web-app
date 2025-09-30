@@ -1853,7 +1853,7 @@ export const CustCandidateListView = (props) => {
       <>
         {showIRSModal ? (
           <UpdateScheduleInterviewModal
-            interviewData={selectedRowData}
+            interviewData={selectedRowData?.scheduledInterviewDtos[0]}
             durationOptions={durationOptions}
             postData={(e) => {
               postUpdateRescheduleInterview(e);
