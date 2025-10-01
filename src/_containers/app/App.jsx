@@ -80,7 +80,8 @@ import { getPublicIP } from "_helpers/helper";
 import { UnsubscribeEmail } from "_containers/common/UnsubscribeEmail/UnsubscribeEmail";
 import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
-
+import SuccessPage from "_components/unifiedApp/unifiedSuccess";
+import UnifiedCandidates from "_components/unifiedApp/unifiedCandidates";
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -654,6 +655,16 @@ export function App() {
             path="/report/open-jobs"
             element={<OpenJobs title={"Open Jobs"} isCompanyAdmin={true} />}
           />
+
+          <Route
+            path="/success"
+            element={<SuccessPage />}
+          />
+
+          <Route
+            path="/unified-candidates"
+            element={<UnifiedCandidates />}
+          />
         </>
       );
     } else {
@@ -843,7 +854,7 @@ export function App() {
             <div className={authUser ? `app-main` : ""}>
               {/* <AIProfileOffCanvas>  </AIProfileOffCanvas> */}
               <AIJobOffCanvas></AIJobOffCanvas>
-              
+
               {authUser && !hideSidebar && (
                 <AppSidebar
                   isSidebarOpen={isSidebarOpen}
