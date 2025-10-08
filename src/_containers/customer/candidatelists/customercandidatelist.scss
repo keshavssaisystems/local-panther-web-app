@@ -1,6 +1,7 @@
 .customercandidatelist {
   .cust-btn-tabs {
     display: block;
+
     .active {
       background-color: #61d097 !important;
       color: #ffffff !important;
@@ -20,17 +21,20 @@
       margin-bottom: 0.2rem;
     }
   }
+
   .card-col {
     align-items: stretch;
     display: flex;
     flex-direction: row;
   }
+
   .tab-info {
     color: var(--grey, #979797);
     font-size: 14px;
     font-style: italic;
     font-weight: 500;
     line-height: 150%;
+
     img {
       float: left;
       height: 21px;
@@ -39,4 +43,9 @@
       margin-bottom: 20px;
     }
   }
+}
+
+.count-badge-style {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
 }
