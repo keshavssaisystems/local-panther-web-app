@@ -82,6 +82,8 @@ import { EnhancedSnackbar } from "_components/common/EnhancedSnackbar";
 import { EnhancedSnackbarExamples } from "_components/common/EnhancedSnackbarExamples";
 import SuccessPage from "_components/unifiedApp/unifiedSuccess";
 import UnifiedCandidates from "_components/unifiedApp/unifiedCandidates";
+import UnifiedJobs from "_components/unifiedApp/unifiedJobs";
+import AtsUnified from "_components/unifiedApp/atsUnified";
 // import AIJobOffCanvas from "_components/createJobComponents/AIJobOffCanvas";
 const ZoomVideoScreen = React.lazy(() => import("zoom/zoom-video"));
 const AIJobOffCanvas = React.lazy(() =>
@@ -664,6 +666,18 @@ export function App() {
           <Route
             path="/unified-candidates"
             element={<UnifiedCandidates />}
+          />
+          <Route
+            path="/unified-jobs"
+            element={<UnifiedJobs />}
+          />
+          <Route
+            path="/ats"
+            element={
+              <PrivateRoute>
+                <AtsUnified />
+              </PrivateRoute>
+            }
           />
         </>
       );

@@ -12,8 +12,8 @@ export function createAuthLink(integrationType) {
     const baseUrl = 'https://api.unified.to/unified/integration/auth';
     const params = new URLSearchParams({
         redirect: '1',
-        env: 'Sandbox',
-        success_redirect: window.location.href+'success',
+        //env: 'Sandbox',
+        success_redirect: integrationType === 'bullhorn' ? 'https://api.unified.to/oauth/code' : window.location.origin + '/success',
         failure_redirect: window.location.href,
         scopes: 'ats_candidate_read',
         state: 'abc-123-def-456',

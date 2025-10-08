@@ -240,9 +240,6 @@ export default function CustomerDashboard() {
 
   return (
     <>
-
-      {/* <UnifiedApp /> */}
-      <button onClick={callUnifiedApp}>Unified App</button>
       <div>
         <Row>
           <Col sm="12" md="12" lg="12">
