@@ -29,6 +29,7 @@ function createInitialState() {
     prescreenQues: [],
     custOfferHistory: [],
     offerLetterTemplates: [],
+    reportData: null, // New state variable to store report data
   };
 }
 
@@ -49,7 +50,8 @@ function createExtraActions() {
     getPrescreenDetails: getPrescreenDetails(),
     getCustOfferHistory: getCustOfferHistory(),
     getofferLetterTemplate: getofferLetterTemplate(),
-    getInterviewSlots: getInterviewSlots()
+    getInterviewSlots: getInterviewSlots(),
+    getReportBySP: getCandidateCardCount(), // New action for fetching report
   };
 
   function getDrpDwnJobLists() {
@@ -196,9 +198,9 @@ function createExtraActions() {
     );
   }
   function getDurationOptions() {
+
     return createAsyncThunk(
       `${name}/getDurationOptions`,
-
       async () =>
         await fetchWrapper.get(
           `${newUrl}/Common/GetCommonDropdown?searchText=duration`
@@ -288,6 +290,17 @@ function createExtraActions() {
 
     );
   }
+
+  function getCandidateCardCount() {
+    return createAsyncThunk(
+      `${name}/getReportBySP`,
+      async ({ jobId, userId }) => {
+        const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId}`;
+        return await fetchWrapper.get(REPORT_API_URL);
+      }
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -307,6 +320,7 @@ function createExtraReducers() {
     getCustOfferHistory();
     getofferLetterTemplate();
     getInterviewSlots();
+    getCandidateCardCount(); // Register the new report action
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -561,6 +575,23 @@ function createExtraReducers() {
         })
         .addCase(rejected, (state, action) => {
           state.interviewSlots = [];
+        });
+    }
+
+    function getCandidateCardCount() {
+      let { pending, fulfilled, rejected } = extraActions.getReportBySP;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+          state.reportData = null;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.reportData = action?.payload?.data?.[0] ? action.payload.data[0] : null;
+          state.loading = false;
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+          state.reportData = null;
         });
     }
   };

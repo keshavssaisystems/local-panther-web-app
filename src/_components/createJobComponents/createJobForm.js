@@ -28,6 +28,8 @@ import {
   studyFieldActions,
   addFieldOfStudy,
   dropdownActions,
+  addCertification,
+  certificationTypeActions,
 } from "_store";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import { findRestrictedWords } from "_helpers/helper";
@@ -56,6 +58,7 @@ import {
 import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
+import { on } from "stream";
 export const CreateJob = forwardRef(
   (
     {
@@ -136,27 +139,27 @@ export const CreateJob = forwardRef(
           experienceSchedule: {
             jobType:
               previousData?.jobExperienceScheduleDtos === null ||
-              previousData?.jobExperienceScheduleDtos?.length === 0
+                previousData?.jobExperienceScheduleDtos?.length === 0
                 ? ""
                 : previousData?.jobExperienceScheduleDtos[0]?.jobtypes,
             workSchedule:
               previousData?.jobExperienceScheduleDtos === null ||
-              previousData?.jobExperienceScheduleDtos?.length === 0
+                previousData?.jobExperienceScheduleDtos?.length === 0
                 ? ""
                 : previousData?.jobExperienceScheduleDtos[0]?.workschedules,
             shift:
               previousData?.jobExperienceScheduleDtos === null ||
-              previousData?.jobExperienceScheduleDtos?.length === 0
+                previousData?.jobExperienceScheduleDtos?.length === 0
                 ? ""
                 : previousData?.jobExperienceScheduleDtos[0]?.shifts,
             experienceLevel:
               previousData?.jobExperienceScheduleDtos === null ||
-              previousData?.jobExperienceScheduleDtos?.length === 0
+                previousData?.jobExperienceScheduleDtos?.length === 0
                 ? ""
                 : previousData?.jobExperienceScheduleDtos[0]?.experiencelevelid,
             hiringTimeline:
               previousData?.jobExperienceScheduleDtos === null ||
-              previousData?.jobExperienceScheduleDtos?.length === 0
+                previousData?.jobExperienceScheduleDtos?.length === 0
                 ? ""
                 : previousData?.jobExperienceScheduleDtos[0]?.hiringtimelineid,
             shiftsOption: shiftsOption,
@@ -168,27 +171,27 @@ export const CreateJob = forwardRef(
           paymentBenifits: {
             payPeriodType:
               previousData?.jobPaymentBenefitDtos === null ||
-              previousData?.jobPaymentBenefitDtos?.length === 0
+                previousData?.jobPaymentBenefitDtos?.length === 0
                 ? ""
                 : previousData?.jobPaymentBenefitDtos[0]?.payperiodtypeid,
             minimumAmount:
               previousData?.jobPaymentBenefitDtos === null ||
-              previousData?.jobPaymentBenefitDtos?.length === 0
+                previousData?.jobPaymentBenefitDtos?.length === 0
                 ? ""
                 : previousData?.jobPaymentBenefitDtos[0]?.minimumamount,
             maximumAmount:
               previousData?.jobPaymentBenefitDtos === null ||
-              previousData?.jobPaymentBenefitDtos?.length === 0
+                previousData?.jobPaymentBenefitDtos?.length === 0
                 ? ""
                 : previousData?.jobPaymentBenefitDtos[0]?.maximumamount,
             compensationPackage:
               previousData?.jobPaymentBenefitDtos === null ||
-              previousData?.jobPaymentBenefitDtos?.length === 0
+                previousData?.jobPaymentBenefitDtos?.length === 0
                 ? ""
                 : previousData?.jobPaymentBenefitDtos[0]?.compensationpackage,
             benefits:
               previousData?.jobPaymentBenefitDtos === null ||
-              previousData?.jobPaymentBenefitDtos?.length === 0
+                previousData?.jobPaymentBenefitDtos?.length === 0
                 ? ""
                 : previousData?.jobPaymentBenefitDtos[0]?.benefits,
             payPeriodTypeOption: payPeriodTypeOption,
@@ -343,137 +346,137 @@ export const CreateJob = forwardRef(
       companyId: "",
       jobTitle:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.jobTitle === undefined
+          jobData.basicInformation.jobTitle === undefined
           ? ""
           : jobData.basicInformation.jobTitle,
       noOfPostions:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.noOfPostions === undefined
+          jobData.basicInformation.noOfPostions === undefined
           ? ""
           : jobData.basicInformation.noOfPostions,
       jobLocation:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation?.jobLocation === undefined
+          jobData.basicInformation?.jobLocation === undefined
           ? ""
           : jobData.basicInformation?.jobLocation,
       address:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.address === undefined
+          jobData.basicInformation.address === undefined
           ? ""
           : jobData.basicInformation.address,
       cityId:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.cityId === undefined
+          jobData.basicInformation.cityId === undefined
           ? ""
           : jobData.basicInformation.cityId,
       stateId:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.stateId === undefined
+          jobData.basicInformation.stateId === undefined
           ? ""
           : jobData.basicInformation.stateId,
       cityName:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.cityName === undefined
+          jobData.basicInformation.cityName === undefined
           ? ""
           : jobData.basicInformation.cityName,
       stateName:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.stateName === undefined
+          jobData.basicInformation.stateName === undefined
           ? ""
           : jobData.basicInformation.stateName,
       zipcode:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.zipcode === undefined
+          jobData.basicInformation.zipcode === undefined
           ? ""
           : jobData.basicInformation.zipcode,
       description:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.description === undefined
+          jobData.basicInformation.description === undefined
           ? ""
           : jobData.basicInformation.description,
       companyDetail:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.companyDetail === undefined
+          jobData.basicInformation.companyDetail === undefined
           ? ""
           : jobData.basicInformation.companyDetail,
       authorizedtoworkinus:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.authorizedtoworkinus === undefined
+          jobData.basicInformation.authorizedtoworkinus === undefined
           ? ""
           : jobData.basicInformation.authorizedtoworkinus,
       sponsorshiprequiured:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.sponsorshiprequiured === undefined
+          jobData.basicInformation.sponsorshiprequiured === undefined
           ? ""
           : jobData.basicInformation.sponsorshiprequiured,
       certifications:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.certifications === undefined
+          jobData.basicInformation.certifications === undefined
           ? ""
           : jobData.basicInformation.certifications,
       subsidiaryid:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.subsidiaryid === undefined
+          jobData.basicInformation.subsidiaryid === undefined
           ? ""
           : jobData.basicInformation.subsidiaryid,
       issecurityclearancerequired:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.issecurityclearancerequired === undefined
+          jobData.basicInformation.issecurityclearancerequired === undefined
           ? ""
           : jobData.basicInformation.issecurityclearancerequired,
       securityclearanceid:
         jobData.basicInformation === undefined ||
-        jobData.basicInformation.securityclearance === undefined
+          jobData.basicInformation.securityclearance === undefined
           ? ""
           : jobData.basicInformation.securityclearance,
       jobType:
         jobData.experienceSchedule === undefined ||
-        jobData.experienceSchedule.jobType === undefined
+          jobData.experienceSchedule.jobType === undefined
           ? ""
           : jobData.experienceSchedule.jobType.slice(","),
       workSchedule:
         jobData.experienceSchedule === undefined ||
-        jobData.experienceSchedule.workSchedule === undefined
+          jobData.experienceSchedule.workSchedule === undefined
           ? ""
           : jobData.experienceSchedule.workSchedule.slice(","),
       shift:
         jobData.experienceSchedule === undefined ||
-        jobData.experienceSchedule.shift === undefined
+          jobData.experienceSchedule.shift === undefined
           ? ""
           : jobData.experienceSchedule.shift.slice(","),
       experienceLevel:
         jobData.experienceSchedule === undefined ||
-        jobData.experienceSchedule.experienceLevel === undefined
+          jobData.experienceSchedule.experienceLevel === undefined
           ? ""
           : jobData.experienceSchedule.experienceLevel,
       hiringTimeline:
         jobData.experienceSchedule === undefined ||
-        jobData.experienceSchedule.hiringTimeline === undefined
+          jobData.experienceSchedule.hiringTimeline === undefined
           ? ""
           : jobData.experienceSchedule.hiringTimeline,
       payPeriodType:
         jobData.paymentBenifits === undefined ||
-        jobData.paymentBenifits.payPeriodType === undefined
+          jobData.paymentBenifits.payPeriodType === undefined
           ? ""
           : jobData.paymentBenifits.payPeriodType,
       minimumAmount:
         jobData.paymentBenifits === undefined ||
-        jobData.paymentBenifits.minimumAmount === undefined
+          jobData.paymentBenifits.minimumAmount === undefined
           ? ""
           : jobData.paymentBenifits.minimumAmount,
       maximumAmount:
         jobData.paymentBenifits === undefined ||
-        jobData.paymentBenifits.maximumAmount === undefined
+          jobData.paymentBenifits.maximumAmount === undefined
           ? ""
           : jobData.paymentBenifits.maximumAmount,
       compensationPackage:
         jobData.paymentBenifits === undefined ||
-        jobData.paymentBenifits.compensationPackage === undefined
+          jobData.paymentBenifits.compensationPackage === undefined
           ? ""
           : jobData.paymentBenifits.compensationPackage,
       benefits:
         jobData.paymentBenifits === undefined ||
-        jobData.paymentBenifits.benefits === undefined
+          jobData.paymentBenifits.benefits === undefined
           ? ""
           : jobData.paymentBenifits.benefits,
     };
@@ -485,7 +488,7 @@ export const CreateJob = forwardRef(
           : previousData.jobtitle,
       noOfPostions:
         previousData === undefined ||
-        previousData.noofopenposition === undefined
+          previousData.noofopenposition === undefined
           ? ""
           : previousData.noofopenposition,
       jobLocation:
@@ -526,12 +529,12 @@ export const CreateJob = forwardRef(
           : previousData.companydetails,
       authorizedtoworkinus:
         previousData === undefined ||
-        previousData.authorizedtoworkinus === undefined
+          previousData.authorizedtoworkinus === undefined
           ? ""
           : previousData.authorizedtoworkinus,
       sponsorshiprequiured:
         previousData === undefined ||
-        previousData.sponsorshiprequiured === undefined
+          previousData.sponsorshiprequiured === undefined
           ? ""
           : previousData.sponsorshiprequiured,
       countryName:
@@ -548,62 +551,62 @@ export const CreateJob = forwardRef(
           : previousData.subsidiaryid,
       issecurityclearancerequired:
         previousData === undefined ||
-        previousData.issecurityclearancerequired === undefined
+          previousData.issecurityclearancerequired === undefined
           ? ""
           : previousData.issecurityclearancerequired,
       securityclearanceid:
         previousData === undefined ||
-        previousData.securityclearanceid === undefined
+          previousData.securityclearanceid === undefined
           ? ""
           : previousData.securityclearanceid,
       jobType:
         previousData?.jobExperienceScheduleDtos === undefined ||
-        previousData?.jobExperienceScheduleDtos.length === 0
+          previousData?.jobExperienceScheduleDtos.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].jobtypes.slice(","),
       workSchedule:
         previousData?.jobExperienceScheduleDtos === undefined ||
-        previousData?.jobExperienceScheduleDtos.length === 0
+          previousData?.jobExperienceScheduleDtos.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].workschedules.slice(","),
       shift:
         previousData?.jobExperienceScheduleDtos === undefined ||
-        previousData?.jobExperienceScheduleDtos.length === 0
+          previousData?.jobExperienceScheduleDtos.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].shifts.slice(","),
       experienceLevel:
         previousData?.jobExperienceScheduleDtos === undefined ||
-        previousData?.jobExperienceScheduleDtos.length === 0
+          previousData?.jobExperienceScheduleDtos.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].experiencelevelid,
       hiringTimeline:
         previousData?.jobExperienceScheduleDtos === undefined ||
-        previousData?.jobExperienceScheduleDtos.length === 0
+          previousData?.jobExperienceScheduleDtos.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].hiringtimelineid,
       payPeriodType:
         previousData?.jobPaymentBenefitDtos === undefined ||
-        previousData?.jobPaymentBenefitDtos?.length === 0
+          previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].payperiodtypeid,
       minimumAmount:
         previousData?.jobPaymentBenefitDtos === undefined ||
-        previousData?.jobPaymentBenefitDtos?.length === 0
+          previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].minimumamount,
       maximumAmount:
         previousData?.jobPaymentBenefitDtos === undefined ||
-        previousData?.jobPaymentBenefitDtos?.length === 0
+          previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].maximumamount,
       compensationPackage:
         previousData?.jobPaymentBenefitDtos === undefined ||
-        previousData?.jobPaymentBenefitDtos?.length === 0
+          previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].compensationpackage,
       benefits:
         previousData?.jobPaymentBenefitDtos === undefined ||
-        previousData?.jobPaymentBenefitDtos?.length === 0
+          previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].benefits,
     };
@@ -709,13 +712,24 @@ export const CreateJob = forwardRef(
             : getStudyData(previousData);
         setStudyFieldPrevArr(studyData);
       }
+
+      if ((previousStep === 1 || previousStep === 3) && previousData?.certifications) {
+
+        let certificationData =
+          previousStep === 3
+            ? getCertificationData(jobData.basicInformation)
+            : getCertificationData(previousData);
+        setCertificateArr(certificationData);
+        setCertificatePrevArr(certificationData);
+      }
+      
     }, []);
     const [descriptionData, setDescriptionData] = useState(
       previousStep === 3 && preValue.description !== ""
         ? preValue.description
         : previousStep === 1 && previousValue.description !== ""
-        ? previousValue.description
-        : ""
+          ? previousValue.description
+          : ""
     );
     const [autoAuthorised, setAutoAuthorised] = useState(false);
     const [companyValidation, setcompanyValidation] = useState(false);
@@ -757,6 +771,10 @@ export const CreateJob = forwardRef(
     const [studyFieldArr, setStudyFieldArr] = useState([]);
     const [studyFieldPrevArr, setStudyFieldPrevArr] = useState([]);
     const [studyFieldChange, setStudyFieldChange] = useState(false);
+
+    const [certificateArr, setCertificateArr] = useState([]);
+    const [certificatePrevArr, setCertificatePrevArr] = useState([]);
+    const [certificateChange, setCertificateChange] = useState(false);
     const flaggedWordList = useSelector(
       (state) => state.dropdown.flaggedWordsList
     );
@@ -827,7 +845,7 @@ export const CreateJob = forwardRef(
         ? setJobTitleValidation(true)
         : setJobTitleValidation(false);
       event.target.elements.openPositions.value === "" ||
-      Number(event.target.elements.openPositions.value) === 0
+        Number(event.target.elements.openPositions.value) === 0
         ? setOpenPositionValidation(true)
         : setOpenPositionValidation(false);
       event.target.elements.jobLocation.value === "0"
@@ -843,7 +861,7 @@ export const CreateJob = forwardRef(
         ? setAddressValidation(true)
         : setAddressValidation(false);
       event.target.elements.issecurityclearancerequired.checked === true &&
-      Number(event.target.elements.securityclearance.value) === 0
+        Number(event.target.elements.securityclearance.value) === 0
         ? setSecurityValidation(true)
         : setSecurityValidation(false);
       descriptionData === ""
@@ -889,7 +907,7 @@ export const CreateJob = forwardRef(
         ? setMaximumBasepayValidation(true)
         : setMaximumBasepayValidation(false);
       prevKeyQualificationArr1?.length === 0 &&
-      keyQualificationArr1?.length === 0
+        keyQualificationArr1?.length === 0
         ? setMustHaveValidation(true)
         : setMustHaveValidation(false);
 
@@ -1472,6 +1490,16 @@ export const CreateJob = forwardRef(
         setKeyQual2(data);
       }
     };
+    const onSelectCertificateDropdown = (data) => {
+      if (data.length === 0) {
+        setCertificateArr([]);
+        setCertificatePrevArr([]);
+      } else {
+        setCertificateArr(data);
+        setCertificatePrevArr(data);
+      }
+    };
+
     const formatCreateLabel = (inputValue) => {
       if (skillExist && inputValue !== "" && inputValue.length > 0) {
         return (
@@ -1519,8 +1547,8 @@ export const CreateJob = forwardRef(
       type === "new_template" && previousStep !== 3
         ? 0
         : previousStep === 3
-        ? preValue.securityclearanceid
-        : previousValue.securityclearanceid;
+          ? preValue.securityclearanceid
+          : previousValue.securityclearanceid;
     useEffect(() => {
       if (type === "ai_template") {
         setZipcodeCityState({
@@ -1679,6 +1707,53 @@ export const CreateJob = forwardRef(
         console.log(res?.error);
       }
     };
+
+
+    const formatCreateCertificateLabel = (inputValue) => {
+      if (inputValue !== "" && inputValue.length > 2) {
+        return (
+          <span style={{ cursor: "pointer" }}>
+            Add new certificate -{" "}
+            <span style={{ color: "#545cd8" }}>{inputValue}</span>
+          </span>
+        );
+      } else {
+        return "";
+      }
+    };
+
+    const onCreateCertificate = async (data) => {
+      let payload = [{
+        certificationtype1: data,
+        isactive: true,
+        isfromresume: false,
+        currentUserId: localStorage.getItem("userId")
+          ? Number(localStorage.getItem("userId"))
+          : 0,
+      }];
+
+      let res = await dispatch(addCertification(payload));
+
+      if (res?.payload && res?.payload?.statusCode === 201) {
+        setCertificateChange(true);
+        let certData = [...certificateArr];
+        certData.push({
+          value: res.payload.data[0].certificationtypeid,
+          label: res.payload.data[0].certificationtype1,
+        });
+        setCertificateArr(certData);
+        let certPrevData = [...certificatePrevArr];
+        certPrevData.push({
+          value: res.payload.data[0].certificationtypeid,
+          label: res.payload.data[0].certificationtype1,
+        });
+        setCertificatePrevArr(certPrevData);
+        await dispatch(certificationTypeActions.certificationType());
+      } else {
+        console.log(res?.error);
+      }
+    };
+
     return (
       <>
         <div className="form-wizard-content">
@@ -1745,11 +1820,11 @@ export const CreateJob = forwardRef(
                                     value={options.subsidiaryid}
                                     selected={
                                       type === "new_template" &&
-                                      previousStep !== 3
+                                        previousStep !== 3
                                         ? ""
                                         : previousStep === 3
-                                        ? preValue.subsidiaryid
-                                        : previousValue.subsidiaryid ===
+                                          ? preValue.subsidiaryid
+                                          : previousValue.subsidiaryid ===
                                           options.subsidiaryid
                                     }
                                   >
@@ -1776,8 +1851,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.jobTitle
-                                : previousValue.jobTitle
+                                  ? preValue.jobTitle
+                                  : previousValue.jobTitle
                             }
                             maxLength={50}
                             invalid={jobTitleValidation === true ? true : false}
@@ -1805,8 +1880,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.noOfPostions
-                                : previousValue.noOfPostions
+                                  ? preValue.noOfPostions
+                                  : previousValue.noOfPostions
                             }
                             min={0}
                             invalid={
@@ -1853,8 +1928,8 @@ export const CreateJob = forwardRef(
                                         previousStep !== 3
                                         ? 0
                                         : previousStep === 3
-                                        ? preValue.jobLocation
-                                        : previousValue.jobLocation
+                                          ? preValue.jobLocation
+                                          : previousValue.jobLocation
                                     ) === Number(options.id)
                                   }
                                 >
@@ -1887,14 +1962,14 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.address
-                                : previousValue.address
+                                  ? preValue.address
+                                  : previousValue.address
                             }
                             maxLength={100}
                             invalid={
                               addressValidation &&
-                              Number(jobLocationOption) !== 1 &&
-                              Number(jobLocationOption) !== 0
+                                Number(jobLocationOption) !== 1 &&
+                                Number(jobLocationOption) !== 0
                                 ? true
                                 : false
                             }
@@ -2004,8 +2079,8 @@ export const CreateJob = forwardRef(
                                 type === "new_template" && previousStep !== 3
                                   ? ""
                                   : previousStep === 3
-                                  ? preValue.zipcode
-                                  : previousValue.zipcode
+                                    ? preValue.zipcode
+                                    : previousValue.zipcode
                               }
                               onChange={(e) => {
                                 loadOptionsByZip(e.target.value);
@@ -2061,8 +2136,8 @@ export const CreateJob = forwardRef(
                                   type === "new_template" && previousStep !== 3
                                     ? false
                                     : previousStep === 3
-                                    ? preValue.sponsorshiprequiured
-                                    : previousValue.sponsorshiprequiured ===
+                                      ? preValue.sponsorshiprequiured
+                                      : previousValue.sponsorshiprequiured ===
                                       true
                                 }
                                 value={"yes"}
@@ -2104,8 +2179,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? false
                                 : previousStep === 3
-                                ? preValue.issecurityclearancerequired
-                                : previousValue.issecurityclearancerequired
+                                  ? preValue.issecurityclearancerequired
+                                  : previousValue.issecurityclearancerequired
                             }
                             onChange={(e) =>
                               setSecurityClearence(e.target.checked)
@@ -2180,12 +2255,12 @@ export const CreateJob = forwardRef(
                             // }
                             value={
                               type === "new_template" &&
-                              previousStep !== 3 &&
-                              levelOfEduChange === false
+                                previousStep !== 3 &&
+                                levelOfEduChange === false
                                 ? ""
                                 : previousStep === 3
-                                ? eduPrevArr
-                                : eduArr
+                                  ? eduPrevArr
+                                  : eduArr
                             }
                             isMulti
                             name="levelofeducationids"
@@ -2218,12 +2293,12 @@ export const CreateJob = forwardRef(
                             isMulti
                             value={
                               type === "new_template" &&
-                              previousStep !== 3 &&
-                              studyFieldChange === false
+                                previousStep !== 3 &&
+                                studyFieldChange === false
                                 ? ""
                                 : previousStep === 3
-                                ? studyFieldPrevArr
-                                : studyFieldArr
+                                  ? studyFieldPrevArr
+                                  : studyFieldArr
                             }
                             onChange={(evt) => {
                               onSelectStudyFieldDropdown(evt);
@@ -2266,7 +2341,7 @@ export const CreateJob = forwardRef(
                             Certification
                           </Label>
 
-                          <Select
+                          {/* <Select
                             defaultValue={
                               type === "new_template" && previousStep !== 3
                                 ? ""
@@ -2277,6 +2352,35 @@ export const CreateJob = forwardRef(
                             options={certificationOptions}
                             classNamePrefix="select"
                             placeholder="Select certification"
+                          /> */}
+
+
+                          <CreatableSelect
+                            isMulti
+                            // defaultValue={
+                            //   type === "new_template" && previousStep !== 3
+                            //     ? ""
+                            //     : certificationsData
+                            // }
+                            value={
+                              type === "new_template" &&
+                                previousStep !== 3 &&
+                                certificateChange === false
+                                ? ""
+                                : previousStep === 3
+                                  ? certificatePrevArr
+                                  : certificateArr
+                            }
+                            onChange={(evt) => {
+                              onSelectCertificateDropdown(evt);
+                              setCertificateChange(true);
+                            }}
+                            name="certificationids"
+                            options={certificationOptions}
+                            classNamePrefix="select"
+                            placeholder="Select Certification"
+                            formatCreateLabel={formatCreateCertificateLabel}
+                            onCreateOption={(e) => onCreateCertificate(e)}
                           />
                         </FormGroup>
                       </Col>
@@ -2341,8 +2445,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.description
-                                : previousValue.description
+                                  ? preValue.description
+                                  : previousValue.description
                             }
                             onChange={(e, editor) => {
                               setupDescriptionData(editor.getData());
@@ -2380,8 +2484,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.companyDetail
-                                : previousValue.companyDetail
+                                  ? preValue.companyDetail
+                                  : previousValue.companyDetail
                             }
                             placeholder="Enter company details"
                             maxLength={1000}
@@ -2430,11 +2534,11 @@ export const CreateJob = forwardRef(
                                   id={"jobType_" + options.id}
                                   defaultChecked={
                                     type === "new_template" &&
-                                    previousStep !== 3
+                                      previousStep !== 3
                                       ? ""
                                       : previousStep === 3
-                                      ? preValue?.jobType?.includes(options.id)
-                                      : previousValue?.jobType?.includes(
+                                        ? preValue?.jobType?.includes(options.id)
+                                        : previousValue?.jobType?.includes(
                                           options.id
                                         )
                                   }
@@ -2471,13 +2575,13 @@ export const CreateJob = forwardRef(
                                   id={"workSchedule_" + options.id}
                                   defaultChecked={
                                     type === "new_template" &&
-                                    previousStep !== 3
+                                      previousStep !== 3
                                       ? ""
                                       : previousStep === 3
-                                      ? preValue?.workSchedule?.includes(
+                                        ? preValue?.workSchedule?.includes(
                                           options.id
                                         )
-                                      : previousValue?.workSchedule?.includes(
+                                        : previousValue?.workSchedule?.includes(
                                           options.id
                                         )
                                   }
@@ -2506,11 +2610,11 @@ export const CreateJob = forwardRef(
                                   id={"shifts_" + options.id}
                                   defaultChecked={
                                     type === "new_template" &&
-                                    previousStep !== 3
+                                      previousStep !== 3
                                       ? ""
                                       : previousStep === 3
-                                      ? preValue?.shift?.includes(options.id)
-                                      : previousValue?.shift?.includes(
+                                        ? preValue?.shift?.includes(options.id)
+                                        : previousValue?.shift?.includes(
                                           options.id
                                         )
                                   }
@@ -2550,7 +2654,7 @@ export const CreateJob = forwardRef(
                                   value={options.id}
                                   selected={
                                     type === "new_template" &&
-                                    previousStep !== 3
+                                      previousStep !== 3
                                       ? 0
                                       : expLevelSelected === options.id
                                   }
@@ -2584,7 +2688,7 @@ export const CreateJob = forwardRef(
                                   value={options.id}
                                   selected={
                                     type === "new_template" &&
-                                    previousStep !== 3
+                                      previousStep !== 3
                                       ? 0
                                       : hiringSelected === options.id
                                   }
@@ -2647,11 +2751,11 @@ export const CreateJob = forwardRef(
                                   value={options.id}
                                   selected={
                                     type === "new_template" &&
-                                    previousStep !== 3
+                                      previousStep !== 3
                                       ? 0
                                       : previousStep === 3
-                                      ? preValue.payPeriodType
-                                      : previousValue.payPeriodType ===
+                                        ? preValue.payPeriodType
+                                        : previousValue.payPeriodType ===
                                         options.id
                                   }
                                 >
@@ -2684,8 +2788,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.minimumAmount
-                                : previousValue.minimumAmount
+                                  ? preValue.minimumAmount
+                                  : previousValue.minimumAmount
                             }
                             placeholder="Enter minimum base pay"
                           />
@@ -2714,8 +2818,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.maximumAmount
-                                : previousValue.maximumAmount
+                                  ? preValue.maximumAmount
+                                  : previousValue.maximumAmount
                             }
                             placeholder="Enter maximum base pay"
                           />
@@ -2746,8 +2850,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.compensationPackage
-                                : previousValue.compensationPackage
+                                  ? preValue.compensationPackage
+                                  : previousValue.compensationPackage
                             }
                             maxLength={1000}
                           />
@@ -2767,8 +2871,8 @@ export const CreateJob = forwardRef(
                               type === "new_template" && previousStep !== 3
                                 ? ""
                                 : previousStep === 3
-                                ? preValue.benefits
-                                : previousValue.benefits
+                                  ? preValue.benefits
+                                  : previousValue.benefits
                             }
                             maxLength={1000}
                           />
@@ -2817,12 +2921,12 @@ export const CreateJob = forwardRef(
                             defaultOptions={mustHaveSkills}
                             value={
                               type === "new_template" &&
-                              previousStep !== 3 &&
-                              keyQualicationChange === false
+                                previousStep !== 3 &&
+                                keyQualicationChange === false
                                 ? []
                                 : previousStep === 3
-                                ? keyQualificationArr1
-                                : prevKeyQualificationArr1
+                                  ? keyQualificationArr1
+                                  : prevKeyQualificationArr1
                             }
                             onKeyDown={(e) => handleKeyDown(e)}
                             onChange={(evt) => {
@@ -2861,12 +2965,12 @@ export const CreateJob = forwardRef(
                             defaultOptions={niceToHaveSkills}
                             value={
                               type === "new_template" &&
-                              previousStep !== 3 &&
-                              keyQualicationChange === false
+                                previousStep !== 3 &&
+                                keyQualicationChange === false
                                 ? []
                                 : previousStep === 3
-                                ? keyQualificationArr2
-                                : prevKeyQualificationArr2
+                                  ? keyQualificationArr2
+                                  : prevKeyQualificationArr2
                             }
                             onKeyDown={(e) => handleKeyDownOptional(e)}
                             onChange={(evt) => {
@@ -2921,10 +3025,10 @@ export const CreateJob = forwardRef(
                                   type === "new_template" && previousStep !== 3
                                     ? false
                                     : previousStep === 3
-                                    ? questionArray.includes(
+                                      ? questionArray.includes(
                                         options.prescreenquestion
                                       )
-                                    : prevDataArr.includes(
+                                      : prevDataArr.includes(
                                         options.prescreenquestion
                                       )
                                 }
