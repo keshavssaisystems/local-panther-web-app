@@ -459,8 +459,8 @@ export default function AIProfileOffCanvas({ closeOffcanvas }) {
                                 textAlign: "left",
                                 marginLeft: "1px",
                                 fontSize: "10px",
-                                marginBottom: "-10px"
-                            }}>Example: “I worked at Google in 2023. I deleted my education at University of Mumbai. I want to add a Master of Fine Arts.”</div>
+                                marginBottom: "-12px"
+                            }}>Example: “I worked at Google in 2023 as UI developer. Remove primary education and add a Applied Physics MS from Stanford University in 2020 to 2024.”</div>
                             <Button className="mt-2" color="primary" onClick={() => submitProfileData()}
                                 disabled={isUpdateButtonDisable}>
                                 Update Profile
