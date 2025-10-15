@@ -36,7 +36,9 @@ export function ChatNameCard({
     lastMessageSender = chatUsers.lastMessageBy;
     id = chatUsers.id;
   }
-  const chatUserRef = firestore.collection("chatUsers");
+  
+  const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
+  const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   const getChatData = (event) => {
     getSelectedChat(event);
     if (id !== null) {
