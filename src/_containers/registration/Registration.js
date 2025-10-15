@@ -6,6 +6,8 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import InputMask from "react-input-mask";
 import AsyncSelect from "react-select/async";
+import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Slider from "react-slick";
 import "./registration.scss";
@@ -76,7 +78,8 @@ export function Registration() {
 
   const [countryValue, setCountryValue] = useState([]);
   const [cityValue, setCityValue] = useState(0);
-  const [selected, setSelected] = useState(1);
+  const { role } = useParams();
+  const [selected, setSelected] = useState(role === 'hm' ? 2 : 1);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
