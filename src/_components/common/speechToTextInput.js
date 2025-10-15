@@ -116,7 +116,7 @@ export const SpeechToTextInput = (props) => {
         <textarea
           value={props.input1}
           onChange={(e) => props.setInput1(e.target.value)}
-          placeholder="Type your prompt here ..."
+          placeholder={props.placeholder || "Type your prompt here ..."}
           ref={input1Ref}
           className={
             activeInput === "input1" && listening ? "listening-active" : ""
@@ -125,9 +125,8 @@ export const SpeechToTextInput = (props) => {
         />
         {browserSupportsSpeechRecognition && (
           <button
-            className={`mic-button ${
-              activeInput === "input1" && listening ? "active-listening" : ""
-            }`}
+            className={`mic-button ${activeInput === "input1" && listening ? "active-listening" : ""
+              }`}
             onClick={() => handleMicClick("input1", input1Ref)}
             title={
               activeInput === "input1" && listening
@@ -157,20 +156,19 @@ export const SpeechToTextInput = (props) => {
           </button>
         )}
         <button
-          className={`mic-button1 mic-button ${
-            activeInput === "input1" && listening ? "active-listening" : ""
-          } ${!props.input1 ? "disabled-col" : ""}`}
+          className={`mic-button1 mic-button ${activeInput === "input1" && listening ? "active-listening" : ""
+            } ${!props.input1 ? "disabled-col" : ""}`}
           onClick={() => {
             props.handleUpdateData();
             if (listening) {
               handleMicClick("input1", input1Ref);
             }
           }}
-          // title={
-          //   activeInput === "input1" && listening
-          //     ? "Stop Listening"
-          //     : "Start Listening"
-          // }
+        // title={
+        //   activeInput === "input1" && listening
+        //     ? "Stop Listening"
+        //     : "Start Listening"
+        // }
         >
           {/* Use IoMicOutline for outline icon */}
           {props.loadInput ? (
