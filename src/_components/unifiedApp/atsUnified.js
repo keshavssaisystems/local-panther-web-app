@@ -34,7 +34,7 @@ export default function AtsUnified() {
 
     useEffect(() => {
         (async () => {
-            await dispatch(atsActions.getATSList());
+            await getATSList();
             console.log('atstypeList', atstypeList);
         })();
     }, [dispatch]);
@@ -42,7 +42,7 @@ export default function AtsUnified() {
     useEffect(() => {
         if (user && user.CompanyId) {
             (async () => {
-                await dispatch(atsActions.getCompanyATS({ companyId: user.CompanyId }));
+                await getConfiguredAts();
                 console.log('configuredAtsList', configuredAtsList);
             })();
         }
@@ -61,10 +61,21 @@ export default function AtsUnified() {
         setAvailableAts(availableAtsList);
     }, [atstypeList, configuredAtsList, dispatch]);
 
+    const getATSList = async () => {
+        await dispatch(atsActions.getATSList());
+    }
+
+    const getConfiguredAts = async () => {
+        if (user && user.CompanyId) {
+            await dispatch(atsActions.getCompanyATS({ companyId: user.CompanyId }));
+        }
+    }
 
     const handleDeleteAts = (id) => {
         if (window.confirm("Are you sure you want to delete this ATS configuration?")) {
             dispatch(atsActions.deleteAtsAuthorization(id));
+            getATSList();
+            getConfiguredAts();
         }
     };
 
