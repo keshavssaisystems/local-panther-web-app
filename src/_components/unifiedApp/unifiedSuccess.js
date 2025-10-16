@@ -2,15 +2,13 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import unifiedKeys from './unifiedKeys.json';
-function handleAuthCallback(connectionId) {
-    localStorage.setItem('unifiedConnectionId', connectionId);
-    window.history.replaceState({}, document.title, window.location.pathname);
-}
+import { postAtsAuthorization } from '_store/ats.slice';
+import { useDispatch } from 'react-redux';
 
 export default function SuccessPage() {
     const location = useLocation();
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const code = params.get('code');
@@ -38,12 +36,30 @@ export default function SuccessPage() {
                     navigate('/failure');
                 });
         }
-        if (id) {          
+        if (id) {
             handleAuthCallback(id);
+
             navigate('/unified-candidates'); // redirect after storing connection
         }
 
     }, [location, navigate]);
+
+    const handleAuthCallback = (connectionId) => {
+        localStorage.setItem('unifiedConnectionId', connectionId);
+        var obj = {
+            "companyid": JSON.parse(localStorage.getItem("userDetails"))?.CompanyId || 0,
+            "integrationtype": "unified",
+            "atstype": "workable",
+            "connectionid": connectionId,
+            "accesstoken": null,
+            "refreshtoken": null,
+            "isactive": true
+        }
+
+        dispatch(postAtsAuthorization(obj));
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
 
     return <h2>Authenticating with Bullhorn...</h2>;
 }
