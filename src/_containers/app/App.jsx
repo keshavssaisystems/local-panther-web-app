@@ -73,6 +73,9 @@ import { ATSCandidate } from "_containers/admin/reports/ATSCandidateReport";
 import { Payment } from "_containers/payment/payment";
 // import { AdmCandidateList } from "_containers/admin/candidates/candidatesList";
 import { getPublicIP } from "_helpers/helper";
+import { isMobile, isTablet } from "../../_helpers/helper";
+import GetAppPopup from "_components/common/GetAppPopup";
+
 // import { TermsAndConditions } from "_containers/static/terms";
 // import { PrivacyPolicy } from "_containers/static/privacy";
 // import { Support } from "_containers/static/support";
@@ -143,6 +146,7 @@ export function App() {
   const userroleid = useSelector((state) => state.auth.userroleid);
   const [hideSidebar, setHideSidebar] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showGetAppPopup, setShowGetAppPopup] = useState(false);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -221,6 +225,9 @@ export function App() {
       });
     }
     getPublicIpAdd();
+    if (isMobile() || isTablet()) {
+      setShowGetAppPopup(true);
+    }
     return () => {
       localStorage.removeItem("publicip");
     };
@@ -921,6 +928,10 @@ export function App() {
               </div>
             </div>
           </>
+        )}
+        
+        {(isMobile() || isTablet()) && (          
+          <GetAppPopup isOpen={showGetAppPopup} toggle={() => setShowGetAppPopup(false)} />
         )}
       </Suspense>
     </>
