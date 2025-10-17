@@ -59,8 +59,8 @@ export function CertificationsModal(props) {
   }, []);
 
   const [certificationOptions, setCertificationOptions] = useState([]);
-  const [certificateArr, setCertificateArr] = useState([]);
-  const [certificatePrevArr, setCertificatePrevArr] = useState([]);
+  const [certificateArr, setCertificateArr] = useState({});
+  const [certificatePrevArr, setCertificatePrevArr] = useState({});
   useEffect(() => {
     setCertificationOptions(typeList.map(
       ({ id: value, ...rest }) => {
@@ -69,7 +69,7 @@ export function CertificationsModal(props) {
           label: `${rest.name}`,
         };
       }
-    ));   
+    ));
   }, [typeList]);
 
   const loadData = function () {
@@ -146,7 +146,7 @@ export function CertificationsModal(props) {
         setToDateSelect(toSelected);
       }
 
-      var selectedCertification = [{ value: props?.selected?.certificationtypeid, label: props?.selected?.certificationtype }];
+      var selectedCertification = { value: props?.selected?.certificationtypeid, label: props?.selected?.certificationtype };
       setCertificateArr(selectedCertification);
       setCertificatePrevArr(selectedCertification);
     }
@@ -435,18 +435,16 @@ export function CertificationsModal(props) {
 
     if (res?.payload && res?.payload?.statusCode === 201) {
       setCertificateChange(true);
-      let certData = [...certificateArr];
-      certData.push({
-        value: res.payload.data[0].certificationtypeid,
-        label: res.payload.data[0].certificationtype1,
-      });
+      let certData = certificateArr;
+      certData.value = res.payload.data[0].certificationtypeid;
+      certData.label = res.payload.data[0].certificationtype1;
+
       setCertificateArr(certData);
-      let certPrevData = [...certificatePrevArr];
-      certPrevData.push({
-        value: res.payload.data[0].certificationtypeid,
-        label: res.payload.data[0].certificationtype1,
-      });
+      let certPrevData = certificatePrevArr;
+      certPrevData.value = res.payload.data[0].certificationtypeid;
+      certPrevData.label = res.payload.data[0].certificationtype1;
       setCertificatePrevArr(certPrevData);
+      onHandleInputChange("certificateType", res.payload.data[0].certificationtypeid);
       await dispatch(certificationTypeActions.certificationType());
     } else {
       console.log(res?.error);
@@ -569,7 +567,7 @@ export function CertificationsModal(props) {
                   onCreateOption={(e) => onCreateCertificate(e)}
                 />
 
-                <div className="invalid-feedback">
+                <div className="filter-info-text filter-error-msg">
                   {formDetails.typeError
                     ? "Certification type is required"
                     : ""}
