@@ -1,5 +1,5 @@
 // pages/SuccessPage.jsx
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import unifiedKeys from './unifiedKeys.json';
 import { postAtsAuthorization } from '_store/ats.slice';
@@ -9,10 +9,13 @@ export default function SuccessPage() {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [type, setType] = useState('');
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const code = params.get('code');
         const id = params.get('id');
+        const type = params.get('type');
+        setType(type);
         if (code) {
             fetch('https://api.unified.to/unified/integration/token', {
                 method: 'POST',
@@ -37,19 +40,19 @@ export default function SuccessPage() {
                 });
         }
         if (id) {
-            handleAuthCallback(id);
+            handleAuthCallback(id, type);
 
-            navigate('/unified-candidates'); // redirect after storing connection
+            navigate(`/unified-candidates/${id}`); // redirect after storing connection
         }
 
     }, [location, navigate]);
 
-    const handleAuthCallback = (connectionId) => {
+    const handleAuthCallback = (connectionId, type) => {
         localStorage.setItem('unifiedConnectionId', connectionId);
         var obj = {
             "companyid": JSON.parse(localStorage.getItem("userDetails"))?.CompanyId || 0,
             "integrationtype": "unified",
-            "atstype": "workable",
+            "atstype": type,
             "connectionid": connectionId,
             "accesstoken": null,
             "refreshtoken": null,
@@ -61,5 +64,5 @@ export default function SuccessPage() {
     }
 
 
-    return <h2>Authenticating with Bullhorn...</h2>;
+    return <h2>Authenticating with {type}...</h2>;
 }

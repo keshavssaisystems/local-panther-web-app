@@ -6,11 +6,13 @@ import moment from "moment/moment";
 import axios from "axios";
 import unifiedKeys from './unifiedKeys.json';
 import UnifiedCandidateModal from "./unifiedCandidateModal";
+import { useParams } from "react-router-dom";
 
 export default function UnifiedCandidates() {
     const [candidates, setCandidates] = useState([]);
-    const connectionId = localStorage.getItem('unifiedConnectionId');
+    const { connectionId } = useParams();
     const UNIFIED_API_KEY = unifiedKeys.UNIFIED_API_KEY;
+
     const fetchATSCandidates = async () => {
         const options = {
             method: 'GET',

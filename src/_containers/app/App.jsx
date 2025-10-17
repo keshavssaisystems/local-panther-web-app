@@ -659,16 +659,16 @@ export function App() {
           />
 
           <Route
-            path="/success"
+            path="/success/:integrationType"
             element={<SuccessPage />}
           />
 
           <Route
-            path="/unified-candidates"
+            path="/unified-candidates/:connectionId"
             element={<UnifiedCandidates />}
           />
           <Route
-            path="/unified-jobs"
+            path="/unified-jobs/:connectionId"
             element={<UnifiedJobs />}
           />
           <Route

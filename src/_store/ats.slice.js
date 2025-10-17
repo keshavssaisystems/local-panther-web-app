@@ -37,7 +37,7 @@ export const deleteAtsAuthorization = createAsyncThunk(
 export const getATSList = createAsyncThunk(
     `${name}/getATSList`,
     async () => {
-        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Atstype`;
+        const TOKEN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Atstype/filter-only?filterExpression=isactive=true&pageNumber=1&pageSize=100`;
         return await fetchWrapper.get(TOKEN_END_POINT);
     }
 );
@@ -57,7 +57,10 @@ const atsSlice = createSlice({
 
     extraReducers: (builder) => {
         builder
-            .addCase(getCompanyATS.pending, (state, { payload }) => { })
+            .addCase(getCompanyATS.pending, (state, { payload }) => {
+                state.loader = true;
+                state.atsauthorizationList = [];
+            })
             .addCase(getCompanyATS.fulfilled, (state, action) => {
                 console.log(action.payload);
                 state.atsauthorizationList = action.payload?.data?.data || [];
@@ -74,10 +77,13 @@ const atsSlice = createSlice({
             .addCase(postAtsAuthorization.rejected, (state, action) => {
                 state.loader = false;
             })
-            .addCase(getATSList.pending, (state, { payload }) => { })
+            .addCase(getATSList.pending, (state, { payload }) => {
+                state.loader = true;
+                state.atstypeList = [];
+             })
             .addCase(getATSList.fulfilled, (state, action) => {
                 console.log(action.payload);
-                state.atstypeList = action?.payload?.data || [];
+                state.atstypeList = action?.payload?.data?.data || [];
                 //state.atsauthorizationList = payload?.data?.data;
             })
             .addCase(getATSList.rejected, (state, action) => { })

@@ -6,10 +6,10 @@ import moment from "moment/moment";
 import axios from "axios";
 import unifiedKeys from './unifiedKeys.json';
 import UnifiedCandidateModal from "./unifiedCandidateModal";
-
+import { useParams } from "react-router-dom";
 export default function UnifiedJobs() {
     const [jobs, setJobs] = useState([]);
-    const connectionId = localStorage.getItem('unifiedConnectionId');
+    const { connectionId } = useParams();
     const UNIFIED_API_KEY = unifiedKeys.UNIFIED_API_KEY;
     const fetchATSJobs = async () => {
         const options = {

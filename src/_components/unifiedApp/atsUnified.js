@@ -9,6 +9,10 @@ import './atsUnified.css';
 import { toast } from "react-toastify";
 import { atsActions } from "_store/ats.slice";
 import { use } from "react";
+import ConfirmModal from "_components/modal/confirmModal";
+import { set } from "lodash";
+// import errorIcon from '_assets/images/error-icon.svg';
+import atsintegrationIcon from '../../assets/utils/images/ats-integration.png';
 export default function AtsUnified() {
     const navigate = useNavigate();
     const callUnifiedApp = (ats) => {
@@ -26,6 +30,7 @@ export default function AtsUnified() {
     const atstypeList = useSelector((state) => state.ats.atstypeList);
     const user = JSON.parse(localStorage.getItem("userDetails"));
     const [availableAts, setAvailableAts] = useState([]);
+    const [atsAuthorizationId, setAtsAuthorizationId] = useState(null);
     // const allAtsVendors = atstypeList?.map(x => ({
     //     type: x.atstype?.toLowerCase(),
     //     name: x.atstype,
@@ -71,16 +76,26 @@ export default function AtsUnified() {
         }
     }
 
-    const handleDeleteAts = (id) => {
-        if (window.confirm("Are you sure you want to delete this ATS configuration?")) {
-            dispatch(atsActions.deleteAtsAuthorization(id));
+    const handleDeleteAts = async (id) => {
+        setAtsAuthorizationId(id);
+        setShowModal(true);
+    };
+
+
+    const handleConfirm = async (id) => {
+        let res = await dispatch(atsActions.deleteAtsAuthorization(atsAuthorizationId));
+        {
             getATSList();
             getConfiguredAts();
         }
+        setAtsAuthorizationId(null);
+        setShowModal(false);
     };
+    const [showModal, setShowModal] = useState(false);
 
     return (
         <div>
+
             {/* <h1>ATS</h1>         */}
             <div class="unified">
                 <div class="unified_menu">
@@ -94,8 +109,11 @@ export default function AtsUnified() {
                         <div class="unified_vendors">
                             {configuredAtsList?.map(x => (
                                 <a class="unified_vendor">
-                                    <img alt={x.atstype} src={`https://api.unified.to/docs/images/${x.atstype}.png`} class="unified_image"></img>
-                                    <div class="unified_vendor_inner"><div class="unified_vendor_name">{x.atstype}</div>
+                                    <img alt={x.atstype}
+                                        src={`https://api.unified.to/docs/images/${x.atstype}.png`}
+                                        onError={(e) => (e.target.src = atsintegrationIcon)}
+                                        class="unified_image"></img>
+                                    <div class="unified_vendor_inner"><div class="unified_vendor_name" style={{ color: '#333', fontWeight: 'bold', textTransform: 'capitalize' }}>{x.atstype}</div>
                                         <div class="unified_vendor_cats"><span>ATS</span>
                                         </div>
                                         <button
@@ -148,7 +166,7 @@ export default function AtsUnified() {
                                     }
                                     {ats.atstype1 !== 'Workable' && ats.atstype1 !== 'Bullhorn' &&
                                         <a onClick={() => callUnifiedApp(ats)} class="unified_vendor">
-                                            <img alt="Greenhouse" src={`https://api.unified.to/docs/images/${ats.atstype1}.png`} class="unified_image"></img>
+                                            <img alt={ats.atstype1} src={`https://api.unified.to/docs/images/${ats.atstype1}.png`} class="unified_image"></img>
                                             <div class="unified_vendor_inner"><div class="unified_vendor_name">{ats.atstype1}</div>
                                                 <div class="unified_vendor_cats"><span>ATS</span></div>
                                             </div>
@@ -160,7 +178,17 @@ export default function AtsUnified() {
                     </>
                 )}
 
-
+                <ConfirmModal
+                    isOpen={showModal}
+                    title="Are you sure?"
+                    message="You want to remove the ATS account configuration?"
+                    icon={/*errorIcon*/ null}
+                    confirmText="YES"
+                    cancelText="NO"
+                    onConfirm={handleConfirm}
+                    zIndex={1050}
+                    onCancel={() => { setShowModal(false); setAtsAuthorizationId(null); }}
+                />
             </div>
 
         </div>
