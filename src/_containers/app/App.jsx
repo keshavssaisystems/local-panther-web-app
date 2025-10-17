@@ -883,6 +883,7 @@ export function App() {
                     <Route path="/login" element={<Login />} />
                     {/* <Route path="/login/:id" element={<Login />} /> */}
                     <Route path="/registration" element={<Registration />} />
+                    <Route path="/registration/:role" element={<Registration />} />
                     <Route
                       path="/customer-registration"
                       element={<CustomerRegistration />}

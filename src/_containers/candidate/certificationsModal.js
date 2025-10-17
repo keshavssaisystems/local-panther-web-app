@@ -25,15 +25,14 @@ import "./profile.scss";
 
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
+import CreatableSelect from "react-select/creatable";
+import { addCertification, certificationTypeActions } from '_store';
 export function CertificationsModal(props) {
   const dispatch = useDispatch();
   const [check, setCheck] = useState(props.check);
   const [summary, setSummary] = useState("");
 
-  const [typeList, setTypeList] = useState(
-    useSelector((state) => state.certificateType.user.data)
-  );
+  const typeList = useSelector((state) => state.certificateType.user.data || []);
   let desc_temp;
   const [isSave, setSave] = useState(true);
   const [success, setSuccess] = useState(false);
@@ -58,6 +57,20 @@ export function CertificationsModal(props) {
   useEffect(() => {
     loadData();
   }, []);
+
+  const [certificationOptions, setCertificationOptions] = useState([]);
+  const [certificateArr, setCertificateArr] = useState([]);
+  const [certificatePrevArr, setCertificatePrevArr] = useState([]);
+  useEffect(() => {
+    setCertificationOptions(typeList.map(
+      ({ id: value, ...rest }) => {
+        return {
+          value: `${value}`,
+          label: `${rest.name}`,
+        };
+      }
+    ));   
+  }, [typeList]);
 
   const loadData = function () {
     let data;
@@ -132,6 +145,10 @@ export function CertificationsModal(props) {
         toSelected.year = selectedYear;
         setToDateSelect(toSelected);
       }
+
+      var selectedCertification = [{ value: props?.selected?.certificationtypeid, label: props?.selected?.certificationtype }];
+      setCertificateArr(selectedCertification);
+      setCertificatePrevArr(selectedCertification);
     }
     setFormData(data);
   };
@@ -380,15 +397,72 @@ export function CertificationsModal(props) {
     } else {
       // setError(true);
       dispatch(showSnackbar({
-              message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
-              type: SNACKBAR_TYPES.ERROR,
-              position: SNACKBAR_POSITION.TOP_CENTER,
-              autoClose: true,
-              autoCloseDelay: 3000,
-              maxWidth: 500,
-            }));
+        message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
     }
   }
+  const [certificateChange, setCertificateChange] = useState(false);
+  const formatCreateCertificateLabel = (inputValue) => {
+    if (inputValue !== "" && inputValue.length > 2) {
+      return (
+        <span style={{ cursor: "pointer" }}>
+          Add new certificate -{" "}
+          <span style={{ color: "#545cd8" }}>{inputValue}</span>
+        </span>
+      );
+    } else {
+      return "";
+    }
+  };
+
+
+  const onCreateCertificate = async (data) => {
+    let payload = [{
+      certificationtype1: data,
+      isactive: true,
+      isfromresume: false,
+      currentUserId: localStorage.getItem("userId")
+        ? Number(localStorage.getItem("userId"))
+        : 0,
+    }];
+
+    let res = await dispatch(addCertification(payload));
+
+    if (res?.payload && res?.payload?.statusCode === 201) {
+      setCertificateChange(true);
+      let certData = [...certificateArr];
+      certData.push({
+        value: res.payload.data[0].certificationtypeid,
+        label: res.payload.data[0].certificationtype1,
+      });
+      setCertificateArr(certData);
+      let certPrevData = [...certificatePrevArr];
+      certPrevData.push({
+        value: res.payload.data[0].certificationtypeid,
+        label: res.payload.data[0].certificationtype1,
+      });
+      setCertificatePrevArr(certPrevData);
+      await dispatch(certificationTypeActions.certificationType());
+    } else {
+      console.log(res?.error);
+    }
+  };
+
+  const onSelectCertificateDropdown = (data) => {
+    if (data.length === 0) {
+      setCertificateArr([]);
+      setCertificatePrevArr([]);
+    } else {
+      setCertificateArr(data);
+      setCertificatePrevArr(data);
+    }
+  };
+
   return (
     <div className="profile-view react-date-picker-profile">
       {/* {formDetails.map((item, index) => ( */}
@@ -457,7 +531,7 @@ export function CertificationsModal(props) {
                   Certification type <span className="required-icon"> *</span>
                 </Label>
 
-                <Input
+                {/* <Input
                   id={"eligibility"}
                   name={"eligibility"}
                   type={"select"}
@@ -478,7 +552,23 @@ export function CertificationsModal(props) {
                         {options.name}
                       </option>
                     ))}
-                </Input>
+                </Input> */}
+
+                <CreatableSelect
+                  value={certificateArr}
+                  onChange={(evt) => {
+                    onSelectCertificateDropdown(evt);
+                    setCertificateChange(true);
+                    onHandleInputChange("certificateType", evt?.value)
+                  }}
+                  name="typeList"
+                  options={certificationOptions}
+                  classNamePrefix="select"
+                  placeholder="Select Certification"
+                  formatCreateLabel={formatCreateCertificateLabel}
+                  onCreateOption={(e) => onCreateCertificate(e)}
+                />
+
                 <div className="invalid-feedback">
                   {formDetails.typeError
                     ? "Certification type is required"
@@ -540,8 +630,8 @@ export function CertificationsModal(props) {
                   onHandleInputChange("fromMonth", evt.target.value)
                 }
                 className={`form-control ${formDetails.fromMonthReq || formDetails.fromDateValid
-                    ? "is-invalid"
-                    : ""
+                  ? "is-invalid"
+                  : ""
                   }`}
               >
                 <option key={0}>Select month</option>
@@ -579,8 +669,8 @@ export function CertificationsModal(props) {
                     onHandleInputChange("fromYear", evt.target.value)
                   }
                   className={`form-control ${formDetails.fromYearReq || formDetails.fromDateValid
-                      ? "is-invalid"
-                      : ""
+                    ? "is-invalid"
+                    : ""
                     }`}
                 >
                   <option key={0}>Select year</option>

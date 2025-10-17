@@ -186,7 +186,7 @@ export const getCandidateHistory = createAsyncThunk(
 const getProfileSlice = createSlice({
   name: "getProfile",
   initialState,
-   reducers: {
+  reducers: {
     updateLoadAIProfileCanvas: (state, { payload }) => {
       state.loadAIProfileCanvas = payload;
     },
@@ -201,14 +201,13 @@ const getProfileSlice = createSlice({
         // state.user.data = action.payload; // Update the state properly
         state.loader = false;
         let filter_data = action.payload;
-        let organization = filter_data.candidateQualificationsDtos.filter(
+        let organization = filter_data?.candidateQualificationsDtos?.filter(
           (x) => x.iscurrentlyworking === true
         );
 
         let data = {
           position: organization?.length > 0 ? organization[0].jobtitle : "",
-          organization:
-            organization.length > 0 ? organization[0].company : "Not Working",
+          organization: organization?.length > 0 ? organization[0].company : "Not Working",
           eligibility: state.dropdownLists.eligibilityDropDown.find(
             (x) => x.id === filter_data.employmenteligiblity
           )?.name,

@@ -52,9 +52,13 @@ export const PaymentDetails = ({
   }
   const [companyValue, setCompanyValue] = useState(0);
   const [currencyValue, setCurrencyValue] = useState(1);
+  // const [sameAsCust, setSameAsCust] = useState(
+  //   authUser ? authUser : userId ? true : selectedCustomer?.billingdetailstatus
+  // );
   const [sameAsCust, setSameAsCust] = useState(
-    authUser ? authUser : userId ? true : selectedCustomer?.billingdetailstatus
+    true
   );
+
   const [cityList, setCityList] = useState([]);
 
   const [countryList, setCountryList] = useState([]);
@@ -508,9 +512,16 @@ export const PaymentDetails = ({
       }));
 
     } else {
+      if (userId) {
+        setDisableCABillStat(true);
+      }
+      else {
+        dispatch(paymentActions.getCustomerUserDetails(id || selectedCustomer?.customerid)
+        );
+      }
       setDeletedCard(false);
       if (authUser) {
-        dispatch(paymentActions.updateShowBilling(true));
+        dispatch(paymentActions.updateShowBilling(false));
       }
       dispatch(showSnackbar({
         message: response.payload.message,

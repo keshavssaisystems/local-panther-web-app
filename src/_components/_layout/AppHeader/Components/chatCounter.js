@@ -13,7 +13,8 @@ export function ChatCounter() {
     firebase.initializeApp(firebaseConfig);
   }
   const firestore = firebase.firestore();
-  const chatUserRef = firestore.collection("chatUsers");
+   const firebaseEnv = `${process.env.REACT_APP_FIREBASE_ENVIRONMENT}`;
+  const chatUserRef = firestore.collection("chatUsers" + (firebaseEnv ? `-${firebaseEnv}` : ""));
   let field = userRole === 2 ? "customerId" : "candidateId";
   const chatUserList = chatUserRef
     .where(field, "==", userId)
