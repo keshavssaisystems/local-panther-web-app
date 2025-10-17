@@ -510,9 +510,10 @@ export const getAcceptedListUniqueData = (acceptedList) => {
 
 export const getPublicIP = async () => {
   try {
-    const response = await fetch("https://api.ipify.org?format=json");
-    const data = await response.json();
-    return data;
+    //const response = await fetch("https://api.ipify.org?format=json");
+    //const data = await response.json();
+    //return data;
+    return "";
   } catch (error) {
     console.error("Error fetching IP:", error);
     return error;
