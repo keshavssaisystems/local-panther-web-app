@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { Row, Col } from "reactstrap";
 import { CompleteCandProfileModal } from "_components/modal/completeCandProfileModal";
+import { isDesktop } from "../../../_helpers/helper";
+import GetAppPopup from "../../common/GetAppPopup";
 
 export function AppHeader({
   headerBackgroundColor = "white",
@@ -31,6 +33,7 @@ export function AppHeader({
   let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
     ? localStorage.getItem("isCompanyAdmin") === "true"
     : false;
+  const [showGetAppPopup, setShowGetAppPopup] = useState(false);
   return (
     <>
       <CSSTransitionGroup
@@ -133,7 +136,11 @@ export function AppHeader({
                 <span>
                   <NotificationCounter></NotificationCounter>
                 </span>
+                {isDesktop() && userroleid === 3 && (
+                  <button className="btn btn-primary get-app-btn-lm-10" onClick={() => setShowGetAppPopup(true)}>Get App</button>
+                )}
                 <UserBox />
+                
                 <CompleteCandProfileModal
                   isOpen={showCPModal}
                   onCloseModal={() => {
@@ -147,6 +154,7 @@ export function AppHeader({
           )}
         </div>
       </CSSTransitionGroup>
+      <GetAppPopup isOpen={showGetAppPopup} toggle={() => setShowGetAppPopup(false)} />
     </>
   );
 }

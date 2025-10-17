@@ -531,3 +531,26 @@ export const detectInputType = (input) => {
     return "invalid";
   }
 };
+
+export const isMobile = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (/android/i.test(userAgent)) {
+    return true;
+  }
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return true;
+  }
+  return false;
+};
+
+export const isTablet = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (/(ipad|tablet|playbook|silk)|(android(?!.*mobile))/i.test(userAgent)) {
+    return true;
+  }
+  return false;
+};
+
+export const isDesktop = () => {
+  return !isMobile() && !isTablet();
+};
