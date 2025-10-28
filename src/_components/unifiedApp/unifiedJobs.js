@@ -65,7 +65,7 @@ export default function UnifiedJobs() {
                     <Col key={job.id} sm="6" md="4" lg="3">
                         <div className="job-card">
                             <h5>{job.name}</h5>
-                            <p>{job?.addresses[0]?.region}</p>
+                            <p>{job?.addresses?.[0]?.region}</p>
                             <p>{moment(job.created_at).fromNow()}</p>
                             <Button color="primary" onClick={() => viewProfile(job)}>View Profile</Button>
                         </div>

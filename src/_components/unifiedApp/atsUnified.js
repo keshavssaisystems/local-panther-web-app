@@ -16,8 +16,8 @@ import atsintegrationIcon from '../../assets/utils/images/ats-integration.png';
 export default function AtsUnified() {
     const navigate = useNavigate();
     const callUnifiedApp = (ats) => {
-        if (ats?.connectionId) {
-            navigate('/unified-candidates');
+        if (ats?.connectionid) {
+            navigate('/unified-candidates/' + ats?.connectionid);
             return;
             //return toast.info("You have already connected with Workable");
         }
@@ -31,11 +31,6 @@ export default function AtsUnified() {
     const user = JSON.parse(localStorage.getItem("userDetails"));
     const [availableAts, setAvailableAts] = useState([]);
     const [atsAuthorizationId, setAtsAuthorizationId] = useState(null);
-    // const allAtsVendors = atstypeList?.map(x => ({
-    //     type: x.atstype?.toLowerCase(),
-    //     name: x.atstype,
-    //     img: `https://api.unified.to/docs/images/${x.atstype?.toLowerCase()}.png`
-    // })) || [];
 
     useEffect(() => {
         (async () => {
@@ -93,6 +88,20 @@ export default function AtsUnified() {
     };
     const [showModal, setShowModal] = useState(false);
 
+    const handleATSCandidateClick = (ats) => {
+        if (ats?.connectionid) {
+            navigate('/unified-candidates/' + ats?.connectionid);
+            return;
+        }
+
+    }
+    const handleATSJobClick = (ats) => {
+        if (ats?.connectionid) {
+            navigate('/unified-jobs/' + ats?.connectionid);
+            return;
+        }
+    }
+
     return (
         <div>
 
@@ -114,8 +123,10 @@ export default function AtsUnified() {
                                         onError={(e) => (e.target.src = atsintegrationIcon)}
                                         class="unified_image"></img>
                                     <div class="unified_vendor_inner"><div class="unified_vendor_name" style={{ color: '#333', fontWeight: 'bold', textTransform: 'capitalize' }}>{x.atstype}</div>
-                                        <div class="unified_vendor_cats"><span>ATS</span>
+                                        <div class="unified_vendor_cats1" onClick={() => handleATSCandidateClick(x)}><span>Candidates</span>
+
                                         </div>
+                                        <div class="unified_vendor_cats1" onClick={() => handleATSJobClick(x)}><span>Jobs</span></div>
                                         <button
                                             className="removeBtn"
                                             title="Delete"
