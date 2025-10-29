@@ -42,7 +42,8 @@ import { analytics } from "../../../firebase/index";
 import cx from "classnames";
 import moment from "moment";
 import { getHiringMangerList } from "_store";
-
+import PageTitle from "../../../_components/common/pagetitle";
+import { CommonFilters } from "../../../_components/common/commonFilters";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, CANDIDATE_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import DatePicker from "react-datepicker";
@@ -523,6 +524,22 @@ export default function CustomerCandidateLists(props) {
   }, [wrapperRef]);
   return (
     <>
+
+
+      <PageTitle heading="Candidates" />
+
+      <CommonFilters //onSearchData={() => onSearchData()}
+      // placeHolder={placeHolder}
+      // setPlaceHolder={setPlaceHolder}
+      // selectedOpt={selectedOpt}
+      // setSelectedOpt={setSelectedOpt}
+      // searchText={searchText}
+      // setSearchText={setSearchText}
+      // onJobStatusChange={onJobStatusChange}
+      // onJobHiringMangerChange={onJobHiringMangerChange}
+      // hiringManagerId={hiringManagerId}
+      // setHiringMangerId={setHiringMangerId} 
+      />
       <Row className="customercandidatelist">
         <div
           className="candidate-toolbar-flex"
