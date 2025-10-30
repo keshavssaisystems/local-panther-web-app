@@ -67,7 +67,7 @@ export default function UnifiedJobs() {
                             <h5>{job.name}</h5>
                             <p>{job?.addresses?.[0]?.region}</p>
                             <p>{moment(job.created_at).fromNow()}</p>
-                            <Button color="primary" onClick={() => viewProfile(job)}>View Profile</Button>
+                            {/* <Button color="primary" onClick={() => viewProfile(job)}>View Profile</Button> */}
                         </div>
                     </Col>
                 ))}
