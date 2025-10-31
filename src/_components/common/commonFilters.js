@@ -16,10 +16,14 @@ import {
     setSearchText,
     setHiringManagerId,
     setJobStatus,
+    setPlaceHolder,
     clearFilters,
 } from "_store/commonCustFiltersSlice";
 
-export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, setSelectedOpt, setSearchText, setHiringMangerId, setPlaceHolder }) => {
+export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
+    showJobStatus = true,
+    showSearch = true,
+    showClearButton = true }) => {
     const dispatch = useDispatch();
 
     // 🔹 Redux state for filters
@@ -36,6 +40,9 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     useEffect(() => {
         const companyId = Number(localStorage.getItem("companyid"));
         dispatch(getHiringMangerList(companyId));
+        if (!hiringManagerId) {
+            dispatch(setHiringManagerId(localStorage.getItem("userId")));
+        }
     }, [dispatch]);
 
     // 🔹 Handle search type (JobTitle, City, etc.)
@@ -43,13 +50,12 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         const value = e.target.value;
         dispatch(setSelectedOpt(value));
         dispatch(setSearchText(""));
-        dispatch(setHiringManagerId(""));
 
         const placeholderText =
             value === "JobTitle"
                 ? "Search job title"
                 : "Search " + value.toLowerCase();
-        dispatch({ type: "CommonFilters/setPlaceHolder", payload: placeholderText });
+        dispatch(setPlaceHolder(placeholderText));
     };
 
     // 🔹 Handle job status change
@@ -65,14 +71,16 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
     };
 
     // 🔹 Clear filters
-    const handleClearFilters = () => {
+    const handleClearFilters = (e) => {
         dispatch(clearFilters());
+        e.preventDefault();
+        if (onSearchData) onSearchData();
     };
 
     // 🔹 Submit (search)
     const handleSearch = (e) => {
         e.preventDefault();
-       // if (onSearchData) onSearchData();
+        if (onSearchData) onSearchData();
     };
 
     return (
@@ -105,28 +113,29 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                 </Col>
 
                                 {/* Job Type */}
-                                <Col xs={12} sm={6} md={3} lg={2}>
-                                    <Input
-                                        name="jobStatus"
-                                        type="select"
-                                        value={jobStatus}
-                                        onChange={(e) => handleJobStatusChange(e.target.value)}
-                                        className="filter-select"
-                                    >
-                                        <option value={""}>Select job type</option>
-                                        <option value={"Publish"}>Publish jobs</option>
-                                        <option value={"Draft"}>Draft jobs</option>
-                                        <option value={"Closed"}>Closed jobs</option>
-                                    </Input>
-                                </Col>
-
+                                {showJobStatus && (
+                                    <Col xs={12} sm={6} md={3} lg={2}>
+                                        <Input
+                                            name="jobStatus"
+                                            type="select"
+                                            value={jobStatus}
+                                            onChange={(e) => handleJobStatusChange(e.target.value)}
+                                            className="filter-select"
+                                        >
+                                            <option value={""}>Select job type</option>
+                                            <option value={"Publish"}>Publish jobs</option>
+                                            <option value={"Draft"}>Draft jobs</option>
+                                            <option value={"Closed"}>Closed jobs</option>
+                                        </Input>
+                                    </Col>
+                                )}
                                 {/* Clear Filters */}
                                 <Col xs={12} sm={12} md={2} lg={2} className="text-md-start text-left">
                                     <div className="filter-actions1">
                                         <Button
                                             color="link"
                                             className="clear-filters w-100"
-                                            onClick={handleClearFilters}
+                                            onClick={(e) => handleClearFilters(e)}
                                         >
                                             Clear Filters
                                         </Button>
@@ -144,7 +153,7 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                 value={selectedOpt}
                                                 onChange={handleSelectChange}
                                             >
-                                                <option value={"JobTitle"}>Search</option>
+                                                <option value={"JobTitle"}>Job Title</option>
                                                 <option value={"State"}>State</option>
                                                 <option value={"City"}>City</option>
                                                 <option value={"Skills"}>Skill</option>

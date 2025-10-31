@@ -528,7 +528,9 @@ export default function CustomerCandidateLists(props) {
 
       <PageTitle heading="Candidates" />
 
-      <CommonFilters //onSearchData={() => onSearchData()}
+      <CommonFilters
+        showJobStatus={false}
+      //onSearchData={() => onSearchData()}
       // placeHolder={placeHolder}
       // setPlaceHolder={setPlaceHolder}
       // selectedOpt={selectedOpt}

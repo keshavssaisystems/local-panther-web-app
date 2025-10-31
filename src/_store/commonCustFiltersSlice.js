@@ -1,11 +1,13 @@
 // _store/commonCustFiltersSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { set } from "lodash";
 
 const initialState = {
     selectedOpt: "JobTitle",
     searchText: "",
     hiringManagerId: "",
-    jobStatus: ""
+    jobStatus: "",
+    placeHolder: "Search job title",
 };
 
 const commonCustFiltersSlice = createSlice({
@@ -24,11 +26,15 @@ const commonCustFiltersSlice = createSlice({
         setJobStatus: (state, action) => {
             state.jobStatus = action.payload;
         },
+        setPlaceHolder: (state, action) => {
+            state.placeHolder = action.payload;
+        },
         clearFilters: (state) => {
             state.selectedOpt = "JobTitle";
             state.searchText = "";
-            state.hiringManagerId = "";
+            state.hiringManagerId = localStorage.getItem("userId") || "";
             state.jobStatus = "";
+            state.placeHolder = "Search job title"; 
         }
     }
 });
@@ -38,6 +44,7 @@ export const {
     setSearchText,
     setHiringManagerId,
     setJobStatus,
+    setPlaceHolder,
     clearFilters
 } = commonCustFiltersSlice.actions;
 

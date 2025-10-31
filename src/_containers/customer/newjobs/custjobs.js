@@ -67,7 +67,7 @@ export default function CustJobList() {
       };
       dispatch(custJobListActions.getJobList(filterObj));
     }
-  }, [JSON.stringify({ dispatch, selectedOpt, searchText, jobStatus, hiringManagerId })]);
+  }, [JSON.stringify({ dispatch, jobStatus, hiringManagerId })]);
 
   // useEffect(() => {
   //   //setHiringMangerId(localStorage.getItem("userId"));
@@ -188,7 +188,7 @@ export default function CustJobList() {
         </Col>
 
         <CommonFilters
-          // onSearchData={() => onSearchData()}
+           onSearchData={() => onSearchData()}
           //   // placeHolder={placeHolder}
           //   // setPlaceHolder={setPlaceHolder}
           //   // selectedOpt={selectedOpt}
