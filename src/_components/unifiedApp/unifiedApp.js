@@ -3,9 +3,9 @@ import { Row, Col } from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import moment from "moment/moment";
 import UnifiedDirectory from "@unified-api/react-directory";
-
+import unifiedKeys from "./unifiedKeys.json";
 export function createAuthLink(integrationType) {
-    const UNIFIED_WORKSPACE_ID = '68dbc51bc83fc0f2def390b7';
+    const UNIFIED_WORKSPACE_ID = unifiedKeys.UNIFIED_WORKSPACE_ID;
     const baseUrl = 'https://api.unified.to/unified/integration/auth';
     const params = new URLSearchParams({
         redirect: '1',
