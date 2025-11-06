@@ -560,52 +560,52 @@ export const CreateJob = forwardRef(
           ? ""
           : previousData.securityclearanceid,
       jobType:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].jobtypes.slice(","),
       workSchedule:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].workschedules.slice(","),
       shift:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].shifts.slice(","),
       experienceLevel:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].experiencelevelid,
       hiringTimeline:
-        previousData?.jobExperienceScheduleDtos === undefined ||
-          previousData?.jobExperienceScheduleDtos.length === 0
+        !previousData?.jobExperienceScheduleDtos ||
+          previousData?.jobExperienceScheduleDtos?.length === 0
           ? ""
           : previousData?.jobExperienceScheduleDtos[0].hiringtimelineid,
       payPeriodType:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].payperiodtypeid,
       minimumAmount:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].minimumamount,
       maximumAmount:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].maximumamount,
       compensationPackage:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].compensationpackage,
       benefits:
-        previousData?.jobPaymentBenefitDtos === undefined ||
+        !previousData?.jobPaymentBenefitDtos ||
           previousData?.jobPaymentBenefitDtos?.length === 0
           ? ""
           : previousData?.jobPaymentBenefitDtos[0].benefits,
