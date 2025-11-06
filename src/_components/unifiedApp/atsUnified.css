@@ -1,0 +1,206 @@
+.unified .unified_vendors {
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 32px;
+    display: grid;
+    box-sizing: border-box;
+    color: rgb(71, 77, 102);
+    font-size: 0.75rem;
+    font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol';
+    line-height: 1.25rem;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 640px) {
+    .unified .unified_vendors {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .unified .unified_vendors {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.unified .unified_vendor {
+    background-color: white;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    transition-property: box-shadow, transform;
+    transition-duration: 150ms;
+    border: 1px solid rgb(230, 232, 240);
+    border-radius: 4px;
+    padding: 24px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    text-decoration: none;
+    color: rgb(71, 77, 102);
+    user-select: none;
+}
+
+.unified .unified_vendor:hover {
+    /* box-shadow: rgba(67, 90, 111, 0.3) 0px 0px 1px, rgba(67, 90, 111, 0.47) 0px 2px 4px -2px; */
+    /* transform: translateY(-2px); */
+    /* outline: 0; */
+    background-color: rgb(230, 232, 240);
+    /* border: 1px solid rgb(51, 102, 255); */
+}
+
+.unified .unified_vendor img.unified_image {
+    width: 48px;
+    height: 48px;
+    box-sizing: border-box;
+    display: block;
+    border: 0;
+}
+
+.unified .unified_vendor .unified_vendor_inner {
+    margin-left: 24px;
+    align-items: flex-start;
+    -webkit-box-align: start;
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    display: block;
+    overflow: hidden;
+}
+
+.unified .unified_vendor_name {
+    font-weight: 700;
+    font-size: 120%;
+    width: 100%;
+    display: inline-block;
+}
+
+.unified .unified_vendor .unified_vendor_inner .unified_vendor_cats {
+    padding-top: 10px;
+    display: inline-block;
+}
+
+.unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span {
+    margin-right: 6px;
+    border-radius: 4px;
+    background-color: rgb(237, 239, 245);
+    padding-right: 6px;
+    padding-left: 6px;
+    display: inline-block;
+    font-size: 11.5px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    color: rgb(71, 77, 102);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0px;
+    line-height: 16px;
+    text-align: center;
+    height: 16px;
+    font-weight: 300;
+    font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol';
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.unified .unified_menu {
+    border-bottom: 1px #444 solid;
+    margin-bottom: 32px;
+}
+
+.unified .unified_menu .unified_button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    margin-right: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    -webkit-font-smoothing: antialiased;
+    appearance: none;
+    height: 28px;
+    width: auto;
+    text-decoration: none;
+    outline: none;
+    font-weight: 500;
+    letter-spacing: 0px;
+    line-height: 16px;
+    color: rgb(105, 111, 140);
+    display: inline-flex;
+    font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol';
+    position: relative;
+    justify-content: center;
+    -webkit-box-pack: center;
+    align-items: center;
+    -webkit-box-align: center;
+    border-bottom: 1px solid transparent;
+}
+
+.unified .unified_menu .unified_button:hover,
+.unified .unified_menu .unified_button.active {
+    /* border-bottom: 1px solid rgb(51, 102, 255); */
+    color: rgb(51, 102, 255);
+}
+
+/* dark mode */
+.body--dark .unified .unified_vendor,
+.dark-mode .unified .unified_vendor,
+.dark-theme .unified .unified_vendor,
+.dark .unified .unified_vendor {
+    background-color: rgb(51, 51, 51);
+    border: 1px solid rgb(51, 51, 51);
+    color: rgb(255, 255, 255);
+}
+
+.body--dark .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span,
+.dark-mode .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span,
+.dark-theme .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span,
+.dark .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span {
+    background-color: rgb(156, 156, 156);
+    color: #222;
+}
+
+.body--dark .unified .unified_menu .unified_button,
+.dark-mode .unified .unified_menu .unified_button,
+.dark-theme .unified .unified_menu .unified_button,
+.dark .unified .unified_menu .unified_button {
+    color: rgb(222, 222, 222);
+}
+
+/* @media (prefers-color-scheme: dark) {
+    .unified .unified_menu .unified_button {
+        color: rgb(222, 222, 222);
+    }
+    .unified .unified_vendor .unified_vendor_inner .unified_vendor_cats span {
+        background-color: rgb(156, 156, 156);
+        color: #222;
+    }
+    .unified .unified_vendor {
+        background-color: rgb(51, 51, 51);
+        border: 1px solid rgb(51, 51, 51);
+        color: rgb(255, 255, 255);
+    }
+} */
+
+
+.removeBtn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: transparent;
+    border: none;
+    color: #d32f2f;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 6px;
+    z-index: 2;
+    transition: color 0.2s;
+}
+.removeBtn:hover {
+    color: #b71c1c;
+}

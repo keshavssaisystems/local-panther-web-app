@@ -21,6 +21,7 @@ import custDashIcons from "assets/utils/images/customer/dashboard";
 import { analytics } from "../../../firebase/index";
 import { history } from "_helpers";
 import { PaymentModal } from "_components/modal/paymentmodal";
+import { createAuthLink } from "_components/unifiedApp/unifiedApp";
 
 export default function CustomerDashboard() {
   const [showRemModal, setShowRemModal] = useState(false);
@@ -231,6 +232,11 @@ export default function CustomerDashboard() {
       path: `customer-candidate-applied/0/${userId}`,
     },
   ];
+
+  const callUnifiedApp = () => {
+    const authUrl = createAuthLink('bullhorn');
+    window.location.href = authUrl; // 
+  }
 
   return (
     <>
