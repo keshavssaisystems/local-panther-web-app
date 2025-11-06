@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     Card,
@@ -10,7 +10,7 @@ import {
     Input,
     Button,
 } from "reactstrap";
-import { getHiringMangerList } from "_store";
+import { getHiringMangerList, dropdownActions } from "_store";
 import {
     setSelectedOpt,
     setSearchText,
@@ -23,9 +23,12 @@ import {
 export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMangerChange, showHiringManager = true,
     showJobStatus = true,
     showSearch = true,
-    showClearButton = true }) => {
+    showClearButton = true,
+    showOnlyJobTitle = false
+}) => {
     const dispatch = useDispatch();
 
+    const [filteredItems, setFilteredItems] = useState([]);
     // 🔹 Redux state for filters
     const { selectedOpt, searchText, hiringManagerId, jobStatus, placeHolder } = useSelector(
         (state) => state.commonCustFilters
@@ -83,6 +86,43 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
         if (onSearchData) onSearchData();
     };
 
+    const searchOptionDropdown = async (option) => {
+        if (selectedOpt !== "JobTitle") {
+            // Handle other search options
+            return;
+        }
+        if (option?.length >= 2) {
+            let companyId = Number(localStorage.getItem("companyid"));
+            let filter = {
+                companyId: companyId,
+                isClose: 0,
+                searchText: option.replaceAll(" ", "_"),
+            }
+            let response = await dispatch(dropdownActions.getJobsListThunk(filter));
+            if (response?.payload) {
+                setFilteredItems(response.payload);
+            }
+            else {
+                setFilteredItems([]);
+            }
+        }
+    };
+
+    const handleSelectSearch = (value) => {
+        dispatch(setSearchText(value.jobtitle));
+
+        setFilteredItems([]); // close suggestions
+    };
+
+    const searchOptions = showOnlyJobTitle
+        ? [{ value: "JobTitle", label: "Job Title" }]
+        : [
+            { value: "JobTitle", label: "Job Title" },
+            { value: "State", label: "State" },
+            { value: "City", label: "City" },
+            { value: "Skills", label: "Skill" },
+        ];
+
     return (
         <Col md="12">
             <Card className="main-card mb-3 card-filter filter-toolbar">
@@ -113,33 +153,35 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                 </Col>
 
                                 {/* Job Type */}
-                                {showJobStatus && (
-                                    <Col xs={12} sm={6} md={3} lg={2}>
-                                        <Input
-                                            name="jobStatus"
-                                            type="select"
-                                            value={jobStatus}
-                                            onChange={(e) => handleJobStatusChange(e.target.value)}
-                                            className="filter-select"
-                                        >
-                                            <option value={""}>Select job type</option>
-                                            <option value={"Publish"}>Publish jobs</option>
-                                            <option value={"Draft"}>Draft jobs</option>
-                                            <option value={"Closed"}>Closed jobs</option>
-                                        </Input>
-                                    </Col>
-                                )}
+
+                                <Col xs={12} sm={6} md={3} lg={2}>
+                                    {showJobStatus && (<Input
+                                        name="jobStatus"
+                                        type="select"
+                                        value={jobStatus}
+                                        onChange={(e) => handleJobStatusChange(e.target.value)}
+                                        className="filter-select"
+                                    >
+                                        <option value={""}>Select job type</option>
+                                        <option value={"Publish"}>Publish jobs</option>
+                                        <option value={"Draft"}>Draft jobs</option>
+                                        <option value={"Closed"}>Closed jobs</option>
+                                    </Input>)}
+                                </Col>
+
                                 {/* Clear Filters */}
                                 <Col xs={12} sm={12} md={2} lg={2} className="text-md-start text-left">
-                                    <div className="filter-actions1">
-                                        <Button
-                                            color="link"
-                                            className="clear-filters w-100"
-                                            onClick={(e) => handleClearFilters(e)}
-                                        >
-                                            Clear Filters
-                                        </Button>
-                                    </div>
+                                    {showClearButton && (
+                                        <div className="filter-actions1">
+                                            <Button
+                                                color="link"
+                                                className="clear-filters w-100"
+                                                onClick={(e) => handleClearFilters(e)}
+                                            >
+                                                Clear Filters
+                                            </Button>
+                                        </div>
+                                    )}
                                 </Col>
 
                                 {/* Search */}
@@ -153,20 +195,49 @@ export const CommonFilters = ({ onSearchData, onJobStatusChange, onJobHiringMang
                                                 value={selectedOpt}
                                                 onChange={handleSelectChange}
                                             >
-                                                <option value={"JobTitle"}>Job Title</option>
-                                                <option value={"State"}>State</option>
-                                                <option value={"City"}>City</option>
-                                                <option value={"Skills"}>Skill</option>
+                                                {searchOptions.map((option) => (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
                                             </Input>
                                             <Input
                                                 type="search"
                                                 placeholder={placeHolder}
                                                 value={searchText}
-                                                onChange={(e) =>
-                                                    dispatch(setSearchText(e.target.value))
-                                                }
+                                                onChange={(e) => {
+                                                    dispatch(setSearchText(e.target.value));
+                                                    searchOptionDropdown(e.target.value);
+                                                }}
                                                 className="filter-search-input"
                                             />
+                                            {filteredItems.length > 0 && (
+                                                <ul
+                                                    style={{
+                                                        listStyle: "none",
+                                                        margin: 0,
+                                                        padding: "4px",
+                                                        border: "1px solid #ccc",
+                                                        borderTop: "none",
+                                                        position: "absolute",
+                                                        width: "100%",
+                                                        background: "#fff",
+                                                        zIndex: 1000,
+                                                        maxHeight: "150px",
+                                                        overflowY: "auto",
+                                                    }}
+                                                >
+                                                    {filteredItems.map((item, index) => (
+                                                        <li
+                                                            key={index}
+                                                            style={{ padding: "6px", cursor: "pointer" }}
+                                                            onClick={() => handleSelectSearch(item)}
+                                                        >
+                                                            {item.jobtitle}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                             <Button
                                                 color={"primary"}
                                                 className="input-group-text filter-search-btn"
