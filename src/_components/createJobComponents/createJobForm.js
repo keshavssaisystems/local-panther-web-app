@@ -722,7 +722,7 @@ export const CreateJob = forwardRef(
         setCertificateArr(certificationData);
         setCertificatePrevArr(certificationData);
       }
-      
+
     }, []);
     const [descriptionData, setDescriptionData] = useState(
       previousStep === 3 && preValue.description !== ""
@@ -1020,7 +1020,8 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
-
+        hiringmanagerid: assignedToValue?.value || 0,
+        assignedto:  assignedToValue?.label || '',
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
         //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
@@ -1754,6 +1755,78 @@ export const CreateJob = forwardRef(
       }
     };
 
+  const [assignedToUserOptions, setAssignedToUserOptions] = useState([]);
+    const [assignedToValue, setAssignedToValue] = useState(null);
+
+    useEffect(() => {
+      // load once on mount
+      getAssignedToUser();
+    }, []); // no need to include dispatch in deps for one-time load
+
+    const getAssignedToUser = async () => {
+      try {
+        const companyId =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "AssignedTo",
+            commonId: companyId,
+          })
+        );
+
+        // handle possible response shapes
+        const users =
+          response?.payload?.data ||
+          response?.payload?.data?.data ||
+          response?.payload ||
+          [];
+
+        const userOptions = (users || []).map((user) => ({
+          value: user.id,
+          label: user.name,
+        }));
+
+        setAssignedToUserOptions(userOptions);
+
+        // optionally set default selected value if jobData contains assigned to id
+        const assignedId =
+          (type === "new_template" && previousStep !== 3)
+            ? null
+            : previousStep === 3
+            ? jobData?.basicInformation?.hiringmanagerid
+            : previousData?.hiringmanagerid;
+
+        if (assignedId) {
+          const found = userOptions.find((u) => String(u.value) === String(assignedId));
+          if (found) setAssignedToValue(found);
+        }
+      } catch (err) {
+        // keep silent or console.log(err) for debugging
+        // console.error(err);
+      }
+    };
+
+    const loadOptionsAssignedTo = useCallback(
+      async (inputValue) => {
+        // return all options when input empty so AsyncSelect shows choices
+        const source = assignedToUserOptions || [];
+        if (!inputValue) return source;
+        const filtered = source.filter((option) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        return filtered;
+      },
+      [assignedToUserOptions]
+    );
+
+    const loadOptionsDebAssignedTo = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsAssignedTo(inputValue).then(callback);
+      }, 300),
+      [loadOptionsAssignedTo]
+    );
+
+
     return (
       <>
         <div className="form-wizard-content">
@@ -2097,6 +2170,30 @@ export const CreateJob = forwardRef(
                           </FormGroup>
                         </Col>
                       )}
+
+                      <Col md={6} lg={3}>
+                        <FormGroup>
+                          <Label for="city" className="fw-semi-bold">
+                            Assigned To
+                          </Label>
+                        <AsyncSelect
+                            name={"assignedto"}
+                            placeholder="Search Assigned To"
+                            cacheOptions
+                            loadOptions={loadOptionsDebAssignedTo}
+                            defaultOptions={assignedToUserOptions}
+                            value={assignedToValue}
+                            onChange={(val) => {
+                              setAssignedToValue(val);
+                              // if you need to persist selection to the form submission,
+                              // write the selected id into a hidden input or local state used by saveData
+                              // e.g. setSelectedAssignedToId(val ? val.value : null);
+                            }}
+                            isMulti={false}
+                            styles={customStyles}
+                          />
+                        </FormGroup>
+                      </Col>
                     </Row>
                     <Row>
                       <Col md={6} lg={3}>
