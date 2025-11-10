@@ -6,7 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createAuthLink } from "_components/unifiedApp/unifiedApp";
 import UnifiedDirectory from '@unified-api/react-directory';
 import './atsUnified.css';
-import { toast } from "react-toastify";
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 import { atsActions } from "_store/ats.slice";
 import { use } from "react";
 import ConfirmModal from "_components/modal/confirmModal";
@@ -20,6 +21,13 @@ export default function AtsUnified() {
             navigate('/unified-candidates/' + ats?.connectionid);
             return;
             //return toast.info("You have already connected with Workable");
+        }
+        if (configuredAtsList.length > 0) {
+            dispatch(showSnackbar({
+                message: 'You can configure only one ATS at a time.',
+                type: SNACKBAR_TYPES.INFO, position: SNACKBAR_POSITION.TOP_CENTER, autoClose: true, autoCloseDelay: 2000, maxWidth: 500,
+            }));
+            return;
         }
         const authUrl = createAuthLink(ats.atstype1?.toLowerCase());
         window.location.href = authUrl; // 
@@ -35,7 +43,7 @@ export default function AtsUnified() {
     useEffect(() => {
         (async () => {
             await getATSList();
-            console.log('atstypeList', atstypeList);
+            //console.log('atstypeList', atstypeList);
         })();
     }, [dispatch]);
 
@@ -43,7 +51,7 @@ export default function AtsUnified() {
         if (user && user.CompanyId) {
             (async () => {
                 await getConfiguredAts();
-                console.log('configuredAtsList', configuredAtsList);
+                //console.log('configuredAtsList', configuredAtsList);
             })();
         }
 
@@ -123,10 +131,8 @@ export default function AtsUnified() {
                                         onError={(e) => (e.target.src = atsintegrationIcon)}
                                         class="unified_image"></img>
                                     <div class="unified_vendor_inner"><div class="unified_vendor_name" style={{ color: '#333', fontWeight: 'bold', textTransform: 'capitalize' }}>{x.atstype}</div>
-                                        <div class="unified_vendor_cats1" onClick={() => handleATSCandidateClick(x)}><span>Candidates</span>
-
-                                        </div>
-                                        <div class="unified_vendor_cats1" onClick={() => handleATSJobClick(x)}><span>Jobs</span></div>
+                                        {/* <div class="unified_vendor_cats1" onClick={() => handleATSCandidateClick(x)}><span>Candidates</span>                                        </div>
+                                        <div class="unified_vendor_cats1" onClick={() => handleATSJobClick(x)}><span>Jobs</span></div> */}
                                         <button
                                             className="removeBtn"
                                             title="Delete"
