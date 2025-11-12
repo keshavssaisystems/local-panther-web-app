@@ -126,6 +126,7 @@ export * from "./snackbar.slice";
 
 // export all customer slice fn
 export * from "_containers/customer/reports/customerreport.slice";
+export * from "_containers/customer/atscustomercandidatelist/customercandidatelist.slice.js";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -189,6 +190,7 @@ export const store = configureStore({
     snackbar: snackbarReducer,
     hiringManager: hiringManagerReducer,
     ats: atsReducer,
+    atsCustomerCandidates: customerCandidateListsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
