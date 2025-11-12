@@ -13,9 +13,9 @@ import {
 import { atsActions } from "_store/ats.slice";
 import { useSelector, useDispatch } from "react-redux";
 import cx from "classnames";
-import "./customercandidatelist.css"; // add this import
+import "./atscandidatelist.css"; // add this import
 
-const CustomerCandidateList = () => {
+const ATSCandidateList = () => {
     let isCompanyAdmin = true;
     let entity = "candidates";
     const title = "Candidate List";
@@ -101,7 +101,7 @@ const CustomerCandidateList = () => {
             sortable: true,
         },
         {
-            name: "ATS Type",
+            name: "ATS type",
             id: "atstype",
             selector: (row) => row.ATSCandidateDetailJson[0]?.atstype,
             sortable: true,
@@ -134,19 +134,20 @@ const CustomerCandidateList = () => {
             name: "Address",
             id: "address",
             cell: (row) => (
-                <span className="table-cell" title={row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-"}>
-                    {row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-"}
+                <span className="table-cell" title={removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-")}>
+                    {removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-")}
                 </span>
             ),
             selector: (row) =>
-              removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-"),
+                removeCommas(row.address ? row.address + ", " + getCity(row?.cityid_Object) + ", " + getState(row?.stateid_Object) + ", " + (row.zipcode || "") : "-"),
             sortable: true,
         }
 
     ];
 
-    const removeCommas = (data) => {
-       return data.replace(/(,)+/g, ",").replace(/^,|,$/g, "");
+    const removeCommas = (input) => {
+        // return data.replace(/(,)+/g, ",").replace(/^,|,$/g, "");
+        return input.replace(/(,\s*)+/g, ", ").replace(/^, |, $/g, "").trim();
     }
     const getCity = (cityObj) => {
         if (!cityObj) return "";
@@ -158,6 +159,17 @@ const CustomerCandidateList = () => {
         const state = JSON.parse(stateObj);
         return state.statename || "";
     }
+
+    const customStyles = {
+        headCells: {
+            style: {
+                color: "#2F479B",
+                fontFamily: "Capitana",
+                fontSize: "16px",
+                fontWeight: "400",
+            },
+        },
+    };
     return (
         <div>
             <Row>
@@ -233,6 +245,7 @@ const CustomerCandidateList = () => {
                                     <DataTable
                                         data={data}
                                         // className="cust-rep-list-view"
+                                        customStyles={customStyles}
                                         columns={columns}
                                         pagination
                                         fixedHeader
@@ -254,4 +267,4 @@ const CustomerCandidateList = () => {
     );
 };
 
-export default CustomerCandidateList;
+export default ATSCandidateList;
