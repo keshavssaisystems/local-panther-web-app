@@ -181,8 +181,8 @@ export const getJobsListThunk = createAsyncThunk(
 
 export const getDropdownListThunk = createAsyncThunk(
   `${name}/getDropdownListThunk`,
-  async ({searchText, commonId}) => {
-    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=${searchText}&commonId=${commonId}`;
+  async ({searchText, commonId, searchBy}) => {
+    const DROPDOWN_END_POINT = `${process.env.REACT_APP_MAIN_API_URL}/api/Common/GetCommonDropdown?searchText=${searchText}&commonId=${commonId}&searchBy=${searchBy}`;
     return await fetchWrapper.get(DROPDOWN_END_POINT);
   }
 );
