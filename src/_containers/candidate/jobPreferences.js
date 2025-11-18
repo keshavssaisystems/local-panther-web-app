@@ -37,6 +37,7 @@ import { formatDate } from "_helpers/helper";
 import { BsDownload, BsUpload, BsInfoCircle } from "react-icons/bs";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import { set } from "lodash";
 
 export function JobPreferences(props) {
   const dispatch = useDispatch();
@@ -400,8 +401,19 @@ export function JobPreferences(props) {
     };
     if (props?.isRequired && props?.isCompleteProfile) {
       data.employmenteligibility = false;
-      data.city = "";
-      data.state = "";
+      data.city = profileData?.city ?? "";
+      data.state = profileData?.state ?? "";
+
+      if (profileData?.stateid && profileData?.cityid) {
+        data.stateid = profileData?.stateid ?? 0;
+        data.cityid = profileData?.cityid ?? 0;
+        setSelectedLocationCP({
+          value: profileData?.cityid,
+          cityid: profileData?.cityid,
+          stateid: profileData?.stateid,
+          label: `${profileData?.city + ", " + profileData?.state}`,
+        });
+      }
     }
     setFormData(data);
   };
@@ -1049,11 +1061,10 @@ export function JobPreferences(props) {
                               onChange={(evt) =>
                                 onHandleInputChange("locationCP", evt)
                               }
-                              className={`placeholder-name ${
-                                save && selectedLocationCP.length === 0
+                              className={`placeholder-name ${save && selectedLocationCP.length === 0
                                   ? "async-border-red"
                                   : ""
-                              }`}
+                                }`}
                             />
 
                             <div className="async-error-text">
@@ -1378,11 +1389,10 @@ export function JobPreferences(props) {
                           onChange={(evt) =>
                             onHandleInputChange("payType", evt)
                           }
-                          className={`placeholder-name ${
-                            save && parentItem.payperiodtypeid == 0
+                          className={`placeholder-name ${save && parentItem.payperiodtypeid == 0
                               ? "async-border-red"
                               : ""
-                          }`}
+                            }`}
                         />
 
                         <div className="filter-info-text filter-error-msg">
@@ -1568,11 +1578,10 @@ export function JobPreferences(props) {
                                     onChange={(evt) =>
                                       onHandleInputChange("location", evt)
                                     }
-                                    className={`placeholder-name ${
-                                      save && selectedLocation.length === 0
+                                    className={`placeholder-name ${save && selectedLocation.length === 0
                                         ? "async-border-red"
                                         : ""
-                                    }`}
+                                      }`}
                                   />
 
                                   <div className="async-error-text">
@@ -1618,11 +1627,10 @@ export function JobPreferences(props) {
                                   onChange={(evt) =>
                                     onHandleInputChange("distance", evt)
                                   }
-                                  className={`placeholder-name ${
-                                    save && distanceSelect.length === 0
+                                  className={`placeholder-name ${save && distanceSelect.length === 0
                                       ? "async-border-red"
                                       : ""
-                                  }`}
+                                    }`}
                                 />
                                 <div className="filter-info-text filter-error-msg">
                                   {save && distanceSelect.length === 0
