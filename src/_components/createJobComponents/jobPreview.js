@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Row, Col } from "reactstrap";
 import "./createJob.scss";
 
-export default function JobPreview({ previewData, editdata }) {
+export default function JobPreview({ previewData, editdata, customerDetails }) {
   useEffect(() => {
     editdata(previewData);
   }, [previewData]);
@@ -147,7 +147,7 @@ export default function JobPreview({ previewData, editdata }) {
     previewData.basicInformation.subsidiaryid !== "" &&
     previewData.basicInformation.subsidiaryOption !== undefined
   ) {
-    previewData.basicInformation.subsidiaryOption.forEach((element) => {
+    previewData.basicInformation.subsidiaryOption?.forEach((element) => {
       if (
         Number(previewData.basicInformation.subsidiaryid) ===
         element.subsidiaryid
@@ -176,6 +176,18 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
+              {customerDetails?.isatsenable === true && (
+                <Col md={6} lg={3}>
+                  <div className="detail-padding">
+                    <h6 className="mb-0 job-heading-custom">Client company</h6>
+                    <p className="mb-0 mt-1 mr-1">
+                      {previewData.basicInformation === undefined ||
+                        previewData.basicInformation.clientCompanyDto === undefined
+                        ? "-"
+                        : previewData.basicInformation.clientCompanyDto.name}
+                    </p>
+                  </div>
+                </Col>)}
               {previewData?.basicInformation?.subsidiaryOption?.length > 0 && (
                 <Col md={6} lg={3}>
                   <div className="detail-padding">
@@ -282,17 +294,17 @@ export default function JobPreview({ previewData, editdata }) {
                   </p>
                 </div>
               </Col>
-              <Col md={6} lg={3}>
+              {customerDetails?.isatsenable === true && (<Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">Assign To</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.assignedto === undefined
+                      previewData.basicInformation.hiringManagerDto === undefined
                       ? "-"
-                      : previewData.basicInformation.assignedto}
+                      : previewData.basicInformation.hiringManagerDto.name}
                   </p>
                 </div>
-              </Col>
+              </Col>)}
               <Col md={6} lg={3}>
                 <div className="detail-padding">
                   <h6 className="mb-0 job-heading-custom">
