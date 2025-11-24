@@ -154,7 +154,7 @@ const createjobSlice = createSlice({
      state.customerDetails = JSON.parse(action.payload?.data[0]?.data);
       localStorage.setItem(
         "companyid",
-        action?.payload?.data?.companyid ? action?.payload?.data?.companyid : ""
+        state.customerDetails?.companyid ? state.customerDetails?.companyid : ""
       );
       state.loading = false;
     },
