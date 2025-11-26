@@ -63,6 +63,7 @@ export const AddEditCompany = (props) => {
   const [locationValidation, setLocationValidation] = useState(false);
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
+  const [isStaffingFirm, setIsStaffingFirm] = useState(false);
   useEffect(() => {
     if (!isAddMode) {
       let name = data?.logourl?.replace(/^.*[\\\/]/, "");
@@ -215,6 +216,9 @@ export const AddEditCompany = (props) => {
     } else if (check === "zipcode") {
       data.zipcode = event.target.value;
     }
+    else if (check === "isstaffingfirm") {
+      data.isstaffingfirm = event.target.checked;
+    }
     setEditData(data);
   };
 
@@ -295,6 +299,7 @@ export const AddEditCompany = (props) => {
     form.append("Address", editData.address);
     form.append("Logourl", logourl ? logourl : "");
     form.append("Logourlfile", logo?.[0] ? logo[0] : logo);
+    form.append("Isstaffingfirm", isStaffingFirm);
     if (isAddMode) {
       form.append("Companyid", 0);
 
@@ -475,7 +480,24 @@ export const AddEditCompany = (props) => {
                   />
                 </FormGroup>
               </Col>
-
+              <Col md={6}>
+                <FormGroup>
+                  <Input
+                    id={"isstaffingfirm"}
+                    name={"isstaffingfirm"}
+                    type={"checkbox"}
+                    defaultChecked={data.isstaffingfirm}
+                    onChange={(e) => {
+                      setIsStaffingFirm(e.target.checked);
+                      handleInputChange(e, "isstaffingfirm")
+                    }}
+                  />{" "}
+                  {"  "}
+                  <Label for="isstaffingfirm">
+                    Staffing firm
+                  </Label>
+                </FormGroup>
+              </Col>
               <Col md={12}>
                 <FormGroup>
                   <Label for="description">Description</Label>
@@ -495,6 +517,7 @@ export const AddEditCompany = (props) => {
                   />
                 </FormGroup>
               </Col>
+
               <Col md={6}>
                 <FormGroup>
                   <Label for="employee">No of employees</Label>
