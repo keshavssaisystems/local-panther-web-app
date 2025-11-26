@@ -243,7 +243,7 @@ export function App() {
       localStorage.setItem("publicip", data.ip);
     }
   };
-  const renderRoutes = (userroleid) => {
+  const renderRoutes = (userroleid) => {   
     if (userroleid === 1) {
       return (
         <>
@@ -438,7 +438,7 @@ export function App() {
           />
         </>
       );
-    } else if (userroleid === 2) {
+    } else if (userroleid === 2 || userroleid === 4) {
       return (
         <>
           <Route
@@ -687,7 +687,7 @@ export function App() {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/acl/candidates"
             element={
               <PrivateRoute>
@@ -963,8 +963,8 @@ export function App() {
             </div>
           </>
         )}
-        
-        {(isMobile() || isTablet()) && (          
+
+        {(isMobile() || isTablet()) && (
           <GetAppPopup isOpen={showGetAppPopup} toggle={() => setShowGetAppPopup(false)} />
         )}
       </Suspense>
