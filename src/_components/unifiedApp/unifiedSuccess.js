@@ -4,7 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import unifiedKeys from './unifiedKeys.json';
 import { postAtsAuthorization } from '_store/ats.slice';
 import { useDispatch } from 'react-redux';
-
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
 export default function SuccessPage() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -41,8 +42,13 @@ export default function SuccessPage() {
         }
         if (id) {
             handleAuthCallback(id, type);
-
-            navigate(`/unified-candidates/${id}`); // redirect after storing connection
+            navigate(`/ats`);
+            dispatch(showSnackbar({
+                message: type + ' connected successfully!',
+                type: SNACKBAR_TYPES.SUCCESS, position: SNACKBAR_POSITION.TOP_CENTER, 
+                autoClose: true, autoCloseDelay: 2000, maxWidth: 500,
+            }));
+            // navigate(`/unified-candidates/${id}`); // redirect after storing connection
         }
 
     }, [location, navigate]);

@@ -18,7 +18,7 @@ export default function AtsUnified() {
     const navigate = useNavigate();
     const callUnifiedApp = (ats) => {
         if (ats?.connectionid) {
-            navigate('/unified-candidates/' + ats?.connectionid);
+            //navigate('/unified-candidates/' + ats?.connectionid);
             return;
             //return toast.info("You have already connected with Workable");
         }
