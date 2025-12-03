@@ -12,10 +12,12 @@ import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
-
 export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
+  const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
+  const [companyId, setCompanyId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0);
+  const [isCompanyUserRole, setIsCompanyUserRole] = useState(false);
   let isCompanyAdmin = localStorage.getItem("isCompanyAdmin")
     ? localStorage.getItem("isCompanyAdmin") === "true"
     : false;
@@ -114,18 +116,11 @@ export const AddEditUser = (props) => {
     form.append("ProfileFile", null);
     if (isAddMode) {
       form.append("UserId", 0);
-      if (
-        localStorage.getItem("isCompanyAdmin") &&
-        localStorage.getItem("isCompanyAdmin") === "true"
-      ) {
-        form.append(
-          "Companyname",
-          JSON.parse(localStorage.getItem("userDetails"))?.Companyname
-        );
-        form.append(
-          "Companyid",
-          JSON.parse(localStorage.getItem("userDetails"))?.CompanyId
-        );
+      if (localStorage.getItem("isCompanyAdmin") && localStorage.getItem("isCompanyAdmin") === "true") {
+        form.append("Companyname", JSON.parse(localStorage.getItem("userDetails"))?.Companyname);
+        form.append("Companyid", JSON.parse(localStorage.getItem("userDetails"))?.CompanyId);
+      } else {
+        form.append("Companyid", companyId);
       }
       axios
         .post(`${url}/api/User/AddUser`, form, config)
@@ -297,6 +292,20 @@ export const AddEditUser = (props) => {
     console.log(getValues("roleid"));
   };
 
+  const showCompanyDropdown = (roleid) => {
+    if (rolesList) {
+      console.log(props?.companiesList);
+      const selectedRole = rolesList.find(x => x.userroleid == roleid);
+      if (selectedRole && selectedRole.roletype.toLowerCase() === "company") {
+        setIsCompanyUserRole(true);
+        return true;
+      }
+    }
+    setIsCompanyUserRole(false);
+    return false;
+  }
+
+
   return (
     <>
       <Row>
@@ -317,7 +326,11 @@ export const AddEditUser = (props) => {
                     : "input-text"
                     }`}
                   {...register("roleid")}
-                  onChange={(evt) => selectRole(evt.target.value)}
+                  onChange={(evt) => {
+                    selectRole(evt.target.value)
+                    showCompanyDropdown(evt.target.value)
+                  }
+                  }
                 >
                   <option key={0} value="">
                     {" "}
@@ -360,7 +373,40 @@ export const AddEditUser = (props) => {
                 </div>
               </FormGroup>
             </Col>
-
+            {isCompanyUserRole === true && currentRoleId === 1 && <Col md={6}>
+              <FormGroup>
+                <Label for="role" className="fw-semi-bold">
+                  Company <span style={{ color: "red" }}>* </span>
+                </Label>
+                <Input
+                  type="select"
+                  name="company"
+                  placeholder="company"
+                  disabled={isView}
+                  className={`field-input placeholder-text form-control ${errors?.companyId && companyId === 0
+                    ? "is-invalid error-text"
+                    : "input-text"
+                    }`}
+                  {...register("CompanyId")}
+                  onChange={(evt) => setCompanyId(evt.target.value)}
+                >
+                  <option key={0} value=""> {" "} Select Company{" "} </option>
+                  {props?.companiesList?.length > 0 &&
+                    props?.companiesList?.map((options) => (
+                      <option
+                        selected={options.id === companyId}
+                        key={options.id}
+                        value={options.id}
+                      >
+                        <div>{options.name}</div>
+                      </option>
+                    ))}
+                </Input>
+                <div className="invalid-feedback">
+                  {errors?.companyId && companyId === 0 ? "Company is required" : ""}
+                </div>
+              </FormGroup>
+            </Col>}
             {/* <Col md={6}>
               <FormGroup>
                 <Label for="prefix" className="fw-semi-bold">

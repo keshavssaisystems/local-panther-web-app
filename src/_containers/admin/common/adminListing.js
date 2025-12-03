@@ -38,6 +38,7 @@ import { BsPencil, BsTrash3 } from "react-icons/bs";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
 import { getCustomerDropdownList } from "_store";
+import { getCompaniesList } from "_containers/admin/_redux/addCustomer.slice";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { PaymentModal } from "_components/modal/paymentmodal";
@@ -62,12 +63,14 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
   const { customerList = [] } = useSelector(
     (state) => state.adminReportReducer
   );
+
+  const companiesList = useSelector((state) => state.addCustomer.companiesList);
   useEffect(() => {
     loadData();
-
     dispatch(getRolesForCompanyAdmin());
     dispatch(getRoles());
     dispatch(getCustomerDropdownList());
+    dispatch(getCompaniesList());
     if (analytics) {
       analytics.logEvent("page_visit", {
         page_title: "Admin listing",
@@ -1081,6 +1084,7 @@ export default function AdminListing({ entity, isCompanyAdmin = false }) {
                   data={selectedRowData}
                   isView={viewMode}
                   entity={entity}
+                  companiesList={companiesList}
                   callBack={() => CloseModal()}
                 />
               )}
