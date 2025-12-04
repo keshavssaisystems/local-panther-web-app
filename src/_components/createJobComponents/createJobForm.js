@@ -58,6 +58,7 @@ import {
 import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
+import { assign } from "lodash";
 
 export const CreateJob = forwardRef(
   (
@@ -311,6 +312,9 @@ export const CreateJob = forwardRef(
     const [assignedToValue, setAssignedToValue] = useState(null);
     const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
+    const [hiringManagerValue, setHiringManagerValue] = useState(null);
+
     const customStyles = {
       valueContainer: (provided, state) => ({
         ...provided,
@@ -1075,10 +1079,13 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
-        hiringmanagerid: assignedToValue?.value || 0,
-        hiringManagerDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+        hiringmanagerid: hiringManagerValue?.value || 0,
+        hiringManagerDto: { id: hiringManagerValue?.value || 0, name: hiringManagerValue?.label || '' },
         clientcompanyid: clientCompanyValue?.value || 0,
         clientCompanyDto: { id: clientCompanyValue?.value || 0, name: clientCompanyValue?.label || '' },
+        assignedtoid: assignedToValue?.value || 0,
+        assignedToDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
         //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
@@ -1915,6 +1922,57 @@ export const CreateJob = forwardRef(
       [loadOptionClientCompany]
     );
 
+
+    //Contact (Hiring Manager) Dropdown
+    const getHiringManagerOptions = async (inputValue) => {
+      try {
+        const companyId =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "AssignedTo",
+            commonId: companyId,
+            searchBy: inputValue || "",
+          })
+        );
+
+        // handle possible response shapes
+        const users =
+          response?.payload?.data ||
+          response?.payload?.data?.data ||
+          response?.payload ||
+          [];
+
+        const userOptions = (users || []).map((user) => ({
+          value: user.id,
+          label: user.name,
+        }));
+        return userOptions;
+      } catch (err) {
+        // keep silent or console.log(err) for debugging
+        // console.error(err);
+      }
+    };
+    const loadOptionsHiringManager = useCallback(
+      async (inputValue) => {
+        // return all options when input empty so AsyncSelect shows choices
+        const source = await getHiringManagerOptions(inputValue) || [];
+        if (!inputValue) return source;
+        const filtered = source.filter((option) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        return filtered;
+      },
+      [assignedToUserOptions]
+    );
+
+    const loadOptionsDebHiringManager = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsHiringManager(inputValue).then(callback);
+      }, 300),
+      [loadOptionsHiringManager]
+    );
+
     return (
       <>
         <div className="form-wizard-content">
@@ -1998,36 +2056,67 @@ export const CreateJob = forwardRef(
                       )}
 
                       {customerDetails?.isatsenable === true && (
-                        <Col md={6} lg={3}>
-                          <FormGroup>
-                            <Label className="fw-semi-bold">
-                              Client company<span style={{ color: "red" }}>* </span>
-                            </Label>
-                            <AsyncSelect
-                              name={"clientCompany"}
-                              placeholder="Search Client Company"
-                              cacheOptions
-                              loadOptions={loadOptionsDebClientCompany}
-                              defaultOptions={clientCompanyOptions}
-                              value={clientCompanyValue}
-                              onChange={(val) => {
-                                setClientCompanyValue(val);
-                                setClientCompanyValidation(false);
-                                // if you need to persist selection to the form submission,
-                                // write the selected id into a hidden input or local state used by saveData
-                                // e.g. setSelectedAssignedToId(val ? val.value : null);
-                              }}
-                              isMulti={false}
-                              styles={customStyles}
-                              invalid={clientCompanyValidation === true ? true : false}
-                            />
-                            {clientCompanyValidation === true && (
-                              <FormText color="danger">
-                                Please select client company
-                              </FormText>
-                            )}
-                          </FormGroup>
-                        </Col>)}
+                        <>
+                          <Col md={6} lg={3}>
+                            <FormGroup>
+                              <Label className="fw-semi-bold">
+                                Client company<span style={{ color: "red" }}>* </span>
+                              </Label>
+                              <AsyncSelect
+                                name={"clientCompany"}
+                                placeholder="Search Client Company"
+                                cacheOptions
+                                loadOptions={loadOptionsDebClientCompany}
+                                defaultOptions={clientCompanyOptions}
+                                value={clientCompanyValue}
+                                onChange={(val) => {
+                                  setClientCompanyValue(val);
+                                  setClientCompanyValidation(false);
+                                  // if you need to persist selection to the form submission,
+                                  // write the selected id into a hidden input or local state used by saveData
+                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                }}
+                                isMulti={false}
+                                styles={customStyles}
+                                invalid={clientCompanyValidation === true ? true : false}
+                              />
+                              {clientCompanyValidation === true && (
+                                <FormText color="danger">
+                                  Please select client company
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          </Col>
+                          <Col md={6} lg={3}>
+                            <FormGroup>
+                              <Label for="contact" className="fw-semi-bold">
+                                Contact<span style={{ color: "red" }}>* </span>
+                              </Label>
+                              <AsyncSelect
+                                name={"contact"}
+                                placeholder="Search Contact"
+                                cacheOptions
+                                loadOptions={loadOptionsDebHiringManager}
+                                defaultOptions={hiringManagerOptions}
+                                value={hiringManagerValue}
+                                onChange={(val) => {
+                                  setHiringManagerValue(val);
+                                  // if you need to persist selection to the form submission,
+                                  // write the selected id into a hidden input or local state used by saveData
+                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                }}
+                                isMulti={false}
+                                styles={customStyles}
+                              />
+                              {hiringmanagerValidation === true && (
+                                <FormText color="danger">
+                                  Please select Contact
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        </>
+                      )}
                     </Row>
                     <Row>
                       <Col md={6} lg={3}>
