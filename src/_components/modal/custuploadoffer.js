@@ -224,10 +224,8 @@ export const CustomerUploadOffer = (props) => {
   };
 
   const replacePlaceholders = (template, data) => {
-    return template.replace(
-      /\[([^\]]+)\]/g,
-      (_, key) => data[key.trim()] || `[${key}]`
-    );
+    //return template.replace(/\[([^\]]+)\]/g, (_, key) => data[key.trim()] || `[${key}]`);
+    return template.replace(/\[([^\]]+)\]/g, (_, key) => data[key.trim()] || '');
   };
 
   function generateFilenameWithTimestamp(
