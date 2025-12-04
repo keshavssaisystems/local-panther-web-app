@@ -48,7 +48,7 @@ export default function PublishJobStep({
       securityclearanceid: reqData.basicInformation.securityclearance,
       hiringmanagerid: String(reqData.basicInformation?.hiringmanagerid),
       clientcompanyid: reqData.basicInformation?.clientcompanyid,
-      assignedtoid: reqData.basicInformation?.assignedtoid,
+      recruiterid: String(reqData.basicInformation?.recruiterid),
       jobExperienceScheduleDtos: [
         {
           jobexperiencescheduleid: 0,
