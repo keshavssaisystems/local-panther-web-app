@@ -248,7 +248,21 @@ export const CreateJob = forwardRef(
           value: hiringManagerDto?.id,
           label: hiringManagerDto?.name,
         };
-        if (found) setAssignedToValue(found);
+        if (found) setHiringManagerValue(found);
+      }
+
+      const recruiterDto =
+        (type === "new_template" && previousStep !== 3)
+          ? null
+          : previousStep === 3
+            ? jobData?.basicInformation?.recruiterDto
+            : previousData?.recruiterDto;
+      if (recruiterDto) {
+        const found1 = {
+          value: recruiterDto?.id,
+          label: recruiterDto?.name,
+        };
+        if (found1) setAssignedToValue(found1);
       }
 
       const clientCompanyDto =
@@ -820,6 +834,7 @@ export const CreateJob = forwardRef(
     const [certificateChange, setCertificateChange] = useState(false);
     const [clientCompanyValidation, setClientCompanyValidation] = useState(false);
     const [hiringmanagerValidation, setHiringmanagerValidation] = useState(false);
+    const [recruiterIdValidation, setRecruiterIdValidation] = useState(false);
     const flaggedWordList = useSelector(
       (state) => state.dropdown.flaggedWordsList
     );
@@ -956,13 +971,17 @@ export const CreateJob = forwardRef(
         ? setMustHaveValidation(true)
         : setMustHaveValidation(false);
 
-      customerDetails.isatsenable === true && (event.target.elements.assignedto.value === "" || event.target.elements.assignedto.value === "0")
-        ? setHiringmanagerValidation(true)
-        : setHiringmanagerValidation(false);
+      customerDetails.isatsenable === true && (event.target.elements.recruiterid.value === "" || event.target.elements.recruiterid.value === "0")
+        ? setRecruiterIdValidation(true)
+        : setRecruiterIdValidation(false);
 
       customerDetails.isatsenable === true && (event.target.elements.clientCompany.value === "" || event.target.elements.clientCompany.value === "0")
         ? setClientCompanyValidation(true)
         : setClientCompanyValidation(false);
+
+      customerDetails.isatsenable === true && (event.target.elements.hiringmanagerid.value === "" || event.target.elements.hiringmanagerid.value === "0")
+        ? setHiringmanagerValidation(true)
+        : setHiringmanagerValidation(false);
 
       if (mustHaveValidation === true) {
         setAccordion([false, false, false, true, false]);
@@ -1010,8 +1029,11 @@ export const CreateJob = forwardRef(
           event.target.elements.mustHave?.length > 0) &&
         (customerDetails?.isatsenable === true ? (event.target.elements.clientCompany.value !== "" ||
           event.target.elements.clientCompany?.length > 0) : true) &&
-        (customerDetails?.isatsenable === true ? (event.target.elements.assignedto.value !== "" ||
-          event.target.elements.assignedto?.length > 0) : true)
+        (customerDetails?.isatsenable === true ? (event.target.elements.recruiterid.value !== "" ||
+          event.target.elements.recruiterid?.length > 0) : true)
+        &&
+        (customerDetails?.isatsenable === true ? (event.target.elements.hiringmanagerid.value !== "" ||
+          event.target.elements.hiringmanagerid?.length > 0) : true)
       ) {
         saveData(event);
       }
@@ -1083,8 +1105,8 @@ export const CreateJob = forwardRef(
         hiringManagerDto: { id: hiringManagerValue?.value || 0, name: hiringManagerValue?.label || '' },
         clientcompanyid: clientCompanyValue?.value || 0,
         clientCompanyDto: { id: clientCompanyValue?.value || 0, name: clientCompanyValue?.label || '' },
-        assignedtoid: assignedToValue?.value || 0,
-        assignedToDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+        recruiterid: assignedToValue?.value || 0,
+        recruiterDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
 
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
@@ -1930,7 +1952,7 @@ export const CreateJob = forwardRef(
           Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
         const response = await dispatch(
           dropdownActions.getDropdownListThunk({
-            searchText: "AssignedTo",
+            searchText: "ClientContact",
             commonId: companyId,
             searchBy: inputValue || "",
           })
@@ -1963,7 +1985,7 @@ export const CreateJob = forwardRef(
         );
         return filtered;
       },
-      [assignedToUserOptions]
+      [hiringManagerOptions]
     );
 
     const loadOptionsDebHiringManager = useCallback(
@@ -2093,7 +2115,7 @@ export const CreateJob = forwardRef(
                                 Contact<span style={{ color: "red" }}>* </span>
                               </Label>
                               <AsyncSelect
-                                name={"contact"}
+                                name={"hiringmanagerid"}
                                 placeholder="Search Contact"
                                 cacheOptions
                                 loadOptions={loadOptionsDebHiringManager}
@@ -2386,7 +2408,7 @@ export const CreateJob = forwardRef(
                               Assigned To<span style={{ color: "red" }}>* </span>
                             </Label>
                             <AsyncSelect
-                              name={"assignedto"}
+                              name={"recruiterid"}
                               placeholder="Search Assigned To"
                               cacheOptions
                               loadOptions={loadOptionsDebAssignedTo}
@@ -2401,7 +2423,7 @@ export const CreateJob = forwardRef(
                               isMulti={false}
                               styles={customStyles}
                             />
-                            {hiringmanagerValidation === true && (
+                            {recruiterIdValidation === true && (
                               <FormText color="danger">
                                 Please select Assigned To
                               </FormText>
