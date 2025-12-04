@@ -521,7 +521,7 @@ export const PaymentDetails = ({
       }
       setDeletedCard(false);
       if (authUser) {
-        dispatch(paymentActions.updateShowBilling(false));
+        dispatch(paymentActions.updateShowBilling(true));
       }
       dispatch(showSnackbar({
         message: response.payload.message,
