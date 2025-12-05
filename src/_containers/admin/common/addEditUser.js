@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -6,12 +6,17 @@ import { useDispatch, useSelector } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import axios from "axios";
 
-import { Form, FormGroup, Label, Row, Col, Button, Input } from "reactstrap";
+import { Form, FormGroup, Label, Row, Col, Button, Input, FormText } from "reactstrap";
 
 import InputMask from "react-input-mask";
 import { analytics } from "../../../firebase/index";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
+import AsyncSelect from "react-select/async";
+import debounce from "lodash/debounce";
+import { dropdownActions } from "_store";
+import { use } from "react";
+import { getCompaniesList } from "_containers/admin/_redux/addCustomer.slice";
 export const AddEditUser = (props) => {
   const { isAddMode, data, isView } = props;
   const [roleId, setRoleId] = useState(0);
@@ -82,7 +87,21 @@ export const AddEditUser = (props) => {
   const { register, handleSubmit, reset, setValue, getValues, formState } =
     useForm(formOptions);
   const { errors, isSubmitting } = formState;
+  const customStyles = {
+    valueContainer: (provided, state) => ({
+      ...provided,
+      minHeight: "30px",
+      padding: "0 6px",
+    }),
+    input: (provided, state) => ({
+      ...provided,
+      margin: "0px",
+    }),
+  };
 
+  const [companyOptions, setCompanyOptions] = useState([]);
+  const [companyValue, setCompanyValue] = useState(null);
+  const [companyValidation, setCompanyValidation] = useState(false);
   const createEntity = async (payload) => {
     const authData = localStorage.getItem("token")
       ? localStorage.getItem("token")
@@ -114,14 +133,16 @@ export const AddEditUser = (props) => {
     );
     form.append("Profilephotopath", null);
     form.append("ProfileFile", null);
+    if ((localStorage.getItem("isCompanyAdmin") && localStorage.getItem("isCompanyAdmin") === "true") || currentRoleId === 4) {
+      form.append("Companyname", JSON.parse(localStorage.getItem("userDetails"))?.Companyname);
+      form.append("Companyid", JSON.parse(localStorage.getItem("userDetails"))?.CompanyId);
+    } else {
+      form.append("Companyid", companyValue?.value ? companyValue?.value : 0);
+    }
+
     if (isAddMode) {
       form.append("UserId", 0);
-      if (localStorage.getItem("isCompanyAdmin") && localStorage.getItem("isCompanyAdmin") === "true") {
-        form.append("Companyname", JSON.parse(localStorage.getItem("userDetails"))?.Companyname);
-        form.append("Companyid", JSON.parse(localStorage.getItem("userDetails"))?.CompanyId);
-      } else {
-        form.append("Companyid", companyId);
-      }
+
       axios
         .post(`${url}/api/User/AddUser`, form, config)
         .then((result) => {
@@ -255,6 +276,15 @@ export const AddEditUser = (props) => {
   };
 
   const onSubmit = (data) => {
+    if (isCompanyUserRole === true && currentRoleId === 1) {
+      if (!companyValue || !companyValue?.value) {
+        setCompanyValidation(true);
+        // scroll to company field or focus if desired
+        return;
+      }
+      // ensure company id is present in form data
+      data.companyId = companyValue.value;
+    }
     return createEntity(data);
   };
 
@@ -268,6 +298,7 @@ export const AddEditUser = (props) => {
         "lastname",
         "email",
         "address",
+        "companyId",
       ];
       formFields.forEach((field) => {
         // stateid
@@ -276,6 +307,12 @@ export const AddEditUser = (props) => {
       setValue("phonenumber", data["phonenumber"].replace(/[\(\)-]/g, ""));
       setValue("roleid", data["userroleid"]);
       setRoleId(data["userroleid"]);
+      showCompanyDropdown(data["userroleid"]);
+      var option = {
+        value: data.companyid,
+        label: data.companyname,
+      }
+      setCompanyValue(option);
     }
     if (analytics) {
       analytics.logEvent("page_visit", {
@@ -294,7 +331,6 @@ export const AddEditUser = (props) => {
 
   const showCompanyDropdown = (roleid) => {
     if (rolesList) {
-      console.log(props?.companiesList);
       const selectedRole = rolesList.find(x => x.userroleid == roleid);
       if (selectedRole && selectedRole.roletype.toLowerCase() === "company") {
         setIsCompanyUserRole(true);
@@ -305,6 +341,53 @@ export const AddEditUser = (props) => {
     return false;
   }
 
+  const getCompany = async (inputValue) => {
+    try {
+      const companyId =
+        Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+      const response = await dispatch(
+        getCompaniesList({
+          companyId: companyId,
+          companyName: inputValue || "",
+        })
+      );
+
+      // handle possible response shapes
+      const companies = response?.payload?.data || response?.payload?.data?.data || response?.payload || [];
+
+      const companyList = (companies || []).map((company) => ({
+        value: company.companyid,
+        label: company.companyname,
+      }));
+
+      setCompanyOptions(companyList);
+      return companyList;
+
+    } catch (err) {
+      // keep silent or console.log(err) for debugging
+      // console.error(err);
+    }
+  };
+
+  const loadOptionCompany = useCallback(
+    async (inputValue) => {
+      // return all options when input empty so AsyncSelect shows choices
+      const source = await getCompany(inputValue) || [];
+      if (!inputValue) return source;
+      const filtered = source?.filter((option) =>
+        option.label.toLowerCase().includes(inputValue?.toLowerCase())
+      );
+      return filtered;
+    },
+    [companyOptions]
+  );
+
+  const loadOptionsDebCompany = useCallback(
+    debounce((inputValue, callback) => {
+      loadOptionCompany(inputValue).then(callback);
+    }, 300),
+    [loadOptionCompany]
+  );
 
   return (
     <>
@@ -336,7 +419,7 @@ export const AddEditUser = (props) => {
                     {" "}
                     Select role{" "}
                   </option>
-                  {!isCompanyAdmin &&
+                  {currentRoleId === 1 &&  // super admin
                     rolesList?.length > 0 &&
                     rolesList?.map((options) => (
                       <option
@@ -353,7 +436,7 @@ export const AddEditUser = (props) => {
                         <div>{options.rolename}</div>
                       </option>
                     ))}
-                  {isCompanyAdmin &&
+                  {(isCompanyAdmin || currentRoleId === 4) && // company admin
                     rolesList?.length > 0 &&
                     rolesList?.map((options) => (
                       <option
@@ -378,33 +461,35 @@ export const AddEditUser = (props) => {
                 <Label for="role" className="fw-semi-bold">
                   Company <span style={{ color: "red" }}>* </span>
                 </Label>
-                <Input
-                  type="select"
-                  name="company"
-                  placeholder="company"
-                  disabled={isView}
-                  className={`field-input placeholder-text form-control ${errors?.companyId && companyId === 0
+                <AsyncSelect
+                  name={"companyId"}
+                  placeholder="Search Company"
+                  cacheOptions
+                  loadOptions={loadOptionsDebCompany}
+                  defaultOptions={companyOptions}
+                  value={companyValue}
+                  className={`field-input placeholder-text ${errors?.companyId && companyId === 0
                     ? "is-invalid error-text"
                     : "input-text"
                     }`}
-                  {...register("CompanyId")}
-                  onChange={(evt) => setCompanyId(evt.target.value)}
-                >
-                  <option key={0} value=""> {" "} Select Company{" "} </option>
-                  {props?.companiesList?.length > 0 &&
-                    props?.companiesList?.map((options) => (
-                      <option
-                        selected={options.id === companyId}
-                        key={options.id}
-                        value={options.id}
-                      >
-                        <div>{options.name}</div>
-                      </option>
-                    ))}
-                </Input>
-                <div className="invalid-feedback">
-                  {errors?.companyId && companyId === 0 ? "Company is required" : ""}
-                </div>
+                  {...register("companyId")}
+                  onChange={(val) => {
+                    setCompanyId(val?.value);
+                    setCompanyValue(val);
+                    setCompanyValidation(false);
+                    setValue("companyId", val?.value);
+                  }}
+                  isMulti={false}
+                  styles={customStyles}
+                  invalid={companyValidation === true ? true : false}
+                  isDisabled={isView}
+                />
+                {companyValidation === true && (
+                  <FormText color="danger">
+                    Please select company
+                  </FormText>
+                )}
+
               </FormGroup>
             </Col>}
             {/* <Col md={6}>
