@@ -58,6 +58,7 @@ import {
 import "ckeditor5/ckeditor5.css";
 import "ckeditor5-premium-features/ckeditor5-premium-features.css";
 import CreatableSelect from "react-select/creatable";
+import { assign } from "lodash";
 
 export const CreateJob = forwardRef(
   (
@@ -247,7 +248,21 @@ export const CreateJob = forwardRef(
           value: hiringManagerDto?.id,
           label: hiringManagerDto?.name,
         };
-        if (found) setAssignedToValue(found);
+        if (found) setHiringManagerValue(found);
+      }
+
+      const recruiterDto =
+        (type === "new_template" && previousStep !== 3)
+          ? null
+          : previousStep === 3
+            ? jobData?.basicInformation?.recruiterDto
+            : previousData?.recruiterDto;
+      if (recruiterDto) {
+        const found1 = {
+          value: recruiterDto?.id,
+          label: recruiterDto?.name,
+        };
+        if (found1) setAssignedToValue(found1);
       }
 
       const clientCompanyDto =
@@ -311,6 +326,9 @@ export const CreateJob = forwardRef(
     const [assignedToValue, setAssignedToValue] = useState(null);
     const [clientCompanyOptions, setClientCompanyOptions] = useState([]);
     const [clientCompanyValue, setClientCompanyValue] = useState(null);
+    const [hiringManagerOptions, setHiringManagerOptions] = useState([]);
+    const [hiringManagerValue, setHiringManagerValue] = useState(null);
+
     const customStyles = {
       valueContainer: (provided, state) => ({
         ...provided,
@@ -816,6 +834,7 @@ export const CreateJob = forwardRef(
     const [certificateChange, setCertificateChange] = useState(false);
     const [clientCompanyValidation, setClientCompanyValidation] = useState(false);
     const [hiringmanagerValidation, setHiringmanagerValidation] = useState(false);
+    const [recruiterIdValidation, setRecruiterIdValidation] = useState(false);
     const flaggedWordList = useSelector(
       (state) => state.dropdown.flaggedWordsList
     );
@@ -952,13 +971,17 @@ export const CreateJob = forwardRef(
         ? setMustHaveValidation(true)
         : setMustHaveValidation(false);
 
-      customerDetails.isatsenable === true && (event.target.elements.assignedto.value === "" || event.target.elements.assignedto.value === "0")
-        ? setHiringmanagerValidation(true)
-        : setHiringmanagerValidation(false);
+      customerDetails.isatsenable === true && (event.target.elements.recruiterid.value === "" || event.target.elements.recruiterid.value === "0")
+        ? setRecruiterIdValidation(true)
+        : setRecruiterIdValidation(false);
 
       customerDetails.isatsenable === true && (event.target.elements.clientCompany.value === "" || event.target.elements.clientCompany.value === "0")
         ? setClientCompanyValidation(true)
         : setClientCompanyValidation(false);
+
+      customerDetails.isatsenable === true && (event.target.elements.hiringmanagerid.value === "" || event.target.elements.hiringmanagerid.value === "0")
+        ? setHiringmanagerValidation(true)
+        : setHiringmanagerValidation(false);
 
       if (mustHaveValidation === true) {
         setAccordion([false, false, false, true, false]);
@@ -1006,8 +1029,11 @@ export const CreateJob = forwardRef(
           event.target.elements.mustHave?.length > 0) &&
         (customerDetails?.isatsenable === true ? (event.target.elements.clientCompany.value !== "" ||
           event.target.elements.clientCompany?.length > 0) : true) &&
-        (customerDetails?.isatsenable === true ? (event.target.elements.assignedto.value !== "" ||
-          event.target.elements.assignedto?.length > 0) : true)
+        (customerDetails?.isatsenable === true ? (event.target.elements.recruiterid.value !== "" ||
+          event.target.elements.recruiterid?.length > 0) : true)
+        &&
+        (customerDetails?.isatsenable === true ? (event.target.elements.hiringmanagerid.value !== "" ||
+          event.target.elements.hiringmanagerid?.length > 0) : true)
       ) {
         saveData(event);
       }
@@ -1075,10 +1101,13 @@ export const CreateJob = forwardRef(
             ? 0
             : eventData?.target?.elements?.securityclearance?.value,
         securityclearanceOptions: securityClearanceOptions,
-        hiringmanagerid: assignedToValue?.value || 0,
-        hiringManagerDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+        hiringmanagerid: hiringManagerValue?.value || 0,
+        hiringManagerDto: { id: hiringManagerValue?.value || 0, name: hiringManagerValue?.label || '' },
         clientcompanyid: clientCompanyValue?.value || 0,
         clientCompanyDto: { id: clientCompanyValue?.value || 0, name: clientCompanyValue?.label || '' },
+        recruiterid: assignedToValue?.value || 0,
+        recruiterDto: { id: assignedToValue?.value || 0, name: assignedToValue?.label || '' },
+
         // isdraft: type === "previous_template" ? previousData?.isdraft : true,
         // isdraft:
         //   previousData?.isdraft !== undefined ? previousData?.isdraft : true,
@@ -1915,6 +1944,57 @@ export const CreateJob = forwardRef(
       [loadOptionClientCompany]
     );
 
+
+    //Contact (Hiring Manager) Dropdown
+    const getHiringManagerOptions = async (inputValue) => {
+      try {
+        const companyId =
+          Number(JSON.parse(localStorage.getItem("userDetails"))?.CompanyId) || 0;
+        const response = await dispatch(
+          dropdownActions.getDropdownListThunk({
+            searchText: "ClientContact",
+            commonId: companyId,
+            searchBy: inputValue || "",
+          })
+        );
+
+        // handle possible response shapes
+        const users =
+          response?.payload?.data ||
+          response?.payload?.data?.data ||
+          response?.payload ||
+          [];
+
+        const userOptions = (users || []).map((user) => ({
+          value: user.id,
+          label: user.name,
+        }));
+        return userOptions;
+      } catch (err) {
+        // keep silent or console.log(err) for debugging
+        // console.error(err);
+      }
+    };
+    const loadOptionsHiringManager = useCallback(
+      async (inputValue) => {
+        // return all options when input empty so AsyncSelect shows choices
+        const source = await getHiringManagerOptions(inputValue) || [];
+        if (!inputValue) return source;
+        const filtered = source.filter((option) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        );
+        return filtered;
+      },
+      [hiringManagerOptions]
+    );
+
+    const loadOptionsDebHiringManager = useCallback(
+      debounce((inputValue, callback) => {
+        loadOptionsHiringManager(inputValue).then(callback);
+      }, 300),
+      [loadOptionsHiringManager]
+    );
+
     return (
       <>
         <div className="form-wizard-content">
@@ -1998,36 +2078,67 @@ export const CreateJob = forwardRef(
                       )}
 
                       {customerDetails?.isatsenable === true && (
-                        <Col md={6} lg={3}>
-                          <FormGroup>
-                            <Label className="fw-semi-bold">
-                              Client company<span style={{ color: "red" }}>* </span>
-                            </Label>
-                            <AsyncSelect
-                              name={"clientCompany"}
-                              placeholder="Search Client Company"
-                              cacheOptions
-                              loadOptions={loadOptionsDebClientCompany}
-                              defaultOptions={clientCompanyOptions}
-                              value={clientCompanyValue}
-                              onChange={(val) => {
-                                setClientCompanyValue(val);
-                                setClientCompanyValidation(false);
-                                // if you need to persist selection to the form submission,
-                                // write the selected id into a hidden input or local state used by saveData
-                                // e.g. setSelectedAssignedToId(val ? val.value : null);
-                              }}
-                              isMulti={false}
-                              styles={customStyles}
-                              invalid={clientCompanyValidation === true ? true : false}
-                            />
-                            {clientCompanyValidation === true && (
-                              <FormText color="danger">
-                                Please select client company
-                              </FormText>
-                            )}
-                          </FormGroup>
-                        </Col>)}
+                        <>
+                          <Col md={6} lg={3}>
+                            <FormGroup>
+                              <Label className="fw-semi-bold">
+                                Client company<span style={{ color: "red" }}>* </span>
+                              </Label>
+                              <AsyncSelect
+                                name={"clientCompany"}
+                                placeholder="Search Client Company"
+                                cacheOptions
+                                loadOptions={loadOptionsDebClientCompany}
+                                defaultOptions={clientCompanyOptions}
+                                value={clientCompanyValue}
+                                onChange={(val) => {
+                                  setClientCompanyValue(val);
+                                  setClientCompanyValidation(false);
+                                  // if you need to persist selection to the form submission,
+                                  // write the selected id into a hidden input or local state used by saveData
+                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                }}
+                                isMulti={false}
+                                styles={customStyles}
+                                invalid={clientCompanyValidation === true ? true : false}
+                              />
+                              {clientCompanyValidation === true && (
+                                <FormText color="danger">
+                                  Please select client company
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          </Col>
+                          <Col md={6} lg={3}>
+                            <FormGroup>
+                              <Label for="contact" className="fw-semi-bold">
+                                Contact<span style={{ color: "red" }}>* </span>
+                              </Label>
+                              <AsyncSelect
+                                name={"hiringmanagerid"}
+                                placeholder="Search Contact"
+                                cacheOptions
+                                loadOptions={loadOptionsDebHiringManager}
+                                defaultOptions={hiringManagerOptions}
+                                value={hiringManagerValue}
+                                onChange={(val) => {
+                                  setHiringManagerValue(val);
+                                  // if you need to persist selection to the form submission,
+                                  // write the selected id into a hidden input or local state used by saveData
+                                  // e.g. setSelectedAssignedToId(val ? val.value : null);
+                                }}
+                                isMulti={false}
+                                styles={customStyles}
+                              />
+                              {hiringmanagerValidation === true && (
+                                <FormText color="danger">
+                                  Please select Contact
+                                </FormText>
+                              )}
+                            </FormGroup>
+                          </Col>
+                        </>
+                      )}
                     </Row>
                     <Row>
                       <Col md={6} lg={3}>
@@ -2297,7 +2408,7 @@ export const CreateJob = forwardRef(
                               Assigned To<span style={{ color: "red" }}>* </span>
                             </Label>
                             <AsyncSelect
-                              name={"assignedto"}
+                              name={"recruiterid"}
                               placeholder="Search Assigned To"
                               cacheOptions
                               loadOptions={loadOptionsDebAssignedTo}
@@ -2312,7 +2423,7 @@ export const CreateJob = forwardRef(
                               isMulti={false}
                               styles={customStyles}
                             />
-                            {hiringmanagerValidation === true && (
+                            {recruiterIdValidation === true && (
                               <FormText color="danger">
                                 Please select Assigned To
                               </FormText>

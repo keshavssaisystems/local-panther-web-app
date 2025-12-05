@@ -177,17 +177,31 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                 </div>
               </Col>
               {customerDetails?.isatsenable === true && (
-                <Col md={6} lg={3}>
-                  <div className="detail-padding">
-                    <h6 className="mb-0 job-heading-custom">Client company</h6>
-                    <p className="mb-0 mt-1 mr-1">
-                      {previewData.basicInformation === undefined ||
-                        previewData.basicInformation.clientCompanyDto === undefined
-                        ? "-"
-                        : previewData.basicInformation.clientCompanyDto.name}
-                    </p>
-                  </div>
-                </Col>)}
+                <>
+                  <Col md={6} lg={3}>
+                    <div className="detail-padding">
+                      <h6 className="mb-0 job-heading-custom">Client company</h6>
+                      <p className="mb-0 mt-1 mr-1">
+                        {previewData.basicInformation === undefined ||
+                          previewData.basicInformation.clientCompanyDto === undefined
+                          ? "-"
+                          : previewData.basicInformation.clientCompanyDto.name}
+                      </p>
+                    </div>
+                  </Col>
+                  <Col md={6} lg={3}>
+                    <div className="detail-padding">
+                      <h6 className="mb-0 job-heading-custom">Contact</h6>
+                      <p className="mb-0 mt-1 mr-1">
+                        {previewData.basicInformation === undefined ||
+                          previewData.basicInformation.hiringManagerDto === undefined
+                          ? "-"
+                          : previewData.basicInformation.hiringManagerDto.name}
+                      </p>
+                    </div>
+                  </Col>
+                </>
+              )}
               {previewData?.basicInformation?.subsidiaryOption?.length > 0 && (
                 <Col md={6} lg={3}>
                   <div className="detail-padding">
@@ -299,9 +313,9 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   <h6 className="mb-0 job-heading-custom">Assign To</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.hiringManagerDto === undefined
+                      previewData.basicInformation.recruiterDto === undefined
                       ? "-"
-                      : previewData.basicInformation.hiringManagerDto.name}
+                      : previewData.basicInformation.recruiterDto.name}
                   </p>
                 </div>
               </Col>)}
@@ -428,8 +442,8 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                 </div>
               </Col>
             </Row>
-          </div>
-        </Col>
+          </div >
+        </Col >
         <Col md={11}>
           <p className="fw-bold block-heading-wizard mt-3">
             Experience & Schedules
@@ -647,7 +661,7 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
             </Row>
           </div>
         </Col>
-      </Row>
+      </Row >
     </>
   );
 }
