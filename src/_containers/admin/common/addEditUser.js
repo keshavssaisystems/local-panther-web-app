@@ -357,7 +357,7 @@ export const AddEditUser = (props) => {
 
       const companyList = (companies || []).map((company) => ({
         value: company.companyid,
-        label: company.companyname,
+        label: company.companyname + (company.isstaffingfirm ? " (Staffing Firm)" : ""),
       }));
 
       setCompanyOptions(companyList);
