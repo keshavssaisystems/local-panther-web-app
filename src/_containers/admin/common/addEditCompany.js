@@ -64,6 +64,8 @@ export const AddEditCompany = (props) => {
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
   const [isStaffingFirm, setIsStaffingFirm] = useState(false);
+  const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
+
   useEffect(() => {
     if (!isAddMode) {
       let name = data?.logourl?.replace(/^.*[\\\/]/, "");
@@ -483,6 +485,7 @@ export const AddEditCompany = (props) => {
               <Col md={6}>
                 <FormGroup>
                   <Input
+                    disabled={isViewMode || (props?.isCompanyAdmin || currentRoleId !== 1)}
                     id={"isstaffingfirm"}
                     name={"isstaffingfirm"}
                     type={"checkbox"}
