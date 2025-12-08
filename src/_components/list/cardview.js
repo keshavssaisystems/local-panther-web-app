@@ -21,6 +21,8 @@ import {
   BsXCircle,
   BsClock,
   BsMortarboard,
+  BsFileEarmark,
+  BsBuildings
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
@@ -40,8 +42,8 @@ export const CandidateCardView = (props) => {
   const [showReModal, setShowReModal] = useState(false);
   const [showRejSModal, setShowRejSModal] = useState(false);
   const [showSchdIntModal, setShowSchdIntSModal] = useState(false);
+  const isStaffingFirm = props.isStaffingFirm;
   const dispatch = useDispatch();
-
   const onRejectClick = () => {
     setShowReModal(true);
   };
@@ -228,6 +230,35 @@ export const CandidateCardView = (props) => {
     }
   };
 
+  const returnResume = () => {
+    return (
+      <Row>
+        <Col sm={6} md={6} lg={6} xl={6} className="card-details-op">
+          <p>  <span>OpenWorX CV</span>
+            <img
+              style={{ float: "left", cursor: "pointer" }}
+              src={customerIcons.view_cv_icon}
+              alt="view cv icon"
+              onClick={() => onBuildResume()}
+            ></img></p>
+        </Col>
+        <Col sm={5} md={5} lg={5} xl={5} className="card-details-op">
+          {props?.data?.candidateResumeDto?.resumepath && (
+            <p>
+              <span >
+                Candidate CV
+              </span>
+              <img
+                style={{ float: "left", cursor: "pointer" }}
+                src={customerIcons.view_cv_icon}
+                alt="view cv icon"
+                onClick={() => onCandidateResume()}
+              ></img></p>
+          )}
+        </Col>
+      </Row>)
+  };
+
   const onBuildResume = () => {
     if (props?.data?.recommendedationCandidateShortList?.length > 0) {
       props.onBuildResume(
@@ -235,6 +266,19 @@ export const CandidateCardView = (props) => {
       );
     }
   };
+
+  const onCandidateResume = () => {
+    if (props?.data?.recommendedationCandidateShortList?.length > 0) {
+      props.onCandidateResume(
+        props?.data?.recommendedationCandidateShortList[0].candidateid,
+        props?.data?.candidateResumeDto?.resumepath
+      );
+    }
+  };
+
+  const onPresentClick = () => {
+    // props.onPresentClick(props?.data?.candidaterecommendedjobid);
+  }
 
   return (
     <>
@@ -364,23 +408,27 @@ export const CandidateCardView = (props) => {
                   <Col md="11" lg="11">
                     <b>Certfications/Licences </b>{" "}
                     <div>
-                      <img
-                        style={{
-                          float: "right",
-                          marginLeft: "0.25rem",
-                          marginTop: "2px",
-                          cursor: "pointer",
-                        }}
-                        src={customerIcons.view_cv_text}
-                        alt="view cv text"
-                        onClick={() => onBuildResume()}
-                      ></img>
-                      <img
-                        style={{ float: "right", cursor: "pointer" }}
-                        src={customerIcons.view_cv_icon}
-                        alt="view cv icon"
-                        onClick={() => onBuildResume()}
-                      ></img>
+                      {isStaffingFirm === false && (
+                        <>
+                          <img
+                            style={{
+                              float: "right",
+                              marginLeft: "0.25rem",
+                              marginTop: "2px",
+                              cursor: "pointer",
+                            }}
+                            src={customerIcons.view_cv_text}
+                            alt="view cv text"
+                            onClick={() => onBuildResume()}
+                          ></img>
+                          <img
+                            style={{ float: "right", cursor: "pointer" }}
+                            src={customerIcons.view_cv_icon}
+                            alt="view cv icon"
+                            onClick={() => onBuildResume()}
+                          ></img>
+                        </>
+                      )}
 
                       <p style={{ overflow: "visible" }}>{returnCert()}</p>
                     </div>
@@ -388,6 +436,40 @@ export const CandidateCardView = (props) => {
                 </Row>
               </p>
             </Col>
+            {isStaffingFirm && (
+              <>
+                <Col className="col-12">
+                  <p className="card-details">
+                    <Row>
+                      <Col md="1" lg="1">
+                        <span className="pe-2">
+                          <BsFileEarmark size={"16px"} />
+                        </span>
+                      </Col>
+                      <Col md="11" lg="11">
+                        <b>Resume </b>
+                        <p>{returnResume()}</p>
+
+                      </Col>
+                    </Row>
+                  </p>
+                </Col>
+                <Col className="col-12">
+                  <p className="card-details">
+                    <Row>
+                      <Col md="1" lg="1">
+                        <span className="pe-2">
+                          <BsBuildings size={"16px"} />
+                        </span>
+                      </Col>
+                      <Col md="11" lg="11">
+                        <b>Client Company </b>
+                        <p> {props?.data?.clientcompanyname}</p>
+                      </Col>
+                    </Row>
+                  </p>
+                </Col>
+              </>)}
           </Row>
         </CardBody>
         <CardFooter className="auto-margin">
@@ -443,6 +525,18 @@ export const CandidateCardView = (props) => {
               >
                 Decline <BsXCircle></BsXCircle>
               </Button>
+              {isStaffingFirm && (
+                <Button
+                  outline
+                  title="decline"
+                  className="btn-icon mb-1"
+                  color="primary"
+                  onClick={() => onPresentClick()}
+                  size="sm"
+                >
+                  Present <BsXCircle></BsXCircle>
+                </Button>
+              )}
             </ButtonGroup>
           </Row>
         </CardFooter>

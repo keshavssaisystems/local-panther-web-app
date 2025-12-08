@@ -446,7 +446,7 @@ export function CustJobDetail({
                                 color="primary"
                                 className={"me-3 mt-3"}
                                 onClick={(e) => {
-                                  setPublishSuccess(true);
+                                  //setPublishSuccess(true);
                                   publishJob(jobDetail.jobid);
                                 }}
                               >
