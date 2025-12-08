@@ -28,6 +28,7 @@ import "./customercandidatelist.scss";
 import { NoDataFound } from "_components/common/nodatafound";
 import { BuildCVModal } from "_components/modal/buildcvmodal";
 import { CandidateHistoryModal } from "_components/modal/candidatehistorymodal";
+import { CandidateCVModal } from "_components/modal/candidatecvmodal";
 import {
   getProfileActions,
   dropdownActions,
@@ -53,7 +54,7 @@ import {
   faSearch,
   faFileExcel,
 } from "@fortawesome/free-solid-svg-icons";
-import { ca } from "date-fns/locale";
+import { ca, is } from "date-fns/locale";
 
 export default function CustomerCandidateLists(props) {
   const { id } = useParams();
@@ -87,6 +88,9 @@ export default function CustomerCandidateLists(props) {
 
   let [startDate, setStartDate] = useState();
   let [endDate, setEndDate] = useState();
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList.some(company => company.isstaffingfirm === true));
+
   const jobList = useSelector((state) => state.customerCandidateList.jobLists);
 
   const rejectDrpDwnList = useSelector(
@@ -116,6 +120,8 @@ export default function CustomerCandidateLists(props) {
   const hiringManagerDownList = useSelector((state) => state?.customerReportReducer?.hiringmangers);
   const interviewFeedbackStatus = useSelector((state) => state.scheduleInterview.interviewStatus);
   const [interviewStatus, setInterviewStatus] = useState([]);
+  const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [candidateDocumentUrl, setCandidateDocumentUrl] = useState("");
   const jobDetail = useSelector((state) => state.custJobListReducer.jobDetail);
   const reportData = useSelector((state) => state.customerCandidateList.reportData);
   // // // Set default actionbyId after hiringManagerDownList is loaded
@@ -521,6 +527,21 @@ export default function CustomerCandidateLists(props) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [wrapperRef]);
+
+  const onCandidateResume = async (candidateId, url) => {
+    if (!url) {
+      return dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.RESUME_NOT_AVAILABLE,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    setOpenDocumentModal(true);
+    setCandidateDocumentUrl(url);
+  }
   return (
     <>
       <Row className="customercandidatelist">
@@ -645,6 +666,20 @@ export default function CustomerCandidateLists(props) {
                   Declined{reportData?.Reject > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Reject}</span>)}
                 </Button>
 
+                {isStaffingFirm && (<Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "presented" })
+                  }
+                  onClick={() => {
+                    toggle("presented");
+                  }}
+                >
+                  Presented{reportData?.Presented > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Presented}</span>)}
+                </Button>
+                )}
               </ButtonGroup></Col>
 
             <Col xs="12" sm="12" md="6" lg="2"><Input
@@ -818,6 +853,10 @@ export default function CustomerCandidateLists(props) {
                                 onBuildResume={(candidateId) =>
                                   onBuildResumeClick(candidateId)
                                 }
+                                onCandidateResume={(candidateId, url) =>
+                                  onCandidateResume(candidateId, url)
+                                }
+                                isStaffingFirm={isStaffingFirm}
                               ></CandidateCardView>
                             </Col>
                           );
@@ -903,6 +942,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -984,6 +1027,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1066,6 +1113,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1264,6 +1315,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1349,6 +1404,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1432,6 +1491,10 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1517,6 +1580,11 @@ export default function CustomerCandidateLists(props) {
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
+
                         />
                         {totalRecords > listPageSize ? (
                           <div className="mt-2">
@@ -1621,6 +1689,13 @@ export default function CustomerCandidateLists(props) {
           </>
         ) : (
           <></>
+        )}
+      </>
+      <>
+        {openDocumentModal && (
+          <CandidateCVModal isOpen={openDocumentModal} onClose={() => setOpenDocumentModal(false)}
+            url={candidateDocumentUrl}
+          />
         )}
       </>
     </>

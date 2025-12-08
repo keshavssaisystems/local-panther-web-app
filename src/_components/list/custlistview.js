@@ -50,7 +50,7 @@ export const CustCandidateListView = (props) => {
   const [showIRSModal, setShowIRSModal] = useState(false);
   const [showUploadOfferModal, setShowUploadOfferModal] = useState(false);
   const [offerUploadLoading, setOfferUploadLoading] = useState(false);
-
+  const [isStaffingFirm, setIsStaffingFirm] = useState(props.isStaffingFirm);
   // Use Redux dispatch for snackbar
   const dispatch = useDispatch();
   const durationOptions = useSelector(
@@ -509,6 +509,11 @@ export const CustCandidateListView = (props) => {
               <i className="dropdown-icon lnr-layers"></i>
               <span>Candidate details</span>
             </DropdownItem>
+            {isStaffingFirm ? (<DropdownItem onClick={() => props.onCandidateResume(candidateid, row?.candidateResumeDto?.resumepath)}>
+              <i className="dropdown-icon lnr-layers"></i>
+              <span>Candidate Resume</span>
+            </DropdownItem>) : (<></>)}
+
             {props.type === "offers" ||
               props.type === "accepted" ||
               props.type === "rejected" ? (
@@ -544,14 +549,28 @@ export const CustCandidateListView = (props) => {
             selector: (row) => row.firstname + " " + row.lastname,
             sortable: true,
             wrap: true,
-            width: "20%",
+            width: "15%",
+          },
+          {
+            name: <span className="table-title">Client name</span>,
+            id: "Clientname",
+            cell: (row) => (
+              <span title={row.clientcompanyname}>
+                {row.clientcompanyname}
+              </span>
+            ),
+            selector: (row) => row.clientcompanyname,
+            sortable: true,
+            wrap: true,
+            width: "15%",
+            hide: isStaffingFirm
           },
           {
             name: <span className="table-title">Job title</span>,
             cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
             selector: (row) => row?.jobtitle,
             sortable: true,
-            width: "40%",
+            width: "30%",
           },
           {
             name: <span className="table-title">{props.type === "liked" ? "Liked by" : "Maybe by"}</span>,
@@ -596,14 +615,28 @@ export const CustCandidateListView = (props) => {
               selector: (row) => row.firstname + " " + row.lastname,
               sortable: true,
               wrap: true,
-              width: "14%",
+              width: "12%",
+            },
+            {
+              name: <span className="table-title">Client name</span>,
+              id: "Clientname",
+              cell: (row) => (
+                <span title={row.clientcompanyname}>
+                  {row.clientcompanyname}
+                </span>
+              ),
+              selector: (row) => row.clientcompanyname,
+              sortable: true,
+              wrap: true,
+              width: "12%",
+              hide: isStaffingFirm
             },
             {
               name: <span className="table-title">Job title</span>,
               cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
               selector: (row) => row?.jobtitle,
               sortable: true,
-              width: "18%",
+              width: "15%",
             },
             {
               name: <span className="table-title">Offered salary</span>,
@@ -834,14 +867,14 @@ export const CustCandidateListView = (props) => {
                       : "-",
               ignoreRowClick: true,
               button: true,
-              width: "15%",
+              width: "10%",
             },
             {
               name: <span className="table-title">Rejected by</span>,
               cell: (row) => <span title={row.customerrejectedbyname}>{row.customerrejectedbyname}</span>,
               selector: (row) => row?.customerrejectedbyname,
               sortable: true,
-              width: "12%",
+              width: "10%",
             },
             {
               name: <span className="table-title">Interest</span>,
@@ -899,14 +932,28 @@ export const CustCandidateListView = (props) => {
                 selector: (row) => row.firstname + " " + row.lastname,
                 sortable: true,
                 wrap: true,
-                width: "15%",
+                width: "13%",
+              },
+              {
+                name: <span className="table-title">Client name</span>,
+                id: "Clientname",
+                cell: (row) => (
+                  <span title={row.clientcompanyname}>
+                    {row.clientcompanyname}
+                  </span>
+                ),
+                selector: (row) => row.clientcompanyname,
+                sortable: true,
+                wrap: true,
+                width: "12%",
+                hide: isStaffingFirm
               },
               {
                 name: <span className="table-title">Job title</span>,
                 cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
                 selector: (row) => row?.jobtitle,
                 sortable: true,
-                width: "22%",
+                width: "20%",
               },
               {
                 name: <span className="table-title">Offered salary</span>,
@@ -947,7 +994,7 @@ export const CustCandidateListView = (props) => {
                         row?.jobOfferDtos[0]?.salary
                       ),
                 sortable: true,
-                width: "12%",
+                width: "10%",
               },
               {
                 name: <span className="table-title">Start date</span>,
@@ -1077,7 +1124,7 @@ export const CustCandidateListView = (props) => {
                 cell: (row) => <span title={props?.type === "offers" ? row.customerofferedbyname : row.jobpostedbyname}>{props?.type === "offers" ? row.customerofferedbyname : row.jobpostedbyname}</span>,
                 selector: (row) => props?.type === "offers" ? row.customerofferedbyname : row.jobpostedbyname,
                 sortable: true,
-                width: "15%",
+                width: "10%",
               },
               {
                 name: <span className="table-title">Interest</span>,
@@ -1090,7 +1137,7 @@ export const CustCandidateListView = (props) => {
                 ),
                 ignoreRowClick: true,
                 button: true,
-                width: "11%",
+                width: "10%",
               },
 
               {
@@ -1135,6 +1182,20 @@ export const CustCandidateListView = (props) => {
                 sortable: true,
                 wrap: true,
                 width: "15%",
+              },
+              {
+                name: <span className="table-title">Client name</span>,
+                id: "Clientname",
+                cell: (row) => (
+                  <span title={row.clientcompanyname}>
+                    {row.clientcompanyname}
+                  </span>
+                ),
+                selector: (row) => row.clientcompanyname,
+                sortable: true,
+                wrap: true,
+                width: "15%",
+                hide: isStaffingFirm
               },
               {
                 name: <span className="table-title">Job title</span>,
@@ -1289,6 +1350,20 @@ export const CustCandidateListView = (props) => {
           selector: (row) => row.firstname + " " + row.lastname,
           sortable: true,
           //width: "15%",
+        },
+        {
+          name: <span className="table-title">Client name</span>,
+          id: "Clientname",
+          cell: (row) => (
+            <span title={row.clientcompanyname}>
+              {row.clientcompanyname}
+            </span>
+          ),
+          selector: (row) => row.clientcompanyname,
+          sortable: true,
+          wrap: true,
+          width: "15%",
+          hide: isStaffingFirm
         },
         {
           name: <span className="table-title">Job title</span>,
@@ -1651,7 +1726,7 @@ export const CustCandidateListView = (props) => {
         maxWidth: 500,
       }));
 
-      
+
     } else {
       // props.showSweetAlert({
       //   title: res.payload.message || res.payload.status,

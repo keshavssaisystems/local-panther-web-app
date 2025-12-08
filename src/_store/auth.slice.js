@@ -187,7 +187,7 @@ const authSlice = createSlice({
       state.loader = true;
     },
     [loginThunk.fulfilled]: (state, { payload: { data = {} } = {} }) => {
-      const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+      const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
       state.menuList = menuDtoList;
       state.user = data;
       state.token = token;
@@ -224,7 +224,7 @@ const authSlice = createSlice({
       //       : 3;
       // console.log("decodedData", decodedData);
       localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
-      state.userroleid =parseInt(decodedData.UserroleId);
+      state.userroleid = parseInt(decodedData.UserroleId);
       localStorage.setItem("userDetails", JSON.stringify(decodedData));
       localStorage.setItem(
         "pushnotification",
@@ -257,6 +257,10 @@ const authSlice = createSlice({
       const { from } = history.location.state || {
         from: { pathname: "/" },
       };
+
+      if (companyList && companyList.length > 0) {
+        localStorage.setItem("companyList", JSON.stringify(companyList));
+      }
       state.loader = false;
       history.navigate(from);
     },
@@ -330,7 +334,7 @@ const authSlice = createSlice({
 
       if (payload?.data?.token) {
         let data = payload.data;
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
         state.menuList = menuDtoList;
         state.user = data;
         state.token = token;
@@ -366,7 +370,7 @@ const authSlice = createSlice({
         //       ? 2
         //       : 3;
         localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
-        state.userroleid =parseInt(decodedData.UserroleId);
+        state.userroleid = parseInt(decodedData.UserroleId);
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -399,6 +403,11 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
+
+        if (companyList && companyList.length > 0) {
+          localStorage.setItem("companyList", JSON.stringify(companyList));
+        }
+
         state.loader = false;
         history.navigate(from);
       }
@@ -456,7 +465,7 @@ const authSlice = createSlice({
     },
     [loginWithOTP.fulfilled]: (state, { payload: { data = {} } = {} }) => {
       if (data?.token) {
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
         state.menuList = menuDtoList;
         state.user = data;
         state.token = token;
@@ -492,7 +501,7 @@ const authSlice = createSlice({
         //       ? 2
         //       : 3;
         localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
-        state.userroleid =parseInt(decodedData.UserroleId);
+        state.userroleid = parseInt(decodedData.UserroleId);
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -525,6 +534,9 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
+        if (companyList && companyList.length > 0) {
+          localStorage.setItem("companyList", JSON.stringify(companyList));
+        }
         state.loader = false;
         history.navigate(from);
       }
@@ -541,7 +553,7 @@ const authSlice = createSlice({
       { payload: { data = {} } = {} }
     ) => {
       if (data?.token) {
-        const { token, refreshToken, menuDtoList = [], userLoginInfoId } = data;
+        const { token, refreshToken, menuDtoList = [], userLoginInfoId, companyList = [] } = data;
         state.menuList = menuDtoList;
         state.user = data;
         state.token = token;
@@ -577,7 +589,7 @@ const authSlice = createSlice({
         //       ? 2
         //       : 3;
         localStorage.setItem("userroleid", parseInt(decodedData.UserroleId));
-        state.userroleid =parseInt(decodedData.UserroleId);
+        state.userroleid = parseInt(decodedData.UserroleId);
         localStorage.setItem("userDetails", JSON.stringify(decodedData));
         localStorage.setItem(
           "pushnotification",
@@ -603,6 +615,9 @@ const authSlice = createSlice({
         const { from } = history.location.state || {
           from: { pathname: "/" },
         };
+         if (companyList && companyList.length > 0) {
+        localStorage.setItem("companyList", JSON.stringify(companyList));
+      }
         state.loader = false;
         history.navigate(from);
       }
