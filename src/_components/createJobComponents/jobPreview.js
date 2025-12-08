@@ -191,12 +191,12 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   </Col>
                   <Col md={6} lg={3}>
                     <div className="detail-padding">
-                      <h6 className="mb-0 job-heading-custom">Client company</h6>
+                      <h6 className="mb-0 job-heading-custom">Contact</h6>
                       <p className="mb-0 mt-1 mr-1">
                         {previewData.basicInformation === undefined ||
-                          previewData.basicInformation.clientCompanyDto === undefined
+                          previewData.basicInformation.hiringManagerDto === undefined
                           ? "-"
-                          : previewData.basicInformation.clientCompanyDto.name}
+                          : previewData.basicInformation.hiringManagerDto.name}
                       </p>
                     </div>
                   </Col>
@@ -313,9 +313,9 @@ export default function JobPreview({ previewData, editdata, customerDetails }) {
                   <h6 className="mb-0 job-heading-custom">Assign To</h6>
                   <p className="mb-0 mt-1 mr-1">
                     {previewData.basicInformation === undefined ||
-                      previewData.basicInformation.hiringManagerDto === undefined
+                      previewData.basicInformation.recruiterDto === undefined
                       ? "-"
-                      : previewData.basicInformation.hiringManagerDto.name}
+                      : previewData.basicInformation.recruiterDto.name}
                   </p>
                 </div>
               </Col>)}

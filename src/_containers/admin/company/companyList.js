@@ -36,7 +36,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const [pageNo, setPageNo] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
-
+  const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
   const [showAlert, SetShowAlert] = useState({
     show: false,
     type: "success",
@@ -128,6 +128,25 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       selector: (row) => row.industry,
       sortable: true,
     },
+    ...(currentRoleId === 1
+      ? [
+        {
+          name: "Staffing Firm",
+
+          cell: (row) => (
+            <span
+              style={{
+                cursor: row.isstaffingfirm === true ? "pointer" : "not-allowed",
+              }}
+              onClick={() => navigateTo(row)}
+            >
+              {row.isstaffingfirm ? "Yes" : "No"}
+            </span>
+          ),
+          sortable: true,
+        },
+      ]
+      : []),
     {
       name: "Action",
       cell: (row) => (
