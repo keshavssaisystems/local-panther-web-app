@@ -507,11 +507,11 @@ export const CustCandidateListView = (props) => {
             )}
             <DropdownItem onClick={() => props.onBuildResume(candidateid)}>
               <i className="dropdown-icon lnr-layers"></i>
-              <span>Candidate details</span>
+              <span>OpenWorX CV</span>
             </DropdownItem>
             {isStaffingFirm ? (<DropdownItem onClick={() => props.onCandidateResume(candidateid, row?.candidateResumeDto?.resumepath)}>
               <i className="dropdown-icon lnr-layers"></i>
-              <span>Candidate Resume</span>
+              <span>Candidate CV</span>
             </DropdownItem>) : (<></>)}
 
             {props.type === "offers" ||
