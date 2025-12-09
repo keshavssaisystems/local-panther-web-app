@@ -90,26 +90,18 @@ export function UserBox() {
     const detail = JSON.parse(localStorage.getItem("userDetails")) || {};
     setUserDetail({ ...detail });
 
-    if (Number(detail.UserroleId) === 2) {
+    if (Number(detail.UserroleId) === 2 || Number(detail.UserroleId) === 4) {
       getCompanyDetails();
     }
   }, []);
   const [changePwd, setChangePwd] = useState(false);
   const getCompanyDetails = async function () {
-    let res = await dispatch(
-      createjobActions.getCustomerDetailsThunk(
-        JSON.parse(localStorage.getItem("userDetails")).InternalUserId
-      )
+    let res = await dispatch(createjobActions.getCustomerDetailsThunk(JSON.parse(localStorage.getItem("userDetails")).InternalUserId)
     );
 
     if (res?.payload?.statusCode === 200) {
-      let roleId = localStorage.getItem("userroleid")
-        ? Number(localStorage.getItem("userroleid"))
-        : 0;
-      if (
-        res?.payload?.data?.billingdetailstatus !== undefined &&
-        res?.payload?.data?.billingdetailstatus &&
-        roleId === 2
+      let roleId = localStorage.getItem("userroleid") ? Number(localStorage.getItem("userroleid")) : 0;
+      if (res?.payload?.data?.billingdetailstatus !== undefined && res?.payload?.data?.billingdetailstatus && (roleId === 2 || roleId === 4)
       ) {
         dispatch(paymentActions.updateShowBilling(true));
       } else {
