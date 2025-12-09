@@ -52,6 +52,10 @@ function createExtraActions() {
     getofferLetterTemplate: getofferLetterTemplate(),
     getInterviewSlots: getInterviewSlots(),
     getReportBySP: getCandidateCardCount(), // New action for fetching report
+    getPresentedCandidateLists: getPresentedCandidateLists(),
+    putPresentCandidate: putPresentCandidate(),
+    putCandidatePlaced: putCandidatePlaced()
+
   };
 
   function getDrpDwnJobLists() {
@@ -301,6 +305,55 @@ function createExtraActions() {
       }
     );
   }
+
+  function getPresentedCandidateLists() {
+    return createAsyncThunk(
+      `${name}/getPresentedCandidateLists`,
+
+      async ({
+        pageNumber,
+        pageSize,
+        jobId,
+        searchText,
+        actionbyId = ""
+      }) => {
+        let parameters = "";
+        let actionBy = "";
+        actionBy = `@userid=${actionbyId}`;
+        parameters += actionBy;
+        parameters += `,@isactive=1`;
+        parameters += `,@pagesize=${pageSize}`;
+        parameters += `,@currentpage=${pageNumber}`;
+        if (searchText) parameters += `,@searchtext='${searchText}'`;
+        if (jobId) parameters += `,@jobid=${jobId}`;
+
+        return await fetchWrapper.get(`${newUrl}/V2/Get_Presented_candidate_list?parameter=${parameters}`);
+
+      }
+    );
+  }
+
+  function putPresentCandidate() {
+    return createAsyncThunk(
+      `${name}/putPresentCandidate`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/customerPresented/${id}`
+        )
+    );
+  }
+
+  function putCandidatePlaced() {
+    return createAsyncThunk(
+      `${name}/putCandidatePlaced`,
+
+      async ({ id }) =>
+        await fetchWrapper.put(
+          `${newUrl}/CandidateRecommendedJob/staffingfirmcandidateaccepted/${id}`
+        )
+    );
+  }
 }
 
 function createExtraReducers() {
@@ -321,6 +374,9 @@ function createExtraReducers() {
     getofferLetterTemplate();
     getInterviewSlots();
     getCandidateCardCount(); // Register the new report action
+    getPresentedCandidateLists();
+    putPresentCandidate();
+    putCandidatePlaced();
     function getDrpDwnJobLists() {
       let { pending, fulfilled, rejected } = extraActions.getDrpDwnJobLists;
       builder
@@ -592,6 +648,71 @@ function createExtraReducers() {
         .addCase(rejected, (state, action) => {
           state.loading = false;
           state.reportData = null;
+        });
+    }
+
+
+    function getPresentedCandidateLists() {
+      let { pending, fulfilled, rejected } = extraActions.getPresentedCandidateLists;
+      builder
+        .addCase(pending, (state) => {
+          state.loading = true;
+          state.candidateList = [];
+          state.totalRecords = 0;
+        })
+        .addCase(fulfilled, (state, action) => {
+          state.candidateList = action?.payload?.data?.data ? action?.payload?.data?.data
+            : [];
+
+          state.totalRecords = action?.payload?.data?.totalRows
+            ? action?.payload?.data?.totalRows
+            : 0;
+          state.loading = false;
+        })
+        .addCase(rejected, (state, action) => {
+          state.loading = false;
+        });
+    }
+
+    function putRejectCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putRejectCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+
+    function putPresentCandidate() {
+      let { pending, fulfilled, rejected } = extraActions.putPresentCandidate;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
+        });
+    }
+    
+    function putCandidatePlaced() {
+      let { pending, fulfilled, rejected } = extraActions.putCandidatePlaced;
+      builder
+        .addCase(pending, (state) => {
+          //no action
+        })
+        .addCase(fulfilled, (state, action) => {
+          //no action
+        })
+        .addCase(rejected, (state, action) => {
+          //no action
         });
     }
   };
