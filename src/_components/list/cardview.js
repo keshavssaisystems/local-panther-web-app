@@ -277,7 +277,7 @@ export const CandidateCardView = (props) => {
   };
 
   const onPresentClick = () => {
-    // props.onPresentClick(props?.data?.candidaterecommendedjobid);
+    props.onPresentClick(props?.data?.candidaterecommendedjobid);
   }
 
   return (
@@ -531,7 +531,7 @@ export const CandidateCardView = (props) => {
                   title="decline"
                   className="btn-icon mb-1"
                   color="primary"
-                  onClick={() => onPresentClick()}
+                  onClick={() => onActionClick("presented")}
                   size="sm"
                 >
                   Present <BsXCircle></BsXCircle>

@@ -225,7 +225,7 @@ export default function CustomerCandidateLists(props) {
       actionbyId: actionbyId
     };
 
-    if (activeTab === 'scheduled') {
+    if (type === 'scheduled') {
       let fromDate = startDate ? moment(startDate).format("YYYY-MM-DDT00:00:00") : null;
       let toDate = endDate ? moment(endDate).format("YYYY-MM-DDT23:59:59") : null;
       candObj = {
@@ -236,6 +236,10 @@ export default function CustomerCandidateLists(props) {
           moment(fromDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null,
         interviewScheduleDateEnd: endDate ? moment(toDate).utc().format("YYYY-MM-DDTHH:mm:ss") : null
       };
+    }
+    if (type === 'presented') {
+      dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
+      return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
@@ -335,6 +339,12 @@ export default function CustomerCandidateLists(props) {
         }));
 
       }
+    }
+    else if (type === "presented") {
+      handlePresentClick(evt, type);
+    }
+    else if(type==="candidatePlaced"){
+      handleCandidatePlacedClick(evt, type);
     }
   };
 
@@ -542,6 +552,60 @@ export default function CustomerCandidateLists(props) {
     setOpenDocumentModal(true);
     setCandidateDocumentUrl(url);
   }
+
+  const handlePresentClick = async (evt, type) => {
+    let res = await dispatch(
+      customerCandidateListsActions.putPresentCandidate({ id: evt })
+    );
+    if (res.payload.statusCode === 204) {
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      onGetPageList(pageNo, props.type || activeTab, id);
+    } else {
+
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
+  const handleCandidatePlacedClick = async (evt, type) => {
+    let res = await dispatch(
+      customerCandidateListsActions.putCandidatePlaced({ id: evt })
+    );
+    if (res.payload.statusCode === 204) {
+      dispatch(showSnackbar({
+        message: CANDIDATE_MESSAGES.CANDIDATE_STATUS_UPDATED_SUCCESS,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      onGetPageList(pageNo, props.type || activeTab, id);
+    } else {
+      dispatch(showSnackbar({
+        message: res.payload.message || res.payload.status,
+        type: SNACKBAR_TYPES.ERROR,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+  }
+
   return (
     <>
       <Row className="customercandidatelist">
@@ -1110,6 +1174,91 @@ export default function CustomerCandidateLists(props) {
                             onBuildResumeClick(candidateId)
                           }
                           onShowOHModal={(row) => onShowOHModal(row)}
+                          onCandidateHistory={(candidateId, row) =>
+                            onCandidateHistoryClick(candidateId, row)
+                          }
+                          onCandidateResume={(candidateId, url) =>
+                            onCandidateResume(candidateId, url)
+                          }
+                          isStaffingFirm={isStaffingFirm}
+                        />
+                        {totalRecords > listPageSize ? (
+                          <div className="mt-2">
+                            <CardPagination
+                              totalPages={totalRecords / listPageSize}
+                              pageIndex={pageNo}
+                              onCallBack={(evt) => handlePageChange(evt)}
+                            ></CardPagination>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {candidateList.length === 0 && !loading ? (
+                          <Row
+                            style={{ textAlign: "center" }}
+                            className="center-middle-align"
+                          >
+                            <Col>
+                              {" "}
+                              <NoDataFound></NoDataFound>
+                            </Col>
+                          </Row>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+              </p>
+            </TabPane>
+            <TabPane tabId="presented">
+              {/* <div className="p-3 tab-info">
+                <Row>
+                  <Col>
+                    <img src={infoIcon} alt="" />
+                    <span style={{ display: "flex" }}>
+                      Candidates are individuals unsure about being invited to
+                      apply, often marked with a question or doubt. They may
+                      also be saved in a separate section of the user account,
+                      allowing users to review and change decisions later. This
+                      helps make informed decisions about potential candidates.
+                    </span>
+                  </Col>
+                </Row>
+              </div> */}
+              <p>
+                {loading ? (
+                  <>
+                    <Loader
+                      type="line-scale-pulse-out-rapid"
+                      className="d-flex justify-content-center"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {candidateList?.length > 0 ? (
+                      <>
+                        <CustCandidateListView
+                          type={props.type || activeTab}
+                          data={candidateList}
+                          user="customer"
+                          rejectDrpDwnList={rejectDrpDwnList}
+                          onActionClick={(e, type) => onActionClick(e, type)}
+                          showSweetAlert={({ title, type }) =>
+                            showSweetAlert({ title, type })
+                          }
+                          updateList={() => onUpdateList()}
+                          durationOptions={durationOptions}
+                          onPrescreenClick={(type, row) =>
+                            onPrescreenActionClick(type, row)
+                          }
+                          onBuildResume={(candidateId) =>
+                            onBuildResumeClick(candidateId)
+                          }
                           onCandidateHistory={(candidateId, row) =>
                             onCandidateHistoryClick(candidateId, row)
                           }
