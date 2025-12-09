@@ -1,13 +1,14 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { Row, Col, Card, CardBody, Button } from "reactstrap";
 import { useSelector } from "react-redux";
 
 import { getDate, getEducText } from "_helpers/helper";
 import html2pdf from "html2pdf.js";
 
-export function ProfilePDF(props) {
+export const ProfilePDF = forwardRef((props, ref) => {
   let userRoleId = localStorage.getItem("userroleid");
   const componentRef = useRef();
+  const [isGenerating, setIsGenerating] = useState(false);
   const personalInfo_temp = useSelector(
     (state) => state.getProfile.profileData.personalInfo
   );
@@ -43,6 +44,9 @@ export function ProfilePDF(props) {
     (state) => state.getProfile?.profileData?.jobPreferenceInfo
   );
 
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+
   useEffect(() => {
     let filtered_data = get_response?.map((rest) => {
       return {
@@ -73,13 +77,13 @@ export function ProfilePDF(props) {
           .join(", "),
         pay:
           (rest.minimumbasepay && rest.payperiodtype) ||
-          (rest.minimumbasepay !== "" && rest.payperiodtype !== "")
+            (rest.minimumbasepay !== "" && rest.payperiodtype !== "")
             ? rest.minimumbasepay + " " + rest.payperiodtype
             : rest.minimumbasepay
-            ? rest.minimumbasepay
-            : rest.payperiodtype
-            ? rest.payperiodtype
-            : "",
+              ? rest.minimumbasepay
+              : rest.payperiodtype
+                ? rest.payperiodtype
+                : "",
         relocate: rest.willingtorelocate ? true : false,
         availabilitytowork: rest.availabilitytowork,
         workType: "",
@@ -89,54 +93,76 @@ export function ProfilePDF(props) {
     setGetResponse(filtered_data);
   }, [get_response]);
 
-  const generatePDF = function (event) {
+  const generatePDF = async function () {
     const content = componentRef.current;
 
-    if (content) {
+    if (!content) return;
+
+    setIsGenerating(true);
+
+    try {
+      // use setTimeout to allow UI to update with loading state
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const pdfOptions = {
         margin: 10,
         filename:
-          personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname,
+          personalInfo_temp?.firstname + " " + personalInfo_temp?.lastname + ".pdf",
         image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, logging: false }, // reduce scale for faster processing
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
 
-      html2pdf().from(content).set(pdfOptions).save();
+      // Generate PDF asynchronously
+      await html2pdf().set(pdfOptions).from(content).save();
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGenerating(false);
     }
   };
+
+  // Expose generatePDF to parent via ref
+  useImperativeHandle(ref, () => ({
+    generatePDF: generatePDF,
+  }));
+
   const profile_img = localStorage.getItem("profileImage");
 
   const getLocationText = function (data) {
     let text = "";
     if (data.company !== "") {
       text = data.company;
-      if (data.cityname !== "") {
+      if (data.cityname && data.cityname !== "") {
         text += " - " + data.cityname;
       }
-      if (data.statename !== "") {
+      if (data.statename && data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname !== "") {
+      if (data.countryname && data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.cityname !== "") {
+    } else if (data.cityname && data.cityname !== "") {
       text = data.cityname;
-      if (data.statename !== "") {
+      if (data.statename && data.statename !== "") {
         text += ", " + data.statename;
       }
-      if (data.countryname !== "") {
+      if (data.countryname && data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.statename !== "") {
+    } else if (data.statename && data.statename !== "") {
       text = data.statename;
-      if (data.countryname !== "") {
+      if (data.countryname && data.countryname !== "") {
         text += ", " + data.countryname;
       }
-    } else if (data.countryname !== "") {
+    } else if (data.countryname && data.countryname !== "") {
       text += data.countryname;
     }
     return text;
   };
+
+  
   return (
     <div>
       <Card>
@@ -149,7 +175,7 @@ export function ProfilePDF(props) {
             <div>
               <Row>
                 <Col className="col-8">
-                  {userRoleId === 3 && (
+                  {(userRoleId === 3 || isStaffingFirm === true) && (
                     <h1>
                       <strong>
                         {" "}
@@ -174,7 +200,7 @@ export function ProfilePDF(props) {
                     {", "}
                     {personalInfo_temp?.state}
                   </p>
-                  {userRoleId === 3 && (
+                  {(userRoleId === 3 || isStaffingFirm === true) && (
                     <p>
                       <span style={{ fontWeight: "600" }}>
                         {personalInfo_temp?.email}
@@ -217,16 +243,15 @@ export function ProfilePDF(props) {
                 {qualificationInfo?.map((item) => (
                   <div className="mb-3">
                     <h3>{item.jobtitle}</h3>
-                    {item.company !== "" &&
-                    item.cityname !== "" &&
-                    item.statename !== "" &&
-                    item.countryname ? (
-                      <p style={{ color: "#979797" }}>
-                        {getLocationText(item)}
-                      </p>
-                    ) : (
-                      ""
-                    )}
+                    {item.company !== ""
+                      // && item.cityname !== "" && item.statename !== "" && item.countryname
+                      ? (
+                        <p style={{ color: "#979797" }}>
+                          {getLocationText(item)}
+                        </p>
+                      ) : (
+                        ""
+                      )}
                     {item.startdate && item.enddate ? (
                       <p style={{ color: "#979797" }}> {getDate(item)}</p>
                     ) : (
@@ -234,9 +259,12 @@ export function ProfilePDF(props) {
                     )}
 
                     {item.jobdescription !== "" ? (
-                      <p className="" style={{ fontWeight: "500" }}>
-                        {item.jobdescription}{" "}
-                      </p>
+                      <>
+                        <p style={{ fontWeight: "500",color: "#979797" }}>Job Responsibilities:</p>
+                        <p className="" style={{ fontWeight: "500", whiteSpace: "pre-wrap" }}>
+                          {item.jobdescription}{" "}
+                        </p>
+                      </>
                     ) : (
                       ""
                     )}
@@ -438,6 +466,34 @@ export function ProfilePDF(props) {
           )}
         </Col>
       </Card>
+      {isGenerating && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.3)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "8px",
+            textAlign: "center"
+          }}>
+            <p>Generating PDF...</p>
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+});
+
+ProfilePDF.displayName = "ProfilePDF";
