@@ -234,7 +234,7 @@ export const CandidateCardView = (props) => {
     return (
       <Row>
         <Col sm={6} md={6} lg={6} xl={6} className="card-details-op">
-          <p>  <span>OpenWorX CV</span>
+          <p>  <span style={{ cursor: "pointer", marginLeft: "3px"}} onClick={() => onBuildResume()}>OpenWorX CV</span>
             <img
               style={{ float: "left", cursor: "pointer" }}
               src={customerIcons.view_cv_icon}
@@ -245,7 +245,7 @@ export const CandidateCardView = (props) => {
         <Col sm={5} md={5} lg={5} xl={5} className="card-details-op">
           {props?.data?.candidateResumeDto?.resumepath && (
             <p>
-              <span >
+              <span style={{ cursor: "pointer", marginLeft: "3px"}} onClick={() => onCandidateResume()}>
                 Candidate CV
               </span>
               <img
