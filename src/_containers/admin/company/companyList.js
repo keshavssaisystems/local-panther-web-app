@@ -100,6 +100,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </span>
       ),
       sortable: true,
+      width:"10%"
     },
 
     {
@@ -263,7 +264,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </div>
       ),
       sortable: false,
-      width: "10%",
+      width: "15%",
     },
   ];
 
