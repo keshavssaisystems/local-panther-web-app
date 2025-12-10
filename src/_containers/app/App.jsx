@@ -243,7 +243,7 @@ export function App() {
       localStorage.setItem("publicip", data.ip);
     }
   };
-  const renderRoutes = (userroleid) => {   
+  const renderRoutes = (userroleid) => {
     if (userroleid === 1) {
       return (
         <>
@@ -517,7 +517,10 @@ export function App() {
             path="/customer-candidate-offers/:id/:jobPostedbyId"
             element={<CustomerCandidateLists type={"offers"} />}
           />
-
+          <Route
+            path="/customer-candidate-presented/:id/:jobPostedbyId"
+            element={<CustomerCandidateLists type={"presented"} />}
+          />
           <Route path="/candidate-list" element={<CustomerCandidateLists />} />
 
           <Route
