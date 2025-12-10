@@ -343,7 +343,7 @@ export default function CustomerCandidateLists(props) {
     else if (type === "presented") {
       handlePresentClick(evt, type);
     }
-    else if(type==="candidatePlaced"){
+    else if (type === "candidatePlaced") {
       handleCandidatePlacedClick(evt, type);
     }
   };
@@ -677,6 +677,21 @@ export default function CustomerCandidateLists(props) {
                   Applied{reportData?.Applied > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Applied}</span>)}
                 </Button>
 
+                {isStaffingFirm && (<Button
+                  color="primary"
+                  disabled={loading}
+                  className={
+                    "border-0 btn-transition  " +
+                    classnames({ active: activeTab === "presented" })
+                  }
+                  onClick={() => {
+                    toggle("presented");
+                  }}
+                >
+                  Presented{reportData?.Presented > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Presented}</span>)}
+                </Button>
+                )}
+
                 <Button
                   color="primary"
                   disabled={loading}
@@ -730,20 +745,7 @@ export default function CustomerCandidateLists(props) {
                   Declined{reportData?.Reject > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Reject}</span>)}
                 </Button>
 
-                {isStaffingFirm && (<Button
-                  color="primary"
-                  disabled={loading}
-                  className={
-                    "border-0 btn-transition  " +
-                    classnames({ active: activeTab === "presented" })
-                  }
-                  onClick={() => {
-                    toggle("presented");
-                  }}
-                >
-                  Presented{reportData?.Presented > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Presented}</span>)}
-                </Button>
-                )}
+
               </ButtonGroup></Col>
 
             <Col xs="12" sm="12" md="6" lg="2"><Input
