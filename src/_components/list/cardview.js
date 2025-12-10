@@ -22,7 +22,8 @@ import {
   BsClock,
   BsMortarboard,
   BsFileEarmark,
-  BsBuildings
+  BsBuildings,
+  BsCheckCircle
 } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { customerCandidateListsActions } from "../../_containers/customer/candidatelists/customercandidatelists.slice";
@@ -234,7 +235,7 @@ export const CandidateCardView = (props) => {
     return (
       <Row>
         <Col sm={6} md={6} lg={6} xl={6} className="card-details-op">
-          <p>  <span>OpenWorX CV</span>
+          <p>  <span style={{ cursor: "pointer", marginLeft: "3px" }} onClick={() => onBuildResume()}>OpenWorX CV</span>
             <img
               style={{ float: "left", cursor: "pointer" }}
               src={customerIcons.view_cv_icon}
@@ -245,7 +246,7 @@ export const CandidateCardView = (props) => {
         <Col sm={5} md={5} lg={5} xl={5} className="card-details-op">
           {props?.data?.candidateResumeDto?.resumepath && (
             <p>
-              <span >
+              <span style={{ cursor: "pointer", marginLeft: "3px" }} onClick={() => onCandidateResume()}>
                 Candidate CV
               </span>
               <img
@@ -277,7 +278,7 @@ export const CandidateCardView = (props) => {
   };
 
   const onPresentClick = () => {
-    // props.onPresentClick(props?.data?.candidaterecommendedjobid);
+    props.onPresentClick(props?.data?.candidaterecommendedjobid);
   }
 
   return (
@@ -493,7 +494,7 @@ export const CandidateCardView = (props) => {
                 size="sm"
                 onClick={() => onActionClick("maybe")}
               >
-                Maybe <BsQuestionCircle></BsQuestionCircle>
+                <BsQuestionCircle></BsQuestionCircle>  Maybe
               </Button>
               <Button
                 outline
@@ -503,8 +504,20 @@ export const CandidateCardView = (props) => {
                 size="sm"
                 onClick={() => onActionClick("like")}
               >
-                Like <BsHandThumbsUp></BsHandThumbsUp>
+                <BsHandThumbsUp></BsHandThumbsUp>  Like
               </Button>
+              {isStaffingFirm && (
+                <Button
+                  outline
+                  title="present"
+                  className="btn-icon mb-1"
+                  color="primary"
+                  onClick={() => onActionClick("presented")}
+                  size="sm"
+                >
+                  <BsCheckCircle ></BsCheckCircle >  Present
+                </Button>
+              )}
               <Button
                 outline
                 title="schedule"
@@ -513,7 +526,7 @@ export const CandidateCardView = (props) => {
                 size="sm"
                 onClick={() => onScheduleInterview()}
               >
-                Schedule <BsClock />
+                <BsClock />  Schedule
               </Button>
               <Button
                 outline
@@ -523,20 +536,9 @@ export const CandidateCardView = (props) => {
                 onClick={() => onRejectClick()}
                 size="sm"
               >
-                Decline <BsXCircle></BsXCircle>
+                <BsXCircle></BsXCircle> Decline
               </Button>
-              {isStaffingFirm && (
-                <Button
-                  outline
-                  title="decline"
-                  className="btn-icon mb-1"
-                  color="primary"
-                  onClick={() => onPresentClick()}
-                  size="sm"
-                >
-                  Present <BsXCircle></BsXCircle>
-                </Button>
-              )}
+
             </ButtonGroup>
           </Row>
         </CardFooter>

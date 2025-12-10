@@ -48,6 +48,9 @@ export function CustJobDetail({
   );
   let customerApproval = customerDetails?.customerstatusid === 2 ? true : false;
   const jobTypeOption = useSelector((state) => state.dropdown.jobType);
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
+
   let loading = true;
   let jobDetail = {};
   let skillsData = "-";
@@ -329,6 +332,15 @@ export function CustJobDetail({
       action: `/customer-candidate-applied/${jobDetails[0]?.jobid}/${hiringManagerId}`,
       icon: appliedIcon,
     },
+    ...(isStaffingFirm === true ? [{
+      name: "Presented",
+      count:
+        jobDetail.totalPresentedCandidates === null || jobDetail.totalPresentedCandidates === undefined || jobDetail.totalPresentedCandidates === 0
+          ? 0
+          : jobDetail.totalPresentedCandidates,
+      action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
+      icon: appliedIcon,
+    }] : []),
     {
       name: "Scheduled",
       count:
@@ -390,6 +402,14 @@ export function CustJobDetail({
     navigate(action);
   };
   const [noPaymentPopup, setNoPaymentPopup] = useState(false);
+
+  const returnClientName = () => {
+    if (jobDetail?.clientcompanyDto !== null && jobDetail?.clientcompanyDto !== undefined) {
+      return jobDetail?.clientcompanyDto?.name || "";
+    }
+    return jobDetail?.clientcompanyname || "";
+  };
+
   return (
     <>
       <Col md="12" lg="12" className="job-detail-cont">
@@ -604,6 +624,12 @@ export function CustJobDetail({
             <div className="heading-title">
               <h6 className="job-main-heading mb-0">Job Details</h6>
             </div>
+            {isStaffingFirm &&
+              (<HeadingAndDetailWithDiv
+                heading={"Client name"}
+                detail={returnClientName()}
+                iconId={5}
+              />)}
             <HeadingAndDetailWithDiv
               heading={"Job type"}
               detail={returnJobType()}

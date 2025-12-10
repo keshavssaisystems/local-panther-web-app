@@ -17,7 +17,7 @@ import cx from "classnames";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
 import { dropdownActions, addCustomerActions } from "_store";
-import { getCompanies } from "_containers/admin/_redux/adminListing.slice";
+import { getCompanies, updateAllowDataSharing } from "_containers/admin/_redux/adminListing.slice";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { AddEditCompany } from "../common/addEditCompany";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,9 @@ import customerIcons from "assets/utils/images/customer";
 import { FaEye } from "react-icons/fa";
 import { analytics } from "../../../firebase/index";
 import { PaymentModal } from "_components/modal/paymentmodal";
-
+import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
+import { showSnackbar } from "_store/snackbar.slice";
+import { settingsActions } from "_store"
 export const CompanyList = ({ isCompanyAdmin = false }) => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -46,6 +48,8 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
 
   const [openBDModal, setOpenBDModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
+  let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
+  const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
 
   const userDetails = localStorage.getItem("userDetails")
     ? JSON.parse(localStorage.getItem("userDetails"))
@@ -78,8 +82,8 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       name: "Company",
       id: "name",
       selector: (row) => row.companyname,
-
       sortable: true,
+      width: "20%",
     },
     {
       name: "Subsidiary count",
@@ -96,33 +100,44 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </span>
       ),
       sortable: true,
+      width:"10%"
     },
 
     {
-      name: "City",
-      id: "cityname",
-      selector: (row) => row.cityname,
+      name: "Addresss",
+      cell: (row) => (
+        <span        >
+          {getAddressString(row)}
+        </span>
+      ),
       sortable: true,
+      width: "20%",
     },
+    // {
+    //   name: "City",
+    //   id: "cityname",
+    //   selector: (row) => row.cityname,
+    //   sortable: true,
+    // },
 
-    {
-      name: "State",
-      id: "cityname",
-      selector: (row) => row.statename,
-      sortable: true,
-    },
-    {
-      name: "Address",
-      id: "address",
-      selector: (row) => row.address,
-      sortable: true,
-    },
-    {
-      name: "Zipcode",
-      id: "phonenumber",
-      selector: (row) => row.zipcode,
-      sortable: true,
-    },
+    // {
+    //   name: "State",
+    //   id: "cityname",
+    //   selector: (row) => row.statename,
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Address",
+    //   id: "address",
+    //   selector: (row) => row.address,
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Zipcode",
+    //   id: "phonenumber",
+    //   selector: (row) => row.zipcode,
+    //   sortable: true,
+    // },
     {
       name: "Industry",
       selector: (row) => row.industry,
@@ -132,7 +147,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       ? [
         {
           name: "Staffing Firm",
-
+          selector: row => row.isstaffingfirm,
           cell: (row) => (
             <span
               style={{
@@ -147,6 +162,53 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         },
       ]
       : []),
+    ...(currentRoleId === 1 || isStaffingFirm
+      ? [
+        {
+          name: "Allow Data Sharing with OpenWorX Ecosystem",
+          cell: (row) => (
+            <div
+              style={{
+                width: "100%",                // take full cell width
+                display: "flex",
+                justifyContent: "center",     // horizontal center
+                alignItems: "center",         // vertical center
+              }}
+            >
+              <div
+                title="Allow Data Sharing with OpenWorX Ecosystem"
+                className="switch has-switch"
+                data-on-label="ON"
+                data-off-label="OFF"
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  handleToggleExcludeCandidateFromEcosystems(
+                    !row.isexcludecandidatesfromecosystem,
+                    row
+                  )
+                }
+              >
+                {row.isstaffingfirm && (
+                  <div
+                    className={cx("switch-animate", {
+                      "switch-on": !row.isexcludecandidatesfromecosystem,
+                      "switch-off": row.isexcludecandidatesfromecosystem,
+                    })}
+                    size="sm"
+                  >
+                    <input type="checkbox" />
+                    <span className="switch-left">ON</span>
+                    <label>&nbsp;</label>
+                    <span className="switch-right">OFF</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ),
+          sortable: true,
+        }
+      ] : []),
+
     {
       name: "Action",
       cell: (row) => (
@@ -202,6 +264,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </div>
       ),
       sortable: false,
+      width: "15%",
     },
   ];
 
@@ -439,6 +502,55 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   const handlePageChange = async (page) => {
     setPageNo(page);
     getCompanyList(pageSize, page);
+  };
+
+
+  const handleToggleExcludeCandidateFromEcosystems = async function (value, row) {
+    let id = row.companyid;
+    let data = {
+      "isexcludecandidatesfromecosystem": value
+    };
+
+    let response = await dispatch(updateAllowDataSharing({ id, payload: data }));
+    if (response.payload) {
+      dispatch(showSnackbar({
+        message: response.payload.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      getCompanyList(pageSize, pageNo);
+    } else {
+      dispatch(showSnackbar({
+        message: response.error.message,
+        type: SNACKBAR_TYPES.SUCCESS,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+      getCompanyList(pageSize, pageNo);
+    }
+  };
+
+
+  const getAddressString = (row) => {
+    let address = "";
+    if (row.address) {
+      address += row.address;
+    }
+    if (row.cityname) {
+      address += address ? `, ${row.cityname}` : row.cityname;
+    }
+    if (row.statename) {
+      address += address ? `, ${row.statename}` : row.statename;
+    }
+    if (row.zipcode) {
+      address += address ? `, ${row.zipcode}` : row.zipcode;
+    }
+    return address;
   };
 
   return (
