@@ -311,10 +311,6 @@ export const AddEditCompany = (props) => {
           if (result.data) {
             if (result.data.status === "Success") {
               setSuccess(true);
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "success",
-              // });
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.SUCCESS,
@@ -323,12 +319,8 @@ export const AddEditCompany = (props) => {
                 autoCloseDelay: 3000,
                 maxWidth: 500,
               }));
-
-            } else {
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "error",
-              // });
+              onClose();
+            } else {            
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.ERROR,
@@ -337,15 +329,10 @@ export const AddEditCompany = (props) => {
                 autoCloseDelay: 3000,
                 maxWidth: 500,
               }));
-
               setError(true);
             }
           } else {
-            setError(true);
-            // showSweetAlert({
-            //   title: "Something went wrong, please try again later",
-            //   type: "warning",
-            // });
+            setError(true);            
             dispatch(showSnackbar({
               message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
               type: SNACKBAR_TYPES.ERROR,
@@ -354,7 +341,6 @@ export const AddEditCompany = (props) => {
               autoCloseDelay: 3000,
               maxWidth: 500,
             }));
-
           }
         })
         .catch((error) => { });
@@ -365,11 +351,7 @@ export const AddEditCompany = (props) => {
         .then((result) => {
           if (result.data) {
             if (result.data.status === "Success") {
-              setSuccess(true);
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "success",
-              // });
+              setSuccess(true);             
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.SUCCESS,
@@ -380,10 +362,6 @@ export const AddEditCompany = (props) => {
               }));
               onClose();
             } else {
-              // showSweetAlert({
-              //   title: result.data.message,
-              //   type: "error",
-              // });
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.ERROR,
@@ -395,11 +373,6 @@ export const AddEditCompany = (props) => {
               setError(true);
             }
           } else {
-            setError(true);
-            // showSweetAlert({
-            //   title: "Something went wrong, please try again later",
-            //   type: "warning",
-            // });
             dispatch(showSnackbar({
               message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
               type: SNACKBAR_TYPES.ERROR,
