@@ -239,7 +239,18 @@ export const CustCandidateListView = (props) => {
           ) : (
             <></>
           )}
-
+          {isStaffingFirm && (
+            <Button
+              // outline
+              title="present"
+              className="btn-icon"
+              color="secondary"
+              onClick={() => onActionClick("presented", candidaterecommendedjobid)}
+              size="sm"
+            >
+              <img src={customerIcons.present_icon} alt="list presented"></img>
+            </Button>
+          )}
           <Button
             // outline
             size="sm"
@@ -275,6 +286,18 @@ export const CustCandidateListView = (props) => {
           >
             <img src={customerIcons.list_schedule} alt="list maybe"></img>
           </Button>
+          {isStaffingFirm && (
+            <Button
+              // outline
+              title="present"
+              className="btn-icon"
+              color="secondary"
+              onClick={() => onActionClick("presented", candidaterecommendedjobid)}
+              size="sm"
+            >
+              <img src={customerIcons.present_icon} alt="list presented"></img>
+            </Button>
+          )}
           <Button
             // outline
             size="sm"
@@ -475,7 +498,7 @@ export const CustCandidateListView = (props) => {
     }
     else if (props.type === "presented") {
       return (
-        <ButtonGroup>         
+        <ButtonGroup>
           <Button
             // outline
             size="sm"
@@ -484,8 +507,8 @@ export const CustCandidateListView = (props) => {
             className="btn-icon"
             color="success"
           >
-            <img src={customerIcons.list_accept} alt="list accept"></img>
-          </Button>         
+            <img src={customerIcons.list_accept} alt="list place"></img>
+          </Button>
         </ButtonGroup>
       );
     }
@@ -1261,7 +1284,7 @@ export const CustCandidateListView = (props) => {
                   selector: (row) => row.firstname + " " + row.lastname,
                   sortable: true,
                   wrap: true,
-                  width: "15%",
+                  width: "13%",
                 },
                 {
                   name: <span className="table-title">Client name</span>,
@@ -1274,7 +1297,7 @@ export const CustCandidateListView = (props) => {
                   selector: (row) => row.clientcompanyname,
                   sortable: true,
                   wrap: true,
-                  width: "15%",
+                  width: "12%",
                   hide: isStaffingFirm
                 },
                 {
@@ -1282,7 +1305,7 @@ export const CustCandidateListView = (props) => {
                   cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
                   selector: (row) => row?.jobtitle,
                   sortable: true,
-                  width: "20%",
+                  width: "15%",
                 },
                 {
                   name: <span className="table-title">Applied date</span>,
@@ -1296,7 +1319,7 @@ export const CustCandidateListView = (props) => {
 
                   ignoreRowClick: true,
                   button: true,
-                  width: "15%",
+                  width: "12%",
                 },
                 // {
                 //   name: <span className="table-title">Location</span>,
@@ -1386,7 +1409,7 @@ export const CustCandidateListView = (props) => {
                     ),
                   ignoreRowClick: true,
                   button: true,
-                  width: "15%",
+                  width: "13%",
                 },
                 {
                   name: <span className="table-title">Job posted by</span>,
@@ -1429,7 +1452,7 @@ export const CustCandidateListView = (props) => {
           ),
           selector: (row) => row.firstname + " " + row.lastname,
           sortable: true,
-          //width: "15%",
+          //width: "12%",
         },
         {
           name: <span className="table-title">Client name</span>,
@@ -1442,7 +1465,7 @@ export const CustCandidateListView = (props) => {
           selector: (row) => row.clientcompanyname,
           sortable: true,
           wrap: true,
-          width: "15%",
+          width: "12%",
           hide: isStaffingFirm
         },
         {
