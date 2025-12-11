@@ -20,6 +20,7 @@ const customerIcons = {
   list_edit: require("./pencil-soild.svg").default,
   audio_icon: require("./audio-icon.svg").default,
   video_icon: require("./camera-video.svg").default,
+  present_icon: require("./list/present.svg").default,
 };
 
 export default customerIcons;

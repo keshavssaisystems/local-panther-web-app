@@ -60,6 +60,24 @@
   padding-bottom: 10px;
 }
 
+.btn-icon svg {
+  margin-top: -4px;
+  /* optional micro-adjustment */
+}
+
+.btn-flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  // gap: 6px;
+  /* spacing between buttons */
+}
+
+.btn-flex-wrap .btn {
+  display: flex;
+  align-items: center;
+  // gap: 4px;
+}
+
 /* Tablet: reduce button padding */
 @media (max-width: 768px) {
   .cust-cand-card {

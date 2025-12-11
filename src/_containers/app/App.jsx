@@ -886,7 +886,7 @@ export function App() {
             )}
             <div className={authUser ? `app-main` : ""}>
               {/* <AIProfileOffCanvas>  </AIProfileOffCanvas> */}
-              <AIJobOffCanvas></AIJobOffCanvas>
+              {/* <AIJobOffCanvas></AIJobOffCanvas> */}
 
               {authUser && !hideSidebar && (
                 <AppSidebar
