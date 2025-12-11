@@ -20,6 +20,7 @@ import scheduledIcon from "assets/utils/images/job-detail-icons/scheduled.svg";
 import offersIcon from "assets/utils/images/job-detail-icons/offers.svg";
 import acceptedIcon from "assets/utils/images/job-detail-icons/accepted.svg";
 import rejectedIcon from "assets/utils/images/job-detail-icons/rejected.svg";
+import presentIcon from "assets/utils/images/job-detail-icons/present.svg";
 import { CloseJobReasonPopup } from "./closeJobReasonPopup";
 import infoIcon from "assets/utils/images/yellow-info-big.svg";
 
@@ -339,7 +340,7 @@ export function CustJobDetail({
           ? 0
           : jobDetail.totalPresentedCandidates,
       action: `/customer-candidate-presented/${jobDetails[0]?.jobid}/${hiringManagerId}`,
-      icon: appliedIcon,
+      icon: presentIcon,
     }] : []),
     {
       name: "Scheduled",
