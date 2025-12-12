@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import Slider from "react-slick";
 import "./registration.scss";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { BsBriefcase, BsPeople, BsArrowLeft } from "react-icons/bs";
 import SweetAlert from "react-bootstrap-sweetalert";
 import bg1 from "../../assets/utils/images/login.png";
 import validIcon from "../../assets/utils/images/valid-icon.svg";
@@ -79,7 +80,7 @@ export function Registration() {
   const [countryValue, setCountryValue] = useState([]);
   const [cityValue, setCityValue] = useState(0);
   const { role } = useParams();
-  const [selected, setSelected] = useState(role === 'hm' ? 2 : 1);
+  const [selected, setSelected] = useState(role === 'hm' ? 2 : role ? 1 : 0);
   const otpLength = ["1", "2", "3", "4", "5", "6"];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -715,78 +716,137 @@ export function Registration() {
               </div>
               <Row className="login-divider" />
               <div className="app-logo mb-0" />
-              <div className="title-text">Welcome,</div>
+              <div className="title-text">Registration</div>
               <span className="title-content">
-                It only takes a few seconds to create your account
+              Welcome, It only takes a few seconds to create your account
               </span>
-              <div className="mt-5 mb-3">
-                <Row>
-                  <Label className="input-label">
-                    Please select your role{" "}
+              {selected === 0 && (
+                <div className="mt-5 mb-3">
+                  <Label className="input-label mb-4">
+                    Please select your account type{" "}
                     <span className="text-danger">*</span>
                   </Label>
-
-                  {/* {registrationType.map((item, index) => ( */}
-                  <Col md={4} lg={4} sm={12} xl={4} xs={12} xxl={3}>
-                    <FormGroup check style={{ marginLeft: "5px" }}>
-                      <div onClick={(evt) => onHandleInputChange(1)}>
-                        <Input
-                          style={{ fontSize: "18px" }}
-                          name="desiredJobType"
-                          type="radio"
-                          value={1}
-                          checked={selected === 1}
-                        />{" "}
-                        <Label
-                          check
-                          className="fw-semi-bold reg-link-text"
-                          style={{ fontSize: "18px", fontWeight: "600" }}
-                        >
-                          Job seekers
-                        </Label>
-                      </div>
-                    </FormGroup>
-                  </Col>
-                  <Col md={8} lg={8} sm={12} xl={8} xs={12} xxl={6}>
-                    <FormGroup check style={{ marginLeft: "5px" }}>
-                      <div onClick={(evt) => onHandleInputChange(2)}>
-                        <Input
-                          style={{ fontSize: "18px" }}
-                          name="desiredJobType"
-                          type="radio"
-                          value={2}
-                          checked={selected === 2}
-                        />{" "}
-                        <Label
-                          check
-                          className="fw-semi-bold reg-link-text"
-                          style={{ fontSize: "18px", fontWeight: "600" }}
-                        >
-                          New Company or Hiring Manager? Register here
-                        </Label>
-                      </div>
-                    </FormGroup>
-                  </Col>
-                  {/* ))} */}
-                </Row>
-                {selected === 0 && (
-                  <div className="mt-3 float-end">
-                    <Link to="/login">
-                      <Button
-                        style={{ background: "#2F2E2E" }}
-                        className=" btn-text me-2"
-                        size="lg"
+                  <Row className="g-2">
+                    <Col md={6} lg={5} sm={12} xs={12} className="role-card-col">
+                      <div
+                        className={`role-selection-card ${
+                          selected === 1 ? "role-card-selected" : ""
+                        }`}
+                        onClick={() => onHandleInputChange(1)}
                       >
-                        Back
-                      </Button>
+                        <div className="role-card-header">
+                          <div className="role-card-icon">
+                            <BsBriefcase size={32} color="#038FFE" />
+                          </div>
+                          <h5 className="role-card-title">Candidate (Job Seeker)</h5>
+                        </div>
+                        <p className="role-card-description">
+                          I am looking for a new job or opportunity.
+                        </p>
+                        {selected === 1 && (
+                          <div className="role-card-checkmark">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle cx="10" cy="10" r="10" fill="#28a745" />
+                              <path
+                                d="M6 10l3 3 5-5"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+                    <Col md={6} lg={5} sm={12} xs={12} className="role-card-col">
+                      <div
+                        className={`role-selection-card ${
+                          selected === 2 ? "role-card-selected" : ""
+                        }`}
+                        onClick={() => onHandleInputChange(2)}
+                      >
+                        <div className="role-card-header">
+                          <div className="role-card-icon">
+                            <BsPeople size={32} color="#038FFE" />
+                          </div>
+                          <h5 className="role-card-title">
+                            Hiring Manager (Company)
+                          </h5>
+                        </div>
+                        <p className="role-card-description">
+                          I want to post jobs and manage my team's hiring.
+                        </p>
+                        {selected === 2 && (
+                          <div className="role-card-checkmark">
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle cx="10" cy="10" r="10" fill="#28a745" />
+                              <path
+                                d="M6 10l3 3 5-5"
+                                stroke="white"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+                  </Row>
+                  <div className="mt-4">
+                    <Link
+                      to="/login"
+                      className="pb-text"
+                      style={{ color: "#052f5f", textDecoration: "none" }}
+                    >
+                      Already Registered?{" "}
+                      <span style={{ textDecoration: "underline", color: "#038FFE" }}>
+                        Login Here
+                      </span>
                     </Link>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
               <div className="mt-5">
                 {selected === 1 && (
-                  <Form onSubmit={handleSubmit(onSubmit1)}>
-                    <Row>
+                  <div>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                      <h5 className="mb-0">
+                        Create your{" "}
+                        <span style={{ color: "#052f5f" }}>
+                          Candidate (Job Seeker)
+                        </span>{" "}
+                        Account
+                      </h5>
+                      <Link
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onHandleInputChange(0);
+                        }}
+                        className="change-role-link"
+                        style={{ color: "#038FFE", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}
+                      >
+                        <BsArrowLeft size={20} color="#038FFE" />
+                        <span style={{ textDecoration: "underline", color: "#038FFE" }}>
+                        Change Role</span>
+                      </Link>
+                    </div>
+                    <Form onSubmit={handleSubmit(onSubmit1)}>
+                      <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="firstName" className="input-label">
@@ -1062,9 +1122,13 @@ export function Registration() {
                         <Link
                           to="/login"
                           className="pb-text"
-                          style={{ borderBottom: "1px solid #545cd8" }}
+                          
                         >
-                          Already a member? Sign in
+                          {/* Already a member? Sign in */}
+                          Already Registered?{" "}
+                      <span style={{ textDecoration: "underline", color: "#038FFE" }}>
+                        Login Here
+                      </span>
                         </Link>
                       </h5>
                       <div>
@@ -1074,9 +1138,36 @@ export function Registration() {
                       </div>
                     </div>
                   </Form>
+                  </div>
                 )}
                 {/* {selected === 2 && <CustomerRegistration />} */}
-                {selected === 2 && <EmployerRegistration />}
+                {selected === 2 && (
+                  <div>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                      <h5 className="mb-0">
+                        Create your{" "}
+                        <span style={{ color: "#052f5f", fontSize:"1.1rem", fontWeight:"600" }}>
+                          Hiring Manager
+                        </span>{" "}
+                        Account
+                      </h5>
+                      <Link
+                        to="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onHandleInputChange(0);
+                        }}
+                        className="change-role-link"
+                        style={{ color: "#038FFE", textDecoration: "none", display: "flex", alignItems: "center", gap: "4px" }}
+                      >
+                        <BsArrowLeft size={20} color="#038FFE" />
+                        <span style={{ textDecoration: "underline", color: "#038FFE" }}>
+                        Change Role</span>
+                      </Link>
+                    </div>
+                    <EmployerRegistration />
+                  </div>
+                )}
               </div>
               {selected === 2 ? "" : <br />}
               <br></br>

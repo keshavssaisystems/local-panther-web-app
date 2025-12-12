@@ -28,6 +28,7 @@ import { useDispatch } from "react-redux";
 import SweetAlert from "react-bootstrap-sweetalert";
 import emailVerify from "../../assets/utils/images/emailverify.svg";
 import infoIcon from "../../assets/utils/images/info-circle-fill-blue.svg";
+import { BsPlus, BsArrowLeft } from "react-icons/bs";
 import { messaging } from "../../firebase";
 import { getPublicIP } from "_helpers/helper";
 
@@ -127,8 +128,9 @@ export function EmployerRegistration() {
 
   const formatCreateLabel = () => {
     return (
-      <span style={{ cursor: "pointer", color: "#052f5f" }}>
-        Add new company +{" "}
+      <span style={{ cursor: "pointer", color: "#038FFE", display: "flex", alignItems: "center", gap: "4px" }}>
+        <BsPlus size={16} color="#038FFE" />
+        Add New Company
       </span>
     );
   };
@@ -138,6 +140,13 @@ export function EmployerRegistration() {
     setValue("companyname", "");
 
     setSelectedComp({ value: "0", label: "New Company", email: "" });
+  };
+
+  const backToSearch = () => {
+    setSelectedComp(null);
+    setValue("companyemail", "");
+    setValue("companyname", "");
+    setCSError(false);
   };
   const loadOptionsDeb = useCallback(
     debounce((inputValue, callback) => {
@@ -394,99 +403,120 @@ export function EmployerRegistration() {
   };
   return (
     <>
-      <Row>
-        <Col md={6}>
-          <FormGroup>
-            <Label for={"mustHave"} className="fw-semi-bold">
-              Select Company <span style={{ color: "red" }}>* </span>
-              {selectedComp?.value && selectedComp?.value === "0" && (
-                <>
-                  <UncontrolledTooltip
-                    placement="bottom"
-                    target={"info-new-comp"}
-                  >
-                    Adding a company creates an admin account assigned to the selected person.
-                  </UncontrolledTooltip>
-                  <img
-                    id="info-new-comp"
-                    src={infoIcon}
-                    alt="info icon"
-                    height={14}
-                    width={14}
-                  />
-                </>
-              )}
-              {!selectedComp?.value && (
-                <>
-                  <UncontrolledTooltip
-                    placement="bottom"
-                    target={"info-no-comp"}
-                  >
-                    If your company is already registered, it will appear in the search result.
-                  </UncontrolledTooltip>
-                  <img
-                    id="info-no-comp"
-                    src={infoIcon}
-                    alt="info icon"
-                    height={14}
-                    width={14}
-                  />
-                </>
-              )}
-              {(selectedComp?.value) && (selectedComp?.value != "0") && (
-                <>
-                  <UncontrolledTooltip
-                    placement="bottom"
-                    target={"info-new-comp"}
-                  >
-                    Your account will be created under this company with the role of Hiring Manager.
-                  </UncontrolledTooltip>
-                  <img
-                    id="info-new-comp"
-                    src={infoIcon}
-                    alt="info icon"
-                    height={14}
-                    width={14}
-                  />
-                </>
-              )}
-            </Label>
+      {!selectedComp?.value || (selectedComp?.value && selectedComp?.value !== "0") ? (
+        <Row>
+          <Col md={8}>
+            <FormGroup>
+              <Label for={"mustHave"} className="fw-semi-bold">
+                Select Company <span style={{ color: "red" }}>* </span>
+                {!selectedComp?.value && (
+                  <>
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      target={"info-no-comp"}
+                    >
+                      If your company is already registered, it will appear in the search result.
+                    </UncontrolledTooltip>
+                    <img
+                      id="info-no-comp"
+                      src={infoIcon}
+                      alt="info icon"
+                      height={14}
+                      width={14}
+                    />
+                  </>
+                )}
+                {selectedComp?.value && selectedComp?.value !== "0" && (
+                  <>
+                    <UncontrolledTooltip
+                      placement="bottom"
+                      target={"info-new-comp"}
+                    >
+                      Your account will be created under this company with the role of Hiring Manager.
+                    </UncontrolledTooltip>
+                    <img
+                      id="info-new-comp"
+                      src={infoIcon}
+                      alt="info icon"
+                      height={14}
+                      width={14}
+                    />
+                  </>
+                )}
+              </Label>
 
-            <AsyncCreatableSelect
-              name="mustHave"
-              placeholder="Enter your email to find your company"
-              loadOptions={loadOptionsDeb}
-              value={selectedComp}
-              // defaultOptions={[{ value: "", key: "" }]}
-              // value={
-              //   type === "new_template" &&
-              //   previousStep !== 3 &&
-              //   keyQualicationChange === false
-              //     ? []
-              //     : previousStep === 3
-              //     ? keyQualificationArr1
-              //     : prevKeyQualificationArr1
-              // }
-              // onKeyDown={(e) => handleKeyDown(e)}
-              isValidNewOption={() => true}
-              onChange={(evt) => {
-                onCompanySelected(evt);
-              }}
-              allowCreateWhileLoading={true}
-              formatCreateLabel={formatCreateLabel}
-              onCreateOption={addNewCompany}
-              className={csError ? "comp-search-reg-error " : "comp-search-reg"}
-              classNamePrefix="react-select"
-            />
-            {csError && (
-              <div style={{ color: "red" }}>
-                Please enter valid domain name for company search
+              <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                <div style={{ flex: 1 }}>
+                  <AsyncCreatableSelect
+                    name="mustHave"
+                    placeholder="Enter your work email to find your company"
+                    loadOptions={loadOptionsDeb}
+                    value={selectedComp}
+                    onChange={(evt) => {
+                      onCompanySelected(evt);
+                    }}
+                    formatCreateLabel={() => null}
+                    className={csError ? "comp-search-reg-error " : "comp-search-reg"}
+                    classNamePrefix="react-select"
+                  />
+                  <div style={{ fontSize: "12px", color: "#6c757d", marginTop: "4px" }}>
+                    Example: johndoe@companyname.com
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  onClick={addNewCompany}
+                  style={{
+                    background: "#038FFE",
+                    border: "none",
+                    color: "white",
+                    borderRadius: "4px",
+                    padding: "8px 16px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    whiteSpace: "nowrap",
+                    height: "fit-content",
+                  }}
+                >
+                  <BsPlus size={16} color="white" />
+                  Add New Company
+                </Button>
               </div>
-            )}
-          </FormGroup>
-        </Col>
-      </Row>
+              {csError && (
+                <div style={{ color: "red", marginTop: "4px" }}>
+                  Please enter valid domain name for company search
+                </div>
+              )}
+            </FormGroup>
+          </Col>
+        </Row>
+      ) : null}
       <Form onSubmit={handleSubmit(onSubmit)}>
+        {selectedComp?.value && selectedComp?.value === "0" && (
+          <Row className="mb-3">
+            <Col>
+              <Button
+                type="button"
+                onClick={backToSearch}
+                style={{
+                  background: "#038FFE",
+                  border: "none",
+                  color: "white",
+                  borderRadius: "4px",
+                  padding: "8px 16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <BsArrowLeft size={16} color="white" />
+                Back to Search
+              </Button>
+            </Col>
+          </Row>
+        )}
         {selectedComp?.value && (
           <Row>
             <Col md={6}>
@@ -625,10 +655,13 @@ export function EmployerRegistration() {
           <h5 className="mb-0 account-text ms-auto me-4">
             <Link
               to="/login"
-              className="pb-text"
-              style={{ borderBottom: "1px solid #545cd8" }}
+              className="pb-text"              
             >
-              Already a member? Sign in
+              {/* Already a member? Sign in */}
+              Already Registered?{" "}
+                      <span style={{ textDecoration: "underline", color: "#038FFE" }}>
+                        Login Here
+                      </span>
             </Link>
           </h5>
           <div>
