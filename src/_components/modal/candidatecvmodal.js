@@ -12,6 +12,7 @@ import {
 
 export const CandidateCVModal = (props) => {
   const [pdfUrl, setPdfUrl] = useState("");
+  const [documentType, setDocumentType] = useState("");
   const [documentOpenModal, setDocumentOpenModal] = useState(false);
   const onCandidateResume = async () => {
     const response = await fetch(props.url);
@@ -52,21 +53,23 @@ export const CandidateCVModal = (props) => {
 
 
   const getFileType = (url) => {
+    let documentType = "";
     if (!url) return null;
 
     const lower = url.toLowerCase();
 
-    if (lower.endsWith(".pdf")) return "pdf";
-    if (lower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) return "image";
-
-    return "unknown";
+    if (lower.endsWith(".pdf")) documentType = "pdf";
+    else if (lower.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) documentType = "image";
+    else documentType = "unknown";
+    setDocumentType(documentType);
+    return documentType;
   }
 
   return (<Modal isOpen={props.isOpen} toggle={() => props.onClose()} size="lg" className="modal-reject-align ">
     <ModalHeader toggle={() => props.onClose()}></ModalHeader>
 
     <ModalBody style={{ height: "80vh" }}>
-      {pdfUrl && (
+      {pdfUrl && documentType === "pdf" && (
         <iframe
           src={pdfUrl}
           title="document"
@@ -75,6 +78,9 @@ export const CandidateCVModal = (props) => {
           style={{ border: "none" }}
         ></iframe>
       )}
+      {
+        documentType === "image" && (<img src={pdfUrl} alt="document" style={{ width: "100%", height: "100%" }} />)
+      }
     </ModalBody>
     <ModalFooter>
       <Button color="primary" onClick={() => props.onClose()}>

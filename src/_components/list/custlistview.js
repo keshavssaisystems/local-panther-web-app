@@ -205,6 +205,40 @@ export const CustCandidateListView = (props) => {
     }
   };
 
+  const handlePresentCandidate = async (type, candidaterecommendedjobid, row) => {
+    if (row.ispresented === true) {
+      dispatch(showSnackbar({
+        message: "Candidate is already presented",
+        type: SNACKBAR_TYPES.WARNING,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    else {
+      onActionClick("presented", candidaterecommendedjobid);
+    }
+
+  }
+
+  const onPlacedClick = async (type, candidaterecommendedjobid, row) => {
+    if (row.customerrecommendedjobstatusid === 5) {
+      dispatch(showSnackbar({
+        message: "Candidate is already accepted/placed",
+        type: SNACKBAR_TYPES.WARNING,
+        position: SNACKBAR_POSITION.TOP_CENTER,
+        autoClose: true,
+        autoCloseDelay: 3000,
+        maxWidth: 500,
+      }));
+    }
+    else {
+      onActionClick(type, candidaterecommendedjobid);
+    }
+
+  }
+
   const renderButtons = (candidaterecommendedjobid, row) => {
     if (props.type === "liked" || props.type === "maybe") {
       return (
@@ -242,11 +276,12 @@ export const CustCandidateListView = (props) => {
           {isStaffingFirm && (
             <Button
               // outline
-              title="present"
+              title={row.ispresented ? "Candidate already presented" : "Present"}
               className="btn-icon"
               color="secondary"
-              onClick={() => onActionClick("presented", candidaterecommendedjobid)}
+              onClick={() => handlePresentCandidate("presented", candidaterecommendedjobid, row)}
               size="sm"
+
             >
               <img src={customerIcons.present_icon} alt="list presented"></img>
             </Button>
@@ -289,11 +324,12 @@ export const CustCandidateListView = (props) => {
           {isStaffingFirm && (
             <Button
               // outline
-              title="present"
+              title={row.ispresented === true ? "Candidate already presented" : "Present"}
               className="btn-icon"
               color="secondary"
-              onClick={() => onActionClick("presented", candidaterecommendedjobid)}
+              onClick={() => handlePresentCandidate("presented", candidaterecommendedjobid, row)}
               size="sm"
+            // disabled={row.ispresented}
             >
               <img src={customerIcons.present_icon} alt="list presented"></img>
             </Button>
@@ -503,7 +539,7 @@ export const CustCandidateListView = (props) => {
             // outline
             size="sm"
             title="Place"
-            onClick={() => onActionClick("candidatePlaced", candidaterecommendedjobid)}
+            onClick={() => onPlacedClick("candidatePlaced", candidaterecommendedjobid, row)}
             className="btn-icon"
             color="success"
           >
@@ -1222,27 +1258,41 @@ export const CustCandidateListView = (props) => {
                 cell: (row) => <span title={row.jobtitle}>{row?.jobtitle}</span>,
                 selector: (row) => row?.jobtitle,
                 sortable: true,
-                width: "30%",
+                width: "20%",
               },
               {
                 name: <span className="table-title">{"Presented by"}</span>,
                 cell: (row) => <span title={row.customerpresentbyname}>{row.customerpresentbyname}</span>,
                 selector: (row) => row.customerpresentbyname,
                 sortable: true,
-                //width: "20%",
+                width: "15%",
+              },
+              {
+                name: <span className="table-title">{"Current Status"}</span>,
+                cell: (row) => <span title={row.customerrecommendedjobstatus}>{row.customerrecommendedjobstatus || row.candidaterecommendedjobstatus}</span>,
+                selector: (row) => row.customerrecommendedjobstatus,
+                sortable: true,
+                width: "15%",
               },
               {
                 name: <span className="table-title">Interest</span>,
                 cell: (row) => (
                   <div className="list-btn-group">
+                    {/* {row?.customerrecommendedjobstatusid !== 5 && (
+                      <ButtonGroup>
+                      {renderButtons(row.candidaterecommendedjobid, row)}
+                    </ButtonGroup>
+                  )} */}
+
                     <ButtonGroup>
                       {renderButtons(row.candidaterecommendedjobid, row)}
                     </ButtonGroup>
+
                   </div>
                 ),
                 ignoreRowClick: true,
                 button: true,
-                width: "17%",
+                width: "12%",
               },
               {
                 name: <span className="table-title">Action</span>,

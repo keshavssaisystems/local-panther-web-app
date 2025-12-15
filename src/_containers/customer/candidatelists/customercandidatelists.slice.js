@@ -298,9 +298,10 @@ function createExtraActions() {
   function getCandidateCardCount() {
     return createAsyncThunk(
       `${name}/getReportBySP`,
-      async ({ jobId, userId }) => {
+      async ({ jobId, userId, searchText }) => {
         const jobIdToUse = (jobId === undefined || jobId === null || jobId === "") ? null : jobId;
-        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId}`;
+
+        const REPORT_API_URL = `${newUrl}/Report/GetReportBySP?storedProcedure=Fetch_CandidateCardCount&parameter=@jobId=${jobIdToUse},@userId=${userId},@searchText='${searchText}'`;
         return await fetchWrapper.get(REPORT_API_URL);
       }
     );
@@ -701,7 +702,7 @@ function createExtraReducers() {
           //no action
         });
     }
-    
+
     function putCandidatePlaced() {
       let { pending, fulfilled, rejected } = extraActions.putCandidatePlaced;
       builder
