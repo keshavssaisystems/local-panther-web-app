@@ -157,7 +157,7 @@ export default function CustomerCandidateLists(props) {
     const currentUserId = actionbyId;
 
     if (currentUserId) {
-      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: currentUserId }));
+      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: currentUserId, searchText: searchText }));
     }
   }, [id, selectedJobId, actionbyId, dispatch]);
 
@@ -260,7 +260,8 @@ export default function CustomerCandidateLists(props) {
       //setSearchText("");
       setPageNo(1);
       setActiveTab(activetab);
-      onGetPageList(pageNo, activetab, "", false);
+      let pageno = 1;
+      onGetPageList(pageno, activetab, "", false);
     }
   };
 
@@ -436,7 +437,7 @@ export default function CustomerCandidateLists(props) {
     onSearchJob();
     if (searchText && actionbyId) {
       const currentJobId = selectedJobId || id || null;
-      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: actionbyId }));
+      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: actionbyId, searchText: searchText }));
     }
   };
   const onCandidateHistoryClick = async (candidateId, row) => {
