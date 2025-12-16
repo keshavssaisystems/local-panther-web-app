@@ -63,7 +63,7 @@ export const AddEditCompany = (props) => {
   const [locationValidation, setLocationValidation] = useState(false);
   const [countryValidation, setCountryValidation] = useState(false);
   const [save, setSave] = useState(false);
-  const [isStaffingFirm, setIsStaffingFirm] = useState(false);
+  const [isStaffingFirm, setIsStaffingFirm] = useState(data.isstaffingfirm);
   const [currentRoleId, setCurrentRoleId] = useState(parseInt(JSON.parse(localStorage.getItem("userDetails"))?.UserroleId) || 0);
 
   useEffect(() => {
@@ -320,7 +320,7 @@ export const AddEditCompany = (props) => {
                 maxWidth: 500,
               }));
               onClose();
-            } else {            
+            } else {
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.ERROR,
@@ -332,7 +332,7 @@ export const AddEditCompany = (props) => {
               setError(true);
             }
           } else {
-            setError(true);            
+            setError(true);
             dispatch(showSnackbar({
               message: GENERAL_MESSAGES.SOMETHING_WENT_WRONG,
               type: SNACKBAR_TYPES.ERROR,
@@ -351,7 +351,7 @@ export const AddEditCompany = (props) => {
         .then((result) => {
           if (result.data) {
             if (result.data.status === "Success") {
-              setSuccess(true);             
+              setSuccess(true);
               dispatch(showSnackbar({
                 message: result.data.message,
                 type: SNACKBAR_TYPES.SUCCESS,
@@ -462,10 +462,12 @@ export const AddEditCompany = (props) => {
                     id={"isstaffingfirm"}
                     name={"isstaffingfirm"}
                     type={"checkbox"}
-                    defaultChecked={data.isstaffingfirm}
+                    defaultChecked={isStaffingFirm}
                     onChange={(e) => {
-                      setIsStaffingFirm(e.target.checked);
-                      handleInputChange(e, "isstaffingfirm")
+                      if (currentRoleId === 1) {
+                        setIsStaffingFirm(e.target.checked);
+                        handleInputChange(e, "isstaffingfirm")
+                      }
                     }}
                   />{" "}
                   {"  "}
