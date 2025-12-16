@@ -215,6 +215,10 @@ export default function CustomerCandidateLists(props) {
     }
   };
 
+  const onGetCandidatesCount = (id, clearText = false) => {
+    dispatch(customerCandidateListsActions.getReportBySP({ jobId: id, userId: actionbyId, searchText: clearText ? "" : searchText }));
+  }
+
   const onGetPageList = (pageNo, type, id, clearText = false) => {
     let candObj = {
       pageNumber: pageNo,
@@ -239,10 +243,12 @@ export default function CustomerCandidateLists(props) {
     }
     if (type === 'presented') {
       dispatch(customerCandidateListsActions.getPresentedCandidateLists(candObj));
+      onGetCandidatesCount(id, clearText);
       return
     }
 
     dispatch(customerCandidateListsActions.getCandidateLists(candObj));
+    onGetCandidatesCount(id, clearText);
   };
 
   const handlePageChange = (page) => {
