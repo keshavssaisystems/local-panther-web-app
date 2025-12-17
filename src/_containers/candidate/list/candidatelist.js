@@ -796,7 +796,7 @@ export default function CandidateList(props) {
                 toggle("maybe");
               }}
             >
-              Maybe
+              Maybe{reportData?.Maybe > 0 && (<span className="badge rounded-pill bg-danger count-badge-style">{reportData.Maybe}</span>)}
             </Button>
             <Button
               color="primary"
