@@ -28,6 +28,8 @@ import { PaymentModal } from "_components/modal/paymentmodal";
 import { SNACKBAR_TYPES, SNACKBAR_POSITION, GENERAL_MESSAGES } from "_constants/snackbarMessages";
 import { showSnackbar } from "_store/snackbar.slice";
 import { settingsActions } from "_store"
+import info from "assets/utils/images/info-circle-fill.svg";
+import ConfirmModal from "_components/modal/confirmModal";
 export const CompanyList = ({ isCompanyAdmin = false }) => {
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
@@ -48,6 +50,8 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
 
   const [openBDModal, setOpenBDModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [pendingToggle, setPendingToggle] = useState(null);
   let companyList = localStorage.getItem("companyList") ? JSON.parse(localStorage.getItem("companyList")) : [];
   const [isStaffingFirm, setIsStaffingFirm] = useState(companyList?.some(company => company.isstaffingfirm === true));
 
@@ -100,7 +104,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
         </span>
       ),
       sortable: true,
-      width:"10%"
+      width: "10%"
     },
 
     {
@@ -182,7 +186,7 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
                 data-off-label="OFF"
                 style={{ cursor: "pointer" }}
                 onClick={() =>
-                  handleToggleExcludeCandidateFromEcosystems(
+                  openConfirmModal(
                     !row.isexcludecandidatesfromecosystem,
                     row
                   )
@@ -505,6 +509,20 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
   };
 
 
+  const openConfirmModal = async (value, row) => {
+    setShowModal(true);
+    setPendingToggle({ value, row });
+  }
+
+  const handleConfirm = async () => {
+    if (!pendingToggle) return;
+
+    const { value, row } = pendingToggle;
+    await handleToggleExcludeCandidateFromEcosystems(value, row);
+    setShowModal(false);
+  };
+
+
   const handleToggleExcludeCandidateFromEcosystems = async function (value, row) {
     let id = row.companyid;
     let data = {
@@ -700,6 +718,27 @@ export const CompanyList = ({ isCompanyAdmin = false }) => {
       ) : (
         <></>
       )}
+      <ConfirmModal
+        isOpen={showModal}
+        title="Confirm data sharing update"
+        icon={info}
+        message={
+          <>
+            <p>This will update your data sharing settings.</p>
+            <ul>
+              <li>Existing jobs and candidates will not be affected</li>
+              <li>The change applies only to newly posted jobs</li>
+            </ul>
+            <p>Do you want to continue?</p>
+          </>
+        }
+        confirmText="Update Setting"
+        cancelText="Cancel"
+        onConfirm={handleConfirm}
+        onCancel={() => setShowModal(false)}
+        zIndex={1050}
+      />
+
     </>
   );
 };

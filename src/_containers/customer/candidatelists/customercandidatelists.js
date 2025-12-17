@@ -152,14 +152,14 @@ export default function CustomerCandidateLists(props) {
     }
   }, []);
 
-  useEffect(() => {
-    const currentJobId = id || selectedJobId || null; // Prioritize id, then selectedJobId, then null
-    const currentUserId = actionbyId;
+  // useEffect(() => {
+  //   const currentJobId = id || selectedJobId || null; // Prioritize id, then selectedJobId, then null
+  //   const currentUserId = actionbyId;
 
-    if (currentUserId) {
-      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: currentUserId, searchText: searchText }));
-    }
-  }, [id, selectedJobId, actionbyId, dispatch]);
+  //   if (currentUserId) {
+  //     dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: currentUserId, searchText: searchText }));
+  //   }
+  // }, [id, selectedJobId, actionbyId, dispatch]);
 
   useEffect(() => {
     if (window?.location?.pathname?.includes("candidate-list")) {
@@ -167,7 +167,7 @@ export default function CustomerCandidateLists(props) {
       let pageno = 1;
       onGetPageList(pageno, props.type || activeTab, "");
     }
-  }, [props.type, actionbyId]);
+  }, [props.type, actionbyId, selectedJobId]);
 
   useEffect(() => {
     if (id) {
@@ -176,7 +176,7 @@ export default function CustomerCandidateLists(props) {
       onGetPageList(pageno, props.type || activeTab, id);
 
     }
-  }, [props.type, id, actionbyId]);
+  }, [props.type, id, actionbyId, selectedJobId]);
 
   useEffect(() => {
     let companyId = Number(localStorage.getItem("companyid"));
@@ -441,10 +441,10 @@ export default function CustomerCandidateLists(props) {
 
   const searchCandidate = async () => {
     onSearchJob();
-    if (searchText && actionbyId) {
-      const currentJobId = selectedJobId || id || null;
-      dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: actionbyId, searchText: searchText }));
-    }
+    // if (searchText && actionbyId) {
+    //   const currentJobId = selectedJobId || id || null;
+    //   dispatch(customerCandidateListsActions.getReportBySP({ jobId: currentJobId, userId: actionbyId, searchText: searchText }));
+    // }
   };
   const onCandidateHistoryClick = async (candidateId, row) => {
     setCandidateName(row?.firstname + " " + row?.lastname);
