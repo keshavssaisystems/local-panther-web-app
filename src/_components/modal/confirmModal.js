@@ -1,67 +1,75 @@
 import React from "react";
-import { Modal, Button, Row, Col, Card, CardBody } from "reactstrap";
+import {
+  Modal,
+  Button,
+  Row,
+  Col,
+  Card,
+  CardBody
+} from "reactstrap";
 
 const ConfirmModal = ({
   isOpen,
-  title = "Are you sure?",
-  message = "Do you want to continue?",
+  title = "Confirm action",
+  message,
   icon,
-  confirmText = "YES",
-  cancelText = "NO",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   onConfirm,
   onCancel
 }) => {
   return (
     <Modal
-      className=""
-    //   size="md"
       isOpen={isOpen}
-      
-      backdrop={true}
-      fade={true}
+      backdrop="static"   // prevent accidental close
+      keyboard={true}     // ESC closes
     >
-      <Card >
-        <CardBody className="text-center p-4">
-          {icon && (
-            <div className="d-flex justify-content-center mb-3">
+      <Card>
+        <CardBody className="p-4">
+
+          {/* Header */}
+          <div className="d-flex align-items-start mb-3">
+            {icon && (
               <img
                 src={icon}
-                alt="modal-icon"
-                className="img-fluid"
-                style={{ maxWidth: "80px", height: "auto" }}
+                alt="info"
+                style={{ width: 20, marginRight: 12 }}
               />
-            </div>
-          )}
+            )}
+            <h5 className="fw-bold mb-0">{title}</h5>
+          </div>
 
-          <h5 className="fw-bold mb-2">{title}</h5>
-          <p className="text-muted mb-4">{message}</p>
+          {/* Body */}
+          <div className="text-muted mb-4">
+            {typeof message === "string" ? <p>{message}</p> : message}
+          </div>
 
-          <Row>
-            <Col className="d-flex justify-content-center flex-wrap gap-2">
+          {/* Footer */}
+          <Row className="justify-content-end">
+            <Col className="d-flex justify-content-end gap-2">
+              <Button
+                // outline
+                color="secondary"
+                style={{ minWidth: 120 }}
+                onClick={onCancel}
+              >
+                {cancelText}
+              </Button>
+
               <Button
                 style={{
                   backgroundColor: "#2f479b",
                   borderColor: "#2f479b",
-                  minWidth: "100px"
+                  minWidth: 160
                 }}
                 className="fw-semibold"
                 onClick={onConfirm}
               >
                 {confirmText}
               </Button>
-              <Button
-                style={{
-                  backgroundColor: "#2f2e2e",
-                  borderColor: "#2f2e2e",
-                  minWidth: "100px"
-                }}
-                className="fw-semibold"
-                onClick={onCancel}
-              >
-                {cancelText}
-              </Button>
             </Col>
           </Row>
+
         </CardBody>
       </Card>
     </Modal>

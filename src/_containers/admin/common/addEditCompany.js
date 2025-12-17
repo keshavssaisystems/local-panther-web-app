@@ -301,7 +301,7 @@ export const AddEditCompany = (props) => {
     form.append("Address", editData.address);
     form.append("Logourl", logourl ? logourl : "");
     form.append("Logourlfile", logo?.[0] ? logo[0] : logo);
-    form.append("Isstaffingfirm", isStaffingFirm);
+    form.append("Isstaffingfirm", isStaffingFirm ? isStaffingFirm : false);
     if (isAddMode) {
       form.append("Companyid", 0);
 
